@@ -1,24 +1,35 @@
-// Service Worker for Neta Light PWA - Offline & Cache Architecture
-const CACHE_NAME = 'neta-light-v3.4';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture
+const CACHE_NAME = 'neta-poker-v3.5';
 
-const CARD_ASSETS = [
+const CORE_ASSETS = [
   './',
   'index.html',
-  'styles.css?v=3.4',
-  'app.js?v=3.4',
-  'cards_data.js?v=3.4',
-  'manifest.json?v=3.4',
+  'styles.css?v=3.5',
+  'app.js?v=3.5',
+  'cards_data.js?v=3.5',
+  'poker_data.js?v=3.5',
+  'manifest.json?v=3.5',
   'neta_cards/card_back.png',
   'neta_cards/phap_an.jpg',
+  'Porker/card_back.png',
   'icons/apple-touch-icon.png',
   'icons/favicon-32x32.png',
   'favicon.ico'
 ];
 
-// Thêm toàn bộ 48 quân bài Neta Light vào danh sách nạp trước
+// Thêm toàn bộ 48 quân bài Neta Light
 for (let i = 1; i <= 48; i++) {
   const num = i < 10 ? '0' + i : '' + i;
-  CARD_ASSETS.push(`neta_cards/card_${num}.png`);
+  CORE_ASSETS.push(`neta_cards/card_${num}.png`);
+}
+
+// Thêm toàn bộ 52 quân bài Poker
+const SUITS = ['spades', 'hearts', 'diamonds', 'clubs'];
+const RANKS = ['ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king'];
+for (const s of SUITS) {
+  for (const r of RANKS) {
+    CORE_ASSETS.push(`Porker/${r}_of_${s}.png`);
+  }
 }
 
 // Cài đặt và nạp trước toàn bộ kho bài vào bộ nhớ máy
@@ -26,9 +37,8 @@ self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // Dùng nạp từng phần để không bị fail toàn bộ nếu 1 asset có vấn đề
       return Promise.allSettled(
-        CARD_ASSETS.map((asset) =>
+        CORE_ASSETS.map((asset) =>
           cache.add(asset).catch((err) => {
             console.warn('Pre-cache asset warning:', asset, err);
           })
@@ -51,8 +61,8 @@ self.addEventListener('activate', (e) => {
 });
 
 // Chiến lược định tuyến thông minh:
-// 1. Ảnh bài (.png, .jpg): Cache-First (Lấy ngay trong máy, nếu chưa có mới tải qua mạng rồi lưu lại)
-// 2. Mã nguồn (HTML, CSS, JS): Network-First (Lấy mã mới nhất, mất mạng thì lấy cache)
+// 1. Ảnh bài (.png, .jpg): Cache-First
+// 2. Mã nguồn (HTML, CSS, JS): Network-First
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 

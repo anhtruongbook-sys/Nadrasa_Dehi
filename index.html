@@ -12,33 +12,45 @@
   <meta name="theme-color" content="#1a0003">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=3.4">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=3.4">
-  <link rel="icon" type="image/x-icon" href="favicon.ico?v=3.4">
-  <link rel="manifest" href="manifest.json?v=3.4">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=3.5">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=3.5">
+  <link rel="icon" type="image/x-icon" href="favicon.ico?v=3.5">
+  <link rel="manifest" href="manifest.json?v=3.5">
   
-  <link rel="stylesheet" href="styles.css?v=3.4">
+  <link rel="stylesheet" href="styles.css?v=3.5">
 </head>
 <body>
   <div id="app-container">
     <!-- Header -->
     <header class="app-header">
       <div class="header-brand">
-        <img src="neta_cards/phap_an.jpg" alt="Pháp Ấn" class="header-logo" id="header-logo">
+        <img src="neta_cards/phap_an.jpg" alt="Logo Bộ Bài" class="header-logo" id="header-logo">
         <div class="header-titles">
-          <h1 class="app-title">NETA LIGHT</h1>
-          <p class="app-subtitle">Pháp môn Nadrasa Dehi</p>
+          <h1 class="app-title" id="app-main-title">NETA LIGHT</h1>
+          <p class="app-subtitle" id="app-sub-title">Pháp môn Nadrasa Dehi</p>
         </div>
       </div>
       <div class="header-actions">
-        <button id="btn-sound" class="btn-icon" title="Âm thanh Chuông Thiền" aria-label="Bật/Tắt âm thanh">
+        <button id="btn-sound" class="btn-icon" title="Âm thanh Chuông" aria-label="Bật/Tắt âm thanh">
           <span class="icon" id="sound-icon">🔔</span>
         </button>
-        <button id="btn-guide" class="btn-icon" title="Bảng Tra Cứu 48 Lá" aria-label="Xem danh sách 48 lá">
+        <button id="btn-guide" class="btn-icon" title="Tra cứu danh mục lá bài" aria-label="Xem danh sách bài">
           <span class="icon">📜</span>
         </button>
       </div>
     </header>
+
+    <!-- Deck Mode Tabs (Chuyển đổi tức thì 2 bộ bài) -->
+    <nav class="deck-mode-tabs" aria-label="Chọn bộ bài">
+      <button class="mode-tab active" id="tab-mode-neta" data-mode="neta">
+        <span class="tab-icon">🪷</span>
+        <span class="tab-text">Neta Light (48 lá)</span>
+      </button>
+      <button class="mode-tab" id="tab-mode-poker" data-mode="poker">
+        <span class="tab-icon">♠️</span>
+        <span class="tab-text">Bài Tây Poker (52 lá)</span>
+      </button>
+    </nav>
 
     <!-- Top Status Bar -->
     <div class="deck-status-bar">
@@ -55,17 +67,17 @@
     <main class="card-arena-container" id="arena-container">
       <!-- Empty State -->
       <div class="arena-empty-state" id="empty-state">
-        <div class="mandala-circle">
-          <img src="neta_cards/phap_an.jpg" alt="Pháp Ấn Đại Định" class="empty-phapan">
+        <div class="mandala-circle" id="empty-avatar-circle">
+          <img src="neta_cards/phap_an.jpg" alt="Biểu Tượng" class="empty-phapan" id="empty-avatar-img">
         </div>
-        <h2 class="empty-title">Định Tâm Chiêm Nghiệm</h2>
-        <p class="empty-desc">
+        <h2 class="empty-title" id="empty-title-text">Định Tâm Chiêm Nghiệm</h2>
+        <p class="empty-desc" id="empty-desc-text">
           Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chọn số lượng lá bài bên dưới.
         </p>
       </div>
 
       <!-- Hint Bar khi đã trải bài -->
-      <div class="arena-hint-bar" id="arena-hint" style="display: none;">✨ Chạm vào quân bài để xem giải nghĩa & lời khuyên</div>
+      <div class="arena-hint-bar" id="arena-hint" style="display: none;">✨ Chạm vào quân bài để xem giải nghĩa & chi tiết</div>
 
       <!-- Dynamic Cards Grid (Sẽ được chèn tự động qua JS) -->
       <div class="cards-grid" id="cards-grid" style="display: none;"></div>
@@ -81,8 +93,8 @@
         <button class="btn-draw" data-count="3" id="btn-draw-3">
           <span class="btn-badge">Rút 3 lá</span>
         </button>
-        <button class="btn-draw" data-count="10" id="btn-draw-10">
-          <span class="btn-badge">Rút 10 lá</span>
+        <button class="btn-draw" data-count="main" id="btn-draw-main">
+          <span class="btn-badge" id="btn-draw-main-text">Rút 10 lá</span>
         </button>
       </div>
 
@@ -120,15 +132,15 @@
     </div>
   </div>
 
-  <!-- Deck Guide Modal (Xem danh bạ 48 lá) -->
+  <!-- Deck Guide Modal (Xem danh bạ lá bài) -->
   <div class="modal-overlay" id="guide-modal" style="display: none;">
     <div class="modal-dialog guide-dialog">
       <div class="guide-header">
-        <h2>📜 Bảng Tra Cứu 48 Quân Bài Neta Light</h2>
+        <h2 id="guide-modal-title">📜 Danh Mục Lá Bài</h2>
         <button class="modal-close" id="guide-close-btn" aria-label="Đóng">&times;</button>
       </div>
       <div class="guide-search-box">
-        <input type="text" id="guide-search-input" placeholder="🔍 Tìm kiếm tên quân bài hoặc tần số (226, 227...)...">
+        <input type="text" id="guide-search-input" placeholder="🔍 Tìm kiếm quân bài...">
       </div>
       <div class="guide-cards-list" id="guide-cards-list"></div>
     </div>
@@ -137,8 +149,9 @@
   <!-- Toast Notification -->
   <div class="toast-notification" id="toast"></div>
 
-  <!-- Load Database and Scripts -->
-  <script src="cards_data.js?v=3.4"></script>
-  <script src="app.js?v=3.4"></script>
+  <!-- Load Databases and Scripts -->
+  <script src="cards_data.js?v=3.5"></script>
+  <script src="poker_data.js?v=3.5"></script>
+  <script src="app.js?v=3.5"></script>
 </body>
 </html>
