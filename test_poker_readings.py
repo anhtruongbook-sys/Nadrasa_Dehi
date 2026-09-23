@@ -45,6 +45,11 @@ async def run():
         print(f"[TEST] Card title tags count under cards: {len(title_tags)}")
         assert len(title_tags) == 0, f"Expected 0 title tags under poker cards, got: {len(title_tags)}"
 
+        # Verify NO order badges on cards ("không hiển thị số thứ tự lá bài nhé")
+        order_badges = await page.query_selector_all(".cards-grid .card-order-badge")
+        print(f"[TEST] Card order badges count: {len(order_badges)}")
+        assert len(order_badges) == 0, f"Expected 0 order badges on cards, got: {len(order_badges)}"
+
         # Verify Footer controls are FIXED inside viewport (not scrolled out of view)
         footer_box = await page.locator("#session-controls").bounding_box()
         print(f"[TEST] Footer controls box: {footer_box}")
@@ -198,6 +203,20 @@ async def run():
 
         print(f"[TEST] Matching Tus alert: {test_results['matching']}")
         assert "có các lá bài như nhau" in test_results['matching']
+
+        # Test Neta Light mode has NO order badges as well
+        print("[TEST] 6. Switching to Neta Light tab and drawing 10 cards...")
+        await page.click("#tab-mode-neta")
+        await page.wait_for_timeout(300)
+        await page.click("#btn-draw-main")
+        await page.wait_for_timeout(800)
+
+        neta_badges = await page.query_selector_all(".cards-grid .card-order-badge")
+        print(f"[TEST] Neta Light order badges count: {len(neta_badges)}")
+        assert len(neta_badges) == 0, f"Expected 0 order badges in Neta Light, got: {len(neta_badges)}"
+
+        await page.screenshot(path="screenshot_neta_nobadges.png")
+        print("[TEST] Saved screenshot_neta_nobadges.png")
 
         await browser.close()
         print("[TEST] ALL SPIRITUAL RULES & POKER TESTS PASSED SUCCESSFULLY! 100% PASS.")

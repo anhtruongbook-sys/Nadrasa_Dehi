@@ -367,22 +367,7 @@ body {
 }
 
 .card-order-badge {
-  position: absolute;
-  top: -4px;
-  left: -3px;
-  background: linear-gradient(135deg, var(--gold-glow), var(--gold-dark));
-  color: #120104;
-  font-size: 0.58rem;
-  font-weight: 800;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-  border: 1px solid #ffffff;
-  z-index: 5;
+  display: none !important;
 }
 
 .card-inner {

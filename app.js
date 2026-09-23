@@ -630,22 +630,22 @@
       let boxClass = 'tu-extra';
 
       if (i === 0) {
-        tuName = 'Tụ 1 (Lá 1 - 3: Tụ đầu)';
+        tuName = 'Tụ 1 (3 cây đầu tiên)';
         badgeClass = 'badge-rank-1';
         badgeText = '🌟 Xác nhận cao nhất';
         boxClass = 'tu-1';
       } else if (i === 1) {
-        tuName = 'Tụ 2 (Lá 4 - 6: Tụ sau)';
+        tuName = 'Tụ 2 (3 cây kế tiếp)';
         badgeClass = 'badge-rank-2';
         badgeText = '⚡ Có thể chấp nhận được';
         boxClass = 'tu-2';
       } else if (i === 2) {
-        tuName = 'Tụ 3 (Lá 7 - 9: Tụ sau)';
+        tuName = 'Tụ 3 (3 cây kế tiếp)';
         badgeClass = 'badge-rank-3';
         badgeText = '⚠️ Cần kiểm tra bốc lại';
         boxClass = 'tu-3';
       } else {
-        tuName = `Tụ ${i + 1} (Lá ${start + 1} - ${end}: Tụ bổ trợ)`;
+        tuName = `Tụ ${i + 1} (Cây rút thêm bổ trợ)`;
       }
 
       const combo = tuCards.length === 3 ? detectTuCombo(tuCards) : null;
@@ -676,6 +676,14 @@
       <div class="poker-panel-title">
         <span>🃏 Chi Tiết Luận Giải 52 Quân Bài Tây</span>
       </div>
+      <div class="poker-reading-rule-box" style="background: rgba(212, 175, 55, 0.08); border: 1px dashed rgba(212, 175, 55, 0.4); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.76rem; line-height: 1.45; color: #f0e6d2;">
+        <div style="font-weight: 700; color: #ffd700; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
+          <span>📜 Quy tắc luận giải Nadrasa Dehi:</span>
+        </div>
+        <div>• <strong>Bộ 3 con</strong>: Chỉ có ý nghĩa khi <strong>cùng nằm trong 1 tụ (3 cây)</strong> (Tụ 1: 3 cây đầu; Tụ 2: 3 cây kế tiếp; Tụ 3: 3 cây sau).</div>
+        <div>• <strong>Bộ nhiều hơn 3 con</strong> (2 đôi trong 4 lá, 2 đôi trong 5 lá...): Bắt buộc phải <strong>liên tiếp nhau</strong>.</div>
+        <div>• <strong>Hiệu lực xác nhận</strong>: Tụ đầu (Tụ 1) xác nhận cao nhất, Tụ 2 có thể chấp nhận được, Tụ 3 cần kiểm tra bốc lại.</div>
+      </div>
     `;
 
     // Render consecutive alerts if any
@@ -687,7 +695,7 @@
           : '';
         html += `
           <div class="tu-consecutive-alert" style="${style}">
-            <div>${a.title} <span style="font-size: 0.70rem; opacity: 0.85;">(${a.cardsRange}: ${a.cardsList})</span></div>
+            <div>${a.title} <span style="font-size: 0.70rem; opacity: 0.85;">(${a.cardsList})</span></div>
             <div style="font-size: 0.72rem; margin-top: 3px; font-weight: normal;">${a.description}</div>
           </div>
         `;
@@ -732,8 +740,8 @@
               </div>
             `
                 : tu.cards.length === 3
-                ? `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; font-style: italic;">(3 lá đơn lẻ, không tạo thành bộ 3 quy ước)</div>`
-                : `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; font-style: italic;">(Đang bốc ${tu.cards.length}/3 lá - Cần đủ 3 lá cùng tụ để xác thực bộ 3)</div>`
+                ? `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; font-style: italic;">(3 lá đơn lẻ trong cùng 1 tụ, không tạo thành bộ 3 quy ước)</div>`
+                : `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; font-style: italic;">(Đang bốc ${tu.cards.length}/3 lá - Cần đủ 3 lá cùng 1 tụ để xác thực bộ)</div>`
             }
           </div>
         </div>
@@ -753,7 +761,6 @@
     const showTitleTag = currentDeckMode !== 'poker';
 
     item.innerHTML = `
-      <div class="card-order-badge">${index + 1}</div>
       <div class="card-inner">
         <div class="card-face card-back">
           <img src="${cfg.backImage}" alt="Mặt sau bài" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${cfg.backImage}?r='+Date.now()},250);}">
