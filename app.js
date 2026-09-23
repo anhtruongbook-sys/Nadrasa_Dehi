@@ -87,15 +87,7 @@
   const toast = document.getElementById('toast');
 
   // Screenshot Elements
-  const btnScreenshot = document.getElementById('btn-screenshot');
   const btnScreenshotHeader = document.getElementById('btn-screenshot-header');
-  const screenshotModal = document.getElementById('screenshot-modal');
-  const screenshotCloseBtn = document.getElementById('screenshot-close-btn');
-  const screenshotPreviewImg = document.getElementById('screenshot-preview-img');
-  const btnDownloadScreenshot = document.getElementById('btn-download-screenshot');
-  const btnShareScreenshot = document.getElementById('btn-share-screenshot');
-  let currentScreenshotBlob = null;
-  let currentScreenshotDataUrl = null;
 
   // Modal Elements
   const cardModal = document.getElementById('card-modal');
@@ -227,7 +219,6 @@
     if (btnSessionReading) btnSessionReading.style.display = 'none';
     if (btnScreenshotHeader) btnScreenshotHeader.style.display = 'none';
     closeReadingModal();
-    closeScreenshotModal();
     initialControls.style.display = 'flex';
     sessionControls.style.display = 'none';
   }
@@ -1155,17 +1146,8 @@
       });
     }
 
-    // Screenshot Events
-    if (btnScreenshot) btnScreenshot.addEventListener('click', captureArenaScreenshot);
+    // Screenshot Event (Header camera button)
     if (btnScreenshotHeader) btnScreenshotHeader.addEventListener('click', captureArenaScreenshot);
-    if (screenshotCloseBtn) screenshotCloseBtn.addEventListener('click', closeScreenshotModal);
-    if (screenshotModal) {
-      screenshotModal.addEventListener('click', (e) => {
-        if (e.target === screenshotModal) closeScreenshotModal();
-      });
-    }
-    if (btnDownloadScreenshot) btnDownloadScreenshot.addEventListener('click', downloadScreenshot);
-    if (btnShareScreenshot) btnShareScreenshot.addEventListener('click', shareScreenshot);
 
     // Auto-fit cards on screen resize
     window.addEventListener('resize', fitCardsToScreen);
@@ -1179,15 +1161,11 @@
         closeModal();
         guideModal.style.display = 'none';
         closeReadingModal();
-        closeScreenshotModal();
       }
     });
   }
 
-  // ================= SCREENSHOT ENGINE =================
-  function closeScreenshotModal() {
-    if (screenshotModal) screenshotModal.style.display = 'none';
-  }
+  // ================= SCREENSHOT ENGINE (LƯU TRỰC TIẾP VÀO MÁY) =================
 
   function triggerCameraFlash() {
     const flash = document.createElement('div');
@@ -1272,97 +1250,40 @@
       });
 
       const dataUrl = canvas.toDataURL('image/png');
-      currentScreenshotDataUrl = dataUrl;
-
       const now = new Date();
       const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
       const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
       const filename = `${modeName}_TraiBai_${dateStr}.png`;
 
-      // Set image into preview modal
-      if (screenshotPreviewImg) {
-        screenshotPreviewImg.src = dataUrl;
+      // Convert DataURL to Blob synchronously
+      const binStr = atob(dataUrl.split(',')[1]);
+      const len = binStr.length;
+      const u8arr = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        u8arr[i] = binStr.charCodeAt(i);
       }
-      if (screenshotModal) {
-        screenshotModal.style.display = 'flex';
-      }
+      const blob = new Blob([u8arr], { type: 'image/png' });
+      const blobUrl = URL.createObjectURL(blob);
 
-      // Convert to blob and store, try auto-download in background
-      canvas.toBlob((blob) => {
-        currentScreenshotBlob = blob;
-        try {
-          const a = document.createElement('a');
-          a.href = dataUrl;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        } catch (e) {}
-      }, 'image/png');
+      // Trigger instant direct download into user device
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        if (a.parentNode) a.parentNode.removeChild(a);
+      }, 1000);
 
-      showToast('📸 Đã chụp xong! Chạm giữ vào ảnh để lưu vào máy');
+      // Keep blob URL alive for 5 minutes so Android Chrome download service finishes smoothly
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 300000);
+
+      showToast('✨ Đã lưu ảnh vào máy! Bác mở Thư viện ảnh / Tải về để xem nhé');
 
     } catch (err) {
       console.error('Screenshot error:', err);
       showToast('Không thể lưu ảnh: ' + (err.message || err));
     }
-  }
-
-  function downloadScreenshot() {
-    if (!currentScreenshotDataUrl) return;
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
-    const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
-    const filename = `${modeName}_TraiBai_${dateStr}.png`;
-
-    try {
-      if (currentScreenshotBlob) {
-        const blobUrl = URL.createObjectURL(currentScreenshotBlob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
-      } else {
-        const a = document.createElement('a');
-        a.href = currentScreenshotDataUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-      showToast('💾 Đang tải ảnh về thư mục máy...');
-    } catch (e) {
-      showToast('Hãy chạm và giữ vào ảnh để Lưu hình ảnh vào máy');
-    }
-  }
-
-  async function shareScreenshot() {
-    if (!currentScreenshotBlob && !currentScreenshotDataUrl) return;
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
-    const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
-    const filename = `${modeName}_TraiBai_${dateStr}.png`;
-
-    try {
-      if (navigator.share && currentScreenshotBlob) {
-        const file = new File([currentScreenshotBlob], filename, { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: `Trải bài ${modeName} - Nadrasa Dehi`,
-            text: `Kết quả chiêm nghiệm ${modeName} - Pháp môn Nadrasa Dehi`,
-            files: [file]
-          });
-          return;
-        }
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-    }
-    // Fallback to direct download
-    downloadScreenshot();
   }
 
   // Register Service Worker for Offline PWA
