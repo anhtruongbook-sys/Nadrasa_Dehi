@@ -1,0 +1,11 @@
+# Temporary / demo files
+demo_*.png
+verify_*.png
+pdf_page1_preview.png
+extracted_cards/
+__pycache__/
+*.pyc
+
+# OS files
+Thumbs.db
+.DS_Store

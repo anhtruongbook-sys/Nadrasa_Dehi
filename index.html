@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Bốc Bài Neta Light - Pháp môn Nadrasa Dehi</title>
+  
+  <!-- Mobile & PWA Meta Tags -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#1a0003">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=3.2">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=3.2">
+  <link rel="icon" type="image/x-icon" href="favicon.ico?v=3.2">
+  <link rel="manifest" href="manifest.json?v=3.2">
+  
+  <link rel="stylesheet" href="styles.css?v=3.2">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <img src="neta_cards/phap_an.jpg" alt="Pháp Ấn" class="header-logo" id="header-logo">
+        <div class="header-titles">
+          <h1 class="app-title">NETA LIGHT</h1>
+          <p class="app-subtitle">Pháp môn Nadrasa Dehi</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-sound" class="btn-icon" title="Âm thanh Chuông Thiền" aria-label="Bật/Tắt âm thanh">
+          <span class="icon" id="sound-icon">🔔</span>
+        </button>
+        <button id="btn-guide" class="btn-icon" title="Bảng Tra Cứu 48 Lá" aria-label="Xem danh sách 48 lá">
+          <span class="icon">📜</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Status Bar -->
+    <div class="deck-status-bar">
+      <div class="status-item">
+        <span class="status-dot"></span>
+        <span id="deck-remaining-text">Bộ bài: Còn 48/48 lá</span>
+      </div>
+      <div class="status-item" id="drawn-count-item">
+        <span>Đã bốc: <strong id="drawn-count-text">0</strong> lá</span>
+      </div>
+    </div>
+
+    <!-- Main Card Arena / Table -->
+    <main class="card-arena-container" id="arena-container">
+      <!-- Empty State -->
+      <div class="arena-empty-state" id="empty-state">
+        <div class="mandala-circle">
+          <img src="neta_cards/phap_an.jpg" alt="Pháp Ấn Đại Định" class="empty-phapan">
+        </div>
+        <h2 class="empty-title">Định Tâm Chiêm Nghiệm</h2>
+        <p class="empty-desc">
+          Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chọn số lượng lá bài bên dưới.
+        </p>
+      </div>
+
+      <!-- Dynamic Cards Grid (Sẽ được chèn tự động qua JS) -->
+      <div class="cards-grid" id="cards-grid" style="display: none;"></div>
+    </main>
+
+    <!-- Bottom Controls (Mobile-First Ergonomics) -->
+    <footer class="app-controls">
+      <!-- Quick Initial Draw Row -->
+      <div class="control-row initial-draw-row" id="initial-controls">
+        <button class="btn-draw" data-count="1" id="btn-draw-1">
+          <span class="btn-badge">Rút 1 lá</span>
+        </button>
+        <button class="btn-draw" data-count="3" id="btn-draw-3">
+          <span class="btn-badge">Rút 3 lá</span>
+        </button>
+        <button class="btn-draw" data-count="10" id="btn-draw-10">
+          <span class="btn-badge">Rút 10 lá</span>
+        </button>
+      </div>
+
+      <!-- Active In-Session Controls -->
+      <div class="control-row in-session-row" id="session-controls" style="display: none;">
+        <button class="btn-action btn-add-card" id="btn-draw-more">
+          <span class="btn-icon-symbol">➕</span>
+          <span class="btn-text">Rút thêm 1 lá</span>
+          <span class="btn-subtext" id="btn-remaining-sub">(Còn 47)</span>
+        </button>
+        <button class="btn-action btn-secondary" id="btn-shuffle">
+          <span class="btn-icon-symbol">🔀</span>
+          <span class="btn-text">Xáo bài</span>
+        </button>
+        <button class="btn-action btn-secondary" id="btn-reset">
+          <span class="btn-icon-symbol">🔄</span>
+          <span class="btn-text">Thu bài</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Card Detail Modal (Popup Phóng to Lá Bài) -->
+  <div class="modal-overlay" id="card-modal" style="display: none;">
+    <div class="modal-dialog">
+      <button class="modal-close" id="modal-close-btn" aria-label="Đóng">&times;</button>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Rendered dynamically via JS -->
+      </div>
+      <div class="modal-nav">
+        <button class="btn-nav" id="modal-prev-btn">◀ Lá trước</button>
+        <span class="modal-counter" id="modal-card-counter">1/3</span>
+        <button class="btn-nav" id="modal-next-btn">Lá sau ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deck Guide Modal (Xem danh bạ 48 lá) -->
+  <div class="modal-overlay" id="guide-modal" style="display: none;">
+    <div class="modal-dialog guide-dialog">
+      <div class="guide-header">
+        <h2>📜 Bảng Tra Cứu 48 Quân Bài Neta Light</h2>
+        <button class="modal-close" id="guide-close-btn" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="guide-search-box">
+        <input type="text" id="guide-search-input" placeholder="🔍 Tìm kiếm tên quân bài hoặc tần số (226, 227...)...">
+      </div>
+      <div class="guide-cards-list" id="guide-cards-list"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification" id="toast"></div>
+
+  <!-- Load Database and Scripts -->
+  <script src="cards_data.js?v=3.1"></script>
+  <script src="app.js?v=3.1"></script>
+</body>
+</html>

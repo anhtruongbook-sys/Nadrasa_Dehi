@@ -1,0 +1,482 @@
+[
+  {
+    "id": 1,
+    "name": "Yêu nam",
+    "image": "card_01.png",
+    "row": 1,
+    "col": 1,
+    "cell_image": "B2",
+    "cell_name": "C2",
+    "source_image": "xl/media/image1.png"
+  },
+  {
+    "id": 2,
+    "name": "Yêu nữ",
+    "image": "card_02.png",
+    "row": 1,
+    "col": 2,
+    "cell_image": "D2",
+    "cell_name": "E2",
+    "source_image": "xl/media/image2.png"
+  },
+  {
+    "id": 3,
+    "name": "Vong nam",
+    "image": "card_03.png",
+    "row": 1,
+    "col": 3,
+    "cell_image": "F2",
+    "cell_name": "G2",
+    "source_image": "xl/media/image3.png"
+  },
+  {
+    "id": 4,
+    "name": "Vong nữ",
+    "image": "card_04.png",
+    "row": 1,
+    "col": 4,
+    "cell_image": "H2",
+    "cell_name": "I2",
+    "source_image": "xl/media/image4.png"
+  },
+  {
+    "id": 5,
+    "name": "Đủ điều kiện đầu thai",
+    "image": "card_05.png",
+    "row": 1,
+    "col": 5,
+    "cell_image": "J2",
+    "cell_name": "K2",
+    "source_image": "xl/media/image5.png"
+  },
+  {
+    "id": 6,
+    "name": "Nghiệp nặng",
+    "image": "card_06.png",
+    "row": 1,
+    "col": 6,
+    "cell_image": "L2",
+    "cell_name": "M2",
+    "source_image": "xl/media/image6.png"
+  },
+  {
+    "id": 7,
+    "name": "Nghiệp đang xảy ra",
+    "image": "card_07.png",
+    "row": 1,
+    "col": 7,
+    "cell_image": "N2",
+    "cell_name": "O2",
+    "source_image": "xl/media/image7.png"
+  },
+  {
+    "id": 8,
+    "name": "Bùa",
+    "image": "card_08.png",
+    "row": 1,
+    "col": 8,
+    "cell_image": "P2",
+    "cell_name": "Q2",
+    "source_image": "xl/media/image8.png"
+  },
+  {
+    "id": 9,
+    "name": "Quỷ nam",
+    "image": "card_09.png",
+    "row": 2,
+    "col": 1,
+    "cell_image": "B4",
+    "cell_name": "C4",
+    "source_image": "xl/media/image9.png"
+  },
+  {
+    "id": 10,
+    "name": "Quỷ nữ",
+    "image": "card_10.png",
+    "row": 2,
+    "col": 2,
+    "cell_image": "D4",
+    "cell_name": "E4",
+    "source_image": "xl/media/image10.png"
+  },
+  {
+    "id": 11,
+    "name": "Thầy tà",
+    "image": "card_11.png",
+    "row": 2,
+    "col": 3,
+    "cell_image": "F4",
+    "cell_name": "G4",
+    "source_image": "xl/media/image11.png"
+  },
+  {
+    "id": 12,
+    "name": "Thổ địa",
+    "image": "card_12.png",
+    "row": 2,
+    "col": 4,
+    "cell_image": "H4",
+    "cell_name": "I4",
+    "source_image": "xl/media/image12.png"
+  },
+  {
+    "id": 13,
+    "name": "Đất xấu (không có thổ địa)",
+    "image": "card_13.png",
+    "row": 2,
+    "col": 5,
+    "cell_image": "J4",
+    "cell_name": "K4",
+    "source_image": "xl/media/image13.png"
+  },
+  {
+    "id": 14,
+    "name": "Nghiệp ở đất",
+    "image": "card_14.png",
+    "row": 2,
+    "col": 6,
+    "cell_image": "L4",
+    "cell_name": "M4",
+    "source_image": "xl/media/image14.png"
+  },
+  {
+    "id": 15,
+    "name": "Đất tốt",
+    "image": "card_15.png",
+    "row": 2,
+    "col": 7,
+    "cell_image": "N4",
+    "cell_name": "O4",
+    "source_image": "xl/media/image15.png"
+  },
+  {
+    "id": 16,
+    "name": "Hộ pháp thiên tâm đạo",
+    "image": "card_16.png",
+    "row": 2,
+    "col": 8,
+    "cell_image": "P4",
+    "cell_name": "Q4",
+    "source_image": "xl/media/image16.png"
+  },
+  {
+    "id": 17,
+    "name": "Om trắng",
+    "image": "card_17.png",
+    "row": 3,
+    "col": 1,
+    "cell_image": "B6",
+    "cell_name": "C6",
+    "source_image": "xl/media/image17.png"
+  },
+  {
+    "id": 18,
+    "name": "Om trắng",
+    "image": "card_18.png",
+    "row": 3,
+    "col": 2,
+    "cell_image": "D6",
+    "cell_name": "E6",
+    "source_image": "xl/media/image17.png"
+  },
+  {
+    "id": 19,
+    "name": "Om trắng",
+    "image": "card_19.png",
+    "row": 3,
+    "col": 3,
+    "cell_image": "F6",
+    "cell_name": "G6",
+    "source_image": "xl/media/image17.png"
+  },
+  {
+    "id": 20,
+    "name": "Có thể khai ngộ",
+    "image": "card_20.png",
+    "row": 3,
+    "col": 4,
+    "cell_image": "H6",
+    "cell_name": "I6",
+    "source_image": "xl/media/image18.png"
+  },
+  {
+    "id": 21,
+    "name": "Om vàng",
+    "image": "card_21.png",
+    "row": 3,
+    "col": 5,
+    "cell_image": "J6",
+    "cell_name": "K6",
+    "source_image": "xl/media/image19.png"
+  },
+  {
+    "id": 22,
+    "name": "Om vàng",
+    "image": "card_22.png",
+    "row": 3,
+    "col": 6,
+    "cell_image": "L6",
+    "cell_name": "M6",
+    "source_image": "xl/media/image19.png"
+  },
+  {
+    "id": 23,
+    "name": "Om vàng",
+    "image": "card_23.png",
+    "row": 3,
+    "col": 7,
+    "cell_image": "N6",
+    "cell_name": "O6",
+    "source_image": "xl/media/image19.png"
+  },
+  {
+    "id": 24,
+    "name": "Om trắng",
+    "image": "card_24.png",
+    "row": 3,
+    "col": 8,
+    "cell_image": "P6",
+    "cell_name": "Q6",
+    "source_image": "xl/media/image20.png"
+  },
+  {
+    "id": 25,
+    "name": "Âm binh người",
+    "image": "card_25.png",
+    "row": 4,
+    "col": 1,
+    "cell_image": "B8",
+    "cell_name": "C8",
+    "source_image": "xl/media/image21.png"
+  },
+  {
+    "id": 26,
+    "name": "Âm binh súc sinh",
+    "image": "card_26.png",
+    "row": 4,
+    "col": 2,
+    "cell_image": "D8",
+    "cell_name": "E8",
+    "source_image": "xl/media/image22.png"
+  },
+  {
+    "id": 27,
+    "name": "Vong nhi nam",
+    "image": "card_27.png",
+    "row": 4,
+    "col": 3,
+    "cell_image": "F8",
+    "cell_name": "G8",
+    "source_image": "xl/media/image23.png"
+  },
+  {
+    "id": 28,
+    "name": "Vong nhi nữ",
+    "image": "card_28.png",
+    "row": 4,
+    "col": 4,
+    "cell_image": "H8",
+    "cell_name": "I8",
+    "source_image": "xl/media/image24.png"
+  },
+  {
+    "id": 29,
+    "name": "Thầy chánh pháp",
+    "image": "card_29.png",
+    "row": 4,
+    "col": 5,
+    "cell_image": "J8",
+    "cell_name": "K8",
+    "source_image": "xl/media/image25.png"
+  },
+  {
+    "id": 30,
+    "name": "Nghiệp tâm linh",
+    "image": "card_30.png",
+    "row": 4,
+    "col": 6,
+    "cell_image": "L8",
+    "cell_name": "M8",
+    "source_image": "xl/media/image26.png"
+  },
+  {
+    "id": 31,
+    "name": "Chết tận số",
+    "image": "card_31.png",
+    "row": 4,
+    "col": 7,
+    "cell_image": "N8",
+    "cell_name": "O8",
+    "source_image": "xl/media/image27.png"
+  },
+  {
+    "id": 32,
+    "name": "Chết oan",
+    "image": "card_32.png",
+    "row": 4,
+    "col": 8,
+    "cell_image": "P8",
+    "cell_name": "Q8",
+    "source_image": "xl/media/image28.png"
+  },
+  {
+    "id": 33,
+    "name": "Pháp ấn",
+    "image": "card_33.png",
+    "row": 5,
+    "col": 1,
+    "cell_image": "B10",
+    "cell_name": "C10",
+    "source_image": "xl/media/image29.png"
+  },
+  {
+    "id": 34,
+    "name": "Om vàng",
+    "image": "card_34.png",
+    "row": 5,
+    "col": 2,
+    "cell_image": "D10",
+    "cell_name": "E10",
+    "source_image": "xl/media/image30.png"
+  },
+  {
+    "id": 35,
+    "name": "Bà cô tổ",
+    "image": "card_35.png",
+    "row": 5,
+    "col": 3,
+    "cell_image": "F10",
+    "cell_name": "G10",
+    "source_image": "xl/media/image31.png"
+  },
+  {
+    "id": 36,
+    "name": "Ông mãnh",
+    "image": "card_36.png",
+    "row": 5,
+    "col": 4,
+    "cell_image": "H10",
+    "cell_name": "I10",
+    "source_image": "xl/media/image32.png"
+  },
+  {
+    "id": 37,
+    "name": "Gia tiên",
+    "image": "card_37.png",
+    "row": 5,
+    "col": 5,
+    "cell_image": "J10",
+    "cell_name": "K10",
+    "source_image": "xl/media/image33.png"
+  },
+  {
+    "id": 38,
+    "name": "Duyên vợ chồng",
+    "image": "card_38.png",
+    "row": 5,
+    "col": 6,
+    "cell_image": "L10",
+    "cell_name": "M10",
+    "source_image": "xl/media/image34.png"
+  },
+  {
+    "id": 39,
+    "name": "Duyên âm",
+    "image": "card_39.png",
+    "row": 5,
+    "col": 7,
+    "cell_image": "N10",
+    "cell_name": "O10",
+    "source_image": "xl/media/image35.png"
+  },
+  {
+    "id": 40,
+    "name": "Con âm",
+    "image": "card_40.png",
+    "row": 5,
+    "col": 8,
+    "cell_image": "P10",
+    "cell_name": "Q10",
+    "source_image": "xl/media/image36.png"
+  },
+  {
+    "id": 41,
+    "name": "Vị thầy tâm linh",
+    "image": "card_41.png",
+    "row": 6,
+    "col": 1,
+    "cell_image": "B12",
+    "cell_name": "C12",
+    "source_image": "xl/media/image37.png"
+  },
+  {
+    "id": 42,
+    "name": "Thiên thần hộ mệnh nam",
+    "image": "card_42.png",
+    "row": 6,
+    "col": 2,
+    "cell_image": "D12",
+    "cell_name": "E12",
+    "source_image": "xl/media/image38.png"
+  },
+  {
+    "id": 43,
+    "name": "Thiên thần hộ mệnh nữ",
+    "image": "card_43.png",
+    "row": 6,
+    "col": 3,
+    "cell_image": "F12",
+    "cell_name": "G12",
+    "source_image": "xl/media/image39.png"
+  },
+  {
+    "id": 44,
+    "name": "Hộ pháp",
+    "image": "card_44.png",
+    "row": 6,
+    "col": 4,
+    "cell_image": "H12",
+    "cell_name": "I12",
+    "source_image": "xl/media/image40.png"
+  },
+  {
+    "id": 45,
+    "name": "Pháp binh",
+    "image": "card_45.png",
+    "row": 6,
+    "col": 5,
+    "cell_image": "J12",
+    "cell_name": "K12",
+    "source_image": "xl/media/image41.png"
+  },
+  {
+    "id": 46,
+    "name": "Sứ giả",
+    "image": "card_46.png",
+    "row": 6,
+    "col": 6,
+    "cell_image": "L12",
+    "cell_name": "M12",
+    "source_image": "xl/media/image42.png"
+  },
+  {
+    "id": 47,
+    "name": "Ấn chữ vạn",
+    "image": "card_47.png",
+    "row": 6,
+    "col": 7,
+    "cell_image": "N12",
+    "cell_name": "O12",
+    "source_image": "xl/media/image43.png"
+  },
+  {
+    "id": 48,
+    "name": "Quan thần linh",
+    "image": "card_48.png",
+    "row": 6,
+    "col": 8,
+    "cell_image": "P12",
+    "cell_name": "Q12",
+    "source_image": "xl/media/image44.png"
+  }
+]

@@ -1,0 +1,811 @@
+/* ============================================================
+   NETA LIGHT - CSS STYLESHEET (Mobile-First Spiritual Theme)
+   Pháp môn Nadrasa Dehi
+   ============================================================ */
+
+:root {
+  --bg-primary: #120104;
+  --bg-secondary: #230309;
+  --bg-card: rgba(35, 3, 9, 0.85);
+  --gold-primary: #f5b041;
+  --gold-glow: #f7dc6f;
+  --gold-dark: #b7950b;
+  --red-accent: #c0392b;
+  --red-deep: #78281f;
+  --text-primary: #fdfefe;
+  --text-secondary: #f5cba7;
+  --text-muted: #a6acaf;
+  --border-gold: rgba(245, 176, 65, 0.4);
+  --border-gold-bright: rgba(247, 220, 111, 0.85);
+  --shadow-gold: 0 0 20px rgba(245, 176, 65, 0.25);
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+  --safe-top: env(safe-area-inset-top, 12px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 20%, #2e040b 0%, #170104 60%, #0a0002 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+#app-container {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: rgba(14, 1, 3, 0.6);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* ================= HEADER ================= */
+.app-header {
+  padding: calc(var(--safe-top) + 8px) 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(30, 2, 6, 0.95) 0%, rgba(18, 1, 4, 0.75) 100%);
+  border-bottom: 1px solid var(--border-gold);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 12px rgba(245, 176, 65, 0.5);
+  animation: logo-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes logo-glow {
+  0% { box-shadow: 0 0 8px rgba(245, 176, 65, 0.4); transform: scale(1); }
+  100% { box-shadow: 0 0 16px rgba(247, 220, 111, 0.8); transform: scale(1.03); }
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #fff7d6 0%, #f5b041 50%, #d4ac0d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.app-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: rgba(45, 5, 12, 0.8);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-primary);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:active {
+  transform: scale(0.92);
+  background: var(--gold-primary);
+  color: #120104;
+}
+
+/* ================= STATUS BAR ================= */
+.deck-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: rgba(25, 2, 6, 0.5);
+  border-bottom: 1px solid rgba(245, 176, 65, 0.15);
+}
+
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #27ae60;
+  box-shadow: 0 0 6px #2ecc71;
+  margin-right: 6px;
+}
+
+/* ================= ARENA CONTAINER ================= */
+.card-arena-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 10px 10px;
+  overflow-y: auto;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dark) transparent;
+}
+
+/* Empty State */
+.arena-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 16px;
+  max-width: 380px;
+  margin: auto;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.mandala-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px dashed rgba(245, 176, 65, 0.6);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  position: relative;
+  animation: rotate-mandala 60s linear infinite;
+}
+
+@keyframes rotate-mandala {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.empty-phapan {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(245, 176, 65, 0.5);
+}
+
+.empty-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gold-glow);
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.empty-desc {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+/* ================= DYNAMIC CARDS GRID ================= */
+.cards-grid {
+  width: 100%;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  gap: 10px;
+  margin: auto;
+  transition: all 0.4s ease;
+}
+
+/* 1 Lá (Lớn, Căn giữa) */
+.cards-grid.layout-1 {
+  grid-template-columns: minmax(180px, 220px);
+  gap: 16px;
+  padding: 10px 0;
+}
+.cards-grid.layout-1 .card-item {
+  height: 330px;
+}
+
+/* 2 Lá */
+.cards-grid.layout-2 {
+  grid-template-columns: repeat(2, minmax(130px, 160px));
+  gap: 14px;
+}
+.cards-grid.layout-2 .card-item {
+  height: 235px;
+}
+
+/* 3 Lá (1 hàng 3 cột) */
+.cards-grid.layout-3 {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.cards-grid.layout-3 .card-item {
+  height: 180px;
+}
+
+/* 4 Lá (2x2) */
+.cards-grid.layout-4 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  max-width: 320px;
+}
+.cards-grid.layout-4 .card-item {
+  height: 190px;
+}
+
+/* 5 - 6 Lá (3 cột x 2 hàng) */
+.cards-grid.layout-5-6 {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.cards-grid.layout-5-6 .card-item {
+  height: 160px;
+}
+
+/* 7 - 8 Lá (4 cột x 2 hàng) */
+.cards-grid.layout-7-8 {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.cards-grid.layout-7-8 .card-item {
+  height: 135px;
+}
+
+/* Bố cục 5 Cột Chuẩn cho 10 Lá (2 hàng x 5 lá đối xứng) và các lá rút thêm */
+.cards-grid.layout-5-col {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px 6px;
+  width: 100%;
+}
+.cards-grid.layout-5-col .card-item {
+  height: 125px;
+}
+
+/* 11 - 16 Lá */
+.cards-grid.layout-11-16 {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+.cards-grid.layout-11-16 .card-item {
+  height: 110px;
+}
+
+/* 17 Lá trở lên */
+.cards-grid.layout-17-plus {
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 6px;
+  max-height: 100%;
+}
+.cards-grid.layout-17-plus .card-item {
+  height: 105px;
+}
+
+/* ================= 3D CARD ITEM ================= */
+.card-item {
+  position: relative;
+  perspective: 1000px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.25s ease;
+}
+
+.card-item:active {
+  transform: scale(0.96);
+}
+
+.card-order-badge {
+  position: absolute;
+  top: -6px;
+  left: -4px;
+  background: linear-gradient(135deg, var(--gold-glow), var(--gold-dark));
+  color: #120104;
+  font-size: 0.65rem;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+  z-index: 5;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.card-item.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-gold);
+}
+
+/* Mặt Sau Bài (Card Back) */
+.card-back {
+  background: #1a0104;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 12px rgba(245, 176, 65, 0.3);
+}
+
+.card-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Mặt Trước Bài (Card Front) */
+.card-front {
+  background: #ffffff;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  box-shadow: 0 0 12px rgba(245, 176, 65, 0.4);
+}
+
+.card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.card-title-tag {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gold-glow);
+  text-align: center;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.cards-grid.layout-1 .card-title-tag {
+  font-size: 1.05rem;
+  margin-top: 8px;
+}
+.cards-grid.layout-7-8 .card-title-tag,
+.cards-grid.layout-9-10 .card-title-tag,
+.cards-grid.layout-11-16 .card-title-tag,
+.cards-grid.layout-17-plus .card-title-tag {
+  font-size: 0.62rem;
+}
+
+/* ================= CONTROLS FOOTER ================= */
+.app-controls {
+  padding: 10px 14px calc(var(--safe-bottom) + 8px);
+  background: linear-gradient(0deg, rgba(20, 1, 4, 0.98) 0%, rgba(20, 1, 4, 0.85) 100%);
+  border-top: 1px solid var(--border-gold);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.control-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Nút Bốc Ban Đầu (1 lá, 3 lá, 10 lá) */
+.btn-draw {
+  flex: 1;
+  background: linear-gradient(145deg, #3d050f 0%, #200207 100%);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: 12px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.btn-draw:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 0 15px var(--gold-primary);
+}
+
+.btn-draw .btn-badge {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--gold-glow);
+  letter-spacing: 0.5px;
+}
+
+.btn-draw .btn-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Nút In-Session Controls */
+.in-session-row {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-action {
+  border-radius: 10px;
+  border: 1px solid var(--border-gold);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-card {
+  flex: 2;
+  background: linear-gradient(135deg, #d4ac0d 0%, #b7950b 50%, #9a7d0a 100%);
+  color: #120104;
+  border-color: var(--gold-glow);
+  box-shadow: 0 0 14px rgba(245, 176, 65, 0.4);
+  font-size: 0.92rem;
+}
+
+.btn-add-card:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.btn-add-card .btn-subtext {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.btn-secondary {
+  flex: 1;
+  background: rgba(45, 5, 12, 0.85);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.btn-secondary:active {
+  transform: scale(0.95);
+  background: rgba(70, 8, 18, 0.95);
+}
+
+/* ================= MODAL DIALOGS ================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 0, 2, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-dialog {
+  background: linear-gradient(160deg, #2c040d 0%, #150105 100%);
+  border: 1.5px solid var(--border-gold-bright);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(245, 176, 65, 0.3);
+  overflow: hidden;
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-gold);
+  color: var(--text-primary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-body {
+  padding: 20px 18px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.modal-card-preview {
+  width: 150px;
+  height: 240px;
+  border-radius: 10px;
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 20px rgba(245, 176, 65, 0.5);
+  margin-bottom: 14px;
+  background: #ffffff;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.modal-card-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--gold-glow);
+  margin-bottom: 6px;
+}
+
+.modal-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.modal-tag {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+.modal-desc-box {
+  background: rgba(10, 0, 3, 0.6);
+  border-left: 3px solid var(--gold-primary);
+  padding: 10px 12px;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.modal-advice-box {
+  background: rgba(30, 4, 10, 0.7);
+  border-left: 3px solid #2ecc71;
+  padding: 10px 12px;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #eaeded;
+  width: 100%;
+}
+
+.modal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid rgba(245, 176, 65, 0.2);
+  background: rgba(18, 1, 4, 0.9);
+}
+
+.btn-nav {
+  background: rgba(45, 5, 12, 0.8);
+  border: 1px solid var(--border-gold);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.modal-counter {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ================= GUIDE MODAL ================= */
+.guide-dialog {
+  max-width: 480px;
+  height: 85vh;
+}
+
+.guide-header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-gold);
+}
+
+.guide-header h2 {
+  font-size: 1.05rem;
+  color: var(--gold-glow);
+}
+
+.guide-search-box {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.15);
+}
+
+.guide-search-box input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-gold);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.guide-cards-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.guide-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px;
+  background: rgba(30, 3, 8, 0.6);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.guide-item:active {
+  background: rgba(60, 8, 16, 0.8);
+}
+
+.guide-thumb {
+  width: 38px;
+  height: 60px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.guide-info {
+  flex: 1;
+}
+
+.guide-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gold-glow);
+}
+
+.guide-meta {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* ================= TOAST NOTIFICATION ================= */
+.toast-notification {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(30, 2, 7, 0.95);
+  border: 1px solid var(--gold-primary);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 200;
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
