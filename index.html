@@ -17,7 +17,7 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico?v=3.5">
   <link rel="manifest" href="manifest.json?v=3.5">
   
-  <link rel="stylesheet" href="styles.css?v=4.2">
+  <link rel="stylesheet" href="styles.css?v=4.3">
 </head>
 <body>
   <div id="app-container">
@@ -44,19 +44,19 @@
     <nav class="deck-mode-tabs" aria-label="Chọn bộ bài">
       <button class="mode-tab active" id="tab-mode-neta" data-mode="neta">
         <span class="tab-icon">🪷</span>
-        <span class="tab-text">Neta Light (48 lá)</span>
+        <span class="tab-text">Neta Light</span>
       </button>
       <button class="mode-tab" id="tab-mode-poker" data-mode="poker">
         <span class="tab-icon">♠️</span>
-        <span class="tab-text">Bài Tây Poker (52 lá)</span>
+        <span class="tab-text">Bài Tây Poker</span>
       </button>
     </nav>
 
-    <!-- Top Status Bar -->
-    <div class="deck-status-bar">
+    <!-- Top Status Bar (Ẩn hiển thị số đếm lá bài) -->
+    <div class="deck-status-bar" style="display: none;">
       <div class="status-item">
         <span class="status-dot"></span>
-        <span id="deck-remaining-text">Bộ bài: Còn 48/48 lá</span>
+        <span id="deck-remaining-text">Bộ bài</span>
       </div>
       <div class="status-item" id="drawn-count-item">
         <span>Đã bốc: <strong id="drawn-count-text">0</strong> lá</span>
@@ -110,7 +110,6 @@
         <button class="btn-action btn-add-card" id="btn-draw-more">
           <span class="btn-icon-symbol">➕</span>
           <span class="btn-text">Rút thêm</span>
-          <span class="btn-subtext" id="btn-remaining-sub">(43)</span>
         </button>
         <button class="btn-action btn-reading" id="btn-session-reading" style="display: none;">
           <span class="btn-icon-symbol">🔮</span>
@@ -175,8 +174,8 @@
   <div class="toast-notification" id="toast"></div>
 
   <!-- Load Databases and Scripts -->
-  <script src="cards_data.js?v=4.2"></script>
-  <script src="poker_data.js?v=4.2"></script>
-  <script src="app.js?v=4.2"></script>
+  <script src="cards_data.js?v=4.3"></script>
+  <script src="poker_data.js?v=4.3"></script>
+  <script src="app.js?v=4.3"></script>
 </body>
 </html>

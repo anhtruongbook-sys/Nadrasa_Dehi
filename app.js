@@ -27,20 +27,20 @@
       emptyDesc: 'Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chọn số lượng lá bài bên dưới.',
       mainDrawCount: 10,
       mainDrawLabel: 'Rút 10 lá',
-      guideTitle: '📜 Bảng Tra Cứu 48 Quân Bài Neta Light'
+      guideTitle: '📜 Bảng Tra Cứu Quân Bài Neta Light'
     },
     poker: {
-      name: 'POKER 52 LÁ',
-      subtitle: 'Bài Tây Cổ Điển',
+      name: 'BÀI TÂY POKER',
+      subtitle: 'Chiêm Đoán Tâm Linh',
       logo: 'Porker/card_back.png',
       backImage: 'Porker/card_back.png',
       getData: () => (typeof POKER_CARDS_DATA !== 'undefined' ? POKER_CARDS_DATA : []),
       totalCards: 52,
-      emptyTitle: 'Chiêm Đoán Bài Tây 52 Lá',
+      emptyTitle: 'Chiêm Đoán Bài Tây Poker',
       emptyDesc: 'Tập trung vào sự việc hoặc người bạn muốn xem, sau đó chọn rút 1 lá, rút 3 lá hoặc rút 9 lá bên dưới.',
       mainDrawCount: 9,
       mainDrawLabel: 'Rút 9 lá',
-      guideTitle: '♠️ Tra Cứu 52 Quân Bài Tây (Poker)'
+      guideTitle: '♠️ Tra Cứu Quân Bài Tây (Poker)'
     }
   };
 
@@ -182,15 +182,12 @@
 
   // Update Status Bar
   function updateStatusBar() {
-    const cfg = DECK_CONFIG[currentDeckMode];
     const remaining = availableDeck.length;
     const drawn = drawnCards.length;
 
-    deckRemainingText.textContent = `Bộ bài: Còn ${remaining}/${cfg.totalCards} lá`;
-    drawnCountText.textContent = drawn;
-    if (btnRemainingSub) {
-      btnRemainingSub.textContent = `(Còn ${remaining})`;
-    }
+    if (deckRemainingText) deckRemainingText.textContent = 'Bộ bài';
+    if (drawnCountText) drawnCountText.textContent = drawn;
+    if (btnRemainingSub) btnRemainingSub.textContent = '';
 
     const drawMoreBtn = document.getElementById('btn-draw-more');
     if (drawMoreBtn) {
