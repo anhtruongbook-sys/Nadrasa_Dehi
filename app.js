@@ -72,6 +72,7 @@
   const soundIcon = document.getElementById('sound-icon');
   const btnGuide = document.getElementById('btn-guide');
   const toast = document.getElementById('toast');
+  const pokerReadingPanel = document.getElementById('poker-reading-panel');
 
   // Modal Elements
   const cardModal = document.getElementById('card-modal');
@@ -90,6 +91,12 @@
 
   // Initialize
   function init() {
+    window._openCardModal = (idx) => openCardModal(idx);
+    window._pokerEngine = {
+      detectTuCombo,
+      detectConsecutiveCombos,
+      checkMatchingTus
+    };
     resetDeck();
     bindEvents();
     renderGuideList();
@@ -195,6 +202,10 @@
     if (arenaHint) arenaHint.style.display = 'none';
     cardsGrid.style.display = 'none';
     cardsGrid.innerHTML = '';
+    if (pokerReadingPanel) {
+      pokerReadingPanel.style.display = 'none';
+      pokerReadingPanel.innerHTML = '';
+    }
     initialControls.style.display = 'flex';
     sessionControls.style.display = 'none';
   }
@@ -286,6 +297,8 @@
         cardEl.classList.add('flipped');
       }
     });
+
+    renderPokerReadingPanel(drawnCards);
   }
 
   // Draw 1 more card (Rút thêm từng lá)
@@ -312,7 +325,298 @@
       cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 100);
 
+    renderPokerReadingPanel(drawnCards);
     showToast(`Đã rút thêm: ${newCard.name}`);
+  }
+
+  // ================= POKER SPIRITUAL READING ENGINE =================
+  // Luận giải tâm linh theo Tụ (3 cây/tụ) & Bộ 4, 5 lá liền nhau
+
+  function detectTuCombo(tuCards) {
+    if (!tuCards || tuCards.length < 3) return null;
+    if (typeof POKER_COMBOS_DATA === 'undefined') return null;
+
+    const ranks = tuCards.map((c) => c.rankNum).sort((a, b) => a - b);
+    const colorTypes = tuCards.map((c) => c.colorType);
+    const suitCodes = tuCards.map((c) => c.suitCode);
+
+    const isAllBlack = colorTypes.every((ct) => ct === 'black');
+    const isAllRed = colorTypes.every((ct) => ct === 'red');
+    const isSameSuit = suitCodes.every((sc) => sc === suitCodes[0]);
+
+    // 1. Check combos from POKER_COMBOS_DATA (16 combos & Nadrasa)
+    for (const combo of POKER_COMBOS_DATA) {
+      const comboRanks = [...combo.ranks].sort((a, b) => a - b);
+      if (
+        ranks[0] === comboRanks[0] &&
+        ranks[1] === comboRanks[1] &&
+        ranks[2] === comboRanks[2]
+      ) {
+        if (combo.color === 'black' && !isAllBlack) continue;
+        if (combo.color === 'red' && !isAllRed) continue;
+        if (combo.suit && combo.suit !== 'any' && (!isSameSuit || suitCodes[0] !== combo.suit)) continue;
+        return {
+          name: combo.name,
+          meaning: combo.meaning,
+          description: combo.description
+        };
+      }
+    }
+
+    // 2. Check 3 of a kind (Bộ ba cùng bậc)
+    if (ranks[0] === ranks[1] && ranks[1] === ranks[2]) {
+      return {
+        name: `Bộ Ba Quân ${tuCards[0].rankShort || tuCards[0].rank}`,
+        meaning: 'Uy lực ba chân vạc - Khuếch đại năng lượng',
+        description: `Cả 3 quân bài đều đồng bậc ${tuCards[0].rank}, báo hiệu năng lượng biểu trưng được củng cố vững chắc gấp ba lần.`
+      };
+    }
+
+    // 3. Check 3-card straight flush (Sảnh đồng chất)
+    if (
+      isSameSuit &&
+      ((ranks[0] + 1 === ranks[1] && ranks[1] + 1 === ranks[2]) ||
+        (ranks[0] === 1 && ranks[1] === 12 && ranks[2] === 13))
+    ) {
+      return {
+        name: `Dây Đồng Chất 3 Lá (${tuCards[0].suit})`,
+        meaning: 'Dòng năng lượng liên tục và đồng nhất',
+        description: `Ba quân bài liên tiếp cùng chất ${tuCards[0].suit} (${tuCards[0].symbol}), đại diện cho dòng chảy sự việc diễn ra thuận chiều, có trật tự rõ ràng.`
+      };
+    }
+
+    return null;
+  }
+
+  // Detect consecutive 4-card or 5-card combos (2 pairs)
+  function detectConsecutiveCombos(cards) {
+    const alerts = [];
+    if (!cards || cards.length < 4) return alerts;
+
+    // Check 4 consecutive cards for 2 pairs
+    for (let i = 0; i <= cards.length - 4; i++) {
+      const slice4 = cards.slice(i, i + 4);
+      const counts = {};
+      slice4.forEach((c) => {
+        counts[c.rankNum] = (counts[c.rankNum] || 0) + 1;
+      });
+      const freqs = Object.values(counts).sort((a, b) => b - a);
+      if (freqs.length === 2 && freqs[0] === 2 && freqs[1] === 2) {
+        const isAllBlack = slice4.every((c) => c.colorType === 'black');
+        if (isAllBlack) {
+          alerts.push({
+            type: 'danger-critical',
+            cardsRange: `Lá ${i + 1} - ${i + 4}`,
+            cardsList: slice4.map((c) => c.shortName || c.name).join(', '),
+            title: '🚨 2 đôi trong 4 lá toàn đen: Hết phúc làm người',
+            description: 'Cảnh báo nghiệp quả cạn kiệt, cần lập tức sám hối sâu sắc và tu phúc cấp thiết.'
+          });
+        } else {
+          alerts.push({
+            type: 'danger-warn',
+            cardsRange: `Lá ${i + 1} - ${i + 4}`,
+            cardsList: slice4.map((c) => c.shortName || c.name).join(', '),
+            title: '⚠️ 2 đôi trong 4 lá: Cạn phúc',
+            description: 'Phước đức đang có dấu hiệu hao hụt lớn; cần thận trọng trong lời nói, hành động và tích thêm phước thiện.'
+          });
+        }
+      }
+    }
+
+    // Check 5 consecutive cards for 2 pairs
+    for (let i = 0; i <= cards.length - 5; i++) {
+      const slice5 = cards.slice(i, i + 5);
+      const counts = {};
+      slice5.forEach((c) => {
+        counts[c.rankNum] = (counts[c.rankNum] || 0) + 1;
+      });
+      const freqs = Object.values(counts).sort((a, b) => b - a);
+      if (freqs[0] === 2 && freqs[1] === 2 && freqs[2] === 1) {
+        // Chỉ tính 2 đôi trong 5 lá nếu không bị trùng với 4 lá liền nhau đã thành 2 đôi
+        const sub4a = slice5.slice(0, 4);
+        const sub4b = slice5.slice(1, 5);
+        const isTwoPairs4 = (arr) => {
+          const c = {};
+          arr.forEach((x) => (c[x.rankNum] = (c[x.rankNum] || 0) + 1));
+          const vals = Object.values(c).sort((a, b) => b - a);
+          return vals.length === 2 && vals[0] === 2 && vals[1] === 2;
+        };
+        if (!isTwoPairs4(sub4a) && !isTwoPairs4(sub4b)) {
+          alerts.push({
+            type: 'confirm-combo',
+            cardsRange: `Lá ${i + 1} - ${i + 5}`,
+            cardsList: slice5.map((c) => c.shortName || c.name).join(', '),
+            title: '✨ 2 đôi trong 5 lá liền nhau: Xác nhận như bộ 3',
+            description: 'Cấu trúc tương hỗ đặc biệt xác nhận năng lượng tâm linh tương đương hiệu lực của một bộ 3 linh ứng.'
+          });
+        }
+      }
+    }
+
+    return alerts;
+  }
+
+  // Check matching Tụs (2 tụ có các lá như nhau)
+  function checkMatchingTus(cards) {
+    const alerts = [];
+    if (!cards || cards.length < 6) return alerts;
+
+    const tus = [];
+    for (let i = 0; i + 3 <= cards.length; i += 3) {
+      tus.push({
+        index: Math.floor(i / 3) + 1,
+        cards: cards.slice(i, i + 3),
+        ranks: cards
+          .slice(i, i + 3)
+          .map((c) => c.rankNum)
+          .sort((a, b) => a - b)
+          .join('-')
+      });
+    }
+
+    for (let i = 0; i < tus.length; i++) {
+      for (let j = i + 1; j < tus.length; j++) {
+        if (tus[i].ranks === tus[j].ranks) {
+          alerts.push({
+            title: `✨ Tụ ${tus[i].index} và Tụ ${tus[j].index} có các lá bài như nhau`,
+            description: '2 tụ có các lá như nhau: Xác nhận như bộ 3 (Đồng điệu linh ứng).'
+          });
+        }
+      }
+    }
+
+    return alerts;
+  }
+
+  // Render Poker Reading Panel
+  function renderPokerReadingPanel(cards) {
+    if (!pokerReadingPanel) return;
+
+    if (currentDeckMode !== 'poker' || !cards || cards.length === 0) {
+      pokerReadingPanel.style.display = 'none';
+      pokerReadingPanel.innerHTML = '';
+      return;
+    }
+
+    const consecutiveAlerts = detectConsecutiveCombos(cards);
+    const matchingTuAlerts = checkMatchingTus(cards);
+
+    // Group cards into Tụ (mỗi tụ 3 lá)
+    const tus = [];
+    const totalTus = Math.ceil(cards.length / 3);
+    for (let i = 0; i < totalTus; i++) {
+      const start = i * 3;
+      const end = Math.min(start + 3, cards.length);
+      const tuCards = cards.slice(start, end);
+
+      let tuName = `Tụ ${i + 1}`;
+      let badgeClass = 'badge-rank-extra';
+      let badgeText = '🔮 Bổ trợ thông tin';
+      let boxClass = 'tu-extra';
+
+      if (i === 0) {
+        tuName = 'Tụ 1 (Lá 1 - 3: Tụ đầu)';
+        badgeClass = 'badge-rank-1';
+        badgeText = '🌟 Xác nhận cao nhất';
+        boxClass = 'tu-1';
+      } else if (i === 1) {
+        tuName = 'Tụ 2 (Lá 4 - 6: Tụ sau)';
+        badgeClass = 'badge-rank-2';
+        badgeText = '⚡ Có thể chấp nhận được';
+        boxClass = 'tu-2';
+      } else if (i === 2) {
+        tuName = 'Tụ 3 (Lá 7 - 9: Tụ sau)';
+        badgeClass = 'badge-rank-3';
+        badgeText = '⚠️ Cần kiểm tra bốc lại';
+        boxClass = 'tu-3';
+      } else {
+        tuName = `Tụ ${i + 1} (Lá ${start + 1} - ${end}: Tụ bổ trợ)`;
+      }
+
+      const combo = tuCards.length === 3 ? detectTuCombo(tuCards) : null;
+
+      tus.push({
+        index: i + 1,
+        tuName,
+        badgeClass,
+        badgeText,
+        boxClass,
+        cards: tuCards,
+        startIndex: start,
+        combo
+      });
+    }
+
+    let html = `
+      <div class="poker-panel-title">
+        <span>🃏 Luận Giải Tâm Linh Bài Tây 52 Lá</span>
+      </div>
+    `;
+
+    // Render consecutive alerts if any
+    if (consecutiveAlerts.length > 0 || matchingTuAlerts.length > 0) {
+      consecutiveAlerts.forEach((a) => {
+        const isConfirm = a.type === 'confirm-combo';
+        const style = isConfirm
+          ? 'background: rgba(46, 204, 113, 0.2); border-color: #2ecc71; color: #a9dfbf;'
+          : '';
+        html += `
+          <div class="tu-consecutive-alert" style="${style}">
+            <div>${a.title} <span style="font-size: 0.70rem; opacity: 0.85;">(${a.cardsRange}: ${a.cardsList})</span></div>
+            <div style="font-size: 0.72rem; margin-top: 3px; font-weight: normal;">${a.description}</div>
+          </div>
+        `;
+      });
+
+      matchingTuAlerts.forEach((a) => {
+        html += `
+          <div class="tu-consecutive-alert" style="background: rgba(52, 152, 219, 0.2); border-color: #3498db; color: #aed6f1;">
+            <div>${a.title}</div>
+            <div style="font-size: 0.72rem; margin-top: 3px; font-weight: normal;">${a.description}</div>
+          </div>
+        `;
+      });
+    }
+
+    // Render each Tu
+    tus.forEach((tu) => {
+      html += `
+        <div class="tu-reading-box ${tu.boxClass}">
+          <div class="tu-box-header">
+            <span class="tu-box-name">${tu.tuName}</span>
+            <span class="tu-box-badge ${tu.badgeClass}">${tu.badgeText}</span>
+          </div>
+          <div class="tu-box-content">
+            <div style="margin-bottom: 4px;">
+              ${tu.cards
+                .map(
+                  (c, cIdx) => `
+                <div style="margin: 2px 0; cursor: pointer;" onclick="window._openCardModal(${tu.startIndex + cIdx})">
+                  • <strong>${c.shortName || c.name}</strong>: ${c.meaning || c.description}
+                </div>
+              `
+                )
+                .join('')}
+            </div>
+            ${
+              tu.combo
+                ? `
+              <div class="tu-combo-alert">
+                <div>⚜️ <strong>${tu.combo.name}</strong>: ${tu.combo.meaning}</div>
+                <div style="font-size: 0.72rem; opacity: 0.9; margin-top: 2px; font-weight: normal;">${tu.combo.description}</div>
+              </div>
+            `
+                : tu.cards.length === 3
+                ? `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; font-style: italic;">(3 lá đơn lẻ, không tạo thành bộ 3 quy ước)</div>`
+                : `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; font-style: italic;">(Đang bốc ${tu.cards.length}/3 lá - Cần đủ 3 lá cùng tụ để xác thực bộ 3)</div>`
+            }
+          </div>
+        </div>
+      `;
+    });
+
+    pokerReadingPanel.innerHTML = html;
+    pokerReadingPanel.style.display = 'block';
   }
 
   // Create single card DOM element
