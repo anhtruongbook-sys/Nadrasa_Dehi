@@ -63,10 +63,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.1.0
-          name: "Neta Light & Poker v1.1.0 (Giao Diện Zen Tối Giản & Chuẩn Công Thái Học)"
+          tag_name: v1.1.1
+          name: "Neta Light & Poker v1.1.1 (Thu Bài 1 Chạm & Giao Diện Zen Tối Giản)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Poker v1.1.0 (Bản Phát Hành Hiện Đại & Tối Giản)
+            ## Ứng dụng Di Động Neta Light & Poker v1.1.1 (Bản Cập Nhật Mới Nhất)
+            - **Thu Bài 1 Chạm Tức Thì (Không Hộp Thoại)**:
+              + Nút `[🔄 Thu bài]` nằm ở góc an toàn ngoài cùng bên trái.
+              + Loại bỏ hoàn toàn hộp thoại xác nhận phiền phức, chạm là dọn sạch bàn bài trong 0ms.
             - **Header Siêu Mỏng (~42px) & Dropdown Kính Mờ Tinh Tế**:
               + Tích hợp bộ chọn bộ bài ngay tại tiêu đề Header (`NETA LIGHT ▾` / `BÀI TÂY POKER ▾`) với menu kính mờ (glassmorphism) sang trọng.
               + Lược bỏ hàng Tab cố định 44px, giải phóng hoàn toàn không gian trên đỉnh màn hình.
@@ -76,8 +79,7 @@ jobs:
             - **Mở Rộng Không Gian Bàn Bài (Arena) +25-30%**:
               + Tận dụng tối đa diện tích chiều dọc vừa giải phóng, lá bài tự động co giãn to hơn, sắc nét và trang nghiêm hơn.
             - **Công Thái Học Tay Phải Tuyệt Đối Dưới Đáy**:
-              + Nút `[➕ Rút tiếp]` to bản ở góc ngoài cùng bên phải — đúng tầm ngón cái tay phải.
-              + Nút `[🔄 Thu bài]` ở góc ngoài cùng bên trái với hộp thoại xác nhận tinh tế, triệt tiêu nguy cơ bấm nhầm.
+              + Nút `[➕ Rút tiếp]` to bản ở góc ngoài cùng bên phải — đúng tầm ngón cái tay phải khi cầm máy 1 tay.
             - **Hoạt động Ngoại tuyến 100% Offline**: Độc lập hoàn toàn, không cần kết nối mạng.
           files: build-output/NetaLight.apk
           draft: false
