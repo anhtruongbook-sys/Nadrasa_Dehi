@@ -1,0 +1,27 @@
+name: neta_light_mobile
+description: Neta Light & Poker - Phap mon Nadrasa Dehi Mobile Client
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  webview_flutter: ^4.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/www/
+    - assets/www/favicon.ico
+    - assets/www/manifest.json
+    - assets/www/sw.js
+    - assets/www/icons/
+    - assets/www/neta_cards/
+    - assets/www/Porker/
