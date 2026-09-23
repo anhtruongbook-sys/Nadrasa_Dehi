@@ -31,6 +31,9 @@
         </div>
       </div>
       <div class="header-actions">
+        <button id="btn-screenshot-header" class="btn-icon" title="Lưu ảnh trải bài" aria-label="Lưu ảnh trải bài" style="display: none;">
+          <span class="icon">📸</span>
+        </button>
         <button id="btn-sound" class="btn-icon" title="Âm thanh Chuông" aria-label="Bật/Tắt âm thanh">
           <span class="icon" id="sound-icon">🔔</span>
         </button>
@@ -116,6 +119,10 @@
           <span class="btn-text">Luận giải</span>
           <span class="reading-session-dot" id="reading-session-dot" style="display: none;"></span>
         </button>
+        <button class="btn-action btn-screenshot" id="btn-screenshot" title="Chụp ảnh trải bài để lưu trữ">
+          <span class="btn-icon-symbol">📸</span>
+          <span class="btn-text">Lưu ảnh</span>
+        </button>
         <button class="btn-action btn-secondary" id="btn-shuffle">
           <span class="btn-icon-symbol">🔀</span>
           <span class="btn-text">Xáo bài</span>
@@ -170,12 +177,37 @@
     </div>
   </div>
 
+  <!-- Screenshot Preview Modal -->
+  <div class="modal-overlay" id="screenshot-modal" style="display: none;">
+    <div class="modal-dialog screenshot-dialog">
+      <div class="guide-header">
+        <h2>📸 Ảnh Trải Bài Của Bạn</h2>
+        <button class="modal-close" id="screenshot-close-btn" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="screenshot-modal-body">
+        <p class="screenshot-tip">Chạm giữ vào ảnh để Lưu về Album, hoặc bấm nút Tải Về bên dưới:</p>
+        <div class="screenshot-img-wrapper" id="screenshot-img-wrapper">
+          <img id="screenshot-preview-img" alt="Ảnh Trải Bài" class="screenshot-preview-img" />
+        </div>
+        <div class="screenshot-actions">
+          <button class="btn-download-img" id="btn-download-screenshot">
+            <span>⬇️ Tải Ảnh Về Máy</span>
+          </button>
+          <button class="btn-share-img" id="btn-share-screenshot" style="display: none;">
+            <span>📤 Chia Sẻ</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div class="toast-notification" id="toast"></div>
 
   <!-- Load Databases and Scripts -->
-  <script src="cards_data.js?v=4.3"></script>
-  <script src="poker_data.js?v=4.3"></script>
-  <script src="app.js?v=4.3"></script>
+  <script src="html2canvas.min.js"></script>
+  <script src="cards_data.js?v=4.4"></script>
+  <script src="poker_data.js?v=4.4"></script>
+  <script src="app.js?v=4.4"></script>
 </body>
 </html>

@@ -83,6 +83,17 @@
   const btnGuide = document.getElementById('btn-guide');
   const toast = document.getElementById('toast');
 
+  // Screenshot Elements
+  const btnScreenshot = document.getElementById('btn-screenshot');
+  const btnScreenshotHeader = document.getElementById('btn-screenshot-header');
+  const screenshotModal = document.getElementById('screenshot-modal');
+  const screenshotCloseBtn = document.getElementById('screenshot-close-btn');
+  const screenshotPreviewImg = document.getElementById('screenshot-preview-img');
+  const btnDownloadScreenshot = document.getElementById('btn-download-screenshot');
+  const btnShareScreenshot = document.getElementById('btn-share-screenshot');
+  let currentScreenshotBlob = null;
+  let currentScreenshotDataUrl = null;
+
   // Modal Elements
   const cardModal = document.getElementById('card-modal');
   const modalCloseBtn = document.getElementById('modal-close-btn');
@@ -210,7 +221,9 @@
     cardsGrid.innerHTML = '';
     if (btnOpenReading) btnOpenReading.style.display = 'none';
     if (btnSessionReading) btnSessionReading.style.display = 'none';
+    if (btnScreenshotHeader) btnScreenshotHeader.style.display = 'none';
     closeReadingModal();
+    closeScreenshotModal();
     initialControls.style.display = 'flex';
     sessionControls.style.display = 'none';
   }
@@ -219,6 +232,7 @@
     emptyState.style.display = 'none';
     if (arenaHint) arenaHint.style.display = 'flex';
     cardsGrid.style.display = 'grid';
+    if (btnScreenshotHeader) btnScreenshotHeader.style.display = 'inline-flex';
     initialControls.style.display = 'none';
     sessionControls.style.display = 'flex';
   }
@@ -1105,6 +1119,18 @@
       });
     }
 
+    // Screenshot Events
+    if (btnScreenshot) btnScreenshot.addEventListener('click', captureArenaScreenshot);
+    if (btnScreenshotHeader) btnScreenshotHeader.addEventListener('click', captureArenaScreenshot);
+    if (screenshotCloseBtn) screenshotCloseBtn.addEventListener('click', closeScreenshotModal);
+    if (screenshotModal) {
+      screenshotModal.addEventListener('click', (e) => {
+        if (e.target === screenshotModal) closeScreenshotModal();
+      });
+    }
+    if (btnDownloadScreenshot) btnDownloadScreenshot.addEventListener('click', downloadScreenshot);
+    if (btnShareScreenshot) btnShareScreenshot.addEventListener('click', shareScreenshot);
+
     // Auto-fit cards on screen resize
     window.addEventListener('resize', fitCardsToScreen);
     window.addEventListener('orientationchange', () => {
@@ -1117,8 +1143,103 @@
         closeModal();
         guideModal.style.display = 'none';
         closeReadingModal();
+        closeScreenshotModal();
       }
     });
+  }
+
+  // ================= SCREENSHOT ENGINE =================
+  function closeScreenshotModal() {
+    if (screenshotModal) screenshotModal.style.display = 'none';
+  }
+
+  async function captureArenaScreenshot() {
+    if (drawnCards.length === 0) {
+      showToast('Chưa có quân bài nào trên bàn để chụp!');
+      return;
+    }
+
+    showToast('📸 Đang tạo ảnh trải bài...');
+
+    try {
+      const arena = document.getElementById('arena-container');
+      if (!arena) return;
+
+      if (typeof html2canvas === 'undefined') {
+        showToast('Đang nạp công cụ chụp ảnh, vui lòng thử lại sau giây lát!');
+        return;
+      }
+
+      const hint = document.getElementById('arena-hint');
+      const originalHintDisplay = hint ? hint.style.display : '';
+      if (hint) hint.style.display = 'none';
+
+      const canvas = await html2canvas(arena, {
+        scale: 2,
+        backgroundColor: '#120104',
+        useCORS: true,
+        logging: false,
+        allowTaint: true
+      });
+
+      if (hint) hint.style.display = originalHintDisplay;
+
+      currentScreenshotDataUrl = canvas.toDataURL('image/png');
+      screenshotPreviewImg.src = currentScreenshotDataUrl;
+
+      canvas.toBlob((blob) => {
+        currentScreenshotBlob = blob;
+      }, 'image/png');
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([''], 'test.png', { type: 'image/png' })] })) {
+        if (btnShareScreenshot) btnShareScreenshot.style.display = 'inline-flex';
+      } else {
+        if (btnShareScreenshot) btnShareScreenshot.style.display = 'none';
+      }
+
+      screenshotModal.style.display = 'flex';
+      playBellChime();
+      showToast('✨ Đã chụp ảnh trải bài thành công!');
+    } catch (err) {
+      console.error('Screenshot error:', err);
+      showToast('Không thể tạo ảnh: ' + (err.message || err));
+    }
+  }
+
+  function downloadScreenshot() {
+    if (!currentScreenshotDataUrl) return;
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+    const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
+    const filename = `TraiBai_${modeName}_${dateStr}.png`;
+
+    const a = document.createElement('a');
+    a.href = currentScreenshotDataUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('Đang tải ảnh về máy...');
+  }
+
+  async function shareScreenshot() {
+    if (!currentScreenshotBlob) {
+      downloadScreenshot();
+      return;
+    }
+    const modeName = currentDeckMode === 'poker' ? 'Bài Tây Poker' : 'Neta Light';
+    const file = new File([currentScreenshotBlob], `TraiBai_${modeName}.png`, { type: 'image/png' });
+    try {
+      await navigator.share({
+        title: `Trải bài ${modeName} - Nadrasa Dehi`,
+        text: `Kết quả chiêm nghiệm ${modeName} - Pháp môn Nadrasa Dehi`,
+        files: [file]
+      });
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        downloadScreenshot();
+      }
+    }
   }
 
   // Register Service Worker for Offline PWA
