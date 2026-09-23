@@ -47,6 +47,22 @@
     bindEvents();
     renderGuideList();
     registerServiceWorker();
+    preloadAllCardImages();
+  }
+
+  // Preload all 48 cards silently into browser memory
+  function preloadAllCardImages() {
+    if (typeof NETA_CARDS_DATA !== 'undefined') {
+      // Preload back card first
+      const back = new Image();
+      back.src = 'neta_cards/card_back.png';
+
+      // Preload all front cards
+      NETA_CARDS_DATA.forEach((card) => {
+        const img = new Image();
+        img.src = card.image;
+      });
+    }
   }
 
   // Audio System using Web Audio API (Chime/Bell)
@@ -298,10 +314,10 @@
       <div class="card-order-badge">${index + 1}</div>
       <div class="card-inner">
         <div class="card-face card-back">
-          <img src="neta_cards/card_back.png" alt="Mặt sau bài Neta Light" loading="lazy">
+          <img src="neta_cards/card_back.png" alt="Mặt sau bài Neta Light" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='neta_cards/card_back.png?r='+Date.now()},250);}">
         </div>
         <div class="card-face card-front">
-          <img src="${card.image}" alt="${card.name}" loading="lazy">
+          <img src="${card.image}" alt="${card.name}" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${card.image}?r='+Date.now()},250);}">
         </div>
       </div>
       <div class="card-title-tag">${card.name}</div>

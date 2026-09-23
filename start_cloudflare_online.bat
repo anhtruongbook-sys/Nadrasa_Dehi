@@ -10,5 +10,5 @@ timeout /t 2 >nul
 
 echo [2] Dang mo duong ham Cloudflare Tunnel ra toan cau...
 echo.
-cloudflared.exe tunnel --url http://localhost:8080
+cloudflared.exe tunnel --url http://127.0.0.1:8080
 pause
