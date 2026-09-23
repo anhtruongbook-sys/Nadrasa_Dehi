@@ -5,11 +5,12 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout Source Code
@@ -45,16 +46,16 @@ jobs:
         run: |
           mkdir -p build-output
           if [ -f mobile_app/build/app/outputs/flutter-apk/app-release.apk ]; then
-            cp mobile_app/build/app/outputs/flutter-apk/app-release.apk build-output/NetaLight-NadrasaDehi.apk
+            cp mobile_app/build/app/outputs/flutter-apk/app-release.apk build-output/NetaLight.apk
           else
-            cp mobile_app/build/app/outputs/flutter-apk/*.apk build-output/NetaLight-NadrasaDehi.apk
+            cp mobile_app/build/app/outputs/flutter-apk/*.apk build-output/NetaLight.apk
           fi
 
       - name: Upload Release APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: neta-light-mobile-release-apk
-          path: build-output/NetaLight-NadrasaDehi.apk
+          name: NetaLight-mobile-release-apk
+          path: build-output/NetaLight.apk
           retention-days: 30
           if-no-files-found: error
 
@@ -65,19 +66,10 @@ jobs:
           tag_name: v1.0.0
           name: "Neta Light & Poker v1.0.0 (Android APK)"
           body: |
-            ## 🪷 Neta Light & Bài Tây Poker - Pháp môn Nadrasa Dehi
-            
-            Ứng dụng chiêm nghiệm tâm linh Nadrasa Dehi và Bài Tây 52 Lá (bản cài đặt trực tiếp trên Android APK):
-            
-            ### ✨ Tính Năng Nổi Bật:
-            - **100% Hoạt động Offline**: Đóng gói nội bộ toàn bộ hình ảnh, âm thanh chuông và ý nghĩa quân bài, mở lên dùng ngay không cần mạng.
-            - **Chuyển đổi 2 chế độ bài**: Neta Light và Bài Tây Poker.
-            - **Thuật toán bốc bài**: Rút 1 lá, 3 lá, 9 lá / 10 lá và rút thêm từng lá.
-            - **Tự động co giãn màn hình**: Tối đa 3 lá/hàng, vừa khít 1 màn hình di động.
-            - **Luận giải tâm linh chuẩn xác 100%**: Chuẩn hóa nguyên văn theo tệp gốc *Ý nghĩa quân bài_1.pdf*.
-            
-            ### 📲 Tải Về & Cài Đặt:
-            - Tải tệp `NetaLight-NadrasaDehi.apk` bên dưới về điện thoại và chọn Cài đặt (Install).
-          files: build-output/NetaLight-NadrasaDehi.apk
+            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK)
+            - **100% Hoạt động Offline**: Đóng gói nội bộ toàn bộ tài nguyên (HTML, CSS, JS, âm thanh, hình ảnh thẻ bài Neta & Poker).
+            - **Tải tệp APK**: Tải file `NetaLight.apk` bên dưới về điện thoại Android và chọn Cài đặt (Install).
+            - **Không cần Internet**: Mở ứng dụng lên là sử dụng ngay lập tức mọi lúc mọi nơi.
+          files: build-output/NetaLight.apk
           draft: false
           prerelease: false
