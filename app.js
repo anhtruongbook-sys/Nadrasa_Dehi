@@ -261,7 +261,8 @@
     // Khoảng cách an toàn giữa các lá bài
     const gapX = cols >= 5 ? 3 : (cols === 3 ? 5 : 8);
     const gapY = rows >= 4 ? 3 : (rows === 3 ? 5 : 8);
-    const labelH = rows >= 4 ? 12 : (rows === 3 ? 14 : 16);
+    // Bài tây poker không cần chú thích tên ở dưới quân bài -> labelH = 0
+    const labelH = currentDeckMode === 'poker' ? 0 : (rows >= 4 ? 12 : (rows === 3 ? 14 : 16));
     const fontSize = rows >= 4 ? '0.48rem' : (rows === 3 ? '0.56rem' : '0.64rem');
 
     const hintH = (arenaHint && arenaHint.style.display !== 'none') ? (arenaHint.offsetHeight || 30) : 0;
@@ -689,6 +690,8 @@
     item.className = 'card-item';
     item.setAttribute('data-index', index);
 
+    const showTitleTag = currentDeckMode !== 'poker';
+
     item.innerHTML = `
       <div class="card-order-badge">${index + 1}</div>
       <div class="card-inner">
@@ -699,7 +702,7 @@
           <img src="${card.image}" alt="${card.name}" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${card.image}?r='+Date.now()},250);}">
         </div>
       </div>
-      <div class="card-title-tag">${card.name}</div>
+      ${showTitleTag ? `<div class="card-title-tag">${card.name}</div>` : ''}
     `;
 
     item.addEventListener('click', () => {

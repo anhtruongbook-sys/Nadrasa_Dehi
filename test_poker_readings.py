@@ -40,6 +40,11 @@ async def run():
         print(f"[TEST] Reading panel on arena visible: {reading_panel_exists}")
         assert not reading_panel_exists, "Reading panel should NOT be shown directly on table arena!"
 
+        # Verify NO title tags under cards in Poker mode ("bài tây không cần chữ chú thích tên")
+        title_tags = await page.query_selector_all(".cards-grid .card-title-tag")
+        print(f"[TEST] Card title tags count under cards: {len(title_tags)}")
+        assert len(title_tags) == 0, f"Expected 0 title tags under poker cards, got: {len(title_tags)}"
+
         # Verify Footer controls are FIXED inside viewport (not scrolled out of view)
         footer_box = await page.locator("#session-controls").bounding_box()
         print(f"[TEST] Footer controls box: {footer_box}")
