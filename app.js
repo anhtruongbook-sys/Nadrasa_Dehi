@@ -6,6 +6,17 @@
 (function () {
   'use strict';
 
+  // Security Helper: Defense-in-depth HTML sanitizer
+  function escapeHTML(str) {
+    if (typeof str !== 'string') return str == null ? '' : String(str);
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // State
   let currentDeckMode = 'neta'; // 'neta' or 'poker'
   let availableDeck = [];

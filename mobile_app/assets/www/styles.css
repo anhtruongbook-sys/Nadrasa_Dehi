@@ -410,10 +410,13 @@ body {
   width: var(--card-w, auto);
   box-sizing: border-box;
   transition: transform 0.2s ease;
+  will-change: transform;
+  transform: translateZ(0);
+  touch-action: manipulation;
 }
 
 .card-item:active {
-  transform: scale(0.96);
+  transform: scale(0.96) translateZ(0);
 }
 
 .card-order-badge {
