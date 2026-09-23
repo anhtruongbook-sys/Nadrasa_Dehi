@@ -34,24 +34,31 @@ jobs:
         working-directory: ./mobile_app
         run: |
           # Backup custom files
-          cp -f ios/Runner/Info.plist /tmp/Info.plist
-          cp -r ios/Runner/Assets.xcassets /tmp/Assets.xcassets
-          cp -f ios/Runner/AppDelegate.swift /tmp/AppDelegate.swift
+          mkdir -p /tmp/ios_backup
+          cp -f ios/Runner/Info.plist /tmp/ios_backup/Info.plist 2>/dev/null || true
+          cp -rf ios/Runner/Assets.xcassets /tmp/ios_backup/Assets.xcassets 2>/dev/null || true
+          cp -f ios/Runner/AppDelegate.swift /tmp/ios_backup/AppDelegate.swift 2>/dev/null || true
+          cp -f ios/Podfile /tmp/ios_backup/Podfile 2>/dev/null || true
 
           # Regenerate standard Xcode runner configuration for Flutter
           flutter create . --platforms=ios --org com.nadrasadehi
 
-          # Restore custom Info.plist, AppIcon, and AppDelegate
-          cp -f /tmp/Info.plist ios/Runner/Info.plist
-          cp -rf /tmp/Assets.xcassets ios/Runner/
-          cp -f /tmp/AppDelegate.swift ios/Runner/AppDelegate.swift
+          # Restore custom Info.plist, AppIcon, AppDelegate, and Podfile
+          cp -f /tmp/ios_backup/Info.plist ios/Runner/Info.plist
+          cp -rf /tmp/ios_backup/Assets.xcassets ios/Runner/
+          cp -f /tmp/ios_backup/AppDelegate.swift ios/Runner/AppDelegate.swift
+          if [ -f /tmp/ios_backup/Podfile ]; then
+            cp -f /tmp/ios_backup/Podfile ios/Podfile
+          fi
 
       - name: Install Dependencies & CocoaPods
         working-directory: ./mobile_app
         run: |
           flutter pub get
           cd ios
-          pod install --repo-update
+          if [ -f Podfile ]; then
+            pod install --repo-update || pod install
+          fi
           cd ..
 
       - name: Build iOS Release App (No CodeSign)
