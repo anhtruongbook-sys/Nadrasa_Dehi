@@ -243,6 +243,7 @@
 
     let cols = 3;
     let rows = 1;
+    const isPortrait = arenaH >= arenaW;
 
     if (currentDeckMode === 'poker') {
       if (count === 1) {
@@ -260,20 +261,28 @@
       else if (count === 3) { cols = 3; rows = 1; }
       else if (count <= 6) { cols = 3; rows = 2; }
       else if (count <= 8) { cols = 4; rows = 2; }
-      else if (count <= 10) { cols = 5; rows = 2; }
-      else { cols = 5; rows = Math.ceil(count / 5); }
+      else if (count <= 10) {
+        if (isPortrait && arenaW < 560) {
+          cols = 4; rows = 3; // 4 + 4 + 2: nở rộng tối đa lá bài trên điện thoại
+        } else {
+          cols = 5; rows = 2; // 5 x 2 trên màn hình rộng / tablet / landscape
+        }
+      } else {
+        cols = (isPortrait && arenaW < 560) ? 4 : 5;
+        rows = Math.ceil(count / cols);
+      }
     }
 
     // Khoảng cách an toàn giữa các lá bài
-    const gapX = cols >= 5 ? 3 : (cols === 3 ? 5 : 8);
-    const gapY = rows >= 4 ? 3 : (rows === 3 ? 5 : 8);
+    const gapX = cols >= 5 ? 3 : (cols === 3 ? 5 : 6);
+    const gapY = rows >= 4 ? 3 : (rows === 3 ? 5 : 6);
     // Bài tây poker không cần chú thích tên ở dưới quân bài -> labelH = 0
     const labelH = currentDeckMode === 'poker' ? 0 : (rows >= 4 ? 12 : (rows === 3 ? 14 : 16));
     const fontSize = rows >= 4 ? '0.48rem' : (rows === 3 ? '0.56rem' : '0.64rem');
 
-    const hintH = (arenaHint && arenaHint.style.display !== 'none') ? (arenaHint.offsetHeight || 30) : 0;
-    const padX = 12;
-    const padY = 16 + hintH;
+    const hintH = (arenaHint && arenaHint.style.display !== 'none') ? (arenaHint.offsetHeight || 22) : 0;
+    const padX = 6;
+    const padY = 4 + hintH;
     const availW = Math.max(80, arenaW - padX);
     const availH = Math.max(80, arenaH - padY);
 
@@ -287,7 +296,7 @@
     const maxCardH_fromWidth = maxCellW / ratio;
 
     let optimalCardH = Math.min(maxCardH_fromHeight, maxCardH_fromWidth);
-    const capMaxH = count === 1 ? 230 : (count === 2 ? 180 : (count === 3 ? 160 : (rows >= 4 ? 115 : 145)));
+    const capMaxH = count === 1 ? 280 : (count === 2 ? 240 : (count === 3 ? 210 : (rows >= 4 ? 140 : 185)));
     optimalCardH = Math.min(optimalCardH, capMaxH);
     optimalCardH = Math.max(optimalCardH, 36);
 
@@ -300,6 +309,18 @@
     cardsGrid.style.setProperty('--card-gap-y', `${gapY}px`);
     cardsGrid.style.setProperty('--card-font-size', fontSize);
     cardsGrid.style.setProperty('--card-label-h', `${labelH}px`);
+
+    // Căn giữa hàng cuối nếu có thẻ bài mồ côi
+    const cardItems = cardsGrid.querySelectorAll('.card-item');
+    cardItems.forEach((el) => { el.style.gridColumnStart = ''; });
+    const remainder = count % cols;
+    if (remainder !== 0) {
+      if (cols === 4 && remainder === 2) {
+        if (cardItems[count - 2]) cardItems[count - 2].style.gridColumnStart = '2';
+      } else if (cols === 3 && remainder === 1) {
+        if (cardItems[count - 1]) cardItems[count - 1].style.gridColumnStart = '2';
+      }
+    }
   }
 
   // Draw initial batch (1, 3, or main count)
