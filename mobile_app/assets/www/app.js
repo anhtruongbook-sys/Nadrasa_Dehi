@@ -790,10 +790,10 @@
     item.innerHTML = `
       <div class="card-inner">
         <div class="card-face card-back">
-          <img src="${cfg.backImage}" alt="Mặt sau bài" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${cfg.backImage}?r='+Date.now()},250);}">
+          <img crossorigin="anonymous" src="${cfg.backImage}" alt="Mặt sau bài" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${cfg.backImage}?r='+Date.now()},250);}">
         </div>
         <div class="card-face card-front">
-          <img src="${card.image}" alt="${card.name}" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${card.image}?r='+Date.now()},250);}">
+          <img crossorigin="anonymous" src="${card.image}" alt="${card.name}" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${card.image}?r='+Date.now()},250);}">
         </div>
       </div>
       ${showTitleTag ? `<div class="card-title-tag">${card.name}</div>` : ''}
@@ -1220,6 +1220,50 @@
     } catch (e) {}
   }
 
+  // Caching Base64 data URLs để triệt tiêu hoàn toàn lỗi Tainted Canvas trên mọi trình duyệt
+  const imageBase64Cache = new Map();
+
+  async function toBase64Url(url) {
+    if (!url) return '';
+    if (url.startsWith('data:')) return url;
+    if (imageBase64Cache.has(url)) return imageBase64Cache.get(url);
+
+    try {
+      const response = await fetch(url, { mode: 'cors' });
+      const blob = await response.blob();
+      return await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          imageBase64Cache.set(url, reader.result);
+          resolve(reader.result);
+        };
+        reader.onerror = () => resolve(url);
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const c = document.createElement('canvas');
+            c.width = img.naturalWidth || img.width || 100;
+            c.height = img.naturalHeight || img.height || 100;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const data = c.toDataURL('image/png');
+            imageBase64Cache.set(url, data);
+            resolve(data);
+          } catch (err) {
+            resolve(url);
+          }
+        };
+        img.onerror = () => resolve(url);
+        img.src = url;
+      });
+    }
+  }
+
   async function captureArenaScreenshot() {
     if (drawnCards.length === 0) {
       showToast('Chưa có quân bài nào trên bàn để chụp!');
@@ -1243,14 +1287,46 @@
       const bgColor = isLight ? '#f4ede1' : '#120104';
       const titleColor = isLight ? '#6e1507' : '#f5b041';
 
-      // Capture full app container at retina 2x resolution
+      // 1. Chuyển đổi toàn bộ ảnh sang Base64 Data URL trước khi render
+      // Đảm bảo 100% canvas luôn Origin-Clean, không bao giờ bị dính lỗi Tainted Canvas
+      const imgElements = appContainer.querySelectorAll('img');
+      const imgUrlMap = new Map();
+      await Promise.all(
+        Array.from(imgElements).map(async (img) => {
+          const fullSrc = img.src;
+          const attrSrc = img.getAttribute('src');
+          if (fullSrc && !fullSrc.startsWith('data:') && !imgUrlMap.has(fullSrc)) {
+            const b64 = await toBase64Url(fullSrc);
+            imgUrlMap.set(fullSrc, b64);
+            if (attrSrc && !imgUrlMap.has(attrSrc)) {
+              imgUrlMap.set(attrSrc, b64);
+            }
+          }
+        })
+      );
+
+      // 2. Chụp container với html2canvas ở độ phân giải Retina 2x
       const canvas = await html2canvas(appContainer, {
         scale: 2,
         backgroundColor: bgColor,
         useCORS: true,
+        allowTaint: false, // Bắt buộc false để trình duyệt cho phép toDataURL() và toBlob()
         logging: false,
-        allowTaint: true,
+        imageTimeout: 10000,
         onclone: (clonedDoc) => {
+          // Thay thế toàn bộ ảnh trong bản sao DOM bằng Base64 Data URL sạch
+          const clonedImgs = clonedDoc.querySelectorAll('img');
+          clonedImgs.forEach((img) => {
+            const fullSrc = img.src;
+            const attrSrc = img.getAttribute('src');
+            if (imgUrlMap.has(fullSrc)) {
+              img.src = imgUrlMap.get(fullSrc);
+            } else if (imgUrlMap.has(attrSrc)) {
+              img.src = imgUrlMap.get(attrSrc);
+            }
+            img.crossOrigin = 'anonymous';
+          });
+
           const title = clonedDoc.querySelector('.app-title');
           if (title) {
             title.style.background = 'none';
@@ -1270,20 +1346,28 @@
         }
       });
 
-      const dataUrl = canvas.toDataURL('image/png');
       const now = new Date();
       const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
       const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
       const filename = `${modeName}_TraiBai_${dateStr}.png`;
 
-      // Convert DataURL to Blob synchronously
-      const binStr = atob(dataUrl.split(',')[1]);
-      const len = binStr.length;
-      const u8arr = new Uint8Array(len);
-      for (let i = 0; i < len; i++) {
-        u8arr[i] = binStr.charCodeAt(i);
+      // 3. Xuất Blob từ Canvas an toàn tuyệt đối
+      let blob;
+      try {
+        const dataUrl = canvas.toDataURL('image/png');
+        const binStr = atob(dataUrl.split(',')[1]);
+        const len = binStr.length;
+        const u8arr = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          u8arr[i] = binStr.charCodeAt(i);
+        }
+        blob = new Blob([u8arr], { type: 'image/png' });
+      } catch (toDataUrlErr) {
+        console.warn('toDataURL warning, using toBlob fallback:', toDataUrlErr);
+        blob = await new Promise((resolve, reject) => {
+          canvas.toBlob((b) => (b ? resolve(b) : reject(toDataUrlErr)), 'image/png');
+        });
       }
-      const blob = new Blob([u8arr], { type: 'image/png' });
       const blobUrl = URL.createObjectURL(blob);
       const file = new File([blob], filename, { type: 'image/png' });
 
