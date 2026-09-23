@@ -63,17 +63,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.1.3
-          name: "Neta Light & Poker v1.1.3 (Khôi Phục Căn Giữa Bàn Bài Sang Trọng)"
+          tag_name: v1.1.4
+          name: "Neta Light & Poker v1.1.4 (Xóa Triệt Để Cache Cũ & Đồng Bộ Toàn Diện)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Poker v1.1.3 (Bản Cập Nhật Mới Nhất)
-            - **Khôi Phục Bố Cục Căn Giữa Truyền Thống Cho Bàn Bài**:
-              + Bàn bài được căn giữa tự nhiên (`justify-content: center; align-content: center`).
-              + Các lá bài nằm cân đối, hài hòa và trang nghiêm tại trung tâm bàn trải bài, không bị dồn ép sát mép trên.
-            - **Bảo Lưu Header Siêu Gọn (~36px)**:
-              + Vẫn giữ nguyên Header thu gọn sát mép trên, triệt tiêu khoảng trống thừa phía trên các icon chức năng.
+            ## Ứng dụng Di Động Neta Light & Poker v1.1.4 (Bản Cập Nhật Mới Nhất)
+            - **Xóa Triệt Để Cache Trình Duyệt & Service Worker (v7.0)**:
+              + Tự động xóa sạch toàn bộ các bộ nhớ đệm cũ (CacheStorage) khi mở ứng dụng.
+              + Cài đặt tham số chống cache tĩnh `?v=7.0` cho toàn bộ CSS, JS, Service Worker.
+            - **Khôi Phục Căn Giữa Bàn Bài Sang Trọng**:
+              + Bàn bài được căn giữa tự nhiên (`justify-content: center; align-content: center`), hài hòa và trang nghiêm.
+            - **Header Siêu Gọn (~36px)**:
+              + Thu gọn sát mép trên màn hình, triệt tiêu khoảng trống thừa phía trên các icon.
             - **Thu Bài 1 Chạm Tức Thì (Không Hộp Thoại)**:
-              + Nút `[🔄 Thu bài]` ở góc trái an toàn, dọn bàn ngay tức thì trong 0ms.
+              + Nút `[🔄 Thu bài]` ở góc trái dọn bàn ngay tức thì trong 0ms.
             - **Hoạt động Ngoại tuyến 100% Offline**: Độc lập hoàn toàn, không cần kết nối mạng.
           files: build-output/NetaLight.apk
           draft: false

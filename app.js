@@ -1510,17 +1510,17 @@
     }
   }
 
-  // Quản lý Service Worker và Tự động làm mới Cache khi có bản v5.0
-  const CURRENT_APP_VERSION = '5.0';
+  // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
+  const CURRENT_APP_VERSION = '7.0';
   function registerServiceWorker() {
-    // Tự động xóa các bộ nhớ đệm cache phiên bản cũ
+    // Tự động xóa sạch toàn bộ các bộ nhớ đệm cache cũ
     try {
       const savedVersion = localStorage.getItem('neta_poker_app_version');
       if (savedVersion !== CURRENT_APP_VERSION) {
         if ('caches' in window) {
           caches.keys().then((keys) => {
             keys.forEach((key) => {
-              if (key !== 'neta-poker-v5.0') caches.delete(key);
+              caches.delete(key);
             });
           });
         }
@@ -1530,7 +1530,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=5.0')
+        navigator.serviceWorker.register('sw.js?v=7.0')
           .then((reg) => {
             reg.update();
           })

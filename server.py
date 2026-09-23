@@ -22,8 +22,10 @@ class FastCardHandler(SimpleHTTPRequestHandler):
             # Cache ảnh tĩnh 1 ngày
             self.send_header('Cache-Control', 'public, max-age=86400')
         else:
-            # HTML, JS, CSS: Luôn kiểm tra bản mới nhất
-            self.send_header('Cache-Control', 'no-cache, must-revalidate, max-age=0')
+            # HTML, JS, CSS: Tuyệt đối không cache để điện thoại luôn nhận bản mới nhất
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
         super().end_headers()
 
 if __name__ == '__main__':
