@@ -1431,3 +1431,33 @@ body.theme-light .toast-notification {
   box-shadow: 0 4px 18px rgba(60, 30, 10, 0.25);
 }
 
+/* Screenshot Modal in Light Mode */
+body.theme-light .screenshot-dialog {
+  background: linear-gradient(160deg, #ffffff 0%, #faf3e8 100%);
+  border-color: #b8860b;
+}
+
+body.theme-light .screenshot-tip {
+  color: #47260e;
+  font-weight: 600;
+}
+
+body.theme-light .screenshot-img-wrapper {
+  background: #f4ede1;
+  border: 1.5px solid #b8860b;
+  box-shadow: 0 4px 16px rgba(100, 60, 20, 0.15);
+}
+
+body.theme-light .btn-download-img {
+  background: linear-gradient(135deg, #a87412 0%, #c48c1e 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(168, 116, 18, 0.35);
+}
+
+body.theme-light .btn-share-img {
+  background: #ffffff;
+  color: #47260e;
+  border: 1.5px solid #a87412;
+  box-shadow: 0 2px 8px rgba(100, 60, 20, 0.12);
+}
+

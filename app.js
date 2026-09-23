@@ -1271,33 +1271,36 @@
         }
       });
 
+      const dataUrl = canvas.toDataURL('image/png');
+      currentScreenshotDataUrl = dataUrl;
+
       const now = new Date();
       const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
       const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
       const filename = `${modeName}_TraiBai_${dateStr}.png`;
 
-      // Trigger instant direct download into user device
+      // Set image into preview modal
+      if (screenshotPreviewImg) {
+        screenshotPreviewImg.src = dataUrl;
+      }
+      if (screenshotModal) {
+        screenshotModal.style.display = 'flex';
+      }
+
+      // Convert to blob and store, try auto-download in background
       canvas.toBlob((blob) => {
-        if (!blob) {
-          const dataUrl = canvas.toDataURL('image/png');
+        currentScreenshotBlob = blob;
+        try {
           const a = document.createElement('a');
           a.href = dataUrl;
           a.download = filename;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-        } else {
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
-        }
-        showToast('✨ Đã chụp và lưu ảnh trải bài vào máy!');
+        } catch (e) {}
       }, 'image/png');
+
+      showToast('📸 Đã chụp xong! Chạm giữ vào ảnh để lưu vào máy');
 
     } catch (err) {
       console.error('Screenshot error:', err);
@@ -1306,11 +1309,60 @@
   }
 
   function downloadScreenshot() {
-    captureArenaScreenshot();
+    if (!currentScreenshotDataUrl) return;
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+    const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
+    const filename = `${modeName}_TraiBai_${dateStr}.png`;
+
+    try {
+      if (currentScreenshotBlob) {
+        const blobUrl = URL.createObjectURL(currentScreenshotBlob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+      } else {
+        const a = document.createElement('a');
+        a.href = currentScreenshotDataUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      showToast('💾 Đang tải ảnh về thư mục máy...');
+    } catch (e) {
+      showToast('Hãy chạm và giữ vào ảnh để Lưu hình ảnh vào máy');
+    }
   }
 
   async function shareScreenshot() {
-    captureArenaScreenshot();
+    if (!currentScreenshotBlob && !currentScreenshotDataUrl) return;
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+    const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
+    const filename = `${modeName}_TraiBai_${dateStr}.png`;
+
+    try {
+      if (navigator.share && currentScreenshotBlob) {
+        const file = new File([currentScreenshotBlob], filename, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: `Trải bài ${modeName} - Nadrasa Dehi`,
+            text: `Kết quả chiêm nghiệm ${modeName} - Pháp môn Nadrasa Dehi`,
+            files: [file]
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+    // Fallback to direct download
+    downloadScreenshot();
   }
 
   // Register Service Worker for Offline PWA
