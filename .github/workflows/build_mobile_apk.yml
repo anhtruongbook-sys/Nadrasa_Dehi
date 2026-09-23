@@ -8,6 +8,8 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Source Code
@@ -42,7 +44,11 @@ jobs:
       - name: Prepare Single APK
         run: |
           mkdir -p build-output
-          cp mobile_app/build/app/outputs/flutter-apk/app-release.apk build-output/NetaLight-NadrasaDehi.apk
+          if [ -f mobile_app/build/app/outputs/flutter-apk/app-release.apk ]; then
+            cp mobile_app/build/app/outputs/flutter-apk/app-release.apk build-output/NetaLight-NadrasaDehi.apk
+          else
+            cp mobile_app/build/app/outputs/flutter-apk/*.apk build-output/NetaLight-NadrasaDehi.apk
+          fi
 
       - name: Upload Release APK Artifacts
         uses: actions/upload-artifact@v4
