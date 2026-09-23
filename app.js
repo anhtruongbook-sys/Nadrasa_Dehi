@@ -400,25 +400,85 @@
       }
     }
 
-    // 2. Check 3 of a kind (Bộ ba cùng bậc)
-    if (ranks[0] === ranks[1] && ranks[1] === ranks[2]) {
-      return {
-        name: `Bộ Ba Quân ${tuCards[0].rankShort || tuCards[0].rank}`,
-        meaning: 'Uy lực ba chân vạc - Khuếch đại năng lượng',
-        description: `Cả 3 quân bài đều đồng bậc ${tuCards[0].rank}, báo hiệu năng lượng biểu trưng được củng cố vững chắc gấp ba lần.`
-      };
-    }
-
-    // 3. Check 3-card straight flush (Sảnh đồng chất)
+    // 2. Check 3-card straight flush (Dây đồng chất chuẩn theo PDF)
     if (
       isSameSuit &&
       ((ranks[0] + 1 === ranks[1] && ranks[1] + 1 === ranks[2]) ||
         (ranks[0] === 1 && ranks[1] === 12 && ranks[2] === 13))
     ) {
+      if (isAllBlack) {
+        return {
+          name: `Dây đen đồng chất (${tuCards[0].suit})`,
+          meaning: 'Việc gấp',
+          description: 'Dây đen đồng chất: Việc gấp.'
+        };
+      } else if (isAllRed) {
+        return {
+          name: `Dây đỏ đồng chất (${tuCards[0].suit})`,
+          meaning: 'Thông pháp',
+          description: 'Dây đỏ đồng chất: Thông pháp.'
+        };
+      }
+    }
+
+    // 3. Check bộ số Nadrasa Dehi (Bộ 22, bộ 7, kết nối 27/227)
+    // Bộ ba quân 7 (777)
+    if (ranks[0] === 7 && ranks[1] === 7 && ranks[2] === 7) {
       return {
-        name: `Dây Đồng Chất 3 Lá (${tuCards[0].suit})`,
-        meaning: 'Dòng năng lượng liên tục và đồng nhất',
-        description: `Ba quân bài liên tiếp cùng chất ${tuCards[0].suit} (${tuCards[0].symbol}), đại diện cho dòng chảy sự việc diễn ra thuận chiều, có trật tự rõ ràng.`
+        name: 'Bộ Số 777 Nadrasa Dehi',
+        meaning: 'Hãy tập trung lắng nghe sự dẫn dắt ngay bây giờ',
+        description: 'Hãy tập trung lắng nghe sự dẫn dắt ngay bây giờ, đọc trong suy nghĩ của bạn sẽ nghe thấy lời chỉ dẫn.'
+      };
+    }
+    // Bộ ba quân 2 (222)
+    if (ranks[0] === 2 && ranks[1] === 2 && ranks[2] === 2) {
+      return {
+        name: 'Bộ Số 222 Nadrasa Dehi',
+        meaning: 'Sự xuất hiện của thiên thần bảo hộ bất kể khi nào bạn kêu gọi',
+        description: 'Sự xuất hiện của thiên thần bảo hộ bất kể khi nào bạn kêu gọi.'
+      };
+    }
+    // Bộ số 22x (có hai quân 2 và 1 quân khác)
+    const countRank2 = ranks.filter((r) => r === 2).length;
+    if (countRank2 === 2) {
+      const otherRank = ranks.find((r) => r !== 2);
+      const nadrasaMap = {
+        1: { code: '221', desc: 'Nhiều trắc trở sắp xảy ra về tiền bạc, sức khỏe' },
+        3: { code: '223', desc: 'Hãy thiền nhận năng lượng bảo vệ' },
+        4: { code: '224', desc: 'Kiềm chế và rèn luyện kiên nhẫn, cẩn thận tổn thương' },
+        5: { code: '225', desc: 'Sự mất mát nào đó sớm xảy ra' },
+        6: { code: '226', desc: 'Có nghiệp đang quanh bạn, và sẽ trổ ra sắp tơi hoặc bây giờ.' },
+        7: { code: '227', desc: 'Linh hồn của bạn đang trong kết nối với vị thầy Bổn Tôn (Nadrasa Dehi).' },
+        8: { code: '228', desc: 'Sự bảo hộ của các vị Hộ Pháp dành cho bạn' },
+        9: { code: '229', desc: 'Hãy buông bỏ các bám chấp và quên đi nỗi đau buồn của quá khứ. Sống với thực tại.' },
+        10: { code: '220', desc: 'Sự cố về họa mắt và họa miệng rất dễ xảy ra giữ vững thái độ ôn hòa trong mọi tình huống.' }
+      };
+      if (nadrasaMap[otherRank]) {
+        const item = nadrasaMap[otherRank];
+        return {
+          name: `Bộ Số ${item.code} Nadrasa Dehi`,
+          meaning: item.desc,
+          description: item.desc
+        };
+      }
+    }
+    // Gánh 272 hoặc 727
+    const origRanks = tuCards.map((c) => c.rankNum);
+    if ((origRanks[0] === 2 && origRanks[1] === 7 && origRanks[2] === 2) ||
+        (origRanks[0] === 7 && origRanks[1] === 2 && origRanks[2] === 7)) {
+      return {
+        name: `Bộ Số Gánh ${origRanks.join('')} Nadrasa Dehi`,
+        meaning: 'Chủ định kết nối số 27 biến thiên',
+        description: 'Nadrasa Dehi chủ định kết nối là số 27 và cao nhất trong kết nối là 227, trong đó số 2 và 7 linh hoạt biến thiên.'
+      };
+    }
+
+    // 4. Check 3 of a kind (Bộ ba cùng bậc)
+    if (ranks[0] === ranks[1] && ranks[1] === ranks[2]) {
+      return {
+        name: `Bộ Ba Quân ${tuCards[0].rankShort || tuCards[0].rank}`,
+        meaning: 'Uy lực ba chân vạc - Khuếch đại năng lượng',
+        description: `Cả 3 quân bài đều đồng bậc ${tuCards[0].rank}, báo hiệu năng lượng biểu trưng được củng cố vững chắc gấp ba lần.`
       };
     }
 
