@@ -1,6 +1,6 @@
 /**
- * POKER 52 LÁ - CSDL NGUYÊN VĂN TỪ Ý NGHĨA QUÂN BÀI_1.PDF
- * Pháp môn Nadrasa Dehi
+ * POKER 52 LÁ - CSDL NGUYÊN VĂN TỪ HÌNH ẢNH TRỰC QUAN TRANG 1 & 2
+ * Ý NGHĨA QUÂN BÀI_1.PDF - PHÁP MÔN NADRASA DEHI
  */
 
 const POKER_CARDS_DATA = [
@@ -18,10 +18,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/ace_of_spades.png",
-    "symbolCode": "b",
-    "meaning": "Thầy Tà",
-    "description": "Quân Át (Ace) (♠) mang ý nghĩa: Thầy Tà.",
-    "advice": "Cảnh báo sự dẫn dắt sai lạc, tà sư tà đạo hoặc người có tâm địa bất chính gây ảnh hưởng."
+    "meaning": "Các vị thần cõi âm (tầm thấp)/quan thần linh/ Sơn thần",
+    "description": "Quân Át (Ace) (♠) mang ý nghĩa: Các vị thần cõi âm (tầm thấp)/quan thần linh/ Sơn thần.",
+    "advice": "Quan Thần Linh, Sơn Thần hoặc chư vị thần cõi âm hiển linh hộ quản phương xứ."
   },
   {
     "id": 2,
@@ -37,10 +36,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/2_of_spades.png",
-    "symbolCode": "c",
-    "meaning": "Vong trẻ em (thường là nữ)",
-    "description": "Quân Hai (2) (♠) mang ý nghĩa: Vong trẻ em (thường là nữ).",
-    "advice": "Có sự hiện diện của linh hồn trẻ em (nữ) nương tựa hoặc báo điềm."
+    "meaning": "Thầy Tà",
+    "description": "Quân Hai (2) (♠) mang ý nghĩa: Thầy Tà.",
+    "advice": "Cảnh báo sự dẫn dắt sai lạc, tà sư tà đạo hoặc người có tâm địa bất chính gây ảnh hưởng."
   },
   {
     "id": 3,
@@ -56,10 +54,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/3_of_spades.png",
-    "symbolCode": "d",
-    "meaning": "Âm binh súc sinh. Mộ có vấn đề, động mộ",
-    "description": "Quân Ba (3) (♠) mang ý nghĩa: Âm binh súc sinh. Mộ có vấn đề, động mộ.",
-    "advice": "Cảnh báo về phần mộ tổ tiên có dấu hiệu bị động, sụt lún hoặc có âm binh súc sinh quấy nhiễu."
+    "meaning": "Vong trẻ em (thường là nữ)",
+    "description": "Quân Ba (3) (♠) mang ý nghĩa: Vong trẻ em (thường là nữ).",
+    "advice": "Có sự hiện diện của linh hồn trẻ em (nữ) nương tựa hoặc báo điềm."
   },
   {
     "id": 4,
@@ -75,10 +72,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/4_of_spades.png",
-    "symbolCode": "e",
-    "meaning": "Âm binh người",
-    "description": "Quân Bốn (4) (♠) mang ý nghĩa: Âm binh người.",
-    "advice": "Có âm binh dạng người vướng mắc, theo sát hoặc quấy phá trường năng lượng."
+    "meaning": "Âm binh súc sinh. Mộ có vấn đề, động mộ",
+    "description": "Quân Bốn (4) (♠) mang ý nghĩa: Âm binh súc sinh. Mộ có vấn đề, động mộ.",
+    "advice": "Cảnh báo về phần mộ tổ tiên có dấu hiệu bị động, sụt lún hoặc có âm binh súc sinh quấy nhiễu."
   },
   {
     "id": 5,
@@ -94,10 +90,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/5_of_spades.png",
-    "symbolCode": "f",
-    "meaning": "Bùa",
-    "description": "Quân Năm (5) (♠) mang ý nghĩa: Bùa.",
-    "advice": "Sự hiện diện của bùa chú, tà thuật hoặc trường khí tiêu cực bị gài đặt."
+    "meaning": "Âm binh người",
+    "description": "Quân Năm (5) (♠) mang ý nghĩa: Âm binh người.",
+    "advice": "Có âm binh dạng người vướng mắc, theo sát hoặc quấy phá trường năng lượng."
   },
   {
     "id": 6,
@@ -113,10 +108,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/6_of_spades.png",
-    "symbolCode": "g",
-    "meaning": "Nghiệp tâm linh",
-    "description": "Quân Sáu (6) (♠) mang ý nghĩa: Nghiệp tâm linh.",
-    "advice": "Khối nghiệp chướng về phần tâm linh tiền kiếp đang đòi hỏi sự sám hối và giải tỏa."
+    "meaning": "Bùa",
+    "description": "Quân Sáu (6) (♠) mang ý nghĩa: Bùa.",
+    "advice": "Sự hiện diện của bùa chú, tà thuật hoặc trường khí tiêu cực bị gài đặt."
   },
   {
     "id": 7,
@@ -132,10 +126,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/7_of_spades.png",
-    "symbolCode": "h",
-    "meaning": "Vong Nữ",
-    "description": "Quân Bảy (7) (♠) mang ý nghĩa: Vong Nữ.",
-    "advice": "Linh hồn nữ giới nơi cõi âm còn nhiều vướng mắc tâm niệm chưa buông."
+    "meaning": "Nghiệp tâm linh",
+    "description": "Quân Bảy (7) (♠) mang ý nghĩa: Nghiệp tâm linh.",
+    "advice": "Khối nghiệp chướng về phần tâm linh tiền kiếp đang đòi hỏi sự sám hối và giải tỏa."
   },
   {
     "id": 8,
@@ -151,10 +144,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/8_of_spades.png",
-    "symbolCode": "i",
-    "meaning": "Vong Nam",
-    "description": "Quân Tám (8) (♠) mang ý nghĩa: Vong Nam.",
-    "advice": "Linh hồn nam giới nơi cõi âm gửi tín hiệu cần trợ duyên siêu thoát."
+    "meaning": "Vong Nữ",
+    "description": "Quân Tám (8) (♠) mang ý nghĩa: Vong Nữ.",
+    "advice": "Linh hồn nữ giới nơi cõi âm còn nhiều vướng mắc tâm niệm chưa buông."
   },
   {
     "id": 9,
@@ -170,10 +162,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/9_of_spades.png",
-    "symbolCode": "j",
-    "meaning": "Nghiệp ở đất",
-    "description": "Quân Chín (9) (♠) mang ý nghĩa: Nghiệp ở đất.",
-    "advice": "Năng lượng đất đai, nhà ở đang tích tụ ám khí, nợ nghiệp hoặc tiền duyên chưa dứt."
+    "meaning": "Vong Nam",
+    "description": "Quân Chín (9) (♠) mang ý nghĩa: Vong Nam.",
+    "advice": "Linh hồn nam giới nơi cõi âm gửi tín hiệu cần trợ duyên siêu thoát."
   },
   {
     "id": 10,
@@ -189,10 +180,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/10_of_spades.png",
-    "symbolCode": "k",
-    "meaning": "Thổ địa",
-    "description": "Quân Mười (10) (♠) mang ý nghĩa: Thổ địa.",
-    "advice": "Thần linh Thổ Địa cai quản mảnh đất hiện diện, cần lễ bái tôn kính và giữ sạch long mạch."
+    "meaning": "Nghiệp ở đất",
+    "description": "Quân Mười (10) (♠) mang ý nghĩa: Nghiệp ở đất.",
+    "advice": "Năng lượng đất đai, nhà ở đang tích tụ ám khí, nợ nghiệp hoặc tiền duyên chưa dứt."
   },
   {
     "id": 11,
@@ -208,10 +198,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/jack_of_spades.png",
-    "symbolCode": "l",
-    "meaning": "Các vị thần cõi âm (tầm thấp)/ Thổ thần",
-    "description": "Quân J (Jack / Bồi) (♠) mang ý nghĩa: Các vị thần cõi âm (tầm thấp)/ Thổ thần.",
-    "advice": "Chư vị thần cõi âm bậc dưới hoặc Thổ thần đang trông coi, chứng giám."
+    "meaning": "Thổ địa",
+    "description": "Quân J (Jack / Bồi) (♠) mang ý nghĩa: Thổ địa.",
+    "advice": "Thần linh Thổ Địa cai quản mảnh đất hiện diện, cần lễ bái tôn kính và giữ sạch long mạch."
   },
   {
     "id": 12,
@@ -227,10 +216,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/queen_of_spades.png",
-    "symbolCode": "m",
-    "meaning": "Các vị thần cõi âm (tầm thấp)",
-    "description": "Quân Q (Queen / Đầm) (♠) mang ý nghĩa: Các vị thần cõi âm (tầm thấp).",
-    "advice": "Chư vị thần cõi âm đang theo dõi mọi hành vi và tâm niệm của trần thế."
+    "meaning": "Các vị thần cõi âm (tầm thấp)/ Thổ thần",
+    "description": "Quân Q (Queen / Đầm) (♠) mang ý nghĩa: Các vị thần cõi âm (tầm thấp)/ Thổ thần.",
+    "advice": "Chư vị thần cõi âm bậc dưới hoặc Thổ thần đang trông coi, chứng giám."
   },
   {
     "id": 13,
@@ -246,10 +234,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/king_of_spades.png",
-    "symbolCode": "a",
-    "meaning": "Các vị thần cõi âm (tầm thấp)/quan thần linh/ Sơn thần",
-    "description": "Quân K (King / Già) (♠) mang ý nghĩa: Các vị thần cõi âm (tầm thấp)/quan thần linh/ Sơn thần.",
-    "advice": "Quan Thần Linh, Sơn Thần hoặc chư vị thần cõi âm hiển linh hộ quản phương xứ."
+    "meaning": "Các vị thần cõi âm (tầm thấp)",
+    "description": "Quân K (King / Già) (♠) mang ý nghĩa: Các vị thần cõi âm (tầm thấp).",
+    "advice": "Chư vị thần cõi âm đang theo dõi mọi hành vi và tâm niệm của trần thế."
   },
   {
     "id": 14,
@@ -265,10 +252,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/ace_of_hearts.png",
-    "symbolCode": "B",
-    "meaning": "Thầy chánh pháp",
-    "description": "Quân Át (Ace) (♥) mang ý nghĩa: Thầy chánh pháp.",
-    "advice": "Minh sư chánh đạo khai mở trí tuệ, dẫn dắt trên con đường tu học chân chính."
+    "meaning": "Các vị tiên thánh cõi cao",
+    "description": "Quân Át (Ace) (♥) mang ý nghĩa: Các vị tiên thánh cõi cao.",
+    "advice": "Chư vị Tiên Thánh cõi cao chứng giám và soi tỏ mọi việc."
   },
   {
     "id": 15,
@@ -284,10 +270,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/2_of_hearts.png",
-    "symbolCode": "C",
-    "meaning": "Vong trẻ em Nam",
-    "description": "Quân Hai (2) (♥) mang ý nghĩa: Vong trẻ em Nam.",
-    "advice": "Linh hồn trẻ nhỏ nam giới mang tâm niệm trong sáng hướng về gia đình."
+    "meaning": "Thầy chánh pháp",
+    "description": "Quân Hai (2) (♥) mang ý nghĩa: Thầy chánh pháp.",
+    "advice": "Minh sư chánh pháp chỉ đường dẫn lối, mang năng lượng thanh tịnh."
   },
   {
     "id": 16,
@@ -303,10 +288,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/3_of_hearts.png",
-    "symbolCode": "D",
-    "meaning": "Rồng xuất hiện. Mộ tốt",
-    "description": "Quân Ba (3) (♥) mang ý nghĩa: Rồng xuất hiện. Mộ tốt.",
-    "advice": "Điềm lành cát tường: Long mạch hưng vượng, mồ mả tổ tiên kết phát đại cát."
+    "meaning": "Vong trẻ em Nam",
+    "description": "Quân Ba (3) (♥) mang ý nghĩa: Vong trẻ em Nam.",
+    "advice": "Linh hồn trẻ thơ nam giới hiển hiện mang năng lượng tích cực."
   },
   {
     "id": 17,
@@ -322,10 +306,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/4_of_hearts.png",
-    "symbolCode": "E",
-    "meaning": "Con cháu hiếu thảo",
-    "description": "Quân Bốn (4) (♥) mang ý nghĩa: Con cháu hiếu thảo.",
-    "advice": "Gia đạo thuận hòa, con cháu thảo hiền biết hướng về cội nguồn tổ tiên."
+    "meaning": "Rồng xuất hiện. Mộ tốt",
+    "description": "Quân Bốn (4) (♥) mang ý nghĩa: Rồng xuất hiện. Mộ tốt.",
+    "advice": "Long khí hưng thịnh, phần mộ gia tiên được phong thủy tốt lành chở che."
   },
   {
     "id": 18,
@@ -341,10 +324,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/5_of_hearts.png",
-    "symbolCode": "F",
-    "meaning": "Phúc lành. Bùa đã được giải",
-    "description": "Quân Năm (5) (♥) mang ý nghĩa: Phúc lành. Bùa đã được giải.",
-    "advice": "Phước đức sâu dày: Bùa chú tà thuật đã được hóa giải hoàn toàn, thân tâm an lạc."
+    "meaning": "Con cháu hiếu thảo",
+    "description": "Quân Năm (5) (♥) mang ý nghĩa: Con cháu hiếu thảo.",
+    "advice": "Đạo hiếu rạng rỡ, phước đức tổ tiên chảy tràn xuống các thế hệ tương lai."
   },
   {
     "id": 19,
@@ -360,10 +342,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/6_of_hearts.png",
-    "symbolCode": "G",
-    "meaning": "Nghiệp lành",
-    "description": "Quân Sáu (6) (♥) mang ý nghĩa: Nghiệp lành.",
-    "advice": "Thiện căn tích tụ trổ quả ngọt ngào, may mắn hanh thông trong cuộc sống."
+    "meaning": "Bùa đã được giải/ Ứng lệnh",
+    "description": "Quân Sáu (6) (♥) mang ý nghĩa: Bùa đã được giải/ Ứng lệnh.",
+    "advice": "Lệnh giải trừ bùa ngải đã ứng nghiệm, chánh khí phục hồi sáng suốt."
   },
   {
     "id": 20,
@@ -379,10 +360,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/7_of_hearts.png",
-    "symbolCode": "H",
-    "meaning": "Bồ tát/ Quan thế âm Bồ Tát/ Vong nữ gia tiên",
-    "description": "Quân Bảy (7) (♥) mang ý nghĩa: Bồ tát/ Quan thế âm Bồ Tát/ Vong nữ gia tiên.",
-    "advice": "Đức Quán Thế Âm Bồ Tát hoặc vong nữ gia tiên từ bi phóng quang gia hộ che chở."
+    "meaning": "Nghiệp lành",
+    "description": "Quân Bảy (7) (♥) mang ý nghĩa: Nghiệp lành.",
+    "advice": "Quả ngọt của lòng lương thiện, công đức thiện lương trổ sinh điềm lành."
   },
   {
     "id": 21,
@@ -398,10 +378,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/8_of_hearts.png",
-    "symbolCode": "I",
-    "meaning": "Bà tổ cô",
-    "description": "Quân Tám (8) (♥) mang ý nghĩa: Bà tổ cô.",
-    "advice": "Bà Tổ Cô linh thiêng trong dòng họ chở che, độ trì vượt qua sóng gió."
+    "meaning": "Uyển/ Thiên nữ",
+    "description": "Quân Tám (8) (♥) mang ý nghĩa: Uyển/ Thiên nữ.",
+    "advice": "Chư vị Thiên Nữ thanh cao giáng lâm mang lại trí huệ và sự tươi mới."
   },
   {
     "id": 22,
@@ -417,10 +396,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/9_of_hearts.png",
-    "symbolCode": "J",
-    "meaning": "Phủ",
-    "description": "Quân Chín (9) (♥) mang ý nghĩa: Phủ.",
-    "advice": "Nơi cửa Phủ linh thiêng, gắn liền với căn số và sự che chở của Thánh Mẫu."
+    "meaning": "Thiên nam",
+    "description": "Quân Chín (9) (♥) mang ý nghĩa: Thiên nam.",
+    "advice": "Chư vị Thiên Nam dũng mãnh tiếp thêm nghị lực và bảo vệ thân tâm."
   },
   {
     "id": 23,
@@ -436,10 +414,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/10_of_hearts.png",
-    "symbolCode": "K",
-    "meaning": "Ông mãnh",
-    "description": "Quân Mười (10) (♥) mang ý nghĩa: Ông mãnh.",
-    "advice": "Ông Mãnh hiển linh độ trì cho con cháu trong dòng tộc bình an, công việc thuận lợi."
+    "meaning": "Thông tin về phủ",
+    "description": "Quân Mười (10) (♥) mang ý nghĩa: Thông tin về phủ.",
+    "advice": "Tín hiệu tâm linh rõ ràng liên quan đến cửa Phủ và sự việc tâm linh."
   },
   {
     "id": 24,
@@ -455,10 +432,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/jack_of_hearts.png",
-    "symbolCode": "L",
-    "meaning": "Hộ pháp Thiên tâm đạo/ Gia tiên",
-    "description": "Quân J (Jack / Bồi) (♥) mang ý nghĩa: Hộ pháp Thiên tâm đạo/ Gia tiên.",
-    "advice": "Chư vị Hộ Pháp Thiên Tâm Đạo và Tiên Tổ đồng hành hộ trì vững chắc."
+    "meaning": "Thần thú",
+    "description": "Quân J (Jack / Bồi) (♥) mang ý nghĩa: Thần thú.",
+    "advice": "Linh thú hộ trì linh thiêng xua tan u ám, bảo vệ bản thể."
   },
   {
     "id": 25,
@@ -474,10 +450,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/queen_of_hearts.png",
-    "symbolCode": "M",
-    "meaning": "Thiên thần hộ mệnh/ Vị thánh cấp cao",
-    "description": "Quân Q (Queen / Đầm) (♥) mang ý nghĩa: Thiên thần hộ mệnh/ Vị thánh cấp cao.",
-    "advice": "Thiên thần bảo hộ và chư vị Thánh thượng giới phóng quang dẫn lối."
+    "meaning": "Hộ pháp cứu độ",
+    "description": "Quân Q (Queen / Đầm) (♥) mang ý nghĩa: Hộ pháp cứu độ.",
+    "advice": "Chư vị Hộ Pháp thị hiện tiếp cứu vượt thoát khó khăn, chướng ngại."
   },
   {
     "id": 26,
@@ -493,10 +468,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/king_of_hearts.png",
-    "symbolCode": "A",
-    "meaning": "Ngài Nadrasa Dehi",
-    "description": "Quân K (King / Già) (♥) mang ý nghĩa: Ngài Nadrasa Dehi.",
-    "advice": "Ân phước tối thượng: Sự hiện diện gia hộ trực tiếp của Đức Bổn Tôn Nadrasa Dehi."
+    "meaning": "Các vị tiên thánh cõi cao",
+    "description": "Quân K (King / Già) (♥) mang ý nghĩa: Các vị tiên thánh cõi cao.",
+    "advice": "Tiên Thánh thượng giới soi sáng con đường hành đạo và cuộc sống."
   },
   {
     "id": 27,
@@ -512,10 +486,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/ace_of_clubs.png",
-    "symbolCode": "o",
-    "meaning": "Thầy Tà",
-    "description": "Quân Át (Ace) (♣) mang ý nghĩa: Thầy Tà.",
-    "advice": "Cảnh báo tà sư, thầy tà hoặc pháp thuật sai lạc bên ngoài tác động."
+    "meaning": "Các vị tiên thánh cõi cao",
+    "description": "Quân Át (Ace) (♣) mang ý nghĩa: Các vị tiên thánh cõi cao.",
+    "advice": "Chư vị Tiên Thánh cõi cao chứng giám và ban phước lành tối cao."
   },
   {
     "id": 28,
@@ -531,10 +504,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/2_of_clubs.png",
-    "symbolCode": "p",
-    "meaning": "Vong trẻ em ở ngoài/ Con âm",
-    "description": "Quân Hai (2) (♣) mang ý nghĩa: Vong trẻ em ở ngoài/ Con âm.",
-    "advice": "Linh hồn trẻ nhỏ lang thang bên ngoài hoặc duyên con âm vương vấn theo gót."
+    "meaning": "Thầy Tà",
+    "description": "Quân Hai (2) (♣) mang ý nghĩa: Thầy Tà.",
+    "advice": "Cảnh báo tà sư, thầy tà hoặc pháp thuật sai lạc bên ngoài tác động."
   },
   {
     "id": 29,
@@ -550,10 +522,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/3_of_clubs.png",
-    "symbolCode": "q",
-    "meaning": "Âm binh súc sinh. Mất mộ",
-    "description": "Quân Ba (3) (♣) mang ý nghĩa: Âm binh súc sinh. Mất mộ.",
-    "advice": "Cảnh báo phần mộ thất lạc, mất dấu tích hoặc âm binh súc sinh quấy phá."
+    "meaning": "Vong trẻ em ở ngoài/ Con âm",
+    "description": "Quân Ba (3) (♣) mang ý nghĩa: Vong trẻ em ở ngoài/ Con âm.",
+    "advice": "Linh hồn trẻ nhỏ lang thang bên ngoài hoặc duyên con âm vương vấn theo gót."
   },
   {
     "id": 30,
@@ -569,10 +540,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/4_of_clubs.png",
-    "symbolCode": "r",
-    "meaning": "Âm binh bên ngoài",
-    "description": "Quân Bốn (4) (♣) mang ý nghĩa: Âm binh bên ngoài.",
-    "advice": "Âm binh từ bên ngoài môi trường quấy nhiễu trường năng lượng của bạn."
+    "meaning": "Âm binh súc sinh. Mất mộ",
+    "description": "Quân Bốn (4) (♣) mang ý nghĩa: Âm binh súc sinh. Mất mộ.",
+    "advice": "Cảnh báo phần mộ thất lạc, mất dấu tích hoặc âm binh súc sinh quấy phá."
   },
   {
     "id": 31,
@@ -588,10 +558,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/5_of_clubs.png",
-    "symbolCode": "s",
-    "meaning": "Bùa tàu",
-    "description": "Quân Năm (5) (♣) mang ý nghĩa: Bùa tàu.",
-    "advice": "Sự ảnh hưởng của bùa Tàu hoặc các loại huyền thuật ngoại lai thâm hiểm."
+    "meaning": "Âm binh bên ngoài",
+    "description": "Quân Năm (5) (♣) mang ý nghĩa: Âm binh bên ngoài.",
+    "advice": "Âm binh từ bên ngoài môi trường quấy nhiễu trường năng lượng của bạn."
   },
   {
     "id": 32,
@@ -607,10 +576,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/6_of_clubs.png",
-    "symbolCode": "t",
-    "meaning": "Nghiệp tâm linh",
-    "description": "Quân Sáu (6) (♣) mang ý nghĩa: Nghiệp tâm linh.",
-    "advice": "Nghiệp quả tâm linh đang hiển lộ, nhắc nhở cần chú trọng tu tâm tích đức."
+    "meaning": "Bùa tàu",
+    "description": "Quân Sáu (6) (♣) mang ý nghĩa: Bùa tàu.",
+    "advice": "Sự ảnh hưởng của bùa Tàu hoặc các loại huyền thuật ngoại lai thâm hiểm."
   },
   {
     "id": 33,
@@ -626,10 +594,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/7_of_clubs.png",
-    "symbolCode": "u",
-    "meaning": "Vong Nữ ở ngoài",
-    "description": "Quân Bảy (7) (♣) mang ý nghĩa: Vong Nữ ở ngoài.",
-    "advice": "Vong hồn nữ giới vãng lai bên ngoài chưa siêu thoát theo bám."
+    "meaning": "Nghiệp tâm linh",
+    "description": "Quân Bảy (7) (♣) mang ý nghĩa: Nghiệp tâm linh.",
+    "advice": "Nghiệp quả tâm linh đang hiển lộ, nhắc nhở cần chú trọng tu tâm tích đức."
   },
   {
     "id": 34,
@@ -645,10 +612,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/8_of_clubs.png",
-    "symbolCode": "v",
-    "meaning": "Vong Nam ở ngoài",
-    "description": "Quân Tám (8) (♣) mang ý nghĩa: Vong Nam ở ngoài.",
-    "advice": "Vong hồn nam giới ngoại giới phiêu bạt gửi tín hiệu xin trợ giúp."
+    "meaning": "Vong Nữ ở ngoài",
+    "description": "Quân Tám (8) (♣) mang ý nghĩa: Vong Nữ ở ngoài.",
+    "advice": "Vong hồn nữ giới vãng lai bên ngoài chưa siêu thoát theo bám."
   },
   {
     "id": 35,
@@ -664,10 +630,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/9_of_clubs.png",
-    "symbolCode": "w",
-    "meaning": "Nghiệp ở đất khác",
-    "description": "Quân Chín (9) (♣) mang ý nghĩa: Nghiệp ở đất khác.",
-    "advice": "Nghiệp chướng hoặc duyên nợ liên quan đến mảnh đất phương xa hoặc nơi từng sinh sống."
+    "meaning": "Vong Nam ở ngoài",
+    "description": "Quân Chín (9) (♣) mang ý nghĩa: Vong Nam ở ngoài.",
+    "advice": "Vong hồn nam giới ngoại giới phiêu bạt gửi tín hiệu xin trợ giúp."
   },
   {
     "id": 36,
@@ -683,10 +648,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/10_of_clubs.png",
-    "symbolCode": "x",
-    "meaning": "Thổ địa giả/ Thổ địa nữ",
-    "description": "Quân Mười (10) (♣) mang ý nghĩa: Thổ địa giả/ Thổ địa nữ.",
-    "advice": "Cảnh báo hiện tượng Thổ Địa giả danh hoặc sự quấy nhiễu của Thổ Địa nữ."
+    "meaning": "Nghiệp ở đất khác",
+    "description": "Quân Mười (10) (♣) mang ý nghĩa: Nghiệp ở đất khác.",
+    "advice": "Nghiệp chướng hoặc duyên nợ liên quan đến mảnh đất phương xa hoặc nơi từng sinh sống."
   },
   {
     "id": 37,
@@ -702,10 +666,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/jack_of_clubs.png",
-    "symbolCode": "y",
-    "meaning": "Quỷ/yêu nữ",
-    "description": "Quân J (Jack / Bồi) (♣) mang ý nghĩa: Quỷ/yêu nữ.",
-    "advice": "Thực thể quỷ/yêu nữ gây xáo trộn tinh thần, mê muội cảm xúc."
+    "meaning": "Thổ địa giả/ Thổ địa nữ",
+    "description": "Quân J (Jack / Bồi) (♣) mang ý nghĩa: Thổ địa giả/ Thổ địa nữ.",
+    "advice": "Cảnh báo hiện tượng Thổ Địa giả danh hoặc sự quấy nhiễu của Thổ Địa nữ."
   },
   {
     "id": 38,
@@ -721,10 +684,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/queen_of_clubs.png",
-    "symbolCode": "z",
-    "meaning": "Quỷ/yêu nam",
-    "description": "Quân Q (Queen / Đầm) (♣) mang ý nghĩa: Quỷ/yêu nam.",
-    "advice": "Thực thể quỷ/yêu nam hung hãn gây tranh chấp, hao tổn nguyên khí."
+    "meaning": "Quỷ/yêu nữ",
+    "description": "Quân Q (Queen / Đầm) (♣) mang ý nghĩa: Quỷ/yêu nữ.",
+    "advice": "Thực thể quỷ/yêu nữ gây xáo trộn tinh thần, mê muội cảm xúc."
   },
   {
     "id": 39,
@@ -740,10 +702,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đen",
     "colorType": "black",
     "image": "Porker/king_of_clubs.png",
-    "symbolCode": "n",
-    "meaning": "Các vị tiên thánh cõi cao",
-    "description": "Quân K (King / Già) (♣) mang ý nghĩa: Các vị tiên thánh cõi cao.",
-    "advice": "Chư vị Tiên Thánh cõi cao chứng giám và soi tỏ mọi việc."
+    "meaning": "Quỷ/yêu nam",
+    "description": "Quân K (King / Già) (♣) mang ý nghĩa: Quỷ/yêu nam.",
+    "advice": "Thực thể quỷ/yêu nam hung hãn gây tranh chấp, hao tổn nguyên khí."
   },
   {
     "id": 40,
@@ -759,10 +720,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/ace_of_diamonds.png",
-    "symbolCode": "O",
-    "meaning": "Thầy chánh pháp",
-    "description": "Quân Át (Ace) (♦) mang ý nghĩa: Thầy chánh pháp.",
-    "advice": "Minh sư chánh pháp chỉ đường dẫn lối, mang năng lượng thanh tịnh."
+    "meaning": "Ngài Nadrasa Dehi",
+    "description": "Quân Át (Ace) (♦) mang ý nghĩa: Ngài Nadrasa Dehi.",
+    "advice": "Ân phước tối thượng: Sự hiện diện gia hộ trực tiếp của Đức Bổn Tôn Nadrasa Dehi."
   },
   {
     "id": 41,
@@ -778,10 +738,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/2_of_diamonds.png",
-    "symbolCode": "P",
-    "meaning": "Vong trẻ em Nam",
-    "description": "Quân Hai (2) (♦) mang ý nghĩa: Vong trẻ em Nam.",
-    "advice": "Linh hồn trẻ thơ nam giới hiển hiện mang năng lượng tích cực."
+    "meaning": "Thầy chánh pháp",
+    "description": "Quân Hai (2) (♦) mang ý nghĩa: Thầy chánh pháp.",
+    "advice": "Minh sư chánh đạo khai mở trí tuệ, dẫn dắt trên con đường tu học chân chính."
   },
   {
     "id": 42,
@@ -797,10 +756,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/3_of_diamonds.png",
-    "symbolCode": "Q",
-    "meaning": "Rồng xuất hiện. Mộ tốt",
-    "description": "Quân Ba (3) (♦) mang ý nghĩa: Rồng xuất hiện. Mộ tốt.",
-    "advice": "Long khí hưng thịnh, phần mộ gia tiên được phong thủy tốt lành chở che."
+    "meaning": "Vong trẻ em Nam",
+    "description": "Quân Ba (3) (♦) mang ý nghĩa: Vong trẻ em Nam.",
+    "advice": "Linh hồn trẻ nhỏ nam giới mang tâm niệm trong sáng hướng về gia đình."
   },
   {
     "id": 43,
@@ -816,10 +774,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/4_of_diamonds.png",
-    "symbolCode": "R",
-    "meaning": "Con cháu hiếu thảo",
-    "description": "Quân Bốn (4) (♦) mang ý nghĩa: Con cháu hiếu thảo.",
-    "advice": "Đạo hiếu rạng rỡ, phước đức tổ tiên chảy tràn xuống các thế hệ tương lai."
+    "meaning": "Rồng xuất hiện. Mộ tốt",
+    "description": "Quân Bốn (4) (♦) mang ý nghĩa: Rồng xuất hiện. Mộ tốt.",
+    "advice": "Điềm lành cát tường: Long mạch hưng vượng, mồ mả tổ tiên kết phát đại cát."
   },
   {
     "id": 44,
@@ -835,10 +792,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/5_of_diamonds.png",
-    "symbolCode": "S",
-    "meaning": "Bùa đã được giải/ Ứng lệnh",
-    "description": "Quân Năm (5) (♦) mang ý nghĩa: Bùa đã được giải/ Ứng lệnh.",
-    "advice": "Lệnh giải trừ bùa ngải đã ứng nghiệm, chánh khí phục hồi sáng suốt."
+    "meaning": "Con cháu hiếu thảo",
+    "description": "Quân Năm (5) (♦) mang ý nghĩa: Con cháu hiếu thảo.",
+    "advice": "Gia đạo thuận hòa, con cháu thảo hiền biết hướng về cội nguồn tổ tiên."
   },
   {
     "id": 45,
@@ -854,10 +810,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/6_of_diamonds.png",
-    "symbolCode": "T",
-    "meaning": "Nghiệp lành",
-    "description": "Quân Sáu (6) (♦) mang ý nghĩa: Nghiệp lành.",
-    "advice": "Quả ngọt của lòng lương thiện, công đức thiện lương trổ sinh điềm lành."
+    "meaning": "Phúc lành. Bùa đã được giải",
+    "description": "Quân Sáu (6) (♦) mang ý nghĩa: Phúc lành. Bùa đã được giải.",
+    "advice": "Phước đức sâu dày: Bùa chú tà thuật đã được hóa giải hoàn toàn, thân tâm an lạc."
   },
   {
     "id": 46,
@@ -873,10 +828,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/7_of_diamonds.png",
-    "symbolCode": "U",
-    "meaning": "Uyển/ Thiên nữ",
-    "description": "Quân Bảy (7) (♦) mang ý nghĩa: Uyển/ Thiên nữ.",
-    "advice": "Chư vị Thiên Nữ thanh cao giáng lâm mang lại trí huệ và sự tươi mới."
+    "meaning": "Nghiệp lành",
+    "description": "Quân Bảy (7) (♦) mang ý nghĩa: Nghiệp lành.",
+    "advice": "Thiện căn tích tụ trổ quả ngọt ngào, may mắn hanh thông trong cuộc sống."
   },
   {
     "id": 47,
@@ -892,10 +846,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/8_of_diamonds.png",
-    "symbolCode": "V",
-    "meaning": "Thiên nam",
-    "description": "Quân Tám (8) (♦) mang ý nghĩa: Thiên nam.",
-    "advice": "Chư vị Thiên Nam dũng mãnh tiếp thêm nghị lực và bảo vệ thân tâm."
+    "meaning": "Bồ tát/ Quan thế âm Bồ Tát/ Vong nữ gia tiên",
+    "description": "Quân Tám (8) (♦) mang ý nghĩa: Bồ tát/ Quan thế âm Bồ Tát/ Vong nữ gia tiên.",
+    "advice": "Đức Quán Thế Âm Bồ Tát hoặc vong nữ gia tiên từ bi phóng quang gia hộ che chở."
   },
   {
     "id": 48,
@@ -911,10 +864,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/9_of_diamonds.png",
-    "symbolCode": "W",
-    "meaning": "Thông tin về phủ",
-    "description": "Quân Chín (9) (♦) mang ý nghĩa: Thông tin về phủ.",
-    "advice": "Tín hiệu tâm linh rõ ràng liên quan đến cửa Phủ và sự việc tâm linh."
+    "meaning": "Bà tổ cô",
+    "description": "Quân Chín (9) (♦) mang ý nghĩa: Bà tổ cô.",
+    "advice": "Bà Tổ Cô linh thiêng trong dòng họ chở che, độ trì vượt qua sóng gió."
   },
   {
     "id": 49,
@@ -930,10 +882,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/10_of_diamonds.png",
-    "symbolCode": "X",
-    "meaning": "Thần thú",
-    "description": "Quân Mười (10) (♦) mang ý nghĩa: Thần thú.",
-    "advice": "Linh thú hộ trì linh thiêng xua tan u ám, bảo vệ bản thể."
+    "meaning": "Phủ",
+    "description": "Quân Mười (10) (♦) mang ý nghĩa: Phủ.",
+    "advice": "Nơi cửa Phủ linh thiêng, gắn liền với căn số và sự che chở của Thánh Mẫu."
   },
   {
     "id": 50,
@@ -949,10 +900,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/jack_of_diamonds.png",
-    "symbolCode": "Y",
-    "meaning": "Hộ pháp cứu độ",
-    "description": "Quân J (Jack / Bồi) (♦) mang ý nghĩa: Hộ pháp cứu độ.",
-    "advice": "Chư vị Hộ Pháp thị hiện tiếp cứu vượt thoát khó khăn, chướng ngại."
+    "meaning": "Ông mãnh",
+    "description": "Quân J (Jack / Bồi) (♦) mang ý nghĩa: Ông mãnh.",
+    "advice": "Ông Mãnh hiển linh độ trì cho con cháu trong dòng tộc bình an, công việc thuận lợi."
   },
   {
     "id": 51,
@@ -968,10 +918,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/queen_of_diamonds.png",
-    "symbolCode": "Z",
-    "meaning": "Các vị tiên thánh cõi cao",
-    "description": "Quân Q (Queen / Đầm) (♦) mang ý nghĩa: Các vị tiên thánh cõi cao.",
-    "advice": "Tiên Thánh thượng giới soi sáng con đường hành đạo và cuộc sống."
+    "meaning": "Hộ pháp Thiên tâm đạo/ Gia tiên",
+    "description": "Quân Q (Queen / Đầm) (♦) mang ý nghĩa: Hộ pháp Thiên tâm đạo/ Gia tiên.",
+    "advice": "Chư vị Hộ Pháp Thiên Tâm Đạo và Tiên Tổ đồng hành hộ trì vững chắc."
   },
   {
     "id": 52,
@@ -987,10 +936,9 @@ const POKER_CARDS_DATA = [
     "color": "Màu đỏ",
     "colorType": "red",
     "image": "Porker/king_of_diamonds.png",
-    "symbolCode": "N",
-    "meaning": "Các vị tiên thánh cõi cao",
-    "description": "Quân K (King / Già) (♦) mang ý nghĩa: Các vị tiên thánh cõi cao.",
-    "advice": "Chư vị Tiên Thánh cõi cao chứng giám và ban phước lành tối cao."
+    "meaning": "Thiên thần hộ mệnh/ Vị thánh cấp cao",
+    "description": "Quân K (King / Già) (♦) mang ý nghĩa: Thiên thần hộ mệnh/ Vị thánh cấp cao.",
+    "advice": "Thiên thần bảo hộ và chư vị Thánh thượng giới phóng quang dẫn lối."
   }
 ];
 
