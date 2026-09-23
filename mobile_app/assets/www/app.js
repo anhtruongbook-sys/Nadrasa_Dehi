@@ -11,7 +11,7 @@
   let availableDeck = [];
   let drawnCards = [];
   let currentModalIndex = 0;
-  let soundEnabled = true;
+  let soundEnabled = false; // Mặc định tắt âm thanh, bật lên khi cần
   let audioCtx = null;
 
   // Deck Configuration
@@ -1165,13 +1165,27 @@
       btnTheme.addEventListener('click', toggleTheme);
     }
 
-    // Sound toggle
-    btnSound.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
+    // Sound toggle (Mặc định tắt âm thanh, bấm để bật)
+    if (btnSound) {
       soundIcon.textContent = soundEnabled ? '🔔' : '🔕';
-      btnSound.style.opacity = soundEnabled ? '1' : '0.6';
-      showToast(soundEnabled ? 'Đã bật âm thanh' : 'Đã tắt âm thanh');
-    });
+      btnSound.style.opacity = soundEnabled ? '1' : '0.65';
+      btnSound.title = soundEnabled ? 'Tắt âm thanh Chuông' : 'Bật âm thanh Chuông';
+      btnSound.setAttribute('aria-label', soundEnabled ? 'Tắt âm thanh Chuông' : 'Bật âm thanh Chuông');
+
+      btnSound.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundIcon.textContent = soundEnabled ? '🔔' : '🔕';
+        btnSound.style.opacity = soundEnabled ? '1' : '0.65';
+        btnSound.title = soundEnabled ? 'Tắt âm thanh Chuông' : 'Bật âm thanh Chuông';
+        btnSound.setAttribute('aria-label', soundEnabled ? 'Tắt âm thanh Chuông' : 'Bật âm thanh Chuông');
+        if (soundEnabled) {
+          playBellChime(); // Ngân nhẹ một tiếng chuông báo hiệu âm thanh đã sẵn sàng
+          showToast('🔔 Đã bật âm thanh chuông');
+        } else {
+          showToast('🔕 Đã tắt âm thanh');
+        }
+      });
+    }
 
     // Guide Modal
     btnGuide.addEventListener('click', () => {

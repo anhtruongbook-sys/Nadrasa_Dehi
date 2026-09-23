@@ -63,10 +63,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.0.3
-          name: "Neta Light & Poker v1.0.3 (Android APK)"
+          tag_name: v1.0.4
+          name: "Neta Light & Poker v1.0.4 (Android APK)"
           body: |
-            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK) v1.0.3
+            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK) v1.0.4
+            - **Mặc định Tắt Âm Thanh Chuông**: Ứng dụng khởi động trong trạng thái hoàn toàn yên tĩnh và thiền tịnh. Người dùng có thể chủ động bấm biểu tượng 🔕 trên thanh tiêu đề để bật âm thanh 🔔 bất kỳ lúc nào.
+            - **Phản hồi âm thanh tinh tế**: Khi bấm bật âm thanh, một tiếng chuông thiền tần số 432Hz sẽ ngân nhẹ để báo hiệu âm thanh đã sẵn sàng.
             - **Quy chuẩn Rút Bài Độc Bản (1 cây/lần)**: Tuân thủ quy định chuẩn xác, mỗi lần rút ngẫu nhiên đúng 1 cây duy nhất (áp dụng cho cả 2 bộ bài Neta Light & Poker Tây).
             - **Hộp thoại Xác Nhận Thu Bài Tinh Tế**: Bổ sung xác nhận trước khi thu dọn bài giúp chống bấm nhầm, thiết kế nhã nhặn, sang trọng với 2 lựa chọn [Giữ lại] và [Thu bài].
             - **Bảo toàn Hình ảnh Tuyệt đối**: Quân bài tải tức thì 0ms, không bao giờ bị vỡ ảnh trên WebView Android.
