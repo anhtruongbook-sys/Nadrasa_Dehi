@@ -979,6 +979,26 @@ body {
   font-size: 0.78rem;
 }
 
+.poker-reading-rule-box {
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px dashed rgba(212, 175, 55, 0.4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: #f0e6d2;
+}
+
+.poker-reading-rule-title {
+  font-weight: 700;
+  color: #ffd700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 /* ================= ANIMATIONS ================= */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -1097,5 +1117,317 @@ body {
 
 .camera-flash-overlay.flash-fade {
   opacity: 0;
+}
+
+/* ============================================================
+   LIGHT THEME MODE (GIAO DIỆN SÁNG - TƯƠNG PHẢN CAO HOÀNG GIA)
+   Đảm bảo tỉ lệ tương phản WCAG AAA, sắc nét trên mọi màn hình
+   ============================================================ */
+body.theme-light {
+  background: radial-gradient(circle at 50% 20%, #fdfbf7 0%, #f4ede1 55%, #e6d8c5 100%);
+  color: #1a0e05;
+}
+
+body.theme-light #app-container {
+  background: rgba(255, 253, 249, 0.94);
+  box-shadow: 0 0 35px rgba(90, 50, 20, 0.22);
+}
+
+body.theme-light .app-header {
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.98) 0%, rgba(246, 238, 227, 0.95) 100%);
+  border-bottom: 1px solid rgba(160, 110, 20, 0.35);
+}
+
+body.theme-light .header-logo {
+  border-color: #a87412;
+  box-shadow: 0 0 10px rgba(168, 116, 18, 0.45);
+}
+
+body.theme-light .app-title {
+  background: linear-gradient(135deg, #6e1507 0%, #941f0c 50%, #520f04 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-light .app-subtitle {
+  color: #633b1e;
+  font-weight: 500;
+  opacity: 1;
+}
+
+body.theme-light .btn-icon {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(160, 110, 20, 0.45);
+  color: #734500;
+  box-shadow: 0 2px 6px rgba(100, 60, 20, 0.12);
+}
+
+body.theme-light .btn-icon:active {
+  background: #a87412;
+  color: #ffffff;
+}
+
+/* Tabs */
+body.theme-light .deck-mode-tabs {
+  background: rgba(245, 237, 224, 0.96);
+  border-bottom: 1px solid rgba(160, 110, 20, 0.3);
+}
+
+body.theme-light .mode-tab {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(160, 110, 20, 0.3);
+  color: #5c351b;
+}
+
+body.theme-light .mode-tab.active {
+  background: linear-gradient(135deg, #ffffff 0%, #fdf6ea 100%);
+  border-color: #8c5b05;
+  color: #781708;
+  box-shadow: 0 2px 8px rgba(140, 91, 5, 0.22);
+}
+
+/* Hint */
+body.theme-light .arena-hint,
+body.theme-light .arena-hint-bar {
+  background: rgba(246, 237, 222, 0.95);
+  border: 1px solid rgba(160, 110, 20, 0.45);
+  color: #47260e;
+  box-shadow: 0 2px 6px rgba(100, 60, 20, 0.08);
+}
+
+body.theme-light .hint-text {
+  color: #47260e;
+  font-weight: 600;
+}
+
+body.theme-light .hint-icon {
+  color: #a87412;
+}
+
+body.theme-light .btn-hint-reading {
+  background: linear-gradient(135deg, #f7d794 0%, #e1b12c 100%);
+  border: 1px solid #b8860b;
+  color: #4a2800;
+  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.25);
+}
+
+/* Empty State */
+body.theme-light .empty-state {
+  color: #4a2c16;
+}
+
+body.theme-light .empty-title {
+  color: #781708;
+}
+
+body.theme-light .empty-subtitle {
+  color: #633b1e;
+}
+
+body.theme-light .empty-card-visual {
+  background: #ffffff;
+  border: 2px dashed rgba(160, 110, 20, 0.5);
+  box-shadow: 0 4px 16px rgba(90, 50, 15, 0.15);
+}
+
+body.theme-light .empty-card-icon {
+  opacity: 0.85;
+}
+
+/* Cards on Arena */
+body.theme-light .card-inner {
+  box-shadow: 0 4px 14px rgba(60, 30, 10, 0.22), 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+body.theme-light .card-face {
+  border: 1.5px solid #b8860b;
+}
+
+body.theme-light .card-front {
+  background: #ffffff;
+  box-shadow: 0 0 12px rgba(160, 110, 20, 0.25);
+}
+
+body.theme-light .card-title-tag {
+  color: #1f0d03;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+}
+
+/* Footer & Controls */
+body.theme-light .app-controls {
+  background: linear-gradient(0deg, rgba(255, 253, 249, 0.98) 0%, rgba(247, 239, 230, 0.95) 100%);
+  border-top: 1px solid rgba(160, 110, 20, 0.35);
+}
+
+body.theme-light .btn-draw {
+  background: linear-gradient(145deg, #ffffff 0%, #fbf3e6 100%);
+  border: 1.5px solid #a87412;
+  box-shadow: 0 3px 10px rgba(120, 80, 30, 0.16);
+}
+
+body.theme-light .btn-draw .btn-badge {
+  color: #633303;
+}
+
+body.theme-light .btn-draw .btn-label {
+  color: #6d4220;
+}
+
+body.theme-light .btn-secondary {
+  background: #ffffff;
+  color: #47260e;
+  border: 1.5px solid rgba(160, 110, 20, 0.4);
+  box-shadow: 0 2px 6px rgba(100, 60, 20, 0.12);
+}
+
+body.theme-light .btn-secondary:active {
+  background: #f4ede1;
+}
+
+/* Modals */
+body.theme-light .modal-overlay {
+  background: rgba(35, 20, 10, 0.65);
+}
+
+body.theme-light .modal-dialog {
+  background: linear-gradient(160deg, #ffffff 0%, #faf4ea 100%);
+  border-color: #b8860b;
+  box-shadow: 0 10px 40px rgba(60, 30, 10, 0.35);
+}
+
+body.theme-light .modal-close {
+  background: rgba(240, 230, 215, 0.9);
+  color: #3d1b06;
+  border-color: #b8860b;
+}
+
+body.theme-light .modal-card-preview {
+  border-color: #b8860b;
+  box-shadow: 0 0 16px rgba(184, 134, 11, 0.3);
+}
+
+body.theme-light .modal-card-title {
+  color: #781708;
+}
+
+body.theme-light .modal-tag {
+  background: rgba(184, 134, 11, 0.12);
+  border: 1px solid rgba(184, 134, 11, 0.45);
+  color: #734500;
+}
+
+body.theme-light .modal-desc-box {
+  background: rgba(246, 238, 226, 0.92);
+  color: #221206;
+  border-left: 3.5px solid #b8860b;
+}
+
+body.theme-light .modal-advice-box {
+  background: #edfbf0;
+  border-left: 3.5px solid #1e8449;
+  color: #145a32;
+}
+
+body.theme-light .modal-nav {
+  background: rgba(246, 238, 227, 0.95);
+  border-top: 1px solid rgba(160, 110, 20, 0.3);
+}
+
+body.theme-light .btn-nav {
+  background: #ffffff;
+  color: #47260e;
+  border: 1px solid rgba(184, 134, 11, 0.5);
+}
+
+/* Guide modal */
+body.theme-light .guide-dialog {
+  background: linear-gradient(160deg, #ffffff 0%, #faf4ea 100%);
+  border-color: #b8860b;
+}
+
+body.theme-light .guide-header {
+  border-bottom: 1px solid rgba(160, 110, 20, 0.3);
+}
+
+body.theme-light .guide-header h2 {
+  color: #781708;
+}
+
+body.theme-light .guide-search-box {
+  border-bottom: 1px solid rgba(160, 110, 20, 0.2);
+}
+
+body.theme-light .guide-search-box input {
+  background: #ffffff;
+  border: 1.5px solid #b8860b;
+  color: #221206;
+}
+
+body.theme-light .guide-search-box input::placeholder {
+  color: #8c7361;
+}
+
+body.theme-light .guide-item {
+  background: #ffffff;
+  border: 1px solid rgba(184, 134, 11, 0.3);
+  box-shadow: 0 2px 6px rgba(100, 60, 20, 0.08);
+}
+
+body.theme-light .guide-name {
+  color: #781708;
+}
+
+body.theme-light .guide-meta {
+  color: #5c351b;
+}
+
+/* Reading Modal */
+body.theme-light .reading-dialog {
+  background: linear-gradient(160deg, #ffffff 0%, #faf3e8 100%);
+  border-color: #b8860b;
+}
+
+body.theme-light .poker-panel-title {
+  color: #781708;
+  border-bottom: 1px solid rgba(160, 110, 20, 0.3);
+}
+
+body.theme-light .tu-reading-box {
+  background: #ffffff;
+  border: 1px solid rgba(184, 134, 11, 0.25);
+  box-shadow: 0 2px 6px rgba(100, 60, 20, 0.08);
+}
+
+body.theme-light .tu-box-name {
+  color: #6b1406;
+}
+
+body.theme-light .tu-box-content {
+  color: #221206;
+}
+
+body.theme-light .tu-combo-alert {
+  background: rgba(184, 134, 11, 0.12);
+  color: #6b3f00;
+  border: 1px dashed rgba(184, 134, 11, 0.5);
+}
+
+body.theme-light .poker-reading-rule-box {
+  background: rgba(184, 134, 11, 0.12);
+  border: 1px dashed rgba(184, 134, 11, 0.5);
+  color: #2b1405;
+}
+
+body.theme-light .poker-reading-rule-title {
+  color: #781708;
+}
+
+/* Toast */
+body.theme-light .toast-notification {
+  background: rgba(255, 253, 248, 0.98);
+  color: #221206;
+  border: 1.5px solid #b8860b;
+  box-shadow: 0 4px 18px rgba(60, 30, 10, 0.25);
 }
 

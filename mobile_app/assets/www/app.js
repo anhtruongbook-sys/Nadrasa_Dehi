@@ -81,6 +81,9 @@
   const btnSound = document.getElementById('btn-sound');
   const soundIcon = document.getElementById('sound-icon');
   const btnGuide = document.getElementById('btn-guide');
+  const btnTheme = document.getElementById('btn-theme');
+  const themeIcon = document.getElementById('theme-icon');
+  let currentTheme = localStorage.getItem('neta_theme') || 'dark';
   const toast = document.getElementById('toast');
 
   // Screenshot Elements
@@ -117,6 +120,7 @@
       detectConsecutiveCombos,
       checkMatchingTus
     };
+    initTheme();
     resetDeck();
     bindEvents();
     renderGuideList();
@@ -687,8 +691,8 @@
       <div class="poker-panel-title">
         <span>🃏 Chi Tiết Luận Giải 52 Quân Bài Tây</span>
       </div>
-      <div class="poker-reading-rule-box" style="background: rgba(212, 175, 55, 0.08); border: 1px dashed rgba(212, 175, 55, 0.4); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.76rem; line-height: 1.45; color: #f0e6d2;">
-        <div style="font-weight: 700; color: #ffd700; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
+      <div class="poker-reading-rule-box">
+        <div class="poker-reading-rule-title">
           <span>📜 Quy tắc luận giải Nadrasa Dehi:</span>
         </div>
         <div>• <strong>Bộ 3 con</strong>: Chỉ có ý nghĩa khi <strong>cùng nằm trong 1 tụ (3 cây)</strong> (Tụ 1: 3 cây đầu; Tụ 2: 3 cây kế tiếp; Tụ 3: 3 cây sau).</div>
@@ -933,6 +937,33 @@
     } catch (e) {}
   }
 
+  // ================= THEME CONTROLLER (SÁNG / TỐI) =================
+  function initTheme() {
+    applyTheme(currentTheme, false);
+  }
+
+  function applyTheme(theme, notify = true) {
+    currentTheme = theme;
+    localStorage.setItem('neta_theme', theme);
+    if (theme === 'light') {
+      document.body.classList.add('theme-light');
+      if (themeIcon) themeIcon.textContent = '🌙';
+      if (btnTheme) btnTheme.title = 'Chuyển sang giao diện Tối';
+      if (notify) showToast('☀️ Đã chuyển sang giao diện Sáng');
+    } else {
+      document.body.classList.remove('theme-light');
+      if (themeIcon) themeIcon.textContent = '☀️';
+      if (btnTheme) btnTheme.title = 'Chuyển sang giao diện Sáng';
+      if (notify) showToast('🌙 Đã chuyển sang giao diện Tối');
+    }
+  }
+
+  function toggleTheme() {
+    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+    applyTheme(nextTheme, true);
+    playBellChime();
+  }
+
   function showToast(message) {
     toast.textContent = message;
     toast.classList.add('show');
@@ -1065,6 +1096,11 @@
       playBellChime();
       showToast('Đã thu bài và dọn bàn. Bạn có thể bắt đầu lượt bốc mới!');
     });
+
+    // Theme toggle (Sáng / Tối)
+    if (btnTheme) {
+      btnTheme.addEventListener('click', toggleTheme);
+    }
 
     // Sound toggle
     btnSound.addEventListener('click', () => {
@@ -1204,10 +1240,14 @@
         return;
       }
 
+      const isLight = currentTheme === 'light';
+      const bgColor = isLight ? '#f4ede1' : '#120104';
+      const titleColor = isLight ? '#6e1507' : '#f5b041';
+
       // Capture full app container at retina 2x resolution
       const canvas = await html2canvas(appContainer, {
         scale: 2,
-        backgroundColor: '#120104',
+        backgroundColor: bgColor,
         useCORS: true,
         logging: false,
         allowTaint: true,
@@ -1216,8 +1256,17 @@
           if (title) {
             title.style.background = 'none';
             title.style.webkitBackgroundClip = 'initial';
-            title.style.webkitTextFillColor = '#f5b041';
-            title.style.color = '#f5b041';
+            title.style.webkitTextFillColor = titleColor;
+            title.style.color = titleColor;
+          }
+          if (isLight) {
+            const hintText = clonedDoc.querySelector('.hint-text');
+            if (hintText) hintText.style.color = '#3d1a08';
+            const hintBar = clonedDoc.querySelector('.arena-hint-bar');
+            if (hintBar) {
+              hintBar.style.backgroundColor = '#f0e3ce';
+              hintBar.style.borderColor = '#c29a53';
+            }
           }
         }
       });
