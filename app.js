@@ -54,6 +54,11 @@
   // DOM Elements
   const tabModeNeta = document.getElementById('tab-mode-neta');
   const tabModePoker = document.getElementById('tab-mode-poker');
+  const deckSelectorTrigger = document.getElementById('deck-selector-trigger');
+  const deckDropdown = document.getElementById('deck-dropdown');
+  const deckArrow = document.getElementById('deck-arrow');
+  const checkDeckNeta = document.getElementById('check-deck-neta');
+  const checkDeckPoker = document.getElementById('check-deck-poker');
   const appMainTitle = document.getElementById('app-main-title');
   const appSubTitle = document.getElementById('app-sub-title');
   const headerLogo = document.getElementById('header-logo');
@@ -155,21 +160,31 @@
 
   // Switch between Neta Light & Poker Deck Modes
   function switchDeckMode(mode) {
-    if (currentDeckMode === mode) return;
+    if (currentDeckMode === mode) {
+      if (deckDropdown) deckDropdown.style.display = 'none';
+      if (deckSelectorTrigger) deckSelectorTrigger.classList.remove('open');
+      return;
+    }
     currentDeckMode = mode;
 
-    tabModeNeta.classList.toggle('active', mode === 'neta');
-    tabModePoker.classList.toggle('active', mode === 'poker');
+    if (tabModeNeta) tabModeNeta.classList.toggle('active', mode === 'neta');
+    if (tabModePoker) tabModePoker.classList.toggle('active', mode === 'poker');
+    if (checkDeckNeta) checkDeckNeta.style.opacity = mode === 'neta' ? '1' : '0';
+    if (checkDeckPoker) checkDeckPoker.style.opacity = mode === 'poker' ? '1' : '0';
 
     const cfg = DECK_CONFIG[mode];
-    appMainTitle.textContent = cfg.name;
-    appSubTitle.textContent = cfg.subtitle;
-    headerLogo.src = cfg.logo;
-    emptyAvatarImg.src = cfg.logo;
-    emptyTitleText.textContent = cfg.emptyTitle;
-    emptyDescText.textContent = cfg.emptyDesc;
-    guideModalTitle.textContent = cfg.guideTitle;
-    guideSearchInput.value = '';
+    if (appMainTitle) appMainTitle.textContent = cfg.name;
+    if (appSubTitle) appSubTitle.textContent = cfg.subtitle;
+    if (headerLogo) headerLogo.src = cfg.logo;
+    if (emptyAvatarImg) emptyAvatarImg.src = cfg.logo;
+    if (emptyTitleText) emptyTitleText.textContent = cfg.emptyTitle;
+    if (emptyDescText) emptyDescText.textContent = cfg.emptyDesc;
+    if (guideModalTitle) guideModalTitle.textContent = cfg.guideTitle;
+    if (guideSearchInput) guideSearchInput.value = '';
+
+    // Đóng dropdown menu sau khi chọn
+    if (deckDropdown) deckDropdown.style.display = 'none';
+    if (deckSelectorTrigger) deckSelectorTrigger.classList.remove('open');
 
     resetDeck();
     renderGuideList();
@@ -247,7 +262,7 @@
 
     const count = drawnCards.length;
     const arenaW = arenaContainer ? arenaContainer.clientWidth : window.innerWidth;
-    const arenaH = arenaContainer ? arenaContainer.clientHeight : window.innerHeight * 0.65;
+    const arenaH = arenaContainer ? arenaContainer.clientHeight : window.innerHeight * 0.70;
 
     let cols = 3;
     let rows = 1;
@@ -304,7 +319,7 @@
     const maxCardH_fromWidth = maxCellW / ratio;
 
     let optimalCardH = Math.min(maxCardH_fromHeight, maxCardH_fromWidth);
-    const capMaxH = count === 1 ? 280 : (count === 2 ? 240 : (count === 3 ? 210 : (rows >= 4 ? 140 : 185)));
+    const capMaxH = count === 1 ? 320 : (count === 2 ? 260 : (count === 3 ? 230 : (rows >= 4 ? 150 : 200)));
     optimalCardH = Math.min(optimalCardH, capMaxH);
     optimalCardH = Math.max(optimalCardH, 36);
 
@@ -1113,9 +1128,36 @@
 
   // Bind UI Events
   function bindEvents() {
-    // Mode Switch Tabs
-    tabModeNeta.addEventListener('click', () => switchDeckMode('neta'));
-    tabModePoker.addEventListener('click', () => switchDeckMode('poker'));
+    // Dropdown Trigger & Close Listeners
+    if (deckSelectorTrigger && deckDropdown) {
+      deckSelectorTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = deckDropdown.style.display === 'block';
+        deckDropdown.style.display = isOpen ? 'none' : 'block';
+        deckSelectorTrigger.classList.toggle('open', !isOpen);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!deckSelectorTrigger.contains(e.target) && !deckDropdown.contains(e.target)) {
+          deckDropdown.style.display = 'none';
+          deckSelectorTrigger.classList.remove('open');
+        }
+      });
+    }
+
+    // Mode Switch Items inside Dropdown
+    if (tabModeNeta) {
+      tabModeNeta.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switchDeckMode('neta');
+      });
+    }
+    if (tabModePoker) {
+      tabModePoker.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switchDeckMode('poker');
+      });
+    }
 
     // Initial single draw button (Chỉ rút ngẫu nhiên 1 lá duy nhất)
     if (btnDrawSingle) {

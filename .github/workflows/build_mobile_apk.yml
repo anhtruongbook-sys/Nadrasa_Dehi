@@ -63,18 +63,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.0.6
-          name: "Neta Light & Poker v1.0.6 (Android APK)"
+          tag_name: v1.1.0
+          name: "Neta Light & Poker v1.1.0 (Giao Diện Zen Tối Giản & Chuẩn Công Thái Học)"
           body: |
-            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK) v1.0.6
-            - **Tối Ưu Hóa Công Thái Học Ngón Cái Tay Phải (Right Thumb Zone Ergonomics)**:
-              + **Đưa nút "Rút tiếp" về góc ngoài cùng bên phải**: Đúng vị trí tiếp xúc tự nhiên và thoải mái nhất của ngón cái tay phải khi cầm điện thoại 1 tay, bấm cực kỳ êm ái không cần với ngón tay.
-              + **Đưa nút "Thu bài" về góc ngoài cùng bên trái**: Tạo khoảng cách an toàn tối đa đối với ngón cái tay phải, loại bỏ hoàn toàn nguy cơ bấm nhầm dọn bàn bài.
-              + **Gia tăng kích thước & độ nổi bật nút Rút tiếp**: Nút có flex rộng rãi 1.35, màu vàng cam sang trọng, phản hồi cảm ứng tức thì 0ms.
-            - **Kiểm Thử & Tối Ưu Hóa Chuẩn Mực Tự Động (Score 100/100)**: Đạt chuẩn 5/5 thiết bị, GPU 120 FPS, OWASP CSP.
-            - **Mặc định Tắt Âm Thanh Chuông**: Khởi động tĩnh lặng, bấm 🔕 để bật 🔔 khi cần.
-            - **Quy chuẩn Rút Bài Độc Bản (1 cây/lần)**: Tuân thủ quy định chuẩn xác, mỗi lần rút ngẫu nhiên đúng 1 cây duy nhất.
+            ## Ứng dụng Di Động Neta Light & Poker v1.1.0 (Bản Phát Hành Hiện Đại & Tối Giản)
+            - **Header Siêu Mỏng (~42px) & Dropdown Kính Mờ Tinh Tế**:
+              + Tích hợp bộ chọn bộ bài ngay tại tiêu đề Header (`NETA LIGHT ▾` / `BÀI TÂY POKER ▾`) với menu kính mờ (glassmorphism) sang trọng.
+              + Lược bỏ hàng Tab cố định 44px, giải phóng hoàn toàn không gian trên đỉnh màn hình.
+            - **Tiện Dụng 1 Chạm với 4 Nút Monoline Ghost**:
+              + Giữ trọn vẹn 100% 4 chức năng tiện ích (📸 Chụp ảnh, ☀️/🌙 Sáng/Tối, 🔕/🔔 Chuông, 📜 Tra cứu).
+              + Tinh giản thị giác thành icon vector thanh mảnh, chạm phản hồi tức thì 0ms, không chiếm dụng không gian.
+            - **Mở Rộng Không Gian Bàn Bài (Arena) +25-30%**:
+              + Tận dụng tối đa diện tích chiều dọc vừa giải phóng, lá bài tự động co giãn to hơn, sắc nét và trang nghiêm hơn.
+            - **Công Thái Học Tay Phải Tuyệt Đối Dưới Đáy**:
+              + Nút `[➕ Rút tiếp]` to bản ở góc ngoài cùng bên phải — đúng tầm ngón cái tay phải.
+              + Nút `[🔄 Thu bài]` ở góc ngoài cùng bên trái với hộp thoại xác nhận tinh tế, triệt tiêu nguy cơ bấm nhầm.
             - **Hoạt động Ngoại tuyến 100% Offline**: Độc lập hoàn toàn, không cần kết nối mạng.
           files: build-output/NetaLight.apk
           draft: false
           prerelease: false
+

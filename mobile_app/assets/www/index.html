@@ -26,42 +26,62 @@
 </head>
 <body>
   <div id="app-container">
-    <!-- Header -->
+    <!-- Header Siêu Gọn & Hiện Đại (38px) -->
     <header class="app-header">
-      <div class="header-brand">
+      <div class="header-brand" id="deck-selector-trigger" title="Chạm để chuyển đổi bộ bài" role="button" tabindex="0">
         <img src="neta_cards/phap_an.jpg" alt="Logo Bộ Bài" class="header-logo" id="header-logo">
         <div class="header-titles">
-          <h1 class="app-title" id="app-main-title">NETA LIGHT</h1>
+          <div class="app-title-row">
+            <h1 class="app-title" id="app-main-title">NETA LIGHT</h1>
+            <span class="deck-dropdown-arrow" id="deck-arrow">▾</span>
+          </div>
           <p class="app-subtitle" id="app-sub-title">Pháp môn Nadrasa Dehi</p>
         </div>
       </div>
+
+      <!-- Quick Deck Dropdown Menu (Kính mờ sang trọng) -->
+      <div class="deck-dropdown-menu" id="deck-dropdown" style="display: none;">
+        <div class="deck-dropdown-item active" id="tab-mode-neta" data-mode="neta">
+          <span class="dropdown-icon">🪷</span>
+          <div class="dropdown-info">
+            <span class="dropdown-name">Neta Light</span>
+            <span class="dropdown-desc">22 lá Ánh Sáng • Nadrasa Dehi</span>
+          </div>
+          <span class="dropdown-check" id="check-deck-neta">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-poker" data-mode="poker">
+          <span class="dropdown-icon">♠️</span>
+          <div class="dropdown-info">
+            <span class="dropdown-name">Bài Tây Poker</span>
+            <span class="dropdown-desc">52 lá • Chiêm Đoán Tâm Linh</span>
+          </div>
+          <span class="dropdown-check" id="check-deck-poker" style="opacity: 0;">✓</span>
+        </div>
+      </div>
+
       <div class="header-actions">
-        <button id="btn-screenshot-header" class="btn-icon" title="Lưu ảnh trải bài" aria-label="Lưu ảnh trải bài" style="display: none;">
-          <span class="icon">📸</span>
+        <button id="btn-screenshot-header" class="btn-header-ghost" title="Lưu ảnh trải bài" aria-label="Lưu ảnh trải bài" style="display: none;">
+          <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
         </button>
-        <button id="btn-theme" class="btn-icon" title="Chuyển chế độ Sáng / Tối" aria-label="Đổi giao diện Sáng / Tối">
+        <button id="btn-theme" class="btn-header-ghost" title="Chuyển chế độ Sáng / Tối" aria-label="Đổi giao diện Sáng / Tối">
           <span class="icon" id="theme-icon">☀️</span>
         </button>
-        <button id="btn-sound" class="btn-icon sound-muted" title="Bật âm thanh Chuông" aria-label="Bật âm thanh Chuông" style="opacity: 0.65;">
+        <button id="btn-sound" class="btn-header-ghost sound-muted" title="Bật âm thanh Chuông" aria-label="Bật âm thanh Chuông">
           <span class="icon" id="sound-icon">🔕</span>
         </button>
-        <button id="btn-guide" class="btn-icon" title="Tra cứu danh mục lá bài" aria-label="Xem danh sách bài">
-          <span class="icon">📜</span>
+        <button id="btn-guide" class="btn-header-ghost" title="Tra cứu danh mục lá bài" aria-label="Xem danh sách bài">
+          <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <line x1="9" y1="7" x2="15" y2="7"></line>
+            <line x1="9" y1="11" x2="15" y2="11"></line>
+          </svg>
         </button>
       </div>
     </header>
-
-    <!-- Deck Mode Tabs (Chuyển đổi tức thì 2 bộ bài) -->
-    <nav class="deck-mode-tabs" aria-label="Chọn bộ bài">
-      <button class="mode-tab active" id="tab-mode-neta" data-mode="neta">
-        <span class="tab-icon">🪷</span>
-        <span class="tab-text">Neta Light</span>
-      </button>
-      <button class="mode-tab" id="tab-mode-poker" data-mode="poker">
-        <span class="tab-icon">♠️</span>
-        <span class="tab-text">Bài Tây Poker</span>
-      </button>
-    </nav>
 
     <!-- Top Status Bar (Ẩn hiển thị số đếm lá bài) -->
     <div class="deck-status-bar" style="display: none;">

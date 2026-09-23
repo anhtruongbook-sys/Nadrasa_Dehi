@@ -59,42 +59,135 @@ body {
   overflow: hidden;
 }
 
-/* ================= HEADER ================= */
+/* ================= HEADER SIÊU MỎNG & HIỆN ĐẠI ================= */
 .app-header {
-  padding: calc(var(--safe-top) + 4px) 12px 6px;
+  padding: calc(var(--safe-top) + 2px) 10px 4px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(180deg, rgba(30, 2, 6, 0.95) 0%, rgba(18, 1, 4, 0.75) 100%);
-  border-bottom: 1px solid var(--border-gold);
-  backdrop-filter: blur(10px);
-  z-index: 10;
+  background: linear-gradient(180deg, rgba(25, 2, 5, 0.96) 0%, rgba(15, 1, 3, 0.85) 100%);
+  border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+  backdrop-filter: blur(16px);
+  position: relative;
+  z-index: 50;
+  min-height: 42px;
 }
 
 .header-brand {
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.header-brand:active {
+  background: rgba(245, 176, 65, 0.12);
+  transform: scale(0.98);
+}
+
+.app-title-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.deck-dropdown-arrow {
+  font-size: 0.8rem;
+  color: var(--gold-primary);
+  opacity: 0.85;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+}
+
+.header-brand.open .deck-dropdown-arrow {
+  transform: rotate(180deg);
+  color: var(--gold-glow);
+}
+
+/* Dropdown Menu Chuyển Bộ Bài Kính Mờ */
+.deck-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 10px;
+  background: rgba(26, 2, 6, 0.96);
+  border: 1px solid var(--border-gold-bright);
+  border-radius: 14px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85), 0 0 15px rgba(245, 176, 65, 0.2);
+  backdrop-filter: blur(20px);
+  padding: 6px;
+  min-width: 220px;
+  z-index: 100;
+  animation: dropdown-fade-in 0.2s ease-out;
+}
+
+@keyframes dropdown-fade-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.deck-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.deck-dropdown-item:hover, .deck-dropdown-item:active {
+  background: rgba(245, 176, 65, 0.15);
+}
+
+.deck-dropdown-item.active {
+  background: rgba(245, 176, 65, 0.22);
+  border: 1px solid rgba(247, 220, 111, 0.4);
+}
+
+.dropdown-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.dropdown-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff7d6;
+}
+
+.dropdown-desc {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+.dropdown-check {
+  color: var(--gold-glow);
+  font-weight: 800;
+  font-size: 0.85rem;
 }
 
 .header-logo {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  border: 2px solid var(--gold-primary);
-  box-shadow: 0 0 10px rgba(245, 176, 65, 0.4);
-  animation: logo-glow 4s ease-in-out infinite alternate;
-}
-
-@keyframes logo-glow {
-  0% { box-shadow: 0 0 6px rgba(245, 176, 65, 0.4); transform: scale(1); }
-  100% { box-shadow: 0 0 12px rgba(247, 220, 111, 0.75); transform: scale(1.02); }
+  border: 1.5px solid var(--gold-primary);
+  box-shadow: 0 0 8px rgba(245, 176, 65, 0.4);
 }
 
 .app-title {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   background: linear-gradient(135deg, #fff7d6 0%, #f5b041 50%, #d4ac0d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -102,46 +195,52 @@ body {
 }
 
 .app-subtitle {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: var(--text-secondary);
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   font-weight: 400;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .header-actions {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 2px;
 }
 
-.btn-icon {
-  background: rgba(45, 5, 12, 0.8);
-  border: 1px solid var(--border-gold);
+/* Frameless Monoline Header Ghost Buttons (Thanh mảnh, 1 chạm) */
+.btn-header-ghost {
+  background: transparent;
+  border: none;
   color: var(--gold-primary);
   width: 32px;
   height: 32px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  border-radius: 8px;
+  padding: 0;
+  touch-action: manipulation;
 }
 
-.btn-icon:active {
-  transform: scale(0.92);
-  background: var(--gold-primary);
-  color: #120104;
+.btn-header-ghost:active {
+  background: rgba(245, 176, 65, 0.18);
+  transform: scale(0.9);
+  color: var(--gold-glow);
 }
 
-/* ================= DECK MODE SWITCHER TABS ================= */
-.deck-mode-tabs {
-  display: flex;
-  background: rgba(20, 2, 5, 0.95);
-  border-bottom: 1px solid var(--border-gold);
-  padding: 4px 10px;
-  gap: 6px;
+.btn-header-ghost.sound-muted {
+  opacity: 0.55;
+  filter: grayscale(0.6);
+}
+
+.header-svg-icon {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
 }
 
 .mode-tab {
@@ -1633,6 +1732,65 @@ body.theme-light .btn-confirm-cancel {
   border-color: var(--gold-glow);
   box-shadow: 0 0 10px rgba(245, 176, 65, 0.45);
   transition: all 0.25s ease;
+}
+
+/* Theme Light cho Header & Dropdown Siêu Gọn */
+body.theme-light .app-header {
+  background: rgba(253, 248, 240, 0.96);
+  border-bottom: 1px solid rgba(184, 134, 11, 0.35);
+  box-shadow: 0 2px 10px rgba(60, 30, 10, 0.08);
+}
+
+body.theme-light .app-title {
+  background: linear-gradient(135deg, #781708 0%, #b8860b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-light .deck-dropdown-arrow {
+  color: #781708;
+}
+
+body.theme-light .app-subtitle {
+  color: #5c351b;
+}
+
+body.theme-light .btn-header-ghost {
+  color: #781708;
+}
+
+body.theme-light .btn-header-ghost:hover,
+body.theme-light .btn-header-ghost:active {
+  background: rgba(184, 134, 11, 0.12);
+  color: #962d22;
+}
+
+body.theme-light .deck-dropdown-menu {
+  background: rgba(255, 253, 248, 0.98);
+  border: 1px solid #b8860b;
+  box-shadow: 0 12px 35px rgba(60, 30, 10, 0.2), 0 0 15px rgba(184, 134, 11, 0.15);
+}
+
+body.theme-light .deck-dropdown-item:hover,
+body.theme-light .deck-dropdown-item:active {
+  background: rgba(184, 134, 11, 0.12);
+}
+
+body.theme-light .deck-dropdown-item.active {
+  background: rgba(184, 134, 11, 0.2);
+  border: 1px solid rgba(184, 134, 11, 0.45);
+}
+
+body.theme-light .dropdown-name {
+  color: #781708;
+}
+
+body.theme-light .dropdown-desc {
+  color: #6b4b32;
+}
+
+body.theme-light .dropdown-check {
+  color: #b8860b;
 }
 
 
