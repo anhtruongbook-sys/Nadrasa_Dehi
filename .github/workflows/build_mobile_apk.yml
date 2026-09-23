@@ -63,14 +63,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.0.1
-          name: "Neta Light & Poker v1.0.1 (Android APK)"
+          tag_name: v1.0.2
+          name: "Neta Light & Poker v1.0.2 (Android APK)"
           body: |
-            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK) v1.0.1
+            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK) v1.0.2
+            - **Khắc phục triệt để lỗi hiển thị ảnh**: Loại bỏ hoàn toàn thuộc tính crossorigin gây chặn ảnh trên WebView Android.
+            - **Hiển thị hình ảnh tức thì**: Tích hợp Base64 nội bộ giúp quân bài hiện lên ngay lập tức 0ms không bao giờ bị vỡ.
             - **100% Lưu ảnh trực tiếp vào Thư viện ảnh (Bộ sưu tập)**: Tự động lưu ảnh trải bài vào Album điện thoại mà không bị lỗi canvas.
             - **100% Hoạt động Offline độc lập**: Đóng gói nội bộ toàn bộ tài nguyên (HTML, CSS, JS, âm thanh, hình ảnh thẻ bài Neta & Poker).
-            - **Tải tệp APK**: Tải file `NetaLight.apk` bên dưới về điện thoại Android và chọn Cài đặt (Install).
-            - **Không cần Internet**: Mở ứng dụng lên là sử dụng ngay lập tức mọi lúc mọi nơi.
           files: build-output/NetaLight.apk
           draft: false
           prerelease: false

@@ -1,17 +1,18 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v5.0
--const CACHE_NAME = 'neta-poker-v5.0';
-+const CACHE_NAME = 'neta-poker-v5.0';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v5.1
+const CACHE_NAME = 'neta-poker-v5.1';
 
 const CORE_ASSETS = [
   './',
   'index.html',
-  'styles.css?v=5.0',
+  'styles.css',
   'html2canvas.min.js',
-  'cards_base64_data.js?v=5.0',
-  'cards_data.js?v=5.0',
-  'poker_data.js?v=5.0',
-  'app.js?v=5.0',
-  'manifest.json?v=5.0',
+  'cards_base64_data.js',
+  'cards_data.js',
+  'poker_data.js',
+  'app.js',
+  'manifest.json',
+  'anh_logo.jpg',
+  'Anh Logo.jpg',
   'neta_cards/card_back.png',
   'neta_cards/phap_an.jpg',
   'Porker/card_back.png',
@@ -35,7 +36,7 @@ for (const s of SUITS) {
   }
 }
 
-// Cài đặt và kích hoạt ngay lập tức không chờ đợi
+// Cài đặt và kích hoạt ngay lập tức
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
@@ -64,8 +65,8 @@ self.addEventListener('activate', (e) => {
 });
 
 // Chiến lược nạp tài nguyên:
-// 1. Ảnh tĩnh (.png, .jpg, .webp): Cache-First
-// 2. Mã nguồn (HTML, CSS, JS): Network-First, fallback về Cache nếu offline
+// 1. Ảnh tĩnh: Cache-First
+// 2. HTML/JS/CSS: Network-First
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
@@ -78,7 +79,7 @@ self.addEventListener('fetch', (e) => {
     url.pathname.endsWith('.webp')
   ) {
     e.respondWith(
-      caches.match(e.request).then((cached) => {
+      caches.match(e.request, { ignoreSearch: true }).then((cached) => {
         if (cached) return cached;
         return fetch(e.request)
           .then((networkResp) => {
@@ -94,7 +95,7 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Các file mã nguồn HTML, CSS, JS -> Network First để luôn nhận bản cập nhật mới nhất
+  // Các file mã nguồn HTML, CSS, JS -> Network First
   e.respondWith(
     fetch(e.request)
       .then((networkResp) => {
@@ -104,6 +105,6 @@ self.addEventListener('fetch', (e) => {
         }
         return networkResp;
       })
-      .catch(() => caches.match(e.request))
+      .catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });

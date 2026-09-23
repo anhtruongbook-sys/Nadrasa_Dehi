@@ -778,6 +778,27 @@
     readingModalBody.innerHTML = html;
   }
 
+  // Tra cứu ảnh Base64 nếu có sẵn để hiển thị tức thì và chống lỗi CORS trên Android WebView
+  function getResolvedCardImage(path) {
+    if (!path) return '';
+    if (path.startsWith('data:')) return path;
+    if (typeof window !== 'undefined' && window.CARDS_BASE64_DATA) {
+      try {
+        const clean = decodeURIComponent(path).replace(/\\/g, '/');
+        const filename = clean.split('/').pop().split('?')[0];
+        if (window.CARDS_BASE64_DATA[filename]) {
+          return window.CARDS_BASE64_DATA[filename];
+        }
+        for (const key in window.CARDS_BASE64_DATA) {
+          if (clean.endsWith(key)) {
+            return window.CARDS_BASE64_DATA[key];
+          }
+        }
+      } catch (e) {}
+    }
+    return path;
+  }
+
   // Create single card DOM element
   function createCardElement(card, index) {
     const cfg = DECK_CONFIG[currentDeckMode];
@@ -786,14 +807,16 @@
     item.setAttribute('data-index', index);
 
     const showTitleTag = currentDeckMode !== 'poker';
+    const backSrc = getResolvedCardImage(cfg.backImage);
+    const frontSrc = getResolvedCardImage(card.image);
 
     item.innerHTML = `
       <div class="card-inner">
         <div class="card-face card-back">
-          <img crossorigin="anonymous" src="${cfg.backImage}" alt="Mặt sau bài" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${cfg.backImage}?r='+Date.now()},250);}">
+          <img src="${backSrc}" alt="Mặt sau bài">
         </div>
         <div class="card-face card-front">
-          <img crossorigin="anonymous" src="${card.image}" alt="${card.name}" onerror="if(!this.dataset.r){this.dataset.r=1;setTimeout(()=>{this.src='${card.image}?r='+Date.now()},250);}">
+          <img src="${frontSrc}" alt="${card.name}">
         </div>
       </div>
       ${showTitleTag ? `<div class="card-title-tag">${card.name}</div>` : ''}
@@ -816,7 +839,7 @@
       // Poker Modal Template
       modalBodyContent.innerHTML = `
         <div class="modal-card-preview" style="aspect-ratio: 2/3; height: 260px; width: auto;">
-          <img src="${card.image}" alt="${card.name}">
+          <img src="${getResolvedCardImage(card.image)}" alt="${card.name}">
         </div>
         <h3 class="modal-card-title">${card.name}</h3>
         <div class="modal-tags">
@@ -837,7 +860,7 @@
       // Neta Light Modal Template
       modalBodyContent.innerHTML = `
         <div class="modal-card-preview">
-          <img src="${card.image}" alt="${card.name}">
+          <img src="${getResolvedCardImage(card.image)}" alt="${card.name}">
         </div>
         <h3 class="modal-card-title">${card.name}</h3>
         <div class="modal-tags">
@@ -1013,7 +1036,7 @@
       const meta = currentDeckMode === 'poker' ? `Chất ${card.suit} (${card.symbol}) • ${card.color}` : `Tần số: ${card.frequency} • ${card.group}`;
 
       item.innerHTML = `
-        <img src="${card.image}" alt="${card.name}" class="guide-thumb" loading="lazy">
+        <img src="${getResolvedCardImage(card.image)}" alt="${card.name}" class="guide-thumb" loading="lazy">
         <div class="guide-info">
           <div class="guide-name">#${card.id < 10 ? '0' + card.id : card.id} - ${card.name}</div>
           <div class="guide-meta">${meta}</div>
@@ -1036,7 +1059,7 @@
     if (currentDeckMode === 'poker') {
       modalBodyContent.innerHTML = `
         <div class="modal-card-preview" style="aspect-ratio: 2/3; height: 260px; width: auto;">
-          <img src="${card.image}" alt="${card.name}">
+          <img src="${getResolvedCardImage(card.image)}" alt="${card.name}">
         </div>
         <h3 class="modal-card-title">${card.name}</h3>
         <div class="modal-tags">
@@ -1056,7 +1079,7 @@
     } else {
       modalBodyContent.innerHTML = `
         <div class="modal-card-preview">
-          <img src="${card.image}" alt="${card.name}">
+          <img src="${getResolvedCardImage(card.image)}" alt="${card.name}">
         </div>
         <h3 class="modal-card-title">${card.name}</h3>
         <div class="modal-tags">
@@ -1344,7 +1367,6 @@
             if (cleanB64 && cleanB64.startsWith('data:')) {
               img.src = cleanB64;
             }
-            img.crossOrigin = 'anonymous';
           });
 
           const title = clonedDoc.querySelector('.app-title');
