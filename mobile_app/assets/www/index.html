@@ -78,7 +78,7 @@
         </div>
         <h2 class="empty-title" id="empty-title-text">Định Tâm Chiêm Nghiệm</h2>
         <p class="empty-desc" id="empty-desc-text">
-          Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chọn số lượng lá bài bên dưới.
+          Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chạm nút bên dưới để rút ngẫu nhiên 1 lá bài.
         </p>
         <div class="dev-brand-badge" id="dev-brand-badge">
           <img src="anh_logo.jpg" alt="Anh's Team" class="dev-brand-logo">
@@ -105,35 +105,30 @@
 
     <!-- Bottom Controls (Mobile-First Ergonomics) -->
     <footer class="app-controls">
-      <!-- Quick Initial Draw Row -->
+      <!-- Quick Initial Draw Row (Rút ngẫu nhiên 1 lá duy nhất) -->
       <div class="control-row initial-draw-row" id="initial-controls">
-        <button class="btn-draw" data-count="1" id="btn-draw-1">
-          <span class="btn-badge">Rút 1 lá</span>
-        </button>
-        <button class="btn-draw" data-count="3" id="btn-draw-3">
-          <span class="btn-badge">Rút 3 lá</span>
-        </button>
-        <button class="btn-draw" data-count="main" id="btn-draw-main">
-          <span class="btn-badge" id="btn-draw-main-text">Rút 10 lá</span>
+        <button class="btn-draw-main-single" id="btn-draw-single" title="Rút ngẫu nhiên 1 lá bài">
+          <span class="btn-single-icon">🎴</span>
+          <span class="btn-single-text" id="btn-draw-single-text">Rút ngẫu nhiên 1 lá</span>
         </button>
       </div>
 
       <!-- Active In-Session Controls -->
       <div class="control-row in-session-row" id="session-controls" style="display: none;">
-        <button class="btn-action btn-add-card" id="btn-draw-more">
+        <button class="btn-action btn-add-card" id="btn-draw-more" title="Rút tiếp ngẫu nhiên 1 lá">
           <span class="btn-icon-symbol">➕</span>
-          <span class="btn-text">Rút thêm</span>
+          <span class="btn-text">Rút tiếp</span>
         </button>
         <button class="btn-action btn-reading" id="btn-session-reading" style="display: none;">
           <span class="btn-icon-symbol">🔮</span>
           <span class="btn-text">Luận giải</span>
           <span class="reading-session-dot" id="reading-session-dot" style="display: none;"></span>
         </button>
-        <button class="btn-action btn-secondary" id="btn-shuffle">
+        <button class="btn-action btn-secondary" id="btn-shuffle" title="Xáo lại các lá bài còn lại trong bộ">
           <span class="btn-icon-symbol">🔀</span>
           <span class="btn-text">Xáo bài</span>
         </button>
-        <button class="btn-action btn-secondary" id="btn-reset">
+        <button class="btn-action btn-secondary btn-reset-action" id="btn-reset" title="Thu toàn bộ bài và dọn bàn">
           <span class="btn-icon-symbol">🔄</span>
           <span class="btn-text">Thu bài</span>
         </button>
@@ -165,6 +160,23 @@
         <button class="btn-nav" id="modal-prev-btn">◀ Lá trước</button>
         <span class="modal-counter" id="modal-card-counter">1/3</span>
         <button class="btn-nav" id="modal-next-btn">Lá sau ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Reset Modal (Hộp thoại xác nhận thu bài tinh tế) -->
+  <div class="modal-overlay" id="confirm-reset-modal" style="display: none;">
+    <div class="modal-dialog confirm-dialog">
+      <div class="confirm-icon-wrap">
+        <span class="confirm-symbol">🔄</span>
+      </div>
+      <h3 class="confirm-title" id="confirm-reset-title">Xác Nhận Thu Bài</h3>
+      <p class="confirm-desc" id="confirm-reset-desc">
+        Bác có muốn thu toàn bộ các lá bài trên bàn để bắt đầu lượt chiêm nghiệm mới không?
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-confirm-cancel" id="btn-cancel-reset">Giữ lại</button>
+        <button class="btn-confirm-ok" id="btn-confirm-reset">Thu bài</button>
       </div>
     </div>
   </div>

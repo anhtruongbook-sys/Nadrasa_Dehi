@@ -24,9 +24,7 @@
       getData: () => (typeof NETA_CARDS_DATA !== 'undefined' ? NETA_CARDS_DATA : []),
       totalCards: 48,
       emptyTitle: 'Định Tâm Chiêm Nghiệm',
-      emptyDesc: 'Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chọn số lượng lá bài bên dưới.',
-      mainDrawCount: 10,
-      mainDrawLabel: 'Rút 10 lá',
+      emptyDesc: 'Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chạm nút bên dưới để rút ngẫu nhiên 1 lá bài.',
       guideTitle: '📜 Bảng Tra Cứu Quân Bài Neta Light'
     },
     poker: {
@@ -37,9 +35,7 @@
       getData: () => (typeof POKER_CARDS_DATA !== 'undefined' ? POKER_CARDS_DATA : []),
       totalCards: 52,
       emptyTitle: 'Chiêm Đoán Bài Tây Poker',
-      emptyDesc: 'Tập trung vào sự việc hoặc người bạn muốn xem, sau đó chọn rút 1 lá, rút 3 lá hoặc rút 9 lá bên dưới.',
-      mainDrawCount: 9,
-      mainDrawLabel: 'Rút 9 lá',
+      emptyDesc: 'Tập trung vào sự việc hoặc người bạn muốn xem, sau đó chạm nút bên dưới để rút ngẫu nhiên 1 lá bài.',
       guideTitle: '♠️ Tra Cứu Quân Bài Tây (Poker)'
     }
   };
@@ -71,8 +67,10 @@
 
   const initialControls = document.getElementById('initial-controls');
   const sessionControls = document.getElementById('session-controls');
-  const btnDrawMain = document.getElementById('btn-draw-main');
-  const btnDrawMainText = document.getElementById('btn-draw-main-text');
+  const btnDrawSingle = document.getElementById('btn-draw-single');
+  const confirmResetModal = document.getElementById('confirm-reset-modal');
+  const btnCancelReset = document.getElementById('btn-cancel-reset');
+  const btnConfirmReset = document.getElementById('btn-confirm-reset');
 
   const deckRemainingText = document.getElementById('deck-remaining-text');
   const drawnCountText = document.getElementById('drawn-count-text');
@@ -159,7 +157,6 @@
     emptyAvatarImg.src = cfg.logo;
     emptyTitleText.textContent = cfg.emptyTitle;
     emptyDescText.textContent = cfg.emptyDesc;
-    btnDrawMainText.textContent = cfg.mainDrawLabel;
     guideModalTitle.textContent = cfg.guideTitle;
     guideSearchInput.value = '';
 
@@ -1109,16 +1106,16 @@
     tabModeNeta.addEventListener('click', () => switchDeckMode('neta'));
     tabModePoker.addEventListener('click', () => switchDeckMode('poker'));
 
-    // Initial draw buttons
-    document.getElementById('btn-draw-1').addEventListener('click', () => drawInitialBatch(1));
-    document.getElementById('btn-draw-3').addEventListener('click', () => drawInitialBatch(3));
-    btnDrawMain.addEventListener('click', () => {
-      const cfg = DECK_CONFIG[currentDeckMode];
-      drawInitialBatch(cfg.mainDrawCount);
-    });
+    // Initial single draw button (Chỉ rút ngẫu nhiên 1 lá duy nhất)
+    if (btnDrawSingle) {
+      btnDrawSingle.addEventListener('click', () => drawInitialBatch(1));
+    }
 
-    // In-session buttons
-    document.getElementById('btn-draw-more').addEventListener('click', drawMoreOneCard);
+    // In-session buttons (Rút tiếp 1 lá ngẫu nhiên)
+    const btnDrawMore = document.getElementById('btn-draw-more');
+    if (btnDrawMore) {
+      btnDrawMore.addEventListener('click', drawMoreOneCard);
+    }
 
     document.getElementById('btn-shuffle').addEventListener('click', () => {
       shuffleDeck(availableDeck);
@@ -1126,11 +1123,42 @@
       showToast('Đã xáo lại các lá bài còn lại trong bộ!');
     });
 
+    // Mở hộp thoại xác nhận thu bài tinh tế để tránh bấm nhầm
     document.getElementById('btn-reset').addEventListener('click', () => {
-      resetDeck();
-      playBellChime();
-      showToast('Đã thu bài và dọn bàn. Bạn có thể bắt đầu lượt bốc mới!');
+      if (confirmResetModal) {
+        confirmResetModal.style.display = 'flex';
+      } else {
+        resetDeck();
+        playBellChime();
+        showToast('Đã thu bài và dọn bàn. Bác có thể bắt đầu lượt rút mới!');
+      }
     });
+
+    // Nút hủy: Giữ lại bài trên bàn
+    if (btnCancelReset) {
+      btnCancelReset.addEventListener('click', () => {
+        if (confirmResetModal) confirmResetModal.style.display = 'none';
+      });
+    }
+
+    // Click ra ngoài hộp thoại để đóng
+    if (confirmResetModal) {
+      confirmResetModal.addEventListener('click', (e) => {
+        if (e.target === confirmResetModal) {
+          confirmResetModal.style.display = 'none';
+        }
+      });
+    }
+
+    // Nút xác nhận thu bài
+    if (btnConfirmReset) {
+      btnConfirmReset.addEventListener('click', () => {
+        if (confirmResetModal) confirmResetModal.style.display = 'none';
+        resetDeck();
+        playBellChime();
+        showToast('Đã thu bài và dọn bàn. Bác có thể bắt đầu lượt rút mới!');
+      });
+    }
 
     // Theme toggle (Sáng / Tối)
     if (btnTheme) {
