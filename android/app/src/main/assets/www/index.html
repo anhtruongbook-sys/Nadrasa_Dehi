@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Bốc Bài Neta Light - Pháp môn Nadrasa Dehi</title>
+  
+  <!-- Mobile & PWA Meta Tags -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#1a0003">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=3.5">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=3.5">
+  <link rel="icon" type="image/x-icon" href="favicon.ico?v=3.5">
+  <link rel="manifest" href="manifest.json?v=3.5">
+  
+  <link rel="stylesheet" href="styles.css?v=4.3">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <img src="neta_cards/phap_an.jpg" alt="Logo Bộ Bài" class="header-logo" id="header-logo">
+        <div class="header-titles">
+          <h1 class="app-title" id="app-main-title">NETA LIGHT</h1>
+          <p class="app-subtitle" id="app-sub-title">Pháp môn Nadrasa Dehi</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-sound" class="btn-icon" title="Âm thanh Chuông" aria-label="Bật/Tắt âm thanh">
+          <span class="icon" id="sound-icon">🔔</span>
+        </button>
+        <button id="btn-guide" class="btn-icon" title="Tra cứu danh mục lá bài" aria-label="Xem danh sách bài">
+          <span class="icon">📜</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Deck Mode Tabs (Chuyển đổi tức thì 2 bộ bài) -->
+    <nav class="deck-mode-tabs" aria-label="Chọn bộ bài">
+      <button class="mode-tab active" id="tab-mode-neta" data-mode="neta">
+        <span class="tab-icon">🪷</span>
+        <span class="tab-text">Neta Light</span>
+      </button>
+      <button class="mode-tab" id="tab-mode-poker" data-mode="poker">
+        <span class="tab-icon">♠️</span>
+        <span class="tab-text">Bài Tây Poker</span>
+      </button>
+    </nav>
+
+    <!-- Top Status Bar (Ẩn hiển thị số đếm lá bài) -->
+    <div class="deck-status-bar" style="display: none;">
+      <div class="status-item">
+        <span class="status-dot"></span>
+        <span id="deck-remaining-text">Bộ bài</span>
+      </div>
+      <div class="status-item" id="drawn-count-item">
+        <span>Đã bốc: <strong id="drawn-count-text">0</strong> lá</span>
+      </div>
+    </div>
+
+    <!-- Main Card Arena / Table -->
+    <main class="card-arena-container" id="arena-container">
+      <!-- Empty State -->
+      <div class="arena-empty-state" id="empty-state">
+        <div class="mandala-circle" id="empty-avatar-circle">
+          <img src="neta_cards/phap_an.jpg" alt="Biểu Tượng" class="empty-phapan" id="empty-avatar-img">
+        </div>
+        <h2 class="empty-title" id="empty-title-text">Định Tâm Chiêm Nghiệm</h2>
+        <p class="empty-desc" id="empty-desc-text">
+          Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chọn số lượng lá bài bên dưới.
+        </p>
+      </div>
+
+      <!-- Hint Bar khi đã trải bài -->
+      <div class="arena-hint-bar" id="arena-hint" style="display: none;">
+        <span class="hint-text" id="arena-hint-text">✨ Chạm lá bài để phóng to</span>
+        <button class="btn-hint-reading" id="btn-open-reading" style="display: none;">
+          <span class="hint-icon">🔮</span>
+          <span>Xem Luận Giải</span>
+          <span class="reading-alert-badge" id="reading-alert-badge" style="display: none;">!</span>
+        </button>
+      </div>
+
+      <!-- Dynamic Cards Grid (Sẽ được chèn tự động qua JS) -->
+      <div class="cards-grid" id="cards-grid" style="display: none;"></div>
+    </main>
+
+    <!-- Bottom Controls (Mobile-First Ergonomics) -->
+    <footer class="app-controls">
+      <!-- Quick Initial Draw Row -->
+      <div class="control-row initial-draw-row" id="initial-controls">
+        <button class="btn-draw" data-count="1" id="btn-draw-1">
+          <span class="btn-badge">Rút 1 lá</span>
+        </button>
+        <button class="btn-draw" data-count="3" id="btn-draw-3">
+          <span class="btn-badge">Rút 3 lá</span>
+        </button>
+        <button class="btn-draw" data-count="main" id="btn-draw-main">
+          <span class="btn-badge" id="btn-draw-main-text">Rút 10 lá</span>
+        </button>
+      </div>
+
+      <!-- Active In-Session Controls -->
+      <div class="control-row in-session-row" id="session-controls" style="display: none;">
+        <button class="btn-action btn-add-card" id="btn-draw-more">
+          <span class="btn-icon-symbol">➕</span>
+          <span class="btn-text">Rút thêm</span>
+        </button>
+        <button class="btn-action btn-reading" id="btn-session-reading" style="display: none;">
+          <span class="btn-icon-symbol">🔮</span>
+          <span class="btn-text">Luận giải</span>
+          <span class="reading-session-dot" id="reading-session-dot" style="display: none;"></span>
+        </button>
+        <button class="btn-action btn-secondary" id="btn-shuffle">
+          <span class="btn-icon-symbol">🔀</span>
+          <span class="btn-text">Xáo bài</span>
+        </button>
+        <button class="btn-action btn-secondary" id="btn-reset">
+          <span class="btn-icon-symbol">🔄</span>
+          <span class="btn-text">Thu bài</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Spiritual Reading Modal (Luận giải Tâm Linh Tụ & Bộ) -->
+  <div class="modal-overlay" id="reading-modal" style="display: none;">
+    <div class="modal-dialog reading-dialog">
+      <div class="guide-header">
+        <h2 id="reading-modal-title">🃏 Luận Giải Tâm Linh Bài Tây</h2>
+        <button class="modal-close" id="reading-close-btn" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="reading-modal-body" id="reading-modal-body">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Detail Modal (Popup Phóng to Lá Bài) -->
+  <div class="modal-overlay" id="card-modal" style="display: none;">
+    <div class="modal-dialog">
+      <button class="modal-close" id="modal-close-btn" aria-label="Đóng">&times;</button>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Rendered dynamically via JS -->
+      </div>
+      <div class="modal-nav">
+        <button class="btn-nav" id="modal-prev-btn">◀ Lá trước</button>
+        <span class="modal-counter" id="modal-card-counter">1/3</span>
+        <button class="btn-nav" id="modal-next-btn">Lá sau ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deck Guide Modal (Xem danh bạ lá bài) -->
+  <div class="modal-overlay" id="guide-modal" style="display: none;">
+    <div class="modal-dialog guide-dialog">
+      <div class="guide-header">
+        <h2 id="guide-modal-title">📜 Danh Mục Lá Bài</h2>
+        <button class="modal-close" id="guide-close-btn" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="guide-search-box">
+        <input type="text" id="guide-search-input" placeholder="🔍 Tìm kiếm quân bài...">
+      </div>
+      <div class="guide-cards-list" id="guide-cards-list"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification" id="toast"></div>
+
+  <!-- Load Databases and Scripts -->
+  <script src="cards_data.js?v=4.3"></script>
+  <script src="poker_data.js?v=4.3"></script>
+  <script src="app.js?v=4.3"></script>
+</body>
+</html>

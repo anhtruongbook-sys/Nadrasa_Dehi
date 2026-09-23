@@ -1,0 +1,14 @@
+<resources>
+    <style name="Theme.NetaLight" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#d4af37</item>
+        <item name="colorPrimaryVariant">#aa820a</item>
+        <item name="colorOnPrimary">#120104</item>
+        <item name="android:statusBarColor">#1a0003</item>
+        <item name="android:navigationBarColor">#1a0003</item>
+    </style>
+
+    <style name="Theme.NetaLight.Fullscreen" parent="Theme.NetaLight">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+</resources>
