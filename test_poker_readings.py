@@ -35,47 +35,88 @@ async def run():
         print(f"[TEST] Rendered {len(card_items)} card items on arena.")
         assert len(card_items) == 9, f"Expected 9 cards, got: {len(card_items)}"
 
-        # Check poker grid class
-        is_poker_col_3 = await page.evaluate("() => document.getElementById('cards-grid').classList.contains('poker-col-3')")
-        assert is_poker_col_3, "cards-grid should have .poker-col-3 class for 3 cards per row"
+        # Verify NO reading panel shown on arena directly ("ko hiện sẵn luận giải")
+        reading_panel_exists = await page.is_visible("#poker-reading-panel")
+        print(f"[TEST] Reading panel on arena visible: {reading_panel_exists}")
+        assert not reading_panel_exists, "Reading panel should NOT be shown directly on table arena!"
 
-        # Check Poker Reading Panel is visible
-        panel_visible = await page.is_visible("#poker-reading-panel")
-        print(f"[TEST] Poker reading panel visible: {panel_visible}")
-        assert panel_visible, "poker-reading-panel should be visible"
+        # Verify Footer controls are FIXED inside viewport (not scrolled out of view)
+        footer_box = await page.locator("#session-controls").bounding_box()
+        print(f"[TEST] Footer controls box: {footer_box}")
+        assert footer_box['y'] + footer_box['height'] <= 844 + 5, "Footer controls must be fixed inside viewport!"
+
+        # Verify all 9 cards fit inside arena without being covered by footer controls
+        last_card_box = await card_items[-1].bounding_box()
+        print(f"[TEST] 9th card bottom: {last_card_box['y'] + last_card_box['height']} vs Footer top: {footer_box['y']}")
+        assert last_card_box['y'] + last_card_box['height'] <= footer_box['y'] + 10, "Cards must fit within 1 screen above footer controls!"
+
+        # Verify reading buttons are visible
+        hint_reading_visible = await page.is_visible("#btn-open-reading")
+        session_reading_visible = await page.is_visible("#btn-session-reading")
+        print(f"[TEST] Hint reading button: {hint_reading_visible}, Session reading button: {session_reading_visible}")
+        assert hint_reading_visible and session_reading_visible, "Reading buttons should be visible in Poker mode!"
+
+        # Save screenshot of clean fitscreen table
+        await page.screenshot(path="screenshot_poker_fitscreen.png")
+        print("[TEST] Saved screenshot_poker_fitscreen.png")
+
+        # Open Spiritual Reading Modal
+        print("[TEST] 4. Opening Spiritual Reading Modal...")
+        await page.click("#btn-session-reading")
+        await page.wait_for_timeout(500)
+
+        modal_visible = await page.is_visible("#reading-modal")
+        assert modal_visible, "Reading modal should be visible after clicking reading button"
 
         # Check Tụ 1 badge
         tu1_badge = await page.text_content(".tu-reading-box.tu-1 .tu-box-badge")
-        print(f"[TEST] Tụ 1 badge: {tu1_badge.strip()}")
+        print(f"[TEST] Modal Tụ 1 badge: {tu1_badge.strip()}")
         assert "Xác nhận cao nhất" in tu1_badge
 
         # Check Tụ 2 badge
         tu2_badge = await page.text_content(".tu-reading-box.tu-2 .tu-box-badge")
-        print(f"[TEST] Tụ 2 badge: {tu2_badge.strip()}")
+        print(f"[TEST] Modal Tụ 2 badge: {tu2_badge.strip()}")
         assert "Có thể chấp nhận được" in tu2_badge
 
         # Check Tụ 3 badge
         tu3_badge = await page.text_content(".tu-reading-box.tu-3 .tu-box-badge")
-        print(f"[TEST] Tụ 3 badge: {tu3_badge.strip()}")
+        print(f"[TEST] Modal Tụ 3 badge: {tu3_badge.strip()}")
         assert "Cần kiểm tra bốc lại" in tu3_badge
 
-        # Take screenshot of 9-card reading
-        await page.screenshot(path="screenshot_poker_9cards.png", full_page=True)
-        print("[TEST] Saved screenshot_poker_9cards.png")
+        # Save screenshot of Reading Modal
+        await page.screenshot(path="screenshot_reading_modal.png")
+        print("[TEST] Saved screenshot_reading_modal.png")
+
+        # Close Reading Modal
+        await page.click("#reading-close-btn")
+        await page.wait_for_timeout(300)
+        modal_closed = not (await page.is_visible("#reading-modal"))
+        assert modal_closed, "Reading modal should be closed"
 
         # Test Draw More (1 lá nữa -> 10 lá -> Tụ 4 bổ trợ)
-        print("[TEST] 4. Drawing 1 more card (Testing Tụ 4)...")
+        print("[TEST] 5. Drawing 1 more card (Testing Tụ 4 & auto-scaling to 4 rows)...")
         await page.click("#btn-draw-more")
         await page.wait_for_timeout(600)
 
         card_items_10 = await page.query_selector_all(".card-item")
         assert len(card_items_10) == 10, f"Expected 10 cards, got: {len(card_items_10)}"
 
+        # Verify 10 cards still fit within screen
+        last_card_10_box = await card_items_10[-1].bounding_box()
+        footer_box_after = await page.locator("#session-controls").bounding_box()
+        print(f"[TEST] 10th card bottom: {last_card_10_box['y'] + last_card_10_box['height']} vs Footer top: {footer_box_after['y']}")
+        assert last_card_10_box['y'] + last_card_10_box['height'] <= footer_box_after['y'] + 10, "10 cards must still fit within 1 screen!"
+
+        # Check Tụ 4 in modal
+        await page.click("#btn-session-reading")
+        await page.wait_for_timeout(400)
         tu4_exists = await page.is_visible(".tu-reading-box.tu-extra")
         assert tu4_exists, "Tụ bổ trợ (tu-extra) should be visible when 10 cards drawn"
         tu4_badge = await page.text_content(".tu-reading-box.tu-extra .tu-box-badge")
         print(f"[TEST] Tụ 4 badge: {tu4_badge.strip()}")
         assert "Bổ trợ thông tin" in tu4_badge
+        await page.click("#reading-close-btn")
+        await page.wait_for_timeout(200)
 
         # Run algorithmic unit tests inside page context
         print("[TEST] 5. Running in-browser unit tests for spiritual combos...")

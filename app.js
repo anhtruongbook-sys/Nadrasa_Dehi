@@ -56,8 +56,18 @@
   const emptyTitleText = document.getElementById('empty-title-text');
   const emptyDescText = document.getElementById('empty-desc-text');
 
+  const arenaContainer = document.getElementById('arena-container');
   const arenaHint = document.getElementById('arena-hint');
   const cardsGrid = document.getElementById('cards-grid');
+
+  const btnOpenReading = document.getElementById('btn-open-reading');
+  const readingAlertBadge = document.getElementById('reading-alert-badge');
+  const btnSessionReading = document.getElementById('btn-session-reading');
+  const readingSessionDot = document.getElementById('reading-session-dot');
+
+  const readingModal = document.getElementById('reading-modal');
+  const readingCloseBtn = document.getElementById('reading-close-btn');
+  const readingModalBody = document.getElementById('reading-modal-body');
 
   const initialControls = document.getElementById('initial-controls');
   const sessionControls = document.getElementById('session-controls');
@@ -72,7 +82,6 @@
   const soundIcon = document.getElementById('sound-icon');
   const btnGuide = document.getElementById('btn-guide');
   const toast = document.getElementById('toast');
-  const pokerReadingPanel = document.getElementById('poker-reading-panel');
 
   // Modal Elements
   const cardModal = document.getElementById('card-modal');
@@ -202,10 +211,9 @@
     if (arenaHint) arenaHint.style.display = 'none';
     cardsGrid.style.display = 'none';
     cardsGrid.innerHTML = '';
-    if (pokerReadingPanel) {
-      pokerReadingPanel.style.display = 'none';
-      pokerReadingPanel.innerHTML = '';
-    }
+    if (btnOpenReading) btnOpenReading.style.display = 'none';
+    if (btnSessionReading) btnSessionReading.style.display = 'none';
+    closeReadingModal();
     initialControls.style.display = 'flex';
     sessionControls.style.display = 'none';
   }
@@ -218,44 +226,73 @@
     sessionControls.style.display = 'flex';
   }
 
-  // Dynamic Adaptive Layout Engine
-  function applyDynamicLayout(count) {
-    cardsGrid.className = 'cards-grid';
+  // Dynamic Card Auto-Scaling Engine
+  // Đảm bảo tất cả các lá bài luôn tự thu nhỏ để vừa khít 100% trong 1 màn hình duy nhất
+  function fitCardsToScreen() {
+    if (!cardsGrid || drawnCards.length === 0) return;
 
-    // Bố cục Bài Tây Poker: Tối đa 3 lá / hàng, luôn căn giữa
+    const count = drawnCards.length;
+    const arenaW = arenaContainer ? arenaContainer.clientWidth : window.innerWidth;
+    const arenaH = arenaContainer ? arenaContainer.clientHeight : window.innerHeight * 0.65;
+
+    let cols = 3;
+    let rows = 1;
+
     if (currentDeckMode === 'poker') {
-      cardsGrid.classList.add('poker-grid');
       if (count === 1) {
-        cardsGrid.classList.add('poker-col-1');
+        cols = 1; rows = 1;
       } else if (count === 2) {
-        cardsGrid.classList.add('poker-col-2');
+        cols = 2; rows = 1;
       } else {
-        // 3 lá, 9 lá hoặc rút thêm: Luôn tối đa đúng 3 lá trên 1 hàng
-        cardsGrid.classList.add('poker-col-3');
+        cols = 3;
+        rows = Math.ceil(count / 3);
       }
-      return;
+    } else {
+      // Neta Light
+      if (count === 1) { cols = 1; rows = 1; }
+      else if (count === 2) { cols = 2; rows = 1; }
+      else if (count === 3) { cols = 3; rows = 1; }
+      else if (count <= 6) { cols = 3; rows = 2; }
+      else if (count <= 8) { cols = 4; rows = 2; }
+      else if (count <= 10) { cols = 5; rows = 2; }
+      else { cols = 5; rows = Math.ceil(count / 5); }
     }
 
-    // Bố cục Neta Light (Cách bốc chính 10 lá 5 cột)
-    if (count === 1) {
-      cardsGrid.classList.add('layout-1');
-    } else if (count === 2) {
-      cardsGrid.classList.add('layout-2');
-    } else if (count === 3) {
-      cardsGrid.classList.add('layout-3');
-    } else if (count === 4) {
-      cardsGrid.classList.add('layout-4');
-    } else if (count >= 5 && count <= 6) {
-      cardsGrid.classList.add('layout-5-6');
-    } else if (count >= 7 && count <= 8) {
-      cardsGrid.classList.add('layout-7-8');
-    } else if (count >= 9 && count <= 15) {
-      cardsGrid.classList.add('layout-5-col');
-    } else if (count >= 16 && count <= 20) {
-      cardsGrid.classList.add('layout-5-col');
-    } else {
-      cardsGrid.classList.add('layout-17-plus');
-    }
+    // Khoảng cách an toàn giữa các lá bài
+    const gapX = cols >= 5 ? 3 : (cols === 3 ? 5 : 8);
+    const gapY = rows >= 4 ? 3 : (rows === 3 ? 5 : 8);
+    const labelH = rows >= 4 ? 12 : (rows === 3 ? 14 : 16);
+    const fontSize = rows >= 4 ? '0.48rem' : (rows === 3 ? '0.56rem' : '0.64rem');
+
+    const hintH = (arenaHint && arenaHint.style.display !== 'none') ? (arenaHint.offsetHeight || 30) : 0;
+    const padX = 12;
+    const padY = 16 + hintH;
+    const availW = Math.max(80, arenaW - padX);
+    const availH = Math.max(80, arenaH - padY);
+
+    // Tính kích thước tối đa theo trục ngang và trục dọc
+    const maxCellW = Math.floor((availW - (cols - 1) * gapX) / cols);
+    const maxCellH = Math.floor((availH - (rows - 1) * gapY) / rows);
+    const maxCardH_fromHeight = maxCellH - labelH;
+
+    // Tỉ lệ Poker = 2/3 (0.667), Neta = 5/7 (0.714)
+    const ratio = currentDeckMode === 'poker' ? (2 / 3) : (5 / 7);
+    const maxCardH_fromWidth = maxCellW / ratio;
+
+    let optimalCardH = Math.min(maxCardH_fromHeight, maxCardH_fromWidth);
+    const capMaxH = count === 1 ? 230 : (count === 2 ? 180 : (count === 3 ? 160 : (rows >= 4 ? 115 : 145)));
+    optimalCardH = Math.min(optimalCardH, capMaxH);
+    optimalCardH = Math.max(optimalCardH, 36);
+
+    const optimalCardW = Math.floor(optimalCardH * ratio);
+
+    cardsGrid.style.setProperty('--grid-cols', cols);
+    cardsGrid.style.setProperty('--card-w', `${optimalCardW}px`);
+    cardsGrid.style.setProperty('--card-h', `${optimalCardH}px`);
+    cardsGrid.style.setProperty('--card-gap-x', `${gapX}px`);
+    cardsGrid.style.setProperty('--card-gap-y', `${gapY}px`);
+    cardsGrid.style.setProperty('--card-font-size', fontSize);
+    cardsGrid.style.setProperty('--card-label-h', `${labelH}px`);
   }
 
   // Draw initial batch (1, 3, or main count)
@@ -282,7 +319,6 @@
   function renderDrawnCards(animateFlip) {
     cardsGrid.innerHTML = '';
     cardsGrid.style.display = 'grid';
-    applyDynamicLayout(drawnCards.length);
 
     drawnCards.forEach((card, index) => {
       const cardEl = createCardElement(card, index);
@@ -298,6 +334,7 @@
       }
     });
 
+    fitCardsToScreen();
     renderPokerReadingPanel(drawnCards);
   }
 
@@ -313,7 +350,6 @@
     drawnCards.push(newCard);
 
     updateStatusBar();
-    applyDynamicLayout(drawnCards.length);
 
     const cardIndex = drawnCards.length - 1;
     const cardEl = createCardElement(newCard, cardIndex);
@@ -322,9 +358,9 @@
     setTimeout(() => {
       cardEl.classList.add('flipped');
       playFlipChime();
-      cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 100);
 
+    fitCardsToScreen();
     renderPokerReadingPanel(drawnCards);
     showToast(`Đã rút thêm: ${newCard.name}`);
   }
@@ -488,21 +524,39 @@
     return alerts;
   }
 
-  // Render Poker Reading Panel
+  // Open Spiritual Reading Modal
+  function openReadingModal() {
+    if (!readingModal) return;
+    readingModal.style.display = 'flex';
+  }
+
+  // Close Spiritual Reading Modal
+  function closeReadingModal() {
+    if (!readingModal) return;
+    readingModal.style.display = 'none';
+  }
+
+  // Render Poker Reading Content into Modal
   function renderPokerReadingPanel(cards) {
-    if (!pokerReadingPanel) return;
+    if (!readingModalBody) return;
 
     if (currentDeckMode !== 'poker' || !cards || cards.length === 0) {
-      pokerReadingPanel.style.display = 'none';
-      pokerReadingPanel.innerHTML = '';
+      if (btnOpenReading) btnOpenReading.style.display = 'none';
+      if (btnSessionReading) btnSessionReading.style.display = 'none';
+      readingModalBody.innerHTML = '';
       return;
     }
+
+    // Hiển thị nút bấm Luận Giải ở Hint Bar và Session Controls
+    if (btnOpenReading) btnOpenReading.style.display = 'inline-flex';
+    if (btnSessionReading) btnSessionReading.style.display = 'inline-flex';
 
     const consecutiveAlerts = detectConsecutiveCombos(cards);
     const matchingTuAlerts = checkMatchingTus(cards);
 
     // Group cards into Tụ (mỗi tụ 3 lá)
     const tus = [];
+    let hasAnyCombo = false;
     const totalTus = Math.ceil(cards.length / 3);
     for (let i = 0; i < totalTus; i++) {
       const start = i * 3;
@@ -534,6 +588,7 @@
       }
 
       const combo = tuCards.length === 3 ? detectTuCombo(tuCards) : null;
+      if (combo) hasAnyCombo = true;
 
       tus.push({
         index: i + 1,
@@ -547,9 +602,18 @@
       });
     }
 
+    // Bật dot/badge cảnh báo nếu có phát hiện đặc biệt
+    const hasAlert = consecutiveAlerts.length > 0 || matchingTuAlerts.length > 0 || hasAnyCombo;
+    if (readingAlertBadge) {
+      readingAlertBadge.style.display = hasAlert ? 'inline-flex' : 'none';
+    }
+    if (readingSessionDot) {
+      readingSessionDot.style.display = hasAlert ? 'block' : 'none';
+    }
+
     let html = `
       <div class="poker-panel-title">
-        <span>🃏 Luận Giải Tâm Linh Bài Tây 52 Lá</span>
+        <span>🃏 Chi Tiết Luận Giải 52 Quân Bài Tây</span>
       </div>
     `;
 
@@ -615,8 +679,7 @@
       `;
     });
 
-    pokerReadingPanel.innerHTML = html;
-    pokerReadingPanel.style.display = 'block';
+    readingModalBody.innerHTML = html;
   }
 
   // Create single card DOM element
@@ -959,11 +1022,34 @@
       }
     });
 
+    // Spiritual Reading Modal
+    if (btnOpenReading) {
+      btnOpenReading.addEventListener('click', openReadingModal);
+    }
+    if (btnSessionReading) {
+      btnSessionReading.addEventListener('click', openReadingModal);
+    }
+    if (readingCloseBtn) {
+      readingCloseBtn.addEventListener('click', closeReadingModal);
+    }
+    if (readingModal) {
+      readingModal.addEventListener('click', (e) => {
+        if (e.target === readingModal) closeReadingModal();
+      });
+    }
+
+    // Auto-fit cards on screen resize
+    window.addEventListener('resize', fitCardsToScreen);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(fitCardsToScreen, 150);
+    });
+
     // Close on Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal();
         guideModal.style.display = 'none';
+        closeReadingModal();
       }
     });
   }
@@ -972,7 +1058,7 @@
   function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=3.5').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=3.6').catch(() => {});
       });
     }
   }

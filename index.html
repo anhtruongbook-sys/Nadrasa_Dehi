@@ -17,7 +17,7 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico?v=3.5">
   <link rel="manifest" href="manifest.json?v=3.5">
   
-  <link rel="stylesheet" href="styles.css?v=3.6">
+  <link rel="stylesheet" href="styles.css?v=3.7">
 </head>
 <body>
   <div id="app-container">
@@ -77,13 +77,17 @@
       </div>
 
       <!-- Hint Bar khi đã trải bài -->
-      <div class="arena-hint-bar" id="arena-hint" style="display: none;">✨ Chạm vào quân bài để xem giải nghĩa & chi tiết</div>
+      <div class="arena-hint-bar" id="arena-hint" style="display: none;">
+        <span class="hint-text" id="arena-hint-text">✨ Chạm lá bài để phóng to</span>
+        <button class="btn-hint-reading" id="btn-open-reading" style="display: none;">
+          <span class="hint-icon">🔮</span>
+          <span>Xem Luận Giải</span>
+          <span class="reading-alert-badge" id="reading-alert-badge" style="display: none;">!</span>
+        </button>
+      </div>
 
       <!-- Dynamic Cards Grid (Sẽ được chèn tự động qua JS) -->
       <div class="cards-grid" id="cards-grid" style="display: none;"></div>
-
-      <!-- Poker Spiritual Reading Panel (Luận giải Tụ & Bộ bài) -->
-      <div class="poker-reading-panel" id="poker-reading-panel" style="display: none;"></div>
     </main>
 
     <!-- Bottom Controls (Mobile-First Ergonomics) -->
@@ -105,8 +109,13 @@
       <div class="control-row in-session-row" id="session-controls" style="display: none;">
         <button class="btn-action btn-add-card" id="btn-draw-more">
           <span class="btn-icon-symbol">➕</span>
-          <span class="btn-text">Rút thêm 1 lá</span>
-          <span class="btn-subtext" id="btn-remaining-sub">(Còn 47)</span>
+          <span class="btn-text">Rút thêm</span>
+          <span class="btn-subtext" id="btn-remaining-sub">(43)</span>
+        </button>
+        <button class="btn-action btn-reading" id="btn-session-reading" style="display: none;">
+          <span class="btn-icon-symbol">🔮</span>
+          <span class="btn-text">Luận giải</span>
+          <span class="reading-session-dot" id="reading-session-dot" style="display: none;"></span>
         </button>
         <button class="btn-action btn-secondary" id="btn-shuffle">
           <span class="btn-icon-symbol">🔀</span>
@@ -118,6 +127,19 @@
         </button>
       </div>
     </footer>
+  </div>
+
+  <!-- Spiritual Reading Modal (Luận giải Tâm Linh Tụ & Bộ) -->
+  <div class="modal-overlay" id="reading-modal" style="display: none;">
+    <div class="modal-dialog reading-dialog">
+      <div class="guide-header">
+        <h2 id="reading-modal-title">🃏 Luận Giải Tâm Linh Bài Tây</h2>
+        <button class="modal-close" id="reading-close-btn" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="reading-modal-body" id="reading-modal-body">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
   </div>
 
   <!-- Card Detail Modal (Popup Phóng to Lá Bài) -->
@@ -153,8 +175,8 @@
   <div class="toast-notification" id="toast"></div>
 
   <!-- Load Databases and Scripts -->
-  <script src="cards_data.js?v=3.6"></script>
-  <script src="poker_data.js?v=3.6"></script>
-  <script src="app.js?v=3.6"></script>
+  <script src="cards_data.js?v=3.7"></script>
+  <script src="poker_data.js?v=3.7"></script>
+  <script src="app.js?v=3.7"></script>
 </body>
 </html>
