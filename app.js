@@ -15,6 +15,7 @@
 
   // DOM Elements
   const emptyState = document.getElementById('empty-state');
+  const arenaHint = document.getElementById('arena-hint');
   const cardsGrid = document.getElementById('cards-grid');
   const initialControls = document.getElementById('initial-controls');
   const sessionControls = document.getElementById('session-controls');
@@ -46,6 +47,91 @@
     bindEvents();
     renderGuideList();
     registerServiceWorker();
+  }
+
+  // Audio System using Web Audio API (Chime/Bell)
+  function playBellChime() {
+    if (!soundEnabled) return;
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+
+      // Tibetan Singing Bowl Harmony
+      const freqs = [528, 792, 1056];
+      freqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+        gain.gain.setValueAtTime(0.12 / (idx + 1), ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 2.5);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 2.5);
+      });
+    } catch (e) {
+      console.warn('Audio not supported or blocked:', e);
+    }
+  }
+
+  function playFlipChime() {
+    if (!soundEnabled) return;
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(660, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } catch (e) {
+      // Ignored
+    }
+  }
+
+  function playCardSlideSound() {
+    if (!soundEnabled) return;
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(554, ctx.currentTime + 0.12);
+
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.2);
+    } catch (e) {
+      // Ignored
+    }
   }
 
   // Reset / Initialize Deck
@@ -92,6 +178,7 @@
 
   function showEmptyState() {
     emptyState.style.display = 'flex';
+    if (arenaHint) arenaHint.style.display = 'none';
     cardsGrid.style.display = 'none';
     cardsGrid.innerHTML = '';
     initialControls.style.display = 'flex';
@@ -100,6 +187,7 @@
 
   function showActiveArena() {
     emptyState.style.display = 'none';
+    if (arenaHint) arenaHint.style.display = 'flex';
     cardsGrid.style.display = 'grid';
     initialControls.style.display = 'none';
     sessionControls.style.display = 'flex';

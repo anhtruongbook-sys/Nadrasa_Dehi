@@ -1,10 +1,14 @@
 # Temporary / demo files
 demo_*.png
 verify_*.png
+test_*.png
+phone_*.png
+qr_code_*.png
 pdf_page1_preview.png
 extracted_cards/
 __pycache__/
 *.pyc
+cloudflared.exe
 
 # OS files
 Thumbs.db
