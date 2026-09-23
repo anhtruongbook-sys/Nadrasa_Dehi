@@ -1153,93 +1153,115 @@
     if (screenshotModal) screenshotModal.style.display = 'none';
   }
 
+  function triggerCameraFlash() {
+    const flash = document.createElement('div');
+    flash.className = 'camera-flash-overlay';
+    document.body.appendChild(flash);
+    requestAnimationFrame(() => {
+      flash.classList.add('flash-fade');
+      setTimeout(() => {
+        if (flash.parentNode) flash.parentNode.removeChild(flash);
+      }, 350);
+    });
+  }
+
+  function playCameraShutterSound() {
+    if (!soundEnabled) return;
+    try {
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.06);
+
+      setTimeout(() => playBellChime(), 60);
+    } catch (e) {}
+  }
+
   async function captureArenaScreenshot() {
     if (drawnCards.length === 0) {
       showToast('Chưa có quân bài nào trên bàn để chụp!');
       return;
     }
 
-    showToast('📸 Đang tạo ảnh trải bài...');
+    triggerCameraFlash();
+    playCameraShutterSound();
+    showToast('📸 Đang chụp và lưu ảnh vào máy...');
 
     try {
-      const arena = document.getElementById('arena-container');
-      if (!arena) return;
+      const appContainer = document.getElementById('app-container');
+      if (!appContainer) return;
 
       if (typeof html2canvas === 'undefined') {
         showToast('Đang nạp công cụ chụp ảnh, vui lòng thử lại sau giây lát!');
         return;
       }
 
-      const hint = document.getElementById('arena-hint');
-      const originalHintDisplay = hint ? hint.style.display : '';
-      if (hint) hint.style.display = 'none';
-
-      const canvas = await html2canvas(arena, {
+      // Capture full app container at retina 2x resolution
+      const canvas = await html2canvas(appContainer, {
         scale: 2,
         backgroundColor: '#120104',
         useCORS: true,
         logging: false,
-        allowTaint: true
+        allowTaint: true,
+        onclone: (clonedDoc) => {
+          const title = clonedDoc.querySelector('.app-title');
+          if (title) {
+            title.style.background = 'none';
+            title.style.webkitBackgroundClip = 'initial';
+            title.style.webkitTextFillColor = '#f5b041';
+            title.style.color = '#f5b041';
+          }
+        }
       });
 
-      if (hint) hint.style.display = originalHintDisplay;
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+      const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
+      const filename = `${modeName}_TraiBai_${dateStr}.png`;
 
-      currentScreenshotDataUrl = canvas.toDataURL('image/png');
-      screenshotPreviewImg.src = currentScreenshotDataUrl;
-
+      // Trigger instant direct download into user device
       canvas.toBlob((blob) => {
-        currentScreenshotBlob = blob;
+        if (!blob) {
+          const dataUrl = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else {
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        }
+        showToast('✨ Đã chụp và lưu ảnh trải bài vào máy!');
       }, 'image/png');
 
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([''], 'test.png', { type: 'image/png' })] })) {
-        if (btnShareScreenshot) btnShareScreenshot.style.display = 'inline-flex';
-      } else {
-        if (btnShareScreenshot) btnShareScreenshot.style.display = 'none';
-      }
-
-      screenshotModal.style.display = 'flex';
-      playBellChime();
-      showToast('✨ Đã chụp ảnh trải bài thành công!');
     } catch (err) {
       console.error('Screenshot error:', err);
-      showToast('Không thể tạo ảnh: ' + (err.message || err));
+      showToast('Không thể lưu ảnh: ' + (err.message || err));
     }
   }
 
   function downloadScreenshot() {
-    if (!currentScreenshotDataUrl) return;
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
-    const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
-    const filename = `TraiBai_${modeName}_${dateStr}.png`;
-
-    const a = document.createElement('a');
-    a.href = currentScreenshotDataUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    showToast('Đang tải ảnh về máy...');
+    captureArenaScreenshot();
   }
 
   async function shareScreenshot() {
-    if (!currentScreenshotBlob) {
-      downloadScreenshot();
-      return;
-    }
-    const modeName = currentDeckMode === 'poker' ? 'Bài Tây Poker' : 'Neta Light';
-    const file = new File([currentScreenshotBlob], `TraiBai_${modeName}.png`, { type: 'image/png' });
-    try {
-      await navigator.share({
-        title: `Trải bài ${modeName} - Nadrasa Dehi`,
-        text: `Kết quả chiêm nghiệm ${modeName} - Pháp môn Nadrasa Dehi`,
-        files: [file]
-      });
-    } catch (e) {
-      if (e.name !== 'AbortError') {
-        downloadScreenshot();
-      }
-    }
+    captureArenaScreenshot();
   }
 
   // Register Service Worker for Offline PWA
