@@ -1285,8 +1285,36 @@
       }
       const blob = new Blob([u8arr], { type: 'image/png' });
       const blobUrl = URL.createObjectURL(blob);
+      const file = new File([blob], filename, { type: 'image/png' });
 
-      // Trigger instant direct download into user device
+      // Phát hiện môi trường ứng dụng nhúng (Zalo, Facebook, TikTok)
+      const ua = navigator.userAgent || '';
+      const isZalo = /zalo/i.test(ua);
+      const isFB = /fban|fbav|messenger/i.test(ua);
+
+      if (isZalo || isFB) {
+        showToast('⚠️ Zalo/FB chặn lưu tệp! Bác chạm dấu "..." góc trên ➔ chọn "Mở bằng trình duyệt" để ảnh lưu thẳng vào máy nhé!', 6000);
+      }
+
+      // Ưu tiên 1: Native Web Share API (Phương thức chuẩn nhất của iOS Safari & Android để lưu thẳng vào Cuộn Camera / Photos)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'Trải bài Nadrasa Dehi',
+            text: 'Ảnh chụp trải bài Pháp môn Nadrasa Dehi'
+          });
+          showToast('✨ Chạm "Lưu hình ảnh" (Save Image) để lưu thẳng vào Thư viện ảnh nhé!');
+          return;
+        } catch (shareErr) {
+          if (shareErr.name === 'AbortError') {
+            return; // Người dùng chủ động đóng bảng chia sẻ
+          }
+          console.warn('Web Share failed, fallback to direct download:', shareErr);
+        }
+      }
+
+      // Ưu tiên 2: Tự động tải xuống qua thẻ <a> download (Dành cho máy tính / Android Chrome)
       const a = document.createElement('a');
       a.href = blobUrl;
       a.download = filename;
@@ -1296,7 +1324,7 @@
         if (a.parentNode) a.parentNode.removeChild(a);
       }, 1000);
 
-      // Keep blob URL alive for 5 minutes so Android Chrome download service finishes smoothly
+      // Keep blob URL alive for 5 minutes so Android download service finishes smoothly
       setTimeout(() => URL.revokeObjectURL(blobUrl), 300000);
 
       showToast('✨ Đã lưu ảnh vào máy! Bác mở Thư viện ảnh / Tải về để xem nhé');

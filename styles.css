@@ -266,6 +266,56 @@ body {
   opacity: 0.88;
 }
 
+/* Subtle Developer Signature (Kín đáo, trang nhã, không phô trương) */
+.dev-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 4px 12px;
+  background: rgba(30, 2, 7, 0.65);
+  border: 1px solid rgba(245, 176, 65, 0.22);
+  border-radius: 20px;
+  opacity: 0.82;
+  transition: all 0.2s ease;
+}
+
+.dev-brand-badge:hover {
+  opacity: 1;
+  border-color: rgba(245, 176, 65, 0.5);
+  box-shadow: 0 0 10px rgba(245, 176, 65, 0.15);
+}
+
+.dev-brand-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.dev-brand-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.15;
+}
+
+.dev-brand-name {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--gold-glow);
+  letter-spacing: 0.5px;
+}
+
+.dev-brand-tagline {
+  font-size: 0.50rem;
+  color: var(--text-secondary);
+  opacity: 0.75;
+  letter-spacing: 0.3px;
+}
+
 /* Active Arena Hint Bar */
 .arena-hint-bar {
   display: flex;
@@ -825,6 +875,47 @@ body {
   margin-top: 2px;
 }
 
+/* Guide Developer Footer */
+.guide-dev-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(20, 2, 5, 0.85);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.guide-dev-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-gold);
+}
+
+.guide-dev-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.25;
+}
+
+.guide-dev-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--gold-glow);
+  letter-spacing: 0.5px;
+}
+
+.guide-dev-sub {
+  font-size: 0.60rem;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
 /* ================= TOAST NOTIFICATION ================= */
 .toast-notification {
   position: fixed;
@@ -1131,6 +1222,11 @@ body.theme-light .empty-title {
   color: #781708;
 }
 
+body.theme-light .empty-desc {
+  color: #4a2810;
+  opacity: 0.95;
+}
+
 body.theme-light .empty-subtitle {
   color: #633b1e;
 }
@@ -1340,6 +1436,34 @@ body.theme-light .toast-notification {
   color: #221206;
   border: 1.5px solid #b8860b;
   box-shadow: 0 4px 18px rgba(60, 30, 10, 0.25);
+}
+
+/* Dev Branding in Light Theme */
+body.theme-light .dev-brand-badge {
+  background: rgba(240, 227, 206, 0.85);
+  border-color: rgba(184, 134, 11, 0.35);
+  box-shadow: 0 1px 4px rgba(60, 30, 10, 0.08);
+}
+
+body.theme-light .dev-brand-name {
+  color: #781708;
+}
+
+body.theme-light .dev-brand-tagline {
+  color: #5c351b;
+}
+
+body.theme-light .guide-dev-footer {
+  background: rgba(245, 236, 222, 0.9);
+  border-color: rgba(184, 134, 11, 0.3);
+}
+
+body.theme-light .guide-dev-title {
+  color: #781708;
+}
+
+body.theme-light .guide-dev-sub {
+  color: #5c351b;
 }
 
 
