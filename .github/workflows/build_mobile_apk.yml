@@ -63,18 +63,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.0.5
-          name: "Neta Light & Poker v1.0.5 (Android APK)"
+          tag_name: v1.0.6
+          name: "Neta Light & Poker v1.0.6 (Android APK)"
           body: |
-            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK) v1.0.5
-            - **Kiểm Thử & Tối Ưu Hóa Chuẩn Mực Tự Động (Score 100/100)**:
-              + **Giao diện đa nền tảng**: Đạt chuẩn hiển thị vừa vặn 100% trên cả 5 phân khúc màn hình (iPhone SE, iPhone 14/15, Android dài Galaxy S20, iPad Tablet, Desktop).
-              + **Tối ưu hóa hiệu năng phần cứng GPU**: Bổ sung `will-change: transform;` và `translateZ(0)` giúp chuyển động lật bài và trượt bài đạt 60-120 FPS mượt mà.
-              + **Triệt tiêu độ trễ cảm ứng**: Cài đặt `touch-action: manipulation;` cho các phím bấm giúp phản hồi tức thì 0ms trên màn hình cảm ứng di động.
-              + **Gia cố an toàn thông tin OWASP**: Tích hợp Content Security Policy (CSP), bộ lọc XSS Sanitizer phòng thủ theo chiều sâu, và HTTP Security Headers (`nosniff`, `X-Frame-Options`, `Permissions-Policy`).
+            ## Ứng dụng Di Động Cài Đặt Trực Tiếp (APK) v1.0.6
+            - **Tối Ưu Hóa Công Thái Học Ngón Cái Tay Phải (Right Thumb Zone Ergonomics)**:
+              + **Đưa nút "Rút tiếp" về góc ngoài cùng bên phải**: Đúng vị trí tiếp xúc tự nhiên và thoải mái nhất của ngón cái tay phải khi cầm điện thoại 1 tay, bấm cực kỳ êm ái không cần với ngón tay.
+              + **Đưa nút "Thu bài" về góc ngoài cùng bên trái**: Tạo khoảng cách an toàn tối đa đối với ngón cái tay phải, loại bỏ hoàn toàn nguy cơ bấm nhầm dọn bàn bài.
+              + **Gia tăng kích thước & độ nổi bật nút Rút tiếp**: Nút có flex rộng rãi 1.35, màu vàng cam sang trọng, phản hồi cảm ứng tức thì 0ms.
+            - **Kiểm Thử & Tối Ưu Hóa Chuẩn Mực Tự Động (Score 100/100)**: Đạt chuẩn 5/5 thiết bị, GPU 120 FPS, OWASP CSP.
             - **Mặc định Tắt Âm Thanh Chuông**: Khởi động tĩnh lặng, bấm 🔕 để bật 🔔 khi cần.
-            - **Quy chuẩn Rút Bài Độc Bản (1 cây/lần)**: Tuân thủ quy định chuẩn xác, mỗi lần rút ngẫu nhiên đúng 1 cây duy nhất (áp dụng cho cả 2 bộ bài Neta Light & Poker Tây).
-            - **Hộp thoại Xác Nhận Thu Bài Tinh Tế**: Chống bấm nhầm với 2 lựa chọn [Giữ lại] và [Thu bài].
+            - **Quy chuẩn Rút Bài Độc Bản (1 cây/lần)**: Tuân thủ quy định chuẩn xác, mỗi lần rút ngẫu nhiên đúng 1 cây duy nhất.
             - **Hoạt động Ngoại tuyến 100% Offline**: Độc lập hoàn toàn, không cần kết nối mạng.
           files: build-output/NetaLight.apk
           draft: false
