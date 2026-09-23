@@ -63,23 +63,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.1.1
-          name: "Neta Light & Poker v1.1.1 (Thu Bài 1 Chạm & Giao Diện Zen Tối Giản)"
+          tag_name: v1.1.2
+          name: "Neta Light & Poker v1.1.2 (Tối Ưu Không Gian Header & Bàn Bài)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Poker v1.1.1 (Bản Cập Nhật Mới Nhất)
+            ## Ứng dụng Di Động Neta Light & Poker v1.1.2 (Bản Cập Nhật Mới Nhất)
+            - **Triệt Tiêu Khoảng Trống Thừa Phía Trên Header & Các Icon**:
+              + Tinh chỉnh `--safe-top` và thu gọn padding đỉnh Header xuống sát mép (min-height ~36px).
+              + Các icon chức năng (`📸 🌙 🔕 📖`) và tiêu đề bộ bài ôm sát mép trên, không còn khoảng trống thừa.
+            - **Cân Bằng Không Gian Bàn Bài (Arena Layout)**:
+              + Tối ưu căn lề `align-content: start` cho lưới quân bài, loại bỏ hoàn toàn khoảng trống mênh mông phía trên các lá bài.
+              + Các lá bài được bố trí gọn gàng, trang nhã ngay dưới thanh gợi ý.
             - **Thu Bài 1 Chạm Tức Thì (Không Hộp Thoại)**:
-              + Nút `[🔄 Thu bài]` nằm ở góc an toàn ngoài cùng bên trái.
-              + Loại bỏ hoàn toàn hộp thoại xác nhận phiền phức, chạm là dọn sạch bàn bài trong 0ms.
-            - **Header Siêu Mỏng (~42px) & Dropdown Kính Mờ Tinh Tế**:
-              + Tích hợp bộ chọn bộ bài ngay tại tiêu đề Header (`NETA LIGHT ▾` / `BÀI TÂY POKER ▾`) với menu kính mờ (glassmorphism) sang trọng.
-              + Lược bỏ hàng Tab cố định 44px, giải phóng hoàn toàn không gian trên đỉnh màn hình.
-            - **Tiện Dụng 1 Chạm với 4 Nút Monoline Ghost**:
-              + Giữ trọn vẹn 100% 4 chức năng tiện ích (📸 Chụp ảnh, ☀️/🌙 Sáng/Tối, 🔕/🔔 Chuông, 📜 Tra cứu).
-              + Tinh giản thị giác thành icon vector thanh mảnh, chạm phản hồi tức thì 0ms, không chiếm dụng không gian.
-            - **Mở Rộng Không Gian Bàn Bài (Arena) +25-30%**:
-              + Tận dụng tối đa diện tích chiều dọc vừa giải phóng, lá bài tự động co giãn to hơn, sắc nét và trang nghiêm hơn.
-            - **Công Thái Học Tay Phải Tuyệt Đối Dưới Đáy**:
-              + Nút `[➕ Rút tiếp]` to bản ở góc ngoài cùng bên phải — đúng tầm ngón cái tay phải khi cầm máy 1 tay.
+              + Nút `[🔄 Thu bài]` ở góc trái dọn bàn ngay tức thì trong 0ms.
             - **Hoạt động Ngoại tuyến 100% Offline**: Độc lập hoàn toàn, không cần kết nối mạng.
           files: build-output/NetaLight.apk
           draft: false

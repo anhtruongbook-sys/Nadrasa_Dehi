@@ -329,6 +329,7 @@
     cardsGrid.style.setProperty('--card-gap-y', `${gapY}px`);
     cardsGrid.style.setProperty('--card-font-size', fontSize);
     cardsGrid.style.setProperty('--card-label-h', `${labelH}px`);
+    cardsGrid.style.alignContent = count <= 2 ? 'center' : 'start';
 
     // Căn giữa hàng cuối nếu có thẻ bài mồ côi
     const cardItems = cardsGrid.querySelectorAll('.card-item');
