@@ -1,0 +1,84 @@
+name: Build Flutter iOS Client (IPA)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'mobile_app/**'
+      - '.github/workflows/build_mobile_ios.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-ios:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter & Xcode Environment
+        run: |
+          flutter --version
+          xcodebuild -version
+
+      - name: Prepare iOS Project Structure
+        working-directory: ./mobile_app
+        run: |
+          # Backup custom files
+          cp -f ios/Runner/Info.plist /tmp/Info.plist
+          cp -r ios/Runner/Assets.xcassets /tmp/Assets.xcassets
+          cp -f ios/Runner/AppDelegate.swift /tmp/AppDelegate.swift
+
+          # Regenerate standard Xcode runner configuration for Flutter
+          flutter create . --platforms=ios --org com.nadrasadehi
+
+          # Restore custom Info.plist, AppIcon, and AppDelegate
+          cp -f /tmp/Info.plist ios/Runner/Info.plist
+          cp -rf /tmp/Assets.xcassets ios/Runner/
+          cp -f /tmp/AppDelegate.swift ios/Runner/AppDelegate.swift
+
+      - name: Install Dependencies & CocoaPods
+        working-directory: ./mobile_app
+        run: |
+          flutter pub get
+          cd ios
+          pod install --repo-update
+          cd ..
+
+      - name: Build iOS Release App (No CodeSign)
+        working-directory: ./mobile_app
+        run: |
+          flutter build ios --release --no-codesign
+
+      - name: Package Payload into IPA
+        run: |
+          mkdir -p build_output/Payload
+          cp -r mobile_app/build/ios/iphoneos/Runner.app build_output/Payload/
+          cd build_output
+          zip -r -y NetaLight-NadrasaDehi.ipa Payload
+          ls -lh NetaLight-NadrasaDehi.ipa
+          cd ..
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neta-light-mobile-ios-ipa
+          path: build_output/NetaLight-NadrasaDehi.ipa
+          retention-days: 30
+
+      - name: Update GitHub Release Asset
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/heads/main')
+        with:
+          tag_name: v1.0.0
+          name: "Neta Light & Poker v1.0.0 (Android APK & iOS IPA)"
+          files: build_output/NetaLight-NadrasaDehi.ipa
