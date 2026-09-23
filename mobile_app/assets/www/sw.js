@@ -1,14 +1,17 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture
-const CACHE_NAME = 'neta-poker-v3.8';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v5.0
+-const CACHE_NAME = 'neta-poker-v5.0';
++const CACHE_NAME = 'neta-poker-v5.0';
 
 const CORE_ASSETS = [
   './',
   'index.html',
-  'styles.css?v=3.8',
-  'app.js?v=3.8',
-  'cards_data.js?v=3.8',
-  'poker_data.js?v=3.8',
-  'manifest.json?v=3.8',
+  'styles.css?v=5.0',
+  'html2canvas.min.js',
+  'cards_base64_data.js?v=5.0',
+  'cards_data.js?v=5.0',
+  'poker_data.js?v=5.0',
+  'app.js?v=5.0',
+  'manifest.json?v=5.0',
   'neta_cards/card_back.png',
   'neta_cards/phap_an.jpg',
   'Porker/card_back.png',
@@ -32,7 +35,7 @@ for (const s of SUITS) {
   }
 }
 
-// Cài đặt và nạp trước toàn bộ kho bài vào bộ nhớ máy
+// Cài đặt và kích hoạt ngay lập tức không chờ đợi
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
@@ -48,7 +51,7 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// Xóa cache phiên bản cũ khi phiên bản mới kích hoạt
+// Xóa triệt để toàn bộ cache cũ khi phiên bản mới kích hoạt
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -60,21 +63,22 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-// Chiến lược định tuyến thông minh:
-// 1. Ảnh bài (.png, .jpg): Cache-First
-// 2. Mã nguồn (HTML, CSS, JS): Network-First
+// Chiến lược nạp tài nguyên:
+// 1. Ảnh tĩnh (.png, .jpg, .webp): Cache-First
+// 2. Mã nguồn (HTML, CSS, JS): Network-First, fallback về Cache nếu offline
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
-  // Xử lý ảnh tĩnh (.png, .jpg, .ico, .webp) -> Cache First
+  // Xử lý ảnh tĩnh (.png, .jpg, .jpeg, .ico, .webp) -> Cache First
   if (
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.jpg') ||
     url.pathname.endsWith('.jpeg') ||
-    url.pathname.endsWith('.ico')
+    url.pathname.endsWith('.ico') ||
+    url.pathname.endsWith('.webp')
   ) {
     e.respondWith(
-      caches.match(e.request, { ignoreSearch: true }).then((cached) => {
+      caches.match(e.request).then((cached) => {
         if (cached) return cached;
         return fetch(e.request)
           .then((networkResp) => {
@@ -90,7 +94,7 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Các tài nguyên khác -> Network First
+  // Các file mã nguồn HTML, CSS, JS -> Network First để luôn nhận bản cập nhật mới nhất
   e.respondWith(
     fetch(e.request)
       .then((networkResp) => {
@@ -100,6 +104,6 @@ self.addEventListener('fetch', (e) => {
         }
         return networkResp;
       })
-      .catch(() => caches.match(e.request, { ignoreSearch: true }))
+      .catch(() => caches.match(e.request))
   );
 });

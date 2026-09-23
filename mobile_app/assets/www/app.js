@@ -1220,12 +1220,35 @@
     } catch (e) {}
   }
 
-  // Caching Base64 data URLs để triệt tiêu hoàn toàn lỗi Tainted Canvas trên mọi trình duyệt
+  // Tra cứu dữ liệu Base64 Data URL tức thì cho mọi lá bài (loại bỏ hoàn toàn lỗi Tainted Canvas)
+  function getCardBase64(src) {
+    if (!src) return '';
+    if (src.startsWith('data:')) return src;
+    if (typeof window !== 'undefined' && window.CARDS_BASE64_DATA) {
+      try {
+        const cleanSrc = decodeURIComponent(src).replace(/\\/g, '/');
+        const filename = cleanSrc.split('/').pop().split('?')[0];
+        if (window.CARDS_BASE64_DATA[filename]) {
+          return window.CARDS_BASE64_DATA[filename];
+        }
+        for (const key in window.CARDS_BASE64_DATA) {
+          if (cleanSrc.endsWith(key)) {
+            return window.CARDS_BASE64_DATA[key];
+          }
+        }
+      } catch (e) {}
+    }
+    return '';
+  }
+
+  // Fallback chuyển đổi URL ảnh sang Base64 qua Fetch/XHR/Canvas
   const imageBase64Cache = new Map();
 
   async function toBase64Url(url) {
     if (!url) return '';
     if (url.startsWith('data:')) return url;
+    const prebaked = getCardBase64(url);
+    if (prebaked) return prebaked;
     if (imageBase64Cache.has(url)) return imageBase64Cache.get(url);
 
     try {
@@ -1272,7 +1295,7 @@
 
     triggerCameraFlash();
     playCameraShutterSound();
-    showToast('📸 Đang chụp và lưu ảnh vào máy...');
+    showToast('📸 Đang chụp và lưu ảnh vào Thư viện ảnh...');
 
     try {
       const appContainer = document.getElementById('app-container');
@@ -1287,8 +1310,7 @@
       const bgColor = isLight ? '#f4ede1' : '#120104';
       const titleColor = isLight ? '#6e1507' : '#f5b041';
 
-      // 1. Chuyển đổi toàn bộ ảnh sang Base64 Data URL trước khi render
-      // Đảm bảo 100% canvas luôn Origin-Clean, không bao giờ bị dính lỗi Tainted Canvas
+      // 1. Chuyển đổi toàn bộ ảnh sang Base64 Data URL sạch trước khi render
       const imgElements = appContainer.querySelectorAll('img');
       const imgUrlMap = new Map();
       await Promise.all(
@@ -1296,7 +1318,7 @@
           const fullSrc = img.src;
           const attrSrc = img.getAttribute('src');
           if (fullSrc && !fullSrc.startsWith('data:') && !imgUrlMap.has(fullSrc)) {
-            const b64 = await toBase64Url(fullSrc);
+            const b64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || (await toBase64Url(fullSrc));
             imgUrlMap.set(fullSrc, b64);
             if (attrSrc && !imgUrlMap.has(attrSrc)) {
               imgUrlMap.set(attrSrc, b64);
@@ -1305,24 +1327,22 @@
         })
       );
 
-      // 2. Chụp container với html2canvas ở độ phân giải Retina 2x
+      // 2. Chụp container với html2canvas ở độ phân giải cao Retina 2x
       const canvas = await html2canvas(appContainer, {
         scale: 2,
         backgroundColor: bgColor,
         useCORS: true,
-        allowTaint: false, // Bắt buộc false để trình duyệt cho phép toDataURL() và toBlob()
+        allowTaint: false, // 100% canvas Origin-Clean đảm bảo toDataURL xuất ảnh an toàn
         logging: false,
-        imageTimeout: 10000,
+        imageTimeout: 6000,
         onclone: (clonedDoc) => {
-          // Thay thế toàn bộ ảnh trong bản sao DOM bằng Base64 Data URL sạch
           const clonedImgs = clonedDoc.querySelectorAll('img');
           clonedImgs.forEach((img) => {
             const fullSrc = img.src;
             const attrSrc = img.getAttribute('src');
-            if (imgUrlMap.has(fullSrc)) {
-              img.src = imgUrlMap.get(fullSrc);
-            } else if (imgUrlMap.has(attrSrc)) {
-              img.src = imgUrlMap.get(attrSrc);
+            const cleanB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || imgUrlMap.get(fullSrc) || imgUrlMap.get(attrSrc);
+            if (cleanB64 && cleanB64.startsWith('data:')) {
+              img.src = cleanB64;
             }
             img.crossOrigin = 'anonymous';
           });
@@ -1351,54 +1371,40 @@
       const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
       const filename = `${modeName}_TraiBai_${dateStr}.png`;
 
-      // 3. Xuất Blob từ Canvas an toàn tuyệt đối
-      let blob;
-      try {
-        const dataUrl = canvas.toDataURL('image/png');
-        const binStr = atob(dataUrl.split(',')[1]);
-        const len = binStr.length;
-        const u8arr = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-          u8arr[i] = binStr.charCodeAt(i);
-        }
-        blob = new Blob([u8arr], { type: 'image/png' });
-      } catch (toDataUrlErr) {
-        console.warn('toDataURL warning, using toBlob fallback:', toDataUrlErr);
-        blob = await new Promise((resolve, reject) => {
-          canvas.toBlob((b) => (b ? resolve(b) : reject(toDataUrlErr)), 'image/png');
-        });
-      }
-      const blobUrl = URL.createObjectURL(blob);
-      const file = new File([blob], filename, { type: 'image/png' });
+      // 3. Xuất Data URL an toàn
+      const dataUrl = canvas.toDataURL('image/png');
 
-      // Phát hiện môi trường ứng dụng nhúng (Zalo, Facebook, TikTok)
+      // TRƯỜNG HỢP A: Đang chạy trong Ứng Dụng Di Động Android APK (Flutter Native Client)
+      // Lưu trực tiếp 100% vào Thư viện ảnh (Bộ sưu tập / Pictures) qua NativeBridge
+      if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+        window.NativeBridge.postMessage(JSON.stringify({
+          action: 'saveImage',
+          base64: dataUrl,
+          filename: filename
+        }));
+        showToast('✨ Đang lưu ảnh vào Thư viện ảnh của điện thoại...');
+        return;
+      }
+
+      // TRƯỜNG HỢP B: Đang chạy trên Trình Duyệt Web / PWA (Chrome Mobile, Safari iOS, PC)
+      // Tự động tải xuống thẳng vào máy không bật hộp thoại chia sẻ phức tạp
+      const binStr = atob(dataUrl.split(',')[1]);
+      const len = binStr.length;
+      const u8arr = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        u8arr[i] = binStr.charCodeAt(i);
+      }
+      const blob = new Blob([u8arr], { type: 'image/png' });
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Cảnh báo nhẹ nếu đang mở trong in-app browser của Zalo/Facebook
       const ua = navigator.userAgent || '';
       const isZalo = /zalo/i.test(ua);
       const isFB = /fban|fbav|messenger/i.test(ua);
-
       if (isZalo || isFB) {
-        showToast('⚠️ Zalo/FB chặn lưu tệp! Bác chạm dấu "..." góc trên ➔ chọn "Mở bằng trình duyệt" để ảnh lưu thẳng vào máy nhé!', 6000);
+        showToast('⚠️ Zalo/FB chặn tự động lưu! Bác chạm dấu "..." góc trên ➔ chọn "Mở bằng trình duyệt" để ảnh tải thẳng vào máy nhé!', 6000);
       }
 
-      // Ưu tiên 1: Native Web Share API (Phương thức chuẩn nhất của iOS Safari & Android để lưu thẳng vào Cuộn Camera / Photos)
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'Trải bài Nadrasa Dehi',
-            text: 'Ảnh chụp trải bài Pháp môn Nadrasa Dehi'
-          });
-          showToast('✨ Chạm "Lưu hình ảnh" (Save Image) để lưu thẳng vào Thư viện ảnh nhé!');
-          return;
-        } catch (shareErr) {
-          if (shareErr.name === 'AbortError') {
-            return; // Người dùng chủ động đóng bảng chia sẻ
-          }
-          console.warn('Web Share failed, fallback to direct download:', shareErr);
-        }
-      }
-
-      // Ưu tiên 2: Tự động tải xuống qua thẻ <a> download (Dành cho máy tính / Android Chrome)
       const a = document.createElement('a');
       a.href = blobUrl;
       a.download = filename;
@@ -1408,9 +1414,7 @@
         if (a.parentNode) a.parentNode.removeChild(a);
       }, 1000);
 
-      // Keep blob URL alive for 5 minutes so Android download service finishes smoothly
       setTimeout(() => URL.revokeObjectURL(blobUrl), 300000);
-
       showToast('✨ Đã lưu ảnh vào máy! Bác mở Thư viện ảnh / Tải về để xem nhé');
 
     } catch (err) {
@@ -1419,11 +1423,31 @@
     }
   }
 
-  // Register Service Worker for Offline PWA
+  // Quản lý Service Worker và Tự động làm mới Cache khi có bản v5.0
+  const CURRENT_APP_VERSION = '5.0';
   function registerServiceWorker() {
+    // Tự động xóa các bộ nhớ đệm cache phiên bản cũ
+    try {
+      const savedVersion = localStorage.getItem('neta_poker_app_version');
+      if (savedVersion !== CURRENT_APP_VERSION) {
+        if ('caches' in window) {
+          caches.keys().then((keys) => {
+            keys.forEach((key) => {
+              if (key !== 'neta-poker-v5.0') caches.delete(key);
+            });
+          });
+        }
+        localStorage.setItem('neta_poker_app_version', CURRENT_APP_VERSION);
+      }
+    } catch (e) {}
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=3.6').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=5.0')
+          .then((reg) => {
+            reg.update();
+          })
+          .catch(() => {});
       });
     }
   }
