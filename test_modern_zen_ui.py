@@ -103,24 +103,23 @@ async def run_test():
         await page.screenshot(path=shot7)
         print(f"Saved: {shot7}")
 
-        # 10. Test chức năng Thu bài & Modal xác nhận
-        print("10. Testing Reset confirmation dialog...")
+        # 10. Test chức năng Thu bài trực tiếp 1 chạm (Không còn hộp thoại xác nhận phiền phức)
+        print("10. Testing direct 1-touch Reset without modal popup...")
         await page.click("#btn-reset")
         await page.wait_for_timeout(400)
-        confirm_visible = await page.is_visible("#confirm-reset-modal")
-        print(f"Confirm modal visible: {confirm_visible}")
-        assert confirm_visible, "Confirm modal not shown!"
+        
+        # Kiểm tra hộp thoại xác nhận hoàn toàn không tồn tại trên trang
+        confirm_modal = await page.query_selector("#confirm-reset-modal")
+        assert confirm_modal is None, "Error: #confirm-reset-modal should not exist!"
+        
+        # Bàn bài được thu dọn tức thì và trở về trạng thái rỗng
+        empty_visible = await page.is_visible("#empty-state")
+        print(f"Empty state restored instantly: {empty_visible}")
+        assert empty_visible, "Empty state not restored after direct 1-touch reset!"
 
-        shot8 = os.path.join(ARTIFACT_DIR, "v110_confirm_reset.png")
+        shot8 = os.path.join(ARTIFACT_DIR, "v110_instant_reset_empty.png")
         await page.screenshot(path=shot8)
         print(f"Saved: {shot8}")
-
-        # Xác nhận thu bài
-        await page.click("#btn-confirm-reset")
-        await page.wait_for_timeout(500)
-        empty_visible = await page.is_visible("#empty-state")
-        print(f"Empty state restored: {empty_visible}")
-        assert empty_visible, "Empty state not restored after reset!"
 
         # Chuyển lại theme tối để kết thúc ở trạng thái chuẩn
         await page.click("#btn-theme")

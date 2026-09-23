@@ -84,9 +84,6 @@
   const initialControls = document.getElementById('initial-controls');
   const sessionControls = document.getElementById('session-controls');
   const btnDrawSingle = document.getElementById('btn-draw-single');
-  const confirmResetModal = document.getElementById('confirm-reset-modal');
-  const btnCancelReset = document.getElementById('btn-cancel-reset');
-  const btnConfirmReset = document.getElementById('btn-confirm-reset');
 
   const deckRemainingText = document.getElementById('deck-remaining-text');
   const drawnCountText = document.getElementById('drawn-count-text');
@@ -1176,40 +1173,13 @@
       showToast('Đã xáo lại các lá bài còn lại trong bộ!');
     });
 
-    // Mở hộp thoại xác nhận thu bài tinh tế để tránh bấm nhầm
-    document.getElementById('btn-reset').addEventListener('click', () => {
-      if (confirmResetModal) {
-        confirmResetModal.style.display = 'flex';
-      } else {
+    // Thu bài và dọn bàn trực tiếp 1 chạm (Nút ở góc trái an toàn, thao tác tức thì)
+    const btnReset = document.getElementById('btn-reset');
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
         resetDeck();
         playBellChime();
-        showToast('Đã thu bài và dọn bàn. Bác có thể bắt đầu lượt rút mới!');
-      }
-    });
-
-    // Nút hủy: Giữ lại bài trên bàn
-    if (btnCancelReset) {
-      btnCancelReset.addEventListener('click', () => {
-        if (confirmResetModal) confirmResetModal.style.display = 'none';
-      });
-    }
-
-    // Click ra ngoài hộp thoại để đóng
-    if (confirmResetModal) {
-      confirmResetModal.addEventListener('click', (e) => {
-        if (e.target === confirmResetModal) {
-          confirmResetModal.style.display = 'none';
-        }
-      });
-    }
-
-    // Nút xác nhận thu bài
-    if (btnConfirmReset) {
-      btnConfirmReset.addEventListener('click', () => {
-        if (confirmResetModal) confirmResetModal.style.display = 'none';
-        resetDeck();
-        playBellChime();
-        showToast('Đã thu bài và dọn bàn. Bác có thể bắt đầu lượt rút mới!');
+        showToast('✨ Đã thu bài và dọn bàn');
       });
     }
 
