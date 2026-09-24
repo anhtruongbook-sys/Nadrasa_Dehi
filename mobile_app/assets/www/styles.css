@@ -2759,12 +2759,12 @@ body.theme-light .dropdown-check {
    NETA LIGHT - BÁT TỰ MANH PHÁI STYLES
    ========================================================================== */
 
-/* Ngũ Hành Màu Sắc Chuẩn */
-.wx-wood { color: #2ecc71 !important; }
-.wx-fire { color: #e74c3c !important; }
-.wx-earth { color: #e67e22 !important; }
-.wx-metal { color: #f1c40f !important; }
-.wx-water { color: #3498db !important; }
+/* Ngũ Hành Màu Sắc Chuẩn (Độ tương phản cao, rực rỡ, sắc nét) */
+.wx-wood, .wx-moc { color: #4ade80 !important; font-weight: 800; }
+.wx-fire, .wx-hoa { color: #ff6b6b !important; font-weight: 800; }
+.wx-earth, .wx-tho { color: #fbbf24 !important; font-weight: 800; }
+.wx-metal, .wx-kim { color: #fef08a !important; font-weight: 800; }
+.wx-water, .wx-thuy { color: #38bdf8 !important; font-weight: 800; }
 
 .bazi-view-container {
   width: 100%;
@@ -2859,30 +2859,44 @@ body.theme-light .dropdown-check {
 
 .bazi-actions-row {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .bazi-btn-action {
-  flex: 1;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 800;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
   cursor: pointer;
   border: none;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bazi-btn-now {
-  background: rgba(245, 176, 65, 0.15);
-  border: 1px solid var(--border-gold);
-  color: var(--gold-glow);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #e2e8f0;
+}
+
+.bazi-btn-now:hover {
+  background: rgba(245, 176, 65, 0.2);
+  color: #ffd700;
+  border-color: #ffd700;
 }
 
 .bazi-btn-submit {
-  background: linear-gradient(135deg, #f5b041, #d4ac0d);
+  background: linear-gradient(135deg, #f5b041 0%, #d4ac0d 100%);
   color: #1a0507;
-  box-shadow: 0 2px 8px rgba(245, 176, 65, 0.3);
+  font-weight: 900;
+  border: 1px solid #ffd700;
+  box-shadow: 0 2px 6px rgba(245, 176, 65, 0.35);
 }
 
 /* Master Overview Banner (Compact Slim) */
@@ -3444,16 +3458,14 @@ body.theme-light .dropdown-check {
 
 /* Top Control Bar */
 .tuvi-ctrl-bar {
-  background: rgba(22, 2, 5, 0.85);
-  border: 1px solid rgba(245, 176, 65, 0.28);
+  background: #24050b;
+  border: 1px solid rgba(245, 176, 65, 0.35);
   border-radius: 8px;
   padding: 4px 6px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .tuvi-inputs-row {
@@ -3467,7 +3479,14 @@ body.theme-light .dropdown-check {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: 6px;
+  width: 100%;
+}
+
+.tuvi-actions-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .tuvi-view-toggle {
@@ -3503,15 +3522,9 @@ body.theme-light .dropdown-check {
   font-weight: 800;
 }
 
-.tuvi-action-buttons {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
 .tuvi-btn-action {
   height: 24px;
-  padding: 0 8px;
+  padding: 0 10px;
   border-radius: 5px;
   font-size: 0.7rem;
   font-weight: 700;
@@ -3525,16 +3538,23 @@ body.theme-light .dropdown-check {
 }
 
 .tuvi-btn-now {
-  background: rgba(245, 176, 65, 0.12);
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  color: var(--gold-glow);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #e2e8f0;
+}
+
+.tuvi-btn-now:hover {
+  background: rgba(245, 176, 65, 0.2);
+  color: #ffd700;
+  border-color: #ffd700;
 }
 
 .tuvi-btn-submit {
   background: linear-gradient(135deg, #f5b041 0%, #d4ac0d 100%);
   color: #1a0507;
-  font-weight: 800;
-  box-shadow: 0 1px 4px rgba(245, 176, 65, 0.25);
+  font-weight: 900;
+  border: 1px solid #ffd700;
+  box-shadow: 0 2px 6px rgba(245, 176, 65, 0.35);
 }
 
 .tuvi-btn-gender {
@@ -3607,19 +3627,20 @@ body.theme-light .dropdown-check {
   width: 100%;
   aspect-ratio: 1 / 1.05;
   min-height: 420px;
-  background: rgba(245, 176, 65, 0.18);
-  border: 1.5px solid var(--border-gold);
-  border-radius: 10px;
+  background: #24060c;
+  border: 2px solid #f5b041;
+  border-radius: 8px;
   padding: 2px;
   box-sizing: border-box;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 /* Center Box (Thiên Bàn) */
 .tuvi-center-box {
   grid-column: 2 / 4;
   grid-row: 2 / 4;
-  background: linear-gradient(135deg, rgba(28, 3, 6, 0.97), rgba(16, 1, 3, 0.97));
-  border: 1.5px dashed rgba(245, 176, 65, 0.35);
+  background: #1c0409;
+  border: 2px solid rgba(245, 176, 65, 0.65);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -3627,22 +3648,24 @@ body.theme-light .dropdown-check {
   justify-content: center;
   padding: 4px 6px;
   text-align: center;
-  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.8), 0 0 8px rgba(245, 176, 65, 0.2);
   z-index: 5;
 }
 
 .tc-title {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 900;
-  color: var(--gold-glow);
-  letter-spacing: 0.8px;
+  color: #f5b041;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(245, 176, 65, 0.4);
 }
 
 .tc-sub {
-  font-size: 0.52rem;
-  color: var(--text-muted);
+  font-size: 0.55rem;
+  color: #fcd34d;
   font-weight: 700;
   margin-bottom: 3px;
+  letter-spacing: 0.5px;
 }
 
 .tc-info-block {
@@ -3661,29 +3684,31 @@ body.theme-light .dropdown-check {
 }
 
 .tc-row span {
-  color: var(--text-muted);
+  color: #cbd5e1;
 }
 
 .tc-row strong {
-  color: #fff;
+  color: #ffffff;
+  font-weight: 800;
 }
 
 .tc-divider {
   height: 1px;
-  background: rgba(245, 176, 65, 0.25);
+  background: rgba(245, 176, 65, 0.35);
   margin: 2px 0;
 }
 
 .highlight-gold strong {
-  color: var(--gold-glow);
+  color: #fde047;
+  text-shadow: 0 0 4px rgba(253, 224, 71, 0.4);
 }
 
 /* Palace Cell */
 .tuvi-cell {
-  background: rgba(14, 1, 3, 0.95);
-  border: 1px solid rgba(245, 176, 65, 0.22);
+  background: #180307;
+  border: 1.5px solid rgba(245, 176, 65, 0.4);
   border-radius: 6px;
-  padding: 2px 2px;
+  padding: 2px 3px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -3691,25 +3716,27 @@ body.theme-light .dropdown-check {
   cursor: pointer;
   transition: all 0.15s ease;
   position: relative;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 .tuvi-cell:hover {
-  border-color: var(--gold-glow);
-  box-shadow: 0 0 8px rgba(245, 176, 65, 0.4);
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(245, 176, 65, 0.5);
   transform: scale(1.02);
   z-index: 10;
 }
 
 .cell-menh {
-  border: 1.5px solid var(--gold-glow) !important;
-  background: rgba(245, 176, 65, 0.08) !important;
+  border: 2px solid #ffd700 !important;
+  background: #2b0e07 !important;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4), inset 0 0 6px rgba(255, 215, 0, 0.2) !important;
 }
 
 .tc-cell-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px solid rgba(245, 176, 65, 0.15);
+  border-bottom: 1px solid rgba(245, 176, 65, 0.25);
   padding-bottom: 1px;
   margin-bottom: 1px;
 }
@@ -3721,15 +3748,17 @@ body.theme-light .dropdown-check {
 }
 
 .tc-cung-name {
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   font-weight: 900;
-  color: #fff;
+  color: #ffffff;
   text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .text-menh {
-  color: var(--gold-glow) !important;
+  color: #ffd700 !important;
   font-weight: 900 !important;
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.4);
 }
 
 .tc-badge-than {
@@ -3782,8 +3811,8 @@ body.theme-light .dropdown-check {
 }
 
 .tc-no-main {
-  font-size: 0.55rem;
-  color: var(--text-muted);
+  font-size: 0.58rem;
+  color: #94a3b8;
   font-style: italic;
 }
 
@@ -3791,7 +3820,7 @@ body.theme-light .dropdown-check {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1px;
-  font-size: 0.5rem;
+  font-size: 0.52rem;
   overflow: hidden;
   max-height: 52px;
 }
@@ -3811,26 +3840,26 @@ body.theme-light .dropdown-check {
 }
 
 .tc-sec-star.lucky {
-  color: #a9dfbf;
+  color: #86efac !important;
   font-weight: 700;
 }
 
 .tc-sec-star.bad {
-  color: #f1948a;
+  color: #f87171 !important;
   font-weight: 700;
   text-decoration: underline;
 }
 
 .tc-sec-more {
   font-size: 0.5rem;
-  color: var(--text-muted);
+  color: #94a3b8;
 }
 
 .tc-cell-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(245, 176, 65, 0.15);
+  border-top: 1px solid rgba(245, 176, 65, 0.25);
   padding-top: 2px;
   margin-top: 2px;
   font-size: 0.58rem;
@@ -3838,17 +3867,17 @@ body.theme-light .dropdown-check {
 
 .tc-chi {
   font-weight: 800;
-  color: var(--gold-glow);
+  color: #f5b041;
 }
 
 .tc-ts {
-  color: #d5dbdb;
-  font-size: 0.52rem;
+  color: #e2e8f0;
+  font-size: 0.54rem;
 }
 
 .tc-dh {
   font-weight: 800;
-  color: #fff;
+  color: #ffffff;
 }
 
 /* ================= 12 CUNG LIST MODE ================= */
@@ -4271,7 +4300,7 @@ body.theme-light .dropdown-check {
 }
 
 .bazi-actions-row {
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .qmdj-step-group {

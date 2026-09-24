@@ -161,18 +161,19 @@
             </div>
           </div>
 
-          <!-- Action Buttons Row -->
           <div class="qmdj-actions-row">
             <div class="qmdj-step-group">
               <button class="qmdj-btn-step" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀</button>
               <button class="qmdj-btn-now" id="btn-qmdj-now" title="Về giờ hiện tại">⚡ Giờ thực</button>
               <button class="qmdj-btn-step" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">▶</button>
             </div>
-            <button class="qmdj-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
-            <div class="qmdj-cuc-badge" title="Cục số và Tiết khí">
-              <span>${roundText}</span>
-              <span class="cuc-dot">•</span>
-              <span>${solarTerm}</span>
+            <div class="qmdj-actions-right">
+              <button class="qmdj-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
+              <div class="qmdj-cuc-badge" title="Cục số và Tiết khí">
+                <span>${roundText}</span>
+                <span class="cuc-dot">•</span>
+                <span>${solarTerm}</span>
+              </div>
             </div>
           </div>
         </div>

@@ -1476,7 +1476,7 @@
       }
 
       const isLight = currentTheme === 'light';
-      const bgColor = isLight ? '#faf6ee' : '#120104';
+      const bgColor = isLight ? '#fdfbf7' : '#160408';
       const titleColor = isLight ? '#781708' : '#f5b041';
 
       // 1. Xác định target container: Chụp trực tiếp phân hệ đang mở để ảnh gọn, đẹp, full nét
@@ -1510,9 +1510,9 @@
         })
       );
 
-      // 3. Chụp container với html2canvas ở độ phân giải Retina 2x
+      // 3. Chụp container với html2canvas ở độ phân giải siêu nét Retina 3x
       const canvas = await html2canvas(targetElement, {
-        scale: 2,
+        scale: 3,
         backgroundColor: bgColor,
         useCORS: true,
         allowTaint: false,
@@ -1539,7 +1539,22 @@
             v.style.height = 'auto';
             v.style.maxHeight = 'none';
             v.style.overflow = 'visible';
+            v.style.paddingBottom = '16px';
+            v.style.background = bgColor;
           });
+
+          // Ẩn thanh công cụ nhập liệu để ảnh chụp là một lá số/bảng số thuần túy, trang nhã, không rác giao diện
+          const ctrlBars = clonedDoc.querySelectorAll('.tuvi-ctrl-bar, .bazi-ctrl-bar, .qmdj-ctrl-bar');
+          ctrlBars.forEach(b => {
+            b.style.display = 'none';
+          });
+
+          // Đảm bảo Thiên Bàn và 12 Cung hiển thị cực kỳ sắc nét trên ảnh
+          const grid4x4 = clonedDoc.querySelector('.tuvi-grid-4x4');
+          if (grid4x4) {
+            grid4x4.style.boxShadow = 'none';
+            grid4x4.style.border = isLight ? '2px solid #854d0e' : '2px solid #f5b041';
+          }
 
           const title = clonedDoc.querySelector('.app-title');
           if (title) {

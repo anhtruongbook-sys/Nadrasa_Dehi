@@ -136,22 +136,22 @@
           </div>
 
           <div class="tuvi-actions-row">
-            <div class="tuvi-view-toggle">
-              <button class="tuvi-tab-btn ${currentViewMode === 'grid' ? 'active' : ''}" id="btn-tuvi-mode-grid" title="Xem dạng bàn 4x4">
-                🏛️ 4x4
-              </button>
-              <button class="tuvi-tab-btn ${currentViewMode === 'list' ? 'active' : ''}" id="btn-tuvi-mode-list" title="Xem dạng danh sách 12 cung">
-                📜 12 Cung
-              </button>
-            </div>
-            <div class="tuvi-action-buttons">
+            <div class="tuvi-actions-left">
               <button class="tuvi-btn-action tuvi-btn-now" id="btn-tuvi-now" title="Về thời điểm hiện tại">
                 ⚡ Giờ thực
               </button>
-              <button class="tuvi-btn-action tuvi-btn-submit" id="btn-tuvi-submit" title="Lập lại lá số">
-                🔮 Lập Lá Số
-              </button>
+              <div class="tuvi-view-toggle">
+                <button class="tuvi-tab-btn ${currentViewMode === 'grid' ? 'active' : ''}" id="btn-tuvi-mode-grid" title="Xem dạng bàn 4x4">
+                  🏛️ 4x4
+                </button>
+                <button class="tuvi-tab-btn ${currentViewMode === 'list' ? 'active' : ''}" id="btn-tuvi-mode-list" title="Xem dạng danh sách 12 cung">
+                  📜 12 Cung
+                </button>
+              </div>
             </div>
+            <button class="tuvi-btn-action tuvi-btn-submit" id="btn-tuvi-submit" title="Lập lại lá số">
+              🔮 Lập Lá Số
+            </button>
           </div>
         </div>
 
