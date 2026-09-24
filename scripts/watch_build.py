@@ -7,7 +7,7 @@ import os
 TOKEN = "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"
 REPO = "anhtruongbook-sys/Nadrasa_Dehi"
 API_URL = f"https://api.github.com/repos/{REPO}/actions/runs"
-DEFAULT_TAG = "v1.4.1"
+DEFAULT_TAG = "v1.4.2"
 
 def get_runs():
     req = urllib.request.Request(API_URL, headers={

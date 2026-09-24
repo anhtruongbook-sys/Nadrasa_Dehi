@@ -290,11 +290,69 @@
           </div>
         </div>
 
-        <!-- PHẦN I: MACRO SCAN -->
+        <!-- PHẦN I: LÁ BÀI CỐT TỦY & BÀI HỌC LINH HỒN (THE QUINTESSENCE) -->
+        ${report.quintessence ? `
+          <div class="tarot-section-box tarot-quintessence-box">
+            <div class="tarot-section-header">
+              <span class="tarot-sec-icon">🔮</span>
+              <span class="tarot-sec-title">I. LÁ BÀI CỐT TỦY (THE QUINTESSENCE CARD)</span>
+            </div>
+            <div class="tarot-quint-content">
+              <div class="tarot-quint-img-wrap">
+                <img src="assets/tarot/${report.quintessence.imageWebp}" alt="${report.quintessence.nameVi}" class="tarot-quint-img">
+              </div>
+              <div class="tarot-quint-info">
+                <div class="tarot-quint-title">
+                  <span class="quint-name">${report.quintessence.nameVi}</span>
+                  <span class="quint-sub">${report.quintessence.nameEn}</span>
+                  <span class="quint-num-badge">Số học: ${report.quintessence.rawSum} ➔ ${report.quintessence.reducedNumber}</span>
+                </div>
+                <div class="tarot-quint-lesson">
+                  <strong>✨ Bài học linh hồn cốt lõi:</strong>
+                  <p>${report.quintessence.lesson}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- PHẦN II: MẠCH TRUYỆN BIỆN CHỨNG (SYNTHESIZED STORYLINE NARRATIVE) -->
+        <div class="tarot-section-box tarot-storyline-box">
+          <div class="tarot-section-header">
+            <span class="tarot-sec-icon">📜</span>
+            <span class="tarot-sec-title">II. TỔNG LUẬN MẠCH TRUYỆN BIỆN CHỨNG (STORYLINE NARRATIVE)</span>
+          </div>
+          <div class="tarot-storyline-content">
+            <blockquote>${report.synthesizedStory}</blockquote>
+          </div>
+        </div>
+
+        <!-- PHẦN III: MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL CONSTELLATIONS) -->
+        ${report.archetypalPatterns && report.archetypalPatterns.length > 0 ? `
+          <div class="tarot-section-box tarot-patterns-box">
+            <div class="tarot-section-header">
+              <span class="tarot-sec-icon">🌌</span>
+              <span class="tarot-sec-title">III. MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS)</span>
+            </div>
+            <div class="tarot-patterns-list">
+              ${report.archetypalPatterns.map(p => `
+                <div class="tarot-pattern-item">
+                  <div class="pattern-header">
+                    <span class="pattern-title">${p.title}</span>
+                    <span class="pattern-badge">${p.badge}</span>
+                  </div>
+                  <div class="pattern-desc">${p.desc}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- PHẦN IV: MACRO SCAN & ELEMENTAL DIGNITIES -->
         <div class="tarot-section-box">
           <div class="tarot-section-header">
             <span class="tarot-sec-icon">🔬</span>
-            <span class="tarot-sec-title">I. PHÂN TÍCH ĐỊNH LƯỢNG VĨ MÔ (MACRO SCAN)</span>
+            <span class="tarot-sec-title">IV. PHÂN TÍCH ĐỊNH LƯỢNG VĨ MÔ (MACRO SCAN)</span>
           </div>
           <div class="tarot-macro-grid">
             <div class="tarot-macro-item">
@@ -339,11 +397,11 @@
           ` : ''}
         </div>
 
-        <!-- PHẦN II: CHI TIẾT TỪNG LÁ BÀI -->
+        <!-- PHẦN V: CHI TIẾT TỪNG LÁ BÀI -->
         <div class="tarot-section-box">
           <div class="tarot-section-header">
             <span class="tarot-sec-icon">🃏</span>
-            <span class="tarot-sec-title">II. LUẬN GIẢI CHI TIẾT TỪNG VỊ TRÍ</span>
+            <span class="tarot-sec-title">V. LUẬN GIẢI CHI TIẾT TỪNG VỊ TRÍ</span>
           </div>
           <div class="tarot-cards-reading-list">
             ${report.cardReadings.map(c => `
@@ -374,11 +432,11 @@
           </div>
         </div>
 
-        <!-- PHẦN III: TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG -->
+        <!-- PHẦN VI: TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG -->
         <div class="tarot-section-box tarot-prescription-box">
           <div class="tarot-section-header">
             <span class="tarot-sec-icon">🎯</span>
-            <span class="tarot-sec-title">III. TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)</span>
+            <span class="tarot-sec-title">VI. TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)</span>
           </div>
           <div class="tarot-prescription-content">
             <blockquote>${report.finalAdvice}</blockquote>

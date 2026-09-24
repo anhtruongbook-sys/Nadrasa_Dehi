@@ -63,11 +63,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.1
-          name: "Neta Light & Huyền Học v1.4.1 (Tối Ưu Cuộn Màn Hình Mobile & Layout Bàn Bài Tarot)"
+          tag_name: v1.4.2
+          name: "Neta Light & Huyền Học v1.4.2 (Đột Phá Thuật Toán Luận Giải Tarot Cốt Tủy & Mạch Truyện Biện Chứng)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.1
-            - **Sửa Lỗi & Tối Ưu Hóa Cuộn Màn Hình (Mobile Touch Scrolling Fix)**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.2
+            - **Nâng Cấp Đột Phá Động Cơ Luận Giải Tarot Chuyên Sâu 100% Offline (Zero-AI, Zero-Server)**:
+              + **Thuật Toán Lá Bài Cốt Tủy (The Quintessence Card Algorithm)**: Tự động cộng tổng số học của tất cả các lá bài trong trải bài, rút gọn huyền học (*Theosophical Reduction*) để tìm ra lá Ẩn chính đại diện cho bài học linh hồn cốt lõi của toàn bộ tình huống.
+              + **Bộ Tạo Mạch Truyện Biện Chứng (Dialectical Narrative Synthesis)**: Xâu chuỗi nhân quả liền mạch giữa 3 giai đoạn (Quá khứ $\rightarrow$ Hiện tại $\rightarrow$ Tương lai) dựa trên ma trận nguyên tố Golden Dawn, phân tích logic chuyển hóa thay vì các đoạn văn rời rạc.
+              + **Nhận Diện Mẫu Hình Cổ Mẫu Nổi Bật (Archetypal Pattern Constellations)**: Tự động phát hiện các mẫu tổ hợp đặc thù: Mẫu Hoàng gia (Court Dominance - tác động từ người ngoài), Mẫu Bộ đơn sắc (Toàn Kiếm/Cốc/Tiền/Gậy), và các Cặp bài đối ngẫu chuyển hóa lớn (The Tower + The Star, Death + The Sun, The Lovers + The Devil).
+            - **Tối Ưu Hóa Giao Diện Báo Cáo Phân Tầng Chuyên Sâu**:
+              + Trình bày trang trọng: *Lá Bài Cốt Tủy $\rightarrow$ Tổng Luận Mạch Truyện Biện Chứng $\rightarrow$ Mẫu Hình Cổ Mẫu $\rightarrow$ Phân Tích Vĩ Mô & Ma Trận Nguyên Tố $\rightarrow$ Chi Tiết Từng Lá $\rightarrow$ Lời Khuyên Hành Động*.
+              + Cuộn cảm ứng di động mượt mà 60 FPS, hỗ trợ giao diện Sáng & Tối hoàn hảo.
               + Bổ sung cơ chế `overflow-y: auto !important`, `-webkit-overflow-scrolling: touch` và `touch-action: pan-y` cho container giao diện Tarot.
               + Cho phép vuốt cuộn mượt mà 60 FPS từ trên xuống dưới và từ dưới lên trên, không còn bị khựng hay kẹt màn hình.
             - **Tối Ưu Hóa Bố Cục Bàn Bài Tarot Trên Mobile**:
