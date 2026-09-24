@@ -63,10 +63,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.5
-          name: "Neta Light & Huyền Học v1.4.5 (Mobile UI Refinement & Light Theme Contrast Fixes)"
+          tag_name: v1.4.6
+          name: "Neta Light & Huyền Học v1.4.6 (Detailed PDF Export with Card Graphics & Button Contrast Fixes)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.5
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.6
+            - **Tính Năng Xuất & Lưu File PDF Luận Giải Chi Tiết (High-Fidelity PDF Export)**:
+              + Bổ sung nút bấm `📄 Lưu / Xuất File PDF` trực tiếp ở cuối mỗi bản luận giải và trong từng bản ghi Nhật Ký.
+              + Khổ giấy chuẩn A4 với đầy đủ đồ họa quân bài HD trực quan, hiển thị rõ nét lá thuận / lá ngược (xoay 180°), thông tin nguyên tố và tỷ lệ vĩ mô.
+              + Bản xem trước tương tác (Interactive Preview Modal) tích hợp 2 tùy chọn: `🖨️ Lưu Dưới Dạng PDF (Save as PDF)` kích hoạt trình in hệ thống và `💾 Tải Bản HTML Báo Cáo` tự đứng độc lập 100% offline.
+              + Quy tắc CSS in ấn phần cứng (@media print) bảo toàn trọn vẹn màu sắc, hình ảnh và loại bỏ hoàn toàn các thanh điều hướng giao diện web.
+            - **Khắc phục triệt để độ tương phản nút chức năng ở chế độ Sáng (Light Theme)**:
+              + Nút `📋 Sao Chép Markdown` và các nút phụ được chuyển sang nền trắng viền xám tro với chữ đen than đậm `#0f172a`, xóa bỏ hoàn toàn hiện tượng chữ mờ/trùng màu nền.
+              + Nút `📄 Lưu / Xuất File PDF` mang sắc xanh ngọc lục bảo chuyển sắc (Emerald Gradient `#059669` $\rightarrow$ `#10b981`), tạo sự phân tầng thị giác rõ ràng và thu hút.
             - **Khắc phục triệt để tương phản giao diện Sáng (Light Theme Contrast)**:
               + Sửa lỗi màu chữ nhạt/trùng màu nền ở các huy hiệu mẫu hình (Pattern Badges) chuyển sang màu đỏ rượu vang đậm (#831843) trên nền hồng nhạt (#fce7f3) có viền rõ nét.
               + Chuẩn hóa độ tương phản toàn diện cho khối Luận giải cốt tủy, Mạch truyện biện chứng, Chi tiết từng lá bài và Thước đo vĩ mô đạt chuẩn WCAG AAA.
