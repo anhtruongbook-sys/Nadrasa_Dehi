@@ -1,6 +1,7 @@
 /* ============================================================
-   NETA LIGHT - LA KINH VỆ TINH 36 TẦNG (CSS MODULE)
-   Tích hợp bản đồ Leaflet, HUD Glassmorphism, La bàn con quay & Khảo sát viễn thám
+   NETA LIGHT - LA KINH VỆ TINH 36 TẦNG (CSS MODULE V2)
+   Mobile-First Unobstructed Architecture: Tối đa hóa diện tích hiển thị
+   Bản đồ Vệ tinh & La Kinh 100% toàn màn hình, HUD siêu mỏng & Bottom Dock nổi
    ============================================================ */
 
 #view-lakinh {
@@ -8,7 +9,7 @@
   height: 100%;
   position: relative;
   overflow: hidden;
-  background: #0b0f19;
+  background: #070a12;
 }
 
 #lakinh-map {
@@ -17,7 +18,7 @@
   z-index: 1;
 }
 
-/* Lớp phủ đĩa La Kinh 36 tầng */
+/* Lớp phủ đĩa La Kinh 36 tầng xoay tự do */
 #lakinh-overlay-container {
   position: absolute;
   top: 50%;
@@ -28,7 +29,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: width 0.12s ease, height 0.12s ease;
+  transition: width 0.15s ease, height 0.15s ease;
 }
 
 #lakinh-disc {
@@ -57,7 +58,7 @@
   content: '';
   position: absolute;
   background: #ef4444;
-  box-shadow: 0 0 6px #ffffff, 0 0 10px rgba(239, 68, 68, 0.8);
+  box-shadow: 0 0 6px #ffffff, 0 0 10px rgba(239, 68, 68, 0.9);
 }
 
 #lakinh-crosshair::before {
@@ -74,169 +75,165 @@
   height: 26px;
 }
 
-/* Bảng kính mờ Glassmorphism sang trọng */
-.lakinh-glass {
+/* Kính mờ siêu mỏng Glassmorphism */
+.lakinh-glass-panel {
   background: rgba(15, 23, 42, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
   color: #f8fafc;
 }
 
-body.light-theme .lakinh-glass {
+body.light-theme .lakinh-glass-panel {
   background: rgba(255, 255, 255, 0.92);
   border-color: rgba(183, 149, 11, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   color: #0f172a;
 }
 
-/* Thanh điều hướng tìm kiếm trên cùng */
-#lakinh-top-bar {
+/* ================= 1. THANH ĐIỀU HƯỚNG NỔI TRÊN CÙNG ================= */
+#lakinh-top-strip {
   position: absolute;
   top: 8px;
   left: 8px;
   right: 8px;
-  z-index: 20;
+  z-index: 25;
   display: flex;
   align-items: center;
-  padding: 6px 10px;
+  justify-content: space-between;
   gap: 6px;
+  pointer-events: none; /* Cho phép chạm xuyên qua các khoảng trống */
 }
 
-.lakinh-search-box {
-  display: flex;
-  align-items: center;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(245, 176, 65, 0.25);
-  border-radius: 8px;
-  padding: 4px 8px;
-  flex: 1;
-  min-width: 0;
-}
-
-body.light-theme .lakinh-search-box {
-  background: rgba(241, 245, 249, 0.9);
-  border-color: rgba(183, 149, 11, 0.3);
-}
-
-.lakinh-search-box input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #ffffff;
-  font-size: 0.78rem;
-  width: 100%;
-  margin-left: 6px;
-}
-
-body.light-theme .lakinh-search-box input {
-  color: #0f172a;
-}
-
-.lakinh-btn-icon {
-  background: transparent;
-  border: none;
-  color: var(--gold-primary, #f5b041);
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-}
-
-.lakinh-btn-header {
-  background: rgba(30, 41, 59, 0.85);
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  color: #f8fafc;
-  padding: 5px 8px;
-  border-radius: 8px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-body.light-theme .lakinh-btn-header {
-  background: #ffffff;
-  color: #0f172a;
-}
-
-/* Bảng HUD thông số góc & sơn hướng tức thời */
-#lakinh-hud {
-  position: absolute;
-  top: 56px;
-  left: 8px;
-  z-index: 20;
-  padding: 10px 14px;
-  min-width: 190px;
-  max-width: calc(100vw - 16px);
+#lakinh-top-strip > * {
   pointer-events: auto;
 }
 
-.lakinh-hud-title {
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  color: #94a3b8;
-  letter-spacing: 0.8px;
-  font-weight: 700;
+/* Nút Icon nổi siêu gọn */
+.lakinh-float-btn {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #f8fafc;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
-body.light-theme .lakinh-hud-title {
-  color: #64748b;
+body.light-theme .lakinh-float-btn {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(183, 149, 11, 0.4);
+  color: #0f172a;
 }
 
-.lakinh-hud-degree {
-  font-size: 1.8rem;
+.lakinh-float-btn:active {
+  transform: scale(0.95);
+  background: rgba(245, 176, 65, 0.2);
+}
+
+.lakinh-float-btn.icon-only {
+  width: 36px;
+  padding: 0;
+  justify-content: center;
+}
+
+/* Thanh HUD Siêu Gọn Dạng Pill Viên Thuốc Căn Giữa */
+#lakinh-hud-pill {
+  flex: 1;
+  max-width: 250px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(245, 176, 65, 0.45);
+  border-radius: 20px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+body.light-theme #lakinh-hud-pill {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(183, 149, 11, 0.5);
+}
+
+.hud-pill-deg {
+  font-size: 1.15rem;
   font-weight: 800;
   color: #38bdf8;
-  line-height: 1.1;
   font-variant-numeric: tabular-nums;
-  margin-top: 2px;
+  line-height: 1;
 }
 
-body.light-theme .lakinh-hud-degree {
+body.light-theme .hud-pill-deg {
   color: #0284c7;
 }
 
-.lakinh-hud-son {
-  font-size: 0.92rem;
+.hud-pill-son {
+  font-size: 0.76rem;
   font-weight: 700;
-  color: #f5b041;
-  margin-top: 2px;
+  color: var(--gold-primary, #f5b041);
 }
 
-body.light-theme .lakinh-hud-son {
+body.light-theme .hud-pill-son {
   color: #b45309;
 }
 
-.lakinh-hud-detail {
-  font-size: 0.7rem;
-  color: #cbd5e1;
-  margin-top: 4px;
-  line-height: 1.35;
+.hud-pill-arrow {
+  font-size: 0.65rem;
+  color: #94a3b8;
 }
 
-body.light-theme .lakinh-hud-detail {
-  color: #475569;
+/* Thẻ Thông Tin Chi Tiết Mở Rộng Khi Chạm Vào HUD Pill */
+#lakinh-hud-detail-card {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 380px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  z-index: 26;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  display: none;
+  animation: fadeInDown 0.2s ease-out;
 }
 
-.lakinh-badge-row {
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translate(-50%, -8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.hud-card-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 6px;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #cbd5e1;
 }
 
-.lakinh-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+body.light-theme .hud-card-row {
+  color: #334155;
+}
+
+.hud-card-badge {
+  display: inline-block;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.65rem;
@@ -246,97 +243,194 @@ body.light-theme .lakinh-hud-detail {
   border: 1px solid rgba(56, 189, 248, 0.3);
 }
 
-.lakinh-badge.green {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-  border-color: rgba(34, 197, 94, 0.3);
-}
-
-body.light-theme .lakinh-badge {
+body.light-theme .hud-card-badge {
   background: rgba(2, 132, 199, 0.1);
-  color: #0369a1;
-  border-color: rgba(2, 132, 199, 0.25);
+  color: #0284c7;
 }
 
-body.light-theme .lakinh-badge.green {
-  background: rgba(22, 163, 74, 0.1);
-  color: #15803d;
-  border-color: rgba(22, 163, 74, 0.25);
-}
-
-/* Bảng điều khiển ngăn kéo bên dưới (Control Drawer) */
-#lakinh-drawer {
+/* ================= 2. THANH CÔNG CỤ NỔI BÊN DƯỚI (BOTTOM FLOATING DOCK) ================= */
+#lakinh-bottom-dock {
   position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
-  z-index: 20;
-  padding: 10px 14px;
-  max-height: 52vh;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+#lakinh-bottom-dock > * {
+  pointer-events: auto;
+}
+
+.lakinh-dock-btn {
+  background: rgba(15, 23, 42, 0.90);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  color: #f8fafc;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 22px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  white-space: nowrap;
+}
+
+body.light-theme .lakinh-dock-btn {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(183, 149, 11, 0.45);
+  color: #0f172a;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.lakinh-dock-btn:active {
+  transform: scale(0.94);
+}
+
+.lakinh-dock-btn.primary {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: rgba(56, 189, 248, 0.6);
+  color: #ffffff;
+}
+
+.lakinh-dock-btn.active-green {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  border-color: rgba(74, 222, 128, 0.6);
+  color: #ffffff;
+}
+
+.lakinh-dock-btn.locked-red {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-color: rgba(248, 113, 113, 0.6);
+  color: #ffffff;
+}
+
+/* Hiệu ứng Radar nhấp nháy khi đang bắt tín hiệu GPS */
+.pulse-radar-active {
+  animation: radar-pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes radar-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+  70% { box-shadow: 0 0 0 14px rgba(56, 189, 248, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+}
+
+/* ================= 3. BẢNG ĐIỀU KHIỂN NỔI DẠNG BOTTOM SHEET ================= */
+#lakinh-bottom-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(245, 176, 65, 0.4);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.7);
+  padding: 16px 18px 24px;
+  max-height: 75vh;
   overflow-y: auto;
-  transition: transform 0.25s ease, max-height 0.25s ease;
+  transform: translateY(105%);
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 
-#lakinh-drawer.collapsed {
-  max-height: 38px;
-  overflow: hidden;
-  padding-bottom: 4px;
+body.light-theme #lakinh-bottom-sheet {
+  background: rgba(255, 255, 255, 0.98);
+  border-top-color: rgba(183, 149, 11, 0.4);
 }
 
-.lakinh-drawer-header {
+#lakinh-bottom-sheet.open {
+  transform: translateY(0);
+}
+
+.sheet-handle-bar {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  margin: 0 auto 12px;
+  cursor: pointer;
+}
+
+body.light-theme .sheet-handle-bar {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.sheet-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(245, 176, 65, 0.2);
 }
 
-.lakinh-drawer-title {
-  font-size: 0.76rem;
-  font-weight: 700;
+.sheet-title {
+  font-size: 0.85rem;
+  font-weight: 800;
   color: var(--gold-primary, #f5b041);
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.lakinh-drawer-toggle {
+.sheet-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #94a3b8;
+  padding: 4px 10px;
+  border-radius: 12px;
   font-size: 0.72rem;
-  color: #38bdf8;
   font-weight: 600;
+  cursor: pointer;
 }
 
-.lakinh-control-group {
-  margin-bottom: 10px;
+body.light-theme .sheet-close-btn {
+  background: rgba(0, 0, 0, 0.08);
+  color: #334155;
 }
 
-.lakinh-control-label {
+.sheet-control-group {
+  margin-bottom: 12px;
+}
+
+.sheet-control-label {
   display: flex;
   justify-content: space-between;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: #94a3b8;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-body.light-theme .lakinh-control-label {
+body.light-theme .sheet-control-label {
   color: #64748b;
 }
 
-.lakinh-control-label span.val {
+.sheet-control-label span.val {
   color: #38bdf8;
   font-weight: 700;
 }
 
-body.light-theme .lakinh-control-label span.val {
+body.light-theme .sheet-control-label span.val {
   color: #0284c7;
 }
 
 .lakinh-slider {
   width: 100%;
-  height: 5px;
+  height: 6px;
   background: #334155;
   border-radius: 4px;
   outline: none;
@@ -349,28 +443,28 @@ body.light-theme .lakinh-slider {
 
 .lakinh-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #f5b041;
   cursor: pointer;
-  box-shadow: 0 0 6px rgba(245, 176, 65, 0.7);
+  box-shadow: 0 0 8px rgba(245, 176, 65, 0.8);
 }
 
 .lakinh-btn-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-  margin-top: 5px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .lakinh-step-btn {
   background: #1e293b;
   border: 1px solid #475569;
   color: #f8fafc;
-  padding: 5px 0;
-  border-radius: 6px;
-  font-size: 0.7rem;
+  padding: 6px 0;
+  border-radius: 8px;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
@@ -393,9 +487,9 @@ body.light-theme .lakinh-step-btn {
   background: #0284c7;
   border: none;
   color: #ffffff;
-  padding: 8px 10px;
-  border-radius: 8px;
-  font-size: 0.74rem;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.76rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -430,7 +524,42 @@ body.light-theme .lakinh-action-btn.secondary {
   background: #7c3aed;
 }
 
-/* Modals cho La Kinh */
+/* ================= 4. GPS RADAR BEACON MARKER ================= */
+.gps-live-dot {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.gps-inner-dot {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0284c7;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.9);
+}
+
+.gps-pulse-beacon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.4);
+  animation: gps-beacon-grow 2s infinite ease-out;
+}
+
+@keyframes gps-beacon-grow {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* ================= 5. MODAL HỘP THOẠI ================= */
 .lakinh-modal-overlay {
   position: absolute;
   top: 0;
@@ -438,8 +567,8 @@ body.light-theme .lakinh-action-btn.secondary {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
-  z-index: 40;
+  backdrop-filter: blur(8px);
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -448,10 +577,11 @@ body.light-theme .lakinh-action-btn.secondary {
 
 .lakinh-modal-dialog {
   width: 100%;
-  max-width: 480px;
-  max-height: 85vh;
+  max-width: 440px;
+  max-height: 82vh;
   overflow-y: auto;
   padding: 16px 18px;
+  border-radius: 16px;
 }
 
 .lakinh-modal-header {
@@ -476,7 +606,7 @@ body.light-theme .lakinh-action-btn.secondary {
   background: transparent;
   border: none;
   color: #94a3b8;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   cursor: pointer;
   line-height: 1;
 }
@@ -504,7 +634,7 @@ body.light-theme .lakinh-palace-cell {
 
 .lakinh-palace-cell.center {
   border-color: #f59e0b;
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(245, 158, 11, 0.15);
 }
 
 .lakinh-palace-name {
@@ -521,7 +651,7 @@ body.light-theme .lakinh-palace-name {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 800;
   margin: 3px 0;
 }

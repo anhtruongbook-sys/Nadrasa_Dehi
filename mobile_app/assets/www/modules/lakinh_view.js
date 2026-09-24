@@ -1,6 +1,7 @@
 /**
- * NETA LIGHT - LAKINH SATELLITE VIEW MODULE
- * Giao diện La Kinh Vệ Tinh 36 Tầng Tích Hợp Leaflet WebGIS & Viễn Thám
+ * NETA LIGHT - LAKINH SATELLITE VIEW MODULE (V2 - MOBILE-FIRST FULL VIEWPORT)
+ * Tối đa hóa 100% diện tích quan sát Bản đồ Vệ tinh & La Kinh 36 Tầng
+ * Hệ thống định vị GPS 2 tầng (High Accuracy + Network Fallback) & HUD Siêu Mỏng
  */
 
 (function (global) {
@@ -12,22 +13,24 @@
   let elevationLayerGroup = null;
   let surveyRayLayerGroup = null;
   let polygonLayerGroup = null;
+  let userLocationLayerGroup = null;
 
-  // Trạng thái hoạt động của La Kinh
+  // Trạng thái vận hành
   let state = {
-    opacity: 0.70,
-    size: 520,
+    opacity: 0.65,
+    size: 480,
     rotation: 0.0,
-    targetRotation: 0.0,
     isSensorActive: false,
     isLocked: false,
     isRayActive: false,
     isTracingPlot: false,
+    isSheetOpen: false,
+    isHudDetailOpen: false,
     polygonPoints: [],
     declination: -1.34,
     centerElevation: 19.0,
     centerCoords: [21.028511, 105.854167], // Mặc định Hà Nội
-    isDrawerCollapsed: false
+    activeLayerName: 'googleSat'
   };
 
   function initLaKinhView() {
@@ -50,141 +53,156 @@
           <img id="lakinh-disc" src="assets/lakinh/la_kinh_36_tang_vector.svg" alt="La Kinh 36 Tầng" style="opacity: ${state.opacity};">
         </div>
 
-        <!-- Top Bar: Tìm kiếm & Tiện ích bản đồ -->
-        <div id="lakinh-top-bar" class="lakinh-glass">
-          <div class="lakinh-search-box">
-            <span style="color: #ef4444; font-size: 0.8rem;">📍</span>
-            <input type="text" id="lakinh-search-input" placeholder="Nhập địa chỉ hoặc tọa độ..." value="Hồ Hoàn Kiếm, Hà Nội">
-            <button class="lakinh-btn-icon" id="lakinh-btn-search" title="Tìm kiếm">🔍</button>
-          </div>
-          <button class="lakinh-btn-header" id="lakinh-btn-layer" title="Chuyển lớp vệ tinh">
-            🗺️ Vệ Tinh
+        <!-- 1. Thanh Tiện Ích & HUD Siêu Mỏng Trên Cùng -->
+        <div id="lakinh-top-strip">
+          <button class="lakinh-float-btn icon-only" id="lakinh-btn-search" title="Tìm địa chỉ / tọa độ">
+            🔍
           </button>
-          <button class="lakinh-btn-header" id="lakinh-btn-gps" title="Vị trí GPS của tôi">
-            🎯 GPS
-          </button>
-          <button class="lakinh-btn-header" id="lakinh-btn-projects" title="Hồ sơ khảo sát">
-            📁 Hồ Sơ
-          </button>
-        </div>
 
-        <!-- HUD: Thông số góc và Sơn vị thời gian thực -->
-        <div id="lakinh-hud" class="lakinh-glass">
-          <div class="lakinh-hud-title">ĐỘ SỐ HƯỚNG NHÀ</div>
-          <div class="lakinh-hud-degree" id="lakinh-disp-degree">0.0°</div>
-          <div class="lakinh-hud-son" id="lakinh-disp-son">Sơn Tý (Chính Bắc)</div>
-          <div class="lakinh-hud-detail" id="lakinh-disp-detail">
-            Cung: Khảm • Hành: Thủy<br>
-            Tọa Ngọ Hướng Tý (Bắc 0.0°)
+          <!-- HUD Pill Căn Giữa -->
+          <div id="lakinh-hud-pill" title="Chạm để xem thông số chi tiết">
+            <span class="hud-pill-deg" id="hud-pill-deg">0.0°</span>
+            <span class="hud-pill-son" id="hud-pill-son">Sơn Tý (Khảm)</span>
+            <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
           </div>
-          <div class="lakinh-badge-row">
-            <div class="lakinh-badge" id="lakinh-disp-declination">
-              🧭 Từ thiên: -1.34° (Tây)
-            </div>
-            <div class="lakinh-badge green" id="lakinh-disp-elev">
-              ⛰️ Cao độ: 19.0 m
-            </div>
+
+          <div style="display: flex; gap: 4px;">
+            <button class="lakinh-float-btn" id="lakinh-btn-layer" title="Chuyển lớp bản đồ">
+              🛰️ Vệ Tinh
+            </button>
+            <button class="lakinh-float-btn icon-only" id="lakinh-btn-projects" title="Hồ sơ khảo sát">
+              📁
+            </button>
           </div>
         </div>
 
-        <!-- Drawer: Bảng điều khiển công cụ -->
-        <div id="lakinh-drawer" class="lakinh-glass">
-          <div class="lakinh-drawer-header" id="lakinh-drawer-toggle-btn">
-            <div class="lakinh-drawer-title">
+        <!-- Thẻ Thông Tin Chi Tiết Thả Xuống Khi Chạm HUD Pill -->
+        <div id="lakinh-hud-detail-card" class="lakinh-glass-panel">
+          <div class="hud-card-row">
+            <span>Tọa - Hướng:</span>
+            <strong id="hud-detail-toa-huong" style="color: #f5b041;">Tọa Ngọ Hướng Tý</strong>
+          </div>
+          <div class="hud-card-row">
+            <span>Cung & Ngũ Hành:</span>
+            <span id="hud-detail-cung-hanh">Cung Khảm • Hành Thủy</span>
+          </div>
+          <div class="hud-card-row" style="margin-top: 6px;">
+            <span class="hud-card-badge" id="hud-detail-dec">🧭 Từ thiên (WMM): -1.34° (Tây)</span>
+            <span class="hud-card-badge" id="hud-detail-elev" style="background: rgba(34,197,94,0.15); color:#22c55e; border-color:rgba(34,197,94,0.3);">⛰️ Cao độ: 19.0 m</span>
+          </div>
+        </div>
+
+        <!-- 2. Thanh Công Cụ Nổi Dưới Cùng (Floating Dock) -->
+        <div id="lakinh-bottom-dock">
+          <button class="lakinh-dock-btn" id="lakinh-dock-sensor" title="Bật/Tắt cảm biến la bàn">
+            🧭 La Bàn Live
+          </button>
+          <button class="lakinh-dock-btn primary" id="lakinh-dock-gps" title="Định vị vị trí GPS thực tế">
+            🎯 Định Vị GPS
+          </button>
+          <button class="lakinh-dock-btn" id="lakinh-dock-dem" title="Quét cao độ & Tam Hợp Thủy Pháp">
+            🌊 Quét Cục
+          </button>
+          <button class="lakinh-dock-btn" id="lakinh-dock-tools" title="Bảng điều khiển công cụ">
+            ⚙️ Công Cụ
+          </button>
+        </div>
+
+        <!-- 3. Bảng Điều Khiển Dạng Bottom Sheet -->
+        <div id="lakinh-bottom-sheet">
+          <div class="sheet-handle-bar" id="sheet-handle"></div>
+          <div class="sheet-header-row">
+            <div class="sheet-title">
               <span>⚙️ BẢNG ĐIỀU KHIỂN LA KINH</span>
             </div>
-            <span class="lakinh-drawer-toggle" id="lakinh-drawer-toggle-txt">Thu gọn ▾</span>
+            <button class="sheet-close-btn" id="sheet-close-btn">
+              ✕ Đóng / Xem Toàn Màn Hình
+            </button>
           </div>
 
-          <div id="lakinh-drawer-body">
-            <!-- Độ trong suốt & Kích thước -->
-            <div class="lakinh-control-group">
-              <div class="lakinh-control-label">
-                <span>Độ trong suốt</span>
-                <span class="val" id="lakinh-val-opacity">70%</span>
-              </div>
-              <input type="range" class="lakinh-slider" id="lakinh-slider-opacity" min="5" max="100" value="70">
+          <!-- Nhóm trượt: Độ trong suốt & Kích thước -->
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>Độ trong suốt (Nhìn xuyên thấu địa hình)</span>
+              <span class="val" id="sheet-val-opacity">65%</span>
             </div>
+            <input type="range" class="lakinh-slider" id="sheet-slider-opacity" min="5" max="100" value="65">
+          </div>
 
-            <div class="lakinh-control-group">
-              <div class="lakinh-control-label">
-                <span>Kích thước La Kinh</span>
-                <span class="val" id="lakinh-val-size">520 px</span>
-              </div>
-              <input type="range" class="lakinh-slider" id="lakinh-slider-size" min="260" max="950" value="520" step="10">
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>Kích thước La Kinh</span>
+              <span class="val" id="sheet-val-size">480 px</span>
             </div>
+            <input type="range" class="lakinh-slider" id="sheet-slider-size" min="260" max="950" value="480" step="10">
+          </div>
 
-            <!-- Xoay góc hướng nhà -->
-            <div class="lakinh-control-group">
-              <div class="lakinh-control-label">
-                <span>Góc hướng nhà</span>
-                <span class="val" id="lakinh-val-rotation">0.0°</span>
-              </div>
-              <input type="range" class="lakinh-slider" id="lakinh-slider-rotation" min="0" max="360" value="0" step="0.5">
-              <div class="lakinh-btn-row">
-                <button class="lakinh-step-btn" id="btn-rot-m5">-5°</button>
-                <button class="lakinh-step-btn" id="btn-rot-m1">-1°</button>
-                <button class="lakinh-step-btn" id="btn-rot-p1">+1°</button>
-                <button class="lakinh-step-btn" id="btn-rot-p5">+5°</button>
-              </div>
+          <!-- Xoay góc hướng nhà & Vi chỉnh -->
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>Góc hướng nhà</span>
+              <span class="val" id="sheet-val-rotation">0.0°</span>
             </div>
-
-            <!-- Cảm biến La Bàn & Khóa Góc -->
-            <div class="lakinh-control-group">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                <button id="lakinh-btn-sensor" class="lakinh-action-btn">
-                  🧭 La Bàn Live
-                </button>
-                <button id="lakinh-btn-lock" class="lakinh-action-btn secondary">
-                  🔓 Khóa Góc
-                </button>
-              </div>
-              <label style="font-size: 0.68rem; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #94a3b8; margin-top: 6px;">
-                <input type="checkbox" id="lakinh-chk-autodec" checked style="accent-color: #38bdf8;">
-                <span>Tự động bù từ thiên WMM cho cảm biến</span>
-              </label>
+            <input type="range" class="lakinh-slider" id="sheet-slider-rotation" min="0" max="360" value="0" step="0.5">
+            <div class="lakinh-btn-row">
+              <button class="lakinh-step-btn" id="btn-rot-m5">-5°</button>
+              <button class="lakinh-step-btn" id="btn-rot-m1">-1°</button>
+              <button class="lakinh-step-btn" id="btn-rot-p1">+1°</button>
+              <button class="lakinh-step-btn" id="btn-rot-p5">+5°</button>
             </div>
+          </div>
 
-            <!-- Thủy Khẩu & Auto Zoom Cấp Cục -->
-            <div class="lakinh-control-group">
-              <div class="lakinh-control-label">
-                <span>Auto Zoom Cấp Cục Minh Đường</span>
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 6px;">
-                <button class="lakinh-step-btn" id="btn-zoom-tieu">🔍 Tiểu (40m)</button>
-                <button class="lakinh-step-btn" id="btn-zoom-trung">🔍 Trung (350m)</button>
-                <button class="lakinh-step-btn" id="btn-zoom-dai">🔍 Đại (2km)</button>
-              </div>
-
-              <button id="lakinh-btn-scan-elev" class="lakinh-action-btn warning">
-                🌊 Quét Cao Độ DEM & Định Tứ Đại Cục
+          <!-- Tùy chọn la bàn & Cảm biến -->
+          <div class="sheet-control-group">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button id="sheet-btn-lock" class="lakinh-action-btn secondary">
+                🔓 Khóa Góc Hiện Tại
               </button>
-              <button id="lakinh-btn-ray" class="lakinh-action-btn">
+              <button id="sheet-btn-ray" class="lakinh-action-btn secondary">
                 🎯 Bật Tia Ngắm Viễn Thám
               </button>
-              <button id="lakinh-btn-huyenkhong" class="lakinh-action-btn purple">
-                ☯️ Lập Tinh Bàn Huyền Không Vận 9
-              </button>
-              <button id="lakinh-btn-centroid" class="lakinh-action-btn secondary">
-                📐 Vẽ Ranh Đất / Tìm Tim Nhà
-              </button>
             </div>
+            <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #94a3b8; margin-top: 8px;">
+              <input type="checkbox" id="lakinh-chk-autodec" checked style="accent-color: #38bdf8;">
+              <span>Tự động bù từ thiên WMM cho cảm biến thực địa</span>
+            </label>
+          </div>
 
-            <!-- Lưu & Xuất file -->
-            <div class="lakinh-control-group" style="margin-bottom: 0;">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                <button id="lakinh-btn-save" class="lakinh-action-btn success">
-                  💾 Lưu Hồ Sơ
-                </button>
-                <button id="lakinh-btn-kml" class="lakinh-action-btn secondary">
-                  📄 Tải file KML
-                </button>
-              </div>
+          <!-- Các công cụ khảo sát nâng cao -->
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>Khảo Sát & Lập Cực Nâng Cao</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+              <button class="lakinh-step-btn" id="btn-zoom-tieu">🔍 Tiểu (40m)</button>
+              <button class="lakinh-step-btn" id="btn-zoom-trung">🔍 Trung (350m)</button>
+              <button class="lakinh-step-btn" id="btn-zoom-dai">🔍 Đại (2km)</button>
+            </div>
+            <button id="sheet-btn-scan-elev" class="lakinh-action-btn warning">
+              🌊 Quét Cao Độ DEM & Định Tứ Đại Cục
+            </button>
+            <button id="sheet-btn-huyenkhong" class="lakinh-action-btn purple">
+              ☯️ Lập Tinh Bàn Huyền Không Vận 9
+            </button>
+            <button id="sheet-btn-centroid" class="lakinh-action-btn secondary">
+              📐 Vẽ Ranh Đất / Tìm Tim Nhà
+            </button>
+          </div>
+
+          <!-- Lưu & Xuất file KML -->
+          <div class="sheet-control-group" style="margin-bottom: 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button id="sheet-btn-save" class="lakinh-action-btn success">
+                💾 Lưu Hồ Sơ
+              </button>
+              <button id="sheet-btn-kml" class="lakinh-action-btn secondary">
+                📄 Tải file KML Google Earth
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Modals -->
+        <!-- Modals Hộp thoại -->
         <div id="lakinh-modal-container"></div>
       `;
 
@@ -216,11 +234,14 @@
       zoomControl: false
     });
 
+    // Zoom control ở góc phải
     L.control.zoom({ position: 'topright' }).addTo(mapInstance);
 
+    // Lớp ảnh vệ tinh Google Hybrid và các lớp khác
     layers = {
-      googleSat: L.tileLayer('https://mt1.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+      googleSat: L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 22,
+        subdomains: '0123',
         attribution: 'Google Satellite'
       }),
       esriSat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -239,13 +260,13 @@
     elevationLayerGroup = L.layerGroup().addTo(mapInstance);
     surveyRayLayerGroup = L.layerGroup().addTo(mapInstance);
     polygonLayerGroup = L.layerGroup().addTo(mapInstance);
+    userLocationLayerGroup = L.layerGroup().addTo(mapInstance);
 
-    // Sự kiện khi bản đồ di chuyển
     mapInstance.on('move', onMapMove);
     mapInstance.on('moveend', onMapMoveEnd);
     mapInstance.on('click', onMapClick);
 
-    // Cập nhật WMM và HUD ban đầu
+    // Cập nhật thông số vị trí ban đầu
     updateLocationHUD(state.centerCoords[0], state.centerCoords[1]);
   }
 
@@ -267,13 +288,13 @@
     const wmm = global.NetaLaKinhEngine.calculateMagneticDeclination(lat, lng);
     state.declination = wmm.declination;
 
-    const decEl = document.getElementById('lakinh-disp-declination');
+    const decEl = document.getElementById('hud-detail-dec');
     if (decEl) {
       decEl.innerHTML = `🧭 Từ thiên (WMM): ${wmm.text}`;
     }
   }
 
-  // Cập nhật hiển thị HUD và xoay La Kinh
+  // Cập nhật góc xoay và HUD
   function updateRotationDisplay(deg) {
     state.rotation = ((deg % 360) + 360) % 360;
     const rounded = Math.round(state.rotation * 10) / 10;
@@ -283,29 +304,30 @@
       disc.style.transform = `rotate(${rounded}deg)`;
     }
 
-    const dispDeg = document.getElementById('lakinh-disp-degree');
-    const dispSon = document.getElementById('lakinh-disp-son');
-    const dispDetail = document.getElementById('lakinh-disp-detail');
-    const valRot = document.getElementById('lakinh-val-rotation');
-    const sliderRot = document.getElementById('lakinh-slider-rotation');
+    const pillDeg = document.getElementById('hud-pill-deg');
+    const pillSon = document.getElementById('hud-pill-son');
+    const sheetValRot = document.getElementById('sheet-val-rotation');
+    const sheetSliderRot = document.getElementById('sheet-slider-rotation');
+    const detailToaHuong = document.getElementById('hud-detail-toa-huong');
+    const detailCungHanh = document.getElementById('hud-detail-cung-hanh');
 
-    if (dispDeg) dispDeg.textContent = `${rounded.toFixed(1)}°`;
-    if (valRot) valRot.textContent = `${rounded.toFixed(1)}°`;
-    if (sliderRot && parseFloat(sliderRot.value) !== rounded) {
-      sliderRot.value = rounded;
+    if (pillDeg) pillDeg.textContent = `${rounded.toFixed(1)}°`;
+    if (sheetValRot) sheetValRot.textContent = `${rounded.toFixed(1)}°`;
+    if (sheetSliderRot && parseFloat(sheetSliderRot.value) !== rounded) {
+      sheetSliderRot.value = rounded;
     }
 
     if (global.NetaLaKinhEngine) {
       const son = global.NetaLaKinhEngine.getSonInfo(rounded);
       const toa = global.NetaLaKinhEngine.getSonInfo((rounded + 180) % 360);
-      if (dispSon) {
-        dispSon.textContent = `Sơn ${son.name} (${son.cung})`;
+      if (pillSon) {
+        pillSon.textContent = `Sơn ${son.name} (${son.cung})`;
       }
-      if (dispDetail) {
-        dispDetail.innerHTML = `
-          Cung: ${son.cung} • Hành: ${son.hanh}<br>
-          Tọa ${toa.name} Hướng ${son.name} (${rounded.toFixed(1)}°)
-        `;
+      if (detailToaHuong) {
+        detailToaHuong.textContent = `Tọa ${toa.name} Hướng ${son.name} (${rounded.toFixed(1)}°)`;
+      }
+      if (detailCungHanh) {
+        detailCungHanh.textContent = `Cung ${son.cung} • Hành ${son.hanh} (${son.am_duong})`;
       }
     }
 
@@ -333,41 +355,118 @@
     polyline.addTo(surveyRayLayerGroup);
   }
 
-  // Thao tác vẽ ranh đất / tìm tim nhà
-  function onMapClick(e) {
-    if (!state.isTracingPlot) return;
-    state.polygonPoints.push(e.latlng);
-
-    polygonLayerGroup.clearLayers();
-
-    // Vẽ các đỉnh và đường bao
-    state.polygonPoints.forEach((pt, idx) => {
-      L.circleMarker(pt, { radius: 5, color: '#f5b041', fillColor: '#fff', fillOpacity: 1 }).addTo(polygonLayerGroup);
-    });
-
-    if (state.polygonPoints.length >= 2) {
-      L.polyline(state.polygonPoints, { color: '#f5b041', weight: 2, dashArray: '4, 4' }).addTo(polygonLayerGroup);
+  // ================= 4. ĐỊNH VỊ GPS VỆ TINH 2 TẦNG (HIGH ACCURACY + FALLBACK) =================
+  function getCurrentGPS() {
+    if (!navigator.geolocation) {
+      showLaKinhToast('⚠️ Thiết bị của bạn không hỗ trợ định vị Geolocation');
+      return;
     }
 
-    if (state.polygonPoints.length >= 3) {
-      L.polygon(state.polygonPoints, { color: '#f5b041', fillColor: '#f5b041', fillOpacity: 0.15 }).addTo(polygonLayerGroup);
+    showLaKinhToast('🛰️ Đang tìm kiếm tọa độ GPS vệ tinh...');
+    const btn = document.getElementById('lakinh-dock-gps');
+    if (btn) btn.classList.add('pulse-radar-active');
 
-      if (global.NetaLaKinhEngine) {
-        const centroid = global.NetaLaKinhEngine.calculatePolygonCentroid(state.polygonPoints);
-        if (centroid) {
-          L.marker([centroid.lat, centroid.lng], {
-            icon: L.divIcon({
-              className: 'custom-centroid-marker',
-              html: `<div style="background:#ef4444;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 8px #000;">🎯 Tim Đất (${centroid.areaM2} m²)</div>`,
-              iconSize: [80, 20],
-              iconAnchor: [40, 10]
-            })
-          }).addTo(polygonLayerGroup);
+    const onGpsSuccess = (pos) => {
+      if (btn) btn.classList.remove('pulse-radar-active');
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const accuracy = Math.round(pos.coords.accuracy || 0);
 
-          // Tự động căn tâm bản đồ vào tim thửa đất
-          mapInstance.panTo([centroid.lat, centroid.lng]);
-        }
+      state.centerCoords = [lat, lng];
+
+      if (mapInstance && userLocationLayerGroup) {
+        userLocationLayerGroup.clearLayers();
+
+        // Vòng tròn bán kính sai số GPS
+        L.circle([lat, lng], {
+          radius: Math.max(accuracy, 12),
+          color: '#38bdf8',
+          fillColor: '#38bdf8',
+          fillOpacity: 0.15,
+          weight: 1.5,
+          dashArray: '4, 4'
+        }).addTo(userLocationLayerGroup);
+
+        // Radar Beacon Marker nhấp nháy xanh tại vị trí thực
+        L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: 'gps-live-dot',
+            html: `<div class="gps-pulse-beacon"></div><div class="gps-inner-dot"></div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          })
+        }).addTo(userLocationLayerGroup);
+
+        // Đưa tâm bản đồ về vị trí người dùng
+        mapInstance.setView([lat, lng], 19, { animate: true });
+        showLaKinhToast(`🎯 Đã định vị thành công! (Sai số ~${accuracy}m)`);
+        updateLocationHUD(lat, lng);
       }
+    };
+
+    const onGpsFailHighAccuracy = (err) => {
+      console.warn('GPS phần cứng không phản hồi, chuyển sang tầng 2 định vị Mạng/Wifi...', err);
+      if (err.code === 1) {
+        if (btn) btn.classList.remove('pulse-radar-active');
+        showLaKinhToast('🚫 Quyền vị trí bị chặn. Vui lòng cho phép quyền Vị Trí trong cài đặt trình duyệt!');
+        return;
+      }
+
+      // Tầng 2: Fallback định vị mạng / trạm BTS / Wifi
+      showLaKinhToast('🛰️ Đang chuyển sang định vị mạng Wifi/4G...');
+      navigator.geolocation.getCurrentPosition(
+        onGpsSuccess,
+        (err2) => {
+          if (btn) btn.classList.remove('pulse-radar-active');
+          let errMsg = 'Không lấy được tọa độ';
+          if (err2.code === 1) errMsg = '🚫 Bạn đã chặn quyền vị trí GPS';
+          else if (err2.code === 2) errMsg = '⚠️ Vị trí không khả dụng (Hãy bật GPS điện thoại)';
+          else if (err2.code === 3) errMsg = '⏳ Hết thời gian chờ tín hiệu GPS';
+          showLaKinhToast(errMsg);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 15000,
+          maximumAge: 300000 // Chấp nhận cache vị trí 5 phút
+        }
+      );
+    };
+
+    // Tầng 1: Thử GPS vệ tinh độ chính xác cao
+    navigator.geolocation.getCurrentPosition(
+      onGpsSuccess,
+      onGpsFailHighAccuracy,
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  }
+
+  // Chuyển đổi lớp bản đồ
+  function switchMapLayer() {
+    if (!mapInstance) return;
+    const btn = document.getElementById('lakinh-btn-layer');
+
+    if (currentLayer === layers.googleSat) {
+      mapInstance.removeLayer(layers.googleSat);
+      currentLayer = layers.esriSat;
+      currentLayer.addTo(mapInstance);
+      if (btn) btn.innerHTML = '🌍 Esri Sat';
+      showLaKinhToast('Chuyển sang: Ảnh Vệ Tinh Esri');
+    } else if (currentLayer === layers.esriSat) {
+      mapInstance.removeLayer(layers.esriSat);
+      currentLayer = layers.osm;
+      currentLayer.addTo(mapInstance);
+      if (btn) btn.innerHTML = '🗺️ Bản Đồ Phố';
+      showLaKinhToast('Chuyển sang: Bản Đồ Đường Phố');
+    } else {
+      mapInstance.removeLayer(layers.osm);
+      currentLayer = layers.googleSat;
+      currentLayer.addTo(mapInstance);
+      if (btn) btn.innerHTML = '🛰️ Vệ Tinh';
+      showLaKinhToast('Chuyển sang: Vệ Tinh Google Earth');
     }
   }
 
@@ -376,6 +475,7 @@
     if (!mapInstance || !global.NetaLaKinhEngine) return;
     const center = mapInstance.getCenter();
 
+    closeBottomSheet();
     showLaKinhToast('⏳ Đang quét cao độ số DEM 3 cấp cự ly...');
     elevationLayerGroup.clearLayers();
 
@@ -383,7 +483,7 @@
       const result = await global.NetaLaKinhEngine.analyzeMinhDuongCuc(center.lat, center.lng);
       state.centerElevation = result.center.elevation;
 
-      const elevEl = document.getElementById('lakinh-disp-elev');
+      const elevEl = document.getElementById('hud-detail-elev');
       if (elevEl) elevEl.innerHTML = `⛰️ Cao độ: ${result.center.elevation.toFixed(1)} m`;
 
       // Vẽ 3 vòng tròn bán kính trên bản đồ
@@ -400,7 +500,7 @@
         L.marker([t.thuyKhau.lat, t.thuyKhau.lng], {
           icon: L.divIcon({
             className: 'custom-watermouth-marker',
-            html: `<div style="background:#0284c7;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 6px #000;">💧 Thủy Khẩu ${t.name.split(' ')[0]} (${t.thuyKhau.son})</div>`,
+            html: `<div style="background:#0284c7;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 8px rgba(0,0,0,0.8);">💧 Thủy Khẩu ${t.name.split(' ')[0]} (${t.thuyKhau.son})</div>`,
             iconSize: [90, 20],
             iconAnchor: [45, 10]
           })
@@ -426,17 +526,17 @@
       const a = tk.analysis;
 
       tiersHtml += `
-        <div style="background: rgba(30,41,59,0.7); border: 1px solid ${t.color}; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+        <div style="background: rgba(30,41,59,0.7); border: 1px solid ${t.color}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
           <div style="font-weight: 700; font-size: 0.8rem; color: ${t.color}; margin-bottom: 6px;">
             ${t.name} (Bán kính ${t.radiusM}m)
           </div>
-          <div style="font-size: 0.72rem; line-height: 1.45; color: #e2e8f0;">
+          <div style="font-size: 0.72rem; line-height: 1.5; color: #e2e8f0;">
             • <strong>Thủy Khẩu (Điểm trũng nhất):</strong> Sơn ${tk.son} (${tk.bearing.toFixed(1)}°) • Cao độ: ${tk.elevation.toFixed(1)}m (Chênh ${tk.deltaElev >= 0 ? '+' : ''}${tk.deltaElev.toFixed(1)}m)<br>
             • <strong>Tam Hợp Thủy Pháp:</strong> <span style="color: #38bdf8; font-weight: 700;">${a.cuc}</span> (${a.tamHop})<br>
             • <strong>Cung vị:</strong> ${a.viTriTruongSinh} • <strong>Đánh giá:</strong> ${a.danhGia}<br>
             • <strong>Lai Long (Gốc cao nhất):</strong> Sơn ${ll.son} (${ll.bearing.toFixed(1)}°) • Cao độ: ${ll.elevation.toFixed(1)}m (Chênh +${ll.deltaElev.toFixed(1)}m)<br>
             <div style="margin-top: 6px;">
-              <a href="${a.googleMapsUrl}" target="_blank" style="color: #f5b041; text-decoration: underline; font-size: 0.68rem;">📍 Mở vị trí Thủy Khẩu trên Google Maps</a>
+              <a href="${a.googleMapsUrl}" target="_blank" style="color: #f5b041; text-decoration: underline; font-size: 0.7rem;">📍 Mở vị trí Thủy Khẩu trên Google Maps</a>
             </div>
           </div>
         </div>
@@ -445,13 +545,13 @@
 
     modalBox.innerHTML = `
       <div class="lakinh-modal-overlay" id="modal-minhduong-overlay">
-        <div class="lakinh-glass lakinh-modal-dialog">
+        <div class="lakinh-glass-panel lakinh-modal-dialog">
           <div class="lakinh-modal-header">
             <div class="lakinh-modal-title">🌊 KHẢO SÁT CAO ĐỘ MINH ĐƯỜNG CỤC</div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-minhduong-overlay').remove()">✕</button>
           </div>
           <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 10px;">
-            Tâm trạch: ${data.center.lat.toFixed(6)}, ${data.center.lng.toFixed(6)} • Cao độ gốc: ${data.center.elevation.toFixed(1)}m
+            Tọa độ tâm trạch: ${data.center.lat.toFixed(6)}, ${data.center.lng.toFixed(6)} • Cao độ gốc: ${data.center.elevation.toFixed(1)}m
           </div>
           ${tiersHtml}
           <button class="lakinh-action-btn" onclick="document.getElementById('modal-minhduong-overlay').remove()">Đóng</button>
@@ -465,6 +565,7 @@
     const modalBox = document.getElementById('lakinh-modal-container');
     if (!modalBox || !global.NetaLaKinhEngine) return;
 
+    closeBottomSheet();
     const hk = global.NetaLaKinhEngine.generateHuyenKhongMatrix(state.rotation, 9);
 
     let cellsHtml = '';
@@ -483,7 +584,7 @@
 
     modalBox.innerHTML = `
       <div class="lakinh-modal-overlay" id="modal-hk-overlay">
-        <div class="lakinh-glass lakinh-modal-dialog">
+        <div class="lakinh-glass-panel lakinh-modal-dialog">
           <div class="lakinh-modal-header">
             <div class="lakinh-modal-title">☯️ HUYỀN KHÔNG PHI TINH (VẬN 9)</div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-hk-overlay').remove()">✕</button>
@@ -494,7 +595,7 @@
           <div class="lakinh-nine-grid">
             ${cellsHtml}
           </div>
-          <div style="font-size: 0.65rem; color: #94a3b8; line-height: 1.35; margin-bottom: 10px;">
+          <div style="font-size: 0.68rem; color: #94a3b8; line-height: 1.4; margin-bottom: 12px;">
             * Chú giải: Số bên trái (xanh lam) là <strong>Tọa Tinh</strong>; Số bên phải (đỏ) là <strong>Hướng Tinh</strong>; Số ở dưới là <strong>Vận Tinh</strong>.
           </div>
           <button class="lakinh-action-btn" onclick="document.getElementById('modal-hk-overlay').remove()">Đóng</button>
@@ -503,7 +604,190 @@
     `;
   }
 
-  // Quản lý Hồ sơ Khảo sát (LocalStorage)
+  // Quản lý Bottom Sheet
+  function openBottomSheet() {
+    const sheet = document.getElementById('lakinh-bottom-sheet');
+    if (sheet) {
+      sheet.classList.add('open');
+      state.isSheetOpen = true;
+    }
+  }
+
+  function closeBottomSheet() {
+    const sheet = document.getElementById('lakinh-bottom-sheet');
+    if (sheet) {
+      sheet.classList.remove('open');
+      state.isSheetOpen = false;
+    }
+  }
+
+  // Cảm biến La Bàn & Bộ lọc thông thấp
+  function toggleCompassSensor() {
+    const btnDock = document.getElementById('lakinh-dock-sensor');
+    if (!state.isSensorActive) {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission().then(resp => {
+          if (resp === 'granted') startSensorListening(btnDock);
+          else showLaKinhToast('Cần cấp quyền cảm biến la bàn');
+        }).catch(err => {
+          showLaKinhToast('Thiết bị không hỗ trợ quyền cảm biến');
+        });
+      } else {
+        startSensorListening(btnDock);
+      }
+    } else {
+      stopSensorListening(btnDock);
+    }
+  }
+
+  function startSensorListening(btn) {
+    state.isSensorActive = true;
+    if (btn) {
+      btn.classList.add('active-green');
+      btn.innerHTML = '🧭 Đang Đọc La Bàn';
+    }
+    window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
+    window.addEventListener('deviceorientation', handleOrientationEvent, true);
+    showLaKinhToast('🧭 Đã kích hoạt cảm biến la bàn thực địa');
+  }
+
+  function stopSensorListening(btn) {
+    state.isSensorActive = false;
+    if (btn) {
+      btn.classList.remove('active-green');
+      btn.innerHTML = '🧭 La Bàn Live';
+    }
+    window.removeEventListener('deviceorientationabsolute', handleOrientationEvent, true);
+    window.removeEventListener('deviceorientation', handleOrientationEvent, true);
+    showLaKinhToast('Đã dừng cảm biến la bàn');
+  }
+
+  function handleOrientationEvent(e) {
+    if (!state.isSensorActive || state.isLocked) return;
+
+    let heading = 0;
+    if (e.webkitCompassHeading != null) {
+      heading = e.webkitCompassHeading;
+    } else if (e.alpha != null) {
+      heading = 360 - e.alpha;
+    }
+
+    const chkAutoDec = document.getElementById('lakinh-chk-autodec');
+    if (chkAutoDec && chkAutoDec.checked) {
+      heading = (heading + state.declination + 360) % 360;
+    }
+
+    // Bộ lọc thông thấp chống rung (Low-pass smoothing: alpha = 0.18)
+    const alpha = 0.18;
+    let diff = heading - state.rotation;
+    while (diff < -180) diff += 360;
+    while (diff > 180) diff -= 360;
+
+    const smoothed = state.rotation + alpha * diff;
+    updateRotationDisplay(smoothed);
+  }
+
+  function toggleLockHeading() {
+    state.isLocked = !state.isLocked;
+    const btnLock = document.getElementById('sheet-btn-lock');
+    const btnDock = document.getElementById('lakinh-dock-sensor');
+
+    if (state.isLocked) {
+      if (btnLock) {
+        btnLock.innerHTML = '🔒 Đang Khóa Hướng Nhà';
+        btnLock.style.background = '#dc2626';
+      }
+      if (btnDock) {
+        btnDock.classList.add('locked-red');
+        btnDock.innerHTML = '🔒 Đã Khóa Góc';
+      }
+      showLaKinhToast('🔒 Đã khóa góc đo hướng nhà');
+    } else {
+      if (btnLock) {
+        btnLock.innerHTML = '🔓 Khóa Góc Hiện Tại';
+        btnLock.style.background = '#334155';
+      }
+      if (btnDock) {
+        btnDock.classList.remove('locked-red');
+        btnDock.innerHTML = state.isSensorActive ? '🧭 Đang Đọc La Bàn' : '🧭 La Bàn Live';
+      }
+      showLaKinhToast('🔓 Đã mở khóa góc');
+    }
+  }
+
+  // Thao tác vẽ ranh đất
+  function onMapClick(e) {
+    if (!state.isTracingPlot) return;
+    state.polygonPoints.push(e.latlng);
+
+    polygonLayerGroup.clearLayers();
+
+    state.polygonPoints.forEach(pt => {
+      L.circleMarker(pt, { radius: 5, color: '#f5b041', fillColor: '#fff', fillOpacity: 1 }).addTo(polygonLayerGroup);
+    });
+
+    if (state.polygonPoints.length >= 2) {
+      L.polyline(state.polygonPoints, { color: '#f5b041', weight: 2, dashArray: '4, 4' }).addTo(polygonLayerGroup);
+    }
+
+    if (state.polygonPoints.length >= 3) {
+      L.polygon(state.polygonPoints, { color: '#f5b041', fillColor: '#f5b041', fillOpacity: 0.15 }).addTo(polygonLayerGroup);
+
+      if (global.NetaLaKinhEngine) {
+        const centroid = global.NetaLaKinhEngine.calculatePolygonCentroid(state.polygonPoints);
+        if (centroid) {
+          L.marker([centroid.lat, centroid.lng], {
+            icon: L.divIcon({
+              className: 'custom-centroid-marker',
+              html: `<div style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 8px #000;">🎯 Tim Đất (${centroid.areaM2} m²)</div>`,
+              iconSize: [80, 20],
+              iconAnchor: [40, 10]
+            })
+          }).addTo(polygonLayerGroup);
+
+          mapInstance.panTo([centroid.lat, centroid.lng]);
+        }
+      }
+    }
+  }
+
+  // Tìm kiếm địa điểm
+  async function promptSearchLocation() {
+    const q = prompt('Nhập địa chỉ công trình hoặc tọa độ (Vĩ độ, Kinh độ):', 'Hồ Hoàn Kiếm, Hà Nội');
+    if (!q || !q.trim()) return;
+
+    const coordMatch = q.match(/^([-+]?[0-9]*\.?[0-9]+)[\s,]+([-+]?[0-9]*\.?[0-9]+)$/);
+    if (coordMatch) {
+      const lat = parseFloat(coordMatch[1]);
+      const lng = parseFloat(coordMatch[2]);
+      if (mapInstance) {
+        mapInstance.setView([lat, lng], 19);
+        showLaKinhToast(`Đã bay đến tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+      }
+      return;
+    }
+
+    showLaKinhToast('🔍 Đang tìm kiếm...');
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=vn&limit=1`;
+      const resp = await fetch(url, { headers: { 'User-Agent': 'NetaLight/1.6' } });
+      const data = await resp.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        if (mapInstance) {
+          mapInstance.setView([lat, lon], 19);
+          showLaKinhToast(`📍 ${data[0].display_name.split(',')[0]}`);
+        }
+      } else {
+        showLaKinhToast('Không tìm thấy địa điểm');
+      }
+    } catch (e) {
+      showLaKinhToast('Lỗi kết nối tìm kiếm');
+    }
+  }
+
+  // Lưu & Mở hồ sơ
   function saveCurrentProject() {
     const name = prompt('Nhập tên công trình / thửa đất:', `Khảo sát ${new Date().toLocaleDateString('vi-VN')}`);
     if (!name) return;
@@ -524,6 +808,7 @@
       list.unshift(record);
       localStorage.setItem('neta_lakinh_projects', JSON.stringify(list));
       showLaKinhToast('✅ Đã lưu hồ sơ khảo sát!');
+      closeBottomSheet();
     } catch (e) {
       showLaKinhToast('❌ Lỗi khi lưu vào bộ nhớ máy');
     }
@@ -559,7 +844,7 @@
 
     modalBox.innerHTML = `
       <div class="lakinh-modal-overlay" id="modal-projects-overlay">
-        <div class="lakinh-glass lakinh-modal-dialog">
+        <div class="lakinh-glass-panel lakinh-modal-dialog">
           <div class="lakinh-modal-header">
             <div class="lakinh-modal-title">📁 HỒ SƠ KHẢO SÁT ĐÃ LƯU</div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-projects-overlay').remove()">✕</button>
@@ -594,7 +879,6 @@
     openProjectsModal();
   }
 
-  // Xuất file KML Google Earth
   function exportKML() {
     if (!global.NetaLaKinhEngine) return;
     const kml = global.NetaLaKinhEngine.generateKML('Khao_Sat_La_Kinh', state.centerCoords[0], state.centerCoords[1], state.rotation);
@@ -612,171 +896,6 @@
     showLaKinhToast('📥 Đã tạo file KML Google Earth!');
   }
 
-  // Cảm biến La Bàn con quay hồi chuyển & Bộ lọc thông thấp
-  function toggleCompassSensor() {
-    const btn = document.getElementById('lakinh-btn-sensor');
-    if (!state.isSensorActive) {
-      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission().then(resp => {
-          if (resp === 'granted') startSensorListening(btn);
-          else showLaKinhToast('Cần cấp quyền cảm biến la bàn');
-        }).catch(err => {
-          showLaKinhToast('Thiết bị không hỗ trợ quyền cảm biến');
-        });
-      } else {
-        startSensorListening(btn);
-      }
-    } else {
-      stopSensorListening(btn);
-    }
-  }
-
-  function startSensorListening(btn) {
-    state.isSensorActive = true;
-    if (btn) {
-      btn.style.background = '#16a34a';
-      btn.innerHTML = '🧭 Đang Đọc La Bàn';
-    }
-    window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
-    window.addEventListener('deviceorientation', handleOrientationEvent, true);
-    showLaKinhToast('Đã kích hoạt cảm biến la bàn thực địa');
-  }
-
-  function stopSensorListening(btn) {
-    state.isSensorActive = false;
-    if (btn) {
-      btn.style.background = '#0284c7';
-      btn.innerHTML = '🧭 La Bàn Live';
-    }
-    window.removeEventListener('deviceorientationabsolute', handleOrientationEvent, true);
-    window.removeEventListener('deviceorientation', handleOrientationEvent, true);
-    showLaKinhToast('Đã dừng cảm biến la bàn');
-  }
-
-  function handleOrientationEvent(e) {
-    if (!state.isSensorActive || state.isLocked) return;
-
-    let heading = 0;
-    if (e.webkitCompassHeading != null) {
-      // Thiết bị iOS Safari
-      heading = e.webkitCompassHeading;
-    } else if (e.alpha != null) {
-      // Android
-      heading = 360 - e.alpha;
-    }
-
-    const chkAutoDec = document.getElementById('lakinh-chk-autodec');
-    if (chkAutoDec && chkAutoDec.checked) {
-      heading = (heading + state.declination + 360) % 360;
-    }
-
-    // Bộ lọc thông thấp chống rung (Low-pass smoothing: alpha = 0.18)
-    const alpha = 0.18;
-    let diff = heading - state.rotation;
-    while (diff < -180) diff += 360;
-    while (diff > 180) diff -= 360;
-
-    const smoothed = state.rotation + alpha * diff;
-    updateRotationDisplay(smoothed);
-  }
-
-  function toggleLockHeading() {
-    state.isLocked = !state.isLocked;
-    const btn = document.getElementById('lakinh-btn-lock');
-    if (btn) {
-      if (state.isLocked) {
-        btn.style.background = '#dc2626';
-        btn.innerHTML = '🔒 Đã Khóa';
-        showLaKinhToast('🔒 Đã khóa góc hướng nhà');
-      } else {
-        btn.style.background = '#334155';
-        btn.innerHTML = '🔓 Khóa Góc';
-        showLaKinhToast('🔓 Đã mở khóa góc');
-      }
-    }
-  }
-
-  // Tìm kiếm địa chỉ qua Nominatim OpenStreetMap
-  async function searchLocation() {
-    const input = document.getElementById('lakinh-search-input');
-    if (!input || !input.value.trim()) return;
-    const q = input.value.trim();
-
-    // Kiểm tra nếu là tọa độ Lat, Lng
-    const coordMatch = q.match(/^([-+]?[0-9]*\.?[0-9]+)[\s,]+([-+]?[0-9]*\.?[0-9]+)$/);
-    if (coordMatch) {
-      const lat = parseFloat(coordMatch[1]);
-      const lng = parseFloat(coordMatch[2]);
-      if (mapInstance) {
-        mapInstance.setView([lat, lng], 19);
-        showLaKinhToast(`Đã bay đến tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-      }
-      return;
-    }
-
-    showLaKinhToast('🔍 Đang tìm kiếm...');
-    try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=vn&limit=1`;
-      const resp = await fetch(url, { headers: { 'User-Agent': 'NetaLight/1.5' } });
-      const data = await resp.json();
-      if (data && data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        if (mapInstance) {
-          mapInstance.setView([lat, lon], 19);
-          showLaKinhToast(`📍 ${data[0].display_name.split(',')[0]}`);
-        }
-      } else {
-        showLaKinhToast('Không tìm thấy địa điểm');
-      }
-    } catch (e) {
-      showLaKinhToast('Lỗi kết nối tìm kiếm');
-    }
-  }
-
-  function getCurrentGPS() {
-    if (!navigator.geolocation) {
-      showLaKinhToast('Thiết bị không hỗ trợ GPS');
-      return;
-    }
-    showLaKinhToast('🛰️ Đang lấy tọa độ GPS...');
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        if (mapInstance) {
-          mapInstance.setView([lat, lng], 20);
-          showLaKinhToast(`Đã định vị: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-        }
-      },
-      (err) => {
-        showLaKinhToast('Không lấy được vị trí GPS');
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
-  }
-
-  function switchMapLayer() {
-    if (!mapInstance) return;
-    const btn = document.getElementById('lakinh-btn-layer');
-    if (currentLayer === layers.googleSat) {
-      mapInstance.removeLayer(layers.googleSat);
-      currentLayer = layers.esriSat;
-      currentLayer.addTo(mapInstance);
-      if (btn) btn.innerHTML = '🗺️ Esri Sat';
-    } else if (currentLayer === layers.esriSat) {
-      mapInstance.removeLayer(layers.esriSat);
-      currentLayer = layers.osm;
-      currentLayer.addTo(mapInstance);
-      if (btn) btn.innerHTML = '🗺️ Bản Đồ Phố';
-    } else {
-      mapInstance.removeLayer(layers.osm);
-      currentLayer = layers.googleSat;
-      currentLayer.addTo(mapInstance);
-      if (btn) btn.innerHTML = '🗺️ Vệ Tinh';
-    }
-  }
-
   function showLaKinhToast(msg) {
     if (typeof global.showToast === 'function') {
       global.showToast(msg);
@@ -785,25 +904,55 @@
     }
   }
 
-  // Gán sự kiện điều khiển
+  // Gán sự kiện
   function bindLaKinhEvents() {
-    // Drawer thu gọn / mở rộng
-    const drawerToggleBtn = document.getElementById('lakinh-drawer-toggle-btn');
-    const drawer = document.getElementById('lakinh-drawer');
-    const drawerTxt = document.getElementById('lakinh-drawer-toggle-txt');
-    if (drawerToggleBtn && drawer) {
-      drawerToggleBtn.addEventListener('click', () => {
-        state.isDrawerCollapsed = !state.isDrawerCollapsed;
-        drawer.classList.toggle('collapsed', state.isDrawerCollapsed);
-        if (drawerTxt) {
-          drawerTxt.textContent = state.isDrawerCollapsed ? 'Mở rộng ▴' : 'Thu gọn ▾';
+    // 1. HUD Pill chạm để mở thẻ chi tiết
+    const hudPill = document.getElementById('lakinh-hud-pill');
+    const hudCard = document.getElementById('lakinh-hud-detail-card');
+    const hudArrow = document.getElementById('hud-pill-arrow');
+
+    if (hudPill && hudCard) {
+      hudPill.addEventListener('click', () => {
+        state.isHudDetailOpen = !state.isHudDetailOpen;
+        hudCard.style.display = state.isHudDetailOpen ? 'block' : 'none';
+        if (hudArrow) hudArrow.textContent = state.isHudDetailOpen ? '▴' : '▾';
+      });
+    }
+
+    // Đóng thẻ chi tiết khi chạm vào bản đồ
+    if (mapInstance) {
+      mapInstance.on('click', () => {
+        if (state.isHudDetailOpen && hudCard) {
+          state.isHudDetailOpen = false;
+          hudCard.style.display = 'none';
+          if (hudArrow) hudArrow.textContent = '▾';
         }
       });
     }
 
+    // 2. Bottom Dock buttons
+    const dockSensor = document.getElementById('lakinh-dock-sensor');
+    if (dockSensor) dockSensor.addEventListener('click', toggleCompassSensor);
+
+    const dockGps = document.getElementById('lakinh-dock-gps');
+    if (dockGps) dockGps.addEventListener('click', getCurrentGPS);
+
+    const dockDem = document.getElementById('lakinh-dock-dem');
+    if (dockDem) dockDem.addEventListener('click', scanElevationAndTiers);
+
+    const dockTools = document.getElementById('lakinh-dock-tools');
+    if (dockTools) dockTools.addEventListener('click', openBottomSheet);
+
+    // 3. Bottom Sheet controls
+    const sheetCloseBtn = document.getElementById('sheet-close-btn');
+    if (sheetCloseBtn) sheetCloseBtn.addEventListener('click', closeBottomSheet);
+
+    const sheetHandle = document.getElementById('sheet-handle');
+    if (sheetHandle) sheetHandle.addEventListener('click', closeBottomSheet);
+
     // Sliders
-    const sOpacity = document.getElementById('lakinh-slider-opacity');
-    const valOpacity = document.getElementById('lakinh-val-opacity');
+    const sOpacity = document.getElementById('sheet-slider-opacity');
+    const valOpacity = document.getElementById('sheet-val-opacity');
     const disc = document.getElementById('lakinh-disc');
     if (sOpacity) {
       sOpacity.addEventListener('input', (e) => {
@@ -813,8 +962,8 @@
       });
     }
 
-    const sSize = document.getElementById('lakinh-slider-size');
-    const valSize = document.getElementById('lakinh-val-size');
+    const sSize = document.getElementById('sheet-slider-size');
+    const valSize = document.getElementById('sheet-val-size');
     const container = document.getElementById('lakinh-overlay-container');
     if (sSize) {
       sSize.addEventListener('input', (e) => {
@@ -827,7 +976,7 @@
       });
     }
 
-    const sRot = document.getElementById('lakinh-slider-rotation');
+    const sRot = document.getElementById('sheet-slider-rotation');
     if (sRot) {
       sRot.addEventListener('input', (e) => {
         updateRotationDisplay(parseFloat(e.target.value));
@@ -850,26 +999,28 @@
 
     // Zoom buttons
     const btnZoomTieu = document.getElementById('btn-zoom-tieu');
-    if (btnZoomTieu) btnZoomTieu.addEventListener('click', () => mapInstance && mapInstance.setZoom(20));
+    if (btnZoomTieu) btnZoomTieu.addEventListener('click', () => {
+      if (mapInstance) mapInstance.setZoom(20);
+      closeBottomSheet();
+    });
 
     const btnZoomTrung = document.getElementById('btn-zoom-trung');
-    if (btnZoomTrung) btnZoomTrung.addEventListener('click', () => mapInstance && mapInstance.setZoom(17));
+    if (btnZoomTrung) btnZoomTrung.addEventListener('click', () => {
+      if (mapInstance) mapInstance.setZoom(17);
+      closeBottomSheet();
+    });
 
     const btnZoomDai = document.getElementById('btn-zoom-dai');
-    if (btnZoomDai) btnZoomDai.addEventListener('click', () => mapInstance && mapInstance.setZoom(14));
+    if (btnZoomDai) btnZoomDai.addEventListener('click', () => {
+      if (mapInstance) mapInstance.setZoom(14);
+      closeBottomSheet();
+    });
 
-    // Live Sensor & Lock
-    const btnSensor = document.getElementById('lakinh-btn-sensor');
-    if (btnSensor) btnSensor.addEventListener('click', toggleCompassSensor);
-
-    const btnLock = document.getElementById('lakinh-btn-lock');
+    // Sheet actions
+    const btnLock = document.getElementById('sheet-btn-lock');
     if (btnLock) btnLock.addEventListener('click', toggleLockHeading);
 
-    // Actions
-    const btnScanElev = document.getElementById('lakinh-btn-scan-elev');
-    if (btnScanElev) btnScanElev.addEventListener('click', scanElevationAndTiers);
-
-    const btnRay = document.getElementById('lakinh-btn-ray');
+    const btnRay = document.getElementById('sheet-btn-ray');
     if (btnRay) {
       btnRay.addEventListener('click', () => {
         state.isRayActive = !state.isRayActive;
@@ -879,48 +1030,40 @@
       });
     }
 
-    const btnHK = document.getElementById('lakinh-btn-huyenkhong');
+    const btnScanElev = document.getElementById('sheet-btn-scan-elev');
+    if (btnScanElev) btnScanElev.addEventListener('click', scanElevationAndTiers);
+
+    const btnHK = document.getElementById('sheet-btn-huyenkhong');
     if (btnHK) btnHK.addEventListener('click', openHuyenKhongModal);
 
-    const btnCentroid = document.getElementById('lakinh-btn-centroid');
+    const btnCentroid = document.getElementById('sheet-btn-centroid');
     if (btnCentroid) {
       btnCentroid.addEventListener('click', () => {
         state.isTracingPlot = !state.isTracingPlot;
+        closeBottomSheet();
         if (state.isTracingPlot) {
           state.polygonPoints = [];
           if (polygonLayerGroup) polygonLayerGroup.clearLayers();
-          btnCentroid.style.background = '#eab308';
           btnCentroid.innerHTML = '📐 Chạm các góc ranh đất...';
-          showLaKinhToast('Chạm vào các đỉnh góc của thửa đất trên ảnh vệ tinh');
+          showLaKinhToast('Chạm vào các đỉnh góc của thửa đất trên ảnh vệ tinh để tính tim đất');
         } else {
-          btnCentroid.style.background = '#334155';
           btnCentroid.innerHTML = '📐 Vẽ Ranh Đất / Tìm Tim Nhà';
         }
       });
     }
 
-    const btnSave = document.getElementById('lakinh-btn-save');
+    const btnSave = document.getElementById('sheet-btn-save');
     if (btnSave) btnSave.addEventListener('click', saveCurrentProject);
 
-    const btnKML = document.getElementById('lakinh-btn-kml');
+    const btnKML = document.getElementById('sheet-btn-kml');
     if (btnKML) btnKML.addEventListener('click', exportKML);
 
-    // Top Bar Buttons
+    // Top Strip buttons
     const btnSearch = document.getElementById('lakinh-btn-search');
-    if (btnSearch) btnSearch.addEventListener('click', searchLocation);
-
-    const inputSearch = document.getElementById('lakinh-search-input');
-    if (inputSearch) {
-      inputSearch.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') searchLocation();
-      });
-    }
+    if (btnSearch) btnSearch.addEventListener('click', promptSearchLocation);
 
     const btnLayer = document.getElementById('lakinh-btn-layer');
     if (btnLayer) btnLayer.addEventListener('click', switchMapLayer);
-
-    const btnGPS = document.getElementById('lakinh-btn-gps');
-    if (btnGPS) btnGPS.addEventListener('click', getCurrentGPS);
 
     const btnProjects = document.getElementById('lakinh-btn-projects');
     if (btnProjects) btnProjects.addEventListener('click', openProjectsModal);
@@ -931,7 +1074,9 @@
     init: initLaKinhView,
     render: renderLaKinh,
     loadProject: loadProject,
-    deleteProject: deleteProject
+    deleteProject: deleteProject,
+    openBottomSheet: openBottomSheet,
+    closeBottomSheet: closeBottomSheet
   };
 
   global.NetaLaKinhView = NetaLaKinhView;
