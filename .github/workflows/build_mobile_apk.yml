@@ -63,28 +63,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.8
-          name: "Neta Light & Huyền Học v1.3.8 (Tính Năng Năm Xem & An 9 Sao Lưu Hàng Năm)"
+          tag_name: v1.4.0
+          name: "Neta Light & Huyền Học v1.4.0 (Ra Mắt Tính Năng Bài Tarot RWS 78 Lá & Golden Dawn)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.8
-            - **Bổ Sung Tính Năng Chọn Năm Xem Hạn (Mặc định năm hiện tại 2026 - Bính Ngọ)**:
-              + Bổ sung thanh điều khiển Năm xem siêu tốc: nút lùi/tiến năm `[ ◀ ] [ 2026 ] [ ▶ ]`, hiển thị Can Chi năm xem `(Bính Ngọ)` và nút `⚡ Năm nay`.
-              + Tự động tính toán chính xác 100% Tuổi Mụ theo Năm Xem (ví dụ sinh năm 1979 xem năm 2026 $\rightarrow$ 48 tuổi, không còn bị mặc định 1 tuổi).
-            - **An Đầy Đủ Bộ 9 Sao Lưu (Lưu Niên Tinh) Chuẩn Nam Phái Thái Thứ Lang**:
-              + Tự động an 9 sao lưu trên 12 cung theo Can Chi của năm xem:
-                * **Lưu Thái Tuế** (theo Địa Chi năm xem).
-                * **Lưu Tang Môn** (cách Lưu Thái Tuế 2 cung chiều thuận).
-                * **Lưu Bạch Hổ** (đối cung Lưu Tang Môn).
-                * **Lưu Thiên Khốc, Lưu Thiên Hư** (khởi Ngọ tính nghịch/thuận).
-                * **Lưu Lộc Tồn** (theo Thiên Can năm xem).
-                * **Lưu Kình Dương, Lưu Đà La** (trước/sau Lưu Lộc Tồn 1 cung).
-                * **Lưu Thiên Mã** (theo Tam Hợp Chi năm xem).
-              + Đánh dấu cung Tiểu Hạn của năm xem với huy hiệu `[HẠN]` nổi bật.
-              + Hiển thị nhãn Sao Lưu thanh lịch ngay trên chân cung, phân biệt rõ Cát / Hung.
-            - **Tái Cấu Trúc Toàn Diện Ô Giữa (Thiên Bàn Tử Vi)**:
-              + Layout phân tầng ngang toàn chiều rộng, hiển thị trang trọng: `Năm xem: 2026 (Bính Ngọ) • 48 tuổi`.
-              + Loại bỏ triệt để tình trạng đè chữ hay cắt chữ.
-            - **Hoạt động Ngoại tuyến 100% Offline độc lập**: 60 FPS mượt mà.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.0
+            - **Ra Mắt Tính Năng Chiêm Nghiệm Bài Tarot Rider-Waite-Smith (RWS) 78 Lá Cổ Điển**:
+              + Tích hợp đầy đủ CSDL tri thức 78 lá bài (22 Major Arcana + 56 Minor Arcana: Cốc, Tiền, Kiếm, Gậy).
+              + Áp dụng Thuật toán Tương tác Nguyên tố Cổ điển **Golden Dawn Elemental Dignities**: Đánh giá định lượng tương sinh (+1.5), đồng dạng (+1.0), tương khắc (-1.0) và trung tính (+0.5).
+              + **Phân tích Định lượng Vĩ mô (Macro Scan)**: Tỷ lệ Ẩn chính (Định mệnh vs Ý chí tự do), Tỷ lệ Chiều bài (Xuôi / Ngược), Phân bổ 4 Nguyên tố (Lửa, Nước, Khí, Đất) và Dòng chảy năng lượng tổng thể.
+            - **Trải Nghiệm Bàn Bài 3D & Lật Bài Chân Thực (Interactive 3D Flip)**:
+              + Bốc bài ngẫu nhiên theo xác suất tự nhiên (75% xuôi, 25% ngược).
+              + Hiệu ứng lật bài 3D mượt mà xoay ngang `rotateY(180deg)` giữ nguyên chiều bài RWS, tự động định vị thẻ ngược.
+              + Đa dạng kiểu trải bài: 3 lá Quá khứ - Hiện tại - Tương lai, Vấn đề & Giải pháp, Mối quan hệ, Quyết định A/B, và 1 lá Daily Card.
+            - **Bách Khoa Toàn Thư 78 Lá Bài (Tarot Encyclopedia)**:
+              + Tra cứu toàn bộ 78 lá bài với bộ lọc Ẩn chính, Cốc, Tiền, Kiếm, Gậy và tìm kiếm thông minh.
+              + Popup chi tiết: Ảnh HD, từ khóa Xuôi/Ngược, ý nghĩa Tổng quan, Công việc, Tình cảm và Lời khuyên hành động.
+            - **Nhật Ký Trải Bài Cục Bộ (Tarot Journal)**:
+              + Lưu trữ chiêm nghiệm bảo mật 100% trên thiết bị, xem lại lịch sử chi tiết mọi lúc không cần mạng.
+            - **Hoàn toàn Ngoại tuyến 100% Offline (Zero-AI, Zero-API, Zero-Cost)**: Khởi động tức thì, bảo mật tuyệt đối.
           files: build-output/NetaLight.apk
           draft: false
           prerelease: false
