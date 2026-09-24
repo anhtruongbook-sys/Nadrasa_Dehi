@@ -63,16 +63,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.5
-          name: "Neta Light & Huyền Học v1.3.5 (Loại Bỏ Hoàn Toàn Cắt Chữ & Chống Tràn Nút Huy Hiệu)"
+          tag_name: v1.3.6
+          name: "Neta Light & Huyền Học v1.3.6 (Sửa Triệt Để Lỗi Tràn Nút Lịch & Cắt Chữ Tử Vi)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.5
-            - **Khắc Phục Triệt Để Cắt Chữ Khi Không Gian Còn Rộng (Zero Word Truncation)**:
-              + **Phụ Tinh (Cát / Sát)**: Chuyển cấu trúc 2 cột phụ tinh sang Flexbox tự co giãn linh hoạt (`display: flex; justify-content: space-between`), loại bỏ khóa cứng 50% và `overflow: hidden`, giúp hiển thị nguyên vẹn 100% tên sao dài (*Thiếu Dương*, *Thanh Long*, *Nguyệt Đức*...).
-              + **Thiên Bàn Trung Tâm**: Phân bổ tỉ lệ độ rộng cột thông minh (Cột phải chứa Nạp Âm dài được tăng thêm 35% diện tích), hiển thị đầy đủ không sót chữ nào (*Thiên Thượng Hỏa*, *Hỏa Lục Cục*...).
-            - **Loại Bỏ Hoàn Toàn Lỗi Tràn Nút Huy Hiệu (Zero Badge Overflow)**:
-              + Hợp nhất `THÂN`, `TRIỆT`, `TUẦN` vào chung một flex-container chuyên biệt, nằm gọn gàng bên phải tiêu đề cung.
-              + Cung `PHÚC ĐỨC`, `ĐIỀN TRẠCH` khi có cả Thân và Tuần/Triệt hiển thị 2 huy hiệu độc lập song song, màu sắc phân biệt rõ ràng (Thân: Vàng Hổ Phách, Tuần: Xanh Lục, Triệt: Đỏ Thắm), tuyệt đối không tràn mép ô.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.6
+            - **Sửa Triệt Để Lỗi Nút Bị Tràn Ra Ngoài Khung (Lịch Âm Dương)**:
+              + Tái cơ cấu thanh điều khiển Lịch 2 tầng chuẩn mực:
+                * Tầng 1: Nhóm chọn chế độ (`Tháng / Ngày`), chọn lịch (`Dương / Âm`) và nút `⚡ Hôm nay`.
+                * Tầng 2: Hộp nhập ngày tháng năm linh hoạt + Nút hành động `🚀 Xem`.
+              + Chấm dứt hoàn toàn hiện tượng nút `[ 🚀 ]` bị đẩy tràn ra khỏi mép khung trên màn hình điện thoại.
+            - **Khắc Phục Triệt Để Cắt Chữ Khi Không Gian Còn Rộng (Lá Số Tử Vi)**:
+              + **Phụ Tinh (Cát / Sát)**: Chuyển sang Flexbox tự co giãn linh hoạt, loại bỏ khóa cứng 50% và `overflow: hidden`, hiển thị nguyên vẹn 100% tên sao dài (*Thiếu Dương*, *Thanh Long*, *Nguyệt Đức*...).
+              + **Thiên Bàn Trung Tâm**: Phân bổ độ rộng cột linh hoạt (tăng 35% không gian cột phải), hiển thị trọn vẹn Nạp Âm (*Thiên Thượng Hỏa*).
+              + **Huy Hiệu Cung**: Hợp nhất `THÂN`, `TRIỆT`, `TUẦN` vào chung flex-container, hiển thị song song không đè chồng, không cắt chữ cung dài (*PHÚC ĐỨC*).
             - **Hoạt động Ngoại tuyến 100% Offline độc lập**: 60 FPS mượt mà.
           files: build-output/NetaLight.apk
           draft: false

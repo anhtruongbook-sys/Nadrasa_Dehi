@@ -33,7 +33,7 @@
 
     container.innerHTML = `
       <div class="calendar-module-container">
-        <!-- Top Calendar Navigation Bar (2 Clean Rows) -->
+        <!-- Top Calendar Navigation Bar (2 Clean Non-overflowing Rows) -->
         <div class="cal-top-bar">
           <div class="cal-top-row-1">
             <div class="cal-mode-toggle">
@@ -44,15 +44,15 @@
                 📆 Ngày
               </button>
             </div>
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isCalLunarMode ? 'active' : ''}" id="btn-cal-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isCalLunarMode ? 'active' : ''}" id="btn-cal-lunar">🌙 Âm</button>
+            </div>
             <button class="cal-btn-today" id="btn-cal-today" title="Về hôm nay">
               ⚡ Hôm nay
             </button>
           </div>
           <div class="cal-top-row-2">
-            <div class="ucc-pill-cal">
-              <button type="button" class="ucc-pill-btn ${!isCalLunarMode ? 'active' : ''}" id="btn-cal-solar">☀️ Dương</button>
-              <button type="button" class="ucc-pill-btn ${isCalLunarMode ? 'active' : ''}" id="btn-cal-lunar">🌙 Âm</button>
-            </div>
             <div class="ucc-date-box">
               <input type="number" id="cal-jump-day" class="num-box num-day" min="1" max="31" value="${isCalLunarMode ? dayInfo.lunar.day : d}" placeholder="Ngày" title="Nhập Ngày">
               <span class="num-slash">/</span>
@@ -65,7 +65,7 @@
                 <input type="date" id="cal-native-picker" value="${y}-${pad(m)}-${pad(d)}" class="native-hidden-date">
               </label>
             </div>
-            <button class="cal-btn-jump" id="btn-cal-jump" title="Đến ngày">🚀</button>
+            <button class="cal-btn-jump" id="btn-cal-jump" title="Đến ngày">🚀 Xem</button>
           </div>
         </div>
 

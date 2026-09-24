@@ -65,8 +65,8 @@ for attempt in range(60):
             conclusion = latest.get("conclusion")
             run_id = latest.get("id")
             html_url = latest.get("html_url")
-            msg = latest.get("head_commit", {}).get("message", "").split("\n")[0][:60]
-            
+            raw_msg = latest.get("head_commit", {}).get("message", "").split("\n")[0][:60]
+            msg = raw_msg.encode('ascii', 'replace').decode('ascii')
             print(f"[{time.strftime('%H:%M:%S')}] APK Run #{run_id} ({head_sha}): status={status}, conclusion={conclusion} | msg: {msg}")
             
             matched = (head_sha == target_commit) if target_commit else True

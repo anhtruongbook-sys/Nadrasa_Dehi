@@ -4715,11 +4715,10 @@ body.theme-light .dropdown-check {
   background: linear-gradient(135deg, #f5b041 0%, #d4ac0d 100%);
   border: 1px solid #ffd700;
   color: #120104;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 900;
-  padding: 0 6px;
+  padding: 0 10px;
   height: 26px;
-  min-width: 28px;
   border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
@@ -4727,6 +4726,7 @@ body.theme-light .dropdown-check {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .cal-cell {
