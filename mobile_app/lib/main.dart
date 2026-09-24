@@ -68,31 +68,57 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
   Future<void> _handleJavaScriptMessage(String messageText) async {
     try {
       final data = jsonDecode(messageText);
-      if (data is Map && data['action'] == 'saveImage') {
-        final String base64Str = data['base64'] ?? '';
-        final String filename = data['filename'] ?? 'NetaLight_${DateTime.now().millisecondsSinceEpoch}.png';
+      if (data is Map) {
+        final action = data['action'];
+        if (action == 'saveImage') {
+          final String base64Str = data['base64'] ?? '';
+          final String filename = data['filename'] ?? 'NetaLight_${DateTime.now().millisecondsSinceEpoch}.png';
 
-        if (base64Str.isNotEmpty) {
-          final cleanBase64 = base64Str.contains(',')
-              ? base64Str.split(',')[1]
-              : base64Str;
-          final bytes = base64Decode(cleanBase64);
+          if (base64Str.isNotEmpty) {
+            final cleanBase64 = base64Str.contains(',')
+                ? base64Str.split(',')[1]
+                : base64Str;
+            final bytes = base64Decode(cleanBase64);
 
-          final result = await _platform.invokeMethod<String>('saveImageToGallery', {
-            'bytes': bytes,
-            'filename': filename,
-          });
+            final result = await _platform.invokeMethod<String>('saveImageToGallery', {
+              'bytes': bytes,
+              'filename': filename,
+            });
 
-          if (result == 'OK') {
-            _controller.runJavaScript("if (typeof showToast === 'function') showToast('✨ Đã lưu ảnh vào Thư viện ảnh (Bộ sưu tập) của máy!');");
-          } else {
-            _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu ảnh vào máy: $result');");
+            if (result == 'OK') {
+              _controller.runJavaScript("if (typeof showToast === 'function') showToast('✨ Đã lưu ảnh vào Thư viện ảnh (Bộ sưu tập) của máy!');");
+            } else {
+              _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu ảnh vào máy: $result');");
+            }
+          }
+        } else if (action == 'saveFile') {
+          final String base64Str = data['base64'] ?? '';
+          final String filename = data['filename'] ?? 'NetaLight_${DateTime.now().millisecondsSinceEpoch}.bin';
+          final String mimeType = data['mimeType'] ?? 'application/octet-stream';
+
+          if (base64Str.isNotEmpty) {
+            final cleanBase64 = base64Str.contains(',')
+                ? base64Str.split(',')[1]
+                : base64Str;
+            final bytes = base64Decode(cleanBase64);
+
+            final result = await _platform.invokeMethod<String>('saveFileToDownloads', {
+              'bytes': bytes,
+              'filename': filename,
+              'mimeType': mimeType,
+            });
+
+            if (result == 'OK') {
+              _controller.runJavaScript("if (typeof showToast === 'function') showToast('✅ Đã lưu tệp vào thư mục Tải về (Download/NetaLight) của máy!');");
+            } else {
+              _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu tệp vào máy: $result');");
+            }
           }
         }
       }
     } catch (e) {
-      debugPrint('Error saving image in NativeBridge: $e');
-      _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi khi lưu ảnh: $e');");
+      debugPrint('Error in NativeBridge: $e');
+      _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi khi lưu tệp: $e');");
     }
   }
 

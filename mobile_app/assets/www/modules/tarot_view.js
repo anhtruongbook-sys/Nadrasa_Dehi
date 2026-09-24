@@ -376,10 +376,24 @@
 
   function exportJournalData() {
     const list = getJournal();
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list, null, 2));
+    const jsonStr = JSON.stringify(list, null, 2);
+    const filename = `NetaLight_Tarot_Journal_${Date.now()}.json`;
+
+    if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+      const base64Json = btoa(unescape(encodeURIComponent(jsonStr)));
+      window.NativeBridge.postMessage(JSON.stringify({
+        action: 'saveFile',
+        base64: base64Json,
+        filename: filename,
+        mimeType: 'application/json'
+      }));
+      return;
+    }
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonStr);
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `NetaLight_Tarot_Journal_${Date.now()}.json`);
+    dlAnchor.setAttribute("download", filename);
     document.body.appendChild(dlAnchor);
     dlAnchor.click();
     dlAnchor.remove();
@@ -2181,6 +2195,23 @@
 </html>`;
 
     const filename = `Bao_Cao_Tarot_Neta_${Date.now()}.html`;
+
+    if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+      const base64Html = btoa(unescape(encodeURIComponent(fullHtml)));
+      window.NativeBridge.postMessage(JSON.stringify({
+        action: 'saveFile',
+        base64: base64Html,
+        filename: filename,
+        mimeType: 'text/html'
+      }));
+      if (btnElement) {
+        const orig = btnElement.innerHTML;
+        btnElement.innerHTML = '✅ Đã Lưu';
+        setTimeout(() => { btnElement.innerHTML = orig; }, 2500);
+      }
+      return;
+    }
+
     const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2249,7 +2280,36 @@
     };
 
     if (typeof window.html2pdf === 'function') {
-      window.html2pdf().set(opt).from(renderContainer).save().then(() => {
+      const worker = window.html2pdf().set(opt).from(renderContainer);
+
+      if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+        worker.outputPdf('datauristring').then((pdfDataUri) => {
+          const base64Pdf = pdfDataUri.split(',')[1];
+          window.NativeBridge.postMessage(JSON.stringify({
+            action: 'saveFile',
+            base64: base64Pdf,
+            filename: filename,
+            mimeType: 'application/pdf'
+          }));
+          if (btnElement) {
+            btnElement.disabled = false;
+            btnElement.innerHTML = '✅ Đã Lưu';
+            setTimeout(() => { btnElement.innerHTML = originalText; }, 2500);
+          }
+        }).catch((err) => {
+          console.error('html2pdf native export error:', err);
+          if (btnElement) {
+            btnElement.disabled = false;
+            btnElement.innerHTML = originalText;
+          }
+          if (typeof window.showToast === 'function') {
+            window.showToast('⚠️ Lỗi tạo PDF: ' + (err.message || err));
+          }
+        });
+        return;
+      }
+
+      worker.save().then(() => {
         if (btnElement) {
           btnElement.disabled = false;
           btnElement.innerHTML = '✅ Đã Tải';

@@ -63,10 +63,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.7
-          name: "Neta Light & Huyền Học v1.4.7 (Direct 1-Click PDF/HTML Downloads & Justified Typography)"
+          tag_name: v1.4.8
+          name: "Neta Light & Huyền Học v1.4.8 (Direct Physical Storage Downloads for PDF/HTML/JSON)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.7
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.8
+            - **Lưu File Vật Lý Trực Tiếp Vào Thư Mục Tải Về (`Download/NetaLight`) Của Điện Thoại**:
+              + Bổ sung cầu nối MethodChannel `saveFileToDownloads` trong tầng Android Native Kotlin kết hợp Scoped Storage (`MediaStore.Downloads.EXTERNAL_CONTENT_URI` trên Android 10+ và `Environment.DIRECTORY_DOWNLOADS` trên Android 9-).
+              + Xử lý định tuyến `NativeBridge` trong Flutter `_handleJavaScriptMessage` cho hành vi tải tệp `saveFile`.
+              + Tự động giải mã dữ liệu Base64 từ engine đồ họa `html2pdf.js` và lưu trực tiếp tệp PDF chuẩn in ấn A4 (`Luan_Giai_Tarot_Neta_*.pdf`), tệp HTML độc lập (`Bao_Cao_Tarot_Neta_*.html`) và tệp sao lưu dữ liệu Nhật ký JSON (`NetaLight_Tarot_Journal_*.json`) vào máy.
+              + Người dùng mở xem hoặc chia sẻ tệp ngay trong ứng dụng Quản lý Tệp (Files / Downloads) của điện thoại mà không bị chặn hay mất tệp.
             - **Căn Lề Đều Hai Bên (Justify Alignment) Toàn Bộ Nội Dung Luận Giải**:
               + Áp dụng quy chuẩn in ấn `text-align: justify !important; text-justify: inter-word !important;` cho toàn bộ văn bản luận giải trong ứng dụng: Mạch truyện biện chứng, Luận giải vị trí từng lá bài, Ý nghĩa biểu tượng học, Bài học linh hồn cốt tủy và Kế hoạch hành động.
               + Hai mép lề chữ thẳng đều, đẹp mắt và trang trọng như một ấn bản sách huyền học chuyên sâu.
