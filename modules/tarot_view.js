@@ -28,6 +28,28 @@
   let isShufflingRibbon = false;
   let audioCtx = null;
 
+  function showTarotToast(message, duration = 2400) {
+    if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
+      window.showToast(message);
+      return;
+    }
+    if (typeof document !== 'undefined') {
+      let toast = document.getElementById('tarot-floating-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'tarot-floating-toast';
+        toast.className = 'tarot-floating-toast';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+  }
+
   function getAudioContext() {
     try {
       if (typeof window !== 'undefined' && window.soundEnabled === false) return null;
@@ -406,7 +428,7 @@
       localStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(parsed));
       return true;
     } catch (e) {
-      alert('Tệp dữ liệu không hợp lệ: ' + e.message);
+      showTarotToast('⚠️ Tệp dữ liệu không hợp lệ: ' + e.message);
       return false;
     }
   }
@@ -1391,7 +1413,7 @@
       });
     }
 
-    // 7. Save to Journal
+    // 7. Save to Journal (In-Place Feedback, Zero Popup/Alert)
     const btnSaveJournal = container.querySelector('#btn-tarot-save-journal');
     if (btnSaveJournal && currentReadingReport) {
       btnSaveJournal.addEventListener('click', () => {
@@ -1412,18 +1434,16 @@
         };
         const ok = saveJournalEntry(entry);
         if (ok) {
-          if (typeof window.showToast === 'function') {
-            window.showToast('✅ Đã lưu kết quả trải bài vào Nhật Ký!');
-          } else {
-            alert('Đã lưu kết quả vào Nhật ký!');
-          }
-          btnSaveJournal.textContent = '✅ Đã Lưu';
+          triggerHaptic(20);
+          btnSaveJournal.innerHTML = '✅ Đã Lưu';
+          btnSaveJournal.classList.add('is-done');
           btnSaveJournal.disabled = true;
+          showTarotToast('📔 Đã lưu kết quả trải bài vào Nhật Ký!');
         }
       });
     }
 
-    // 8. Direct PDF Download (Zero Popup)
+    // 8. Direct PDF Download (In-Place Feedback, Zero Popup/Alert)
     const btnExportPdf = container.querySelector('#btn-tarot-export-pdf');
     if (btnExportPdf && currentReadingReport) {
       btnExportPdf.addEventListener('click', () => {
@@ -1432,7 +1452,7 @@
       });
     }
 
-    // 8b. Direct HTML Download (Zero Popup)
+    // 8b. Direct HTML Download (In-Place Feedback, Zero Popup/Alert)
     const btnDownloadHtml = container.querySelector('#btn-tarot-download-html');
     if (btnDownloadHtml && currentReadingReport) {
       btnDownloadHtml.addEventListener('click', () => {
@@ -1441,19 +1461,25 @@
       });
     }
 
-    // 8c. Copy Markdown
+    // 8c. Copy Markdown (In-Place Feedback, Zero Popup/Alert)
     const btnCopyMd = container.querySelector('#btn-tarot-copy-markdown');
     if (btnCopyMd && currentReadingReport) {
       btnCopyMd.addEventListener('click', () => {
+        triggerHaptic(15);
         const md = global.NetaTarotEngine.formatMarkdownReport(currentReadingReport);
+        const origHtml = btnCopyMd.innerHTML;
         navigator.clipboard.writeText(md).then(() => {
-          if (typeof window.showToast === 'function') {
-            window.showToast('📋 Đã sao chép Báo cáo Markdown vào Clipboard!');
-          } else {
-            alert('Đã sao chép Markdown!');
-          }
+          btnCopyMd.innerHTML = '✅ Đã Sao Chép';
+          btnCopyMd.classList.add('is-done');
+          showTarotToast('📋 Đã sao chép Markdown vào Clipboard!');
+          setTimeout(() => {
+            btnCopyMd.innerHTML = origHtml;
+            btnCopyMd.classList.remove('is-done');
+          }, 2500);
         }).catch(() => {
-          alert('Không thể sao chép tự động, vui lòng thử lại.');
+          btnCopyMd.innerHTML = '⚠️ Thử Lại';
+          showTarotToast('⚠️ Không thể sao chép tự động');
+          setTimeout(() => { btnCopyMd.innerHTML = origHtml; }, 2500);
         });
       });
     }
@@ -2231,7 +2257,7 @@
       setTimeout(() => { btnElement.innerHTML = orig; }, 2500);
     }
     if (typeof window.showToast === 'function') {
-      window.showToast('✅ Đã tải tệp HTML Báo cáo Luận giải về máy!');
+      showTarotToast('✅ Đã tải tệp HTML Báo cáo về máy!');
     }
   }
 
@@ -2244,7 +2270,7 @@
       btnElement.innerHTML = '⏳ Đang tạo PDF...';
     }
     if (typeof window.showToast === 'function') {
-      window.showToast('⏳ Đang kết xuất tệp PDF đồ họa, vui lòng chờ giây lát...');
+      showTarotToast('⏳ Đang kết xuất tệp PDF đồ họa...');
     }
 
     // 1. Render content in hidden container for html2pdf
@@ -2316,7 +2342,7 @@
           setTimeout(() => { btnElement.innerHTML = originalText; }, 2500);
         }
         if (typeof window.showToast === 'function') {
-          window.showToast('✅ Đã tải file PDF luận giải về máy thành công!');
+          showTarotToast('✅ Đã tải file PDF luận giải về máy!');
         }
       }).catch((err) => {
         console.error('html2pdf generation error, falling back to print:', err);
@@ -2345,7 +2371,7 @@
     }
     printArea.innerHTML = buildTarotPdfHtml(report);
     if (typeof window.showToast === 'function') {
-      window.showToast('📄 Đang mở hộp thoại In / Lưu PDF hệ thống...');
+      showTarotToast('📄 Đang mở hộp thoại In / Lưu PDF...');
     }
     window.print();
   }

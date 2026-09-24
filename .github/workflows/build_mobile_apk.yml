@@ -63,10 +63,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.8
-          name: "Neta Light & Huyền Học v1.4.8 (Direct Physical Storage Downloads for PDF/HTML/JSON)"
+          tag_name: v1.4.9
+          name: "Neta Light & Huyền Học v1.4.9 (In-Place Button Micro-Interactions & Floating Toast, Zero Alerts)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.8
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.9
+            - **Xóa Bỏ 100% Hộp Thoại Alert Cổ Lỗ Sĩ (Eliminate Native Alert Modals)**:
+              + Loại bỏ hoàn toàn hộp thoại OS trắng thô cứng `The page at "file://" says: Đã lưu...` làm gián đoạn trải nghiệm người dùng.
+              + Thay thế bằng cơ chế phản hồi vi mô tức thì ngay trên chính nút bấm (**In-Place Button Micro-Interaction**):
+                * Bấm `[💾 Lưu Nhật Ký]` $\rightarrow$ Đổi ngay sang `✅ Đã Lưu` (hiệu ứng Gradient ngọc lục bảo rực rỡ), khóa nút tự động chống lưu trùng lặp.
+                * Bấm `[📄 Tải File PDF]` $\rightarrow$ Đổi sang `⏳ Đang Tạo...` $\rightarrow$ `✅ Đã Lưu PDF`.
+                * Bấm `[📥 Tải File HTML]` $\rightarrow$ Đổi sang `✅ Đã Lưu HTML`.
+                * Bấm `[📋 Sao Chép MD]` $\rightarrow$ Đổi sang `✅ Đã Sao Chép`.
+              + Tích hợp thanh thông báo nổi hình viên thuốc (**Floating Pill Toast / Snackbar**) bo tròn mềm mại (`border-radius: 9999px`, viền ánh kim, kính mờ `backdrop-filter: blur(12px)`), tự động trượt lên và biến mất êm dịu sau 2.4 giây mà không hề chặn thao tác đọc bài hay vuốt chạm của người dùng.
             - **Lưu File Vật Lý Trực Tiếp Vào Thư Mục Tải Về (`Download/NetaLight`) Của Điện Thoại**:
               + Bổ sung cầu nối MethodChannel `saveFileToDownloads` trong tầng Android Native Kotlin kết hợp Scoped Storage (`MediaStore.Downloads.EXTERNAL_CONTENT_URI` trên Android 10+ và `Environment.DIRECTORY_DOWNLOADS` trên Android 9-).
               + Xử lý định tuyến `NativeBridge` trong Flutter `_handleJavaScriptMessage` cho hành vi tải tệp `saveFile`.
