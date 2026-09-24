@@ -614,6 +614,14 @@
       if (typeof window.playBellChime === 'function') {
         window.playBellChime();
       }
+
+      // Smooth scroll to arena table so cards are immediately visible
+      setTimeout(() => {
+        const table = document.querySelector('.tarot-arena-table');
+        if (table) {
+          table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 150);
     };
 
     if (btnQuickDraw) btnQuickDraw.addEventListener('click', handleDrawCards);

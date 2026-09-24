@@ -63,11 +63,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.0
-          name: "Neta Light & Huyền Học v1.4.0 (Ra Mắt Tính Năng Bài Tarot RWS 78 Lá & Golden Dawn)"
+          tag_name: v1.4.1
+          name: "Neta Light & Huyền Học v1.4.1 (Tối Ưu Cuộn Màn Hình Mobile & Layout Bàn Bài Tarot)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.0
-            - **Ra Mắt Tính Năng Chiêm Nghiệm Bài Tarot Rider-Waite-Smith (RWS) 78 Lá Cổ Điển**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.1
+            - **Sửa Lỗi & Tối Ưu Hóa Cuộn Màn Hình (Mobile Touch Scrolling Fix)**:
+              + Bổ sung cơ chế `overflow-y: auto !important`, `-webkit-overflow-scrolling: touch` và `touch-action: pan-y` cho container giao diện Tarot.
+              + Cho phép vuốt cuộn mượt mà 60 FPS từ trên xuống dưới và từ dưới lên trên, không còn bị khựng hay kẹt màn hình.
+            - **Tối Ưu Hóa Bố Cục Bàn Bài Tarot Trên Mobile**:
+              + Tinh chỉnh khoảng cách padding, đưa thanh tab `[Trải Bài] [Bách Khoa] [Nhật Ký]` lên cùng 1 hàng cuộn ngang gọn gàng.
+              + Cả 3 lá bài trải ra hiển thị vừa vặn, trọn vẹn và cân đối trên màn hình điện thoại mà không bị cắt nửa chừng.
+              + Bổ sung tính năng tự động cuộn mượt mà (`smooth scrollIntoView`) tới bàn bài và báo cáo khi bốc bài.
               + Tích hợp đầy đủ CSDL tri thức 78 lá bài (22 Major Arcana + 56 Minor Arcana: Cốc, Tiền, Kiếm, Gậy).
               + Áp dụng Thuật toán Tương tác Nguyên tố Cổ điển **Golden Dawn Elemental Dignities**: Đánh giá định lượng tương sinh (+1.5), đồng dạng (+1.0), tương khắc (-1.0) và trung tính (+0.5).
               + **Phân tích Định lượng Vĩ mô (Macro Scan)**: Tỷ lệ Ẩn chính (Định mệnh vs Ý chí tự do), Tỷ lệ Chiều bài (Xuôi / Ngược), Phân bổ 4 Nguyên tố (Lửa, Nước, Khí, Đất) và Dòng chảy năng lượng tổng thể.
