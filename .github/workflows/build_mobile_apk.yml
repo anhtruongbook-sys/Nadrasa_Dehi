@@ -63,19 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.4
-          name: "Neta Light & Huyền Học v1.4.4 (Tarot Encyclopedia V2 & Reflective Journal V2)"
+          tag_name: v1.4.5
+          name: "Neta Light & Huyền Học v1.4.5 (Mobile UI Refinement & Light Theme Contrast Fixes)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.4
-            - **Bách Khoa Toàn Thư 78 Lá Bài Chuyên Sâu (Tarot Encyclopedia V2)**:
-              + **Phân loại đa tầng**: Lọc theo bộ lá (Ẩn chính, Cốc, Tiền, Kiếm, Gậy) và phân cấp (Hoàng gia - Court cards, Lá số - Pips 1-10).
-              + **Hộp thoại chi tiết lá bài tương tác 3D**: Cho phép xoay lật 180 độ xem chiều Xuôi (Upright) và chiều Ngược (Reversed) trực quan.
-              + **Bảng thuộc tính học thuật**: Tích hợp tương ứng Chiêm tinh / Hành tinh, Số học huyền bí (Numerology) và phân tích biểu tượng học Rider-Waite-Smith (RWS Symbolism) chuẩn mực.
-            - **Nhật Ký Trải Bài & Phản Tư Cá Nhân (Tarot Reflective Journal V2)**:
-              + **Ghi chú phản tư cá nhân (Personal Reflection Note)**: Cho phép bổ sung, chỉnh sửa cảm nhận và ghi chép thực tế sau mỗi lần xem bài.
-              + **Đánh giá độ ứng nghiệm (Accuracy Rating)**: Hệ thống chấm sao 1-5 sao kèm trạng thái chiêm nghiệm (Đang chiêm nghiệm, Đã ứng nghiệm, Bài học sâu sắc).
-              + **Bảng thống kê năng lượng tâm thức**: Tổng hợp số lần trải bài, phân tích bộ lá áp đảo và thống kê top các lá bài xuất hiện nhiều nhất.
-              + **Sao lưu & Phục hồi JSON**: Hỗ trợ xuất và nhập dữ liệu nhật ký dạng JSON cục bộ an toàn.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.5
+            - **Khắc phục triệt để tương phản giao diện Sáng (Light Theme Contrast)**:
+              + Sửa lỗi màu chữ nhạt/trùng màu nền ở các huy hiệu mẫu hình (Pattern Badges) chuyển sang màu đỏ rượu vang đậm (#831843) trên nền hồng nhạt (#fce7f3) có viền rõ nét.
+              + Chuẩn hóa độ tương phản toàn diện cho khối Luận giải cốt tủy, Mạch truyện biện chứng, Chi tiết từng lá bài và Thước đo vĩ mô đạt chuẩn WCAG AAA.
+            - **Chuẩn hóa hiển thị Markdown (Loại bỏ ký tự thô `**`)**:
+              + Tích hợp bộ chuyển đổi Markdown sang HTML nội tuyến (`<strong>`, `<em>`), hiển thị tên lá bài in đậm và lời khuyên in nghiêng mượt mà, không còn hiện dấu sao `**`.
+            - **Tối ưu hóa Bố cục 3 Nút Điều Hướng Trên Mobile**:
+              + Tinh gọn nhãn hiển thị thành `🔮 Trải Bài`, `📖 Bách Khoa`, `📔 Nhật Ký` với tỷ lệ linh hoạt `flex: 1 1 0` cân đối 33.3%, đảm bảo vừa vặn 100% trên màn hình hẹp (360px - 390px) mà không bị che khuất hay tràn mép.
+            - **Cấu hình Chế độ Rung Xúc giác (Haptic Feedback)**:
+              + Mặc định TẮT (False) để tiết kiệm pin và tránh làm phiền.
+              + Bổ sung công tắc bật/tắt `📳 Rung (Haptic)` trong bảng điều khiển trải bài, người dùng chủ động bật khi cần.
             - **Giao Diện Bàn Bài Dải Quạt Ribbon 78 Lá (Interactive Fanned Ribbon Deck)**:
               + 78 lá bài dải quạt xếp lớp mượt mà với hiệu ứng chạm nhô cao và vòng hào quang vàng kim.
               + Rút bài trực giác từng bước cho từng vị trí Quá khứ - Hiện tại - Tương lai.

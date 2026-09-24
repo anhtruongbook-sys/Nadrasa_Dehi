@@ -19,6 +19,7 @@
   let encyFilter = 'all'; // 'all' | 'Major' | 'Cups' | 'Pentacles' | 'Swords' | 'Wands'
   let encyClassFilter = 'all'; // 'all' | 'court' | 'pips'
   let encySearchQuery = '';
+  let hapticEnabled = localStorage.getItem('neta_tarot_haptic') === 'true'; // MẶC ĐỊNH TẮT (FALSE)
   let journalFilterDomain = 'all'; // 'all' | 'general' | 'career' | 'love'
   let journalSearchQuery = '';
 
@@ -127,6 +128,7 @@
   }
 
   function triggerHaptic(duration = 15) {
+    if (!hapticEnabled) return; // MẶC ĐỊNH TẮT, CHỈ CHẠY KHI NGƯỜI DÙNG BẬT
     try {
       if (typeof navigator !== 'undefined' && navigator.vibrate) {
         navigator.vibrate(duration);
@@ -154,6 +156,13 @@
   }
 
   const JOURNAL_STORAGE_KEY = 'NETA_TAROT_OFFLINE_JOURNAL_V1';
+
+  function formatMarkdownInline(str) {
+    if (!str) return '';
+    return str
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>');
+  }
 
   function escapeHTML(str) {
     if (typeof str !== 'string') return str == null ? '' : String(str);
@@ -398,13 +407,13 @@
         <div class="tarot-nav-bar">
           <div class="tarot-tabs">
             <button class="tarot-tab-btn ${currentSubTab === 'spread' ? 'active' : ''}" data-tab="spread">
-              🔮 Trải Bài (Spread)
+              🔮 Trải Bài
             </button>
             <button class="tarot-tab-btn ${currentSubTab === 'encyclopedia' ? 'active' : ''}" data-tab="encyclopedia">
-              📖 Bách Khoa 78 Lá
+              📖 Bách Khoa
             </button>
             <button class="tarot-tab-btn ${currentSubTab === 'journal' ? 'active' : ''}" data-tab="journal">
-              📔 Nhật Ký (${getJournal().length})
+              📔 Nhật Ký
             </button>
           </div>
         </div>
@@ -471,7 +480,11 @@
             <div class="tarot-control-group tarot-checkbox-group">
               <label class="tarot-switch-label">
                 <input type="checkbox" id="tarot-allow-reversed" ${allowReversed ? 'checked' : ''}>
-                <span class="tarot-switch-text">Cho phép lá ngược (Reversed)</span>
+                <span class="tarot-switch-text">Cho phép lá ngược</span>
+              </label>
+              <label class="tarot-switch-label" title="Chế độ rung phản hồi (mặc định tắt)">
+                <input type="checkbox" id="tarot-toggle-haptic" ${hapticEnabled ? 'checked' : ''}>
+                <span class="tarot-switch-text">📳 Rung (Haptic)</span>
               </label>
             </div>
           </div>
@@ -690,7 +703,7 @@
                 </div>
                 <div class="tarot-quint-lesson">
                   <strong>✨ Bài học linh hồn cốt lõi:</strong>
-                  <p>${report.quintessence.lesson}</p>
+                  <p>${formatMarkdownInline(report.quintessence.lesson)}</p>
                 </div>
               </div>
             </div>
@@ -704,7 +717,7 @@
             <span class="tarot-sec-title">II. TỔNG LUẬN MẠCH TRUYỆN BIỆN CHỨNG (STORYLINE NARRATIVE)</span>
           </div>
           <div class="tarot-storyline-content">
-            <blockquote>${report.synthesizedStory}</blockquote>
+            <blockquote>${formatMarkdownInline(report.synthesizedStory)}</blockquote>
           </div>
         </div>
 
@@ -722,7 +735,7 @@
                     <span class="pattern-title">${p.title}</span>
                     <span class="pattern-badge">${p.badge}</span>
                   </div>
-                  <div class="pattern-desc">${p.desc}</div>
+                  <div class="pattern-desc">${formatMarkdownInline(p.desc)}</div>
                 </div>
               `).join('')}
             </div>
@@ -820,7 +833,7 @@
             <span class="tarot-sec-title">VI. TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)</span>
           </div>
           <div class="tarot-prescription-content">
-            <blockquote>${report.finalAdvice}</blockquote>
+            <blockquote>${formatMarkdownInline(report.finalAdvice)}</blockquote>
           </div>
         </div>
 
@@ -1062,7 +1075,7 @@
                 </div>
 
                 <div class="journal-item-advice">
-                  <strong>Lời khuyên:</strong> ${entry.finalAdvice}
+                  <strong>Lời khuyên:</strong> ${formatMarkdownInline(entry.finalAdvice)}
                 </div>
 
                 <!-- PERSONAL REFLECTION SECTION (PHASE 3) -->
