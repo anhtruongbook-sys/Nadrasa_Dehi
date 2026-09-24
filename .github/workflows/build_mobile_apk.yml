@@ -63,14 +63,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.2
-          name: "Neta Light & Huyền Học v1.4.2 (Đột Phá Thuật Toán Luận Giải Tarot Cốt Tủy & Mạch Truyện Biện Chứng)"
+          tag_name: v1.4.3
+          name: "Neta Light & Huyền Học v1.4.3 (Interactive Fanned Ribbon Deck & Deep Tarot Engine)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.2
-            - **Nâng Cấp Đột Phá Động Cơ Luận Giải Tarot Chuyên Sâu 100% Offline (Zero-AI, Zero-Server)**:
-              + **Thuật Toán Lá Bài Cốt Tủy (The Quintessence Card Algorithm)**: Tự động cộng tổng số học của tất cả các lá bài trong trải bài, rút gọn huyền học (*Theosophical Reduction*) để tìm ra lá Ẩn chính đại diện cho bài học linh hồn cốt lõi của toàn bộ tình huống.
-              + **Bộ Tạo Mạch Truyện Biện Chứng (Dialectical Narrative Synthesis)**: Xâu chuỗi nhân quả liền mạch giữa 3 giai đoạn (Quá khứ $\rightarrow$ Hiện tại $\rightarrow$ Tương lai) dựa trên ma trận nguyên tố Golden Dawn, phân tích logic chuyển hóa thay vì các đoạn văn rời rạc.
-              + **Nhận Diện Mẫu Hình Cổ Mẫu Nổi Bật (Archetypal Pattern Constellations)**: Tự động phát hiện các mẫu tổ hợp đặc thù: Mẫu Hoàng gia (Court Dominance - tác động từ người ngoài), Mẫu Bộ đơn sắc (Toàn Kiếm/Cốc/Tiền/Gậy), và các Cặp bài đối ngẫu chuyển hóa lớn (The Tower + The Star, Death + The Sun, The Lovers + The Devil).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.3
+            - **Giao Diện Nghi Thức Trực Quan & Bàn Bài Dải Quạt Ribbon 78 Lá (Interactive Fanned Ribbon Deck)**:
+              + **Dải quạt 78 lá (Fanned Ribbon Deck)**: Hiển thị 78 lá bài xếp lớp dải quạt ngang, hỗ trợ lướt vuốt mượt mà trên di động và máy tính.
+              + **Cơ chế chọn bài trực giác từng bước (Intuitive Step-by-Step Selection)**: Hướng dẫn người dùng tập trung tĩnh tâm và chạm chọn từng lá bài cho từng vị trí (Quá khứ / Hiện tại / Tương lai), hiển thị hiệu ứng nhấc thẻ bài và vòng hào quang khi chạm.
+              + **Bộ tổng hợp âm thanh & xúc giác ngoại tuyến (Offline Web Audio Synthesizer & Haptics)**: Tạo âm thanh lướt bài (paper slide), âm thanh lật thẻ (card flip snap), âm thanh xáo bài (riffle shuffle), chuông bát hát Tây Tạng (singing bowl chime) và rung phản hồi (haptic vibration) hoàn toàn bằng Web Audio API không phụ thuộc tệp âm thanh bên ngoài.
+              + **Hiệu ứng xáo bài (Shuffle Animation)**: Nút xáo bộ bài với hiệu ứng thu gọn và trải quạt lại toàn bộ 78 lá.
+            - **Động Cơ Luận Giải Tarot Chuyên Sâu 100% Ngoại Tuyến (Offline Deep Interpretation Engine)**:
+              + **Lá Bài Cốt Tủy (The Quintessence Card Algorithm)**: Tự động cộng tổng số học của tất cả các lá bài trong trải bài, rút gọn huyền học (*Theosophical Reduction*) để xác định lá Ẩn chính đại diện cho bài học linh hồn cốt lõi.
+              + **Bộ Tạo Mạch Truyện Biện Chứng (Dialectical Narrative Synthesis)**: Xâu chuỗi nhân quả liên hoàn giữa các giai đoạn dựa trên ma trận nguyên tố Golden Dawn Dignities và dòng chảy năng lượng.
+              + **Nhận Diện Mẫu Hình Cổ Mẫu Nổi Bật (Archetypal Pattern Constellations)**: Nhận diện mẫu Hoàng gia (Court Dominance), mẫu Đơn sắc (Suit Saturation) và các cặp bài đối ngẫu chuyển hóa lớn.
             - **Tối Ưu Hóa Giao Diện Báo Cáo Phân Tầng Chuyên Sâu**:
               + Trình bày trang trọng: *Lá Bài Cốt Tủy $\rightarrow$ Tổng Luận Mạch Truyện Biện Chứng $\rightarrow$ Mẫu Hình Cổ Mẫu $\rightarrow$ Phân Tích Vĩ Mô & Ma Trận Nguyên Tố $\rightarrow$ Chi Tiết Từng Lá $\rightarrow$ Lời Khuyên Hành Động*.
               + Cuộn cảm ứng di động mượt mà 60 FPS, hỗ trợ giao diện Sáng & Tối hoàn hảo.

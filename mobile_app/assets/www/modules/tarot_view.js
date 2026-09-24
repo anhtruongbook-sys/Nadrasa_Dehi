@@ -19,6 +19,137 @@
   let encyFilter = 'all'; // 'all' | 'Major' | 'Cups' | 'Pentacles' | 'Swords' | 'Wands'
   let encySearchQuery = '';
 
+  // Phase 2: Interactive Fanned Ribbon Deck & Audio State
+  let ribbonDeckPool = []; // [{index, cardId, isUpright, isPicked}]
+  let isShufflingRibbon = false;
+  let audioCtx = null;
+
+  function getAudioContext() {
+    try {
+      if (typeof window !== 'undefined' && window.soundEnabled === false) return null;
+      if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function playCardSlideSound() {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      const bufferSize = Math.floor(ctx.sampleRate * 0.12);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1400, ctx.currentTime);
+      filter.Q.setValueAtTime(1.8, ctx.currentTime);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.11);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      noise.start();
+    } catch (e) {}
+  }
+
+  function playCardFlipSound() {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.08);
+
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.1);
+    } catch (e) {}
+  }
+
+  function playMysticChime() {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      [528, 1056].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+        const vol = i === 0 ? 0.22 : 0.1;
+        gain.gain.setValueAtTime(0.001, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 1.85);
+      });
+    } catch (e) {}
+  }
+
+  function playShuffleSound() {
+    for (let i = 0; i < 6; i++) {
+      setTimeout(() => {
+        playCardSlideSound();
+      }, i * 45);
+    }
+  }
+
+  function triggerHaptic(duration = 15) {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(duration);
+      }
+    } catch (e) {}
+  }
+
+  function initRibbonDeckPool(forceShuffle = false) {
+    const engine = global.NetaTarotEngine;
+    if (!engine) return;
+    const all = engine.getAllCardsList();
+    if (ribbonDeckPool.length === 0 || forceShuffle) {
+      const copy = [...all];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      ribbonDeckPool = copy.map((card, idx) => ({
+        index: idx,
+        cardId: card.id,
+        isUpright: allowReversed ? (Math.random() > 0.25) : true,
+        isPicked: false
+      }));
+    }
+  }
+
   const JOURNAL_STORAGE_KEY = 'NETA_TAROT_OFFLINE_JOURNAL_V1';
 
   function escapeHTML(str) {
@@ -133,6 +264,8 @@
     const engine = global.NetaTarotEngine;
     if (!engine) return '<div class="tarot-error">Không tìm thấy Động cơ Tarot!</div>';
 
+    initRibbonDeckPool();
+
     const spreads = engine.getSpreadDefinitions();
     const currentSpreadDef = spreads[currentSpreadType] || spreads['past_present_future'];
     const requiredCount = currentSpreadDef.count;
@@ -178,14 +311,16 @@
 
           <div class="tarot-action-buttons">
             <button id="btn-tarot-quick-draw" class="tarot-btn-primary">
-              ⚡ Bốc Bài Ngẫu Nhiên (${requiredCount} lá)
+              ⚡ Bốc Nhanh Tự Động (${requiredCount} lá)
             </button>
-            ${activeDrawnCards.length > 0 ? `
+            ${activeDrawnCards.length === requiredCount ? `
               <button id="btn-tarot-flip-all" class="tarot-btn-secondary">
                 ✨ Lật Tất Cả
               </button>
+            ` : ''}
+            ${activeDrawnCards.length > 0 ? `
               <button id="btn-tarot-reset-spread" class="tarot-btn-ghost">
-                🔄 Xáo Bài Lại
+                🔄 Bốc Lại Từ Đầu
               </button>
             ` : ''}
           </div>
@@ -196,6 +331,9 @@
           ${renderSpreadSlots(currentSpreadDef)}
         </div>
 
+        <!-- Interactive Fanned Ribbon Deck Ritual (Dải Quạt 78 Lá Trực Giác) -->
+        ${renderRibbonWorkspaceHTML(currentSpreadDef)}
+
         <!-- Comprehensive Report Section -->
         <div class="tarot-report-anchor" id="tarot-report-section">
           ${currentReadingReport && areAllCardsFlipped() ? renderTarotReportHTML(currentReadingReport) : ''}
@@ -205,64 +343,134 @@
   }
 
   function renderSpreadSlots(spreadDef) {
-    if (activeDrawnCards.length === 0) {
+    const positions = spreadDef.positions || [];
+    const requiredCount = spreadDef.count || 3;
+
+    return `
+      <div class="tarot-cards-spread-row count-${requiredCount}">
+        ${Array.from({ length: requiredCount }).map((_, index) => {
+          const item = activeDrawnCards[index];
+          const posLabel = positions[index] || `Vị trí ${index + 1}`;
+
+          if (item) {
+            const cardData = global.NetaTarotEngine.getCard(item.cardId);
+            const isFlipped = item.isFlipped;
+            const isReversed = !item.isUpright;
+            const imgUrl = `assets/tarot/${item.cardId}.webp`;
+
+            return `
+              <div class="tarot-slot-wrapper slot-filled">
+                <div class="tarot-slot-header">
+                  <span class="tarot-slot-pos-badge">${index + 1}</span>
+                  <span class="tarot-slot-pos-title">${posLabel}</span>
+                </div>
+                <div class="tarot-card-3d-scene" data-index="${index}">
+                  <div class="tarot-card-3d ${isFlipped ? 'flipped' : ''}">
+                    <!-- Back Side -->
+                    <div class="tarot-card-face tarot-card-back">
+                      <img src="assets/tarot/Back_Cover.webp" alt="Mặt sau bài Tarot" loading="lazy">
+                      <div class="tarot-card-touch-hint">Chạm để lật</div>
+                    </div>
+                    <!-- Front Side -->
+                    <div class="tarot-card-face tarot-card-front ${isReversed ? 'is-reversed' : ''}">
+                      <img src="${imgUrl}" alt="${cardData ? cardData.name_vi : ''}" loading="lazy">
+                      ${isReversed ? '<div class="tarot-reversed-badge">NGƯỢC</div>' : ''}
+                    </div>
+                  </div>
+                </div>
+                ${isFlipped && cardData ? `
+                  <div class="tarot-slot-card-meta">
+                    <div class="tarot-meta-name">${cardData.name_vi}</div>
+                    <div class="tarot-meta-sub">${cardData.name_en} • ${item.isUpright ? 'Xuôi' : 'Ngược'}</div>
+                  </div>
+                ` : `
+                  <div class="tarot-slot-card-meta placeholder">
+                    <div class="tarot-meta-name">Đang úp</div>
+                    <div class="tarot-meta-sub">Chạm để mở lá bài</div>
+                  </div>
+                `}
+              </div>
+            `;
+          } else {
+            const isCurrentTarget = index === activeDrawnCards.length;
+            return `
+              <div class="tarot-slot-wrapper slot-pending">
+                <div class="tarot-slot-header">
+                  <span class="tarot-slot-pos-badge ${isCurrentTarget ? 'active-step' : 'pending'}">${index + 1}</span>
+                  <span class="tarot-slot-pos-title">${posLabel}</span>
+                </div>
+                <div class="tarot-slot-empty ${isCurrentTarget ? 'slot-current-target' : ''}">
+                  <div class="slot-target-glow"></div>
+                  <div class="slot-target-icon">${isCurrentTarget ? '✨' : '🃏'}</div>
+                  <div class="slot-target-label">${isCurrentTarget ? 'Chạm dải bài bên dưới' : `Chờ chọn lá ${index + 1}`}</div>
+                </div>
+                <div class="tarot-slot-card-meta placeholder">
+                  <div class="tarot-meta-name">${isCurrentTarget ? 'Đang chờ chọn' : 'Chưa chọn'}</div>
+                  <div class="tarot-meta-sub">${posLabel}</div>
+                </div>
+              </div>
+            `;
+          }
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderRibbonWorkspaceHTML(spreadDef) {
+    const requiredCount = spreadDef.count || 3;
+    const currentStep = activeDrawnCards.length;
+    const positions = spreadDef.positions || [];
+    const isCompleted = currentStep >= requiredCount;
+
+    if (isCompleted) {
       return `
-        <div class="tarot-empty-arena">
-          <div class="tarot-empty-deck-stack" id="btn-tarot-deck-stack" title="Chạm để bốc bài">
-            <img src="assets/tarot/Back_Cover.webp" alt="Mặt lưng bài Tarot" class="tarot-stack-img">
-            <div class="tarot-stack-glow"></div>
-          </div>
-          <div class="tarot-empty-prompt">
-            Chạm vào tụ bài hoặc bấm nút <strong>⚡ Bốc Bài Ngẫu Nhiên</strong> để bắt đầu trải bài
-          </div>
+        <div class="tarot-spread-ready-banner">
+          <div class="ready-badge">✨ Bàn bài đã sẵn sàng (${requiredCount}/${requiredCount} lá)</div>
+          <div class="ready-desc">Chạm vào từng lá bài để lật mở theo trực giác, hoặc bấm <strong>✨ Lật Tất Cả</strong></div>
         </div>
       `;
     }
 
-    const positions = spreadDef.positions || [];
-    return `
-      <div class="tarot-cards-spread-row count-${activeDrawnCards.length}">
-        ${activeDrawnCards.map((item, index) => {
-          const cardData = global.NetaTarotEngine.getCard(item.cardId);
-          const posLabel = positions[index] || `Vị trí ${index + 1}`;
-          const isFlipped = item.isFlipped;
-          const isReversed = !item.isUpright;
-          const imgUrl = `assets/tarot/${item.cardId}.webp`;
+    const currentPosLabel = positions[currentStep] || `Lá thứ ${currentStep + 1}`;
 
-          return `
-            <div class="tarot-slot-wrapper">
-              <div class="tarot-slot-header">
-                <span class="tarot-slot-pos-badge">${index + 1}</span>
-                <span class="tarot-slot-pos-title">${posLabel}</span>
-              </div>
-              <div class="tarot-card-3d-scene" data-index="${index}">
-                <div class="tarot-card-3d ${isFlipped ? 'flipped' : ''}">
-                  <!-- Back Side -->
-                  <div class="tarot-card-face tarot-card-back">
-                    <img src="assets/tarot/Back_Cover.webp" alt="Mặt sau bài Tarot" loading="lazy">
-                    <div class="tarot-card-touch-hint">Chạm để lật</div>
-                  </div>
-                  <!-- Front Side -->
-                  <div class="tarot-card-face tarot-card-front ${isReversed ? 'is-reversed' : ''}">
-                    <img src="${imgUrl}" alt="${cardData ? cardData.name_vi : ''}" loading="lazy">
-                    ${isReversed ? '<div class="tarot-reversed-badge">NGƯỢC</div>' : ''}
-                  </div>
+    return `
+      <div class="tarot-ribbon-workspace">
+        <div class="tarot-ribbon-instruction">
+          <div class="ribbon-step-badge">Bước ${currentStep + 1} / ${requiredCount}</div>
+          <div class="ribbon-prompt-text">
+            Hãy tĩnh tâm, nghĩ về câu hỏi và <strong>chạm chọn 1 lá bài</strong> theo trực giác cho vị trí:
+            <span class="ribbon-target-pos">${currentPosLabel}</span>
+          </div>
+        </div>
+
+        <div class="tarot-ribbon-viewport" id="tarot-ribbon-viewport">
+          <div class="tarot-ribbon-track ${isShufflingRibbon ? 'is-shuffling' : ''}" id="tarot-ribbon-track">
+            ${ribbonDeckPool.map((c, idx) => {
+              const waveY = Math.round(Math.sin(idx * 0.4) * 6);
+              const rot = ((idx % 7) - 3) * 0.8;
+              return `
+                <div class="tarot-ribbon-card ${c.isPicked ? 'is-picked' : ''}" 
+                  data-ribbon-idx="${idx}"
+                  style="transform: translateY(${waveY}px) rotate(${rot}deg);"
+                  title="Chạm để chọn lá bài này">
+                  <img src="assets/tarot/Back_Cover.webp" alt="Mặt sau bài Tarot" loading="lazy">
                 </div>
-              </div>
-              ${isFlipped && cardData ? `
-                <div class="tarot-slot-card-meta">
-                  <div class="tarot-meta-name">${cardData.name_vi}</div>
-                  <div class="tarot-meta-sub">${cardData.name_en} • ${item.isUpright ? 'Xuôi' : 'Ngược'}</div>
-                </div>
-              ` : `
-                <div class="tarot-slot-card-meta placeholder">
-                  <div class="tarot-meta-name">Đang úp</div>
-                  <div class="tarot-meta-sub">Chạm để mở lá bài</div>
-                </div>
-              `}
-            </div>
-          `;
-        }).join('')}
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <div class="tarot-ribbon-footer-bar">
+          <div class="ribbon-scroll-hint">👈 Vuốt ngang để lướt qua toàn bộ 78 lá bài 👉</div>
+          <div class="ribbon-tool-buttons">
+            <button id="btn-tarot-shuffle-ribbon" class="tarot-btn-subtle" title="Xáo trộn lại toàn bộ 78 lá bài">
+              🔄 Xáo Bộ Bài
+            </button>
+            <button id="btn-tarot-pick-current" class="tarot-btn-subtle" title="Tự động chọn ngẫu nhiên lá bài tiếp theo">
+              ⚡ Bốc Hộ Tôi Lá Này
+            </button>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -642,55 +850,154 @@
 
     // 3. Quick Draw Button & Deck Stack Click
     const btnQuickDraw = container.querySelector('#btn-tarot-quick-draw');
-    const deckStack = container.querySelector('#btn-tarot-deck-stack');
+    const engine = global.NetaTarotEngine;
 
-    const handleDrawCards = () => {
-      const engine = global.NetaTarotEngine;
+    // Helper: Execute complete draw (for Quick Draw)
+    const handleQuickDrawCards = () => {
       if (!engine) return;
       const spreads = engine.getSpreadDefinitions();
       const count = (spreads[currentSpreadType] || spreads['past_present_future']).count;
 
       const qInput = container.querySelector('#tarot-question-input');
       const question = qInput ? qInput.value.trim() : '';
-      if (question) {
-        // Auto detect domain if general
-        if (currentDomain === 'general') {
-          currentDomain = engine.detectDomainFromQuestion(question);
+      if (question && currentDomain === 'general') {
+        currentDomain = engine.detectDomainFromQuestion(question);
+      }
+
+      initRibbonDeckPool();
+      // Mark first 'count' cards as picked
+      const drawn = [];
+      let drawnCount = 0;
+      for (let i = 0; i < ribbonDeckPool.length && drawnCount < count; i++) {
+        if (!ribbonDeckPool[i].isPicked) {
+          ribbonDeckPool[i].isPicked = true;
+          drawn.push({
+            cardId: ribbonDeckPool[i].cardId,
+            isUpright: ribbonDeckPool[i].isUpright,
+            isFlipped: false
+          });
+          drawnCount++;
         }
       }
 
-      const drawn = engine.drawRandom(count, allowReversed);
-      activeDrawnCards = drawn.map(d => ({
-        ...d,
-        isFlipped: false
-      }));
-
+      activeDrawnCards = drawn;
       currentReadingReport = engine.evaluateSpread(activeDrawnCards, currentSpreadType, currentDomain, question);
+
+      playShuffleSound();
+      triggerHaptic(20);
       renderTarot();
 
-      // Play bell/draw sound if available
-      if (typeof window.playBellChime === 'function') {
-        window.playBellChime();
-      }
-
-      // Smooth scroll to arena table so cards are immediately visible
       setTimeout(() => {
         const table = document.querySelector('.tarot-arena-table');
-        if (table) {
-          table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        if (table) table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }, 150);
     };
 
-    if (btnQuickDraw) btnQuickDraw.addEventListener('click', handleDrawCards);
-    if (deckStack) deckStack.addEventListener('click', handleDrawCards);
+    if (btnQuickDraw) btnQuickDraw.addEventListener('click', handleQuickDrawCards);
 
-    // 4. Flip Cards interaction (3D click)
+    // Interactive Ribbon Card Selection
+    container.querySelectorAll('.tarot-ribbon-card').forEach(cardEl => {
+      cardEl.addEventListener('click', () => {
+        const idx = parseInt(cardEl.getAttribute('data-ribbon-idx'), 10);
+        if (isNaN(idx) || !ribbonDeckPool[idx] || ribbonDeckPool[idx].isPicked) return;
+
+        const spreads = engine.getSpreadDefinitions();
+        const requiredCount = (spreads[currentSpreadType] || spreads['past_present_future']).count;
+        if (activeDrawnCards.length >= requiredCount) return;
+
+        ribbonDeckPool[idx].isPicked = true;
+        activeDrawnCards.push({
+          cardId: ribbonDeckPool[idx].cardId,
+          isUpright: ribbonDeckPool[idx].isUpright,
+          isFlipped: false
+        });
+
+        playCardSlideSound();
+        triggerHaptic(15);
+
+        if (activeDrawnCards.length === requiredCount) {
+          const qInput = container.querySelector('#tarot-question-input');
+          const question = qInput ? qInput.value.trim() : '';
+          if (question && currentDomain === 'general') {
+            currentDomain = engine.detectDomainFromQuestion(question);
+          }
+          currentReadingReport = engine.evaluateSpread(activeDrawnCards, currentSpreadType, currentDomain, question);
+          playMysticChime();
+        }
+
+        renderTarot();
+
+        setTimeout(() => {
+          const table = document.querySelector('.tarot-arena-table');
+          if (table) table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 150);
+      });
+    });
+
+    // Ribbon Shuffle Button
+    const btnShuffleRibbon = container.querySelector('#btn-tarot-shuffle-ribbon');
+    if (btnShuffleRibbon) {
+      btnShuffleRibbon.addEventListener('click', () => {
+        isShufflingRibbon = true;
+        playShuffleSound();
+        triggerHaptic(30);
+
+        const track = container.querySelector('#tarot-ribbon-track');
+        if (track) track.classList.add('is-shuffling');
+
+        setTimeout(() => {
+          initRibbonDeckPool(true);
+          activeDrawnCards = [];
+          currentReadingReport = null;
+          isShufflingRibbon = false;
+          renderTarot();
+        }, 550);
+      });
+    }
+
+    // Ribbon Auto-Pick Next Card
+    const btnPickCurrent = container.querySelector('#btn-tarot-pick-current');
+    if (btnPickCurrent) {
+      btnPickCurrent.addEventListener('click', () => {
+        const spreads = engine.getSpreadDefinitions();
+        const requiredCount = (spreads[currentSpreadType] || spreads['past_present_future']).count;
+        if (activeDrawnCards.length >= requiredCount) return;
+
+        const nextIdx = ribbonDeckPool.findIndex(c => !c.isPicked);
+        if (nextIdx !== -1) {
+          ribbonDeckPool[nextIdx].isPicked = true;
+          activeDrawnCards.push({
+            cardId: ribbonDeckPool[nextIdx].cardId,
+            isUpright: ribbonDeckPool[nextIdx].isUpright,
+            isFlipped: false
+          });
+
+          playCardSlideSound();
+          triggerHaptic(15);
+
+          if (activeDrawnCards.length === requiredCount) {
+            const qInput = container.querySelector('#tarot-question-input');
+            const question = qInput ? qInput.value.trim() : '';
+            if (question && currentDomain === 'general') {
+              currentDomain = engine.detectDomainFromQuestion(question);
+            }
+            currentReadingReport = engine.evaluateSpread(activeDrawnCards, currentSpreadType, currentDomain, question);
+            playMysticChime();
+          }
+
+          renderTarot();
+        }
+      });
+    }
+
+    // Flip Cards interaction (3D click)
     container.querySelectorAll('.tarot-card-3d-scene').forEach(scene => {
       scene.addEventListener('click', () => {
         const idx = parseInt(scene.getAttribute('data-index'), 10);
         if (!isNaN(idx) && activeDrawnCards[idx]) {
           activeDrawnCards[idx].isFlipped = !activeDrawnCards[idx].isFlipped;
+          playCardFlipSound();
+          triggerHaptic(15);
           renderTarot();
           if (areAllCardsFlipped()) {
             setTimeout(() => {
@@ -702,11 +1009,13 @@
       });
     });
 
-    // 5. Flip All
+    // Flip All
     const btnFlipAll = container.querySelector('#btn-tarot-flip-all');
     if (btnFlipAll) {
       btnFlipAll.addEventListener('click', () => {
         activeDrawnCards.forEach(c => c.isFlipped = true);
+        playCardFlipSound();
+        triggerHaptic(20);
         renderTarot();
         setTimeout(() => {
           const rep = document.getElementById('tarot-report-section');
@@ -715,12 +1024,13 @@
       });
     }
 
-    // 6. Reset Spread
+    // Reset Spread
     const btnReset = container.querySelector('#btn-tarot-reset-spread');
     if (btnReset) {
       btnReset.addEventListener('click', () => {
         activeDrawnCards = [];
         currentReadingReport = null;
+        initRibbonDeckPool(true);
         renderTarot();
       });
     }
