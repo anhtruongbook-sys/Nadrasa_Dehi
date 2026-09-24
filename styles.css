@@ -3621,13 +3621,14 @@ body.theme-light .dropdown-check {
   align-items: center;
   justify-content: space-between;
   gap: 2px;
-  background: rgba(20, 2, 5, 0.85);
-  border: 1px solid rgba(245, 176, 65, 0.25);
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 6px;
-  padding: 3px 5px;
+  padding: 3px 6px;
   margin-bottom: 5px;
   box-sizing: border-box;
   width: 100%;
+  box-shadow: none;
 }
 
 .tms-item {
@@ -3639,20 +3640,20 @@ body.theme-light .dropdown-check {
 
 .tms-lbl {
   font-size: 0.50rem;
-  color: var(--text-muted);
+  color: #94a3b8;
   font-weight: 700;
 }
 
 .tms-val {
   font-size: 0.55rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #f8fafc;
   white-space: nowrap;
 }
 
 .tms-sep {
   font-size: 0.48rem;
-  color: rgba(245, 176, 65, 0.35);
+  color: #475569;
 }
 
 .tuvi-grid-wrapper {
@@ -3666,32 +3667,32 @@ body.theme-light .dropdown-check {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap: 2px;
+  gap: 1.5px;
   width: 100%;
   aspect-ratio: 1 / 1.25;
   min-height: 520px;
-  background: #24060c;
-  border: 2px solid #b8860b;
-  border-radius: 8px;
-  padding: 2px;
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 6px;
+  padding: 1.5px;
   box-sizing: border-box;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: none;
 }
 
-/* Center Box: Thiên Bàn Hoàng Gia */
+/* Center Box: Thiên Bàn Phẳng Hiện Đại */
 .tuvi-center-box {
   grid-column: 2 / 4;
   grid-row: 2 / 4;
-  background: #1b0307;
-  border: 2px solid #b8860b;
-  border-radius: 6px;
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 4px;
   padding: 3px 4px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 8px rgba(184, 134, 11, 0.3);
+  box-shadow: none;
   z-index: 5;
   box-sizing: border-box;
 }
@@ -3699,8 +3700,8 @@ body.theme-light .dropdown-check {
 .tc-inner-border {
   width: 100%;
   height: 100%;
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  border-radius: 4px;
+  border: 1px solid #1e293b;
+  border-radius: 3px;
   padding: 3px;
   display: flex;
   flex-direction: column;
@@ -3710,20 +3711,12 @@ body.theme-light .dropdown-check {
 }
 
 .tc-bg-yin-yang {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 3.5rem;
-  color: #f5b041;
-  opacity: 0.08;
-  pointer-events: none;
-  user-select: none;
+  display: none;
 }
 
 .tc-header {
   text-align: center;
-  border-bottom: 1px solid rgba(245, 176, 65, 0.3);
+  border-bottom: 1px solid #334155;
   padding-bottom: 2px;
 }
 
@@ -3731,16 +3724,16 @@ body.theme-light .dropdown-check {
   margin: 0;
   font-size: 0.78rem;
   font-weight: 900;
-  color: #f5b041;
-  letter-spacing: 1px;
-  font-family: 'Times New Roman', Georgia, serif;
-  text-shadow: 0 1px 4px rgba(245, 176, 65, 0.5);
+  color: #fbbf24;
+  letter-spacing: 0.8px;
+  font-family: inherit;
   line-height: 1.15;
+  text-shadow: none;
 }
 
 .tc-sub {
   font-size: 0.44rem;
-  color: #fcd34d;
+  color: #94a3b8;
   font-weight: 700;
   letter-spacing: 0.5px;
   line-height: 1;
@@ -3766,7 +3759,7 @@ body.theme-light .dropdown-check {
 
 .tc-divider-v {
   width: 1px;
-  background: rgba(245, 176, 65, 0.25);
+  background: #334155;
   flex-shrink: 0;
 }
 
@@ -3781,14 +3774,14 @@ body.theme-light .dropdown-check {
 }
 
 .tc-k {
-  color: #cbd5e1;
+  color: #94a3b8;
   font-weight: 600;
   flex-shrink: 0;
   font-size: 0.43rem;
 }
 
 .tc-v {
-  color: #ffffff;
+  color: #f8fafc;
   font-weight: 800;
   text-align: right;
   letter-spacing: -0.2px;
@@ -3798,28 +3791,28 @@ body.theme-light .dropdown-check {
 
 .text-menh-gold {
   color: #fde047 !important;
-  text-shadow: 0 0 3px rgba(253, 224, 71, 0.5);
+  text-shadow: none;
 }
 
 .tc-footer-stars {
-  border-top: 1px solid rgba(245, 176, 65, 0.3);
+  border-top: 1px solid #334155;
   padding-top: 1px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.48rem;
-  color: #e2e8f0;
+  font-size: 0.44rem;
+  color: #94a3b8;
   line-height: 1.2;
 }
 
 .tc-footer-stars strong {
-  color: #f5b041;
+  color: #f8fafc;
 }
 
-/* Palace Cell (Mỗi Cung) */
+/* Palace Cell (Mỗi Cung Phẳng Hiện Đại) */
 .tuvi-cell {
-  background: #140205;
-  border: 1px solid rgba(245, 176, 65, 0.28);
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 4px;
   padding: 2px 2px 1px 2px;
   display: flex;
@@ -3827,29 +3820,28 @@ body.theme-light .dropdown-check {
   justify-content: space-between;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: border-color 0.15s ease;
   position: relative;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+  box-shadow: none;
   box-sizing: border-box;
 }
 
 .tuvi-cell:hover {
-  border-color: #ffd700;
-  box-shadow: 0 0 8px rgba(245, 176, 65, 0.6);
+  border-color: #60a5fa;
   z-index: 10;
 }
 
 .cell-menh {
-  border: 2px solid #ffd700 !important;
-  background: #240508 !important;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4), inset 0 0 6px rgba(255, 215, 0, 0.2) !important;
+  border: 2px solid #eab308 !important;
+  background: #172554 !important;
+  box-shadow: none !important;
 }
 
 .tc-cell-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(245, 176, 65, 0.2);
+  border-bottom: 1px solid #334155;
   padding-bottom: 1px;
   margin-bottom: 1px;
   min-height: 14px;
@@ -3866,7 +3858,7 @@ body.theme-light .dropdown-check {
 .tc-cung-name {
   font-size: 0.58rem;
   font-weight: 900;
-  color: #ffffff;
+  color: #f8fafc;
   text-transform: uppercase;
   font-family: inherit;
   letter-spacing: 0.2px;
@@ -3875,9 +3867,9 @@ body.theme-light .dropdown-check {
 }
 
 .text-menh {
-  color: #ffd700 !important;
+  color: #fde047 !important;
   font-weight: 900 !important;
-  text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+  text-shadow: none !important;
 }
 
 .tc-badges-wrap {
@@ -3888,8 +3880,8 @@ body.theme-light .dropdown-check {
 }
 
 .badge-than-royal {
-  background: linear-gradient(135deg, #b91c1c, #991b1b);
-  border: 1px solid #ffd700;
+  background: #b91c1c;
+  border: none;
   color: #ffffff;
   font-size: 0.42rem;
   font-weight: 900;
@@ -3901,6 +3893,7 @@ body.theme-light .dropdown-check {
 
 .badge-triet-royal {
   background: #dc2626;
+  border: none;
   color: #ffffff;
   font-size: 0.42rem;
   font-weight: 900;
@@ -3911,7 +3904,8 @@ body.theme-light .dropdown-check {
 }
 
 .badge-tuan-royal {
-  background: #059669;
+  background: #16a34a;
+  border: none;
   color: #ffffff;
   font-size: 0.42rem;
   font-weight: 900;
@@ -4013,7 +4007,7 @@ body.theme-light .dropdown-check {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(245, 176, 65, 0.2);
+  border-top: 1px solid #334155;
   padding-top: 1px;
   margin-top: 1px;
   font-size: 0.46rem;
@@ -4023,21 +4017,21 @@ body.theme-light .dropdown-check {
 
 .tc-canchi-val {
   font-weight: 800;
-  color: #f5b041;
+  color: #fbbf24;
   white-space: nowrap;
 }
 
 .tc-trangsinh-val {
-  color: #cbd5e1;
-  font-size: 0.46rem;
+  color: #94a3b8;
+  font-size: 0.44rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .tc-daihan-val {
   font-weight: 900;
-  color: #ffffff;
-  font-size: 0.54rem;
+  color: #f8fafc;
+  font-size: 0.52rem;
   white-space: nowrap;
 }
 
@@ -5473,135 +5467,239 @@ body.theme-light .tuvi-tab-btn.active {
 }
 
 body.theme-light .tuvi-master-strip {
-  background: #faf4e8 !important;
-  border: 1px solid #dccbb3 !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
   padding: 3px 6px;
 }
 
 body.theme-light .tms-item {
-  border-right-color: #e5d7c3 !important;
+  border-right-color: #e2e8f0 !important;
 }
 
 body.theme-light .tms-lbl {
-  color: #4b5563 !important;
+  color: #475569 !important;
   font-weight: 700 !important;
 }
 
 body.theme-light .tms-val {
-  color: #111827 !important;
-  font-weight: 800 !important;
+  color: #0f172a !important;
+  font-weight: 900 !important;
 }
 
+body.theme-light .tms-val.text-menh-gold,
 body.theme-light .tms-val.text-gold {
-  color: #854d0e !important;
-  font-weight: 800 !important;
+  color: #b45309 !important;
+  font-weight: 900 !important;
 }
 
+body.theme-light .tms-sep {
+  color: #cbd5e1 !important;
+}
+
+/* Lưới 4x4 phẳng trong Light Mode */
+body.theme-light .tuvi-grid-4x4 {
+  background: #cbd5e1 !important;
+  border: 1.5px solid #94a3b8 !important;
+  box-shadow: none !important;
+}
+
+/* Từng ô Cung: Nền trắng tinh khôi, viền phẳng sắc nét */
 body.theme-light .tuvi-cell {
   background: #ffffff !important;
-  border: 1px solid #dcd0bc !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: none !important;
 }
 
+body.theme-light .tuvi-cell:hover {
+  border-color: #2563eb !important;
+}
+
+/* Cung Mệnh phẳng nổi bật */
+body.theme-light .cell-menh {
+  background: #fffbeb !important;
+  border: 2px solid #d97706 !important;
+  box-shadow: none !important;
+}
+
+/* Header ô Cung: Tiêu đề ĐEN TUYỀN 100% rõ nét */
+body.theme-light .tc-cell-header {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+body.theme-light .tc-cung-name-royal,
 body.theme-light .tc-cung-name {
-  color: #713f12 !important;
+  color: #0f172a !important;
   font-weight: 900 !important;
 }
 
 body.theme-light .text-menh {
-  color: #b91c1c !important;
+  color: #b45309 !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+/* Badges phẳng */
+body.theme-light .badge-than-royal {
+  background: #b91c1c !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+body.theme-light .badge-triet-royal {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+body.theme-light .badge-tuan-royal {
+  background: #16a34a !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Chính Tinh & Độ Sáng */
+body.theme-light .star-name {
   font-weight: 900 !important;
 }
 
-body.theme-light .tc-no-main {
-  color: #4b5563 !important;
-}
-
-body.theme-light .tc-sec-star.lucky {
-  color: #047857 !important;
+body.theme-light .star-bright {
+  color: #64748b !important;
   font-weight: 700 !important;
 }
 
-body.theme-light .tc-sec-star.bad {
-  color: #b91c1c !important;
-  font-weight: 700 !important;
-}
-
-body.theme-light .tc-sec-more {
-  color: #4b5563 !important;
-}
-
-body.theme-light .tc-cell-footer {
-  border-top-color: #e5d7c3 !important;
-}
-
-body.theme-light .tc-chi {
-  color: #854d0e !important;
-  font-weight: 800 !important;
-}
-
-body.theme-light .tc-ts {
-  color: #4b5563 !important;
+body.theme-light .tc-vcd-tag {
+  color: #64748b !important;
   font-weight: 600 !important;
 }
 
-body.theme-light .tc-dh {
-  color: #111827 !important;
+/* Phụ Tinh Cát / Sát: Tương phản tuyệt đối */
+body.theme-light .star-sec.lucky,
+body.theme-light .tc-sec-star.lucky {
+  color: #15803d !important;
   font-weight: 800 !important;
 }
 
+body.theme-light .star-sec.bad,
+body.theme-light .tc-sec-star.bad {
+  color: #b91c1c !important;
+  font-weight: 800 !important;
+}
+
+body.theme-light .star-more,
+body.theme-light .tc-sec-more {
+  color: #64748b !important;
+}
+
+/* Đáy Cung: Rõ ràng, không mờ nhạt */
+body.theme-light .tc-cell-footer {
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+body.theme-light .tc-canchi-val,
+body.theme-light .tc-chi {
+  color: #b45309 !important;
+  font-weight: 900 !important;
+}
+
+body.theme-light .tc-trangsinh-val,
+body.theme-light .tc-ts {
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .tc-daihan-val,
+body.theme-light .tc-dh {
+  color: #0f172a !important;
+  font-weight: 900 !important;
+}
+
+/* Thiên Bàn Trung Tâm: PURE FLAT & MAX CONTRAST */
 body.theme-light .tuvi-center-box {
-  background: linear-gradient(135deg, #fffbf2 0%, #f6ebd5 100%) !important;
-  border: 1.5px solid #c99324 !important;
+  background: #f8fafc !important;
+  border: 1.5px solid #94a3b8 !important;
+  box-shadow: none !important;
+}
+
+body.theme-light .tc-inner-border {
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.theme-light .tc-bg-yin-yang {
+  display: none !important;
+}
+
+body.theme-light .tc-header {
+  border-bottom: 1px solid #cbd5e1 !important;
 }
 
 body.theme-light .tc-title {
-  color: #713f12 !important;
+  color: #0f172a !important;
   font-weight: 900 !important;
+  text-shadow: none !important;
 }
 
 body.theme-light .tc-sub {
-  color: #4b5563 !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
 }
 
-body.theme-light .tc-row span {
-  color: #4b5563 !important;
+body.theme-light .tc-divider-v {
+  background: #cbd5e1 !important;
+}
+
+body.theme-light .tc-k {
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .tc-v {
+  color: #0f172a !important;
+  font-weight: 900 !important;
+}
+
+body.theme-light .text-menh-gold {
+  color: #b45309 !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .tc-footer-stars {
+  border-top: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
   font-weight: 600 !important;
 }
 
-body.theme-light .tc-row strong {
-  color: #111827 !important;
-  font-weight: 800 !important;
+body.theme-light .tc-footer-stars strong {
+  color: #0f172a !important;
+  font-weight: 900 !important;
 }
 
-body.theme-light .tc-divider {
-  background: #dccbb3 !important;
-}
-
+/* Danh Sách 12 Cung Phẳng */
 body.theme-light .tuvi-list-card {
   background: #ffffff !important;
-  border: 1px solid #dcd0bc !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
 }
 
 body.theme-light .tlc-cung-name {
-  color: #713f12 !important;
+  color: #0f172a !important;
   font-weight: 900 !important;
 }
 
 body.theme-light .tlc-canchi {
-  color: #854d0e !important;
-  font-weight: 800 !important;
+  color: #b45309 !important;
+  font-weight: 900 !important;
 }
 
 body.theme-light .tlc-ts,
 body.theme-light .tlc-dh {
-  color: #4b5563 !important;
+  color: #475569 !important;
   font-weight: 600 !important;
 }
 
 body.theme-light .tlc-main-stars {
-  color: #111827 !important;
+  color: #0f172a !important;
 }
 
 /* Light Theme: Calendar (Lịch Âm Dương) */

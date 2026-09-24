@@ -63,20 +63,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.2
-          name: "Neta Light & Huyền Học v1.3.2 (Hoàn Thiện Không Gian & Bố Cục Lá Số Tử Vi Hoàng Gia)"
+          tag_name: v1.3.3
+          name: "Neta Light & Huyền Học v1.3.3 (Chuyển Đổi Giao Diện Phẳng Hoàn Toàn & Tương Phản Tối Đa)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.2
-            - **Hoàn thiện Không gian & Bố cục Lá Số Tử Vi 4x4 (Zero Text Clipping)**:
-              + **Thu gọn Thanh Master Overview thành Ruy-băng Thượng Hạng (Single Sleek Ribbon)**: Tiết kiệm ~40px chiều dọc, mở rộng không gian hiển thị cho toàn bộ 12 cung chức.
-              + **Mở rộng Chiều cao Cung & Tỉ lệ Khung 4x4**: Tăng aspect-ratio lên 1 / 1.25, chiều cao tối thiểu 520px, giúp mỗi ô cung tăng gấp đôi không gian chứa chính tinh và phụ tinh.
-              + **Chuẩn hoá Tiêu Đề Cung & Chống Tràn Dòng**: Tất cả 12 cung chức nằm gọn trên 1 dòng duy nhất kèm huy hiệu Thân, Triệt, Tuần sắc nét.
-              + **Tinh Chỉnh Font Chữ & Giãn Cách Phụ Tinh (Secondary Stars)**: Font 0.42rem kèm kerning chuẩn mực giúp hiển thị đầy đủ tên các sao dài (Thiếu Dương, Tướng Quân, Nguyệt Đức, Thanh Long...) không còn bị cắt chữ `...`.
-              + **Thiên Bàn Hoàng Gia Chuẩn Xác**: Ngày giờ âm dương, Mệnh, Cục, Cung, Thân, Chủ Mệnh, Chủ Thân hiển thị toàn văn nguyên bản 100%.
-            - **Hệ Thống Khung Điều Khiển Hợp Nhất 3 Tầng Chuẩn Mực (Unified Control Card)**:
-              + Nút `⚡ Giờ thực` tách biệt bên trái chống bấm nhầm sau khi đã nhập thông tin.
-              + Nhập nhanh năm/thập niên bằng phím tắt `⚡ Năm`.
-              + Tự động chuyển đổi mượt mà giữa Lịch Tháng và Lịch Ngày Bloc.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.3
+            - **Chuyển Đổi Giao Diện Phẳng Hoàn Toàn (Pure Flat Design)**:
+              + Loại bỏ 100% bóng đổ 3D (box-shadow/text-shadow), dải màu chuyển (radial/linear gradients) và viền giả nổi; chuyển sang ngôn ngữ thiết kế phẳng hiện đại, tinh gọn và thanh thoát.
+              + Khung viền đơn sắc phẳng, sắc nét (Crisp 1px / 1.5px Hairline Borders) phân tách rõ ràng từng cung chức và dải tổng quan.
+            - **Khắc Phục Triệt Để Độ Tương Phản Trong Chế Độ Sáng (Light Theme Max Contrast)**:
+              + **Tiêu đề Cung chức**: Hiển thị màu Đen Tuyền (`#0f172a`), font đậm 900, chấm dứt hoàn toàn hiện tượng chữ trắng chìm trên nền trắng.
+              + **Thiên Bàn Trung Tâm**: Toàn bộ nhãn thông tin (`Dương`, `Âm`, `Giờ`, `Mụ`, `Mệnh`, `Cục`, `Cung`, `Thân`) hiển thị màu xám đậm (`#475569`) và giá trị màu Đen Tuyền/Hổ Phách (`#0f172a` / `#b45309`), nhìn rõ ràng 100%.
+              + **Phụ Tinh & Đáy Cung**: Cát tinh xanh lục đậm (`#15803d`), Sát tinh đỏ thắm (`#b91c1c`), Can Chi và Đại hạn đậm nét, tuyệt đối không bị mờ nhạt.
+            - **Đồng Bộ Giao Diện Phẳng Tối (Dark Theme Flat UI)**:
+              + Tối ưu nền phẳng Slate-900 / Slate-800 (`#0f172a`, `#1e293b`), giữ độ tương phản cao và dịu mắt.
             - **Hoạt động Ngoại tuyến 100% Offline độc lập**: Trải nghiệm 60 FPS mượt mà.
           files: build-output/NetaLight.apk
           draft: false
