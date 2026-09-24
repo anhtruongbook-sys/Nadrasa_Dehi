@@ -63,20 +63,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.4
-          name: "Neta Light & Huyền Học v1.3.4 (Tối Ưu Hóa Huy Hiệu Thân, Tuần, Triệt & Không Chồng Lấn)"
+          tag_name: v1.3.5
+          name: "Neta Light & Huyền Học v1.3.5 (Loại Bỏ Hoàn Toàn Cắt Chữ & Chống Tràn Nút Huy Hiệu)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.4
-            - **Tối Ưu Hóa Huy Hiệu Thân, Tuần, Triệt (Zero Badge Overlap)**:
-              + **Hợp nhất nhóm huy hiệu**: Đưa `THÂN`, `TRIỆT`, `TUẦN` vào chung flex-container chuyên biệt, hiển thị song song cạnh nhau, loại bỏ hoàn toàn lỗi đè chồng lên nhau khi cung có cả Thân và Tuần/Triệt.
-              + **Phân biệt màu sắc & thứ bậc chuẩn xác**:
-                * Huy hiệu `THÂN`: Màu Vàng Hổ Phách cao quý (`#d97706` trong Light, `#eab308` chữ đen trong Dark).
-                * Huy hiệu `TRIỆT`: Màu Đỏ Thắm (`#dc2626`).
-                * Huy hiệu `TUẦN`: Màu Xanh Lục Bảo (`#16a34a`).
-              + **Chống cắt cụt tên cung dài**: Tinh chỉnh font tiêu đề cung `0.50rem`, khoảng cách chữ chuẩn xác, hiển thị đầy đủ tên các cung dài như `PHÚC ĐỨC`, `ĐIỀN TRẠCH` dù đi kèm đồng thời cả 2 huy hiệu.
-            - **Giao Diện Phẳng Hoàn Toàn & Tương Phản Tối Đa**:
-              + Chế độ Sáng: Tiêu đề đen tuyền, Thiên Bàn rõ nét 100%, phụ tinh cát/sát sắc sảo.
-              + Chế độ Tối: Nền phẳng dịu mắt, tương phản cao.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.5
+            - **Khắc Phục Triệt Để Cắt Chữ Khi Không Gian Còn Rộng (Zero Word Truncation)**:
+              + **Phụ Tinh (Cát / Sát)**: Chuyển cấu trúc 2 cột phụ tinh sang Flexbox tự co giãn linh hoạt (`display: flex; justify-content: space-between`), loại bỏ khóa cứng 50% và `overflow: hidden`, giúp hiển thị nguyên vẹn 100% tên sao dài (*Thiếu Dương*, *Thanh Long*, *Nguyệt Đức*...).
+              + **Thiên Bàn Trung Tâm**: Phân bổ tỉ lệ độ rộng cột thông minh (Cột phải chứa Nạp Âm dài được tăng thêm 35% diện tích), hiển thị đầy đủ không sót chữ nào (*Thiên Thượng Hỏa*, *Hỏa Lục Cục*...).
+            - **Loại Bỏ Hoàn Toàn Lỗi Tràn Nút Huy Hiệu (Zero Badge Overflow)**:
+              + Hợp nhất `THÂN`, `TRIỆT`, `TUẦN` vào chung một flex-container chuyên biệt, nằm gọn gàng bên phải tiêu đề cung.
+              + Cung `PHÚC ĐỨC`, `ĐIỀN TRẠCH` khi có cả Thân và Tuần/Triệt hiển thị 2 huy hiệu độc lập song song, màu sắc phân biệt rõ ràng (Thân: Vàng Hổ Phách, Tuần: Xanh Lục, Triệt: Đỏ Thắm), tuyệt đối không tràn mép ô.
             - **Hoạt động Ngoại tuyến 100% Offline độc lập**: 60 FPS mượt mà.
           files: build-output/NetaLight.apk
           draft: false

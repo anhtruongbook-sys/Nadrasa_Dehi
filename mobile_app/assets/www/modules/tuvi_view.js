@@ -213,14 +213,14 @@
                 <div class="tc-sub">NAM PHÁI • THÁI THỨ LANG</div>
               </div>
               <div class="tc-body-grid">
-                <div class="tc-col">
+                <div class="tc-col tc-col-left">
                   <div class="tc-item"><span class="tc-k">Dương:</span><strong class="tc-v">${pad(meta.solarDay)}/${pad(meta.solarMonth)}/${meta.solarYear}</strong></div>
                   <div class="tc-item"><span class="tc-k">Âm:</span><strong class="tc-v">${pad(meta.lunarDay)}/${pad(meta.lunarMonth)} (${meta.yearGan} ${meta.yearZhi})</strong></div>
                   <div class="tc-item"><span class="tc-k">Giờ:</span><strong class="tc-v">${pad(meta.solarHour)}h (${meta.hourZhi})</strong></div>
                   <div class="tc-item"><span class="tc-k">Mụ:</span><strong class="tc-v">${meta.currentAgeMu} tuổi</strong></div>
                 </div>
                 <div class="tc-divider-v"></div>
-                <div class="tc-col">
+                <div class="tc-col tc-col-right">
                   <div class="tc-item"><span class="tc-k">Mệnh:</span><strong class="tc-v text-menh-gold">${meta.napAm}</strong></div>
                   <div class="tc-item"><span class="tc-k">Cục:</span><strong class="tc-v">${meta.cucName}</strong></div>
                   <div class="tc-item"><span class="tc-k">Cung:</span><strong class="tc-v">${palaces[meta.menhIdx].canChi}</strong></div>

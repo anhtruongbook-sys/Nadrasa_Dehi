@@ -3753,8 +3753,15 @@ body.theme-light .dropdown-check {
   flex-direction: column;
   justify-content: space-around;
   gap: 1px;
-  flex: 1;
   min-width: 0;
+}
+
+.tc-col-left {
+  flex: 4 1 0%;
+}
+
+.tc-col-right {
+  flex: 5.5 1 0%;
 }
 
 .tc-divider-v {
@@ -3767,7 +3774,7 @@ body.theme-light .dropdown-check {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.44rem;
+  font-size: 0.42rem;
   line-height: 1.25;
   white-space: nowrap;
   gap: 1px;
@@ -3777,7 +3784,7 @@ body.theme-light .dropdown-check {
   color: #94a3b8;
   font-weight: 600;
   flex-shrink: 0;
-  font-size: 0.43rem;
+  font-size: 0.41rem;
 }
 
 .tc-v {
@@ -3785,7 +3792,7 @@ body.theme-light .dropdown-check {
   font-weight: 800;
   text-align: right;
   letter-spacing: -0.2px;
-  font-size: 0.44rem;
+  font-size: 0.42rem;
   white-space: nowrap;
 }
 
@@ -3953,11 +3960,10 @@ body.theme-light .dropdown-check {
 
 /* Phụ Tinh: 2 Cột Đối Xứng */
 .tc-sec-stars-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px 1px;
-  font-size: 0.42rem;
-  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+  font-size: 0.39rem;
   flex-grow: 1;
   min-height: 0;
   padding: 1px 0;
@@ -3969,7 +3975,8 @@ body.theme-light .dropdown-check {
   flex-direction: column;
   gap: 0px;
   text-align: left;
-  overflow: hidden;
+  min-width: 0;
+  flex-shrink: 0;
 }
 
 .tc-col-bad {
@@ -3977,7 +3984,8 @@ body.theme-light .dropdown-check {
   flex-direction: column;
   gap: 0px;
   text-align: right;
-  overflow: hidden;
+  min-width: 0;
+  flex-shrink: 0;
 }
 
 .star-sec {
