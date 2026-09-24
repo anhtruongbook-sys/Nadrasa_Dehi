@@ -63,23 +63,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.0
-          name: "Neta Light & Huyền Học v1.3.0 (Bộ Chọn Ngày Giờ Siêu Tốc & Thập Niên 1940-2030)"
+          tag_name: v1.3.1
+          name: "Neta Light & Huyền Học v1.3.1 (Đại Trùng Tu Lá Số Tử Vi Hoàng Gia & Hệ Thống Điều Khiển Hợp Nhất)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.0 (Bản Nâng Cấp Bộ Chọn Ngày Giờ Siêu Tốc)
-            - **Bộ Chọn Ngày Giờ Thông Minh & Bảng Thập Niên Siêu Tốc (Smart Picker & Decade Jumper)**:
-              + **Nhập trực tiếp số tự nhảy ô**: Gõ 2 số ngày tự nhảy tháng, gõ 2 số tháng tự nhảy năm, phím Backspace lùi ô thông minh.
-              + **Tự hoàn thiện năm 2 chữ số**: Gõ `79` -> `1979`, `65` -> `1965`, `05` -> `2005` mà không cần gõ đủ 4 số.
-              + **Bảng chọn Thập niên & Năm 2 Chạm (`⚡Năm`)**: Chọn các năm từ 1940 đến 2030 chỉ với 2 lần chạm, thao tác siêu nhanh cho mọi độ tuổi.
-              + **Chuyển đổi Lịch Hai Chiều (`☀️ Dương` <-> `🌙 Âm`)**: Cho phép nhập ngày sinh âm lịch và tự động chuyển đổi thiên văn chuẩn xác sang dương lịch.
-              + **Đồng bộ Can Chi giờ <-> Giờ số (HH:MM)**: Tự động tính toán canh giờ Can Chi tương ứng.
-              + **Bảo vệ nút Giờ Thực / Hôm Nay**: Tách biệt nút đặt lại để tránh bấm nhầm sau khi đã nhập ngày giờ cụ thể.
-            - **4 Phân Hệ Huyền Học Hoàn Chỉnh**:
-              + **Tử Vi Đẩu Số**: 12 Cung Nam Phái Thái Thứ Lang, 2 chế độ hiển thị (4x4 & Thẻ bài).
-              + **Bát Tự Manh Phái**: Tứ Trụ, Thập Thần, Đại Vận, Lưu Niên.
-              + **Kỳ Môn Độn Giáp**: 9 Cung Lạc Thư, Chân Thái Dương Thời, bước nhảy giờ thực.
-              + **Lịch Âm Dương**: Lịch Tháng và Lịch Ngày Bloc chi tiết.
-            - **Hoạt động Ngoại tuyến 100% Offline**: Không phụ thuộc internet.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.1 (Bản Đại Trùng Tu Toàn Diện)
+            - **Đại Trùng Tu Tuyệt Phẩm Lá Số Tử Vi Đẩu Số 4x4 (Imperial Masterpiece)**:
+              + **Thiên Bàn Hoàng Gia**: Khung viền thếp vàng cổ điển 2 lớp, hoa văn Thái Cực Âm Dương ẩn chìm tinh tế, bố cục 2 cột đối xứng chia ngăn hoàng kim (Thời gian sinh đối xứng Bản Mệnh, Cục số, Cung Mệnh, Thân cư, Chủ Mệnh & Chủ Thân chuẩn Thái Thứ Lang).
+              + **Phân tầng Màu sắc Ngũ Hành Đậm Chất Sơn Mài**: Sao Tử Vi (Thổ - Vàng kim), Thất Sát (Kim - Trắng ngọc), Liêm Trinh (Hỏa - Đỏ ruby), Thiên Đồng (Thủy - Lam sapphire), Thiên Cơ (Mộc - Lục bảo) phân cấp độ sáng miếu vượng (M, V, Đ, H) rõ rệt.
+              + **Thẻ Tóm Lược Master Overview 4 Ô Ngọc Bích**: Đương số, Bản Mệnh, Cục số, Thân cư hiển thị nổi bật, không tràn màn hình.
+              + **Hệ thống Cung Chức & Phụ Tinh Cát / Sát 2 Cột**: Cung Mệnh viền hoàng kim, huy hiệu THÂN, TRIỆT, TUẦN chạm nổi, phụ tinh chia 2 cột Cát tinh (xanh) - Sát tinh (đỏ) đối xứng hoàn hảo.
+            - **Hệ Thống Khung Điều Khiển Hợp Nhất 3 Tầng Chuẩn Mực (Unified Control Card)**:
+              + **Phân vùng chức năng 3 tầng rõ ràng cho cả 4 module** (Kỳ Môn, Bát Tự, Tử Vi, Lịch):
+                * Tầng 1: Chọn Lịch (Dương / Âm) + Nhập ngày tháng năm + Phím tắt chọn nhanh thập niên `⚡Năm` + Lịch hệ thống.
+                * Tầng 2: Chọn Can Chi giờ + Giờ số : Phút + Tuỳ chọn phụ (Giới tính Nam/Nữ hoặc Bước nhảy 2h Kỳ Môn).
+                * Tầng 3: Hành động chính: Nút `⚡ Giờ thực` bên trái (chống bấm nhầm), Chế độ xem ở giữa, Nút lập lá số nổi bật bên phải.
+              + **Xử lý triệt để lỗi tràn dòng & kẹt nút**: Sửa nút bước giờ Kỳ Môn `[ ◀ 2h ] [ 2h ▶ ]`, thanh Lịch 2 tầng không tràn ngang.
+              + **Bấm chọn ngày trong lịch tháng tự động chuyển sang Lịch Ngày Bloc chi tiết**.
+            - **Hoạt động Ngoại tuyến 100% Offline**: Tốc độ 60 FPS mượt mà.
           files: build-output/NetaLight.apk
           draft: false
           prerelease: false

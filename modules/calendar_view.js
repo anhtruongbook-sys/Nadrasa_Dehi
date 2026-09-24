@@ -33,37 +33,40 @@
 
     container.innerHTML = `
       <div class="calendar-module-container">
-        <!-- Top Calendar Navigation Bar (Compact) -->
+        <!-- Top Calendar Navigation Bar (2 Clean Rows) -->
         <div class="cal-top-bar">
-          <div class="cal-mode-toggle">
-            <button class="cal-btn-tab ${currentCalendarMode === 'month' ? 'active' : ''}" id="btn-cal-tab-month">
-              Tháng
-            </button>
-            <button class="cal-btn-tab ${currentCalendarMode === 'day' ? 'active' : ''}" id="btn-cal-tab-day">
-              Ngày
+          <div class="cal-top-row-1">
+            <div class="cal-mode-toggle">
+              <button class="cal-btn-tab ${currentCalendarMode === 'month' ? 'active' : ''}" id="btn-cal-tab-month">
+                📅 Tháng
+              </button>
+              <button class="cal-btn-tab ${currentCalendarMode === 'day' ? 'active' : ''}" id="btn-cal-tab-day">
+                📆 Ngày
+              </button>
+            </div>
+            <button class="cal-btn-today" id="btn-cal-today" title="Về hôm nay">
+              ⚡ Hôm nay
             </button>
           </div>
-          <div class="cal-quick-jump-inline">
-            <button type="button" class="btn-lunar-toggle ${isCalLunarMode ? 'lunar' : ''}" id="btn-cal-lunar-toggle" title="Chuyển đổi Dương lịch / Âm lịch">
-              ${isCalLunarMode ? '🌙 Âm' : '☀️ Dương'}
-            </button>
-            <div class="numeric-date-row">
+          <div class="cal-top-row-2">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isCalLunarMode ? 'active' : ''}" id="btn-cal-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isCalLunarMode ? 'active' : ''}" id="btn-cal-lunar">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box">
               <input type="number" id="cal-jump-day" class="num-box num-day" min="1" max="31" value="${isCalLunarMode ? dayInfo.lunar.day : d}" placeholder="Ngày" title="Nhập Ngày">
               <span class="num-slash">/</span>
               <input type="number" id="cal-jump-month" class="num-box num-month" min="1" max="12" value="${isCalLunarMode ? dayInfo.lunar.month : m}" placeholder="Tháng" title="Nhập Tháng">
               <span class="num-slash">/</span>
               <input type="number" id="cal-jump-year" class="num-box num-year" min="1900" max="2100" value="${isCalLunarMode ? dayInfo.lunar.year : y}" placeholder="Năm" title="Nhập Năm">
-              <button type="button" class="btn-quick-year" id="btn-cal-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
-              <label class="btn-picker-cal" title="Chọn ngày trên lịch">
+              <button type="button" class="ucc-btn-year" id="btn-cal-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
+              <label class="btn-picker-cal" id="cal-btn-native-cal" title="Chọn ngày trên lịch">
                 📅
                 <input type="date" id="cal-native-picker" value="${y}-${pad(m)}-${pad(d)}" class="native-hidden-date">
               </label>
-              <button class="cal-btn-jump" id="btn-cal-jump" title="Đến ngày">🚀</button>
             </div>
+            <button class="cal-btn-jump" id="btn-cal-jump" title="Đến ngày">🚀</button>
           </div>
-          <button class="cal-btn-today" id="btn-cal-today" title="Về hôm nay">
-            ⚡ Hôm nay
-          </button>
         </div>
 
         <!-- Navigation Bar -->
@@ -293,12 +296,23 @@
     const inputYear = document.getElementById('cal-jump-year');
     const nativePicker = document.getElementById('cal-native-picker');
     const btnYearJumper = document.getElementById('btn-cal-year-jumper');
-    const btnLunarToggle = document.getElementById('btn-cal-lunar-toggle');
+    const btnSolar = document.getElementById('btn-cal-solar');
+    const btnLunar = document.getElementById('btn-cal-lunar');
 
-    if (btnLunarToggle) {
-      btnLunarToggle.onclick = () => {
-        isCalLunarMode = !isCalLunarMode;
-        renderCalendar();
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isCalLunarMode) {
+          isCalLunarMode = false;
+          renderCalendar();
+        }
+      };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isCalLunarMode) {
+          isCalLunarMode = true;
+          renderCalendar();
+        }
       };
     }
 
@@ -332,7 +346,7 @@
         currentSelectedDate = new Date(py, pm - 1, pd);
         renderCalendar();
       });
-      const pickerLabel = document.querySelector('.cal-quick-jump-inline .btn-picker-cal');
+      const pickerLabel = document.getElementById('cal-btn-native-cal') || document.querySelector('.btn-picker-cal');
       if (pickerLabel && global.NetaSmartPicker) {
         global.NetaSmartPicker.setupNativeDatePicker(pickerLabel, nativePicker);
       }

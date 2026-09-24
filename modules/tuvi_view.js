@@ -97,30 +97,31 @@
 
     container.innerHTML = `
       <div class="tuvi-view-container">
-        <!-- Tu Vi Ultra-Compact Control Bar with Smart Picker -->
-        <div class="tuvi-ctrl-bar">
-          <div class="tuvi-inputs-row">
-            <!-- Lunar / Solar Toggle -->
-            <button class="btn-lunar-toggle ${isLunarMode ? 'mode-lunar' : ''}" id="tuvi-btn-cal-type" title="Chạm để chuyển đổi Dương Lịch / Âm Lịch">
-              ${isLunarMode ? '🌙 Âm' : '☀️ Dương'}
-            </button>
-
-            <!-- Direct Numeric Date with Smart Picker & Quick Decade Jumper -->
-            <div class="numeric-date-row">
+        <!-- Unified Control Card -->
+        <div class="unified-ctrl-card">
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isLunarMode ? 'active' : ''}" id="tuvi-btn-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isLunarMode ? 'active' : ''}" id="tuvi-btn-lunar">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box">
               <input type="number" id="tuvi-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày" title="Nhập Ngày (1-31)">
               <span class="num-slash">/</span>
               <input type="number" id="tuvi-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng" title="Nhập Tháng (1-12)">
               <span class="num-slash">/</span>
               <input type="number" id="tuvi-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm" title="Nhập Năm (gõ 2 số: 79 -> 1979)">
-              <button class="btn-quick-year" id="tuvi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc (1940 - 2030)">⚡Năm</button>
+              <button type="button" class="ucc-btn-year" id="tuvi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc">⚡Năm</button>
               <label class="btn-picker-cal" id="tuvi-btn-native-cal" title="Mở lịch chọn ngày gốc của hệ điều hành">
                 📅
                 <input type="date" id="tuvi-date-picker" value="${dStr}" class="native-hidden-date">
               </label>
             </div>
+          </div>
 
-            <!-- Time: Can Chi Select + Direct Numeric Hour & Minute -->
-            <div class="numeric-time-row">
+          <!-- Row 2: Can Chi + Numeric Time & Gender -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
               <select id="tuvi-select-canchi" class="select-canchi">
                 <option value="0" ${[23, 0].includes(meta.solarHour) ? 'selected' : ''}>Tý (23-01h)</option>
                 <option value="2" ${[1, 2].includes(meta.solarHour) ? 'selected' : ''}>Sửu (01-03h)</option>
@@ -139,42 +140,49 @@
               <span class="num-colon">:</span>
               <input type="number" id="tuvi-input-minute" class="num-box num-min" min="0" max="59" value="${pad(currentTuViDate.getMinutes())}" placeholder="Phút" title="Nhập Phút (0-59)">
             </div>
-
-            <!-- Gender Toggle -->
-            <button class="tuvi-btn-gender ${currentIsMale ? 'gender-male' : 'gender-female'}" id="tuvi-btn-gender" title="Chạm để đổi giới tính">
-              ${currentIsMale ? '♂ Nam' : '♀ Nữ'}
-            </button>
+            <div class="ucc-pill-gender">
+              <button type="button" class="ucc-gender-btn ${currentIsMale ? 'active male' : ''}" id="tuvi-btn-male">♂ Nam</button>
+              <button type="button" class="ucc-gender-btn ${!currentIsMale ? 'active female' : ''}" id="tuvi-btn-female">♀ Nữ</button>
+            </div>
           </div>
 
-          <div class="tuvi-actions-row">
-            <div class="tuvi-actions-left">
-              <button class="tuvi-btn-action tuvi-btn-now" id="btn-tuvi-now" title="Về thời điểm hiện tại">
-                ⚡ Giờ thực
+          <!-- Row 3: Action row (Giờ thực, 4x4 / 12 Cung, Lập Lá Số) -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-tuvi-now" title="Về thời điểm hiện tại">
+              ⚡ Giờ thực
+            </button>
+            <div class="ucc-pill-view">
+              <button class="ucc-view-btn ${currentViewMode === 'grid' ? 'active' : ''}" id="btn-tuvi-mode-grid" title="Bàn 4x4 truyền thống">
+                🏛️ 4x4
               </button>
-              <div class="tuvi-view-toggle">
-                <button class="tuvi-tab-btn ${currentViewMode === 'grid' ? 'active' : ''}" id="btn-tuvi-mode-grid" title="Xem dạng bàn 4x4">
-                  🏛️ 4x4
-                </button>
-                <button class="tuvi-tab-btn ${currentViewMode === 'list' ? 'active' : ''}" id="btn-tuvi-mode-list" title="Xem dạng danh sách 12 cung">
-                  📜 12 Cung
-                </button>
-              </div>
+              <button class="ucc-view-btn ${currentViewMode === 'list' ? 'active' : ''}" id="btn-tuvi-mode-list" title="Danh sách 12 cung">
+                📜 12 Cung
+              </button>
             </div>
-            <button class="tuvi-btn-action tuvi-btn-submit" id="btn-tuvi-submit" title="Lập lại lá số">
+            <button class="ucc-btn-submit" id="btn-tuvi-submit" title="Lập lại lá số">
               🔮 Lập Lá Số
             </button>
           </div>
         </div>
 
-        <!-- Master Overview Strip (Single Sleek Row) -->
+        <!-- Master Overview Strip (4 High-End Responsive Jade Cards) -->
         <div class="tuvi-master-strip">
-          <div class="tms-item"><span class="tms-lbl">Đương số:</span> <strong class="tms-val">${meta.amDuongNamNu || (currentIsMale ? 'Dương Nam' : 'Âm Nữ')}</strong></div>
-          <span class="tms-sep">•</span>
-          <div class="tms-item"><span class="tms-lbl">Mệnh:</span> <strong class="tms-val text-gold">${meta.napAm}</strong></div>
-          <span class="tms-sep">•</span>
-          <div class="tms-item"><span class="tms-lbl">Cục:</span> <strong class="tms-val">${meta.cucName}</strong></div>
-          <span class="tms-sep">•</span>
-          <div class="tms-item"><span class="tms-lbl">Mệnh/Thân:</span> <strong class="tms-val">${meta.menhCanChi} (Thân cư ${palaces[meta.thanIdx].name})</strong></div>
+          <div class="tms-card">
+            <span class="tms-card-lbl">ĐƯƠNG SỐ</span>
+            <span class="tms-card-val">${meta.amDuongNamNu || (currentIsMale ? 'Dương Nam' : 'Âm Nữ')}</span>
+          </div>
+          <div class="tms-card">
+            <span class="tms-card-lbl">BẢN MỆNH</span>
+            <span class="tms-card-val val-gold">${meta.napAm}</span>
+          </div>
+          <div class="tms-card">
+            <span class="tms-card-lbl">CỤC SỐ</span>
+            <span class="tms-card-val">${meta.cucName}</span>
+          </div>
+          <div class="tms-card">
+            <span class="tms-card-lbl">THÂN CƯ</span>
+            <span class="tms-card-val val-gold">${palaces[meta.thanIdx].name} (${palaces[meta.thanIdx].canChi})</span>
+          </div>
         </div>
 
         <!-- Main Chart Display -->
@@ -200,44 +208,37 @@
 
   function renderGrid4x4HTML(meta, palaces) {
     const getColorClass = global.NetaTuViEngine.getStarColorClass;
+    const pad = n => String(n).padStart(2, '0');
 
     return `
       <div class="tuvi-grid-wrapper">
         <div class="tuvi-grid-4x4">
-          <!-- Thiên Bàn Center -->
+          <!-- Thiên Bàn Center (Imperial Masterpiece) -->
           <div class="tuvi-center-box">
-            <div class="tc-title">TỬ VI ĐẨU SỐ</div>
-            <div class="tc-sub">NAM PHÁI • THÁI THỨ LANG</div>
-            
-            <div class="tc-info-block">
-              <div class="tc-row">
-                <span>Dương lịch:</span>
-                <strong>${meta.solarDay}/${meta.solarMonth}/${meta.solarYear} (${meta.solarHour}h)</strong>
+            <div class="tc-bg-yin-yang">☯</div>
+            <div class="tc-inner-border">
+              <div class="tc-header">
+                <div class="tc-title">LÁ SỐ TỬ VI</div>
+                <div class="tc-sub">NAM PHÁI • THÁI THỨ LANG</div>
               </div>
-              <div class="tc-row">
-                <span>Âm lịch:</span>
-                <strong>${meta.lunarDay}/${meta.lunarMonth} năm ${meta.yearGan} ${meta.yearZhi}</strong>
+              <div class="tc-body-grid">
+                <div class="tc-col">
+                  <div class="tc-item"><span class="tc-k">Dương:</span><strong class="tc-v">${pad(meta.solarDay)}/${pad(meta.solarMonth)}/${meta.solarYear}</strong></div>
+                  <div class="tc-item"><span class="tc-k">Âm:</span><strong class="tc-v">${pad(meta.lunarDay)}/${pad(meta.lunarMonth)} (${meta.yearGan} ${meta.yearZhi})</strong></div>
+                  <div class="tc-item"><span class="tc-k">Giờ:</span><strong class="tc-v">${pad(meta.solarHour)}h (${meta.hourZhi})</strong></div>
+                  <div class="tc-item"><span class="tc-k">Mụ:</span><strong class="tc-v">${meta.currentAgeMu} tuổi</strong></div>
+                </div>
+                <div class="tc-divider-v"></div>
+                <div class="tc-col">
+                  <div class="tc-item"><span class="tc-k">Mệnh:</span><strong class="tc-v text-menh-gold">${meta.napAm}</strong></div>
+                  <div class="tc-item"><span class="tc-k">Cục:</span><strong class="tc-v">${meta.cucName}</strong></div>
+                  <div class="tc-item"><span class="tc-k">Mệnh Cung:</span><strong class="tc-v">${palaces[meta.menhIdx].canChi}</strong></div>
+                  <div class="tc-item"><span class="tc-k">Thân cư:</span><strong class="tc-v text-menh-gold">${palaces[meta.thanIdx].name}</strong></div>
+                </div>
               </div>
-              <div class="tc-row">
-                <span>Giờ sinh:</span>
-                <strong>${meta.hourZhi} • ${meta.amDuongNamNu || (currentIsMale ? 'Nam' : 'Nữ')} (Tuổi mụ: ${meta.currentAgeMu})</strong>
-              </div>
-              <div class="tc-divider"></div>
-              <div class="tc-row highlight-gold">
-                <span>Bản Mệnh:</span>
-                <strong>${meta.napAm}</strong>
-              </div>
-              <div class="tc-row">
-                <span>Cục:</span>
-                <strong>${meta.cucName}</strong>
-              </div>
-              <div class="tc-row">
-                <span>Cung Mệnh:</span>
-                <strong>${palaces[meta.menhIdx].canChi}</strong>
-              </div>
-              <div class="tc-row">
-                <span>Thân cư:</span>
-                <strong>${palaces[meta.thanIdx].name} (${palaces[meta.thanIdx].canChi})</strong>
+              <div class="tc-footer-stars">
+                <span>Chủ Mệnh: <strong>${meta.chuMenh || 'Tham Lang'}</strong></span>
+                <span>Chủ Thân: <strong>${meta.chuThan || 'Linh Tinh'}</strong></span>
               </div>
             </div>
           </div>
@@ -250,49 +251,49 @@
               <div class="tuvi-cell ${p.isMenh ? 'cell-menh' : ''}" style="${style}" data-palace-idx="${p.index}">
                 <!-- Cell Header -->
                 <div class="tc-cell-header">
-                  <div class="tc-header-left">
-                    <span class="tc-cung-name ${p.isMenh ? 'text-menh' : ''}">${p.name}</span>
-                    ${p.isThan ? '<span class="tc-badge-than">THÂN</span>' : ''}
+                  <div class="tc-name-wrap">
+                    <span class="tc-cung-name-royal ${p.isMenh ? 'text-menh' : ''}">${p.name}</span>
+                    ${p.isThan ? '<span class="badge-than-royal">THÂN</span>' : ''}
                   </div>
-                  <div class="tc-header-right">
-                    ${p.isTriet ? '<span class="tc-badge-triet">TRIỆT</span>' : ''}
-                    ${p.isTuan ? '<span class="tc-badge-tuan">TUẦN</span>' : ''}
+                  <div class="tc-badges-wrap">
+                    ${p.isTriet ? '<span class="badge-triet-royal">TRIỆT</span>' : ''}
+                    ${p.isTuan ? '<span class="badge-tuan-royal">TUẦN</span>' : ''}
                   </div>
                 </div>
 
                 <!-- Main Stars -->
-                <div class="tc-main-stars">
-                  ${p.mainStars.length === 0 ? '<span class="tc-no-main">Vô Chính Diệu</span>' : `
+                <div class="tc-main-stars-box">
+                  ${p.mainStars.length === 0 ? '<span class="tc-vcd-tag">Vô Chính Diệu</span>' : `
                     ${p.mainStars.map(s => `
-                      <div class="tc-main-star ${getColorClass(s.hanh)}">
-                        <span class="ms-name">${s.name}</span>
-                        ${s.brightness ? `<span class="ms-b">(${s.brightness})</span>` : ''}
+                      <div class="tc-main-star-row ${getColorClass(s.hanh)}">
+                        <span class="star-name">${s.name}</span>
+                        ${s.brightness ? `<span class="star-bright">(${s.brightness})</span>` : ''}
                       </div>
                     `).join('')}
                   `}
                 </div>
 
-                <!-- Secondary Stars (Cát & Hung) -->
-                <div class="tc-secondary-stars">
-                  <div class="tc-lucky-col">
+                <!-- Secondary Stars (2 Cột Đối Xứng) -->
+                <div class="tc-sec-stars-grid">
+                  <div class="tc-col-lucky">
                     ${p.luckyStars.slice(0, 4).map(s => `
-                      <span class="tc-sec-star lucky ${getColorClass(s.hanh)}">${s.name}</span>
+                      <span class="star-sec lucky ${getColorClass(s.hanh)}">${s.name}</span>
                     `).join('')}
-                    ${p.luckyStars.length > 4 ? `<span class="tc-sec-more">+${p.luckyStars.length - 4}</span>` : ''}
+                    ${p.luckyStars.length > 4 ? `<span class="star-more">+${p.luckyStars.length - 4}</span>` : ''}
                   </div>
-                  <div class="tc-bad-col">
+                  <div class="tc-col-bad">
                     ${p.badStars.slice(0, 4).map(s => `
-                      <span class="tc-sec-star bad ${getColorClass(s.hanh)}">${s.name}</span>
+                      <span class="star-sec bad ${getColorClass(s.hanh)}">${s.name}</span>
                     `).join('')}
-                    ${p.badStars.length > 4 ? `<span class="tc-sec-more">+${p.badStars.length - 4}</span>` : ''}
+                    ${p.badStars.length > 4 ? `<span class="star-more">+${p.badStars.length - 4}</span>` : ''}
                   </div>
                 </div>
 
                 <!-- Cell Footer -->
                 <div class="tc-cell-footer">
-                  <span class="tc-chi">${p.canChi}</span>
-                  <span class="tc-ts">${p.trangSinh}</span>
-                  <span class="tc-dh">${p.daiHan}</span>
+                  <span class="tc-canchi-val">${p.canChi}</span>
+                  <span class="tc-trangsinh-val">${p.trangSinh}</span>
+                  <span class="tc-daihan-val">${p.daiHan}</span>
                 </div>
               </div>
             `;
@@ -415,11 +416,22 @@
     const btnSubmit = document.getElementById('btn-tuvi-submit');
 
     // Chuyển đổi Dương Lịch <-> Âm Lịch
-    const btnCalType = document.getElementById('tuvi-btn-cal-type');
-    if (btnCalType) {
-      btnCalType.onclick = () => {
-        isLunarMode = !isLunarMode;
-        renderTuVi();
+    const btnSolar = document.getElementById('tuvi-btn-solar');
+    const btnLunar = document.getElementById('tuvi-btn-lunar');
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isLunarMode) {
+          isLunarMode = false;
+          renderTuVi();
+        }
+      };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isLunarMode) {
+          isLunarMode = true;
+          renderTuVi();
+        }
       };
     }
 
@@ -479,11 +491,22 @@
     }
 
     // Gender toggle
-    const btnGender = document.getElementById('tuvi-btn-gender');
-    if (btnGender) {
-      btnGender.onclick = () => {
-        currentIsMale = !currentIsMale;
-        renderTuVi();
+    const btnMale = document.getElementById('tuvi-btn-male');
+    const btnFemale = document.getElementById('tuvi-btn-female');
+    if (btnMale) {
+      btnMale.onclick = () => {
+        if (!currentIsMale) {
+          currentIsMale = true;
+          renderTuVi();
+        }
+      };
+    }
+    if (btnFemale) {
+      btnFemale.onclick = () => {
+        if (currentIsMale) {
+          currentIsMale = false;
+          renderTuVi();
+        }
       };
     }
 

@@ -134,28 +134,31 @@
 
     container.innerHTML = `
       <div class="qmdj-view-container">
-        <!-- QMDJ Ultra-Compact Control Bar -->
-        <div class="qmdj-ctrl-bar">
-          <div class="qmdj-inputs-row">
-            <!-- Direct Numeric Date -->
-            <div class="numeric-date-row">
-              <button type="button" class="btn-lunar-toggle ${isQmdjLunarMode ? 'lunar' : ''}" id="btn-qmdj-lunar-toggle" title="Chuyển đổi Dương lịch / Âm lịch">
-                ${isQmdjLunarMode ? '🌙 Âm' : '☀️ Dương'}
-              </button>
+        <!-- Unified Control Card -->
+        <div class="unified-ctrl-card">
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-lunar">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box">
               <input type="number" id="qmdj-input-day" class="num-box num-day" min="1" max="31" value="${dayVal}" placeholder="Ngày" title="Nhập Ngày (1-31)">
               <span class="num-slash">/</span>
               <input type="number" id="qmdj-input-month" class="num-box num-month" min="1" max="12" value="${monthVal}" placeholder="Tháng" title="Nhập Tháng (1-12)">
               <span class="num-slash">/</span>
               <input type="number" id="qmdj-input-year" class="num-box num-year" min="1900" max="2100" value="${yearVal}" placeholder="Năm" title="Nhập Năm">
-              <button type="button" class="btn-quick-year" id="btn-qmdj-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
-              <label class="btn-picker-cal" title="Chọn ngày trên lịch">
+              <button type="button" class="ucc-btn-year" id="btn-qmdj-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
+              <label class="btn-picker-cal" id="qmdj-btn-native-cal" title="Chọn ngày trên lịch">
                 📅
                 <input type="date" id="qmdj-date-picker" value="${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}" class="native-hidden-date">
               </label>
             </div>
+          </div>
 
-            <!-- Time: Can Chi Select + Direct Numeric Hour & Minute -->
-            <div class="numeric-time-row">
+          <!-- Row 2: Can Chi + Numeric Time & Hour Stepping -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
               <select id="qmdj-select-canchi" class="select-canchi">
                 <option value="0" ${[23, 0].includes(d.getHours()) ? 'selected' : ''}>Tý (23-01h)</option>
                 <option value="2" ${[1, 2].includes(d.getHours()) ? 'selected' : ''}>Sửu (01-03h)</option>
@@ -174,22 +177,21 @@
               <span class="num-colon">:</span>
               <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}" placeholder="Phút" title="Nhập Phút (0-59)">
             </div>
+            <div class="ucc-step-group">
+              <button class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀ 2h</button>
+              <button class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">2h ▶</button>
+            </div>
           </div>
 
-          <div class="qmdj-actions-row">
-            <div class="qmdj-step-group">
-              <button class="qmdj-btn-step" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀ Lùi giờ</button>
-              <button class="qmdj-btn-step" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">Tiến giờ ▶</button>
+          <!-- Row 3: Actions (Giờ thực, Cục badge, Lập Bàn) -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
+            <div class="qmdj-cuc-badge" title="Cục số và Tiết khí">
+              <span>${roundText}</span>
+              <span class="cuc-dot">•</span>
+              <span>${solarTerm}</span>
             </div>
-            <div class="qmdj-actions-right">
-              <button class="qmdj-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
-              <button class="qmdj-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
-              <div class="qmdj-cuc-badge" title="Cục số và Tiết khí">
-                <span>${roundText}</span>
-                <span class="cuc-dot">•</span>
-                <span>${solarTerm}</span>
-              </div>
-            </div>
+            <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
           </div>
         </div>
 
@@ -331,13 +333,23 @@
     const selectCanChi = document.getElementById('qmdj-select-canchi');
     const inputHour = document.getElementById('qmdj-input-hour');
     const inputMin = document.getElementById('qmdj-input-minute');
-    const btnLunarToggle = document.getElementById('btn-qmdj-lunar-toggle');
-    const btnYearJumper = document.getElementById('btn-qmdj-year-jumper');
+    const btnSolar = document.getElementById('btn-qmdj-solar');
+    const btnLunar = document.getElementById('btn-qmdj-lunar');
 
-    if (btnLunarToggle) {
-      btnLunarToggle.onclick = () => {
-        isQmdjLunarMode = !isQmdjLunarMode;
-        renderQmdj();
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isQmdjLunarMode) {
+          isQmdjLunarMode = false;
+          renderQmdj();
+        }
+      };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isQmdjLunarMode) {
+          isQmdjLunarMode = true;
+          renderQmdj();
+        }
       };
     }
 
@@ -351,13 +363,14 @@
         if (inputMonth) inputMonth.value = m;
         if (inputYear) inputYear.value = y;
       });
-      const pickerLabel = document.querySelector('.qmdj-inputs-row .btn-picker-cal');
+      const pickerLabel = document.getElementById('qmdj-btn-native-cal') || document.querySelector('.btn-picker-cal');
       if (pickerLabel && global.NetaSmartPicker) {
         global.NetaSmartPicker.setupNativeDatePicker(pickerLabel, datePicker);
       }
     }
 
     // Smart auto advance and decade jumper
+    const btnYearJumper = document.getElementById('btn-qmdj-year-jumper');
     if (global.NetaSmartPicker) {
       global.NetaSmartPicker.setupAutoAdvance({
         dayInput: inputDay,

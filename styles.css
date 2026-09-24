@@ -3612,11 +3612,58 @@ body.theme-light .dropdown-check {
   color: rgba(245, 176, 65, 0.4);
 }
 
-/* ================= 4x4 GRID TRADITIONAL LAYOUT ================= */
+/* ============================================================
+   IMPERIAL TỬ VI 4x4 CHART (MASTERPIECE QUALITY)
+   Nam Phái Thái Thứ Lang - Authentic Vietnamese Astrology
+   ============================================================ */
+.tuvi-master-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  width: 100%;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+}
+
+.tms-card {
+  background: rgba(24, 3, 7, 0.9);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 6px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.tms-card.highlight-menh {
+  border-color: #ffd700;
+  background: rgba(43, 14, 7, 0.9);
+}
+
+.tms-badge {
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: #f5b041;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tms-val {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .tuvi-grid-wrapper {
   width: 100%;
   display: flex;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .tuvi-grid-4x4 {
@@ -3625,89 +3672,147 @@ body.theme-light .dropdown-check {
   grid-template-rows: repeat(4, 1fr);
   gap: 2px;
   width: 100%;
-  aspect-ratio: 1 / 1.05;
-  min-height: 420px;
+  aspect-ratio: 1 / 1.06;
+  min-height: 460px;
   background: #24060c;
-  border: 2px solid #f5b041;
-  border-radius: 8px;
+  border: 2px solid #b8860b;
+  border-radius: 10px;
   padding: 2px;
   box-sizing: border-box;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
 }
 
-/* Center Box (Thiên Bàn) */
+/* Center Box: Thiên Bàn Hoàng Gia */
 .tuvi-center-box {
   grid-column: 2 / 4;
   grid-row: 2 / 4;
-  background: #1c0409;
-  border: 2px solid rgba(245, 176, 65, 0.65);
+  background: #1b0307;
+  border: 2px solid #b8860b;
   border-radius: 8px;
+  padding: 4px 6px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 6px;
-  text-align: center;
-  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.8), 0 0 8px rgba(245, 176, 65, 0.2);
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 10px rgba(184, 134, 11, 0.3);
   z-index: 5;
 }
 
+.tc-inner-border {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 5px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.tc-bg-yin-yang {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem;
+  color: #f5b041;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+
+.tc-header {
+  text-align: center;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.3);
+  padding-bottom: 2px;
+}
+
 .tc-title {
+  margin: 0;
   font-size: 0.95rem;
   font-weight: 900;
   color: #f5b041;
-  letter-spacing: 1px;
-  text-shadow: 0 1px 4px rgba(245, 176, 65, 0.4);
+  letter-spacing: 1.5px;
+  font-family: 'Times New Roman', Georgia, serif;
+  text-shadow: 0 1px 4px rgba(245, 176, 65, 0.5);
 }
 
 .tc-sub {
-  font-size: 0.55rem;
+  font-size: 0.52rem;
   color: #fcd34d;
   font-weight: 700;
-  margin-bottom: 3px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
-.tc-info-block {
-  width: 100%;
+.tc-body-grid {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 2px 0;
+  flex-grow: 1;
+}
+
+.tc-col {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  font-size: 0.62rem;
+  justify-content: space-around;
+  gap: 2px;
+  flex: 1;
 }
 
-.tc-row {
+.tc-divider-v {
+  width: 1px;
+  background: rgba(245, 176, 65, 0.25);
+}
+
+.tc-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1px 2px;
+  font-size: 0.6rem;
+  line-height: 1.2;
 }
 
-.tc-row span {
+.tc-k {
   color: #cbd5e1;
+  font-weight: 600;
 }
 
-.tc-row strong {
+.tc-v {
   color: #ffffff;
   font-weight: 800;
+  text-align: right;
 }
 
-.tc-divider {
-  height: 1px;
-  background: rgba(245, 176, 65, 0.35);
-  margin: 2px 0;
+.text-menh-gold {
+  color: #fde047 !important;
+  text-shadow: 0 0 3px rgba(253, 224, 71, 0.5);
 }
 
-.highlight-gold strong {
-  color: #fde047;
-  text-shadow: 0 0 4px rgba(253, 224, 71, 0.4);
+.tc-footer-stars {
+  border-top: 1px solid rgba(245, 176, 65, 0.3);
+  padding-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.56rem;
+  color: #e2e8f0;
 }
 
-/* Palace Cell */
+.tc-footer-stars strong {
+  color: #f5b041;
+}
+
+/* Palace Cell (Mỗi Cung) */
 .tuvi-cell {
-  background: #180307;
-  border: 1.5px solid rgba(245, 176, 65, 0.4);
-  border-radius: 6px;
+  background: #140205;
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 5px;
   padding: 2px 3px;
   display: flex;
   flex-direction: column;
@@ -3716,168 +3821,187 @@ body.theme-light .dropdown-check {
   cursor: pointer;
   transition: all 0.15s ease;
   position: relative;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
 }
 
 .tuvi-cell:hover {
   border-color: #ffd700;
-  box-shadow: 0 0 10px rgba(245, 176, 65, 0.5);
-  transform: scale(1.02);
+  box-shadow: 0 0 8px rgba(245, 176, 65, 0.6);
   z-index: 10;
 }
 
 .cell-menh {
   border: 2px solid #ffd700 !important;
-  background: #2b0e07 !important;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4), inset 0 0 6px rgba(255, 215, 0, 0.2) !important;
+  background: #240508 !important;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4), inset 0 0 8px rgba(255, 215, 0, 0.2) !important;
 }
 
 .tc-cell-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+  align-items: center;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.2);
   padding-bottom: 1px;
   margin-bottom: 1px;
 }
 
-.tc-header-left, .tc-header-right {
+.tc-name-wrap {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .tc-cung-name {
-  font-size: 0.64rem;
+  font-size: 0.66rem;
   font-weight: 900;
   color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  font-family: inherit;
+  letter-spacing: 0.3px;
 }
 
 .text-menh {
   color: #ffd700 !important;
   font-weight: 900 !important;
-  text-shadow: 0 0 4px rgba(255, 215, 0, 0.4);
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
 }
 
-.tc-badge-than {
-  background: #c0392b;
-  color: #fff;
-  font-size: 0.45rem;
-  padding: 1px 2px;
+.badge-than-royal {
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+  border: 1px solid #ffd700;
+  color: #ffffff;
+  font-size: 0.48rem;
+  font-weight: 900;
+  padding: 0 3px;
+  border-radius: 3px;
+  line-height: 1.2;
+}
+
+.tc-badges-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.badge-triet-royal {
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.46rem;
+  font-weight: 900;
+  padding: 0 2px;
   border-radius: 2px;
-  font-weight: 800;
 }
 
-.tc-badge-triet {
-  background: #e74c3c;
-  color: #fff;
-  font-size: 0.45rem;
-  padding: 1px 2px;
+.badge-tuan-royal {
+  background: #059669;
+  color: #ffffff;
+  font-size: 0.46rem;
+  font-weight: 900;
+  padding: 0 2px;
   border-radius: 2px;
-  font-weight: 800;
 }
 
-.tc-badge-tuan {
-  background: #27ae60;
-  color: #fff;
-  font-size: 0.45rem;
-  padding: 1px 2px;
-  border-radius: 2px;
-  font-weight: 800;
-}
-
-.tc-main-stars {
+/* Thân Cung: Chính Tinh */
+.tc-main-stars-box {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  min-height: 22px;
-  margin-bottom: 1px;
+  flex-shrink: 0;
 }
 
-.tc-main-star {
+.tc-main-star-row {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  line-height: 1.15;
+}
+
+.star-name {
   font-size: 0.68rem;
   font-weight: 900;
-  line-height: 1.1;
-  display: flex;
-  align-items: center;
-  gap: 1px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
-.ms-b {
-  font-size: 0.52rem;
+.star-bright {
+  font-size: 0.5rem;
+  font-weight: 700;
   opacity: 0.85;
 }
 
-.tc-no-main {
+.tc-vcd-tag {
   font-size: 0.58rem;
   color: #94a3b8;
   font-style: italic;
+  padding: 2px 0;
 }
 
-.tc-secondary-stars {
+/* Phụ Tinh: 2 Cột Đối Xứng */
+.tc-sec-stars-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1px;
-  font-size: 0.52rem;
+  font-size: 0.5rem;
   overflow: hidden;
-  max-height: 52px;
+  flex-grow: 1;
+  min-height: 0;
 }
 
-.tc-lucky-col {
+.tc-col-lucky {
   display: flex;
   flex-direction: column;
   gap: 1px;
   text-align: left;
 }
 
-.tc-bad-col {
+.tc-col-bad {
   display: flex;
   flex-direction: column;
   gap: 1px;
   text-align: right;
 }
 
-.tc-sec-star.lucky {
+.star-sec.lucky {
   color: #86efac !important;
   font-weight: 700;
 }
 
-.tc-sec-star.bad {
+.star-sec.bad {
   color: #f87171 !important;
   font-weight: 700;
-  text-decoration: underline;
 }
 
-.tc-sec-more {
-  font-size: 0.5rem;
+.star-more {
+  font-size: 0.48rem;
   color: #94a3b8;
 }
 
+/* Cung Đáy: Can Chi, Tràng Sinh, Đại Hạn */
 .tc-cell-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(245, 176, 65, 0.25);
-  padding-top: 2px;
-  margin-top: 2px;
+  border-top: 1px solid rgba(245, 176, 65, 0.2);
+  padding-top: 1px;
+  margin-top: 1px;
   font-size: 0.58rem;
 }
 
-.tc-chi {
+.tc-canchi-val {
   font-weight: 800;
   color: #f5b041;
 }
 
-.tc-ts {
-  color: #e2e8f0;
-  font-size: 0.54rem;
+.tc-trangsinh-val {
+  color: #cbd5e1;
+  font-size: 0.52rem;
+  font-weight: 600;
 }
 
-.tc-dh {
-  font-weight: 800;
+.tc-daihan-val {
+  font-weight: 900;
   color: #ffffff;
+  font-size: 0.62rem;
 }
 
 /* ================= 12 CUNG LIST MODE ================= */
@@ -4119,54 +4243,99 @@ body.theme-light .dropdown-check {
 }
 
 /* ============================================================
-   NUMERIC DATE/TIME INPUT BARS & ACTION BUTTONS (DARK & LIGHT)
-   Ultra-Compact, Sleek 24px Standardized Control System
+   UNIFIED CONTROL CARD SYSTEM (DARK & LIGHT)
+   High-precision 3-row layout: Date/Calendar | Time/Options | Actions
    ============================================================ */
-.tuvi-ctrl-bar,
-.bazi-ctrl-bar,
-.qmdj-ctrl-bar,
-.cal-top-bar {
-  background: rgba(20, 2, 5, 0.88);
-  border: 1px solid rgba(245, 176, 65, 0.25);
-  border-radius: 8px;
-  padding: 4px 6px;
+.unified-ctrl-card {
+  background: rgba(20, 2, 5, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 10px;
+  padding: 6px 8px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  gap: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+.ucc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
   box-sizing: border-box;
 }
 
-.cal-top-bar {
-  flex-direction: row;
-  align-items: center;
+.ucc-row-date {
   justify-content: space-between;
-  gap: 4px;
-  height: 32px;
-  padding: 2px 6px;
 }
 
-.ctrl-group-wrap,
-.qmdj-inputs-row,
-.bazi-inputs-row,
-.tuvi-inputs-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px 5px;
-  align-items: center;
+.ucc-row-time {
+  justify-content: space-between;
 }
 
-.numeric-date-row,
-.numeric-time-row {
+.ucc-row-actions {
+  justify-content: space-between;
+  border-top: 1px solid rgba(245, 176, 65, 0.15);
+  padding-top: 5px;
+  margin-top: 1px;
+}
+
+/* Pill switch for Lunar / Solar */
+.ucc-pill-cal {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 6px;
+  padding: 1px;
+  height: 26px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.ucc-pill-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0 7px;
+  height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 1px;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  border-radius: 5px;
-  padding: 1px 4px;
-  height: 24px;
+  justify-content: center;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ucc-pill-btn.active {
+  background: linear-gradient(135deg, #f5b041 0%, #d4ac0d 100%);
+  color: #120104;
+  font-weight: 900;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Date box & Time box */
+.ucc-date-box,
+.ucc-time-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 6px;
+  padding: 1px 6px;
+  height: 26px;
   box-sizing: border-box;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.ucc-time-box {
+  flex-grow: 1;
 }
 
 .num-box {
@@ -4209,6 +4378,23 @@ body.theme-light .dropdown-check {
   opacity: 0.75;
   padding: 0 1px;
   user-select: none;
+}
+
+.ucc-btn-year {
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  color: #f7dc6f;
+  font-size: 0.65rem;
+  font-weight: 800;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2px;
 }
 
 .btn-picker-cal {
@@ -4258,131 +4444,148 @@ body.theme-light .dropdown-check {
   color: #fff;
 }
 
-/* Gender Toggle Buttons */
-.tuvi-btn-gender,
-.bazi-btn-gender {
-  height: 24px;
-  padding: 0 7px;
+/* Gender switch pill */
+.ucc-pill-gender {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 6px;
+  padding: 1px;
+  height: 26px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.ucc-gender-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
   font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0 8px;
+  height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ucc-gender-btn.active.male {
+  background: rgba(59, 130, 246, 0.85);
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.ucc-gender-btn.active.female {
+  background: rgba(236, 72, 153, 0.85);
+  color: #ffffff;
+  font-weight: 900;
+}
+
+/* Step group for QMDJ: ◀ 2h | 2h ▶ */
+.ucc-step-group {
+  display: inline-flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.ucc-step-btn {
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #f5b041;
+  font-size: 0.68rem;
   font-weight: 800;
-  border-radius: 5px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 6px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  transition: all 0.15s ease;
+}
+
+/* View pill toggle (e.g. 4x4 / 12 Cung) */
+.ucc-pill-view {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 6px;
+  padding: 1px;
+  height: 28px;
   box-sizing: border-box;
-  border: 1px solid rgba(245, 176, 65, 0.3);
 }
 
-.gender-male {
-  background: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
-  border-color: rgba(59, 130, 246, 0.45);
-}
-
-.gender-female {
-  background: rgba(236, 72, 153, 0.2);
-  color: #f472b6;
-  border-color: rgba(236, 72, 153, 0.45);
-}
-
-/* Action Rows & Buttons */
-.qmdj-actions-row,
-.bazi-actions-row,
-.tuvi-actions-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3px;
-  flex-wrap: nowrap;
-}
-
-.bazi-actions-row {
-  justify-content: space-between;
-}
-
-.qmdj-step-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-  flex-shrink: 0;
-}
-
-.qmdj-btn-step {
-  background: rgba(245, 176, 65, 0.12);
-  border: 1px solid rgba(245, 176, 65, 0.25);
-  color: #fff7d6;
-  font-size: 0.65rem;
-  font-weight: 800;
-  width: 22px;
-  height: 24px;
-  padding: 0;
-  border-radius: 5px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.qmdj-btn-now,
-.bazi-btn-now,
-.tuvi-btn-now,
-.cal-btn-today {
-  background: rgba(245, 176, 65, 0.12);
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  color: var(--gold-glow);
+.ucc-view-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
   font-size: 0.68rem;
   font-weight: 700;
-  padding: 0 6px;
+  padding: 0 7px;
   height: 24px;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  white-space: nowrap;
   transition: all 0.15s ease;
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-.qmdj-btn-submit,
-.bazi-btn-submit,
-.tuvi-btn-submit,
-.cal-btn-jump {
+.ucc-view-btn.active {
+  background: rgba(245, 176, 65, 0.25);
+  color: #f5b041;
+  font-weight: 900;
+}
+
+/* Bottom action buttons */
+.ucc-btn-now {
+  background: rgba(245, 176, 65, 0.12);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: var(--gold-glow);
+  font-size: 0.72rem;
+  font-weight: 700;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.ucc-btn-submit {
   background: linear-gradient(135deg, #f5b041 0%, #d4ac0d 100%);
-  border: none;
+  border: 1px solid #ffd700;
   color: #120104;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 0 8px;
-  height: 24px;
-  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  height: 28px;
+  padding: 0 14px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 1px 4px rgba(245, 176, 65, 0.25);
-  white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(245, 176, 65, 0.35);
+  white-space: nowrap;
 }
 
-.qmdj-btn-submit:active,
-.bazi-btn-submit:active,
-.tuvi-btn-submit:active,
-.cal-btn-jump:active {
-  transform: scale(0.96);
+.ucc-btn-submit:active {
+  transform: scale(0.97);
 }
 
 .qmdj-cuc-badge {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(245, 176, 65, 0.25);
   border-radius: 5px;
-  height: 24px;
-  padding: 0 5px;
+  height: 26px;
+  padding: 0 6px;
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -4398,14 +4601,36 @@ body.theme-light .dropdown-check {
   font-size: 0.6rem;
 }
 
-/* Calendar View Toggle & Quick Jump */
+/* Calendar Top Bar - 2 Clean Non-overflowing Rows */
+.cal-top-bar {
+  background: rgba(20, 2, 5, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 10px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+}
+
+.cal-top-row-1,
+.cal-top-row-2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
 .cal-mode-toggle {
   display: inline-flex;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(245, 176, 65, 0.25);
-  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 6px;
   padding: 1px;
-  height: 24px;
+  height: 26px;
   box-sizing: border-box;
 }
 
@@ -4413,10 +4638,10 @@ body.theme-light .dropdown-check {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 0 8px;
-  height: 20px;
+  padding: 0 10px;
+  height: 22px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -4432,22 +4657,49 @@ body.theme-light .dropdown-check {
   font-weight: 800;
 }
 
-.cal-quick-jump-inline {
+.cal-btn-today {
+  background: rgba(245, 176, 65, 0.12);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: var(--gold-glow);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0 10px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
-.cal-quick-jump-inline .numeric-date-row {
-  height: 24px;
-  padding: 1px 3px;
+.cal-btn-jump {
+  background: linear-gradient(135deg, #f5b041 0%, #d4ac0d 100%);
+  border: 1px solid #ffd700;
+  color: #120104;
+  font-size: 0.8rem;
+  font-weight: 900;
+  padding: 0 6px;
+  height: 26px;
+  min-width: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.cal-quick-jump-inline .cal-btn-jump {
-  height: 20px;
-  padding: 0 4px;
-  font-size: 0.65rem;
-  border-radius: 4px;
-  margin-left: 2px;
+.cal-cell {
+  cursor: pointer;
+}
+
+.cal-solar-num,
+.cal-lunar-num,
+.cal-dot-hd,
+.cal-dot-special {
+  pointer-events: none;
 }
 
 /* Bát Tự Master Banner (Compact Slim) */
@@ -4613,6 +4865,7 @@ body.theme-light .tc-row.highlight-gold strong {
 }
 
 /* Module Control Bars in Light Theme */
+body.theme-light .unified-ctrl-card,
 body.theme-light .tuvi-ctrl-bar,
 body.theme-light .bazi-ctrl-bar,
 body.theme-light .qmdj-ctrl-bar,
@@ -4620,6 +4873,66 @@ body.theme-light .cal-top-bar {
   background: #ffffff !important;
   border: 1px solid #e0d5c1 !important;
   box-shadow: 0 1px 4px rgba(160, 120, 60, 0.08) !important;
+}
+
+body.theme-light .ucc-pill-cal,
+body.theme-light .ucc-pill-gender,
+body.theme-light .ucc-pill-view,
+body.theme-light .cal-mode-toggle {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+body.theme-light .ucc-pill-btn,
+body.theme-light .ucc-gender-btn,
+body.theme-light .ucc-view-btn,
+body.theme-light .cal-btn-tab {
+  color: #4b5563 !important;
+}
+
+body.theme-light .ucc-pill-btn.active,
+body.theme-light .cal-btn-tab.active {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .ucc-date-box,
+body.theme-light .ucc-time-box {
+  background: #fdfbf7 !important;
+  border-color: #d4c4af !important;
+}
+
+body.theme-light .ucc-btn-year {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #92400e !important;
+}
+
+body.theme-light .ucc-btn-now,
+body.theme-light .cal-btn-today {
+  background: #fef3c7 !important;
+  border-color: #d97706 !important;
+  color: #92400e !important;
+}
+
+body.theme-light .ucc-btn-submit,
+body.theme-light .cal-btn-jump {
+  background: linear-gradient(135deg, #b45309 0%, #92400e 100%) !important;
+  border-color: #b45309 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.25) !important;
+}
+
+body.theme-light .ucc-step-btn {
+  background: #fef3c7 !important;
+  border-color: #d97706 !important;
+  color: #92400e !important;
+}
+
+body.theme-light .qmdj-cuc-badge {
+  background: #fdfbf7 !important;
+  border-color: #d4c4af !important;
+  color: #854d0e !important;
 }
 
 /* Numeric & Time Controls in Light Theme */

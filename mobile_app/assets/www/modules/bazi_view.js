@@ -75,30 +75,31 @@
 
     container.innerHTML = `
       <div class="bazi-view-container">
-        <!-- Bazi Ultra-Compact Control Bar with Smart Picker -->
-        <div class="bazi-ctrl-bar">
-          <div class="bazi-inputs-row">
-            <!-- Lunar / Solar Toggle -->
-            <button class="btn-lunar-toggle ${isLunarMode ? 'mode-lunar' : ''}" id="bazi-btn-cal-type" title="Chạm để chuyển đổi Dương Lịch / Âm Lịch">
-              ${isLunarMode ? '🌙 Âm' : '☀️ Dương'}
-            </button>
-
-            <!-- Direct Numeric Date with Smart Picker & Quick Decade Jumper -->
-            <div class="numeric-date-row">
+        <!-- Unified Control Card -->
+        <div class="unified-ctrl-card">
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isLunarMode ? 'active' : ''}" id="bazi-btn-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isLunarMode ? 'active' : ''}" id="bazi-btn-lunar">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box">
               <input type="number" id="bazi-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày" title="Nhập Ngày (1-31)">
               <span class="num-slash">/</span>
               <input type="number" id="bazi-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng" title="Nhập Tháng (1-12)">
               <span class="num-slash">/</span>
               <input type="number" id="bazi-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm" title="Nhập Năm (gõ 2 số: 79 -> 1979)">
-              <button class="btn-quick-year" id="bazi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc (1940 - 2030)">⚡Năm</button>
+              <button type="button" class="ucc-btn-year" id="bazi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc">⚡Năm</button>
               <label class="btn-picker-cal" id="bazi-btn-native-cal" title="Mở lịch chọn ngày gốc của hệ điều hành">
                 📅
                 <input type="date" id="bazi-date-picker" value="${dStr}" class="native-hidden-date">
               </label>
             </div>
+          </div>
 
-            <!-- Time: Can Chi Select + Direct Numeric Hour & Minute -->
-            <div class="numeric-time-row">
+          <!-- Row 2: Can Chi + Numeric Time & Gender -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
               <select id="bazi-select-canchi" class="select-canchi">
                 <option value="0" ${[23, 0].includes(input.hour) ? 'selected' : ''}>Tý (23-01h)</option>
                 <option value="2" ${[1, 2].includes(input.hour) ? 'selected' : ''}>Sửu (01-03h)</option>
@@ -117,18 +118,18 @@
               <span class="num-colon">:</span>
               <input type="number" id="bazi-input-minute" class="num-box num-min" min="0" max="59" value="${pad(input.minute)}" placeholder="Phút" title="Nhập Phút (0-59)">
             </div>
-
-            <!-- Gender Toggle -->
-            <button class="bazi-btn-gender ${currentIsMale ? 'gender-male' : 'gender-female'}" id="bazi-btn-gender" title="Chạm để đổi giới tính">
-              ${currentIsMale ? '♂ Nam' : '♀ Nữ'}
-            </button>
+            <div class="ucc-pill-gender">
+              <button type="button" class="ucc-gender-btn ${currentIsMale ? 'active male' : ''}" id="bazi-btn-male">♂ Nam</button>
+              <button type="button" class="ucc-gender-btn ${!currentIsMale ? 'active female' : ''}" id="bazi-btn-female">♀ Nữ</button>
+            </div>
           </div>
 
-          <div class="bazi-actions-row">
-            <button class="bazi-btn-action bazi-btn-now" id="btn-bazi-now" title="Về thời điểm hiện tại">
+          <!-- Row 3: Actions (Giờ thực on left, Lập Bát Tự on right) -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-bazi-now" title="Về thời điểm hiện tại">
               ⚡ Giờ thực
             </button>
-            <button class="bazi-btn-action bazi-btn-submit" id="btn-bazi-submit" title="Lập lại Bát Tự">
+            <button class="ucc-btn-submit" id="btn-bazi-submit" title="Lập lại Bát Tự">
               🔮 Lập Bát Tự
             </button>
           </div>
@@ -371,11 +372,22 @@
     const btnSubmit = document.getElementById('btn-bazi-submit');
 
     // Chuyển đổi Dương Lịch <-> Âm Lịch
-    const btnCalType = document.getElementById('bazi-btn-cal-type');
-    if (btnCalType) {
-      btnCalType.onclick = () => {
-        isLunarMode = !isLunarMode;
-        renderBazi();
+    const btnSolar = document.getElementById('bazi-btn-solar');
+    const btnLunar = document.getElementById('bazi-btn-lunar');
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isLunarMode) {
+          isLunarMode = false;
+          renderBazi();
+        }
+      };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isLunarMode) {
+          isLunarMode = true;
+          renderBazi();
+        }
       };
     }
 
@@ -435,11 +447,22 @@
     }
 
     // Gender toggle
-    const btnGender = document.getElementById('bazi-btn-gender');
-    if (btnGender) {
-      btnGender.onclick = () => {
-        currentIsMale = !currentIsMale;
-        renderBazi();
+    const btnMale = document.getElementById('bazi-btn-male');
+    const btnFemale = document.getElementById('bazi-btn-female');
+    if (btnMale) {
+      btnMale.onclick = () => {
+        if (!currentIsMale) {
+          currentIsMale = true;
+          renderBazi();
+        }
+      };
+    }
+    if (btnFemale) {
+      btnFemale.onclick = () => {
+        if (currentIsMale) {
+          currentIsMale = false;
+          renderBazi();
+        }
       };
     }
 
