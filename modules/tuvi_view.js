@@ -165,24 +165,15 @@
           </div>
         </div>
 
-        <!-- Master Overview Strip (4 High-End Responsive Jade Cards) -->
+        <!-- Master Overview Strip (1 High-End Sleek Ribbon) -->
         <div class="tuvi-master-strip">
-          <div class="tms-card">
-            <span class="tms-card-lbl">ĐƯƠNG SỐ</span>
-            <span class="tms-card-val">${meta.amDuongNamNu || (currentIsMale ? 'Dương Nam' : 'Âm Nữ')}</span>
-          </div>
-          <div class="tms-card">
-            <span class="tms-card-lbl">BẢN MỆNH</span>
-            <span class="tms-card-val val-gold">${meta.napAm}</span>
-          </div>
-          <div class="tms-card">
-            <span class="tms-card-lbl">CỤC SỐ</span>
-            <span class="tms-card-val">${meta.cucName}</span>
-          </div>
-          <div class="tms-card">
-            <span class="tms-card-lbl">THÂN CƯ</span>
-            <span class="tms-card-val val-gold">${palaces[meta.thanIdx].name} (${palaces[meta.thanIdx].canChi})</span>
-          </div>
+          <div class="tms-item"><span class="tms-lbl">Đương số:</span> <strong class="tms-val">${meta.amDuongNamNu || (currentIsMale ? 'Dương Nam' : 'Âm Nữ')}</strong></div>
+          <span class="tms-sep">•</span>
+          <div class="tms-item"><span class="tms-lbl">Mệnh:</span> <strong class="tms-val text-menh-gold">${meta.napAm}</strong></div>
+          <span class="tms-sep">•</span>
+          <div class="tms-item"><span class="tms-lbl">Cục:</span> <strong class="tms-val">${meta.cucName}</strong></div>
+          <span class="tms-sep">•</span>
+          <div class="tms-item"><span class="tms-lbl">Thân:</span> <strong class="tms-val text-menh-gold">${palaces[meta.thanIdx].name}</strong></div>
         </div>
 
         <!-- Main Chart Display -->
@@ -232,8 +223,8 @@
                 <div class="tc-col">
                   <div class="tc-item"><span class="tc-k">Mệnh:</span><strong class="tc-v text-menh-gold">${meta.napAm}</strong></div>
                   <div class="tc-item"><span class="tc-k">Cục:</span><strong class="tc-v">${meta.cucName}</strong></div>
-                  <div class="tc-item"><span class="tc-k">Mệnh Cung:</span><strong class="tc-v">${palaces[meta.menhIdx].canChi}</strong></div>
-                  <div class="tc-item"><span class="tc-k">Thân cư:</span><strong class="tc-v text-menh-gold">${palaces[meta.thanIdx].name}</strong></div>
+                  <div class="tc-item"><span class="tc-k">Cung:</span><strong class="tc-v">${palaces[meta.menhIdx].canChi}</strong></div>
+                  <div class="tc-item"><span class="tc-k">Thân:</span><strong class="tc-v text-menh-gold">${palaces[meta.thanIdx].name}</strong></div>
                 </div>
               </div>
               <div class="tc-footer-stars">
@@ -276,16 +267,16 @@
                 <!-- Secondary Stars (2 Cột Đối Xứng) -->
                 <div class="tc-sec-stars-grid">
                   <div class="tc-col-lucky">
-                    ${p.luckyStars.slice(0, 4).map(s => `
+                    ${p.luckyStars.slice(0, 5).map(s => `
                       <span class="star-sec lucky ${getColorClass(s.hanh)}">${s.name}</span>
                     `).join('')}
-                    ${p.luckyStars.length > 4 ? `<span class="star-more">+${p.luckyStars.length - 4}</span>` : ''}
+                    ${p.luckyStars.length > 5 ? `<span class="star-more">+${p.luckyStars.length - 5}</span>` : ''}
                   </div>
                   <div class="tc-col-bad">
-                    ${p.badStars.slice(0, 4).map(s => `
+                    ${p.badStars.slice(0, 5).map(s => `
                       <span class="star-sec bad ${getColorClass(s.hanh)}">${s.name}</span>
                     `).join('')}
-                    ${p.badStars.length > 4 ? `<span class="star-more">+${p.badStars.length - 4}</span>` : ''}
+                    ${p.badStars.length > 5 ? `<span class="star-more">+${p.badStars.length - 5}</span>` : ''}
                   </div>
                 </div>
 

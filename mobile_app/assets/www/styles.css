@@ -3617,46 +3617,42 @@ body.theme-light .dropdown-check {
    Nam Phái Thái Thứ Lang - Authentic Vietnamese Astrology
    ============================================================ */
 .tuvi-master-strip {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-  width: 100%;
-  margin-bottom: 6px;
-  box-sizing: border-box;
-}
-
-.tms-card {
-  background: rgba(24, 3, 7, 0.9);
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  border-radius: 6px;
-  padding: 3px 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: 2px;
+  background: rgba(20, 2, 5, 0.85);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 6px;
+  padding: 3px 5px;
+  margin-bottom: 5px;
   box-sizing: border-box;
+  width: 100%;
 }
 
-.tms-card.highlight-menh {
-  border-color: #ffd700;
-  background: rgba(43, 14, 7, 0.9);
-}
-
-.tms-badge {
-  font-size: 0.58rem;
-  font-weight: 800;
-  color: #f5b041;
-  text-transform: uppercase;
+.tms-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   white-space: nowrap;
+}
+
+.tms-lbl {
+  font-size: 0.50rem;
+  color: var(--text-muted);
+  font-weight: 700;
 }
 
 .tms-val {
-  font-size: 0.68rem;
+  font-size: 0.55rem;
   font-weight: 800;
   color: #ffffff;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.tms-sep {
+  font-size: 0.48rem;
+  color: rgba(245, 176, 65, 0.35);
 }
 
 .tuvi-grid-wrapper {
@@ -3672,14 +3668,14 @@ body.theme-light .dropdown-check {
   grid-template-rows: repeat(4, 1fr);
   gap: 2px;
   width: 100%;
-  aspect-ratio: 1 / 1.06;
-  min-height: 460px;
+  aspect-ratio: 1 / 1.25;
+  min-height: 520px;
   background: #24060c;
   border: 2px solid #b8860b;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 2px;
   box-sizing: border-box;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 /* Center Box: Thiên Bàn Hoàng Gia */
@@ -3688,23 +3684,24 @@ body.theme-light .dropdown-check {
   grid-row: 2 / 4;
   background: #1b0307;
   border: 2px solid #b8860b;
-  border-radius: 8px;
-  padding: 4px 6px;
+  border-radius: 6px;
+  padding: 3px 4px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 10px rgba(184, 134, 11, 0.3);
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 8px rgba(184, 134, 11, 0.3);
   z-index: 5;
+  box-sizing: border-box;
 }
 
 .tc-inner-border {
   width: 100%;
   height: 100%;
   border: 1px solid rgba(245, 176, 65, 0.3);
-  border-radius: 5px;
-  padding: 4px;
+  border-radius: 4px;
+  padding: 3px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -3717,7 +3714,7 @@ body.theme-light .dropdown-check {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 4rem;
+  font-size: 3.5rem;
   color: #f5b041;
   opacity: 0.08;
   pointer-events: none;
@@ -3732,26 +3729,28 @@ body.theme-light .dropdown-check {
 
 .tc-title {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.78rem;
   font-weight: 900;
   color: #f5b041;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   font-family: 'Times New Roman', Georgia, serif;
   text-shadow: 0 1px 4px rgba(245, 176, 65, 0.5);
+  line-height: 1.15;
 }
 
 .tc-sub {
-  font-size: 0.52rem;
+  font-size: 0.44rem;
   color: #fcd34d;
   font-weight: 700;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
+  line-height: 1;
 }
 
 .tc-body-grid {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  gap: 4px;
+  gap: 3px;
   padding: 2px 0;
   flex-grow: 1;
 }
@@ -3760,32 +3759,41 @@ body.theme-light .dropdown-check {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  gap: 2px;
+  gap: 1px;
   flex: 1;
+  min-width: 0;
 }
 
 .tc-divider-v {
   width: 1px;
   background: rgba(245, 176, 65, 0.25);
+  flex-shrink: 0;
 }
 
 .tc-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.6rem;
-  line-height: 1.2;
+  font-size: 0.44rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  gap: 1px;
 }
 
 .tc-k {
   color: #cbd5e1;
   font-weight: 600;
+  flex-shrink: 0;
+  font-size: 0.43rem;
 }
 
 .tc-v {
   color: #ffffff;
   font-weight: 800;
   text-align: right;
+  letter-spacing: -0.2px;
+  font-size: 0.44rem;
+  white-space: nowrap;
 }
 
 .text-menh-gold {
@@ -3795,13 +3803,13 @@ body.theme-light .dropdown-check {
 
 .tc-footer-stars {
   border-top: 1px solid rgba(245, 176, 65, 0.3);
-  padding-top: 2px;
+  padding-top: 1px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 0.56rem;
+  justify-content: space-between;
+  font-size: 0.48rem;
   color: #e2e8f0;
+  line-height: 1.2;
 }
 
 .tc-footer-stars strong {
@@ -3811,9 +3819,9 @@ body.theme-light .dropdown-check {
 /* Palace Cell (Mỗi Cung) */
 .tuvi-cell {
   background: #140205;
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  border-radius: 5px;
-  padding: 2px 3px;
+  border: 1px solid rgba(245, 176, 65, 0.28);
+  border-radius: 4px;
+  padding: 2px 2px 1px 2px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -3822,6 +3830,7 @@ body.theme-light .dropdown-check {
   transition: all 0.15s ease;
   position: relative;
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
 }
 
 .tuvi-cell:hover {
@@ -3833,7 +3842,7 @@ body.theme-light .dropdown-check {
 .cell-menh {
   border: 2px solid #ffd700 !important;
   background: #240508 !important;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4), inset 0 0 8px rgba(255, 215, 0, 0.2) !important;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4), inset 0 0 6px rgba(255, 215, 0, 0.2) !important;
 }
 
 .tc-cell-header {
@@ -3843,21 +3852,26 @@ body.theme-light .dropdown-check {
   border-bottom: 1px solid rgba(245, 176, 65, 0.2);
   padding-bottom: 1px;
   margin-bottom: 1px;
+  min-height: 14px;
 }
 
 .tc-name-wrap {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
+  min-width: 0;
 }
 
+.tc-cung-name-royal,
 .tc-cung-name {
-  font-size: 0.66rem;
+  font-size: 0.58rem;
   font-weight: 900;
   color: #ffffff;
   text-transform: uppercase;
   font-family: inherit;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  line-height: 1.1;
 }
 
 .text-menh {
@@ -3866,99 +3880,117 @@ body.theme-light .dropdown-check {
   text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
 }
 
+.tc-badges-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
 .badge-than-royal {
   background: linear-gradient(135deg, #b91c1c, #991b1b);
   border: 1px solid #ffd700;
   color: #ffffff;
-  font-size: 0.48rem;
+  font-size: 0.42rem;
   font-weight: 900;
-  padding: 0 3px;
-  border-radius: 3px;
-  line-height: 1.2;
-}
-
-.tc-badges-wrap {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+  padding: 0 2px;
+  border-radius: 2px;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .badge-triet-royal {
   background: #dc2626;
   color: #ffffff;
-  font-size: 0.46rem;
+  font-size: 0.42rem;
   font-weight: 900;
   padding: 0 2px;
   border-radius: 2px;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .badge-tuan-royal {
   background: #059669;
   color: #ffffff;
-  font-size: 0.46rem;
+  font-size: 0.42rem;
   font-weight: 900;
   padding: 0 2px;
   border-radius: 2px;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 /* Thân Cung: Chính Tinh */
 .tc-main-stars-box {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0px;
   flex-shrink: 0;
+  padding: 1px 0;
 }
 
 .tc-main-star-row {
   display: flex;
   align-items: baseline;
-  gap: 2px;
+  gap: 1px;
   line-height: 1.15;
 }
 
 .star-name {
-  font-size: 0.68rem;
+  font-size: 0.60rem;
   font-weight: 900;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   white-space: nowrap;
 }
 
 .star-bright {
-  font-size: 0.5rem;
+  font-size: 0.44rem;
   font-weight: 700;
   opacity: 0.85;
 }
 
 .tc-vcd-tag {
-  font-size: 0.58rem;
+  font-size: 0.50rem;
   color: #94a3b8;
   font-style: italic;
-  padding: 2px 0;
+  padding: 1px 0;
+  line-height: 1.1;
 }
 
 /* Phụ Tinh: 2 Cột Đối Xứng */
 .tc-sec-stars-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  font-size: 0.5rem;
+  gap: 1px 1px;
+  font-size: 0.42rem;
   overflow: hidden;
   flex-grow: 1;
   min-height: 0;
+  padding: 1px 0;
+  line-height: 1.15;
 }
 
 .tc-col-lucky {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0px;
   text-align: left;
+  overflow: hidden;
 }
 
 .tc-col-bad {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0px;
   text-align: right;
+  overflow: hidden;
+}
+
+.star-sec {
+  white-space: nowrap;
+  letter-spacing: -0.25px;
+  display: block;
 }
 
 .star-sec.lucky {
@@ -3972,7 +4004,7 @@ body.theme-light .dropdown-check {
 }
 
 .star-more {
-  font-size: 0.48rem;
+  font-size: 0.40rem;
   color: #94a3b8;
 }
 
@@ -3984,24 +4016,29 @@ body.theme-light .dropdown-check {
   border-top: 1px solid rgba(245, 176, 65, 0.2);
   padding-top: 1px;
   margin-top: 1px;
-  font-size: 0.58rem;
+  font-size: 0.46rem;
+  line-height: 1.1;
+  flex-shrink: 0;
 }
 
 .tc-canchi-val {
   font-weight: 800;
   color: #f5b041;
+  white-space: nowrap;
 }
 
 .tc-trangsinh-val {
   color: #cbd5e1;
-  font-size: 0.52rem;
+  font-size: 0.46rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .tc-daihan-val {
   font-weight: 900;
   color: #ffffff;
-  font-size: 0.62rem;
+  font-size: 0.54rem;
+  white-space: nowrap;
 }
 
 /* ================= 12 CUNG LIST MODE ================= */

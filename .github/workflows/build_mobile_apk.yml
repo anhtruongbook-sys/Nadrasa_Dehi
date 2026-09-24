@@ -63,23 +63,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.1
-          name: "Neta Light & Huyền Học v1.3.1 (Đại Trùng Tu Lá Số Tử Vi Hoàng Gia & Hệ Thống Điều Khiển Hợp Nhất)"
+          tag_name: v1.3.2
+          name: "Neta Light & Huyền Học v1.3.2 (Hoàn Thiện Không Gian & Bố Cục Lá Số Tử Vi Hoàng Gia)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.1 (Bản Đại Trùng Tu Toàn Diện)
-            - **Đại Trùng Tu Tuyệt Phẩm Lá Số Tử Vi Đẩu Số 4x4 (Imperial Masterpiece)**:
-              + **Thiên Bàn Hoàng Gia**: Khung viền thếp vàng cổ điển 2 lớp, hoa văn Thái Cực Âm Dương ẩn chìm tinh tế, bố cục 2 cột đối xứng chia ngăn hoàng kim (Thời gian sinh đối xứng Bản Mệnh, Cục số, Cung Mệnh, Thân cư, Chủ Mệnh & Chủ Thân chuẩn Thái Thứ Lang).
-              + **Phân tầng Màu sắc Ngũ Hành Đậm Chất Sơn Mài**: Sao Tử Vi (Thổ - Vàng kim), Thất Sát (Kim - Trắng ngọc), Liêm Trinh (Hỏa - Đỏ ruby), Thiên Đồng (Thủy - Lam sapphire), Thiên Cơ (Mộc - Lục bảo) phân cấp độ sáng miếu vượng (M, V, Đ, H) rõ rệt.
-              + **Thẻ Tóm Lược Master Overview 4 Ô Ngọc Bích**: Đương số, Bản Mệnh, Cục số, Thân cư hiển thị nổi bật, không tràn màn hình.
-              + **Hệ thống Cung Chức & Phụ Tinh Cát / Sát 2 Cột**: Cung Mệnh viền hoàng kim, huy hiệu THÂN, TRIỆT, TUẦN chạm nổi, phụ tinh chia 2 cột Cát tinh (xanh) - Sát tinh (đỏ) đối xứng hoàn hảo.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.2
+            - **Hoàn thiện Không gian & Bố cục Lá Số Tử Vi 4x4 (Zero Text Clipping)**:
+              + **Thu gọn Thanh Master Overview thành Ruy-băng Thượng Hạng (Single Sleek Ribbon)**: Tiết kiệm ~40px chiều dọc, mở rộng không gian hiển thị cho toàn bộ 12 cung chức.
+              + **Mở rộng Chiều cao Cung & Tỉ lệ Khung 4x4**: Tăng aspect-ratio lên 1 / 1.25, chiều cao tối thiểu 520px, giúp mỗi ô cung tăng gấp đôi không gian chứa chính tinh và phụ tinh.
+              + **Chuẩn hoá Tiêu Đề Cung & Chống Tràn Dòng**: Tất cả 12 cung chức nằm gọn trên 1 dòng duy nhất kèm huy hiệu Thân, Triệt, Tuần sắc nét.
+              + **Tinh Chỉnh Font Chữ & Giãn Cách Phụ Tinh (Secondary Stars)**: Font 0.42rem kèm kerning chuẩn mực giúp hiển thị đầy đủ tên các sao dài (Thiếu Dương, Tướng Quân, Nguyệt Đức, Thanh Long...) không còn bị cắt chữ `...`.
+              + **Thiên Bàn Hoàng Gia Chuẩn Xác**: Ngày giờ âm dương, Mệnh, Cục, Cung, Thân, Chủ Mệnh, Chủ Thân hiển thị toàn văn nguyên bản 100%.
             - **Hệ Thống Khung Điều Khiển Hợp Nhất 3 Tầng Chuẩn Mực (Unified Control Card)**:
-              + **Phân vùng chức năng 3 tầng rõ ràng cho cả 4 module** (Kỳ Môn, Bát Tự, Tử Vi, Lịch):
-                * Tầng 1: Chọn Lịch (Dương / Âm) + Nhập ngày tháng năm + Phím tắt chọn nhanh thập niên `⚡Năm` + Lịch hệ thống.
-                * Tầng 2: Chọn Can Chi giờ + Giờ số : Phút + Tuỳ chọn phụ (Giới tính Nam/Nữ hoặc Bước nhảy 2h Kỳ Môn).
-                * Tầng 3: Hành động chính: Nút `⚡ Giờ thực` bên trái (chống bấm nhầm), Chế độ xem ở giữa, Nút lập lá số nổi bật bên phải.
-              + **Xử lý triệt để lỗi tràn dòng & kẹt nút**: Sửa nút bước giờ Kỳ Môn `[ ◀ 2h ] [ 2h ▶ ]`, thanh Lịch 2 tầng không tràn ngang.
-              + **Bấm chọn ngày trong lịch tháng tự động chuyển sang Lịch Ngày Bloc chi tiết**.
-            - **Hoạt động Ngoại tuyến 100% Offline**: Tốc độ 60 FPS mượt mà.
+              + Nút `⚡ Giờ thực` tách biệt bên trái chống bấm nhầm sau khi đã nhập thông tin.
+              + Nhập nhanh năm/thập niên bằng phím tắt `⚡ Năm`.
+              + Tự động chuyển đổi mượt mà giữa Lịch Tháng và Lịch Ngày Bloc.
+            - **Hoạt động Ngoại tuyến 100% Offline độc lập**: Trải nghiệm 60 FPS mượt mà.
           files: build-output/NetaLight.apk
           draft: false
           prerelease: false

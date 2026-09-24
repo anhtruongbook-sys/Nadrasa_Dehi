@@ -16,7 +16,7 @@ def get_runs():
     with urllib.request.urlopen(req) as resp:
         return json.loads(resp.read().decode("utf-8")).get("workflow_runs", [])
 
-def download_asset_for_tag(tag="v1.3.0"):
+def download_asset_for_tag(tag="v1.3.2"):
     rel_url = f"https://api.github.com/repos/{REPO}/releases/tags/{tag}"
     req = urllib.request.Request(rel_url, headers={
         "User-Agent": "Mozilla/5.0",
