@@ -74,10 +74,17 @@
       subtitle: 'Lịch Vạn Niên & Tiết Khí',
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
+    },
+    tarot: {
+      name: 'TAROT RIDER-WAITE',
+      subtitle: '78 Lá Cổ Điển & Golden Dawn',
+      logo: 'assets/tarot/Major_00_Fool.webp',
+      backImage: 'assets/tarot/Back_Cover.webp',
+      isCardDeck: false
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar'];
+  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'tarot'];
 
   // DOM Elements
   const tabModeNeta = document.getElementById('tab-mode-neta');
@@ -212,6 +219,7 @@
     const viewBazi = document.getElementById('view-bazi');
     const viewTuvi = document.getElementById('view-tuvi');
     const viewCalendar = document.getElementById('view-calendar');
+    const viewTarot = document.getElementById('view-tarot');
 
     const viewsMap = {
       neta: viewCards,
@@ -219,7 +227,8 @@
       qmdj: viewQmdj,
       bazi: viewBazi,
       tuvi: viewTuvi,
-      calendar: viewCalendar
+      calendar: viewCalendar,
+      tarot: viewTarot
     };
 
     // Hide all views first, then show active
@@ -260,6 +269,8 @@
       window.NetaBaziView.render();
     } else if (mode === 'tuvi' && window.NetaTuViView) {
       window.NetaTuViView.render();
+    } else if (mode === 'tarot' && window.NetaTarotView) {
+      window.NetaTarotView.render();
     }
 
     playBellChime();
