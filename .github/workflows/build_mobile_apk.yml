@@ -63,10 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.5.2
-          name: "Neta Light & Huyền Học v1.5.2 (High-Fidelity Multi-Page PDF Engine & Card Artwork Preservation)"
+          tag_name: v1.6.0
+          name: "Neta Light & Huyền Học v1.6.0 (Tích hợp La Kinh 36 Tầng Vệ Tinh, WMM, DEM & Huyền Không)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.5.2
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.6.0
+            - **Tích Hợp Toàn Diện Phân Hệ Phong Thủy Địa Lý - La Kinh Vệ Tinh (36 Tầng)**:
+              + **Đồ họa Vector Đa Tầng Toán Học (36-Ring Luopan Vector SVG)**: Tích hợp trọn vẹn đĩa La Kinh 36 tầng vector độ phân giải cực cao (90 KB), hỗ trợ nhìn xuyên thấu với thanh trượt chỉnh độ mờ (5% - 100%) và kích thước (260px - 950px), đè phủ trực tiếp lên mái nhà và thửa đất trên ảnh vệ tinh mà không làm che khuất địa vật.
+              + **Bản Đồ Viễn Thám Đa Lớp (Leaflet Multi-Layer WebGIS)**: Tích hợp ảnh vệ tinh Google Earth độ nét cao, Esri World Imagery và bản đồ đường phố OpenStreetMap; hỗ trợ phóng to chi tiết đến cấp công trình (Zoom 18-22).
+              + **Thuật Toán Bù Góc Từ Thiên Thời Gian Thực (WMM 2025-2030)**: Tự động tính toán và hiệu chỉnh độ lệch giữa Bắc Từ Tính và Bắc Địa Lý theo tọa độ WGS-84 trên lãnh thổ Việt Nam, bảo đảm số đo la bàn thực địa trùng khớp với hướng Bắc Google Earth.
+              + **Cảm Biến La Bàn Con Quay Hồi Chuyển & Bộ Lọc Thông Thấp (Low-Pass Filter)**: Làm mịn dao động la bàn với hệ số alpha = 0.18, chống hiện tượng rung lắc giật cục trên điện thoại di động; hỗ trợ nút Khóa Góc đo tức thì khi khảo sát thực địa.
+              + **Trắc Địa Số DEM & Quét Cao Độ 3 Cấp Minh Đường Cục**: Tự động quét mô hình cao độ số địa hình theo 3 cấp bán kính (Tiểu Minh Đường 40m, Trung Minh Đường 350m, Đại Minh Đường 2000m) để tìm điểm trũng nhất (Thủy Khẩu / Tụ Thủy) và điểm cao nhất (Lai Long / Tọa Sơn).
+              + **Tam Hợp Thủy Pháp Cổ Truyền**: Tự động định Tứ Đại Cục (Thủy Cục, Hỏa Cục, Kim Cục, Mộc Cục) từ phương vị Thủy Khẩu, xác định cung vị Trường Sinh, xuất đường dẫn liên kết mở trực tiếp tọa độ Thủy Khẩu trên Google Maps.
+              + **Tinh Bàn Huyền Không Phi Tinh Vận 9 (2024 - 2043)**: Lập ma trận Lạc Thư 9 cung chuẩn xác với Tọa tinh, Hướng tinh và Vận tinh theo độ số thực tế của La Kinh.
+              + **Công Cụ Vẽ Ranh Đất & Định Vị Tim Thửa Đất (Centroid Tool)**: Chấm các góc ranh đất để tính diện tích m² và trọng tâm hình học theo định lý Green, tự động đưa tâm bản đồ về chính giữa thửa đất.
+              + **Quản Lý Hồ Sơ & Xuất Tệp KML Google Earth**: Lưu trữ lịch sử khảo sát trực tiếp trong bộ nhớ máy và tạo tệp KML GroundOverlay nạp vào Google Earth Pro.
             - **Đại Tu Toàn Diện Động Cơ Tạo File PDF Luận Giải (High-Fidelity PDF Engine Overhaul)**:
               + Khắc phục triệt để lỗi file PDF tải về bị trắng tinh (loại bỏ hoàn toàn cơ chế render lệch tọa độ `-9999px` cũ khiến thư viện chụp canvas trống).
               + Trực tiếp thu nhận và tối ưu hóa từ vùng hiển thị đồ họa thực tế (`#tarot-report-section`), bảo toàn trọn vẹn 100% hình ảnh lá bài Tarot độ phân giải cao (`150px x 255px`), các biểu tượng thần số học, hộp từ khóa và hộp lời khuyên viền ngọc lục bảo.
