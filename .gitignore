@@ -27,8 +27,7 @@ build-output/
 # Flutter
 .dart_tool/
 mobile_app/.dart_tool/
-mobile_app/build/
-mobile_app/.flutter-plugins
-mobile_app/.flutter-plugins-dependencies
-mobile_app/.packages
+scratch/
+scripts/test_results/
+temp_chunks/
 

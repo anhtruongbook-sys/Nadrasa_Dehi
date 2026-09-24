@@ -25,8 +25,8 @@
   let soundEnabled = false; // Mặc định tắt âm thanh, bật lên khi cần
   let audioCtx = null;
 
-  // Deck Configuration
-  const DECK_CONFIG = {
+  // Module & Deck Configuration
+  const MODULE_CONFIG = {
     neta: {
       name: 'NETA LIGHT',
       subtitle: 'Pháp môn Nadrasa Dehi',
@@ -36,7 +36,8 @@
       totalCards: 48,
       emptyTitle: 'Định Tâm Chiêm Nghiệm',
       emptyDesc: 'Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chạm nút bên dưới để rút ngẫu nhiên 1 lá bài.',
-      guideTitle: '📜 Bảng Tra Cứu Quân Bài Neta Light'
+      guideTitle: '📜 Bảng Tra Cứu Quân Bài Neta Light',
+      isCardDeck: true
     },
     poker: {
       name: 'BÀI TÂY POKER',
@@ -47,9 +48,36 @@
       totalCards: 52,
       emptyTitle: 'Chiêm Đoán Bài Tây Poker',
       emptyDesc: 'Tập trung vào sự việc hoặc người bạn muốn xem, sau đó chạm nút bên dưới để rút ngẫu nhiên 1 lá bài.',
-      guideTitle: '♠️ Tra Cứu Quân Bài Tây (Poker)'
+      guideTitle: '♠️ Tra Cứu Quân Bài Tây (Poker)',
+      isCardDeck: true
+    },
+    qmdj: {
+      name: 'KỲ MÔN ĐỘN GIÁP',
+      subtitle: 'Bàn 9 Cung & Tiết Khí',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
+    },
+    bazi: {
+      name: 'BÁT TỰ',
+      subtitle: 'Manh Phái Mệnh Lý',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
+    },
+    tuvi: {
+      name: 'TỬ VI ĐẨU SỐ',
+      subtitle: 'Nam Phái Thái Thứ Lang',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
+    },
+    calendar: {
+      name: 'LỊCH ÂM DƯƠNG',
+      subtitle: 'Lịch Vạn Niên & Tiết Khí',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
     }
   };
+  const DECK_CONFIG = MODULE_CONFIG;
+  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar'];
 
   // DOM Elements
   const tabModeNeta = document.getElementById('tab-mode-neta');
@@ -155,8 +183,9 @@
     }, 1200);
   }
 
-  // Switch between Neta Light & Poker Deck Modes
-  function switchDeckMode(mode) {
+  // Switch between All App Modes (Neta, Poker, QMDJ, Bazi, TuVi, Calendar)
+  function switchAppMode(mode) {
+    if (!MODULE_CONFIG[mode]) return;
     if (currentDeckMode === mode) {
       if (deckDropdown) deckDropdown.style.display = 'none';
       if (deckSelectorTrigger) deckSelectorTrigger.classList.remove('open');
@@ -164,29 +193,84 @@
     }
     currentDeckMode = mode;
 
-    if (tabModeNeta) tabModeNeta.classList.toggle('active', mode === 'neta');
-    if (tabModePoker) tabModePoker.classList.toggle('active', mode === 'poker');
-    if (checkDeckNeta) checkDeckNeta.style.opacity = mode === 'neta' ? '1' : '0';
-    if (checkDeckPoker) checkDeckPoker.style.opacity = mode === 'poker' ? '1' : '0';
+    // Update active class & checkmarks in dropdown
+    ALL_MODES.forEach((m) => {
+      const tabEl = document.getElementById(`tab-mode-${m}`);
+      const checkEl = document.getElementById(`check-mode-${m}`);
+      if (tabEl) tabEl.classList.toggle('active', m === mode);
+      if (checkEl) checkEl.style.opacity = (m === mode ? '1' : '0');
+    });
 
-    const cfg = DECK_CONFIG[mode];
+    const cfg = MODULE_CONFIG[mode];
     if (appMainTitle) appMainTitle.textContent = cfg.name;
     if (appSubTitle) appSubTitle.textContent = cfg.subtitle;
-    if (headerLogo) headerLogo.src = cfg.logo;
-    if (emptyAvatarImg) emptyAvatarImg.src = cfg.logo;
-    if (emptyTitleText) emptyTitleText.textContent = cfg.emptyTitle;
-    if (emptyDescText) emptyDescText.textContent = cfg.emptyDesc;
-    if (guideModalTitle) guideModalTitle.textContent = cfg.guideTitle;
-    if (guideSearchInput) guideSearchInput.value = '';
+    if (headerLogo && cfg.logo) headerLogo.src = cfg.logo;
 
-    // Đóng dropdown menu sau khi chọn
+    // Toggle View Containers
+    const viewCards = document.getElementById('view-cards');
+    const viewQmdj = document.getElementById('view-qmdj');
+    const viewBazi = document.getElementById('view-bazi');
+    const viewTuvi = document.getElementById('view-tuvi');
+    const viewCalendar = document.getElementById('view-calendar');
+
+    const viewsMap = {
+      neta: viewCards,
+      poker: viewCards,
+      qmdj: viewQmdj,
+      bazi: viewBazi,
+      tuvi: viewTuvi,
+      calendar: viewCalendar
+    };
+
+    // Hide all views first, then show active
+    Object.values(viewsMap).forEach((v) => {
+      if (v) v.style.display = 'none';
+    });
+    if (viewsMap[mode]) {
+      viewsMap[mode].style.display = 'flex';
+    }
+
+    // Toggle card-specific header controls
+    const btnGuide = document.getElementById('btn-guide');
+    if (btnGuide) {
+      btnGuide.style.display = cfg.isCardDeck ? 'inline-flex' : 'none';
+    }
+    if (btnScreenshotHeader) {
+      btnScreenshotHeader.style.display = 'inline-flex';
+    }
+
+    // Close dropdown menu
     if (deckDropdown) deckDropdown.style.display = 'none';
     if (deckSelectorTrigger) deckSelectorTrigger.classList.remove('open');
 
-    resetDeck();
-    renderGuideList();
+    // If it's a card deck, run card reset & guide logic
+    if (cfg.isCardDeck) {
+      if (emptyAvatarImg) emptyAvatarImg.src = cfg.logo;
+      if (emptyTitleText) emptyTitleText.textContent = cfg.emptyTitle;
+      if (emptyDescText) emptyDescText.textContent = cfg.emptyDesc;
+      if (guideModalTitle) guideModalTitle.textContent = cfg.guideTitle;
+      if (guideSearchInput) guideSearchInput.value = '';
+      resetDeck();
+      renderGuideList();
+    } else if (mode === 'calendar' && window.NetaCalendarView) {
+      window.NetaCalendarView.render();
+    } else if (mode === 'qmdj' && window.NetaQMDJView) {
+      window.NetaQMDJView.render();
+    } else if (mode === 'bazi' && window.NetaBaziView) {
+      window.NetaBaziView.render();
+    } else if (mode === 'tuvi' && window.NetaTuViView) {
+      window.NetaTuViView.render();
+    }
+
     playBellChime();
     showToast(`Đã chuyển sang: ${cfg.name}`);
+  }
+
+  const switchDeckMode = switchAppMode;
+  if (typeof window !== 'undefined') {
+    window.switchAppMode = switchAppMode;
+    window.switchDeckMode = switchAppMode;
+    window.captureArenaScreenshot = captureArenaScreenshot;
   }
 
   // Reset / Initialize Current Deck
@@ -1142,19 +1226,16 @@
       });
     }
 
-    // Mode Switch Items inside Dropdown
-    if (tabModeNeta) {
-      tabModeNeta.addEventListener('click', (e) => {
-        e.stopPropagation();
-        switchDeckMode('neta');
-      });
-    }
-    if (tabModePoker) {
-      tabModePoker.addEventListener('click', (e) => {
-        e.stopPropagation();
-        switchDeckMode('poker');
-      });
-    }
+    // Mode Switch Items inside Dropdown (Tất cả 6 Phân hệ)
+    ALL_MODES.forEach((m) => {
+      const el = document.getElementById(`tab-mode-${m}`);
+      if (el) {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          switchAppMode(m);
+        });
+      }
+    });
 
     // Initial single draw button (Chỉ rút ngẫu nhiên 1 lá duy nhất)
     if (btnDrawSingle) {
@@ -1376,7 +1457,7 @@
   }
 
   async function captureArenaScreenshot() {
-    if (drawnCards.length === 0) {
+    if ((currentDeckMode === 'neta' || currentDeckMode === 'poker') && drawnCards.length === 0) {
       showToast('Chưa có quân bài nào trên bàn để chụp!');
       return;
     }
@@ -1395,11 +1476,25 @@
       }
 
       const isLight = currentTheme === 'light';
-      const bgColor = isLight ? '#f4ede1' : '#120104';
-      const titleColor = isLight ? '#6e1507' : '#f5b041';
+      const bgColor = isLight ? '#faf6ee' : '#120104';
+      const titleColor = isLight ? '#781708' : '#f5b041';
 
-      // 1. Chuyển đổi toàn bộ ảnh sang Base64 Data URL sạch trước khi render
-      const imgElements = appContainer.querySelectorAll('img');
+      // 1. Xác định target container: Chụp trực tiếp phân hệ đang mở để ảnh gọn, đẹp, full nét
+      let targetElement = appContainer;
+      if (currentDeckMode === 'tuvi') {
+        targetElement = document.querySelector('.tuvi-view-container') || document.getElementById('tuvi-view') || appContainer;
+      } else if (currentDeckMode === 'bazi') {
+        targetElement = document.querySelector('.bazi-view-container') || document.getElementById('bazi-view') || appContainer;
+      } else if (currentDeckMode === 'qmdj') {
+        targetElement = document.querySelector('.qmdj-view-container') || document.getElementById('qmdj-view') || appContainer;
+      } else if (currentDeckMode === 'calendar') {
+        targetElement = document.querySelector('.cal-body') || document.querySelector('.calendar-module-container') || document.getElementById('calendar-view') || appContainer;
+      } else {
+        targetElement = document.getElementById('card-arena-container') || appContainer;
+      }
+
+      // 2. Chuyển đổi toàn bộ ảnh sang Base64 Data URL sạch trước khi render
+      const imgElements = targetElement.querySelectorAll('img');
       const imgUrlMap = new Map();
       await Promise.all(
         Array.from(imgElements).map(async (img) => {
@@ -1415,14 +1510,16 @@
         })
       );
 
-      // 2. Chụp container với html2canvas ở độ phân giải cao Retina 2x
-      const canvas = await html2canvas(appContainer, {
+      // 3. Chụp container với html2canvas ở độ phân giải Retina 2x
+      const canvas = await html2canvas(targetElement, {
         scale: 2,
         backgroundColor: bgColor,
         useCORS: true,
-        allowTaint: false, // 100% canvas Origin-Clean đảm bảo toDataURL xuất ảnh an toàn
+        allowTaint: false,
         logging: false,
-        imageTimeout: 6000,
+        imageTimeout: 8000,
+        scrollX: 0,
+        scrollY: 0,
         onclone: (clonedDoc) => {
           const clonedImgs = clonedDoc.querySelectorAll('img');
           clonedImgs.forEach((img) => {
@@ -1434,6 +1531,16 @@
             }
           });
 
+          // Expand scrolling containers so complete chart is captured
+          const scrollViews = clonedDoc.querySelectorAll(
+            '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #app-container'
+          );
+          scrollViews.forEach(v => {
+            v.style.height = 'auto';
+            v.style.maxHeight = 'none';
+            v.style.overflow = 'visible';
+          });
+
           const title = clonedDoc.querySelector('.app-title');
           if (title) {
             title.style.background = 'none';
@@ -1441,28 +1548,36 @@
             title.style.webkitTextFillColor = titleColor;
             title.style.color = titleColor;
           }
-          if (isLight) {
-            const hintText = clonedDoc.querySelector('.hint-text');
-            if (hintText) hintText.style.color = '#3d1a08';
-            const hintBar = clonedDoc.querySelector('.arena-hint-bar');
-            if (hintBar) {
-              hintBar.style.backgroundColor = '#f0e3ce';
-              hintBar.style.borderColor = '#c29a53';
-            }
-          }
         }
       });
 
       const now = new Date();
       const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
-      const modeName = currentDeckMode === 'poker' ? 'Poker' : 'NetaLight';
-      const filename = `${modeName}_TraiBai_${dateStr}.png`;
+      let modeName = 'NetaLight';
+      if (currentDeckMode === 'poker') modeName = 'Poker';
+      else if (currentDeckMode === 'qmdj') modeName = 'KyMonDonGiap';
+      else if (currentDeckMode === 'bazi') modeName = 'BatTu_ManhPhai';
+      else if (currentDeckMode === 'tuvi') modeName = 'TuVi_DauSo';
+      else if (currentDeckMode === 'calendar') modeName = 'LichAmDuong';
 
-      // 3. Xuất Data URL an toàn
+      const filename = `${modeName}_${dateStr}.png`;
+
+      // 4. Xuất Data URL & Blob an toàn
       const dataUrl = canvas.toDataURL('image/png');
+      const binStr = atob(dataUrl.split(',')[1]);
+      const len = binStr.length;
+      const u8arr = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        u8arr[i] = binStr.charCodeAt(i);
+      }
+      const blob = new Blob([u8arr], { type: 'image/png' });
+      const blobUrl = URL.createObjectURL(blob);
+      let file = null;
+      try {
+        file = new File([blob], filename, { type: 'image/png' });
+      } catch (e) {}
 
       // TRƯỜNG HỢP A: Đang chạy trong Ứng Dụng Di Động Android APK (Flutter Native Client)
-      // Lưu trực tiếp 100% vào Thư viện ảnh (Bộ sưu tập / Pictures) qua NativeBridge
       if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
         window.NativeBridge.postMessage(JSON.stringify({
           action: 'saveImage',
@@ -1473,23 +1588,13 @@
         return;
       }
 
-      // TRƯỜNG HỢP B: Đang chạy trên Trình Duyệt Web / PWA (Chrome Mobile, Safari iOS, PC)
-      // Tự động tải xuống thẳng vào máy không bật hộp thoại chia sẻ phức tạp
-      const binStr = atob(dataUrl.split(',')[1]);
-      const len = binStr.length;
-      const u8arr = new Uint8Array(len);
-      for (let i = 0; i < len; i++) {
-        u8arr[i] = binStr.charCodeAt(i);
-      }
-      const blob = new Blob([u8arr], { type: 'image/png' });
-      const blobUrl = URL.createObjectURL(blob);
-
-      // Cảnh báo nhẹ nếu đang mở trong in-app browser của Zalo/Facebook
+      // TRƯỜNG HỢP B: Tự động tải thẳng vào máy không dùng popup
+      // Cảnh báo nhẹ nếu đang chạy trong in-app browser của Zalo / Facebook
       const ua = navigator.userAgent || '';
       const isZalo = /zalo/i.test(ua);
       const isFB = /fban|fbav|messenger/i.test(ua);
       if (isZalo || isFB) {
-        showToast('⚠️ Zalo/FB chặn tự động lưu! Bác chạm dấu "..." góc trên ➔ chọn "Mở bằng trình duyệt" để ảnh tải thẳng vào máy nhé!', 6000);
+        showToast('⚠️ Nếu Zalo chặn tải tệp, bác chạm dấu "..." góc trên ➔ chọn "Mở bằng trình duyệt" để ảnh lưu thẳng vào máy nhé!', 6000);
       }
 
       const a = document.createElement('a');
@@ -1501,7 +1606,7 @@
         if (a.parentNode) a.parentNode.removeChild(a);
       }, 1000);
 
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 300000);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 180000);
       showToast('✨ Đã lưu ảnh vào máy! Bác mở Thư viện ảnh / Tải về để xem nhé');
 
     } catch (err) {

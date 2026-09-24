@@ -17,8 +17,15 @@ const CORE_ASSETS = [
   'neta_cards/phap_an.jpg',
   'Porker/card_back.png',
   'icons/apple-touch-icon.png',
-  'icons/favicon-32x32.png',
-  'favicon.ico'
+  'favicon.ico',
+  'engines/calendar_engine.js',
+  'engines/qmdj_engine.js',
+  'engines/bazi_engine.js',
+  'engines/tuvi_engine.js',
+  'modules/calendar_view.js',
+  'modules/qmdj_view.js',
+  'modules/bazi_view.js',
+  'modules/tuvi_view.js'
 ];
 
 // Thêm toàn bộ 48 quân bài Neta Light

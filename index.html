@@ -41,21 +41,42 @@
 
       <!-- Quick Deck Dropdown Menu (Kính mờ sang trọng) -->
       <div class="deck-dropdown-menu" id="deck-dropdown" style="display: none;">
+        <div class="dropdown-section-title">BỐC BÀI</div>
         <div class="deck-dropdown-item active" id="tab-mode-neta" data-mode="neta">
           <span class="dropdown-icon">🪷</span>
-          <div class="dropdown-info">
-            <span class="dropdown-name">Neta Light</span>
-            <span class="dropdown-desc">22 lá Ánh Sáng • Nadrasa Dehi</span>
-          </div>
-          <span class="dropdown-check" id="check-deck-neta">✓</span>
+          <span class="dropdown-name">Neta Light</span>
+          <span class="dropdown-check" id="check-mode-neta">✓</span>
         </div>
         <div class="deck-dropdown-item" id="tab-mode-poker" data-mode="poker">
           <span class="dropdown-icon">♠️</span>
-          <div class="dropdown-info">
-            <span class="dropdown-name">Bài Tây Poker</span>
-            <span class="dropdown-desc">52 lá • Chiêm Đoán Tâm Linh</span>
-          </div>
-          <span class="dropdown-check" id="check-deck-poker" style="opacity: 0;">✓</span>
+          <span class="dropdown-name">Bài Tây</span>
+          <span class="dropdown-check" id="check-mode-poker" style="opacity: 0;">✓</span>
+        </div>
+
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-section-title">LẬP LÁ SỐ</div>
+        <div class="deck-dropdown-item" id="tab-mode-qmdj" data-mode="qmdj">
+          <span class="dropdown-icon">🔮</span>
+          <span class="dropdown-name">Kỳ Môn Độn Giáp</span>
+          <span class="dropdown-check" id="check-mode-qmdj" style="opacity: 0;">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-bazi" data-mode="bazi">
+          <span class="dropdown-icon">📜</span>
+          <span class="dropdown-name">Bát Tự</span>
+          <span class="dropdown-check" id="check-mode-bazi" style="opacity: 0;">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-tuvi" data-mode="tuvi">
+          <span class="dropdown-icon">🌌</span>
+          <span class="dropdown-name">Tử Vi Đẩu Số</span>
+          <span class="dropdown-check" id="check-mode-tuvi" style="opacity: 0;">✓</span>
+        </div>
+
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-section-title">LỊCH VẠN NIÊN</div>
+        <div class="deck-dropdown-item" id="tab-mode-calendar" data-mode="calendar">
+          <span class="dropdown-icon">📅</span>
+          <span class="dropdown-name">Lịch Âm Dương</span>
+          <span class="dropdown-check" id="check-mode-calendar" style="opacity: 0;">✓</span>
         </div>
       </div>
 
@@ -94,71 +115,109 @@
       </div>
     </div>
 
-    <!-- Main Card Arena / Table -->
-    <main class="card-arena-container" id="arena-container">
-      <!-- Empty State -->
-      <div class="arena-empty-state" id="empty-state">
-        <div class="mandala-circle" id="empty-avatar-circle">
-          <img src="neta_cards/phap_an.jpg" alt="Biểu Tượng" class="empty-phapan" id="empty-avatar-img">
-        </div>
-        <h2 class="empty-title" id="empty-title-text">Định Tâm Chiêm Nghiệm</h2>
-        <p class="empty-desc" id="empty-desc-text">
-          Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chạm nút bên dưới để rút ngẫu nhiên 1 lá bài.
-        </p>
-        <div class="dev-brand-badge" id="dev-brand-badge">
-          <img src="anh_logo.jpg" alt="Anh's Team" class="dev-brand-logo">
-          <div class="dev-brand-text">
-            <span class="dev-brand-name">ANH'S TEAM</span>
-            <span class="dev-brand-tagline">Enthusiasm and Ambition</span>
+    <!-- View Module: Bốc Bài (Cards Deck Arena & Controls) -->
+    <div id="view-cards" class="app-module-view" style="display: flex;">
+      <main class="card-arena-container" id="arena-container">
+        <!-- Empty State -->
+        <div class="arena-empty-state" id="empty-state">
+          <div class="mandala-circle" id="empty-avatar-circle">
+            <img src="neta_cards/phap_an.jpg" alt="Biểu Tượng" class="empty-phapan" id="empty-avatar-img">
+          </div>
+          <h2 class="empty-title" id="empty-title-text">Định Tâm Chiêm Nghiệm</h2>
+          <p class="empty-desc" id="empty-desc-text">
+            Hãy hít thở sâu, giữ tâm trí tĩnh lặng và tập trung vào câu hỏi hoặc nguyện vọng của bạn, sau đó chạm nút bên dưới để rút ngẫu nhiên 1 lá bài.
+          </p>
+          <div class="dev-brand-badge" id="dev-brand-badge">
+            <img src="anh_logo.jpg" alt="Anh's Team" class="dev-brand-logo">
+            <div class="dev-brand-text">
+              <span class="dev-brand-name">ANH'S TEAM</span>
+              <span class="dev-brand-tagline">Enthusiasm and Ambition</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Hint Bar khi đã trải bài -->
-      <div class="arena-hint-bar" id="arena-hint" style="display: none;">
-        <span class="hint-text" id="arena-hint-text">✨ Chạm lá bài để phóng to</span>
-        <button class="btn-hint-reading" id="btn-open-reading" style="display: none;">
-          <span class="hint-icon">🔮</span>
-          <span>Xem Luận Giải</span>
-          <span class="reading-alert-badge" id="reading-alert-badge" style="display: none;">!</span>
-        </button>
-      </div>
+        <!-- Hint Bar khi đã trải bài -->
+        <div class="arena-hint-bar" id="arena-hint" style="display: none;">
+          <span class="hint-text" id="arena-hint-text">✨ Chạm lá bài để phóng to</span>
+          <button class="btn-hint-reading" id="btn-open-reading" style="display: none;">
+            <span class="hint-icon">🔮</span>
+            <span>Xem Luận Giải</span>
+            <span class="reading-alert-badge" id="reading-alert-badge" style="display: none;">!</span>
+          </button>
+        </div>
 
-      <!-- Dynamic Cards Grid (Sẽ được chèn tự động qua JS) -->
-      <div class="cards-grid" id="cards-grid" style="display: none;"></div>
-    </main>
+        <!-- Dynamic Cards Grid (Sẽ được chèn tự động qua JS) -->
+        <div class="cards-grid" id="cards-grid" style="display: none;"></div>
+      </main>
 
-    <!-- Bottom Controls (Mobile-First Ergonomics) -->
-    <footer class="app-controls">
-      <!-- Quick Initial Draw Row (Rút ngẫu nhiên 1 lá duy nhất) -->
-      <div class="control-row initial-draw-row" id="initial-controls">
-        <button class="btn-draw-main-single" id="btn-draw-single" title="Rút ngẫu nhiên 1 lá bài">
-          <span class="btn-single-icon">🎴</span>
-          <span class="btn-single-text" id="btn-draw-single-text">Rút ngẫu nhiên 1 lá</span>
-        </button>
-      </div>
+      <!-- Bottom Controls (Mobile-First Ergonomics) -->
+      <footer class="app-controls">
+        <!-- Quick Initial Draw Row (Rút ngẫu nhiên 1 lá duy nhất) -->
+        <div class="control-row initial-draw-row" id="initial-controls">
+          <button class="btn-draw-main-single" id="btn-draw-single" title="Rút ngẫu nhiên 1 lá bài">
+            <span class="btn-single-icon">🎴</span>
+            <span class="btn-single-text" id="btn-draw-single-text">Rút ngẫu nhiên 1 lá</span>
+          </button>
+        </div>
 
-      <!-- Active In-Session Controls (Công thái học tay phải: Rút tiếp ở góc phải thuận tay nhất) -->
-      <div class="control-row in-session-row" id="session-controls" style="display: none;">
-        <button class="btn-action btn-secondary btn-reset-action" id="btn-reset" title="Thu toàn bộ bài và dọn bàn">
-          <span class="btn-icon-symbol">🔄</span>
-          <span class="btn-text">Thu bài</span>
-        </button>
-        <button class="btn-action btn-secondary" id="btn-shuffle" title="Xáo lại các lá bài còn lại trong bộ">
-          <span class="btn-icon-symbol">🔀</span>
-          <span class="btn-text">Xáo bài</span>
-        </button>
-        <button class="btn-action btn-reading" id="btn-session-reading" style="display: none;">
-          <span class="btn-icon-symbol">🔮</span>
-          <span class="btn-text">Luận giải</span>
-          <span class="reading-session-dot" id="reading-session-dot" style="display: none;"></span>
-        </button>
-        <button class="btn-action btn-add-card" id="btn-draw-more" title="Rút tiếp ngẫu nhiên 1 lá">
-          <span class="btn-icon-symbol">➕</span>
-          <span class="btn-text">Rút tiếp</span>
-        </button>
+        <!-- Active In-Session Controls (Công thái học tay phải: Rút tiếp ở góc phải thuận tay nhất) -->
+        <div class="control-row in-session-row" id="session-controls" style="display: none;">
+          <button class="btn-action btn-secondary btn-reset-action" id="btn-reset" title="Thu toàn bộ bài và dọn bàn">
+            <span class="btn-icon-symbol">🔄</span>
+            <span class="btn-text">Thu bài</span>
+          </button>
+          <button class="btn-action btn-secondary" id="btn-shuffle" title="Xáo lại các lá bài còn lại trong bộ">
+            <span class="btn-icon-symbol">🔀</span>
+            <span class="btn-text">Xáo bài</span>
+          </button>
+          <button class="btn-action btn-reading" id="btn-session-reading" style="display: none;">
+            <span class="btn-icon-symbol">🔮</span>
+            <span class="btn-text">Luận giải</span>
+            <span class="reading-session-dot" id="reading-session-dot" style="display: none;"></span>
+          </button>
+          <button class="btn-action btn-add-card" id="btn-draw-more" title="Rút tiếp ngẫu nhiên 1 lá">
+            <span class="btn-icon-symbol">➕</span>
+            <span class="btn-text">Rút tiếp</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <!-- View Module: Kỳ Môn Độn Giáp -->
+    <div id="view-qmdj" class="app-module-view" style="display: none;">
+      <div class="module-placeholder">
+        <div class="placeholder-icon">🔮</div>
+        <h2 class="placeholder-title">KỲ MÔN ĐỘN GIÁP</h2>
+        <p class="placeholder-desc">Hệ thống Lập Bàn 9 Cung & Tiết Khí Chân Thái Dương Thời</p>
       </div>
-    </footer>
+    </div>
+
+    <!-- View Module: Bát Tự Manh Phái -->
+    <div id="view-bazi" class="app-module-view" style="display: none;">
+      <div class="module-placeholder">
+        <div class="placeholder-icon">📜</div>
+        <h2 class="placeholder-title">BÁT TỰ MANH PHÁI</h2>
+        <p class="placeholder-desc">Tứ Trụ, Tàng Can, Thập Thần, Vòng Trường Sinh & Đại Vận</p>
+      </div>
+    </div>
+
+    <!-- View Module: Tử Vi Đẩu Số -->
+    <div id="view-tuvi" class="app-module-view" style="display: none;">
+      <div class="module-placeholder">
+        <div class="placeholder-icon">🌌</div>
+        <h2 class="placeholder-title">TỬ VI ĐẨU SỐ</h2>
+        <p class="placeholder-desc">Lá Số 12 Cung & 114 Tinh Tú Nam Phái (Thái Thứ Lang)</p>
+      </div>
+    </div>
+
+    <!-- View Module: Lịch Âm Dương -->
+    <div id="view-calendar" class="app-module-view" style="display: none;">
+      <div class="module-placeholder">
+        <div class="placeholder-icon">📅</div>
+        <h2 class="placeholder-title">LỊCH ÂM DƯƠNG</h2>
+        <p class="placeholder-desc">Lịch Tháng Vạn Niên & Lịch Ngày Bloc Cát Hung</p>
+      </div>
+    </div>
   </div>
 
   <!-- Spiritual Reading Modal (Luận giải Tâm Linh Tụ & Bộ) -->
@@ -211,8 +270,6 @@
     </div>
   </div>
 
-
-
   <!-- Toast Notification -->
   <div class="toast-notification" id="toast"></div>
 
@@ -221,6 +278,14 @@
   <script src="cards_base64_data.js?v=7.0"></script>
   <script src="cards_data.js?v=7.0"></script>
   <script src="poker_data.js?v=7.0"></script>
+  <script src="engines/calendar_engine.js?v=7.0"></script>
+  <script src="modules/calendar_view.js?v=7.0"></script>
+  <script src="engines/qmdj_engine.js?v=7.0"></script>
+  <script src="modules/qmdj_view.js?v=7.0"></script>
+  <script src="engines/bazi_engine.js?v=7.0"></script>
+  <script src="modules/bazi_view.js?v=7.0"></script>
+  <script src="engines/tuvi_engine.js?v=7.0"></script>
+  <script src="modules/tuvi_view.js?v=7.0"></script>
   <script src="app.js?v=7.0"></script>
 </body>
 </html>

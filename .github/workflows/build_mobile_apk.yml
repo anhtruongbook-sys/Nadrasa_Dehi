@@ -63,19 +63,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.1.4
-          name: "Neta Light & Poker v1.1.4 (Xóa Triệt Để Cache Cũ & Đồng Bộ Toàn Diện)"
+          tag_name: v1.2.0
+          name: "Neta Light & Huyền Học v1.2.0 (Tử Vi, Bát Tự, Kỳ Môn, Lịch Vạn Niên)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Poker v1.1.4 (Bản Cập Nhật Mới Nhất)
-            - **Xóa Triệt Để Cache Trình Duyệt & Service Worker (v7.0)**:
-              + Tự động xóa sạch toàn bộ các bộ nhớ đệm cũ (CacheStorage) khi mở ứng dụng.
-              + Cài đặt tham số chống cache tĩnh `?v=7.0` cho toàn bộ CSS, JS, Service Worker.
-            - **Khôi Phục Căn Giữa Bàn Bài Sang Trọng**:
-              + Bàn bài được căn giữa tự nhiên (`justify-content: center; align-content: center`), hài hòa và trang nghiêm.
-            - **Header Siêu Gọn (~36px)**:
-              + Thu gọn sát mép trên màn hình, triệt tiêu khoảng trống thừa phía trên các icon.
-            - **Thu Bài 1 Chạm Tức Thì (Không Hộp Thoại)**:
-              + Nút `[🔄 Thu bài]` ở góc trái dọn bàn ngay tức thì trong 0ms.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.2.0 (Bản Nâng Cấp Toàn Diện)
+            - **Bổ sung 4 Phân Hệ Huyền Học Kinh Điển Chuyên Sâu**:
+              + **Tử Vi Đẩu Số**: 12 Cung sao chuẩn Nam Phái (Thái Thứ Lang), 2 chế độ xem (Bàn 4x4 truyền thống & Thẻ bài 12 Cung), xem chi tiết hội chiếu Tam Phương Tứ Chính.
+              + **Bát Tự Manh Phái & Hà Lạc**: Tứ Trụ, Thập Thần, Thần Sát, Đại Vận 10 bước, Lưu Niên 10 năm, phân tích Ngũ Hành vượng suy theo Tiết Khí.
+              + **Kỳ Môn Độn Giáp**: Bàn 9 Cung Lạc Thư, Tam Kỳ Lục Nghi, Bát Môn, Cửu Tinh, Bát Thần, bước nhảy giờ thực tế.
+              + **Lịch Âm Dương Vạn Niên**: Lịch Tháng đối chiếu Âm - Dương, Hoàng Đạo/Hắc Đạo, Thập Nhị Trực, 28 Tú, Tiết Khí, chạm ô ngày tự động mở tờ Lịch Ngày chi tiết.
+            - **Giao Diện Siêu Tinh Gọn 24px & Nền Sáng Chuẩn WCAG AAA**:
+              + Rút gọn thanh điều khiển đầu trang xuống 24px, loại bỏ icon thừa, giải phóng tối đa diện tích hiển thị lá số.
+              + Tương phản cao trên cả nền Sáng và Tối, nét chữ mực đen `#111827`, ngọc lục bảo `#047857`, hổ phách `#78350f`.
+            - **Lưu Ảnh Chụp Trực Tiếp 1 Chạm (Không Popup)**: Lưu trực tiếp ảnh chụp lá số chất lượng cao về máy.
             - **Hoạt động Ngoại tuyến 100% Offline**: Độc lập hoàn toàn, không cần kết nối mạng.
           files: build-output/NetaLight.apk
           draft: false
