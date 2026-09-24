@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v7.0
-const CACHE_NAME = 'neta-poker-v7.0';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v7.5
+const CACHE_NAME = 'neta-poker-v7.5';
 
 const CORE_ASSETS = [
   './',
@@ -19,6 +19,7 @@ const CORE_ASSETS = [
   'icons/apple-touch-icon.png',
   'favicon.ico',
   'engines/calendar_engine.js',
+  'engines/smart_picker.js',
   'engines/qmdj_engine.js',
   'engines/bazi_engine.js',
   'engines/tuvi_engine.js',

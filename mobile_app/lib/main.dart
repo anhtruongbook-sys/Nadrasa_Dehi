@@ -47,6 +47,8 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF120104))
+      ..clearCache()
+      ..clearLocalStorage()
       ..addJavaScriptChannel(
         'NativeBridge',
         onMessageReceived: (JavaScriptMessage message) {
