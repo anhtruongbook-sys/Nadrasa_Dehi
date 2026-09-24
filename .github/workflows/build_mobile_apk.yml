@@ -63,10 +63,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.9
-          name: "Neta Light & Huyền Học v1.4.9 (In-Place Button Micro-Interactions & Floating Toast, Zero Alerts)"
+          tag_name: v1.5.0
+          name: "Neta Light & Huyền Học v1.5.0 (High-Res Large Card Showcase, Enhanced Hierarchy & Modern Flat Design)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.9
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.5.0
+            - **Tối Ưu Hóa Kích Thước & Khung Trưng Bày Lá Bài Nghệ Thuật (Large Card Artwork Showcase)**:
+              + Nâng kích thước lá bài trong từng mục luận giải từ 90px lên **150px x 255px** (chuẩn tỷ lệ vàng 1:1.7 của Tarot RWS), xóa bỏ hoàn toàn hiện tượng lá bài bé tí lọt thỏm giữa khoảng trống bao la.
+              + Đặt lá bài trong khung tranh nghệ thuật sang trọng (`border-radius: 12px`, viền mảnh sắc nét và đổ bóng êm dịu), tôn vinh trọn vẹn từng đường nét biểu tượng của lá bài.
+              + Thiết kế lại huy hiệu trạng thái Thuận / Ngược thành thẻ Flat Pill bo tròn mềm mại (`border-radius: 9999px`) với màu xanh dương / đỏ ruby phẳng tinh tế.
+              + Nâng kích thước Lá Bài Cốt Tủy (The Quintessence Card - Phần I) lên **105px x 178px** vương giả.
+            - **Tối Ưu Hóa Bố Cục Phân Cấp Thị Giác (Enhanced Visual Hierarchy Layout)**:
+              + Đưa vị trí quẻ bài (`QUÁ KHỨ / CĂN NGUYÊN GỐC RỄ`, `HIỆN TẠI / THỬ THÁCH CỐT LÕI`) và Tên lá bài lên phần đầu trang trọng, tiếp nối là khung tranh lá bài lớn căn giữa, rồi đến hộp từ khóa cốt lõi, phần luận giải biện chứng căn lề hai bên, và hộp lời khuyên hành động viền xanh ngọc lục bảo.
+            - **Thiết Kế Lại Toàn Bộ Nút Bấm Chuẩn Triết Lý Phẳng (Modern Flat Design Philosophy)**:
+              + Loại bỏ 100% các dải chuyển màu gradient bóng bẩy, viền 3D nổi thô thiển.
+              + Đồng bộ các nút bấm phẳng theo chuẩn Material Design 3 / Flat UI: Nút chính Indigo `#4f46e5`, nút PDF Emerald `#059669`, nút thứ cấp Flat Slate `#f1f5f9` / `#1e2030`, nút lọc Bách khoa dạng Chip phẳng bo tròn.
+              + Độ nảy bấm vi mô phẳng tự nhiên (`transform: scale(0.97)`), khoảng cách đệm chuẩn tay chạm di động.
             - **Xóa Bỏ 100% Hộp Thoại Alert Cổ Lỗ Sĩ (Eliminate Native Alert Modals)**:
               + Loại bỏ hoàn toàn hộp thoại OS trắng thô cứng `The page at "file://" says: Đã lưu...` làm gián đoạn trải nghiệm người dùng.
               + Thay thế bằng cơ chế phản hồi vi mô tức thì ngay trên chính nút bấm (**In-Place Button Micro-Interaction**):

@@ -836,25 +836,35 @@
           <div class="tarot-cards-reading-list">
             ${report.cardReadings.map(c => `
               <div class="tarot-card-reading-card">
-                <div class="reading-card-left">
-                  <img src="assets/tarot/${c.imageWebp}" alt="${c.cardName}" class="reading-card-thumb ${c.isUpright ? '' : 'is-reversed'}">
-                  <div class="reading-card-orientation ${c.isUpright ? 'upright' : 'reversed'}">${c.orientation}</div>
-                </div>
-                <div class="reading-card-right">
+                <div class="reading-card-header">
                   <div class="reading-card-pos">${c.position}</div>
                   <h3 class="reading-card-name">${c.cardName}</h3>
                   <div class="reading-card-tags">
                     <span class="tarot-tag arcana">${c.arcana} Arcana</span>
                     <span class="tarot-tag element">Nguyên tố ${c.element}</span>
                   </div>
-                  <div class="reading-card-keywords">
-                    <strong>Từ khóa:</strong> <span>${c.keywords}</span>
+                </div>
+
+                <div class="reading-card-body">
+                  <div class="reading-card-visual">
+                    <div class="reading-card-frame">
+                      <img src="assets/tarot/${c.imageWebp}" alt="${c.cardName}" class="reading-card-thumb ${c.isUpright ? '' : 'is-reversed'}" loading="lazy">
+                    </div>
+                    <div class="reading-card-orientation ${c.isUpright ? 'upright' : 'reversed'}">
+                      ${c.isUpright ? '✦ ' + c.orientation : '↻ ' + c.orientation}
+                    </div>
                   </div>
-                  <div class="reading-card-desc">
-                    ${c.detailMeaning}
-                  </div>
-                  <div class="reading-card-advice">
-                    <strong>💡 Lời khuyên:</strong> <em>${c.advice}</em>
+
+                  <div class="reading-card-content-pane">
+                    <div class="reading-card-keywords">
+                      <strong>Từ khóa:</strong> <span>${c.keywords}</span>
+                    </div>
+                    <div class="reading-card-desc">
+                      ${c.detailMeaning}
+                    </div>
+                    <div class="reading-card-advice">
+                      <strong>💡 Lời khuyên:</strong> <em>${c.advice}</em>
+                    </div>
                   </div>
                 </div>
               </div>
