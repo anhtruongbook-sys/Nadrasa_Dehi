@@ -63,10 +63,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.4.6
-          name: "Neta Light & Huyền Học v1.4.6 (Detailed PDF Export with Card Graphics & Button Contrast Fixes)"
+          tag_name: v1.4.7
+          name: "Neta Light & Huyền Học v1.4.7 (Direct 1-Click PDF/HTML Downloads & Justified Typography)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.6
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.4.7
+            - **Căn Lề Đều Hai Bên (Justify Alignment) Toàn Bộ Nội Dung Luận Giải**:
+              + Áp dụng quy chuẩn in ấn `text-align: justify !important; text-justify: inter-word !important;` cho toàn bộ văn bản luận giải trong ứng dụng: Mạch truyện biện chứng, Luận giải vị trí từng lá bài, Ý nghĩa biểu tượng học, Bài học linh hồn cốt tủy và Kế hoạch hành động.
+              + Hai mép lề chữ thẳng đều, đẹp mắt và trang trọng như một ấn bản sách huyền học chuyên sâu.
+            - **Tải File Trực Tiếp Một Chạm (Loại Bỏ Hoàn Toàn Popup)**:
+              + Bỏ hẳn cửa sổ popup xem trước gây xung đột hoặc không phản hồi trên thiết bị di động.
+              + Bố cục cụm 4 nút hành động lưới 2x2 gọn gàng, vừa vặn 100% trên màn hình hẹp: `[💾 Lưu Nhật Ký] [📄 Tải File PDF] [📥 Tải File HTML] [📋 Sao Chép MD]`.
+              + Tích hợp thư viện đồ họa độc lập `html2pdf.js` nội bộ, tạo và tải trực tiếp tệp `Luan_Giai_Tarot_Neta.pdf` về thư mục Tải xuống của điện thoại chỉ với 1 chạm.
+              + Tối ưu hóa tải tệp HTML báo cáo độc lập với cơ chế giữ liên kết Blob 45 giây, hoạt động ổn định trên Chrome Android và các trình duyệt di động.
             - **Tính Năng Xuất & Lưu File PDF Luận Giải Chi Tiết (High-Fidelity PDF Export)**:
               + Bổ sung nút bấm `📄 Lưu / Xuất File PDF` trực tiếp ở cuối mỗi bản luận giải và trong từng bản ghi Nhật Ký.
               + Khổ giấy chuẩn A4 với đầy đủ đồ họa quân bài HD trực quan, hiển thị rõ nét lá thuận / lá ngược (xoay 180°), thông tin nguyên tố và tỷ lệ vĩ mô.

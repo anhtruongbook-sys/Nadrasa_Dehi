@@ -837,16 +837,19 @@
           </div>
         </div>
 
-        <!-- Report Footer Actions -->
+        <!-- Report Footer Actions: Direct 1-Click Zero-Popup -->
         <div class="tarot-report-actions">
-          <button id="btn-tarot-save-journal" class="tarot-btn-primary">
-            💾 Lưu Vào Nhật Ký
+          <button id="btn-tarot-save-journal" class="tarot-btn-primary" title="Lưu kết quả trải bài vào sổ tay">
+            💾 Lưu Nhật Ký
           </button>
-          <button id="btn-tarot-export-pdf" class="tarot-btn-pdf">
-            📄 Lưu / Xuất File PDF
+          <button id="btn-tarot-export-pdf" class="tarot-btn-pdf" title="Tải trực tiếp tệp PDF đồ họa A4">
+            📄 Tải File PDF
           </button>
-          <button id="btn-tarot-copy-markdown" class="tarot-btn-secondary">
-            📋 Sao Chép Markdown
+          <button id="btn-tarot-download-html" class="tarot-btn-secondary" title="Tải tệp HTML báo cáo độc lập">
+            📥 Tải File HTML
+          </button>
+          <button id="btn-tarot-copy-markdown" class="tarot-btn-secondary" title="Sao chép toàn bộ văn bản Markdown">
+            📋 Sao Chép MD
           </button>
         </div>
       </div>
@@ -1126,10 +1129,13 @@
 
                 <div class="journal-item-actions">
                   <button class="tarot-btn-secondary btn-view-journal-detail" data-id="${entry.id}">
-                    👁️ Xem Toàn Văn
+                    👁️ Xem Lại
                   </button>
                   <button class="tarot-btn-pdf btn-export-journal-pdf" data-id="${entry.id}">
-                    📄 Xuất PDF
+                    📄 Tải PDF
+                  </button>
+                  <button class="tarot-btn-secondary btn-download-journal-html" data-id="${entry.id}">
+                    📥 Tải HTML
                   </button>
                 </div>
               </div>
@@ -1403,16 +1409,25 @@
       });
     }
 
-    // 8. Export PDF Report
+    // 8. Direct PDF Download (Zero Popup)
     const btnExportPdf = container.querySelector('#btn-tarot-export-pdf');
     if (btnExportPdf && currentReadingReport) {
       btnExportPdf.addEventListener('click', () => {
         triggerHaptic(15);
-        openPdfExportModal(currentReadingReport);
+        exportTarotPdfDirect(currentReadingReport, btnExportPdf);
       });
     }
 
-    // 8b. Copy Markdown
+    // 8b. Direct HTML Download (Zero Popup)
+    const btnDownloadHtml = container.querySelector('#btn-tarot-download-html');
+    if (btnDownloadHtml && currentReadingReport) {
+      btnDownloadHtml.addEventListener('click', () => {
+        triggerHaptic(15);
+        downloadStandaloneHtmlReport(currentReadingReport, btnDownloadHtml);
+      });
+    }
+
+    // 8c. Copy Markdown
     const btnCopyMd = container.querySelector('#btn-tarot-copy-markdown');
     if (btnCopyMd && currentReadingReport) {
       btnCopyMd.addEventListener('click', () => {
@@ -1631,7 +1646,20 @@
         const entry = list.find(it => it.id === id);
         if (entry && entry.fullReport) {
           triggerHaptic(15);
-          openPdfExportModal(entry.fullReport);
+          exportTarotPdfDirect(entry.fullReport, btn);
+        }
+      });
+    });
+
+    container.querySelectorAll('.btn-download-journal-html').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        const list = getJournal();
+        const entry = list.find(it => it.id === id);
+        if (entry && entry.fullReport) {
+          triggerHaptic(15);
+          downloadStandaloneHtmlReport(entry.fullReport, btn);
         }
       });
     });
@@ -2077,7 +2105,7 @@
     return html;
   }
 
-  function downloadStandaloneHtmlReport(report) {
+  function downloadStandaloneHtmlReport(report, btnElement) {
     if (!report) return;
     const bodyContent = buildTarotPdfHtml(report);
     const fullHtml = `<!DOCTYPE html>
@@ -2085,7 +2113,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bao_Cao_Tarot_Neta_Light_${Date.now()}</title>
+  <title>Bao_Cao_Tarot_Neta_${Date.now()}</title>
   <style>
     body {
       background: #f1f5f9;
@@ -2098,48 +2126,48 @@
       background: #ffffff;
       max-width: 800px;
       margin: 0 auto;
-      padding: 32px 36px;
+      padding: 32px 30px;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     .pdf-hdr-banner { border-bottom: 2.5px solid #4f46e5; padding-bottom: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-start; }
     .pdf-hdr-left { display: flex; align-items: center; gap: 12px; }
-    .pdf-hdr-icon { font-size: 2.4rem; }
-    .pdf-hdr-title { font-size: 1.3rem; font-weight: 800; color: #1e1b4b; margin: 0; }
+    .pdf-hdr-icon { font-size: 2.2rem; }
+    .pdf-hdr-title { font-size: 1.25rem; font-weight: 800; color: #1e1b4b; margin: 0; }
     .pdf-hdr-subtitle { font-size: 0.85rem; color: #64748b; margin-top: 2px; }
-    .pdf-hdr-date { font-size: 0.85rem; color: #475569; text-align: right; }
-    .pdf-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 22px; font-size: 0.9rem; }
+    .pdf-hdr-date { font-size: 0.82rem; color: #475569; text-align: right; }
+    .pdf-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.88rem; }
     .pdf-meta-cell { display: flex; gap: 6px; }
     .pdf-meta-label { color: #64748b; font-weight: 600; }
     .pdf-meta-val { color: #0f172a; font-weight: 700; }
     .pdf-sec-head { font-size: 1.05rem; font-weight: 800; color: #312e81; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-    .pdf-cards-gallery-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 10px; }
-    .pdf-card-col { flex: 0 0 130px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center; background: #f8fafc; box-sizing: border-box; }
-    .pdf-card-pos { font-size: 0.75rem; font-weight: 700; color: #4338ca; margin-bottom: 6px; }
+    .pdf-cards-gallery-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 10px; }
+    .pdf-card-col { flex: 0 0 120px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center; background: #f8fafc; box-sizing: border-box; }
+    .pdf-card-pos { font-size: 0.72rem; font-weight: 700; color: #4338ca; margin-bottom: 4px; }
     .pdf-card-img-wrap { width: 100%; aspect-ratio: 2/3.4; overflow: hidden; border-radius: 4px; margin-bottom: 6px; background: #e2e8f0; }
     .pdf-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
     .pdf-card-img-wrap img.is-reversed { transform: rotate(180deg); }
     .pdf-card-name-vi { font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
-    .pdf-card-name-en { font-size: 0.72rem; color: #64748b; margin-bottom: 4px; }
-    .pdf-card-status-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+    .pdf-card-name-en { font-size: 0.7rem; color: #64748b; margin-bottom: 4px; }
+    .pdf-card-status-badge { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
     .pdf-card-status-badge.upright { background: #dbeafe; color: #1e40af; }
     .pdf-card-status-badge.reversed { background: #fee2e2; color: #991b1b; }
     .pdf-block { margin-bottom: 20px; page-break-inside: avoid; }
     .pdf-quint-card { display: flex; gap: 16px; background: #faf5ff; border: 1.5px solid #d8b4fe; border-radius: 8px; padding: 14px; }
     .pdf-quint-img { width: 75px; height: 125px; object-fit: cover; border-radius: 6px; border: 1px solid #c084fc; flex-shrink: 0; }
-    .pdf-story-quote { background: #f1f5f9; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 0 8px 8px 0; color: #1e293b; font-size: 0.94rem; line-height: 1.6; margin: 0; }
-    .pdf-pattern-item { background: #fff5f7; border: 1px solid #fbcfe8; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+    .pdf-story-quote { background: #f1f5f9; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 0 8px 8px 0; color: #1e293b; font-size: 0.94rem; line-height: 1.6; margin: 0; text-align: justify; }
+    .pdf-pattern-item { background: #fff5f7; border: 1px solid #fbcfe8; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; text-align: justify; }
     .pdf-pattern-badge { background: #fce7f3; color: #831843; border: 1px solid #f472b6; font-size: 0.78rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
     .pdf-card-detail-item { display: flex; gap: 16px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 12px; background: #ffffff; page-break-inside: avoid; }
     .pdf-card-thumb { width: 78px; height: 130px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; flex-shrink: 0; }
     .pdf-card-thumb.is-reversed { transform: rotate(180deg); }
-    .pdf-card-info { flex: 1; }
+    .pdf-card-info { flex: 1; text-align: justify; }
     .pdf-card-pos-title { font-size: 0.88rem; font-weight: 800; color: #4338ca; margin-bottom: 2px; }
-    .pdf-card-item-name { font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+    .pdf-card-item-name { font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
     .pdf-card-meta-line { font-size: 0.82rem; color: #475569; margin-bottom: 8px; }
-    .pdf-card-text { font-size: 0.9rem; color: #1e293b; line-height: 1.55; margin-bottom: 8px; }
-    .pdf-card-advice-box { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; padding: 8px 12px; font-size: 0.86rem; color: #065f46; }
-    .pdf-prescription-quote { background: #ecfdf5; border-left: 4px solid #059669; padding: 12px 16px; border-radius: 0 8px 8px 0; color: #065f46; font-size: 0.94rem; line-height: 1.6; margin: 0; }
+    .pdf-card-text { font-size: 0.9rem; color: #1e293b; line-height: 1.55; margin-bottom: 8px; text-align: justify; }
+    .pdf-card-advice-box { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; padding: 8px 12px; font-size: 0.86rem; color: #065f46; text-align: justify; }
+    .pdf-prescription-quote { background: #ecfdf5; border-left: 4px solid #059669; padding: 12px 16px; border-radius: 0 8px 8px 0; color: #065f46; font-size: 0.94rem; line-height: 1.6; margin: 0; text-align: justify; }
     .pdf-footer { margin-top: 28px; padding-top: 12px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #94a3b8; }
     @media print {
       body { background: #fff; padding: 0; }
@@ -2152,103 +2180,122 @@
 </body>
 </html>`;
 
+    const filename = `Bao_Cao_Tarot_Neta_${Date.now()}.html`;
     const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Bao_Cao_Tarot_Neta_Light_${Date.now()}.html`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+
+    setTimeout(() => {
+      if (document.body.contains(a)) document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 45000);
+
+    if (btnElement) {
+      const orig = btnElement.innerHTML;
+      btnElement.innerHTML = '✅ Đã Tải';
+      setTimeout(() => { btnElement.innerHTML = orig; }, 2500);
+    }
     if (typeof window.showToast === 'function') {
       window.showToast('✅ Đã tải tệp HTML Báo cáo Luận giải về máy!');
     }
   }
 
-  function openPdfExportModal(report) {
+  function exportTarotPdfDirect(report, btnElement) {
     if (!report) return;
 
-    const oldModal = document.getElementById('tarot-pdf-modal');
-    if (oldModal) oldModal.remove();
+    const originalText = btnElement ? btnElement.innerHTML : '';
+    if (btnElement) {
+      btnElement.disabled = true;
+      btnElement.innerHTML = '⏳ Đang tạo PDF...';
+    }
+    if (typeof window.showToast === 'function') {
+      window.showToast('⏳ Đang kết xuất tệp PDF đồ họa, vui lòng chờ giây lát...');
+    }
 
-    // Prepare print area for hardware print
+    // 1. Render content in hidden container for html2pdf
+    let renderContainer = document.getElementById('tarot-pdf-direct-render');
+    if (!renderContainer) {
+      renderContainer = document.createElement('div');
+      renderContainer.id = 'tarot-pdf-direct-render';
+      renderContainer.style.position = 'fixed';
+      renderContainer.style.left = '-9999px';
+      renderContainer.style.top = '0';
+      renderContainer.style.width = '780px';
+      renderContainer.style.zIndex = '-9999';
+      renderContainer.style.background = '#ffffff';
+      document.body.appendChild(renderContainer);
+    }
+
+    renderContainer.innerHTML = buildTarotPdfHtml(report);
+
+    // 2. html2pdf options
+    const filename = `Luan_Giai_Tarot_Neta_${Date.now()}.pdf`;
+    const opt = {
+      margin: [8, 8, 8, 8],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true, 
+        logging: false,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    if (typeof window.html2pdf === 'function') {
+      window.html2pdf().set(opt).from(renderContainer).save().then(() => {
+        if (btnElement) {
+          btnElement.disabled = false;
+          btnElement.innerHTML = '✅ Đã Tải';
+          setTimeout(() => { btnElement.innerHTML = originalText; }, 2500);
+        }
+        if (typeof window.showToast === 'function') {
+          window.showToast('✅ Đã tải file PDF luận giải về máy thành công!');
+        }
+      }).catch((err) => {
+        console.error('html2pdf generation error, falling back to print:', err);
+        if (btnElement) {
+          btnElement.disabled = false;
+          btnElement.innerHTML = originalText;
+        }
+        fallbackToSystemPrint(report);
+      });
+    } else {
+      // Direct fallback to hardware print if html2pdf not available
+      if (btnElement) {
+        btnElement.disabled = false;
+        btnElement.innerHTML = originalText;
+      }
+      fallbackToSystemPrint(report);
+    }
+  }
+
+  function fallbackToSystemPrint(report) {
     let printArea = document.getElementById('tarot-pdf-print-area');
     if (!printArea) {
       printArea = document.createElement('div');
       printArea.id = 'tarot-pdf-print-area';
       document.body.appendChild(printArea);
     }
-    const reportHtml = buildTarotPdfHtml(report);
-    printArea.innerHTML = reportHtml;
-
-    // Interactive Preview Modal
-    const modal = document.createElement('div');
-    modal.id = 'tarot-pdf-modal';
-    modal.className = 'tarot-pdf-modal-overlay';
-    modal.innerHTML = `
-      <div class="tarot-pdf-modal-card">
-        <div class="tarot-pdf-modal-header">
-          <h3><span>📄</span> Xuất Báo Cáo Luận Giải PDF (Format Đẹp Mắt)</h3>
-          <button class="tarot-pdf-modal-close" id="btn-close-pdf-modal">✕</button>
-        </div>
-        <div class="tarot-pdf-modal-body">
-          <div style="margin-bottom: 12px; color: #cbd5e1; font-size: 0.88rem; display: flex; align-items: center; justify-content: space-between;">
-            <span>Xem trước định dạng chuẩn A4 (Bao gồm đồ họa quân bài & phân tích chuyên sâu)</span>
-          </div>
-          <div class="tarot-pdf-preview-container">
-            ${reportHtml}
-          </div>
-        </div>
-        <div class="tarot-pdf-modal-footer">
-          <button id="btn-download-html-report" class="tarot-btn-secondary">
-            💾 Tải Bản HTML Báo Cáo
-          </button>
-          <button id="btn-print-to-pdf" class="tarot-btn-pdf">
-            🖨️ Lưu Dưới Dạng PDF (Save as PDF)
-          </button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    const btnClose = modal.querySelector('#btn-close-pdf-modal');
-    if (btnClose) {
-      btnClose.addEventListener('click', () => modal.remove());
+    printArea.innerHTML = buildTarotPdfHtml(report);
+    if (typeof window.showToast === 'function') {
+      window.showToast('📄 Đang mở hộp thoại In / Lưu PDF hệ thống...');
     }
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.remove();
-    });
-
-    const btnPrint = modal.querySelector('#btn-print-to-pdf');
-    if (btnPrint) {
-      btnPrint.addEventListener('click', () => {
-        triggerHaptic(20);
-        if (typeof window.showToast === 'function') {
-          window.showToast('📄 Đang mở trình Lưu PDF / In hệ thống...');
-        }
-        setTimeout(() => {
-          window.print();
-        }, 150);
-      });
-    }
-
-    const btnDownloadHtml = modal.querySelector('#btn-download-html-report');
-    if (btnDownloadHtml) {
-      btnDownloadHtml.addEventListener('click', () => {
-        triggerHaptic(15);
-        downloadStandaloneHtmlReport(report);
-      });
-    }
+    window.print();
   }
 
   const NetaTarotView = {
     init: initTarotView,
     render: renderTarot,
     openCardDetail: openTarotCardDetailModal,
-    exportPdf: openPdfExportModal
+    exportPdf: exportTarotPdfDirect,
+    downloadHtml: downloadStandaloneHtmlReport
   };
 
   global.NetaTarotView = NetaTarotView;
