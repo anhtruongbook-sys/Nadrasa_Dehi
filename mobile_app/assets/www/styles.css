@@ -9867,18 +9867,34 @@ body.theme-light .tarot-btn-pdf {
 }
 
 /* 4-Button Action Grid (2x2 on mobile, 4 columns on desktop, ZERO popup) */
+/* 3-Button Action Grid: Prominent PDF button + 2 utility buttons, ZERO popup */
 .tarot-report-actions {
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  grid-template-columns: 1fr 1fr !important;
   gap: 8px !important;
   margin-top: 20px !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
+.tarot-btn-pdf {
+  grid-column: 1 / -1 !important;
+  min-height: 46px !important;
+  font-size: 0.92rem !important;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid #34d399 !important;
+  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.28) !important;
+}
+
 @media (min-width: 640px) {
   .tarot-report-actions {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .tarot-btn-pdf {
+    grid-column: auto !important;
+    min-height: auto !important;
+    font-size: 0.85rem !important;
   }
 }
 

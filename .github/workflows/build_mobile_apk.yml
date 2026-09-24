@@ -63,11 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.5.1
-          name: "Neta Light & Huyền Học v1.5.1 (Pixel-Perfect Unified Control Grid & High-Res Large Card Showcase)"
+          tag_name: v1.5.2
+          name: "Neta Light & Huyền Học v1.5.2 (High-Fidelity Multi-Page PDF Engine & Card Artwork Preservation)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.5.1
-            - **Cố Định Lưới Bố Cục Thao Tác Quẻ Bài 100% Khớp Cạnh (Zero Layout Shift & Pixel-Perfect Alignment)**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.5.2
+            - **Đại Tu Toàn Diện Động Cơ Tạo File PDF Luận Giải (High-Fidelity PDF Engine Overhaul)**:
+              + Khắc phục triệt để lỗi file PDF tải về bị trắng tinh (loại bỏ hoàn toàn cơ chế render lệch tọa độ `-9999px` cũ khiến thư viện chụp canvas trống).
+              + Trực tiếp thu nhận và tối ưu hóa từ vùng hiển thị đồ họa thực tế (`#tarot-report-section`), bảo toàn trọn vẹn 100% hình ảnh lá bài Tarot độ phân giải cao (`150px x 255px`), các biểu tượng thần số học, hộp từ khóa và hộp lời khuyên viền ngọc lục bảo.
+              + Cơ chế đồng bộ tải trước (Preload & Await Complete) 100% hình ảnh quân bài trước khi đóng gói PDF, xóa bỏ hiện tượng mất hình hoặc vỡ layout.
+              + Tự động loại bỏ cụm nút bấm khỏi tệp PDF xuất ra, bổ sung tiêu đề banner hành chính trang trọng (`NETA LIGHT - BÁO CÁO LUẬN GIẢI TAROT CHUYÊN SÂU`) và chân trang xuất bản A4 chuẩn mực.
+              + Cấu hình phân trang thông minh (`page-break-inside: avoid`), chống cắt ngang lá bài hay bảng biểu qua mép trang.
+            - **Loại Bỏ Tính Năng Lưu File HTML Thô (Deprecate Raw HTML Export)**:
+              + Xóa bỏ hoàn toàn nút `[📥 Tải File HTML]` ở cả phần kết quả luận giải và trong Sổ tay Nhật ký theo phản hồi người dùng.
+              + Tái cấu trúc lưới 3 nút bấm công thái học: Nút `[📄 Tải File PDF]` màu xanh ngọc lục bảo nổi bật ở hàng 1 chiếm trọn 100% chiều rộng, hàng 2 gồm `[💾 Lưu Nhật Ký]` và `[📋 Sao Chép MD]` đối xứng 50% - 50%.
+            - **Cố Định Lưới Bố Cục Thao Tác Quẻ Bài 100% Khớp Cạnh (Zero Layout Shift)**:
               + Khắc phục triệt để hiện tượng 3 nút thao tác `[⚡ Bốc Bài Tự Động]`, `[✨ Lật Bài]`, `[🔄 Trải Mới]` bị thò ra thụt vào, lệch mép so với ô nhập câu hỏi bên trên.
               + Hàng trên `[⚡ Bốc Bài Tự Động]` kéo giãn đủ 100% chiều rộng container, khớp chính xác từng pixel với ô nhập câu hỏi.
               + Hàng dưới chia lưới 2 cột đối xứng chuẩn xác 50% - 50% (`grid-template-columns: 1fr 1fr`, gap: 8px), mép ngoài bên trái và bên phải ăn khớp 100% với hàng trên.
