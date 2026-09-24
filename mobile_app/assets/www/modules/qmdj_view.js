@@ -11,6 +11,7 @@
   let currentQmdjDate = new Date();
   let currentChart = null;
   let currentPatterns = [];
+  let isQmdjLunarMode = false;
 
   const VI_DICT = {
     "天蓬星": "Thiên Bồng", "天任星": "Thiên Nhậm", "天冲星": "Thiên Xung",
@@ -121,6 +122,16 @@
       solarTerm = global.NetaCalendarEngine.getSolarTerm(d.getDate(), d.getMonth() + 1, d.getFullYear());
     }
 
+    let dayVal = d.getDate();
+    let monthVal = d.getMonth() + 1;
+    let yearVal = d.getFullYear();
+    if (isQmdjLunarMode && global.NetaCalendarEngine) {
+      const lInfo = global.NetaCalendarEngine.getFullDayInfo(d);
+      dayVal = lInfo.lunar.day;
+      monthVal = lInfo.lunar.month;
+      yearVal = lInfo.lunar.year;
+    }
+
     container.innerHTML = `
       <div class="qmdj-view-container">
         <!-- QMDJ Ultra-Compact Control Bar -->
@@ -128,11 +139,15 @@
           <div class="qmdj-inputs-row">
             <!-- Direct Numeric Date -->
             <div class="numeric-date-row">
-              <input type="number" id="qmdj-input-day" class="num-box num-day" min="1" max="31" value="${d.getDate()}" placeholder="Ngày" title="Nhập Ngày (1-31)">
+              <button type="button" class="btn-lunar-toggle ${isQmdjLunarMode ? 'lunar' : ''}" id="btn-qmdj-lunar-toggle" title="Chuyển đổi Dương lịch / Âm lịch">
+                ${isQmdjLunarMode ? '🌙 Âm' : '☀️ Dương'}
+              </button>
+              <input type="number" id="qmdj-input-day" class="num-box num-day" min="1" max="31" value="${dayVal}" placeholder="Ngày" title="Nhập Ngày (1-31)">
               <span class="num-slash">/</span>
-              <input type="number" id="qmdj-input-month" class="num-box num-month" min="1" max="12" value="${d.getMonth() + 1}" placeholder="Tháng" title="Nhập Tháng (1-12)">
+              <input type="number" id="qmdj-input-month" class="num-box num-month" min="1" max="12" value="${monthVal}" placeholder="Tháng" title="Nhập Tháng (1-12)">
               <span class="num-slash">/</span>
-              <input type="number" id="qmdj-input-year" class="num-box num-year" min="1900" max="2100" value="${d.getFullYear()}" placeholder="Năm" title="Nhập Năm">
+              <input type="number" id="qmdj-input-year" class="num-box num-year" min="1900" max="2100" value="${yearVal}" placeholder="Năm" title="Nhập Năm">
+              <button type="button" class="btn-quick-year" id="btn-qmdj-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
               <label class="btn-picker-cal" title="Chọn ngày trên lịch">
                 📅
                 <input type="date" id="qmdj-date-picker" value="${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}" class="native-hidden-date">
@@ -163,11 +178,11 @@
 
           <div class="qmdj-actions-row">
             <div class="qmdj-step-group">
-              <button class="qmdj-btn-step" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀</button>
-              <button class="qmdj-btn-now" id="btn-qmdj-now" title="Về giờ hiện tại">⚡ Giờ thực</button>
-              <button class="qmdj-btn-step" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">▶</button>
+              <button class="qmdj-btn-step" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀ Lùi giờ</button>
+              <button class="qmdj-btn-step" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">Tiến giờ ▶</button>
             </div>
             <div class="qmdj-actions-right">
+              <button class="qmdj-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
               <button class="qmdj-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
               <div class="qmdj-cuc-badge" title="Cục số và Tiết khí">
                 <span>${roundText}</span>
@@ -316,16 +331,54 @@
     const selectCanChi = document.getElementById('qmdj-select-canchi');
     const inputHour = document.getElementById('qmdj-input-hour');
     const inputMin = document.getElementById('qmdj-input-minute');
+    const btnLunarToggle = document.getElementById('btn-qmdj-lunar-toggle');
+    const btnYearJumper = document.getElementById('btn-qmdj-year-jumper');
+
+    if (btnLunarToggle) {
+      btnLunarToggle.onclick = () => {
+        isQmdjLunarMode = !isQmdjLunarMode;
+        renderQmdj();
+      };
+    }
 
     // Sync native datepicker -> numeric boxes
     if (datePicker) {
       datePicker.addEventListener('change', () => {
         if (!datePicker.value) return;
         const [y, m, d] = datePicker.value.split('-').map(Number);
+        isQmdjLunarMode = false;
         if (inputDay) inputDay.value = d;
         if (inputMonth) inputMonth.value = m;
         if (inputYear) inputYear.value = y;
       });
+      const pickerLabel = document.querySelector('.qmdj-inputs-row .btn-picker-cal');
+      if (pickerLabel && global.NetaSmartPicker) {
+        global.NetaSmartPicker.setupNativeDatePicker(pickerLabel, datePicker);
+      }
+    }
+
+    // Smart auto advance and decade jumper
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        hourInput: inputHour,
+        minuteInput: inputMin,
+        onSubmit: () => {
+          if (btnSubmit) btnSubmit.click();
+        }
+      });
+
+      if (btnYearJumper && inputYear) {
+        btnYearJumper.onclick = () => {
+          const curY = parseInt(inputYear.value) || currentQmdjDate.getFullYear();
+          global.NetaSmartPicker.openYearJumperModal(curY, (selectedYear) => {
+            inputYear.value = selectedYear;
+            syncDateBoxesToPicker();
+          });
+        };
+      }
     }
 
     // Sync numeric boxes -> native datepicker
@@ -369,11 +422,23 @@
     const btnSubmit = document.getElementById('btn-qmdj-submit');
     if (btnSubmit) {
       btnSubmit.onclick = () => {
-        const d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
-        const m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
-        const y = Math.min(2100, Math.max(1900, parseInt(inputYear ? inputYear.value : 2026) || 2026));
+        let d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
+        let m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
+        let rawYear = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (global.NetaSmartPicker && rawYear < 100) {
+          rawYear = global.NetaSmartPicker.parseSmartYear(rawYear);
+          if (inputYear) inputYear.value = rawYear;
+        }
+        let y = Math.min(2100, Math.max(1900, rawYear));
         const h = Math.min(23, Math.max(0, parseInt(inputHour ? inputHour.value : 12) || 12));
         const min = Math.min(59, Math.max(0, parseInt(inputMin ? inputMin.value : 0) || 0));
+
+        if (isQmdjLunarMode && global.NetaCalendarEngine && global.NetaCalendarEngine.lunar2Solar) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y, false, 7);
+          d = solar.day;
+          m = solar.month;
+          y = solar.year;
+        }
 
         currentQmdjDate = new Date(y, m - 1, d, h, min, 0);
         renderQmdj();

@@ -11,6 +11,7 @@
 
   let currentSelectedDate = new Date();
   let currentCalendarMode = 'month'; // 'month' or 'day'
+  let isCalLunarMode = false;
 
   function initCalendarView() {
     const container = document.getElementById('view-calendar');
@@ -26,6 +27,7 @@
     const y = currentSelectedDate.getFullYear();
     const m = currentSelectedDate.getMonth() + 1; // 1-12
     const d = currentSelectedDate.getDate();
+    const pad = n => String(n).padStart(2, '0');
 
     const dayInfo = global.NetaCalendarEngine.getFullDayInfo(currentSelectedDate);
 
@@ -42,12 +44,20 @@
             </button>
           </div>
           <div class="cal-quick-jump-inline">
+            <button type="button" class="btn-lunar-toggle ${isCalLunarMode ? 'lunar' : ''}" id="btn-cal-lunar-toggle" title="Chuyển đổi Dương lịch / Âm lịch">
+              ${isCalLunarMode ? '🌙 Âm' : '☀️ Dương'}
+            </button>
             <div class="numeric-date-row">
-              <input type="number" id="cal-jump-day" class="num-box num-day" min="1" max="31" value="${d}" placeholder="Ngày" title="Nhập Ngày">
+              <input type="number" id="cal-jump-day" class="num-box num-day" min="1" max="31" value="${isCalLunarMode ? dayInfo.lunar.day : d}" placeholder="Ngày" title="Nhập Ngày">
               <span class="num-slash">/</span>
-              <input type="number" id="cal-jump-month" class="num-box num-month" min="1" max="12" value="${m}" placeholder="Tháng" title="Nhập Tháng">
+              <input type="number" id="cal-jump-month" class="num-box num-month" min="1" max="12" value="${isCalLunarMode ? dayInfo.lunar.month : m}" placeholder="Tháng" title="Nhập Tháng">
               <span class="num-slash">/</span>
-              <input type="number" id="cal-jump-year" class="num-box num-year" min="1900" max="2100" value="${y}" placeholder="Năm" title="Nhập Năm">
+              <input type="number" id="cal-jump-year" class="num-box num-year" min="1900" max="2100" value="${isCalLunarMode ? dayInfo.lunar.year : y}" placeholder="Năm" title="Nhập Năm">
+              <button type="button" class="btn-quick-year" id="btn-cal-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
+              <label class="btn-picker-cal" title="Chọn ngày trên lịch">
+                📅
+                <input type="date" id="cal-native-picker" value="${y}-${pad(m)}-${pad(d)}" class="native-hidden-date">
+              </label>
               <button class="cal-btn-jump" id="btn-cal-jump" title="Đến ngày">🚀</button>
             </div>
           </div>
@@ -278,18 +288,76 @@
 
     // Jump button (Direct numeric date)
     const btnJump = document.getElementById('btn-cal-jump');
-    if (btnJump) {
-      btnJump.onclick = () => {
-        const inputDay = document.getElementById('cal-jump-day');
-        const inputMonth = document.getElementById('cal-jump-month');
-        const inputYear = document.getElementById('cal-jump-year');
-        const d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
-        const m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
-        const y = Math.min(2100, Math.max(1900, parseInt(inputYear ? inputYear.value : 2026) || 2026));
+    const inputDay = document.getElementById('cal-jump-day');
+    const inputMonth = document.getElementById('cal-jump-month');
+    const inputYear = document.getElementById('cal-jump-year');
+    const nativePicker = document.getElementById('cal-native-picker');
+    const btnYearJumper = document.getElementById('btn-cal-year-jumper');
+    const btnLunarToggle = document.getElementById('btn-cal-lunar-toggle');
 
-        currentSelectedDate = new Date(y, m - 1, d);
+    if (btnLunarToggle) {
+      btnLunarToggle.onclick = () => {
+        isCalLunarMode = !isCalLunarMode;
         renderCalendar();
       };
+    }
+
+    if (btnJump) {
+      btnJump.onclick = () => {
+        const d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
+        const m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
+        let rawYear = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (global.NetaSmartPicker && rawYear < 100) {
+          rawYear = global.NetaSmartPicker.parseSmartYear(rawYear);
+          if (inputYear) inputYear.value = rawYear;
+        }
+        const y = Math.min(2100, Math.max(1900, rawYear));
+
+        if (isCalLunarMode && global.NetaCalendarEngine && global.NetaCalendarEngine.lunar2Solar) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y, false, 7);
+          currentSelectedDate = new Date(solar.year, solar.month - 1, solar.day);
+        } else {
+          currentSelectedDate = new Date(y, m - 1, d);
+        }
+        renderCalendar();
+      };
+    }
+
+    // Native picker support
+    if (nativePicker) {
+      nativePicker.addEventListener('change', () => {
+        if (!nativePicker.value) return;
+        const [py, pm, pd] = nativePicker.value.split('-').map(Number);
+        isCalLunarMode = false;
+        currentSelectedDate = new Date(py, pm - 1, pd);
+        renderCalendar();
+      });
+      const pickerLabel = document.querySelector('.cal-quick-jump-inline .btn-picker-cal');
+      if (pickerLabel && global.NetaSmartPicker) {
+        global.NetaSmartPicker.setupNativeDatePicker(pickerLabel, nativePicker);
+      }
+    }
+
+    // Smart auto-advance and decade jumper
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        onSubmit: () => {
+          if (btnJump) btnJump.click();
+        }
+      });
+
+      if (btnYearJumper && inputYear) {
+        btnYearJumper.onclick = () => {
+          const curY = parseInt(inputYear.value) || currentSelectedDate.getFullYear();
+          global.NetaSmartPicker.openYearJumperModal(curY, (selectedYear) => {
+            inputYear.value = selectedYear;
+            if (btnJump) btnJump.click();
+          });
+        };
+      }
     }
 
     // Prev / Next Month

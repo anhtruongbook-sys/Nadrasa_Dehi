@@ -169,6 +169,37 @@
     };
   }
 
+  function convertLunar2Solar(lunarDay, lunarMonth, lunarYear, lunarLeap = 0, timeZone = 7) {
+    let k, a11, b11, off, leapOff, leapMonth, monthStart;
+    if (lunarMonth < 11) {
+      a11 = getLunarMonth11(lunarYear - 1, timeZone);
+      b11 = getLunarMonth11(lunarYear, timeZone);
+    } else {
+      a11 = getLunarMonth11(lunarYear, timeZone);
+      b11 = getLunarMonth11(lunarYear + 1, timeZone);
+    }
+    k = INT(0.5 + (a11 - 2415021.076998695) / 29.530588853);
+    off = lunarMonth - 11;
+    if (off < 0) off += 12;
+    if (b11 - a11 > 365) {
+      leapOff = getLeapMonthOffset(a11, timeZone);
+      leapMonth = leapOff - 2;
+      if (leapMonth < 0) leapMonth += 12;
+      if (lunarLeap !== 0 && lunarMonth !== leapMonth) {
+        return null;
+      } else if (lunarLeap !== 0 || off >= leapOff) {
+        off += 1;
+      }
+    }
+    monthStart = getNewMoonDay(k + off, timeZone);
+    const [solarDay, solarMonth, solarYear] = jdToDate(monthStart + lunarDay - 1);
+    return {
+      day: solarDay,
+      month: solarMonth,
+      year: solarYear
+    };
+  }
+
   // --- 2. CAN CHI, NẠP ÂM & TIẾT KHÍ CONSTANTS ---
   const CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
   const CHI = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
@@ -324,6 +355,11 @@
     // Chuyển đổi Dương lịch -> Âm lịch
     solar2Lunar(d, m, y, tz = 7) {
       return convertSolar2Lunar(d, m, y, tz);
+    },
+
+    // Chuyển đổi Âm lịch -> Dương lịch
+    lunar2Solar(d, m, y, isLeap = 0, tz = 7) {
+      return convertLunar2Solar(d, m, y, isLeap ? 1 : 0, tz);
     },
 
     // Lấy thông tin Julian Day

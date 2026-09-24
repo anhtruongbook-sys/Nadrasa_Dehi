@@ -5541,5 +5541,205 @@ body.theme-light .pm-pattern-item {
   -webkit-overflow-scrolling: touch;
 }
 
+/* ==========================================================================
+   NETA SMART PICKER STYLES (Chuyển đổi Âm Dương, Chọn Năm Siêu Tốc)
+   ========================================================================== */
+
+.smart-picker-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+}
+
+.btn-lunar-toggle {
+  height: 24px;
+  padding: 0 5px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  border-radius: 4px;
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  background: rgba(0, 0, 0, 0.4);
+  color: #f5b041;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.15s ease;
+}
+
+.btn-lunar-toggle.lunar,
+.btn-lunar-toggle.mode-lunar {
+  background: linear-gradient(135deg, rgba(142, 68, 173, 0.35), rgba(41, 128, 185, 0.35));
+  border-color: #a569bd;
+  color: #f5eef8;
+}
+
+.btn-quick-year {
+  height: 24px;
+  padding: 0 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 4px;
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  background: rgba(245, 176, 65, 0.1);
+  color: #ffd700;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-quick-year:hover {
+  background: rgba(245, 176, 65, 0.25);
+  border-color: #ffd700;
+}
+
+/* Modal Chọn Năm Siêu Tốc */
+.smart-year-overlay {
+  z-index: 99999;
+}
+
+.smart-year-dialog {
+  max-width: 360px !important;
+  width: 92% !important;
+  background: #1c0409 !important;
+  border: 2px solid #f5b041 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+}
+
+.smart-year-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.3);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.smart-year-header h3 {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #f5b041;
+  font-weight: 900;
+}
+
+.decade-selector-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #cbd5e1;
+  margin: 6px 0 4px;
+  text-transform: uppercase;
+}
+
+.decade-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.decade-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 6px 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.decade-chip.active,
+.decade-chip:hover {
+  background: linear-gradient(135deg, #f5b041, #d4ac0d);
+  color: #1a0507;
+  border-color: #ffd700;
+  font-weight: 900;
+}
+
+.years-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+.year-chip {
+  background: rgba(245, 176, 65, 0.1);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 6px;
+  color: #fef08a;
+  padding: 6px 2px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.year-chip.active,
+.year-chip:hover {
+  background: #f5b041;
+  color: #1a0507;
+  border-color: #ffffff;
+  font-weight: 900;
+  transform: scale(1.05);
+}
+
+/* Light Theme support for Smart Picker */
+body.theme-light .btn-lunar-toggle {
+  background: #ffffff;
+  border-color: #c99324;
+  color: #78350f;
+}
+
+body.theme-light .btn-quick-year {
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #78350f;
+}
+
+body.theme-light .smart-year-dialog {
+  background: #ffffff !important;
+  border-color: #c99324 !important;
+}
+
+body.theme-light .smart-year-header h3 {
+  color: #78350f;
+}
+
+body.theme-light .decade-selector-label {
+  color: #4b5563;
+}
+
+body.theme-light .decade-chip {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+body.theme-light .decade-chip.active,
+body.theme-light .decade-chip:hover {
+  background: #b45309;
+  color: #ffffff;
+}
+
+body.theme-light .year-chip {
+  background: #fef9c3;
+  border-color: #facc15;
+  color: #78350f;
+}
+
+body.theme-light .year-chip.active,
+body.theme-light .year-chip:hover {
+  background: #b45309;
+  color: #ffffff;
+}
+
 
 

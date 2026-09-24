@@ -9,6 +9,7 @@
 
   let currentBaziDate = new Date();
   let currentIsMale = true;
+  let isLunarMode = false;
   let currentStartAge = 3;
   let currentChartData = null;
   let selectedLuckStep = 1;
@@ -65,21 +66,32 @@
     const dStr = `${input.year}-${pad(input.month)}-${pad(input.day)}`;
     const timeFormatted = `${pad(input.hour)}:${pad(input.minute)} • ${pad(input.day)}/${pad(input.month)}/${input.year}`;
 
+    const lunarObj = global.NetaCalendarEngine ? global.NetaCalendarEngine.solar2Lunar(input.day, input.month, input.year) : null;
+    const displayDay = isLunarMode && lunarObj ? lunarObj.day : input.day;
+    const displayMonth = isLunarMode && lunarObj ? lunarObj.month : input.month;
+    const displayYear = isLunarMode && lunarObj ? lunarObj.year : input.year;
+
     const getWxClass = global.NetaBaziEngine.getWuXingColorClass;
 
     container.innerHTML = `
       <div class="bazi-view-container">
-        <!-- Bazi Ultra-Compact Control Bar -->
+        <!-- Bazi Ultra-Compact Control Bar with Smart Picker -->
         <div class="bazi-ctrl-bar">
           <div class="bazi-inputs-row">
-            <!-- Direct Numeric Date -->
+            <!-- Lunar / Solar Toggle -->
+            <button class="btn-lunar-toggle ${isLunarMode ? 'mode-lunar' : ''}" id="bazi-btn-cal-type" title="Chạm để chuyển đổi Dương Lịch / Âm Lịch">
+              ${isLunarMode ? '🌙 Âm' : '☀️ Dương'}
+            </button>
+
+            <!-- Direct Numeric Date with Smart Picker & Quick Decade Jumper -->
             <div class="numeric-date-row">
-              <input type="number" id="bazi-input-day" class="num-box num-day" min="1" max="31" value="${input.day}" placeholder="Ngày" title="Nhập Ngày (1-31)">
+              <input type="number" id="bazi-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày" title="Nhập Ngày (1-31)">
               <span class="num-slash">/</span>
-              <input type="number" id="bazi-input-month" class="num-box num-month" min="1" max="12" value="${input.month}" placeholder="Tháng" title="Nhập Tháng (1-12)">
+              <input type="number" id="bazi-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng" title="Nhập Tháng (1-12)">
               <span class="num-slash">/</span>
-              <input type="number" id="bazi-input-year" class="num-box num-year" min="1900" max="2100" value="${input.year}" placeholder="Năm" title="Nhập Năm">
-              <label class="btn-picker-cal" title="Chọn ngày trên lịch">
+              <input type="number" id="bazi-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm" title="Nhập Năm (gõ 2 số: 79 -> 1979)">
+              <button class="btn-quick-year" id="bazi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc (1940 - 2030)">⚡Năm</button>
+              <label class="btn-picker-cal" id="bazi-btn-native-cal" title="Mở lịch chọn ngày gốc của hệ điều hành">
                 📅
                 <input type="date" id="bazi-date-picker" value="${dStr}" class="native-hidden-date">
               </label>
@@ -356,29 +368,52 @@
     const selectCanChi = document.getElementById('bazi-select-canchi');
     const inputHour = document.getElementById('bazi-input-hour');
     const inputMin = document.getElementById('bazi-input-minute');
+    const btnSubmit = document.getElementById('btn-bazi-submit');
 
-    // Sync native datepicker -> numeric boxes
-    if (datePicker) {
-      datePicker.addEventListener('change', () => {
-        if (!datePicker.value) return;
-        const [y, m, d] = datePicker.value.split('-').map(Number);
-        if (inputDay) inputDay.value = d;
-        if (inputMonth) inputMonth.value = m;
-        if (inputYear) inputYear.value = y;
+    // Chuyển đổi Dương Lịch <-> Âm Lịch
+    const btnCalType = document.getElementById('bazi-btn-cal-type');
+    if (btnCalType) {
+      btnCalType.onclick = () => {
+        isLunarMode = !isLunarMode;
+        renderBazi();
+      };
+    }
+
+    // Nút Chọn Năm Siêu Tốc (Decade & Year Jumper)
+    const btnQuickYear = document.getElementById('bazi-btn-quick-year');
+    if (btnQuickYear && inputYear) {
+      btnQuickYear.onclick = (e) => {
+        e.preventDefault();
+        if (global.NetaSmartPicker) {
+          global.NetaSmartPicker.openYearJumperModal(inputYear.value, (newYear) => {
+            inputYear.value = newYear;
+            if (btnSubmit) btnSubmit.click();
+          });
+        }
+      };
+    }
+
+    // Tự động nhảy ô thông minh (Auto-advance) & Nhận diện năm 2 chữ số (79 -> 1979)
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        hourInput: inputHour,
+        minuteInput: inputMin,
+        onSubmit: () => { if (btnSubmit) btnSubmit.click(); }
       });
+      // Kết nối Date Picker gốc của hệ điều hành di động
+      global.NetaSmartPicker.setupNativeDatePicker(
+        document.getElementById('bazi-btn-native-cal'),
+        datePicker,
+        (d, m, y) => {
+          isLunarMode = false;
+          currentBaziDate = new Date(y, m - 1, d, parseInt(inputHour.value) || 12, parseInt(inputMin.value) || 0, 0);
+          renderBazi();
+        }
+      );
     }
-
-    // Sync numeric boxes -> native datepicker
-    function syncDateBoxesToPicker() {
-      if (!inputDay || !inputMonth || !inputYear || !datePicker) return;
-      const d = parseInt(inputDay.value) || 1;
-      const m = parseInt(inputMonth.value) || 1;
-      const y = parseInt(inputYear.value) || 2026;
-      datePicker.value = `${y}-${pad(m)}-${pad(d)}`;
-    }
-    if (inputDay) inputDay.addEventListener('input', syncDateBoxesToPicker);
-    if (inputMonth) inputMonth.addEventListener('input', syncDateBoxesToPicker);
-    if (inputYear) inputYear.addEventListener('input', syncDateBoxesToPicker);
 
     // Sync Can Chi hour -> numeric hour box
     if (selectCanChi) {
@@ -392,16 +427,10 @@
       inputHour.addEventListener('input', () => {
         const h = parseInt(inputHour.value);
         if (isNaN(h)) return;
-        const CAN_CHI_MAP = [
-          { val: 0, match: [23, 0] }, { val: 2, match: [1, 2] },
-          { val: 4, match: [3, 4] }, { val: 6, match: [5, 6] },
-          { val: 8, match: [7, 8] }, { val: 10, match: [9, 10] },
-          { val: 12, match: [11, 12] }, { val: 14, match: [13, 14] },
-          { val: 16, match: [15, 16] }, { val: 18, match: [17, 18] },
-          { val: 20, match: [19, 20] }, { val: 22, match: [21, 22] }
-        ];
-        const found = CAN_CHI_MAP.find(c => c.match.includes(h));
-        if (found && selectCanChi) selectCanChi.value = String(found.val);
+        if (global.NetaSmartPicker) {
+          const zhiObj = global.NetaSmartPicker.getZhiByHour(h);
+          if (zhiObj && selectCanChi) selectCanChi.value = String(zhiObj.val);
+        }
       });
     }
 
@@ -418,20 +447,34 @@
     const btnNow = document.getElementById('btn-bazi-now');
     if (btnNow) {
       btnNow.onclick = () => {
+        isLunarMode = false;
         currentBaziDate = new Date();
         renderBazi();
       };
     }
 
     // Submit button
-    const btnSubmit = document.getElementById('btn-bazi-submit');
     if (btnSubmit) {
       btnSubmit.onclick = () => {
-        const d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
-        const m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
-        const y = Math.min(2100, Math.max(1900, parseInt(inputYear ? inputYear.value : 2026) || 2026));
+        let d = parseInt(inputDay ? inputDay.value : 1) || 1;
+        let m = parseInt(inputMonth ? inputMonth.value : 1) || 1;
+        let y = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (inputYear && inputYear.value.length === 2 && global.NetaSmartPicker) {
+          y = global.NetaSmartPicker.parseSmartYear(inputYear.value);
+          inputYear.value = y;
+        }
         const h = Math.min(23, Math.max(0, parseInt(inputHour ? inputHour.value : 12) || 12));
         const min = Math.min(59, Math.max(0, parseInt(inputMin ? inputMin.value : 0) || 0));
+
+        // Nếu người dùng nhập ngày Âm lịch, tự động quy đổi sang Dương lịch
+        if (isLunarMode && global.NetaCalendarEngine) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y);
+          if (solar) {
+            d = solar.day;
+            m = solar.month;
+            y = solar.year;
+          }
+        }
 
         currentBaziDate = new Date(y, m - 1, d, h, min, 0);
         renderBazi();

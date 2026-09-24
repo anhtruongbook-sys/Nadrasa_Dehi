@@ -12,6 +12,7 @@
 
   let currentTuViDate = new Date();
   let currentIsMale = true;
+  let isLunarMode = false; // Chuyển đổi Dương Lịch <-> Âm Lịch
   let currentViewMode = 'grid'; // 'grid' (4x4) or 'list'
   let currentChartData = null;
 
@@ -90,19 +91,29 @@
     const pad = n => String(n).padStart(2, '0');
     const dStr = `${meta.solarYear}-${pad(meta.solarMonth)}-${pad(meta.solarDay)}`;
 
+    const displayDay = isLunarMode ? meta.lunarDay : meta.solarDay;
+    const displayMonth = isLunarMode ? meta.lunarMonth : meta.solarMonth;
+    const displayYear = isLunarMode ? meta.lunarYear : meta.solarYear;
+
     container.innerHTML = `
       <div class="tuvi-view-container">
-        <!-- Tu Vi Ultra-Compact Control Bar -->
+        <!-- Tu Vi Ultra-Compact Control Bar with Smart Picker -->
         <div class="tuvi-ctrl-bar">
           <div class="tuvi-inputs-row">
-            <!-- Direct Numeric Date -->
+            <!-- Lunar / Solar Toggle -->
+            <button class="btn-lunar-toggle ${isLunarMode ? 'mode-lunar' : ''}" id="tuvi-btn-cal-type" title="Chạm để chuyển đổi Dương Lịch / Âm Lịch">
+              ${isLunarMode ? '🌙 Âm' : '☀️ Dương'}
+            </button>
+
+            <!-- Direct Numeric Date with Smart Picker & Quick Decade Jumper -->
             <div class="numeric-date-row">
-              <input type="number" id="tuvi-input-day" class="num-box num-day" min="1" max="31" value="${meta.solarDay}" placeholder="Ngày" title="Nhập Ngày (1-31)">
+              <input type="number" id="tuvi-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày" title="Nhập Ngày (1-31)">
               <span class="num-slash">/</span>
-              <input type="number" id="tuvi-input-month" class="num-box num-month" min="1" max="12" value="${meta.solarMonth}" placeholder="Tháng" title="Nhập Tháng (1-12)">
+              <input type="number" id="tuvi-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng" title="Nhập Tháng (1-12)">
               <span class="num-slash">/</span>
-              <input type="number" id="tuvi-input-year" class="num-box num-year" min="1900" max="2100" value="${meta.solarYear}" placeholder="Năm" title="Nhập Năm">
-              <label class="btn-picker-cal" title="Chọn ngày trên lịch">
+              <input type="number" id="tuvi-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm" title="Nhập Năm (gõ 2 số: 79 -> 1979)">
+              <button class="btn-quick-year" id="tuvi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc (1940 - 2030)">⚡Năm</button>
+              <label class="btn-picker-cal" id="tuvi-btn-native-cal" title="Mở lịch chọn ngày gốc của hệ điều hành">
                 📅
                 <input type="date" id="tuvi-date-picker" value="${dStr}" class="native-hidden-date">
               </label>
@@ -401,29 +412,52 @@
     const selectCanChi = document.getElementById('tuvi-select-canchi');
     const inputHour = document.getElementById('tuvi-input-hour');
     const inputMin = document.getElementById('tuvi-input-minute');
+    const btnSubmit = document.getElementById('btn-tuvi-submit');
 
-    // Sync native datepicker -> numeric boxes
-    if (datePicker) {
-      datePicker.addEventListener('change', () => {
-        if (!datePicker.value) return;
-        const [y, m, d] = datePicker.value.split('-').map(Number);
-        if (inputDay) inputDay.value = d;
-        if (inputMonth) inputMonth.value = m;
-        if (inputYear) inputYear.value = y;
+    // Chuyển đổi Dương Lịch <-> Âm Lịch
+    const btnCalType = document.getElementById('tuvi-btn-cal-type');
+    if (btnCalType) {
+      btnCalType.onclick = () => {
+        isLunarMode = !isLunarMode;
+        renderTuVi();
+      };
+    }
+
+    // Nút Chọn Năm Siêu Tốc (Decade & Year Jumper)
+    const btnQuickYear = document.getElementById('tuvi-btn-quick-year');
+    if (btnQuickYear && inputYear) {
+      btnQuickYear.onclick = (e) => {
+        e.preventDefault();
+        if (global.NetaSmartPicker) {
+          global.NetaSmartPicker.openYearJumperModal(inputYear.value, (newYear) => {
+            inputYear.value = newYear;
+            if (btnSubmit) btnSubmit.click();
+          });
+        }
+      };
+    }
+
+    // Tự động nhảy ô thông minh (Auto-advance) & Nhận diện năm 2 chữ số (79 -> 1979)
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        hourInput: inputHour,
+        minuteInput: inputMin,
+        onSubmit: () => { if (btnSubmit) btnSubmit.click(); }
       });
+      // Kết nối Date Picker gốc của hệ điều hành di động
+      global.NetaSmartPicker.setupNativeDatePicker(
+        document.getElementById('tuvi-btn-native-cal'),
+        datePicker,
+        (d, m, y) => {
+          isLunarMode = false;
+          currentTuViDate = new Date(y, m - 1, d, parseInt(inputHour.value) || 12, parseInt(inputMin.value) || 0, 0);
+          renderTuVi();
+        }
+      );
     }
-
-    // Sync numeric boxes -> native datepicker
-    function syncDateBoxesToPicker() {
-      if (!inputDay || !inputMonth || !inputYear || !datePicker) return;
-      const d = parseInt(inputDay.value) || 1;
-      const m = parseInt(inputMonth.value) || 1;
-      const y = parseInt(inputYear.value) || 2026;
-      datePicker.value = `${y}-${pad(m)}-${pad(d)}`;
-    }
-    if (inputDay) inputDay.addEventListener('input', syncDateBoxesToPicker);
-    if (inputMonth) inputMonth.addEventListener('input', syncDateBoxesToPicker);
-    if (inputYear) inputYear.addEventListener('input', syncDateBoxesToPicker);
 
     // Sync Can Chi hour -> numeric hour box
     if (selectCanChi) {
@@ -437,16 +471,10 @@
       inputHour.addEventListener('input', () => {
         const h = parseInt(inputHour.value);
         if (isNaN(h)) return;
-        const CAN_CHI_MAP = [
-          { val: 0, match: [23, 0] }, { val: 2, match: [1, 2] },
-          { val: 4, match: [3, 4] }, { val: 6, match: [5, 6] },
-          { val: 8, match: [7, 8] }, { val: 10, match: [9, 10] },
-          { val: 12, match: [11, 12] }, { val: 14, match: [13, 14] },
-          { val: 16, match: [15, 16] }, { val: 18, match: [17, 18] },
-          { val: 20, match: [19, 20] }, { val: 22, match: [21, 22] }
-        ];
-        const found = CAN_CHI_MAP.find(c => c.match.includes(h));
-        if (found && selectCanChi) selectCanChi.value = String(found.val);
+        if (global.NetaSmartPicker) {
+          const zhiObj = global.NetaSmartPicker.getZhiByHour(h);
+          if (zhiObj && selectCanChi) selectCanChi.value = String(zhiObj.val);
+        }
       });
     }
 
@@ -463,20 +491,34 @@
     const btnNow = document.getElementById('btn-tuvi-now');
     if (btnNow) {
       btnNow.onclick = () => {
+        isLunarMode = false;
         currentTuViDate = new Date();
         renderTuVi();
       };
     }
 
     // Submit button
-    const btnSubmit = document.getElementById('btn-tuvi-submit');
     if (btnSubmit) {
       btnSubmit.onclick = () => {
-        const d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
-        const m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
-        const y = Math.min(2100, Math.max(1900, parseInt(inputYear ? inputYear.value : 2026) || 2026));
+        let d = parseInt(inputDay ? inputDay.value : 1) || 1;
+        let m = parseInt(inputMonth ? inputMonth.value : 1) || 1;
+        let y = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (inputYear && inputYear.value.length === 2 && global.NetaSmartPicker) {
+          y = global.NetaSmartPicker.parseSmartYear(inputYear.value);
+          inputYear.value = y;
+        }
         const h = Math.min(23, Math.max(0, parseInt(inputHour ? inputHour.value : 12) || 12));
         const min = Math.min(59, Math.max(0, parseInt(inputMin ? inputMin.value : 0) || 0));
+
+        // Nếu người dùng nhập ngày Âm lịch, tự động quy đổi sang Dương lịch
+        if (isLunarMode && global.NetaCalendarEngine) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y);
+          if (solar) {
+            d = solar.day;
+            m = solar.month;
+            y = solar.year;
+          }
+        }
 
         currentTuViDate = new Date(y, m - 1, d, h, min, 0);
         renderTuVi();
