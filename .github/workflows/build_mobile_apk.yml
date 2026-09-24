@@ -63,19 +63,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.6
-          name: "Neta Light & Huyền Học v1.3.6 (Sửa Triệt Để Lỗi Tràn Nút Lịch & Cắt Chữ Tử Vi)"
+          tag_name: v1.3.7
+          name: "Neta Light & Huyền Học v1.3.7 (Tái Cấu Trúc Toàn Diện Thiên Bàn Tử Vi)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.6
-            - **Sửa Triệt Để Lỗi Nút Bị Tràn Ra Ngoài Khung (Lịch Âm Dương)**:
-              + Tái cơ cấu thanh điều khiển Lịch 2 tầng chuẩn mực:
-                * Tầng 1: Nhóm chọn chế độ (`Tháng / Ngày`), chọn lịch (`Dương / Âm`) và nút `⚡ Hôm nay`.
-                * Tầng 2: Hộp nhập ngày tháng năm linh hoạt + Nút hành động `🚀 Xem`.
-              + Chấm dứt hoàn toàn hiện tượng nút `[ 🚀 ]` bị đẩy tràn ra khỏi mép khung trên màn hình điện thoại.
-            - **Khắc Phục Triệt Để Cắt Chữ Khi Không Gian Còn Rộng (Lá Số Tử Vi)**:
-              + **Phụ Tinh (Cát / Sát)**: Chuyển sang Flexbox tự co giãn linh hoạt, loại bỏ khóa cứng 50% và `overflow: hidden`, hiển thị nguyên vẹn 100% tên sao dài (*Thiếu Dương*, *Thanh Long*, *Nguyệt Đức*...).
-              + **Thiên Bàn Trung Tâm**: Phân bổ độ rộng cột linh hoạt (tăng 35% không gian cột phải), hiển thị trọn vẹn Nạp Âm (*Thiên Thượng Hỏa*).
-              + **Huy Hiệu Cung**: Hợp nhất `THÂN`, `TRIỆT`, `TUẦN` vào chung flex-container, hiển thị song song không đè chồng, không cắt chữ cung dài (*PHÚC ĐỨC*).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.7
+            - **Tái Cấu Trúc Toàn Diện Ô Giữa (Thiên Bàn Tử Vi)**:
+              + Loại bỏ hoàn toàn vách ngăn dọc chia đôi thô cứng khiến chữ bị dồn ép và đè chồng lên nhau.
+              + Thiết kế lại layout phân tầng ngang (Full-width Horizontal Rows):
+                * Tiêu đề & Đương số: Font chữ lớn, sắc nét, trang trọng.
+                * Khối Thời Gian Sinh (Dương lịch, Âm lịch, Giờ sinh, Tuổi mụ): Trải rộng 100% bề ngang ô giữa, khoảng cách thoáng đãng, tuyệt đối không va chạm chữ.
+                * Khối Bản Mệnh & Cục Số: Bản Mệnh Nạp Âm nổi bật trong thẻ viền hổ phách sang trọng, Cục số và Cung Mệnh/Thân phân bổ cân đối.
+                * Khối Chủ Mệnh & Chủ Thân: Căn đều chân Thiên Bàn tinh tế.
+            - **Khắc Phục Lỗi Nút Tràn Ra Ngoài Khung (Lịch Âm Dương)**:
+              + Cân bằng thanh điều khiển 2 tầng, nút `🚀 Xem` nằm gọn gàng bên trong thẻ.
+            - **Khắc Phục Cắt Chữ & Đè Huy Hiệu Tử Vi**:
+              + Phụ tinh co giãn tự nhiên, không cắt tên sao dài (*Thiếu Dương*, *Thanh Long*...).
+              + Huy hiệu `THÂN`, `TRIỆT`, `TUẦN` bố trí song song không chồng chéo.
+            - **Giao Diện Phẳng Hiện Đại (Pure Flat UI)**: Độ tương phản cao, tối ưu cho cả chế độ Sáng (Light) và Tối (Dark).
             - **Hoạt động Ngoại tuyến 100% Offline độc lập**: 60 FPS mượt mà.
           files: build-output/NetaLight.apk
           draft: false

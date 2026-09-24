@@ -3679,14 +3679,14 @@ body.theme-light .dropdown-check {
   box-shadow: none;
 }
 
-/* Center Box: Thiên Bàn Phẳng Hiện Đại */
+/* Center Box: Thiên Bàn Phẳng Hiện Đại - Cấu Trúc Thoáng Rộng Hoàn Toàn */
 .tuvi-center-box {
   grid-column: 2 / 4;
   grid-row: 2 / 4;
   background: #0f172a;
   border: 1.5px solid #334155;
   border-radius: 4px;
-  padding: 3px 4px;
+  padding: 4px 6px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -3702,7 +3702,7 @@ body.theme-light .dropdown-check {
   height: 100%;
   border: 1px solid #1e293b;
   border-radius: 3px;
-  padding: 3px;
+  padding: 4px 6px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -3717,12 +3717,12 @@ body.theme-light .dropdown-check {
 .tc-header {
   text-align: center;
   border-bottom: 1px solid #334155;
-  padding-bottom: 2px;
+  padding-bottom: 3px;
 }
 
 .tc-title {
   margin: 0;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 900;
   color: #fbbf24;
   letter-spacing: 0.8px;
@@ -3732,88 +3732,104 @@ body.theme-light .dropdown-check {
 }
 
 .tc-sub {
-  font-size: 0.44rem;
+  font-size: 0.48rem;
   color: #94a3b8;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  line-height: 1;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
+  margin-top: 2px;
 }
 
-.tc-body-grid {
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  gap: 3px;
-  padding: 2px 0;
-  flex-grow: 1;
-}
-
-.tc-col {
+.tc-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  gap: 1px;
-  min-width: 0;
+  justify-content: space-between;
+  flex-grow: 1;
+  padding: 5px 0;
+  gap: 2px;
 }
 
-.tc-col-left {
-  flex: 4 1 0%;
-}
-
-.tc-col-right {
-  flex: 5.5 1 0%;
-}
-
-.tc-divider-v {
-  width: 1px;
+.tc-divider-h {
+  height: 1px;
   background: #334155;
-  flex-shrink: 0;
+  margin: 2px 0;
+  width: 100%;
+  opacity: 0.8;
 }
 
-.tc-item {
+.tc-row-full {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.42rem;
-  line-height: 1.25;
+  font-size: 0.49rem;
+  line-height: 1.35;
   white-space: nowrap;
-  gap: 1px;
+  width: 100%;
+  gap: 4px;
 }
 
-.tc-k {
+.tc-row-split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.tc-pair {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.tc-row-menh {
+  background: rgba(251, 191, 36, 0.08);
+  padding: 2px 5px;
+  border-radius: 2px;
+  border-left: 2px solid #fbbf24;
+}
+
+.tc-lbl {
   color: #94a3b8;
   font-weight: 600;
   flex-shrink: 0;
-  font-size: 0.41rem;
+  font-size: 0.47rem;
 }
 
-.tc-v {
+.tc-val {
   color: #f8fafc;
   font-weight: 800;
   text-align: right;
-  letter-spacing: -0.2px;
-  font-size: 0.42rem;
+  font-size: 0.49rem;
   white-space: nowrap;
 }
 
-.text-menh-gold {
-  color: #fde047 !important;
-  text-shadow: none;
+.tc-val-gold {
+  color: #fbbf24 !important;
+  font-weight: 900;
+  font-size: 0.48rem;
+  letter-spacing: 0.2px;
+}
+
+.tc-val-than {
+  color: #f59e0b !important;
+  font-weight: 800;
 }
 
 .tc-footer-stars {
   border-top: 1px solid #334155;
-  padding-top: 1px;
+  padding-top: 3px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.44rem;
+  font-size: 0.45rem;
   color: #94a3b8;
   line-height: 1.2;
 }
 
 .tc-footer-stars strong {
   color: #f8fafc;
+  font-weight: 800;
 }
 
 /* Palace Cell (Mỗi Cung Phẳng Hiện Đại) */
@@ -5663,24 +5679,34 @@ body.theme-light .tc-sub {
   font-weight: 700 !important;
 }
 
-body.theme-light .tc-divider-v {
+body.theme-light .tc-divider-h {
   background: #cbd5e1 !important;
 }
 
-body.theme-light .tc-k {
+body.theme-light .tc-lbl {
   color: #475569 !important;
   font-weight: 700 !important;
 }
 
-body.theme-light .tc-v {
+body.theme-light .tc-val {
   color: #0f172a !important;
   font-weight: 900 !important;
 }
 
-body.theme-light .text-menh-gold {
+body.theme-light .tc-row-menh {
+  background: rgba(180, 83, 9, 0.08) !important;
+  border-left: 2px solid #b45309 !important;
+}
+
+body.theme-light .tc-val-gold {
   color: #b45309 !important;
   font-weight: 900 !important;
   text-shadow: none !important;
+}
+
+body.theme-light .tc-val-than {
+  color: #d97706 !important;
+  font-weight: 900 !important;
 }
 
 body.theme-light .tc-footer-stars {

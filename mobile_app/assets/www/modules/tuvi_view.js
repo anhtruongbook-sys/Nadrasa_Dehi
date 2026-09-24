@@ -204,29 +204,55 @@
     return `
       <div class="tuvi-grid-wrapper">
         <div class="tuvi-grid-4x4">
-          <!-- Thiên Bàn Center (Imperial Masterpiece) -->
+          <!-- Thiên Bàn Center (Modern Flat Masterpiece) -->
           <div class="tuvi-center-box">
-            <div class="tc-bg-yin-yang">☯</div>
             <div class="tc-inner-border">
               <div class="tc-header">
                 <div class="tc-title">LÁ SỐ TỬ VI</div>
-                <div class="tc-sub">NAM PHÁI • THÁI THỨ LANG</div>
+                <div class="tc-sub">${meta.amDuongNamNu || (currentIsMale ? 'Dương Nam' : 'Âm Nữ')} • Năm ${meta.yearGan} ${meta.yearZhi} (${meta.solarYear})</div>
               </div>
-              <div class="tc-body-grid">
-                <div class="tc-col tc-col-left">
-                  <div class="tc-item"><span class="tc-k">Dương:</span><strong class="tc-v">${pad(meta.solarDay)}/${pad(meta.solarMonth)}/${meta.solarYear}</strong></div>
-                  <div class="tc-item"><span class="tc-k">Âm:</span><strong class="tc-v">${pad(meta.lunarDay)}/${pad(meta.lunarMonth)} (${meta.yearGan} ${meta.yearZhi})</strong></div>
-                  <div class="tc-item"><span class="tc-k">Giờ:</span><strong class="tc-v">${pad(meta.solarHour)}h (${meta.hourZhi})</strong></div>
-                  <div class="tc-item"><span class="tc-k">Mụ:</span><strong class="tc-v">${meta.currentAgeMu} tuổi</strong></div>
+
+              <div class="tc-content">
+                <!-- Hàng 1: Dương lịch & Giờ phút -->
+                <div class="tc-row-full">
+                  <span class="tc-lbl">Dương lịch:</span>
+                  <span class="tc-val">${pad(meta.solarDay)}/${pad(meta.solarMonth)}/${meta.solarYear} (${pad(meta.solarHour)}:${pad(currentTuViDate.getMinutes())})</span>
                 </div>
-                <div class="tc-divider-v"></div>
-                <div class="tc-col tc-col-right">
-                  <div class="tc-item"><span class="tc-k">Mệnh:</span><strong class="tc-v text-menh-gold">${meta.napAm}</strong></div>
-                  <div class="tc-item"><span class="tc-k">Cục:</span><strong class="tc-v">${meta.cucName}</strong></div>
-                  <div class="tc-item"><span class="tc-k">Cung:</span><strong class="tc-v">${palaces[meta.menhIdx].canChi}</strong></div>
-                  <div class="tc-item"><span class="tc-k">Thân:</span><strong class="tc-v text-menh-gold">${palaces[meta.thanIdx].name}</strong></div>
+
+                <!-- Hàng 2: Âm lịch & Can Chi Năm -->
+                <div class="tc-row-full">
+                  <span class="tc-lbl">Âm lịch:</span>
+                  <span class="tc-val">${pad(meta.lunarDay)}/${pad(meta.lunarMonth)} năm ${meta.yearGan} ${meta.yearZhi}</span>
+                </div>
+
+                <!-- Hàng 3: Giờ sinh & Tuổi mụ -->
+                <div class="tc-row-full">
+                  <span class="tc-lbl">Giờ sinh:</span>
+                  <span class="tc-val">Giờ ${meta.hourZhi} (${pad(meta.solarHour)}h) • Tuổi: ${meta.currentAgeMu}</span>
+                </div>
+
+                <div class="tc-divider-h"></div>
+
+                <!-- Hàng 4: Bản Mệnh Nạp Âm Hoàng Gia -->
+                <div class="tc-row-full tc-row-menh">
+                  <span class="tc-lbl">Bản Mệnh:</span>
+                  <strong class="tc-val tc-val-gold">${meta.napAm}</strong>
+                </div>
+
+                <!-- Hàng 5: Cục Số -->
+                <div class="tc-row-full">
+                  <span class="tc-lbl">Cục số:</span>
+                  <strong class="tc-val">${meta.cucName}</strong>
+                </div>
+
+                <!-- Hàng 6: Mệnh Cung & Thân Cư -->
+                <div class="tc-row-full tc-row-split">
+                  <span class="tc-pair"><span class="tc-lbl">Mệnh tại:</span> <strong class="tc-val">${palaces[meta.menhIdx].canChi}</strong></span>
+                  <span class="tc-pair"><span class="tc-lbl">Thân cư:</span> <strong class="tc-val tc-val-than">${palaces[meta.thanIdx].name}</strong></span>
                 </div>
               </div>
+
+              <!-- Khối Chủ Tinh -->
               <div class="tc-footer-stars">
                 <span>Chủ Mệnh: <strong>${meta.chuMenh || 'Tham Lang'}</strong></span>
                 <span>Chủ Thân: <strong>${meta.chuThan || 'Linh Tinh'}</strong></span>
