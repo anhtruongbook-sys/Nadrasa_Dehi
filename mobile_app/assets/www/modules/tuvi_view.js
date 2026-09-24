@@ -15,6 +15,7 @@
   let isLunarMode = false; // Chuyển đổi Dương Lịch <-> Âm Lịch
   let currentViewMode = 'grid'; // 'grid' (4x4) or 'list'
   let currentChartData = null;
+  let currentViewYear = new Date().getFullYear(); // Mặc định năm xem hạn là năm hiện tại
 
   // Grid row & col mappings for 12 Chi in 4x4 grid (1-based for CSS Grid)
   // Row 1: Tỵ(5), Ngọ(6), Mùi(7), Thân(8)
@@ -42,9 +43,10 @@
     renderTuVi();
   }
 
-  function setDateAndRender(date, isMale = currentIsMale) {
+  function setDateAndRender(date, isMale = currentIsMale, viewYear = currentViewYear) {
     currentTuViDate = new Date(date);
     currentIsMale = isMale;
+    currentViewYear = viewYear;
     renderTuVi();
   }
 
@@ -61,7 +63,7 @@
       const chart = global.NetaTuViEngine.generateTuViChart({
         day: d, month: m, year: y, hour: h,
         isMale: currentIsMale,
-        viewYear: y
+        viewYear: currentViewYear
       });
       currentChartData = chart;
       return chart;
@@ -146,7 +148,19 @@
             </div>
           </div>
 
-          <!-- Row 3: Action row (Giờ thực, 4x4 / 12 Cung, Lập Lá Số) -->
+          <!-- Row 3: Năm Xem Vận Hạn & Sao Lưu -->
+          <div class="ucc-row ucc-row-view-year">
+            <div class="ucc-view-year-box">
+              <span class="ucc-lbl-view-year">🎯 Năm xem:</span>
+              <button type="button" class="ucc-btn-year-step" id="btn-view-year-prev" title="Lùi 1 năm">◀</button>
+              <input type="number" id="tuvi-input-view-year" class="num-box num-view-year" min="1900" max="2100" value="${currentViewYear}" title="Nhập Năm xem hạn">
+              <button type="button" class="ucc-btn-year-step" id="btn-view-year-next" title="Tiến 1 năm">▶</button>
+              <span class="ucc-tag-canchi-year" id="tuvi-tag-canchi-year">(${meta.viewYearCanChi})</span>
+            </div>
+            <button type="button" class="ucc-btn-year-now" id="btn-view-year-now" title="Về năm hiện tại (${new Date().getFullYear()})">⚡ Năm nay</button>
+          </div>
+
+          <!-- Row 4: Action row (Giờ thực, 4x4 / 12 Cung, Lập Lá Số) -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="btn-tuvi-now" title="Về thời điểm hiện tại">
               ⚡ Giờ thực
@@ -174,10 +188,12 @@
           <div class="tms-item"><span class="tms-lbl">Cục:</span> <strong class="tms-val">${meta.cucName}</strong></div>
           <span class="tms-sep">•</span>
           <div class="tms-item"><span class="tms-lbl">Thân:</span> <strong class="tms-val text-menh-gold">${palaces[meta.thanIdx].name}</strong></div>
+          <span class="tms-sep">•</span>
+          <div class="tms-item"><span class="tms-lbl">Hạn:</span> <strong class="tms-val text-view-year">${meta.viewYear} (${meta.viewYearCanChi}) - ${meta.currentAgeMu}t</strong></div>
         </div>
 
         <!-- Main Chart Display -->
-        ${currentViewMode === 'grid' ? renderGrid4x4HTML(meta, palaces) : renderListModeHTML(palaces)}
+        ${currentViewMode === 'grid' ? renderGrid4x4HTML(meta, palaces) : renderListModeHTML(meta, palaces)}
       </div>
 
       <!-- Palace Detail Modal -->
@@ -225,27 +241,33 @@
                   <span class="tc-val">${pad(meta.lunarDay)}/${pad(meta.lunarMonth)} năm ${meta.yearGan} ${meta.yearZhi}</span>
                 </div>
 
-                <!-- Hàng 3: Giờ sinh & Tuổi mụ -->
+                <!-- Hàng 3: Giờ sinh -->
                 <div class="tc-row-full">
                   <span class="tc-lbl">Giờ sinh:</span>
-                  <span class="tc-val">Giờ ${meta.hourZhi} (${pad(meta.solarHour)}h) • Tuổi: ${meta.currentAgeMu}</span>
+                  <span class="tc-val">Giờ ${meta.hourZhi} (${pad(meta.solarHour)}h)</span>
+                </div>
+
+                <!-- Hàng 4: Năm xem hạn & Tuổi mụ (Nổi bật) -->
+                <div class="tc-row-full tc-row-view-highlight">
+                  <span class="tc-lbl">Năm xem:</span>
+                  <strong class="tc-val tc-val-view-year">${meta.viewYear} (${meta.viewYearCanChi}) • ${meta.currentAgeMu} tuổi</strong>
                 </div>
 
                 <div class="tc-divider-h"></div>
 
-                <!-- Hàng 4: Bản Mệnh Nạp Âm Hoàng Gia -->
+                <!-- Hàng 5: Bản Mệnh Nạp Âm Hoàng Gia -->
                 <div class="tc-row-full tc-row-menh">
                   <span class="tc-lbl">Bản Mệnh:</span>
                   <strong class="tc-val tc-val-gold">${meta.napAm}</strong>
                 </div>
 
-                <!-- Hàng 5: Cục Số -->
+                <!-- Hàng 6: Cục Số -->
                 <div class="tc-row-full">
                   <span class="tc-lbl">Cục số:</span>
                   <strong class="tc-val">${meta.cucName}</strong>
                 </div>
 
-                <!-- Hàng 6: Mệnh Cung & Thân Cư -->
+                <!-- Hàng 7: Mệnh Cung & Thân Cư -->
                 <div class="tc-row-full tc-row-split">
                   <span class="tc-pair"><span class="tc-lbl">Mệnh tại:</span> <strong class="tc-val">${palaces[meta.menhIdx].canChi}</strong></span>
                   <span class="tc-pair"><span class="tc-lbl">Thân cư:</span> <strong class="tc-val tc-val-than">${palaces[meta.thanIdx].name}</strong></span>
@@ -304,11 +326,21 @@
                   </div>
                 </div>
 
+                <!-- Sao Lưu Hàng Năm (Theo Năm Xem) -->
+                ${p.luuStars && p.luuStars.length > 0 ? `
+                  <div class="tc-luu-stars-box">
+                    ${p.luuStars.map(s => `
+                      <span class="star-luu ${s.type} ${getColorClass(s.hanh)}" title="Sao Lưu năm ${meta.viewYear} (${meta.viewYearCanChi})">${s.name}</span>
+                    `).join('')}
+                  </div>
+                ` : ''}
+
                 <!-- Cell Footer -->
                 <div class="tc-cell-footer">
                   <span class="tc-canchi-val">${p.canChi}</span>
                   <span class="tc-trangsinh-val">${p.trangSinh}</span>
                   <span class="tc-daihan-val">${p.daiHan}</span>
+                  ${p.isTieuHanYear ? `<span class="tc-tieuhan-badge" title="Tiểu Hạn năm ${meta.viewYear} (${meta.viewYearCanChi})">HẠN</span>` : ''}
                 </div>
               </div>
             `;
@@ -318,7 +350,7 @@
     `;
   }
 
-  function renderListModeHTML(palaces) {
+  function renderListModeHTML(meta, palaces) {
     const getColorClass = global.NetaTuViEngine.getStarColorClass;
 
     return `
@@ -330,6 +362,7 @@
                 <span class="tlc-cung-name ${p.isMenh ? 'text-menh' : ''}">${p.name}</span>
                 <span class="tlc-canchi">(${p.canChi})</span>
                 ${p.isThan ? '<span class="tc-badge-than">THÂN CƯ</span>' : ''}
+                ${p.isTieuHanYear ? `<span class="tc-tieuhan-badge" title="Tiểu Hạn năm ${meta.viewYear}">HẠN ${meta.viewYear}</span>` : ''}
               </div>
               <div class="tlc-right">
                 ${p.isTriet ? '<span class="tc-badge-triet">TRIỆT</span>' : ''}
@@ -367,6 +400,17 @@
                   </div>
                 </div>
               </div>
+
+              ${p.luuStars && p.luuStars.length > 0 ? `
+                <div class="tlc-luu-row">
+                  <span class="tlc-sec-lbl">Sao Lưu (${meta.viewYear} ${meta.viewYearCanChi}):</span>
+                  <div class="tlc-sec-chips">
+                    ${p.luuStars.map(s => `
+                      <span class="tlc-sec-chip star-luu ${s.type} ${getColorClass(s.hanh)}">${s.name}</span>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
             </div>
           </div>
         `).join('')}
@@ -505,6 +549,45 @@
       });
     }
 
+    // Điều khiển Năm Xem Vận Hạn & Sao Lưu
+    const btnYearPrev = document.getElementById('btn-view-year-prev');
+    const btnYearNext = document.getElementById('btn-view-year-next');
+    const btnYearNow = document.getElementById('btn-view-year-now');
+    const inputViewYear = document.getElementById('tuvi-input-view-year');
+
+    if (btnYearPrev) {
+      btnYearPrev.onclick = () => {
+        currentViewYear--;
+        renderTuVi();
+      };
+    }
+    if (btnYearNext) {
+      btnYearNext.onclick = () => {
+        currentViewYear++;
+        renderTuVi();
+      };
+    }
+    if (btnYearNow) {
+      btnYearNow.onclick = () => {
+        currentViewYear = new Date().getFullYear();
+        renderTuVi();
+      };
+    }
+    if (inputViewYear) {
+      inputViewYear.onchange = () => {
+        const vy = parseInt(inputViewYear.value, 10);
+        if (!isNaN(vy) && vy >= 1900 && vy <= 2100) {
+          currentViewYear = vy;
+          renderTuVi();
+        }
+      };
+      inputViewYear.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          inputViewYear.blur();
+        }
+      };
+    }
+
     // Gender toggle
     const btnMale = document.getElementById('tuvi-btn-male');
     const btnFemale = document.getElementById('tuvi-btn-female');
@@ -531,6 +614,7 @@
       btnNow.onclick = () => {
         isLunarMode = false;
         currentTuViDate = new Date();
+        currentViewYear = new Date().getFullYear();
         renderTuVi();
       };
     }
@@ -544,6 +628,10 @@
         if (inputYear && inputYear.value.length === 2 && global.NetaSmartPicker) {
           y = global.NetaSmartPicker.parseSmartYear(inputYear.value);
           inputYear.value = y;
+        }
+        if (inputViewYear) {
+          const vy = parseInt(inputViewYear.value, 10);
+          if (!isNaN(vy) && vy >= 1900 && vy <= 2100) currentViewYear = vy;
         }
         const h = Math.min(23, Math.max(0, parseInt(inputHour ? inputHour.value : 12) || 12));
         const min = Math.min(59, Math.max(0, parseInt(inputMin ? inputMin.value : 0) || 0));
@@ -608,11 +696,22 @@
           <div class="tm-badge"><strong>Can Chi:</strong> ${p.canChi}</div>
           <div class="tm-badge"><strong>Tràng Sinh:</strong> ${p.trangSinh}</div>
           <div class="tm-badge"><strong>Đại Hạn:</strong> ${p.daiHan} tuổi</div>
-          <div class="tm-badge"><strong>Tiểu Hạn:</strong> ${p.tieuHan}</div>
+          <div class="tm-badge"><strong>Tiểu Hạn:</strong> ${p.tieuHan} ${p.isTieuHanYear ? '(Hạn Năm Nay)' : ''}</div>
           ${p.isThan ? '<div class="tm-badge badge-than">THÂN CƯ</div>' : ''}
           ${p.isTriet ? '<div class="tm-badge badge-triet">TRIỆT</div>' : ''}
           ${p.isTuan ? '<div class="tm-badge badge-tuan">TUẦN</div>' : ''}
         </div>
+
+        ${p.luuStars && p.luuStars.length > 0 ? `
+          <div class="tm-section">
+            <h4>🎯 SAO LƯU NĂM ${chart.meta.viewYear} (${chart.meta.viewYearCanChi})</h4>
+            <div class="tm-chips-wrap">
+              ${p.luuStars.map(s => `
+                <span class="tm-chip star-luu ${s.type} ${getColorClass(s.hanh)}">${s.name} - Hành ${s.hanh}</span>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
 
         <div class="tm-section">
           <h4>🌟 CHÍNH TINH TỌA THỦ (${p.mainStars.length})</h4>

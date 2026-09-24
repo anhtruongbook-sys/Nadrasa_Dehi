@@ -63,23 +63,27 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.3.7
-          name: "Neta Light & Huyền Học v1.3.7 (Tái Cấu Trúc Toàn Diện Thiên Bàn Tử Vi)"
+          tag_name: v1.3.8
+          name: "Neta Light & Huyền Học v1.3.8 (Tính Năng Năm Xem & An 9 Sao Lưu Hàng Năm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.7
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.3.8
+            - **Bổ Sung Tính Năng Chọn Năm Xem Hạn (Mặc định năm hiện tại 2026 - Bính Ngọ)**:
+              + Bổ sung thanh điều khiển Năm xem siêu tốc: nút lùi/tiến năm `[ ◀ ] [ 2026 ] [ ▶ ]`, hiển thị Can Chi năm xem `(Bính Ngọ)` và nút `⚡ Năm nay`.
+              + Tự động tính toán chính xác 100% Tuổi Mụ theo Năm Xem (ví dụ sinh năm 1979 xem năm 2026 $\rightarrow$ 48 tuổi, không còn bị mặc định 1 tuổi).
+            - **An Đầy Đủ Bộ 9 Sao Lưu (Lưu Niên Tinh) Chuẩn Nam Phái Thái Thứ Lang**:
+              + Tự động an 9 sao lưu trên 12 cung theo Can Chi của năm xem:
+                * **Lưu Thái Tuế** (theo Địa Chi năm xem).
+                * **Lưu Tang Môn** (cách Lưu Thái Tuế 2 cung chiều thuận).
+                * **Lưu Bạch Hổ** (đối cung Lưu Tang Môn).
+                * **Lưu Thiên Khốc, Lưu Thiên Hư** (khởi Ngọ tính nghịch/thuận).
+                * **Lưu Lộc Tồn** (theo Thiên Can năm xem).
+                * **Lưu Kình Dương, Lưu Đà La** (trước/sau Lưu Lộc Tồn 1 cung).
+                * **Lưu Thiên Mã** (theo Tam Hợp Chi năm xem).
+              + Đánh dấu cung Tiểu Hạn của năm xem với huy hiệu `[HẠN]` nổi bật.
+              + Hiển thị nhãn Sao Lưu thanh lịch ngay trên chân cung, phân biệt rõ Cát / Hung.
             - **Tái Cấu Trúc Toàn Diện Ô Giữa (Thiên Bàn Tử Vi)**:
-              + Loại bỏ hoàn toàn vách ngăn dọc chia đôi thô cứng khiến chữ bị dồn ép và đè chồng lên nhau.
-              + Thiết kế lại layout phân tầng ngang (Full-width Horizontal Rows):
-                * Tiêu đề & Đương số: Font chữ lớn, sắc nét, trang trọng.
-                * Khối Thời Gian Sinh (Dương lịch, Âm lịch, Giờ sinh, Tuổi mụ): Trải rộng 100% bề ngang ô giữa, khoảng cách thoáng đãng, tuyệt đối không va chạm chữ.
-                * Khối Bản Mệnh & Cục Số: Bản Mệnh Nạp Âm nổi bật trong thẻ viền hổ phách sang trọng, Cục số và Cung Mệnh/Thân phân bổ cân đối.
-                * Khối Chủ Mệnh & Chủ Thân: Căn đều chân Thiên Bàn tinh tế.
-            - **Khắc Phục Lỗi Nút Tràn Ra Ngoài Khung (Lịch Âm Dương)**:
-              + Cân bằng thanh điều khiển 2 tầng, nút `🚀 Xem` nằm gọn gàng bên trong thẻ.
-            - **Khắc Phục Cắt Chữ & Đè Huy Hiệu Tử Vi**:
-              + Phụ tinh co giãn tự nhiên, không cắt tên sao dài (*Thiếu Dương*, *Thanh Long*...).
-              + Huy hiệu `THÂN`, `TRIỆT`, `TUẦN` bố trí song song không chồng chéo.
-            - **Giao Diện Phẳng Hiện Đại (Pure Flat UI)**: Độ tương phản cao, tối ưu cho cả chế độ Sáng (Light) và Tối (Dark).
+              + Layout phân tầng ngang toàn chiều rộng, hiển thị trang trọng: `Năm xem: 2026 (Bính Ngọ) • 48 tuổi`.
+              + Loại bỏ triệt để tình trạng đè chữ hay cắt chữ.
             - **Hoạt động Ngoại tuyến 100% Offline độc lập**: 60 FPS mượt mà.
           files: build-output/NetaLight.apk
           draft: false

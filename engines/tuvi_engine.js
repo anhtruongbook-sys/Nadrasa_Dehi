@@ -388,6 +388,54 @@
       tieuHanByPos[pos] = CHI[mod12(yZhiIdx + i)];
     }
 
+    // 10b. An Các Sao Lưu Theo Năm Xem (viewYear)
+    const viewGanIdx = (((viewYear - 4) % 10) + 10) % 10;
+    const viewZhiIdx = (((viewYear - 4) % 12) + 12) % 12;
+    const viewYearGan = CAN[viewGanIdx];
+    const viewYearZhi = CHI[viewZhiIdx];
+    const viewYearCanChi = `${viewYearGan} ${viewYearZhi}`;
+
+    // 1. Lưu Thái Tuế: tại cung có Địa Chi = viewYearZhi
+    const luuThaiTuePos = viewZhiIdx;
+
+    // 2. Lưu Tang Môn: cách Lưu Thái Tuế 2 cung theo chiều thuận (tiến 2 cung)
+    const luuTangMonPos = mod12(luuThaiTuePos + 2);
+
+    // 3. Lưu Bạch Hổ: đối cung Lưu Tang Môn
+    const luuBachHoPos = mod12(luuTangMonPos + 6);
+
+    // 4. Lưu Thiên Khốc: Khởi Ngọ (6) tính nghịch đến Chi năm xem
+    const luuThienKhocPos = mod12(6 - viewZhiIdx);
+
+    // 5. Lưu Thiên Hư: Khởi Ngọ (6) tính thuận đến Chi năm xem
+    const luuThienHuPos = mod12(6 + viewZhiIdx);
+
+    // 6. Lưu Lộc Tồn: theo Thiên Can năm xem
+    const luuLocTonMap = [2, 3, 5, 6, 5, 6, 8, 9, 11, 0];
+    const luuLocTonPos = luuLocTonMap[viewGanIdx];
+
+    // 7. Lưu Kình Dương: trước Lộc Tồn 1 cung (+1)
+    const luuKinhDuongPos = mod12(luuLocTonPos + 1);
+
+    // 8. Lưu Đà La: sau Lộc Tồn 1 cung (-1)
+    const luuDaLaPos = mod12(luuLocTonPos - 1);
+
+    // 9. Lưu Thiên Mã: theo Tam Hợp Chi năm xem
+    const luuMaMap = [2, 11, 8, 5, 2, 11, 8, 5, 2, 11, 8, 5];
+    const luuThienMaPos = luuMaMap[viewZhiIdx];
+
+    // Gom sao lưu theo vị trí cung (0..11)
+    const luuStarsByPos = Array.from({ length: 12 }, () => []);
+    luuStarsByPos[luuThaiTuePos].push({ name: "L.Thái Tuế", hanh: "Hỏa", type: "bad" });
+    luuStarsByPos[luuTangMonPos].push({ name: "L.Tang Môn", hanh: "Mộc", type: "bad" });
+    luuStarsByPos[luuBachHoPos].push({ name: "L.Bạch Hổ", hanh: "Kim", type: "bad" });
+    luuStarsByPos[luuThienKhocPos].push({ name: "L.Thiên Khốc", hanh: "Thủy", type: "bad" });
+    luuStarsByPos[luuThienHuPos].push({ name: "L.Thiên Hư", hanh: "Thủy", type: "bad" });
+    luuStarsByPos[luuLocTonPos].push({ name: "L.Lộc Tồn", hanh: "Thổ", type: "lucky" });
+    luuStarsByPos[luuKinhDuongPos].push({ name: "L.Kình Dương", hanh: "Kim", type: "bad" });
+    luuStarsByPos[luuDaLaPos].push({ name: "L.Đà La", hanh: "Kim", type: "bad" });
+    luuStarsByPos[luuThienMaPos].push({ name: "L.Thiên Mã", hanh: "Hỏa", type: "lucky" });
+
     // 11. Gom dữ liệu 12 Cung (0 to 11 tương ứng Tý to Hợi)
     const dvDir = tsDir;
     const palaces = [];
@@ -450,9 +498,11 @@
         trangSinh: trangSinhByPos[i] || '',
         daiHan: dvAge,
         tieuHan: tieuHanByPos[i] || '',
+        isTieuHanYear: (tieuHanByPos[i] === viewYearZhi),
         mainStars: mainStarsFormatted,
         luckyStars: luckyStarsFormatted,
         badStars: badStarsFormatted,
+        luuStars: luuStarsByPos[i] || [],
         relatives: {
           xungChieu: xungChieuIdx,
           tamHop1: tamHop1Idx,
@@ -461,8 +511,9 @@
       });
     }
 
-    // Tuổi mụ
-    const currentAgeMu = Math.max(1, viewYear - year + 1);
+    // Tuổi mụ (theo Năm xem)
+    const birthYearRef = lunarYear || year;
+    const currentAgeMu = Math.max(1, viewYear - birthYearRef + 1);
 
     // Chủ Mệnh & Chủ Thân theo Thái Thứ Lang
     const CHU_MENH_MAP = {
@@ -502,7 +553,10 @@
         chuMenh,
         chuThan,
         currentAgeMu,
-        viewYear
+        viewYear,
+        viewYearCanChi,
+        viewYearGan,
+        viewYearZhi
       },
       palaces
     };
