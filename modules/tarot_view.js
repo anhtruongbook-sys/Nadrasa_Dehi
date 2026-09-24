@@ -17,7 +17,10 @@
   let activeDrawnCards = []; // [{cardId, isUpright, isFlipped}]
   let currentReadingReport = null;
   let encyFilter = 'all'; // 'all' | 'Major' | 'Cups' | 'Pentacles' | 'Swords' | 'Wands'
+  let encyClassFilter = 'all'; // 'all' | 'court' | 'pips'
   let encySearchQuery = '';
+  let journalFilterDomain = 'all'; // 'all' | 'general' | 'career' | 'love'
+  let journalSearchQuery = '';
 
   // Phase 2: Interactive Fanned Ribbon Deck & Audio State
   let ribbonDeckPool = []; // [{index, cardId, isUpright, isPicked}]
@@ -213,6 +216,176 @@
     const container = document.getElementById('view-tarot');
     if (!container) return;
     renderTarot();
+  }
+
+
+  // ASTROLOGICAL & SYMBOLIC CORRESPONDENCES (PHASE 3)
+  const MAJOR_ASTROLOGY = {
+    "Major_00_Fool": { astro: "Sao Thiên Vương & Khí (Uranus / Air)", num: "0 (Vô cực & Khởi nguyên)", symbols: "Hoa hồng trắng (thuần khiết), tay nải (tiềm năng tích lũy), chú chó nhỏ (bản năng hộ vệ), bờ vực (bước nhảy niềm tin)." },
+    "Major_01_Magician": { astro: "Sao Thủy (Mercury / Giao tiếp & Trí tuệ)", num: "1 (Ý chí & Khởi đầu)", symbols: "Gậy phép hướng thiên, 4 bảo vật bàn thờ (Gậy, Cốc, Kiếm, Tiền), vòng vô cực Lemniscate." },
+    "Major_02_High_Priestess": { astro: "Mặt Trăng (Moon / Tiềm thức & Bí ẩn)", num: "2 (Nhị nguyên & Cân bằng)", symbols: "Hai cột đền Boaz & Jachin, bức màn quả lựu, cuộn kinh TORA, trăng lưỡi liềm dưới chân." },
+    "Major_03_Empress": { astro: "Sao Kim (Venus / Tình yêu & Sung túc)", num: "3 (Sinh sôi & Sáng tạo)", symbols: "Vương miện 12 ngôi sao, cánh đồng lúa mì chín vàng, dòng thác nước trù phú, khiên biểu tượng Venus." },
+    "Major_04_Emperor": { astro: "Cung Bạch Dương (Aries / Quyền lực & Trật tự)", num: "4 (Cấu trúc & Nền tảng vững chắc)", symbols: "Ngai vàng chạm đầu cừu đực, quyền trượng Ankh sinh khí, quả cầu hoàng quyền, áo giáp sắt." },
+    "Major_05_Hierophant": { astro: "Cung Kim Ngưu (Taurus / Truyền thống & Giáo lý)", num: "5 (Thử thách & Khế ước tinh thần)", symbols: "Hai chìa khóa thiên đàng chéo nhau, vương miện ba tầng ngôi giáo hoàng, hai tu sĩ quỳ dưới bệ." },
+    "Major_06_Lovers": { astro: "Cung Song Tử (Gemini / Gắn kết & Lựa chọn)", num: "6 (Hài hòa & Giao cảm)", symbols: "Đại thiên thần Raphael ban phước, Adam & Eva, Cây sự sống và Cây tri thức thiện ác." },
+    "Major_07_Chariot": { astro: "Cung Cự Giải (Cancer / Ý chí vượt thắng)", num: "7 (Chiến thắng & Tự chủ)", symbols: "Hai nhân sư đen-trắng điều khiển bằng ý chí, cỗ xe bọc thép phủ màn trời sao, áo giáp trăng lưỡi liềm." },
+    "Major_08_Strength": { astro: "Cung Sư Tử (Leo / Sức mạnh nội tâm)", num: "8 (Can trường & Từ tâm)", symbols: "Người phụ nữ dịu dàng khép miệng sư tử gầm, vòng vô cực hoa cỏ, sự kiên nhẫn cảm hóa." },
+    "Major_09_Hermit": { astro: "Cung Xử Nữ (Virgo / Tự vấn & Soi sáng)", num: "9 (Trưởng thành & Tĩnh lặng)", symbols: "Ngọn đèn lồng mang ngôi sao 6 cánh (Seal of Solomon), cây gậy hành hương, đỉnh núi tuyết cô độc." },
+    "Major_10_Wheel_of_Fortune": { astro: "Sao Mộc (Jupiter / Vận mệnh & Cơ hội)", num: "10 (Chu kỳ chuyển dịch & Nhân duyên)", symbols: "Bánh xe luân hồi khắc chữ YHWH / TARO, tượng Nhân sư trí tuệ, rắn Typhon, thần Anubis." },
+    "Major_11_Justice": { astro: "Cung Thiên Bình (Libra / Công lý & Nhân quả)", num: "11 (Cân bằng & Minh bạch)", symbols: "Chiếc cân công lý hai đĩa chuẩn xác, thanh gươm hai lưỡi giơ cao, bức màn tím che giấu chân lý." },
+    "Major_12_Hanged_Man": { astro: "Sao Hải Vương & Nước (Neptune / Giác ngộ & Buông bỏ)", num: "12 (Góc nhìn mới & Chuyển hóa)", symbols: "Người treo ngược một chân trên cành cây sống hình chữ T, vầng hào quang quanh đầu, thái độ an nhiên." },
+    "Major_13_Death": { astro: "Cung Bọ Cạp (Scorpio / Chuyển hóa & Tái sinh)", num: "13 (Kết thúc để tái sinh)", symbols: "Kỵ sĩ xương trắng trên chiến mã, lá cờ hoa hồng huyền bí Mystic Rose, mặt trời mọc giữa hai ngọn tháp." },
+    "Major_14_Temperance": { astro: "Cung Nhân Mã (Sagittarius / Dung hòa & Giả kim)", num: "14 (Điều hòa & Điềm tĩnh)", symbols: "Đại thiên thần rót nước luân chuyển giữa hai bình, một chân trên cạn một chân ngâm nước, đóa hoa diên vĩ." },
+    "Major_15_Devil": { astro: "Cung Ma Kết (Capricorn / Ràng buộc & Cám dỗ)", num: "15 (Ảo tưởng vật chất & Bóng tối)", symbols: "Ác quỷ Baphomet trên bệ đá, sợi xích lỏng lẻo trói cổ hai người, ngọn đuốc chúc xuống đất." },
+    "Major_16_Tower": { astro: "Sao Hỏa (Mars / Đổ vỡ ảo tưởng & Giải phóng)", num: "16 (Sự thật thức tỉnh đột ngột)", symbols: "Tia sét đánh vỡ vương miện trên đỉnh tháp đá cao, ngọn lửa bùng cháy dữ dội, hai bóng người rơi xuống." },
+    "Major_17_Star": { astro: "Cung Bảo Bình (Aquarius / Hy vọng & Chữa lành)", num: "17 (Niềm tin & Ánh sáng soi đường)", symbols: "Ngôi sao lớn 8 cánh rực rỡ, thiếu nữ tưới nước nguồn sống lên đất và suối, chú chim Ibis trên cành cây." },
+    "Major_18_Moon": { astro: "Cung Song Ngư (Pisces / Tiềm thức & Trực giác)", num: "18 (Ảo giác & Nỗi sợ nguyên thủy)", symbols: "Hai con chó sói tru trăng, con tôm bò lên từ đáy đầm lầy sâu thẳm, các giọt sương ánh sáng rơi rụng." },
+    "Major_19_Sun": { astro: "Mặt Trời (Sun / Thành tựu & Vinh quang)", num: "19 (Ánh sáng rực rỡ & Niềm vui)", symbols: "Đứa trẻ thơ trần trụi cưỡi ngựa trắng, đóa hoa hướng dương rạng rỡ, bức tường đá vững chãi, cờ đỏ chiến thắng." },
+    "Major_20_Judgement": { astro: "Sao Diêm Vương & Lửa (Pluto / Thức tỉnh tối hậu)", num: "20 (Phán xét & Tái sinh linh hồn)", symbols: "Đại thiên thần Gabriel thổi tù và cứu rỗi, con người trỗi dậy từ cỗ quan tài đá, dãy núi tuyết vĩnh cửu." },
+    "Major_21_World": { astro: "Sao Thổ & Đất (Saturn / Viên mãn & Trọn vẹn)", num: "21 (Hoàn tất chu kỳ & Hợp nhất)", symbols: "Vũ công thanh thoát giữa vòng nguyệt quế bầu dục, 4 sinh vật bốn góc trời (Người, Đại bàng, Sư tử, Bò mộng)." }
+  };
+
+  function getCardMetadata(card) {
+    if (!card) return null;
+    if (card.arcana === 'Major') {
+      const data = MAJOR_ASTROLOGY[card.id] || {};
+      return {
+        astro: data.astro || 'Huyền học Ẩn chính',
+        num: data.num || `Số ${card.number}`,
+        symbols: data.symbols || 'Biểu tượng RWS cổ điển'
+      };
+    }
+    // Minor Arcana
+    let suitAstro = '';
+    let suitSymbol = '';
+    if (card.id.startsWith('Wands')) {
+      suitAstro = 'Nhóm Lửa: Bạch Dương, Sư Tử, Nhân Mã';
+      suitSymbol = 'Cây gậy đâm chồi nảy lộc (Sinh khí, nhiệt huyết, ý chí hành động và bản lĩnh sáng tạo).';
+    } else if (card.id.startsWith('Cups')) {
+      suitAstro = 'Nhóm Nước: Cự Giải, Bọ Cạp, Song Ngư';
+      suitSymbol = 'Chiếc cốc rót tràn dòng nước (Cảm xúc sâu lắng, trực giác, tình yêu thương và sự thấu cảm).';
+    } else if (card.id.startsWith('Swords')) {
+      suitAstro = 'Nhóm Khí: Song Tử, Thiên Bình, Bảo Bình';
+      suitSymbol = 'Thanh kiếm hai lưỡi sắc bén (Lý trí tỉnh thức, sự thật khách quan, tư duy phân tích và áp lực thử thách).';
+    } else if (card.id.startsWith('Pentacles')) {
+      suitAstro = 'Nhóm Đất: Kim Ngưu, Xử Nữ, Ma Kết';
+      suitSymbol = 'Đồng tiền vàng khắc ngôi sao 5 cánh (Vật chất, tài chính, kỹ năng nghề nghiệp và nền tảng cụ thể).';
+    }
+
+    let rankText = 'Lá số';
+    if (card.id.includes('Ace')) rankText = 'Ách (Ace - Khởi nguyên tinh hoa 100%)';
+    else if (card.id.includes('Page')) rankText = 'Tiểu đồng (Page - Tinh thần học hỏi, thông điệp mới)';
+    else if (card.id.includes('Knight')) rankText = 'Hiệp sĩ (Knight - Tiến công, hành động thần tốc)';
+    else if (card.id.includes('Queen')) rankText = 'Hoàng hậu (Queen - Nuôi dưỡng, thấu hiểu chiều sâu)';
+    else if (card.id.includes('King')) rankText = 'Vua (King - Làm chủ tối cao, quyền lực và bản lĩnh)';
+    else if (card.number !== undefined) rankText = `Lá số ${card.number}`;
+
+    return {
+      astro: suitAstro,
+      num: rankText,
+      symbols: suitSymbol
+    };
+  }
+
+  // --- JOURNAL EXTENDED FUNCTIONS ---
+  function updateJournalEntryData(id, reflectionNote, rating, manifestStatus) {
+    try {
+      const list = getJournal();
+      const item = list.find(it => it.id === id);
+      if (item) {
+        if (reflectionNote !== undefined) item.reflectionNote = reflectionNote;
+        if (rating !== undefined) item.rating = rating;
+        if (manifestStatus !== undefined) item.manifestStatus = manifestStatus;
+        localStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(list));
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error('Error updating journal', e);
+      return false;
+    }
+  }
+
+  function computeJournalStats() {
+    const list = getJournal();
+    if (!list || list.length === 0) return null;
+
+    const totalReadings = list.length;
+    const cardFreq = {};
+    const suitCounts = { Wands: 0, Cups: 0, Swords: 0, Pentacles: 0, Major: 0 };
+
+    list.forEach(entry => {
+      (entry.drawnCards || []).forEach(c => {
+        cardFreq[c.cardId] = (cardFreq[c.cardId] || 0) + 1;
+        if (c.cardId.startsWith('Major')) suitCounts.Major++;
+        else if (c.cardId.startsWith('Wands')) suitCounts.Wands++;
+        else if (c.cardId.startsWith('Cups')) suitCounts.Cups++;
+        else if (c.cardId.startsWith('Swords')) suitCounts.Swords++;
+        else if (c.cardId.startsWith('Pentacles')) suitCounts.Pentacles++;
+      });
+    });
+
+    const topCards = Object.entries(cardFreq)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([cardId, count]) => {
+        const data = global.NetaTarotEngine.getCard(cardId);
+        return {
+          cardId,
+          count,
+          nameVi: data ? data.name_vi : cardId,
+          nameEn: data ? data.name_en : ''
+        };
+      });
+
+    // Dominant Suit
+    let maxSuit = 'Major';
+    let maxCount = suitCounts.Major;
+    Object.entries(suitCounts).forEach(([suit, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        maxSuit = suit;
+      }
+    });
+
+    const suitNames = {
+      Major: 'Ẩn chính (Major Arcana - Các bài học linh hồn & Bước ngoặt lớn)',
+      Wands: 'Bộ Gậy (Hành động, ý chí, công việc và đam mê)',
+      Cups: 'Bộ Cốc (Cảm xúc, tình yêu, mối quan hệ và trực giác)',
+      Swords: 'Bộ Kiếm (Lý trí, tư duy phân tích, sự thật và quyết định)',
+      Pentacles: 'Bộ Tiền (Nền móng vật chất, tài chính và sự ổn định)'
+    };
+
+    return {
+      totalReadings,
+      topCards,
+      dominantSuit: maxSuit,
+      dominantSuitDesc: suitNames[maxSuit],
+      suitCounts
+    };
+  }
+
+  function exportJournalData() {
+    const list = getJournal();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", `NetaLight_Tarot_Journal_${Date.now()}.json`);
+    document.body.appendChild(dlAnchor);
+    dlAnchor.click();
+    dlAnchor.remove();
+  }
+
+  function importJournalData(jsonText) {
+    try {
+      const parsed = JSON.parse(jsonText);
+      if (!Array.isArray(parsed)) throw new Error('Dữ liệu không đúng định dạng mảng.');
+      localStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(parsed));
+      return true;
+    } catch (e) {
+      alert('Tệp dữ liệu không hợp lệ: ' + e.message);
+      return false;
+    }
   }
 
   function renderTarot() {
@@ -673,14 +846,23 @@
     const allCards = engine.getAllCardsList();
 
     const filtered = allCards.filter(c => {
-      // Filter by Arcana / Suit
+      // Suit / Arcana Filter
       if (encyFilter === 'Major' && c.arcana !== 'Major') return false;
       if (encyFilter === 'Cups' && !c.id.startsWith('Cups')) return false;
       if (encyFilter === 'Pentacles' && !c.id.startsWith('Pentacles')) return false;
       if (encyFilter === 'Swords' && !c.id.startsWith('Swords')) return false;
       if (encyFilter === 'Wands' && !c.id.startsWith('Wands')) return false;
 
-      // Filter by search query
+      // Class Filter (Court vs Pips)
+      if (encyClassFilter === 'court') {
+        const isCourt = c.id.includes('Page') || c.id.includes('Knight') || c.id.includes('Queen') || c.id.includes('King');
+        if (!isCourt) return false;
+      } else if (encyClassFilter === 'pips') {
+        const isCourt = c.id.includes('Page') || c.id.includes('Knight') || c.id.includes('Queen') || c.id.includes('King');
+        if (c.arcana === 'Major' || isCourt) return false;
+      }
+
+      // Search query
       if (encySearchQuery) {
         const q = encySearchQuery.toLowerCase().trim();
         const matchNameVi = c.name_vi.toLowerCase().includes(q);
@@ -695,7 +877,7 @@
       <div class="tarot-encyclopedia-workspace">
         <div class="tarot-ency-filter-bar">
           <div class="tarot-ency-search">
-            <input type="text" id="tarot-ency-search-input" placeholder="🔍 Tìm theo tên lá bài (ví dụ: Kẻ Khờ, The Fool, Cups, Kiếm...)" value="${escapeHTML(encySearchQuery)}">
+            <input type="text" id="tarot-ency-search-input" placeholder="🔍 Tìm theo tên hoặc từ khóa (ví dụ: Kẻ Khờ, The Fool, Cups, Ách, Tình cảm...)" value="${escapeHTML(encySearchQuery)}">
           </div>
           <div class="tarot-ency-tabs">
             <button class="ency-filter-btn ${encyFilter === 'all' ? 'active' : ''}" data-filter="all">Tất cả (78)</button>
@@ -705,34 +887,43 @@
             <button class="ency-filter-btn ${encyFilter === 'Swords' ? 'active' : ''}" data-filter="Swords">Kiếm (Swords - 14)</button>
             <button class="ency-filter-btn ${encyFilter === 'Wands' ? 'active' : ''}" data-filter="Wands">Gậy (Wands - 14)</button>
           </div>
+          <div class="tarot-ency-subfilters">
+            <span class="subfilter-label">Phân cấp:</span>
+            <button class="ency-class-btn ${encyClassFilter === 'all' ? 'active' : ''}" data-class="all">Toàn bộ</button>
+            <button class="ency-class-btn ${encyClassFilter === 'court' ? 'active' : ''}" data-class="court">👑 Hoàng gia (Court - 16)</button>
+            <button class="ency-class-btn ${encyClassFilter === 'pips' ? 'active' : ''}" data-class="pips">🔢 Lá số (Pips 1-10 - 40)</button>
+            <span class="ency-count-badge">Hiển thị: <strong>${filtered.length}</strong> lá</span>
+          </div>
         </div>
 
         <div class="tarot-ency-grid">
-          ${filtered.map(c => `
-            <div class="tarot-ency-card-item" data-id="${c.id}">
-              <div class="ency-card-img-wrap">
-                <img src="assets/tarot/${c.id}.webp" alt="${c.name_vi}" loading="lazy">
-              </div>
-              <div class="ency-card-info">
-                <div class="ency-card-name-vi">${c.name_vi}</div>
-                <div class="ency-card-name-en">${c.name_en}</div>
-                <div class="ency-card-tags">
-                  <span class="ency-tag">${c.arcana}</span>
-                  <span class="ency-tag">${c.element}</span>
+          ${filtered.map(c => {
+            const meta = getCardMetadata(c);
+            return `
+              <div class="tarot-ency-card-item" data-id="${c.id}">
+                <div class="ency-card-img-wrap">
+                  <img src="assets/tarot/${c.id}.webp" alt="${c.name_vi}" loading="lazy">
+                </div>
+                <div class="ency-card-info">
+                  <div class="ency-card-name-vi">${c.name_vi}</div>
+                  <div class="ency-card-name-en">${c.name_en}</div>
+                  <div class="ency-card-tags">
+                    <span class="ency-tag">${c.arcana}</span>
+                    <span class="ency-tag">${c.element}</span>
+                  </div>
+                  <div class="ency-card-astro-hint">${meta ? meta.astro : ''}</div>
                 </div>
               </div>
-            </div>
-          `).join('')}
+            `;
+          }).join('')}
         </div>
       </div>
     `;
   }
 
-  // ==========================================================================
-  // TAB 3: JOURNAL (NHẬT KÝ TRẢI BÀI)
-  // ==========================================================================
   function renderJournalSubView() {
     const list = getJournal();
+    const stats = computeJournalStats();
 
     if (list.length === 0) {
       return `
@@ -740,70 +931,196 @@
           <div class="journal-empty-icon">📔</div>
           <h3>Chưa có bản ghi nhật ký nào</h3>
           <p>Khi bạn thực hiện trải bài và bấm <strong>💾 Lưu Vào Nhật Ký</strong>, kết quả chiêm nghiệm sẽ được lưu trữ cục bộ bảo mật 100% tại đây.</p>
+          <div class="journal-empty-actions">
+            <button id="btn-tarot-import-json-empty" class="tarot-btn-secondary">📥 Khôi Phục Từ Tệp JSON</button>
+            <input type="file" id="tarot-journal-file-input" accept=".json" style="display: none;">
+          </div>
         </div>
       `;
     }
 
+    // Filter list by domain & search
+    const filteredList = list.filter(entry => {
+      if (journalFilterDomain !== 'all' && entry.domain !== journalFilterDomain) return false;
+      if (journalSearchQuery) {
+        const q = journalSearchQuery.toLowerCase().trim();
+        const matchQ = (entry.question || '').toLowerCase().includes(q);
+        const matchNote = (entry.reflectionNote || '').toLowerCase().includes(q);
+        const matchSpread = (entry.spreadName || '').toLowerCase().includes(q);
+        return matchQ || matchNote || matchSpread;
+      }
+      return true;
+    });
+
+    const statusMap = {
+      studying: { label: '⏳ Đang chiêm nghiệm', color: '#f59e0b' },
+      manifested: { label: '✅ Đã ứng nghiệm', color: '#10b981' },
+      lesson: { label: '💡 Bài học sâu sắc', color: '#8b5cf6' }
+    };
+
     return `
       <div class="tarot-journal-workspace">
-        <div class="tarot-journal-header">
-          <div class="journal-title-box">
-            <h3>Nhật Ký Chiêm Nghiệm Tarot (${list.length} lần xem)</h3>
-            <span class="journal-subtitle">Lưu trữ bảo mật hoàn toàn trên thiết bị của bạn</span>
-          </div>
-          <button id="btn-tarot-clear-journal" class="tarot-btn-ghost danger">
-            🗑️ Xóa Toàn Bộ
-          </button>
-        </div>
-
-        <div class="tarot-journal-list">
-          ${list.map(entry => `
-            <div class="tarot-journal-item" data-id="${entry.id}">
-              <div class="journal-item-head">
-                <div class="journal-item-date">📅 ${entry.timestamp}</div>
-                <div class="journal-item-badges">
-                  <span class="journal-badge">${entry.spreadName}</span>
-                  <span class="journal-badge">${entry.domain.toUpperCase()}</span>
-                </div>
-                <button class="btn-delete-entry" data-id="${entry.id}" title="Xóa bản ghi này">✕</button>
+        <!-- STATS & INSIGHTS CARD (PHASE 3) -->
+        ${stats ? `
+          <div class="tarot-journal-stats-card">
+            <div class="stats-card-header">
+              <span class="stats-icon">📊</span>
+              <h4>Thống Kê Tần Suất & Năng Lượng Tâm Thức</h4>
+            </div>
+            <div class="stats-summary-grid">
+              <div class="stat-box">
+                <div class="stat-number">${stats.totalReadings}</div>
+                <div class="stat-label">Lần trải bài</div>
               </div>
-
-              <div class="journal-item-question">
-                <strong>Hỏi:</strong> ${escapeHTML(entry.question || 'Chiêm nghiệm tổng quan')}
-              </div>
-
-              <div class="journal-item-cards-row">
-                ${entry.drawnCards.map(c => {
-                  const cardData = global.NetaTarotEngine.getCard(c.cardId);
-                  return `
-                    <div class="journal-mini-card">
-                      <img src="assets/tarot/${c.cardId}.webp" alt="${cardData ? cardData.name_vi : ''}" class="${c.isUpright ? '' : 'is-reversed'}">
-                      <div class="mini-name">${cardData ? cardData.name_vi : c.cardId}</div>
-                      <div class="mini-orient">${c.isUpright ? 'Xuôi' : 'Ngược'}</div>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-
-              <div class="journal-item-advice">
-                <strong>Lời khuyên:</strong> ${entry.finalAdvice}
-              </div>
-
-              <div class="journal-item-actions">
-                <button class="tarot-btn-secondary btn-view-journal-detail" data-id="${entry.id}">
-                  👁️ Xem Chi Tiết Báo Cáo
-                </button>
+              <div class="stat-box dominant-energy-box">
+                <div class="stat-subhead">Dòng năng lượng chủ đạo:</div>
+                <div class="stat-dominant-title">${stats.dominantSuitDesc}</div>
               </div>
             </div>
-          `).join('')}
+            ${stats.topCards.length > 0 ? `
+              <div class="stats-top-cards-row">
+                <span class="top-cards-label">Lá bài xuất hiện nhiều nhất:</span>
+                <div class="top-cards-pills">
+                  ${stats.topCards.map(tc => `
+                    <div class="top-card-pill" data-id="${tc.cardId}">
+                      <img src="assets/tarot/${tc.cardId}.webp" alt="${tc.nameVi}">
+                      <span>${tc.nameVi} (<strong>${tc.count}</strong> lần)</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+
+        <!-- Top Tools & Filter Bar -->
+        <div class="tarot-journal-header">
+          <div class="journal-title-box">
+            <h3>Nhật Ký Chiêm Nghiệm (${filteredList.length}/${list.length} bản ghi)</h3>
+            <span class="journal-subtitle">Lưu trữ cục bộ bảo mật 100% trên thiết bị</span>
+          </div>
+          <div class="journal-tools-bar">
+            <button id="btn-tarot-export-json" class="tarot-btn-subtle" title="Tải tệp sao lưu JSON về máy">
+              📤 Sao Lưu JSON
+            </button>
+            <button id="btn-tarot-import-json" class="tarot-btn-subtle" title="Khôi phục nhật ký từ tệp JSON">
+              📥 Khôi Phục
+            </button>
+            <input type="file" id="tarot-journal-file-input" accept=".json" style="display: none;">
+            <button id="btn-tarot-clear-journal" class="tarot-btn-ghost danger" title="Xóa toàn bộ nhật ký">
+              🗑️ Xóa Hết
+            </button>
+          </div>
+        </div>
+
+        <div class="tarot-journal-filters-row">
+          <div class="journal-search-wrap">
+            <input type="text" id="tarot-journal-search-input" placeholder="🔍 Tìm theo câu hỏi hoặc ghi chú..." value="${escapeHTML(journalSearchQuery)}">
+          </div>
+          <div class="journal-domain-tabs">
+            <button class="journal-domain-btn ${journalFilterDomain === 'all' ? 'active' : ''}" data-domain="all">Tất cả</button>
+            <button class="journal-domain-btn ${journalFilterDomain === 'general' ? 'active' : ''}" data-domain="general">🌟 Tổng quan</button>
+            <button class="journal-domain-btn ${journalFilterDomain === 'career' ? 'active' : ''}" data-domain="career">💼 Công việc</button>
+            <button class="journal-domain-btn ${journalFilterDomain === 'love' ? 'active' : ''}" data-domain="love">❤️ Tình cảm</button>
+          </div>
+        </div>
+
+        <!-- Journal Entries List -->
+        <div class="tarot-journal-list">
+          ${filteredList.map(entry => {
+            const currentRating = entry.rating || 0;
+            const currentStatus = entry.manifestStatus || 'studying';
+            const statusInfo = statusMap[currentStatus] || statusMap.studying;
+
+            return `
+              <div class="tarot-journal-item" data-id="${entry.id}">
+                <div class="journal-item-head">
+                  <div class="journal-item-date">📅 ${entry.timestamp}</div>
+                  <div class="journal-item-badges">
+                    <span class="journal-badge">${entry.spreadName}</span>
+                    <span class="journal-badge domain-${entry.domain}">${entry.domain.toUpperCase()}</span>
+                    <span class="journal-badge status-tag" style="border-color: ${statusInfo.color}; color: ${statusInfo.color};">${statusInfo.label}</span>
+                  </div>
+                  <button class="btn-delete-entry" data-id="${entry.id}" title="Xóa bản ghi này">✕</button>
+                </div>
+
+                <div class="journal-item-question">
+                  <strong>Hỏi:</strong> ${escapeHTML(entry.question || 'Chiêm nghiệm tổng quan')}
+                </div>
+
+                <div class="journal-item-cards-row">
+                  ${(entry.drawnCards || []).map(c => {
+                    const cardData = global.NetaTarotEngine.getCard(c.cardId);
+                    return `
+                      <div class="journal-mini-card" data-id="${c.cardId}">
+                        <img src="assets/tarot/${c.cardId}.webp" alt="${cardData ? cardData.name_vi : ''}" class="${c.isUpright ? '' : 'is-reversed'}">
+                        <div class="mini-name">${cardData ? cardData.name_vi : c.cardId}</div>
+                        <div class="mini-orient">${c.isUpright ? 'Xuôi' : 'Ngược'}</div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                <div class="journal-item-advice">
+                  <strong>Lời khuyên:</strong> ${entry.finalAdvice}
+                </div>
+
+                <!-- PERSONAL REFLECTION SECTION (PHASE 3) -->
+                <div class="journal-reflection-container" id="reflection-wrap-${entry.id}">
+                  <div class="reflection-meta-row">
+                    <div class="reflection-stars" data-id="${entry.id}">
+                      <span class="stars-label">Độ ứng nghiệm:</span>
+                      ${[1, 2, 3, 4, 5].map(star => `
+                        <button class="star-btn ${star <= currentRating ? 'filled' : ''}" data-star="${star}" data-id="${entry.id}">⭐</button>
+                      `).join('')}
+                    </div>
+                    <button class="btn-toggle-edit-reflection" data-id="${entry.id}">
+                      ✏️ ${entry.reflectionNote ? 'Sửa Ghi Chú' : 'Viết Phản Tư'}
+                    </button>
+                  </div>
+
+                  <div class="reflection-display-box" id="reflection-display-${entry.id}">
+                    ${entry.reflectionNote ? `
+                      <div class="reflection-note-quote">
+                        <strong>📝 Phản tư cá nhân:</strong>
+                        <p>${escapeHTML(entry.reflectionNote)}</p>
+                      </div>
+                    ` : `
+                      <div class="reflection-note-empty">
+                        <em>Chưa có ghi chú phản tư. Chạm "Viết Phản Tư" để ghi lại diễn biến thực tế sau khi sự việc xảy ra...</em>
+                      </div>
+                    `}
+                  </div>
+
+                  <div class="reflection-edit-box" id="reflection-edit-${entry.id}" style="display: none;">
+                    <textarea class="journal-reflection-textarea" id="textarea-${entry.id}" placeholder="Ghi lại diễn biến thực tế, cảm xúc hoặc bài học nhận được sau lần trải bài này...">${escapeHTML(entry.reflectionNote || '')}</textarea>
+                    <div class="reflection-edit-footer">
+                      <select class="journal-status-dropdown" id="status-select-${entry.id}">
+                        <option value="studying" ${currentStatus === 'studying' ? 'selected' : ''}>⏳ Đang chiêm nghiệm</option>
+                        <option value="manifested" ${currentStatus === 'manifested' ? 'selected' : ''}>✅ Đã ứng nghiệm chuẩn xác</option>
+                        <option value="lesson" ${currentStatus === 'lesson' ? 'selected' : ''}>💡 Bài học quý giá</option>
+                      </select>
+                      <div class="reflection-btn-group">
+                        <button class="tarot-btn-primary btn-save-note" data-id="${entry.id}">Lưu</button>
+                        <button class="tarot-btn-ghost btn-cancel-note" data-id="${entry.id}">Hủy</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="journal-item-actions">
+                  <button class="tarot-btn-secondary btn-view-journal-detail" data-id="${entry.id}">
+                    👁️ Xem Lại Toàn Văn Báo Cáo
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       </div>
     `;
   }
 
-  // ==========================================================================
-  // EVENT BINDINGS
-  // ==========================================================================
   function bindTarotEvents(container) {
     // 1. Sub-Tabs
     container.querySelectorAll('.tarot-tab-btn').forEach(btn => {
@@ -1106,6 +1423,153 @@
 
     bindEncyclopediaCardClicks(container);
 
+    // Phase 3: Encyclopedia Class Sub-Filters
+    container.querySelectorAll('.ency-class-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        encyClassFilter = btn.getAttribute('data-class') || 'all';
+        renderTarot();
+      });
+    });
+
+    // Phase 3: Journal Domain Filters & Search
+    container.querySelectorAll('.journal-domain-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        journalFilterDomain = btn.getAttribute('data-domain') || 'all';
+        renderTarot();
+      });
+    });
+
+    const journalSearchInput = container.querySelector('#tarot-journal-search-input');
+    if (journalSearchInput) {
+      journalSearchInput.addEventListener('input', (e) => {
+        journalSearchQuery = e.target.value;
+        const subview = container.querySelector('#tarot-subview-container');
+        if (subview) {
+          subview.innerHTML = renderJournalSubView();
+          bindTarotEvents(container);
+        }
+      });
+    }
+
+    // Phase 3: Journal Star Ratings
+    container.querySelectorAll('.star-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        const star = parseInt(btn.getAttribute('data-star'), 10);
+        if (id && !isNaN(star)) {
+          updateJournalEntryData(id, undefined, star, undefined);
+          playCardSlideSound();
+          triggerHaptic(15);
+          renderTarot();
+          if (typeof window.showToast === 'function') {
+            window.showToast(`⭐ Đã cập nhật độ ứng nghiệm: ${star}/5 sao`);
+          }
+        }
+      });
+    });
+
+    // Phase 3: Toggle Reflection Note Editor
+    container.querySelectorAll('.btn-toggle-edit-reflection').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const displayBox = container.querySelector(`#reflection-display-${id}`);
+        const editBox = container.querySelector(`#reflection-edit-${id}`);
+        if (displayBox && editBox) {
+          const isEditing = editBox.style.display !== 'none';
+          editBox.style.display = isEditing ? 'none' : 'block';
+          displayBox.style.display = isEditing ? 'block' : 'none';
+        }
+      });
+    });
+
+    // Phase 3: Save Reflection Note
+    container.querySelectorAll('.btn-save-note').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const textarea = container.querySelector(`#textarea-${id}`);
+        const statusSelect = container.querySelector(`#status-select-${id}`);
+        if (id && textarea) {
+          const noteText = textarea.value.trim();
+          const statusVal = statusSelect ? statusSelect.value : 'studying';
+          updateJournalEntryData(id, noteText, undefined, statusVal);
+          triggerHaptic(20);
+          renderTarot();
+          if (typeof window.showToast === 'function') {
+            window.showToast('✅ Đã lưu ghi chú phản tư cá nhân!');
+          }
+        }
+      });
+    });
+
+    container.querySelectorAll('.btn-cancel-note').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const displayBox = container.querySelector(`#reflection-display-${id}`);
+        const editBox = container.querySelector(`#reflection-edit-${id}`);
+        if (displayBox && editBox) {
+          editBox.style.display = 'none';
+          displayBox.style.display = 'block';
+        }
+      });
+    });
+
+    // Phase 3: Export & Import Journal Data
+    const btnExportJson = container.querySelector('#btn-tarot-export-json');
+    if (btnExportJson) {
+      btnExportJson.addEventListener('click', () => {
+        exportJournalData();
+        if (typeof window.showToast === 'function') {
+          window.showToast('📁 Đang tải tệp sao lưu Nhật ký JSON...');
+        }
+      });
+    }
+
+    const btnImportJson = container.querySelector('#btn-tarot-import-json');
+    const btnImportJsonEmpty = container.querySelector('#btn-tarot-import-json-empty');
+    const fileInput = container.querySelector('#tarot-journal-file-input');
+
+    const handleImportTrigger = () => {
+      if (fileInput) fileInput.click();
+    };
+    if (btnImportJson) btnImportJson.addEventListener('click', handleImportTrigger);
+    if (btnImportJsonEmpty) btnImportJsonEmpty.addEventListener('click', handleImportTrigger);
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const ok = importJournalData(event.target.result);
+          if (ok) {
+            renderTarot();
+            if (typeof window.showToast === 'function') {
+              window.showToast('✅ Đã khôi phục dữ liệu Nhật ký thành công!');
+            }
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    // Mini card click in journal opens card detail
+    container.querySelectorAll('.journal-mini-card').forEach(mc => {
+      mc.addEventListener('click', () => {
+        const id = mc.getAttribute('data-id');
+        if (id) openTarotCardDetailModal(id);
+      });
+    });
+
+    // Top frequent card pills click in stats
+    container.querySelectorAll('.top-card-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const id = pill.getAttribute('data-id');
+        if (id) openTarotCardDetailModal(id);
+      });
+    });
+
+
     // 10. Journal Actions
     const btnClearAllJournal = container.querySelector('#btn-tarot-clear-journal');
     if (btnClearAllJournal) {
@@ -1204,11 +1668,14 @@
   }
 
   // --- POPUP CHI TIẾT LÁ BÀI TAROT ---
-  function openTarotCardDetailModal(cardId) {
+  function openTarotCardDetailModal(cardId, initialReversed = false) {
     const engine = global.NetaTarotEngine;
     if (!engine) return;
     const c = engine.getCard(cardId);
     if (!c) return;
+    const meta = getCardMetadata(c);
+
+    let isModalReversed = initialReversed;
 
     let modal = document.getElementById('tarot-detail-modal');
     if (!modal) {
@@ -1218,68 +1685,126 @@
       document.body.appendChild(modal);
     }
 
-    modal.innerHTML = `
-      <div class="modal-dialog tarot-modal-dialog">
-        <button class="modal-close" id="tarot-modal-close-btn">&times;</button>
-        <div class="tarot-modal-content">
-          <div class="tarot-modal-img-col">
-            <img src="assets/tarot/${c.id}.webp" alt="${c.name_vi}" class="tarot-modal-img">
-            <div class="tarot-modal-tags">
-              <span class="tarot-tag">${c.arcana} Arcana</span>
-              <span class="tarot-tag">Nguyên tố ${c.element}</span>
-              ${c.number !== undefined ? `<span class="tarot-tag">Số ${c.number}</span>` : ''}
-            </div>
-          </div>
-          <div class="tarot-modal-info-col">
-            <h2 class="tarot-modal-title">${c.name_vi}</h2>
-            <div class="tarot-modal-sub">${c.name_en}</div>
+    function renderModalBody() {
+      modal.innerHTML = `
+        <div class="modal-dialog tarot-modal-dialog">
+          <button class="modal-close" id="tarot-modal-close-btn">&times;</button>
+          <div class="tarot-modal-content">
+            <!-- Left Col: 3D Flip Card & Attributes -->
+            <div class="tarot-modal-img-col">
+              <div class="modal-card-3d-scene">
+                <img src="assets/tarot/${c.id}.webp" alt="${c.name_vi}" 
+                  class="tarot-modal-img ${isModalReversed ? 'is-reversed-view' : ''}" 
+                  id="modal-card-img"
+                  title="Chạm vào nút bên dưới để đổi chiều bài">
+              </div>
 
-            <div class="tarot-info-block">
-              <h4>🔑 Từ khóa Xuôi (Upright):</h4>
-              <p>${c.keywords_up}</p>
+              <!-- Orientation Toggle Buttons -->
+              <div class="modal-orientation-switcher">
+                <button class="modal-orient-btn ${!isModalReversed ? 'active' : ''}" id="btn-orient-upright">
+                  🔼 Chiều Xuôi
+                </button>
+                <button class="modal-orient-btn ${isModalReversed ? 'active' : ''}" id="btn-orient-reversed">
+                  🔽 Chiều Ngược
+                </button>
+              </div>
+
+              <div class="tarot-modal-tags">
+                <span class="tarot-tag">${c.arcana} Arcana</span>
+                <span class="tarot-tag">Nguyên tố ${c.element}</span>
+                ${c.number !== undefined ? `<span class="tarot-tag">Số ${c.number}</span>` : ''}
+              </div>
+
+              ${meta ? `
+                <div class="modal-astro-box">
+                  <div class="astro-label">🪐 Chiêm Tinh & Thiên Thể:</div>
+                  <div class="astro-val">${meta.astro}</div>
+                  <div class="astro-label">🔢 Số Học Huyền Bí:</div>
+                  <div class="astro-val">${meta.num}</div>
+                </div>
+              ` : ''}
             </div>
 
-            <div class="tarot-info-block">
-              <h4>🔄 Từ khóa Ngược (Reversed):</h4>
-              <p>${c.keywords_rev}</p>
-            </div>
+            <!-- Right Col: Meaning, Symbolism & Advice -->
+            <div class="tarot-modal-info-col">
+              <h2 class="tarot-modal-title">${c.name_vi}</h2>
+              <div class="tarot-modal-sub">${c.name_en}</div>
 
-            <div class="tarot-info-block">
-              <h4>🌟 Ý nghĩa Tổng quan:</h4>
-              <p>${c.meanings ? c.meanings.general : ''}</p>
-            </div>
+              <!-- Symbolism Breakdown -->
+              ${meta && meta.symbols ? `
+                <div class="tarot-info-block symbolism-block">
+                  <h4>🎨 Biểu Tượng Học Rider-Waite (Symbolism):</h4>
+                  <p>${meta.symbols}</p>
+                </div>
+              ` : ''}
 
-            <div class="tarot-info-block">
-              <h4>💼 Công việc & Tài chính:</h4>
-              <p>${c.meanings ? c.meanings.career : ''}</p>
-            </div>
+              <!-- Active Orientation Keywords -->
+              <div class="tarot-info-block ${!isModalReversed ? 'highlight-block' : ''}">
+                <h4>🔑 Từ khóa Xuôi (Upright):</h4>
+                <p>${c.keywords_up}</p>
+              </div>
 
-            <div class="tarot-info-block">
-              <h4>❤️ Tình cảm & Mối quan hệ:</h4>
-              <p>${c.meanings ? c.meanings.love : ''}</p>
-            </div>
+              <div class="tarot-info-block ${isModalReversed ? 'highlight-block' : ''}">
+                <h4>🔄 Từ khóa Ngược (Reversed):</h4>
+                <p>${c.keywords_rev}</p>
+              </div>
 
-            <div class="tarot-info-block tarot-advice-block">
-              <h4>💡 Lời khuyên vàng:</h4>
-              <p><em>${c.advice}</em></p>
+              <div class="tarot-info-block">
+                <h4>🌟 Ý nghĩa Tổng quan (${!isModalReversed ? 'Chiều Xuôi' : 'Chiều Ngược'}):</h4>
+                <p>${!isModalReversed ? (c.meanings ? c.meanings.general : '') : 'Năng lượng bị trì hoãn, xung đột nội tâm hoặc cần soi xét lại góc nhìn.'}</p>
+              </div>
+
+              <div class="tarot-info-block">
+                <h4>💼 Công việc & Tài chính:</h4>
+                <p>${c.meanings ? c.meanings.career : ''}</p>
+              </div>
+
+              <div class="tarot-info-block">
+                <h4>❤️ Tình cảm & Mối quan hệ:</h4>
+                <p>${c.meanings ? c.meanings.love : ''}</p>
+              </div>
+
+              <div class="tarot-info-block tarot-advice-block">
+                <h4>💡 Lời khuyên cốt lõi:</h4>
+                <p><em>${c.advice}</em></p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
 
-    modal.style.display = 'flex';
+      modal.style.display = 'flex';
 
-    const closeBtn = modal.querySelector('#tarot-modal-close-btn');
-    if (closeBtn) {
-      closeBtn.onclick = () => { modal.style.display = 'none'; };
+      // Event bindings inside modal
+      const closeBtn = modal.querySelector('#tarot-modal-close-btn');
+      if (closeBtn) closeBtn.onclick = () => { modal.style.display = 'none'; };
+      modal.onclick = (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+      };
+
+      const btnUp = modal.querySelector('#btn-orient-upright');
+      const btnRev = modal.querySelector('#btn-orient-reversed');
+      if (btnUp) btnUp.onclick = () => {
+        if (isModalReversed) {
+          isModalReversed = false;
+          playCardFlipSound();
+          triggerHaptic(15);
+          renderModalBody();
+        }
+      };
+      if (btnRev) btnRev.onclick = () => {
+        if (!isModalReversed) {
+          isModalReversed = true;
+          playCardFlipSound();
+          triggerHaptic(15);
+          renderModalBody();
+        }
+      };
     }
-    modal.onclick = (e) => {
-      if (e.target === modal) modal.style.display = 'none';
-    };
+
+    renderModalBody();
   }
 
-  // Export module
   const NetaTarotView = {
     init: initTarotView,
     render: renderTarot,

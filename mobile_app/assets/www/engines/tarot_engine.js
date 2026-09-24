@@ -1878,7 +1878,7 @@
         finalAdvice += `Đồng thời đặc biệt bổ sung phần đang thiếu hụt: ${missingDesc}. `;
       }
       if (quintessence) {
-        finalAdvice += `Lời khuyên cốt tủy từ lá ${quintessence.name_vi}: ${quintessence.lesson}`;
+        finalAdvice += `Lời khuyên cốt tủy từ lá ${quintessence.nameVi || quintessence.name_vi}: ${quintessence.lesson}`;
       }
 
       const now = new Date();
