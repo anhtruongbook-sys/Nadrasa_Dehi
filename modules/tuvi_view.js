@@ -242,11 +242,9 @@
               <div class="tuvi-cell ${p.isMenh ? 'cell-menh' : ''}" style="${style}" data-palace-idx="${p.index}">
                 <!-- Cell Header -->
                 <div class="tc-cell-header">
-                  <div class="tc-name-wrap">
-                    <span class="tc-cung-name-royal ${p.isMenh ? 'text-menh' : ''}">${p.name}</span>
-                    ${p.isThan ? '<span class="badge-than-royal">THÂN</span>' : ''}
-                  </div>
+                  <span class="tc-cung-name-royal ${p.isMenh ? 'text-menh' : ''}">${p.name}</span>
                   <div class="tc-badges-wrap">
+                    ${p.isThan ? '<span class="badge-than-royal">THÂN</span>' : ''}
                     ${p.isTriet ? '<span class="badge-triet-royal">TRIỆT</span>' : ''}
                     ${p.isTuan ? '<span class="badge-tuan-royal">TUẦN</span>' : ''}
                   </div>

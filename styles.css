@@ -3845,25 +3845,20 @@ body.theme-light .dropdown-check {
   padding-bottom: 1px;
   margin-bottom: 1px;
   min-height: 14px;
-}
-
-.tc-name-wrap {
-  display: inline-flex;
-  align-items: center;
   gap: 2px;
-  min-width: 0;
 }
 
 .tc-cung-name-royal,
 .tc-cung-name {
-  font-size: 0.58rem;
+  font-size: 0.50rem;
   font-weight: 900;
   color: #f8fafc;
   text-transform: uppercase;
   font-family: inherit;
-  letter-spacing: 0.2px;
+  letter-spacing: -0.25px;
   white-space: nowrap;
   line-height: 1.1;
+  flex-shrink: 0;
 }
 
 .text-menh {
@@ -3875,44 +3870,48 @@ body.theme-light .dropdown-check {
 .tc-badges-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 1px;
+  gap: 1.5px;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .badge-than-royal {
-  background: #b91c1c;
+  background: #eab308;
   border: none;
-  color: #ffffff;
-  font-size: 0.42rem;
+  color: #0f172a;
+  font-size: 0.35rem;
   font-weight: 900;
-  padding: 0 2px;
+  padding: 0.5px 1.5px;
   border-radius: 2px;
-  line-height: 1.1;
+  line-height: 1;
   white-space: nowrap;
+  letter-spacing: 0;
 }
 
 .badge-triet-royal {
   background: #dc2626;
   border: none;
   color: #ffffff;
-  font-size: 0.42rem;
-  font-weight: 900;
-  padding: 0 2px;
+  font-size: 0.35rem;
+  font-weight: 800;
+  padding: 0.5px 1.5px;
   border-radius: 2px;
-  line-height: 1.1;
+  line-height: 1;
   white-space: nowrap;
+  letter-spacing: 0;
 }
 
 .badge-tuan-royal {
   background: #16a34a;
   border: none;
   color: #ffffff;
-  font-size: 0.42rem;
-  font-weight: 900;
-  padding: 0 2px;
+  font-size: 0.35rem;
+  font-weight: 800;
+  padding: 0.5px 1.5px;
   border-radius: 2px;
-  line-height: 1.1;
+  line-height: 1;
   white-space: nowrap;
+  letter-spacing: 0;
 }
 
 /* Thân Cung: Chính Tinh */
@@ -5541,21 +5540,33 @@ body.theme-light .text-menh {
 
 /* Badges phẳng */
 body.theme-light .badge-than-royal {
-  background: #b91c1c !important;
+  background: #d97706 !important;
   color: #ffffff !important;
   border: none !important;
+  font-size: 0.35rem !important;
+  font-weight: 900 !important;
+  padding: 0.5px 1.5px !important;
+  line-height: 1 !important;
 }
 
 body.theme-light .badge-triet-royal {
   background: #dc2626 !important;
   color: #ffffff !important;
   border: none !important;
+  font-size: 0.35rem !important;
+  font-weight: 800 !important;
+  padding: 0.5px 1.5px !important;
+  line-height: 1 !important;
 }
 
 body.theme-light .badge-tuan-royal {
   background: #16a34a !important;
   color: #ffffff !important;
   border: none !important;
+  font-size: 0.35rem !important;
+  font-weight: 800 !important;
+  padding: 0.5px 1.5px !important;
+  line-height: 1 !important;
 }
 
 /* Chính Tinh & Độ Sáng */
