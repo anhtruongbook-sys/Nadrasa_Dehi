@@ -81,10 +81,16 @@
       logo: 'assets/tarot/Major_00_Fool.webp',
       backImage: 'assets/tarot/Back_Cover.webp',
       isCardDeck: false
+    },
+    lakinh: {
+      name: 'LA KINH VỆ TINH',
+      subtitle: '36 Tầng Định Vị Toạ Độ WMM',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'tarot'];
+  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'tarot', 'lakinh'];
 
   // DOM Elements
   const tabModeNeta = document.getElementById('tab-mode-neta');
@@ -220,6 +226,7 @@
     const viewTuvi = document.getElementById('view-tuvi');
     const viewCalendar = document.getElementById('view-calendar');
     const viewTarot = document.getElementById('view-tarot');
+    const viewLaKinh = document.getElementById('view-lakinh');
 
     const viewsMap = {
       neta: viewCards,
@@ -228,7 +235,8 @@
       bazi: viewBazi,
       tuvi: viewTuvi,
       calendar: viewCalendar,
-      tarot: viewTarot
+      tarot: viewTarot,
+      lakinh: viewLaKinh
     };
 
     // Hide all views first, then show active
@@ -271,6 +279,8 @@
       window.NetaTuViView.render();
     } else if (mode === 'tarot' && window.NetaTarotView) {
       window.NetaTarotView.render();
+    } else if (mode === 'lakinh' && window.NetaLaKinhView) {
+      window.NetaLaKinhView.render();
     }
 
     playBellChime();

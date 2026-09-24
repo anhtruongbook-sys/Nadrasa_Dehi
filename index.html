@@ -18,10 +18,12 @@
   <link rel="manifest" href="manifest.json?v=3.5">
   
   <!-- Security Hardening Meta Tags (OWASP / W3C CSP) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' data: blob:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://mt1.google.com https://*.google.com https://server.arcgisonline.com https://*.tile.openstreetmap.org; media-src 'self' data: blob:; connect-src 'self' data: blob: https://api.open-meteo.com https://nominatim.openstreetmap.org;">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   
+  <link rel="stylesheet" href="assets/leaflet/leaflet.css">
+  <link rel="stylesheet" href="assets/lakinh/lakinh.css?v=1.0">
   <link rel="stylesheet" href="styles.css?v=7.5">
 </head>
 <body>
@@ -85,6 +87,14 @@
           <span class="dropdown-icon">📅</span>
           <span class="dropdown-name">Lịch Âm Dương</span>
           <span class="dropdown-check" id="check-mode-calendar" style="opacity: 0;">✓</span>
+        </div>
+
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-section-title">PHONG THỦY ĐỊA LÝ</div>
+        <div class="deck-dropdown-item" id="tab-mode-lakinh" data-mode="lakinh">
+          <span class="dropdown-icon">🧭</span>
+          <span class="dropdown-name">La Kinh Vệ Tinh (36 Tầng)</span>
+          <span class="dropdown-check" id="check-mode-lakinh" style="opacity: 0;">✓</span>
         </div>
       </div>
 
@@ -231,6 +241,11 @@
     <div id="view-tarot" class="app-module-view" style="display: none;">
       <!-- Dynamically rendered by modules/tarot_view.js -->
     </div>
+
+    <!-- View Module: La Kinh Vệ Tinh 36 Tầng -->
+    <div id="view-lakinh" class="app-module-view" style="display: none;">
+      <!-- Dynamically rendered by modules/lakinh_view.js -->
+    </div>
   </div>
 
   <!-- Spiritual Reading Modal (Luận giải Tâm Linh Tụ & Bộ) -->
@@ -303,6 +318,9 @@
   <script src="modules/tuvi_view.js?v=7.5"></script>
   <script src="engines/tarot_engine.js?v=7.5"></script>
   <script src="modules/tarot_view.js?v=7.5"></script>
+  <script src="assets/leaflet/leaflet.js"></script>
+  <script src="engines/lakinh_engine.js?v=7.5"></script>
+  <script src="modules/lakinh_view.js?v=7.5"></script>
   <script src="app.js?v=7.5"></script>
 </body>
 </html>

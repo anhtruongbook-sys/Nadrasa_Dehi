@@ -1,0 +1,535 @@
+/* ============================================================
+   NETA LIGHT - LA KINH VỆ TINH 36 TẦNG (CSS MODULE)
+   Tích hợp bản đồ Leaflet, HUD Glassmorphism, La bàn con quay & Khảo sát viễn thám
+   ============================================================ */
+
+#view-lakinh {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #0b0f19;
+}
+
+#lakinh-map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Lớp phủ đĩa La Kinh 36 tầng */
+#lakinh-overlay-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.12s ease, height 0.12s ease;
+}
+
+#lakinh-disc {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: center center;
+  filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.75));
+  will-change: transform;
+}
+
+/* Tâm ngắm hồng ngoại Crosshair */
+#lakinh-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 12;
+}
+
+#lakinh-crosshair::before,
+#lakinh-crosshair::after {
+  content: '';
+  position: absolute;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ffffff, 0 0 10px rgba(239, 68, 68, 0.8);
+}
+
+#lakinh-crosshair::before {
+  top: 12px;
+  left: 0;
+  width: 26px;
+  height: 2px;
+}
+
+#lakinh-crosshair::after {
+  top: 0;
+  left: 12px;
+  width: 2px;
+  height: 26px;
+}
+
+/* Bảng kính mờ Glassmorphism sang trọng */
+.lakinh-glass {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  color: #f8fafc;
+}
+
+body.light-theme .lakinh-glass {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(183, 149, 11, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  color: #0f172a;
+}
+
+/* Thanh điều hướng tìm kiếm trên cùng */
+#lakinh-top-bar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  gap: 6px;
+}
+
+.lakinh-search-box {
+  display: flex;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 8px;
+  padding: 4px 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+body.light-theme .lakinh-search-box {
+  background: rgba(241, 245, 249, 0.9);
+  border-color: rgba(183, 149, 11, 0.3);
+}
+
+.lakinh-search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 0.78rem;
+  width: 100%;
+  margin-left: 6px;
+}
+
+body.light-theme .lakinh-search-box input {
+  color: #0f172a;
+}
+
+.lakinh-btn-icon {
+  background: transparent;
+  border: none;
+  color: var(--gold-primary, #f5b041);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.lakinh-btn-header {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  color: #f8fafc;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+body.light-theme .lakinh-btn-header {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+/* Bảng HUD thông số góc & sơn hướng tức thời */
+#lakinh-hud {
+  position: absolute;
+  top: 56px;
+  left: 8px;
+  z-index: 20;
+  padding: 10px 14px;
+  min-width: 190px;
+  max-width: calc(100vw - 16px);
+  pointer-events: auto;
+}
+
+.lakinh-hud-title {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+body.light-theme .lakinh-hud-title {
+  color: #64748b;
+}
+
+.lakinh-hud-degree {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #38bdf8;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+
+body.light-theme .lakinh-hud-degree {
+  color: #0284c7;
+}
+
+.lakinh-hud-son {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #f5b041;
+  margin-top: 2px;
+}
+
+body.light-theme .lakinh-hud-son {
+  color: #b45309;
+}
+
+.lakinh-hud-detail {
+  font-size: 0.7rem;
+  color: #cbd5e1;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+body.light-theme .lakinh-hud-detail {
+  color: #475569;
+}
+
+.lakinh-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.lakinh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.lakinh-badge.green {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+body.light-theme .lakinh-badge {
+  background: rgba(2, 132, 199, 0.1);
+  color: #0369a1;
+  border-color: rgba(2, 132, 199, 0.25);
+}
+
+body.light-theme .lakinh-badge.green {
+  background: rgba(22, 163, 74, 0.1);
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.25);
+}
+
+/* Bảng điều khiển ngăn kéo bên dưới (Control Drawer) */
+#lakinh-drawer {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 20;
+  padding: 10px 14px;
+  max-height: 52vh;
+  overflow-y: auto;
+  transition: transform 0.25s ease, max-height 0.25s ease;
+}
+
+#lakinh-drawer.collapsed {
+  max-height: 38px;
+  overflow: hidden;
+  padding-bottom: 4px;
+}
+
+.lakinh-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.2);
+}
+
+.lakinh-drawer-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--gold-primary, #f5b041);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lakinh-drawer-toggle {
+  font-size: 0.72rem;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.lakinh-control-group {
+  margin-bottom: 10px;
+}
+
+.lakinh-control-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+body.light-theme .lakinh-control-label {
+  color: #64748b;
+}
+
+.lakinh-control-label span.val {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+body.light-theme .lakinh-control-label span.val {
+  color: #0284c7;
+}
+
+.lakinh-slider {
+  width: 100%;
+  height: 5px;
+  background: #334155;
+  border-radius: 4px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+body.light-theme .lakinh-slider {
+  background: #cbd5e1;
+}
+
+.lakinh-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #f5b041;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(245, 176, 65, 0.7);
+}
+
+.lakinh-btn-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.lakinh-step-btn {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #f8fafc;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+body.light-theme .lakinh-step-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.lakinh-step-btn:active {
+  background: #f5b041;
+  color: #1a0003;
+}
+
+.lakinh-action-btn {
+  width: 100%;
+  background: #0284c7;
+  border: none;
+  color: #ffffff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.lakinh-action-btn:active {
+  transform: scale(0.98);
+}
+
+.lakinh-action-btn.secondary {
+  background: #334155;
+}
+
+body.light-theme .lakinh-action-btn.secondary {
+  background: #64748b;
+}
+
+.lakinh-action-btn.warning {
+  background: #d97706;
+}
+
+.lakinh-action-btn.success {
+  background: #16a34a;
+}
+
+.lakinh-action-btn.purple {
+  background: #7c3aed;
+}
+
+/* Modals cho La Kinh */
+.lakinh-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.lakinh-modal-dialog {
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 16px 18px;
+}
+
+.lakinh-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+}
+
+.lakinh-modal-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--gold-primary, #f5b041);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lakinh-modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* Lưới Huyền Không 9 Cung */
+.lakinh-nine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.lakinh-palace-cell {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+body.light-theme .lakinh-palace-cell {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.lakinh-palace-cell.center {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.lakinh-palace-name {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+body.light-theme .lakinh-palace-name {
+  color: #64748b;
+}
+
+.lakinh-palace-stars {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 3px 0;
+}
+
+.lakinh-star-mountain { color: #38bdf8; }
+.lakinh-star-facing { color: #f43f5e; }
+.lakinh-star-period { font-size: 0.72rem; color: #cbd5e1; }
+
+body.light-theme .lakinh-star-mountain { color: #0284c7; }
+body.light-theme .lakinh-star-facing { color: #e11d48; }
+body.light-theme .lakinh-star-period { color: #475569; }
