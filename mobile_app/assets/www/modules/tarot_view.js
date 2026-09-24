@@ -532,19 +532,17 @@
           </div>
 
           <div class="tarot-action-buttons">
-            <button id="btn-tarot-quick-draw" class="tarot-btn-primary">
-              ⚡ Bốc Nhanh Tự Động (${requiredCount} lá)
+            <button id="btn-tarot-quick-draw" class="tarot-btn-primary tarot-btn-full" title="Rút ngẫu nhiên đủ số lượng lá bài cho quẻ">
+              ⚡ Bốc Bài Tự Động (${requiredCount} lá)
             </button>
-            ${activeDrawnCards.length === requiredCount ? `
-              <button id="btn-tarot-flip-all" class="tarot-btn-secondary">
-                ✨ Lật Tất Cả
+            <div class="tarot-action-subgroup">
+              <button id="btn-tarot-flip-all" class="tarot-btn-secondary" ${activeDrawnCards.length === requiredCount && !areAllCardsFlipped() ? '' : 'disabled'} title="Lật mở toàn bộ các lá bài đã bốc">
+                ✨ Lật Bài
               </button>
-            ` : ''}
-            ${activeDrawnCards.length > 0 ? `
-              <button id="btn-tarot-reset-spread" class="tarot-btn-ghost">
-                🔄 Bốc Lại Từ Đầu
+              <button id="btn-tarot-reset-spread" class="tarot-btn-ghost" ${activeDrawnCards.length > 0 ? '' : 'disabled'} title="Xóa quẻ hiện tại và trải bài mới">
+                🔄 Trải Mới
               </button>
-            ` : ''}
+            </div>
           </div>
         </div>
 

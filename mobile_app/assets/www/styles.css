@@ -10472,3 +10472,68 @@ body.theme-light .tarot-question-input {
   border: 1px solid #cbd5e1 !important;
   color: #0f172a !important;
 }
+
+/* ==========================================================================
+   ALIGNMENT & STABILITY FIX FOR 3 CONTROL BUTTONS (CHỐNG THÒ RA THỤT VÀO)
+   ========================================================================== */
+.tarot-control-card {
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.tarot-question-row {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 10px !important;
+}
+
+.tarot-question-input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.tarot-action-buttons {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 4px !important;
+}
+
+.tarot-btn-full {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  justify-content: center !important;
+  min-height: 44px !important;
+}
+
+.tarot-action-subgroup {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.tarot-action-subgroup button {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  justify-content: center !important;
+  min-height: 42px !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.tarot-btn-secondary:disabled,
+.tarot-btn-ghost:disabled,
+.tarot-btn-primary:disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}

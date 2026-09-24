@@ -63,10 +63,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.5.0
-          name: "Neta Light & Huyền Học v1.5.0 (High-Res Large Card Showcase, Enhanced Hierarchy & Modern Flat Design)"
+          tag_name: v1.5.1
+          name: "Neta Light & Huyền Học v1.5.1 (Pixel-Perfect Unified Control Grid & High-Res Large Card Showcase)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.5.0
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.5.1
+            - **Cố Định Lưới Bố Cục Thao Tác Quẻ Bài 100% Khớp Cạnh (Zero Layout Shift & Pixel-Perfect Alignment)**:
+              + Khắc phục triệt để hiện tượng 3 nút thao tác `[⚡ Bốc Bài Tự Động]`, `[✨ Lật Bài]`, `[🔄 Trải Mới]` bị thò ra thụt vào, lệch mép so với ô nhập câu hỏi bên trên.
+              + Hàng trên `[⚡ Bốc Bài Tự Động]` kéo giãn đủ 100% chiều rộng container, khớp chính xác từng pixel với ô nhập câu hỏi.
+              + Hàng dưới chia lưới 2 cột đối xứng chuẩn xác 50% - 50% (`grid-template-columns: 1fr 1fr`, gap: 8px), mép ngoài bên trái và bên phải ăn khớp 100% với hàng trên.
+              + Giữ cố định vĩnh viễn cả 3 nút trong cấu trúc DOM, hiển thị trạng thái mờ `disabled` (`opacity: 0.35`) khi chưa đủ điều kiện thay vì tự ý chèn/xóa động gây giật nảy màn hình.
+              + Tinh gọn nhãn nút thành `[✨ Lật Bài]` và `[🔄 Trải Mới]` để hiển thị vừa vặn, sắc nét trên mọi kích cỡ màn hình di động mà không bao giờ bị cắt chữ hay hiện dấu ba chấm `...`.
             - **Tối Ưu Hóa Kích Thước & Khung Trưng Bày Lá Bài Nghệ Thuật (Large Card Artwork Showcase)**:
               + Nâng kích thước lá bài trong từng mục luận giải từ 90px lên **150px x 255px** (chuẩn tỷ lệ vàng 1:1.7 của Tarot RWS), xóa bỏ hoàn toàn hiện tượng lá bài bé tí lọt thỏm giữa khoảng trống bao la.
               + Đặt lá bài trong khung tranh nghệ thuật sang trọng (`border-radius: 12px`, viền mảnh sắc nét và đổ bóng êm dịu), tôn vinh trọn vẹn từng đường nét biểu tượng của lá bài.
