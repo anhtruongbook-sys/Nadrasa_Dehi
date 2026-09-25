@@ -326,6 +326,18 @@ body.light-theme .hud-card-badge {
   z-index: 28;
   pointer-events: auto;
   box-sizing: border-box;
+  animation: lakinhSearchSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes lakinhSearchSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .lakinh-search-input-box {
@@ -417,6 +429,38 @@ body.light-theme #lakinh-search-bar-input {
 
 #lakinh-search-bar-btn:active {
   transform: scale(0.95);
+}
+
+#lakinh-search-bar-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+#lakinh-search-bar-close:hover,
+#lakinh-search-bar-close:active {
+  color: #f5b041;
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.1);
+}
+
+body.light-theme #lakinh-search-bar-close {
+  color: #64748b;
+}
+
+body.light-theme #lakinh-search-bar-close:hover,
+body.light-theme #lakinh-search-bar-close:active {
+  color: #b45309;
+  background: rgba(0, 0, 0, 0.08);
 }
 
 /* Dropdown menu gợi ý tìm kiếm */

@@ -96,13 +96,14 @@
           </div>
         </div>
 
-        <!-- Thanh Tìm Kiếm Trực Tiếp Địa Chỉ & Tọa Độ GPS -->
-        <div id="lakinh-search-bar-wrap">
+        <!-- Thanh Tìm Kiếm Trực Tiếp Địa Chỉ & Tọa Độ GPS (Tự động ẩn sau khi chọn địa điểm) -->
+        <div id="lakinh-search-bar-wrap" style="display: none;">
           <div class="lakinh-search-input-box">
             <span class="lakinh-search-lens">🔍</span>
             <input type="text" id="lakinh-search-bar-input" placeholder="Tìm địa chỉ hoặc tọa độ GPS (VD: 21.028, 105.854)..." autocomplete="off">
             <button type="button" id="lakinh-search-bar-clear" title="Xóa" style="display: none;">✕</button>
             <button type="button" id="lakinh-search-bar-btn">Tìm</button>
+            <button type="button" id="lakinh-search-bar-close" title="Ẩn thanh tìm kiếm">▲</button>
           </div>
           <div id="lakinh-search-dropdown" class="lakinh-search-dropdown-menu"></div>
         </div>
@@ -986,6 +987,10 @@
     const dropdown = document.getElementById('lakinh-search-dropdown');
     if (dropdown) dropdown.style.display = 'none';
 
+    // Tự động thu / ẩn thanh tìm kiếm sau khi hoàn thành nhiệm vụ để trả lại 100% tầm nhìn khảo sát
+    const searchWrap = document.getElementById('lakinh-search-bar-wrap');
+    if (searchWrap) searchWrap.style.display = 'none';
+
     showLaKinhToast(`🎯 Đã chuyển đến: ${name}`);
   }
 
@@ -995,8 +1000,38 @@
     const input = document.getElementById('lakinh-search-bar-input');
     const clearBtn = document.getElementById('lakinh-search-bar-clear');
     const searchBtn = document.getElementById('lakinh-search-bar-btn');
+    const closeBtn = document.getElementById('lakinh-search-bar-close');
+    const toggleBtn = document.getElementById('lakinh-btn-search');
+    const searchWrap = document.getElementById('lakinh-search-bar-wrap');
     const dropdown = document.getElementById('lakinh-search-dropdown');
     if (!input || !dropdown) return;
+
+    if (toggleBtn && searchWrap) {
+      toggleBtn.onclick = (e) => {
+        e.stopPropagation();
+        const isHidden = searchWrap.style.display === 'none' || getComputedStyle(searchWrap).display === 'none';
+        if (isHidden) {
+          searchWrap.style.display = 'block';
+          input.focus();
+          if (!input.value.trim()) {
+            showQuickCities();
+          } else {
+            performSearch(input.value);
+          }
+        } else {
+          searchWrap.style.display = 'none';
+          dropdown.style.display = 'none';
+        }
+      };
+    }
+
+    if (closeBtn && searchWrap) {
+      closeBtn.onclick = (e) => {
+        e.stopPropagation();
+        searchWrap.style.display = 'none';
+        dropdown.style.display = 'none';
+      };
+    }
 
     const quickCities = [
       { name: 'Hà Nội', lat: 21.028511, lng: 105.854167 },
@@ -1699,6 +1734,8 @@
         }
         const dropdown = document.getElementById('lakinh-search-dropdown');
         if (dropdown) dropdown.style.display = 'none';
+        const searchWrap = document.getElementById('lakinh-search-bar-wrap');
+        if (searchWrap) searchWrap.style.display = 'none';
       });
     }
 
