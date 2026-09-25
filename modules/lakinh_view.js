@@ -60,9 +60,9 @@
           <span>Về Vị Trí Hiện Tại</span>
         </button>
 
-        <!-- Đĩa La Kinh 36 Tầng Xuyên Thấu -->
+        <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
         <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
-          <img id="lakinh-disc" src="assets/lakinh/la_kinh_36_tang_vector.svg" alt="La Kinh 36 Tầng" style="opacity: ${state.opacity};">
+          <img id="lakinh-disc" src="assets/lakinh/thuoc_lap_cuc.png" alt="Thước Lập Cực 36 Tầng" style="opacity: ${state.opacity};">
           <div id="lakinh-target-pointer"></div>
         </div>
 
@@ -144,6 +144,21 @@
             </button>
           </div>
 
+          <!-- Nhóm chọn mẫu Đĩa La Kinh / Thước Lập Cực -->
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>Mẫu La Kinh / Thước Lập Cực</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <button class="lakinh-step-btn active" id="btn-plate-thuoc" style="font-weight: 700; color: #38bdf8;">
+                🎯 Thước Lập Cực (Nét)
+              </button>
+              <button class="lakinh-step-btn" id="btn-plate-trans">
+                💎 Mica Trong Suốt
+              </button>
+            </div>
+          </div>
+
           <!-- Nhóm trượt: Độ trong suốt & Kích thước -->
           <div class="sheet-control-group">
             <div class="sheet-control-label">
@@ -158,7 +173,7 @@
               <span>Kích thước La Kinh</span>
               <span class="val" id="sheet-val-size">${state.size} px</span>
             </div>
-            <input type="range" class="lakinh-slider" id="sheet-slider-size" min="260" max="950" value="${state.size}" step="10">
+            <input type="range" class="lakinh-slider" id="sheet-slider-size" min="260" max="1400" value="${state.size}" step="10">
           </div>
 
           <!-- Xoay góc hướng nhà & Vi chỉnh -->
@@ -1532,10 +1547,40 @@
     const sheetHandle = document.getElementById('sheet-handle');
     if (sheetHandle) sheetHandle.addEventListener('click', closeBottomSheet);
 
+    // Chuyển đổi mẫu Đĩa La Kinh / Thước Lập Cực
+    const btnPlateThuoc = document.getElementById('btn-plate-thuoc');
+    const btnPlateTrans = document.getElementById('btn-plate-trans');
+    const disc = document.getElementById('lakinh-disc');
+
+    const setPlate = (type) => {
+      state.activePlate = type;
+      if (disc) {
+        if (type === 'thuoc_lap_cuc') {
+          disc.src = 'assets/lakinh/thuoc_lap_cuc.png';
+          showLaKinhToast('🎯 Đã đổi sang: Thước Lập Cực (Nét)');
+        } else if (type === 'thuoc_trans') {
+          disc.src = 'assets/lakinh/thuoc_lap_cuc_trans.png';
+          showLaKinhToast('💎 Đã đổi sang: Thước Lập Cực Mica Trong Suốt');
+        }
+      }
+      if (btnPlateThuoc) {
+        btnPlateThuoc.classList.toggle('active', type === 'thuoc_lap_cuc');
+        btnPlateThuoc.style.color = type === 'thuoc_lap_cuc' ? '#38bdf8' : '';
+        btnPlateThuoc.style.fontWeight = type === 'thuoc_lap_cuc' ? '700' : '';
+      }
+      if (btnPlateTrans) {
+        btnPlateTrans.classList.toggle('active', type === 'thuoc_trans');
+        btnPlateTrans.style.color = type === 'thuoc_trans' ? '#38bdf8' : '';
+        btnPlateTrans.style.fontWeight = type === 'thuoc_trans' ? '700' : '';
+      }
+    };
+
+    if (btnPlateThuoc) btnPlateThuoc.addEventListener('click', () => setPlate('thuoc_lap_cuc'));
+    if (btnPlateTrans) btnPlateTrans.addEventListener('click', () => setPlate('thuoc_trans'));
+
     // Sliders
     const sOpacity = document.getElementById('sheet-slider-opacity');
     const valOpacity = document.getElementById('sheet-val-opacity');
-    const disc = document.getElementById('lakinh-disc');
     if (sOpacity) {
       sOpacity.addEventListener('input', (e) => {
         state.opacity = e.target.value / 100.0;
