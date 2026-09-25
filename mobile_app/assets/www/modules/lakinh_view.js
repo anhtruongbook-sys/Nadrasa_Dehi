@@ -106,11 +106,11 @@
 
         <!-- 2. Thanh Công Cụ Nổi Dưới Cùng (Floating Dock) -->
         <div id="lakinh-bottom-dock">
-          <button class="lakinh-dock-btn" id="lakinh-dock-sensor" title="Bật/Tắt cảm biến la bàn">
-            🧭 La Bàn Live
+          <button class="lakinh-dock-btn" id="lakinh-dock-sensor" title="Bật/Tắt cảm biến la bàn thực địa">
+            🧭 La Bàn
           </button>
           <button class="lakinh-dock-btn primary" id="lakinh-dock-gps" title="Bay về vị trí GPS thực tế hiện tại">
-            🎯 Vị Trí Hiện Tại
+            🎯 Vị Trí
           </button>
           <button class="lakinh-dock-btn" id="lakinh-dock-dem" title="Quét cao độ & Tam Hợp Thủy Pháp">
             🌊 Quét Cục
@@ -694,7 +694,7 @@
     state.isSensorActive = true;
     if (btn) {
       btn.classList.add('active-green');
-      btn.innerHTML = '🧭 Đang Đọc La Bàn';
+      btn.innerHTML = '🧭 Đang Đọc';
     }
 
     hasReceivedAbsoluteEvent = false;
@@ -709,7 +709,6 @@
     // 2. Luồng thông thường (iOS Safari webkitCompassHeading hoặc Android fallback)
     const onStandard = (e) => {
       if (!state.isSensorActive || state.isLocked) return;
-      // Nếu đã có luồng absolute và không phải iOS webkitCompassHeading thì bỏ qua để chống xung đột
       if (hasReceivedAbsoluteEvent && !e.webkitCompassHeading) return;
       processSensorHeading(e, false);
     };
@@ -719,14 +718,14 @@
     window.addEventListener('deviceorientationabsolute', onAbsolute, true);
     window.addEventListener('deviceorientation', onStandard, true);
 
-    showLaKinhToast('🧭 Đã bật cảm biến la bàn. Đầu điện thoại là hướng đo nhà.');
+    showLaKinhToast('🧭 Đã bật cảm biến la bàn. Đỉnh điện thoại (12h) là hướng đo nhà.');
   }
 
   function stopSensorListening(btn) {
     state.isSensorActive = false;
     if (btn) {
       btn.classList.remove('active-green');
-      btn.innerHTML = '🧭 La Bàn Live';
+      btn.innerHTML = '🧭 La Bàn';
     }
     if (activeSensorListeners) {
       window.removeEventListener('deviceorientationabsolute', activeSensorListeners.onAbsolute, true);
@@ -742,15 +741,31 @@
 
     let heading = null;
 
-    // A. iOS Safari: webkitCompassHeading (0-360 chuẩn)
+    // A. iOS Safari: webkitCompassHeading (0-360 chuẩn, đã được CoreMotion bù nghiêng phần cứng)
     if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) {
       heading = e.webkitCompassHeading;
     } 
-    // B. Android: alpha
+    // B. Android / Chromium: alpha, beta, gamma
     else if (typeof e.alpha === 'number' && !isNaN(e.alpha)) {
-      // W3C: alpha đo ngược chiều kim đồng hồ từ Bắc
-      // Chuẩn la bàn số: heading = (360 - alpha) % 360
-      heading = (360 - e.alpha) % 360;
+      const alpha = e.alpha;
+      const beta = e.beta;
+      const gamma = e.gamma;
+
+      // Áp dụng thuật toán bù góc nghiêng 3D Euler (3D Tilt Compensation)
+      if (typeof beta === 'number' && typeof gamma === 'number') {
+        const degToRad = Math.PI / 180;
+        const b = beta * degToRad;
+
+        // Khi điện thoại cầm nghiêng bình thường (beta < 75 độ):
+        let h = (360 - alpha) % 360;
+        // Bù góc xoay cổ tay roll (gamma) để triệt tiêu dao động khi nghiêng lắc tay
+        if (Math.abs(gamma) > 2) {
+          h = (h - gamma * Math.sin(b) + 360) % 360;
+        }
+        heading = h;
+      } else {
+        heading = (360 - alpha) % 360;
+      }
 
       // Bù hướng xoay màn hình (Screen orientation angle)
       const screenAngle = (window.screen && window.screen.orientation && typeof window.screen.orientation.angle === 'number')
@@ -768,12 +783,17 @@
       heading = (heading + state.declination + 360) % 360;
     }
 
-    // Bộ lọc thông thấp chống rung giật (Low-pass smoothing: alpha = 0.22)
+    // Tính độ lệch góc ngắn nhất [-180, 180]
     let diff = heading - state.rotation;
     while (diff < -180) diff += 360;
     while (diff > 180) diff -= 360;
 
-    const alphaFilter = 0.22;
+    // Vùng chết (Deadband filter): nếu tay chỉ rung nhẹ < 0.2 độ thì giữ nguyên, chống nhảy số
+    if (Math.abs(diff) < 0.2) return;
+
+    // Bộ lọc thích ứng (Adaptive low-pass filter):
+    // Xoay nhanh thì bắt nhạy (alphaFilter = 0.45), xoay chậm thì làm mượt đầm êm (alphaFilter = 0.20)
+    const alphaFilter = Math.abs(diff) > 15 ? 0.45 : 0.20;
     const smoothed = (state.rotation + alphaFilter * diff + 360) % 360;
     updateRotationDisplay(smoothed);
   }
@@ -800,7 +820,7 @@
       }
       if (btnDock) {
         btnDock.classList.remove('locked-red');
-        btnDock.innerHTML = state.isSensorActive ? '🧭 Đang Đọc La Bàn' : '🧭 La Bàn Live';
+        btnDock.innerHTML = state.isSensorActive ? '🧭 Đang Đọc' : '🧭 La Bàn';
       }
       showLaKinhToast('🔓 Đã mở khóa góc');
     }
