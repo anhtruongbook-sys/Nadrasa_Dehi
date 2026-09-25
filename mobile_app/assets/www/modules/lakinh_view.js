@@ -14,6 +14,7 @@
   let surveyRayLayerGroup = null;
   let polygonLayerGroup = null;
   let userLocationLayerGroup = null;
+  let searchMarkerLayerGroup = null;
 
   // Trạng thái vận hành
   const defaultSize = (typeof window !== 'undefined' && window.innerWidth < 500)
@@ -86,6 +87,17 @@
               📁
             </button>
           </div>
+        </div>
+
+        <!-- Thanh Tìm Kiếm Trực Tiếp Địa Chỉ & Tọa Độ GPS -->
+        <div id="lakinh-search-bar-wrap">
+          <div class="lakinh-search-input-box">
+            <span class="lakinh-search-lens">🔍</span>
+            <input type="text" id="lakinh-search-bar-input" placeholder="Tìm địa chỉ hoặc tọa độ GPS (VD: 21.028, 105.854)..." autocomplete="off">
+            <button type="button" id="lakinh-search-bar-clear" title="Xóa" style="display: none;">✕</button>
+            <button type="button" id="lakinh-search-bar-btn">Tìm</button>
+          </div>
+          <div id="lakinh-search-dropdown" class="lakinh-search-dropdown-menu"></div>
         </div>
 
         <!-- Thẻ Thông Tin Chi Tiết Thả Xuống Khi Chạm HUD Pill -->
@@ -274,6 +286,7 @@
     surveyRayLayerGroup = L.layerGroup().addTo(mapInstance);
     polygonLayerGroup = L.layerGroup().addTo(mapInstance);
     userLocationLayerGroup = L.layerGroup().addTo(mapInstance);
+    searchMarkerLayerGroup = L.layerGroup().addTo(mapInstance);
 
     mapInstance.on('move', onMapMove);
     mapInstance.on('moveend', onMapMoveEnd);
@@ -867,6 +880,271 @@
     }
   }
 
+  // Phân tích cú pháp tọa độ GPS linh hoạt
+  function parseCoordinates(input) {
+    if (!input) return null;
+    const str = input.trim();
+    // Khớp 2 số thực phân cách bởi dấu phẩy hoặc khoảng trắng
+    const m = str.match(/([-+]?[0-9]*\.?[0-9]+)[,\s\t]+([-+]?[0-9]*\.?[0-9]+)/);
+    if (!m) return null;
+    let val1 = parseFloat(m[1]);
+    let val2 = parseFloat(m[2]);
+    if (isNaN(val1) || isNaN(val2)) return null;
+
+    let lat, lng;
+    // Tự động nhận diện vĩ độ / kinh độ tại Việt Nam và toàn cầu
+    if (val1 >= -90 && val1 <= 90 && val2 >= -180 && val2 <= 180) {
+      if (val1 >= 8 && val1 <= 24 && val2 >= 102 && val2 <= 110) {
+        lat = val1; lng = val2;
+      } else if (val2 >= 8 && val2 <= 24 && val1 >= 102 && val1 <= 110) {
+        lat = val2; lng = val1; // Người dùng nhập ngược (kinh độ, vĩ độ)
+      } else {
+        lat = val1; lng = val2;
+      }
+      return { lat, lng };
+    }
+    return null;
+  }
+
+  // Nhảy đến vị trí và cắm marker khảo sát
+  function jumpToLocation(lat, lng, name) {
+    if (!mapInstance) return;
+    mapInstance.setView([lat, lng], 19, { animate: true });
+    state.centerCoords = [lat, lng];
+    updateLocationHUD(lat, lng);
+
+    if (searchMarkerLayerGroup) {
+      searchMarkerLayerGroup.clearLayers();
+      L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'custom-search-marker',
+          html: `<div style="background:#0284c7;color:#fff;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 0 10px rgba(0,0,0,0.8);border:1px solid #38bdf8;">📍 ${name}</div>`,
+          iconSize: [120, 24],
+          iconAnchor: [60, 24]
+        })
+      }).addTo(searchMarkerLayerGroup);
+    }
+
+    const dropdown = document.getElementById('lakinh-search-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+
+    showLaKinhToast(`🎯 Đã chuyển đến: ${name}`);
+  }
+
+  let searchDebounceTimer = null;
+
+  function initQuickSearchBar() {
+    const input = document.getElementById('lakinh-search-bar-input');
+    const clearBtn = document.getElementById('lakinh-search-bar-clear');
+    const searchBtn = document.getElementById('lakinh-search-bar-btn');
+    const dropdown = document.getElementById('lakinh-search-dropdown');
+    if (!input || !dropdown) return;
+
+    const quickCities = [
+      { name: 'Hà Nội', lat: 21.028511, lng: 105.854167 },
+      { name: 'TP. Hồ Chí Minh', lat: 10.776889, lng: 106.700806 },
+      { name: 'Đà Nẵng', lat: 16.054407, lng: 108.202167 },
+      { name: 'Hải Phòng', lat: 20.844912, lng: 106.688084 },
+      { name: 'Cần Thơ', lat: 10.045162, lng: 105.746857 }
+    ];
+
+    const localPlaces = [
+      { name: 'Hồ Hoàn Kiếm, Hà Nội', lat: 21.028511, lng: 105.854167 },
+      { name: 'Quận Hoàn Kiếm, Hà Nội', lat: 21.0312, lng: 105.8525 },
+      { name: 'Quận Cầu Giấy, Hà Nội', lat: 21.0333, lng: 105.7937 },
+      { name: 'Đường Trần Cung, Hà Nội', lat: 21.0475, lng: 105.7958 },
+      { name: 'Viện Khoa học Công nghệ Xây dựng (IBST), Hà Nội', lat: 21.0475, lng: 105.7958 },
+      { name: 'Quận Ba Đình, Hà Nội', lat: 21.0346, lng: 105.8239 },
+      { name: 'Quận Đống Đa, Hà Nội', lat: 21.0182, lng: 105.8277 },
+      { name: 'Quận Hai Bà Trưng, Hà Nội', lat: 21.0076, lng: 105.8524 },
+      { name: 'Quận Tây Hồ, Hà Nội', lat: 21.0667, lng: 105.8208 },
+      { name: 'Quận Long Biên, Hà Nội', lat: 21.0392, lng: 105.8927 },
+      { name: 'Quận Nam Từ Liêm, Hà Nội', lat: 21.0128, lng: 105.7628 },
+      { name: 'Quận Bắc Từ Liêm, Hà Nội', lat: 21.0658, lng: 105.7592 },
+      { name: 'Quận Thanh Xuân, Hà Nội', lat: 20.9983, lng: 105.8078 },
+      { name: 'Quận Hoàng Mai, Hà Nội', lat: 20.9734, lng: 105.8456 },
+      { name: 'Quận Hà Đông, Hà Nội', lat: 20.9634, lng: 105.7725 },
+      { name: 'Quận 1, TP. Hồ Chí Minh', lat: 10.7769, lng: 106.7008 },
+      { name: 'Quận 3, TP. Hồ Chí Minh', lat: 10.7844, lng: 106.6844 },
+      { name: 'TP. Thủ Đức, TP. Hồ Chí Minh', lat: 10.8494, lng: 106.7717 },
+      { name: 'Quận Bình Thạnh, TP. Hồ Chí Minh', lat: 10.8106, lng: 106.7091 },
+      { name: 'Quận Tân Bình, TP. Hồ Chí Minh', lat: 10.8015, lng: 106.6548 },
+      { name: 'Quận Phú Nhuận, TP. Hồ Chí Minh', lat: 10.7992, lng: 106.6803 },
+      { name: 'Quận 7, TP. Hồ Chí Minh', lat: 10.7340, lng: 106.7218 },
+      { name: 'TP. Đà Nẵng', lat: 16.0544, lng: 108.2022 },
+      { name: 'TP. Hải Phòng', lat: 20.8449, lng: 106.6881 },
+      { name: 'TP. Cần Thơ', lat: 10.0452, lng: 105.7469 },
+      { name: 'TP. Nha Trang, Khánh Hòa', lat: 12.2388, lng: 109.1967 },
+      { name: 'TP. Huế, Thừa Thiên Huế', lat: 16.4637, lng: 107.5909 },
+      { name: 'TP. Vũng Tàu, Bà Rịa - Vũng Tàu', lat: 10.3460, lng: 107.0843 }
+    ];
+
+    const showQuickCities = () => {
+      let html = `
+        <div style="font-size:0.7rem; color:#94a3b8; margin-bottom:6px;">Chọn nhanh khu vực khảo sát:</div>
+        <div class="lakinh-quick-cities" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:4px;">
+      `;
+      quickCities.forEach((c) => {
+        html += `<button type="button" class="lakinh-city-chip" style="font-size:0.7rem; padding:3px 8px;" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${c.name}">📍 ${c.name}</button>`;
+      });
+      html += `</div>
+        <div style="font-size:0.68rem; color:#64748b; margin-top:6px;">💡 Nhập tên đường, phường xã hoặc tọa độ GPS (VD: 21.0475, 105.7958)</div>
+      `;
+      dropdown.innerHTML = html;
+      dropdown.style.display = 'block';
+
+      dropdown.querySelectorAll('.lakinh-city-chip').forEach(btn => {
+        btn.onclick = () => {
+          const lat = parseFloat(btn.getAttribute('data-lat'));
+          const lng = parseFloat(btn.getAttribute('data-lng'));
+          const name = btn.getAttribute('data-name');
+          input.value = name;
+          jumpToLocation(lat, lng, name);
+        };
+      });
+    };
+
+    const performSearch = async (val) => {
+      const q = val.trim();
+      if (!q) {
+        showQuickCities();
+        return;
+      }
+
+      // 1. Kiểm tra tọa độ GPS
+      const coords = parseCoordinates(q);
+      let coordHtml = '';
+      if (coords) {
+        coordHtml = `
+          <div class="lakinh-search-suggest-item highlight-coord" data-lat="${coords.lat}" data-lng="${coords.lng}" data-name="Tọa độ ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}">
+            <div style="font-weight:800; font-size:0.78rem; color:#38bdf8;">🎯 Bay đến Tọa độ GPS: ${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}</div>
+            <div style="font-size:0.68rem; color:#cbd5e1; margin-top:2px;">Chạm để đặt tâm La Kinh vào tọa độ này</div>
+          </div>
+        `;
+      }
+
+      // 2. Tìm kiếm trong danh mục ngoại tuyến (Instant Local Match)
+      const qLower = q.toLowerCase();
+      const localMatches = localPlaces.filter(p => p.name.toLowerCase().includes(qLower)).slice(0, 4);
+      let localHtml = '';
+      if (localMatches.length > 0) {
+        localMatches.forEach(p => {
+          localHtml += `
+            <div class="lakinh-search-suggest-item" data-lat="${p.lat}" data-lng="${p.lng}" data-name="${p.name}">
+              <div style="font-weight:700; font-size:0.76rem; color:#f5b041;">📍 ${p.name}</div>
+              <div style="font-size:0.68rem; color:#94a3b8; margin-top:2px;">Tọa độ: ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</div>
+            </div>
+          `;
+        });
+      }
+
+      dropdown.style.display = 'block';
+      dropdown.innerHTML = coordHtml + localHtml + '<div style="padding:6px; text-align:center; color:#94a3b8; font-size:0.72rem;">⏳ Đang tìm kiếm thêm từ máy chủ bản đồ...</div>';
+
+      const bindItems = () => {
+        dropdown.querySelectorAll('.lakinh-search-suggest-item').forEach(item => {
+          item.onclick = () => {
+            const lat = parseFloat(item.getAttribute('data-lat'));
+            const lng = parseFloat(item.getAttribute('data-lng'));
+            const name = item.getAttribute('data-name');
+            input.value = name;
+            jumpToLocation(lat, lng, name);
+          };
+        });
+      };
+      bindItems();
+
+      // 3. Tìm kiếm trực tuyến qua Photon Komoot
+      try {
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`);
+        const data = await res.json();
+
+        let placesHtml = '';
+        if (data && data.features && data.features.length > 0) {
+          data.features.forEach((feat) => {
+            const props = feat.properties || {};
+            const geom = feat.geometry || {};
+            const c = geom.coordinates || [];
+            const lng = c[0];
+            const lat = c[1];
+            const name = props.name || props.street || q;
+            const context = [props.district, props.city, props.state, props.country].filter(Boolean).join(', ');
+
+            placesHtml += `
+              <div class="lakinh-search-suggest-item" data-lat="${lat}" data-lng="${lng}" data-name="${name}">
+                <div style="font-weight:700; font-size:0.76rem; color:#38bdf8;">📍 ${name}</div>
+                <div style="font-size:0.68rem; color:#cbd5e1; margin-top:2px;">${context}</div>
+              </div>
+            `;
+          });
+        }
+
+        dropdown.innerHTML = coordHtml + localHtml + placesHtml;
+        if (!coordHtml && !localHtml && !placesHtml) {
+          dropdown.innerHTML = '<div style="padding:8px; text-align:center; color:#ef4444; font-size:0.73rem;">❌ Không tìm thấy địa chỉ này. Hãy thử nhập tên đường hoặc tọa độ.</div>';
+        }
+        bindItems();
+      } catch (err) {
+        console.warn('Online geocoding fallback to local/coord:', err);
+        if (coordHtml || localHtml) {
+          dropdown.innerHTML = coordHtml + localHtml;
+          bindItems();
+        } else {
+          dropdown.innerHTML = '<div style="padding:8px; text-align:center; color:#f59e0b; font-size:0.73rem;">⚠️ Không kết nối được máy chủ tìm kiếm. Hãy nhập trực tiếp tọa độ (VD: 21.0285, 105.8542).</div>';
+        }
+      }
+    };
+
+    input.onfocus = () => {
+      if (input.value.trim().length === 0) {
+        showQuickCities();
+      } else {
+        performSearch(input.value);
+      }
+    };
+
+    input.oninput = () => {
+      const val = input.value;
+      if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        performSearch(val);
+      }, 300);
+    };
+
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const coords = parseCoordinates(input.value);
+        if (coords) {
+          jumpToLocation(coords.lat, coords.lng, `Tọa độ ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`);
+        } else {
+          performSearch(input.value);
+        }
+      }
+    };
+
+    if (clearBtn) {
+      clearBtn.onclick = () => {
+        input.value = '';
+        clearBtn.style.display = 'none';
+        input.focus();
+        showQuickCities();
+      };
+    }
+
+    if (searchBtn) {
+      searchBtn.onclick = () => {
+        const coords = parseCoordinates(input.value);
+        if (coords) {
+          jumpToLocation(coords.lat, coords.lng, `Tọa độ ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`);
+        } else {
+          performSearch(input.value);
+        }
+      };
+    }
+  }
+
   // Tìm kiếm địa điểm & Hướng dẫn gỡ chặn GPS
   function promptSearchLocation(isGpsBlocked = false) {
     const modalBox = document.getElementById('lakinh-modal-container');
@@ -1205,7 +1483,7 @@
       });
     }
 
-    // Đóng thẻ chi tiết khi chạm vào bản đồ
+    // Đóng thẻ chi tiết và dropdown tìm kiếm khi chạm vào bản đồ
     if (mapInstance) {
       mapInstance.on('click', () => {
         if (state.isHudDetailOpen && hudCard) {
@@ -1213,6 +1491,8 @@
           hudCard.style.display = 'none';
           if (hudArrow) hudArrow.textContent = '▾';
         }
+        const dropdown = document.getElementById('lakinh-search-dropdown');
+        if (dropdown) dropdown.style.display = 'none';
       });
     }
 
@@ -1359,9 +1639,19 @@
     const btnKML = document.getElementById('sheet-btn-kml');
     if (btnKML) btnKML.addEventListener('click', exportKML);
 
+    // Khởi tạo thanh tìm kiếm trực tiếp
+    initQuickSearchBar();
+
     // Top Strip buttons
     const btnSearch = document.getElementById('lakinh-btn-search');
-    if (btnSearch) btnSearch.addEventListener('click', promptSearchLocation);
+    if (btnSearch) {
+      btnSearch.addEventListener('click', () => {
+        const inp = document.getElementById('lakinh-search-bar-input');
+        if (inp) {
+          inp.focus();
+        }
+      });
+    }
 
     const btnLayer = document.getElementById('lakinh-btn-layer');
     if (btnLayer) btnLayer.addEventListener('click', switchMapLayer);
