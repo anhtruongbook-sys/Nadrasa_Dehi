@@ -2005,14 +2005,34 @@
 
       document.body.appendChild(printWrapper);
 
-      // 3. Preload all images and await loading completion
+      // 3. Pre-convert all <img> to Base64 data URLs to eliminate canvas tainting on Android WebView
       const imgs = Array.from(printWrapper.querySelectorAll('img'));
-      await Promise.all(imgs.map(img => {
+      await Promise.all(imgs.map(async (img) => {
+        try {
+          if (!img.src || img.src.startsWith('data:')) return;
+          const res = await fetch(img.src);
+          if (res.ok) {
+            const blob = await res.blob();
+            const dataUrl = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+            if (dataUrl) img.src = dataUrl;
+          }
+        } catch (fetchErr) {
+          console.warn('Fetch to Data URL failed for img, attempting fallback:', fetchErr);
+        }
+      }));
+
+      // Await image rendering completion
+      await Promise.all(Array.from(printWrapper.querySelectorAll('img')).map(img => {
         if (img.complete && img.naturalHeight !== 0) return Promise.resolve();
         return new Promise(resolve => {
           img.onload = resolve;
           img.onerror = resolve;
-          setTimeout(resolve, 3500); // 3.5s guarantee
+          setTimeout(resolve, 2000);
         });
       }));
 
@@ -2028,10 +2048,11 @@
       const opt = {
         margin: [6, 6, 6, 6],
         filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { type: 'jpeg', quality: 0.95 },
         html2canvas: {
           scale: 2,
           useCORS: true,
+          allowTaint: false,
           logging: false,
           scrollY: 0,
           backgroundColor: isDark ? '#0c0d14' : '#ffffff'
@@ -2041,11 +2062,42 @@
       };
 
       if (typeof window.html2pdf === 'function') {
-        const worker = window.html2pdf().set(opt).from(printWrapper);
-        const pdfDataUri = await worker.outputPdf('datauristring');
-        printWrapper.remove();
-        printWrapper = null;
+        let pdfDataUri = null;
+        try {
+          const worker = window.html2pdf().set(opt).from(printWrapper);
+          pdfDataUri = await worker.outputPdf('datauristring');
+        } catch (firstPassErr) {
+          console.warn('First pass PDF export failed (possibly tainted canvas), switching to untainted typography pass:', firstPassErr);
+          if (printWrapper) {
+            printWrapper.querySelectorAll('img').forEach(img => {
+              const cardName = img.alt || 'Lá Bài Tarot';
+              const cardBox = document.createElement('div');
+              cardBox.style.padding = '12px';
+              cardBox.style.borderRadius = '8px';
+              cardBox.style.background = isDark ? '#1e1b4b' : '#f8fafc';
+              cardBox.style.border = isDark ? '1px solid #4338ca' : '1px solid #cbd5e1';
+              cardBox.style.textAlign = 'center';
+              cardBox.innerHTML = `
+                <div style="font-size: 2rem; margin-bottom: 4px;">🃏</div>
+                <div style="font-weight: 800; font-size: 0.88rem; color: ${isDark ? '#e0e7ff' : '#1e293b'};">${cardName}</div>
+              `;
+              if (img.parentNode) img.parentNode.replaceChild(cardBox, img);
+            });
+            const fallbackWorker = window.html2pdf().set(opt).from(printWrapper);
+            pdfDataUri = await fallbackWorker.outputPdf('datauristring');
+          }
+        }
 
+        if (printWrapper && printWrapper.parentNode) {
+          printWrapper.remove();
+          printWrapper = null;
+        }
+
+        if (!pdfDataUri) {
+          throw new Error('Không thể khởi tạo luồng dữ liệu PDF');
+        }
+
+        // Deliver PDF
         if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
           const base64Pdf = pdfDataUri.split(',')[1];
           window.NativeBridge.postMessage(JSON.stringify({
@@ -2059,17 +2111,26 @@
             btnElement.innerHTML = '✅ Đã Lưu PDF';
             setTimeout(() => { btnElement.innerHTML = originalText; }, 2500);
           }
+          if (typeof window.showToast === 'function') {
+            showTarotToast('✅ Đã lưu PDF về thiết bị!');
+          }
         } else {
-          worker.save(filename).then(() => {
-            if (btnElement) {
-              btnElement.disabled = false;
-              btnElement.innerHTML = '✅ Đã Lưu PDF';
-              setTimeout(() => { btnElement.innerHTML = originalText; }, 2500);
-            }
-            if (typeof window.showToast === 'function') {
-              showTarotToast('✅ Đã tải file PDF luận giải về máy!');
-            }
-          });
+          // Direct browser download via data URI anchor (prevents re-rendering canvas)
+          const downloadLink = document.createElement('a');
+          downloadLink.href = pdfDataUri;
+          downloadLink.download = filename;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          if (btnElement) {
+            btnElement.disabled = false;
+            btnElement.innerHTML = '✅ Đã Lưu PDF';
+            setTimeout(() => { btnElement.innerHTML = originalText; }, 2500);
+          }
+          if (typeof window.showToast === 'function') {
+            showTarotToast('✅ Đã tải file PDF luận giải về máy!');
+          }
         }
       } else {
         if (printWrapper) {
