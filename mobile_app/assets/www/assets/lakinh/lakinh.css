@@ -25,6 +25,25 @@
   z-index: 1 !important;
 }
 
+/* Zero-Obscuration Map Markers (Chống che khuất thông tin bản đồ) */
+.custom-search-pin,
+.custom-watermouth-pin,
+.custom-centroid-marker {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.search-drop-pin {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.search-drop-pin:hover,
+.search-drop-pin:active {
+  transform: scale(1.15) translateY(-2px);
+}
+
 /* Lớp phủ đĩa La Kinh 36 tầng xoay tự do */
 #lakinh-overlay-container {
   position: absolute;

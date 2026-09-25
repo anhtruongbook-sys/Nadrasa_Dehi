@@ -610,16 +610,23 @@
           dashArray: '5, 5'
         }).addTo(elevationLayerGroup);
 
-        // Đánh dấu Thủy Khẩu điểm trũng nhất (Thiên Bàn Phùng Châm)
+        // Đánh dấu Thủy Khẩu điểm trũng nhất (Thiên Bàn Phùng Châm) - Không nền che khuất thông tin bản đồ
         const a = t.thuyKhau.analysis;
         L.marker([t.thuyKhau.lat, t.thuyKhau.lng], {
           icon: L.divIcon({
-            className: 'custom-watermouth-marker',
-            html: `<div style="background:#0284c7;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 8px rgba(0,0,0,0.8);">💧 Thủy Khẩu ${t.name.split(' ')[0]} (${a.son} • ${a.songSon})</div>`,
-            iconSize: [110, 20],
-            iconAnchor: [55, 10]
+            className: 'custom-watermouth-pin',
+            html: `<div class="watermouth-pin-wrap" style="display:inline-flex;align-items:center;background:none;border:none;">
+              <svg width="24" height="32" viewBox="0 0 28 36" fill="none" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.85));">
+                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#0284c7" stroke="#ffffff" stroke-width="2"/>
+                <path d="M14 8C14 8 10 13 10 15.5C10 17.7 11.8 19.5 14 19.5C16.2 19.5 18 17.7 18 15.5C18 13 14 8 14 8Z" fill="#ffffff"/>
+              </svg>
+              <span style="color:#38bdf8;font-size:11px;font-weight:800;white-space:nowrap;margin-left:3px;background:none;text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 1px 4px #000;">💧 ${t.name.split(' ')[0]} (${a.son})</span>
+            </div>`,
+            iconSize: [85, 32],
+            iconAnchor: [12, 32],
+            popupAnchor: [0, -32]
           })
-        }).addTo(elevationLayerGroup);
+        }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">💧 Thủy Khẩu ${t.name} (${a.son} • ${a.songSon})<br>Tam Hợp: ${a.cuc}<br>Cao độ: ${t.thuyKhau.elevation.toFixed(1)}m</div>`).addTo(elevationLayerGroup);
       });
 
       openMinhDuongModal(result);
@@ -930,11 +937,14 @@
           L.marker([centroid.lat, centroid.lng], {
             icon: L.divIcon({
               className: 'custom-centroid-marker',
-              html: `<div style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 8px #000;">🎯 Tim Đất (${centroid.areaM2} m²)</div>`,
-              iconSize: [80, 20],
-              iconAnchor: [40, 10]
+              html: `<div style="display:inline-flex;align-items:center;background:none;border:none;">
+                <span style="font-size:18px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.9));">🎯</span>
+                <span style="color:#ef4444;font-size:11px;font-weight:800;white-space:nowrap;margin-left:2px;background:none;text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 1px 4px #000;">${centroid.areaM2} m²</span>
+              </div>`,
+              iconSize: [60, 20],
+              iconAnchor: [9, 10]
             })
-          }).addTo(polygonLayerGroup);
+          }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:3px;">🎯 Tim Thửa Đất<br>Diện tích: ${centroid.areaM2} m²</div>`).addTo(polygonLayerGroup);
 
           mapInstance.panTo([centroid.lat, centroid.lng]);
         }
@@ -979,12 +989,18 @@
       searchMarkerLayerGroup.clearLayers();
       L.marker([lat, lng], {
         icon: L.divIcon({
-          className: 'custom-search-marker',
-          html: `<div style="background:#0284c7;color:#fff;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 0 10px rgba(0,0,0,0.8);border:1px solid #38bdf8;">📍 ${name}</div>`,
-          iconSize: [120, 24],
-          iconAnchor: [60, 24]
+          className: 'custom-search-pin',
+          html: `<div class="search-drop-pin" style="display:flex;align-items:center;justify-content:center;background:none;border:none;">
+            <svg width="28" height="36" viewBox="0 0 28 36" fill="none" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
+              <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+              <circle cx="14" cy="13" r="5" fill="#ffffff"/>
+            </svg>
+          </div>`,
+          iconSize: [28, 36],
+          iconAnchor: [14, 36],
+          popupAnchor: [0, -36]
         })
-      }).addTo(searchMarkerLayerGroup);
+      }).bindPopup(`<div style="font-size:12px;font-weight:700;color:#0f172a;padding:2px 4px;max-width:240px;text-align:center;">📍 ${name}</div>`).addTo(searchMarkerLayerGroup);
     }
 
     const dropdown = document.getElementById('lakinh-search-dropdown');
@@ -1979,6 +1995,7 @@
   const NetaLaKinhView = {
     init: initLaKinhView,
     render: renderLaKinh,
+    jumpTo: jumpToLocation,
     loadProject: loadProject,
     deleteProject: deleteProject,
     openBottomSheet: openBottomSheet,

@@ -63,10 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.7.0
-          name: "Neta Light & Huyền Học v1.7.0 (Sửa lỗi Tainted Canvas Chụp Ảnh Màn Hình, Cập Nhật 48 Lá Bài Neta HD & Ẩn Thanh Tìm Kiếm La Kinh)"
+          tag_name: v1.7.2
+          name: "Neta Light & Huyền Học v1.7.2 (Chỉ Pin Địa Chỉ, Bỏ Nền Xanh Thủy Cục & Chống Che Khuất Bản Đồ)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.7.0
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.7.2
+            - **Chuyển Điểm Tìm Kiếm Địa Chỉ Thành Pin Chuẩn (📍 Pin Only)**:
+              + Loại bỏ hoàn toàn khối hộp chữ nền xanh che phủ bản đồ khi tìm kiếm địa chỉ.
+              + Sử dụng biểu tượng Pin đỏ viền trắng mũi nhọn định vị chính xác tâm tọa độ (tương tự Google Maps). Thông tin tên địa chỉ hiển thị trong popup khi chạm vào pin, không che khuất địa hình, đường sá, mái nhà và tên cửa hiệu xung quanh.
+            - **Xóa Bỏ Nền Xanh Khối Hộp Thủy Cục (💧 Transparent Watermouth Marker)**:
+              + Thủy Khẩu điểm trũng nhất (Tiểu, Trung, Đại Minh Đường) được thể hiện bằng biểu tượng Giọt Nước (Water Pin) chuyên biệt.
+              + Chữ phương vị Sơn Hướng hiển thị trong suốt (không nền che) kèm bóng đổ tương phản cao (text-shadow), giữ trọn vẹn 100% chi tiết ảnh vệ tinh và bản đồ bên dưới.
+            - **Đồng Bộ Hoàn Thiện Bản Sửa Lỗi v1.7.1**:
+              + Pháp Ấn tròn trịa 1:1 sắc nét 2560x2560.
+              + Chụp ảnh màn hình và xuất PDF phân hệ Tarot giữ nguyên hình ảnh màu các lá bài cổ điển RWS.
+              + Chụp ảnh màn hình La Kinh giữ trọn vẹn đĩa 36 tầng và bản đồ vệ tinh không bị trắng xóa.
             - **Khắc phục Triệt Để Lỗi Chụp Ảnh Màn Hình (📷 Tainted Canvas Error) Cho Cả 2 Module Mới**:
               + **Tarot Rider-Waite**: Định tuyến container `#view-tarot`, nạp toàn bộ ảnh lá bài sang Base64 Data URL sạch via FileReader nội bộ, loại bỏ hoàn toàn lỗi `Tainted canvases may not be exported`. Tự động mở rộng toàn bộ bảng quẻ và luận giải chi tiết, ẩn thanh công cụ điều khiển để xuất ảnh báo cáo quẻ bài Retina sắc nét (`Tarot_RiderWaite_*.png`).
               + **La Kinh Vệ Tinh (Thước Lập Cực 36 Tầng)**: Tự động chuyển đổi các mảnh vệ tinh Google (không có CORS) sang tọa độ tương đương trên ArcGIS World Imagery (`server.arcgisonline.com`) có sẵn `Access-Control-Allow-Origin: *`, nạp sạch vào Base64 canvas. Bảo tồn đĩa La Kinh 36 tầng xuyên thấu, kim chỉ hướng, tâm nhà và bảng thông số phong thủy; gắn watermark khảo sát vệ tinh chuyên nghiệp (`LaKinh_VeTinh_*.png`).
