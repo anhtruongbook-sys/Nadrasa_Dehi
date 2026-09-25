@@ -1437,7 +1437,8 @@
       const dicts = [
         window.CARDS_BASE64_DATA,
         window.TAROT_BASE64_DATA,
-        window.LAKINH_BASE64_DATA
+        window.LAKINH_BASE64_DATA,
+        window.PHAP_HANH_BASE64_DATA
       ];
       for (const dict of dicts) {
         if (!dict) continue;
@@ -1574,6 +1575,11 @@
         targetElement = document.getElementById('view-lakinh') || appContainer;
         bgColor = '#06070a';
         captureScale = 2;
+      } else if (currentDeckMode === 'phaphanh') {
+        targetElement = document.getElementById('view-phaphanh') || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#120104';
+        captureScale = 2;
+        captureHeight = targetElement.scrollHeight || null;
       } else {
         targetElement = document.getElementById('card-arena-container') || appContainer;
       }
@@ -1586,7 +1592,23 @@
           const fullSrc = img.src;
           const attrSrc = img.getAttribute('src');
           if (fullSrc && !fullSrc.startsWith('data:') && !imgUrlMap.has(fullSrc)) {
-            const b64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || (await toBase64Url(fullSrc));
+            let b64 = getCardBase64(fullSrc) || getCardBase64(attrSrc);
+            if (!b64 && img.complete && img.naturalWidth > 0) {
+              try {
+                const c = document.createElement('canvas');
+                c.width = img.naturalWidth;
+                c.height = img.naturalHeight;
+                const ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const data = c.toDataURL('image/jpeg', 0.92);
+                if (data && data.startsWith('data:image')) {
+                  b64 = data;
+                }
+              } catch (e) {}
+            }
+            if (!b64) {
+              b64 = await toBase64Url(fullSrc);
+            }
             if (b64 && b64.startsWith('data:')) {
               imgUrlMap.set(fullSrc, b64);
               if (attrSrc && !imgUrlMap.has(attrSrc)) {
@@ -1601,6 +1623,9 @@
       const sanitizeClone = (clonedDoc) => {
         const clonedImgs = clonedDoc.querySelectorAll('img');
         clonedImgs.forEach((img) => {
+          img.removeAttribute('loading');
+          img.loading = 'eager';
+
           const fullSrc = img.src;
           const attrSrc = img.getAttribute('src');
           let cleanB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || imgUrlMap.get(fullSrc) || imgUrlMap.get(attrSrc);
@@ -1618,6 +1643,11 @@
 
           if (cleanB64 && cleanB64.startsWith('data:')) {
             img.src = cleanB64;
+          } else if (img.classList.contains('ph-card-img') || fullSrc.includes('phap_hanh')) {
+            const phB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc);
+            if (phB64 && phB64.startsWith('data:')) {
+              img.src = phB64;
+            }
           } else if (currentDeckMode === 'tarot') {
             // Tìm trong từ điển Tarot
             const tarotB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc);
@@ -1712,7 +1742,7 @@
 
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #app-container'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #app-container'
         );
         scrollViews.forEach(v => {
           v.style.height = 'auto';
@@ -1775,7 +1805,12 @@
             sanitizeClone(clonedDoc);
             clonedDoc.querySelectorAll('img').forEach(img => {
               if (!img.src || !img.src.startsWith('data:')) {
-                img.remove();
+                const fbB64 = getCardBase64(img.src) || getCardBase64(img.getAttribute('src'));
+                if (fbB64 && fbB64.startsWith('data:')) {
+                  img.src = fbB64;
+                } else if (!img.classList.contains('ph-card-img')) {
+                  img.remove();
+                }
               }
             });
           }
@@ -1798,6 +1833,7 @@
       else if (currentDeckMode === 'calendar') modeName = 'LichAmDuong';
       else if (currentDeckMode === 'tarot') modeName = 'Tarot_RiderWaite';
       else if (currentDeckMode === 'lakinh') modeName = 'LaKinh_VeTinh';
+      else if (currentDeckMode === 'phaphanh') modeName = 'PhapHanh_NadrasaDehi';
 
       const filename = `${modeName}_${dateStr}.png`;
 

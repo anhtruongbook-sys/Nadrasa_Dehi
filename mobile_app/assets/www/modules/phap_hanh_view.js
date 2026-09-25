@@ -185,7 +185,13 @@ const PhapHanhModule = (function() {
 
     grid.innerHTML = currentFilteredList.map((item, idx) => {
       const isCustom = !!item.isCustom;
-      const displayImg = isCustom ? (item.images && item.images[0] ? item.images[0] : item.image) : item.image;
+      let displayImg = item.image;
+      if (isCustom) {
+        displayImg = (item.images && item.images[0]) ? item.images[0] : item.image;
+      } else if (typeof window !== 'undefined' && window.PHAP_HANH_BASE64_DATA) {
+        const fname = item.image ? item.image.split('/').pop() : '';
+        displayImg = window.PHAP_HANH_BASE64_DATA[item.image] || window.PHAP_HANH_BASE64_DATA[fname] || item.image;
+      }
       const multipleBadge = (isCustom && item.images && item.images.length > 1) 
         ? `<span class="ph-multiple-badge">📷 ${item.images.length} ảnh</span>` 
         : '';
@@ -193,7 +199,7 @@ const PhapHanhModule = (function() {
       return `
         <div class="ph-card" data-index="${idx}">
           <div class="ph-card-thumb-wrap">
-            <img src="${displayImg}" alt="${item.title}" class="ph-card-img" loading="lazy" />
+            <img src="${displayImg}" alt="${item.title}" class="ph-card-img" />
             <span class="ph-category-badge ${isCustom ? 'badge-custom' : ''}">${item.categoryName || 'Bài học'}</span>
             ${multipleBadge}
           </div>
