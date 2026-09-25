@@ -1456,40 +1456,77 @@
     if (prebaked) return prebaked;
     if (imageBase64Cache.has(url)) return imageBase64Cache.get(url);
 
+    // Xử lý thông minh ảnh vệ tinh Google: chuyển sang ArcGIS World Imagery tương đương để vượt rào CORS 100%
+    let fetchUrl = url;
+    const googleTileMatch = url.match(/x=(\d+)&y=(\d+)&z=(\d+)/);
+    if (googleTileMatch) {
+      const gx = googleTileMatch[1];
+      const gy = googleTileMatch[2];
+      const gz = googleTileMatch[3];
+      fetchUrl = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${gz}/${gy}/${gx}`;
+    }
+
+    // 1. Thử fetch thông thường (không gán mode cors) cho tệp cục bộ / Android assets / relative URLs
     try {
-      const response = await fetch(url, { mode: 'cors' });
-      const blob = await response.blob();
-      return await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          imageBase64Cache.set(url, reader.result);
-          resolve(reader.result);
-        };
-        reader.onerror = () => resolve(url);
-        reader.readAsDataURL(blob);
-      });
-    } catch (e) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          try {
-            const c = document.createElement('canvas');
-            c.width = img.naturalWidth || img.width || 100;
-            c.height = img.naturalHeight || img.height || 100;
-            const ctx = c.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            const data = c.toDataURL('image/png');
+      const response = await fetch(fetchUrl);
+      if (response.ok) {
+        const blob = await response.blob();
+        const dataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = () => resolve('');
+          reader.readAsDataURL(blob);
+        });
+        if (dataUrl && dataUrl.startsWith('data:')) {
+          imageBase64Cache.set(url, dataUrl);
+          if (fetchUrl !== url) imageBase64Cache.set(fetchUrl, dataUrl);
+          return dataUrl;
+        }
+      }
+    } catch (e1) {}
+
+    // 2. Thử fetch với mode 'cors' cho các CDN hỗ trợ CORS (như ArcGIS, OpenStreetMap, v.v.)
+    try {
+      const response = await fetch(fetchUrl, { mode: 'cors' });
+      if (response.ok) {
+        const blob = await response.blob();
+        const dataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = () => resolve('');
+          reader.readAsDataURL(blob);
+        });
+        if (dataUrl && dataUrl.startsWith('data:')) {
+          imageBase64Cache.set(url, dataUrl);
+          if (fetchUrl !== url) imageBase64Cache.set(fetchUrl, dataUrl);
+          return dataUrl;
+        }
+      }
+    } catch (e2) {}
+
+    // 3. Fallback Canvas ẩn an toàn
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth || img.width || 100;
+          c.height = img.naturalHeight || img.height || 100;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const data = c.toDataURL('image/png');
+          if (data && data.startsWith('data:')) {
             imageBase64Cache.set(url, data);
             resolve(data);
-          } catch (err) {
-            resolve(url);
+            return;
           }
-        };
-        img.onerror = () => resolve(url);
-        img.src = url;
-      });
-    }
+        } catch (err) {}
+        resolve('');
+      };
+      img.onerror = () => resolve('');
+      img.src = fetchUrl;
+    });
   }
 
   async function captureArenaScreenshot() {
@@ -1512,11 +1549,14 @@
       }
 
       const isLight = currentTheme === 'light';
-      const bgColor = isLight ? '#fdfbf7' : '#160408';
-      const titleColor = isLight ? '#781708' : '#f5b041';
+      let bgColor = isLight ? '#fdfbf7' : '#160408';
+      let titleColor = isLight ? '#781708' : '#f5b041';
 
       // 1. Xác định target container: Chụp trực tiếp phân hệ đang mở để ảnh gọn, đẹp, full nét
       let targetElement = appContainer;
+      let captureScale = 3;
+      let captureHeight = null;
+
       if (currentDeckMode === 'tuvi') {
         targetElement = document.querySelector('.tuvi-view-container') || document.getElementById('tuvi-view') || appContainer;
       } else if (currentDeckMode === 'bazi') {
@@ -1525,6 +1565,15 @@
         targetElement = document.querySelector('.qmdj-view-container') || document.getElementById('qmdj-view') || appContainer;
       } else if (currentDeckMode === 'calendar') {
         targetElement = document.querySelector('.cal-body') || document.querySelector('.calendar-module-container') || document.getElementById('calendar-view') || appContainer;
+      } else if (currentDeckMode === 'tarot') {
+        targetElement = document.getElementById('view-tarot') || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#0c0d14';
+        captureScale = 2;
+        captureHeight = targetElement.scrollHeight || null;
+      } else if (currentDeckMode === 'lakinh') {
+        targetElement = document.getElementById('view-lakinh') || appContainer;
+        bgColor = '#06070a';
+        captureScale = 2;
       } else {
         targetElement = document.getElementById('card-arena-container') || appContainer;
       }
@@ -1538,17 +1587,146 @@
           const attrSrc = img.getAttribute('src');
           if (fullSrc && !fullSrc.startsWith('data:') && !imgUrlMap.has(fullSrc)) {
             const b64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || (await toBase64Url(fullSrc));
-            imgUrlMap.set(fullSrc, b64);
-            if (attrSrc && !imgUrlMap.has(attrSrc)) {
-              imgUrlMap.set(attrSrc, b64);
+            if (b64 && b64.startsWith('data:')) {
+              imgUrlMap.set(fullSrc, b64);
+              if (attrSrc && !imgUrlMap.has(attrSrc)) {
+                imgUrlMap.set(attrSrc, b64);
+              }
             }
           }
         })
       );
 
-      // 3. Chụp container với html2canvas ở độ phân giải siêu nét Retina 3x
-      const canvas = await html2canvas(targetElement, {
-        scale: 3,
+      // 3. Chuẩn bị hàm onclone chống Tainted Canvas 100%
+      const sanitizeClone = (clonedDoc) => {
+        const clonedImgs = clonedDoc.querySelectorAll('img');
+        clonedImgs.forEach((img) => {
+          const fullSrc = img.src;
+          const attrSrc = img.getAttribute('src');
+          const cleanB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || imgUrlMap.get(fullSrc) || imgUrlMap.get(attrSrc);
+          if (cleanB64 && cleanB64.startsWith('data:')) {
+            img.src = cleanB64;
+          } else if (currentDeckMode === 'tarot') {
+            // Thay thế ảnh không an toàn bằng khung thẻ bài Tarot trang nhã
+            const cardBox = document.createElement('div');
+            cardBox.style.padding = '12px';
+            cardBox.style.borderRadius = '8px';
+            cardBox.style.background = isLight ? '#f1f5f9' : '#1e1b4b';
+            cardBox.style.border = isLight ? '1px solid #cbd5e1' : '1px solid #4338ca';
+            cardBox.style.textAlign = 'center';
+            cardBox.innerHTML = `<div style="font-size: 2rem; margin-bottom: 4px;">🃏</div><div style="font-weight: 700; font-size: 0.88rem; color: ${isLight ? '#1e293b' : '#e0e7ff'};">${img.alt || 'Lá Bài Tarot'}</div>`;
+            if (img.parentNode) img.parentNode.replaceChild(cardBox, img);
+          } else if (currentDeckMode === 'lakinh') {
+            // Loại bỏ tile cross-origin không tải được để tuyệt đối không làm bẩn (taint) canvas
+            img.remove();
+          }
+        });
+
+        // Xử lý riêng cho Tarot: mở rộng vùng cuộn, ẩn nút thao tác để quẻ bài và luận giải hiển thị trọn vẹn
+        if (currentDeckMode === 'tarot') {
+          const vTarot = clonedDoc.getElementById('view-tarot');
+          if (vTarot) {
+            vTarot.style.height = 'auto';
+            vTarot.style.maxHeight = 'none';
+            vTarot.style.overflow = 'visible';
+            vTarot.style.padding = '16px';
+            vTarot.style.background = bgColor;
+          }
+          const workspaces = clonedDoc.querySelectorAll('.tarot-spread-workspace, #tarot-report-section, .tarot-report-body');
+          workspaces.forEach(w => {
+            w.style.height = 'auto';
+            w.style.maxHeight = 'none';
+            w.style.overflow = 'visible';
+          });
+          const hideTarotControls = [
+            '#tarot-tabs-nav',
+            '.tarot-control-card',
+            '.tarot-action-buttons',
+            '.tarot-ribbon-workspace-wrapper',
+            '.tarot-report-actions',
+            '#tarot-quick-actions'
+          ];
+          hideTarotControls.forEach(sel => {
+            const el = clonedDoc.querySelector(sel);
+            if (el) el.style.display = 'none';
+          });
+        }
+
+        // Xử lý riêng cho La Kinh: ẩn các thanh trượt và nút bấm điều khiển, bảo tồn đĩa La Kinh và bảng thông số vệ tinh
+        if (currentDeckMode === 'lakinh') {
+          const hideLaKinhControls = [
+            '#lakinh-btn-my-location',
+            '#lakinh-search-bar-wrap',
+            '#lakinh-dock',
+            '#lakinh-floating-controls',
+            '#lakinh-bottom-sheet',
+            '.leaflet-control-zoom',
+            '.leaflet-control-attribution',
+            '#lakinh-btn-search',
+            '#lakinh-btn-layer',
+            '#lakinh-btn-projects'
+          ];
+          hideLaKinhControls.forEach(sel => {
+            const el = clonedDoc.querySelector(sel);
+            if (el) el.style.display = 'none';
+          });
+
+          // Thêm Watermark khảo sát phong thủy vệ tinh chuẩn mực
+          const footerBadge = document.createElement('div');
+          footerBadge.style.position = 'absolute';
+          footerBadge.style.bottom = '12px';
+          footerBadge.style.left = '12px';
+          footerBadge.style.padding = '8px 14px';
+          footerBadge.style.borderRadius = '8px';
+          footerBadge.style.background = 'rgba(10, 15, 29, 0.88)';
+          footerBadge.style.border = '1px solid rgba(245, 176, 65, 0.4)';
+          footerBadge.style.color = '#f8fafc';
+          footerBadge.style.fontSize = '11px';
+          footerBadge.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+          footerBadge.style.lineHeight = '1.4';
+          footerBadge.style.zIndex = '9999';
+          footerBadge.innerHTML = '<strong>NETA LIGHT • LA KINH VỆ TINH 36 TẦNG</strong><br><span style="color:#f5b041;">Khảo sát thực địa &amp; Đo hướng vệ tinh</span>';
+          const vLaKinh = clonedDoc.getElementById('view-lakinh');
+          if (vLaKinh) vLaKinh.appendChild(footerBadge);
+        }
+
+        // Expand scrolling containers so complete chart is captured
+        const scrollViews = clonedDoc.querySelectorAll(
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #app-container'
+        );
+        scrollViews.forEach(v => {
+          v.style.height = 'auto';
+          v.style.maxHeight = 'none';
+          v.style.overflow = 'visible';
+          v.style.paddingBottom = '16px';
+          v.style.background = bgColor;
+        });
+
+        // Ẩn thanh công cụ nhập liệu để ảnh chụp là một lá số/bảng số thuần túy, trang nhã, không rác giao diện
+        const ctrlBars = clonedDoc.querySelectorAll('.tuvi-ctrl-bar, .bazi-ctrl-bar, .qmdj-ctrl-bar');
+        ctrlBars.forEach(b => {
+          b.style.display = 'none';
+        });
+
+        // Đảm bảo Thiên Bàn và 12 Cung hiển thị cực kỳ sắc nét trên ảnh
+        const grid4x4 = clonedDoc.querySelector('.tuvi-grid-4x4');
+        if (grid4x4) {
+          grid4x4.style.boxShadow = 'none';
+          grid4x4.style.border = isLight ? '2px solid #854d0e' : '2px solid #f5b041';
+        }
+
+        const title = clonedDoc.querySelector('.app-title');
+        if (title) {
+          title.style.background = 'none';
+          title.style.webkitBackgroundClip = 'initial';
+          title.style.webkitTextFillColor = titleColor;
+          title.style.color = titleColor;
+        }
+      };
+
+      // 4. Chụp container với html2canvas
+      const html2canvasOptions = {
+        scale: captureScale,
         backgroundColor: bgColor,
         useCORS: true,
         allowTaint: false,
@@ -1556,51 +1734,39 @@
         imageTimeout: 8000,
         scrollX: 0,
         scrollY: 0,
-        onclone: (clonedDoc) => {
-          const clonedImgs = clonedDoc.querySelectorAll('img');
-          clonedImgs.forEach((img) => {
-            const fullSrc = img.src;
-            const attrSrc = img.getAttribute('src');
-            const cleanB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || imgUrlMap.get(fullSrc) || imgUrlMap.get(attrSrc);
-            if (cleanB64 && cleanB64.startsWith('data:')) {
-              img.src = cleanB64;
-            }
-          });
+        onclone: sanitizeClone
+      };
+      if (captureHeight) {
+        html2canvasOptions.height = captureHeight;
+        html2canvasOptions.windowHeight = captureHeight;
+      }
 
-          // Expand scrolling containers so complete chart is captured
-          const scrollViews = clonedDoc.querySelectorAll(
-            '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #app-container'
-          );
-          scrollViews.forEach(v => {
-            v.style.height = 'auto';
-            v.style.maxHeight = 'none';
-            v.style.overflow = 'visible';
-            v.style.paddingBottom = '16px';
-            v.style.background = bgColor;
-          });
+      let canvas = await html2canvas(targetElement, html2canvasOptions);
 
-          // Ẩn thanh công cụ nhập liệu để ảnh chụp là một lá số/bảng số thuần túy, trang nhã, không rác giao diện
-          const ctrlBars = clonedDoc.querySelectorAll('.tuvi-ctrl-bar, .bazi-ctrl-bar, .qmdj-ctrl-bar');
-          ctrlBars.forEach(b => {
-            b.style.display = 'none';
-          });
-
-          // Đảm bảo Thiên Bàn và 12 Cung hiển thị cực kỳ sắc nét trên ảnh
-          const grid4x4 = clonedDoc.querySelector('.tuvi-grid-4x4');
-          if (grid4x4) {
-            grid4x4.style.boxShadow = 'none';
-            grid4x4.style.border = isLight ? '2px solid #854d0e' : '2px solid #f5b041';
+      // 5. Xuất Data URL an toàn với cơ chế Tainted Canvas Auto-Recovery (Pass 2 Fallback)
+      let dataUrl = null;
+      try {
+        dataUrl = canvas.toDataURL('image/png');
+      } catch (taintErr) {
+        console.warn('First pass screenshot tainted, running safe sanitizing pass:', taintErr);
+        const fallbackOptions = {
+          ...html2canvasOptions,
+          onclone: (clonedDoc) => {
+            sanitizeClone(clonedDoc);
+            clonedDoc.querySelectorAll('img').forEach(img => {
+              if (!img.src || !img.src.startsWith('data:')) {
+                img.remove();
+              }
+            });
           }
+        };
+        const safeCanvas = await html2canvas(targetElement, fallbackOptions);
+        dataUrl = safeCanvas.toDataURL('image/png');
+      }
 
-          const title = clonedDoc.querySelector('.app-title');
-          if (title) {
-            title.style.background = 'none';
-            title.style.webkitBackgroundClip = 'initial';
-            title.style.webkitTextFillColor = titleColor;
-            title.style.color = titleColor;
-          }
-        }
-      });
+      if (!dataUrl) {
+        throw new Error('Không thể xuất dữ liệu hình ảnh canvas');
+      }
 
       const now = new Date();
       const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
@@ -1610,11 +1776,11 @@
       else if (currentDeckMode === 'bazi') modeName = 'BatTu_ManhPhai';
       else if (currentDeckMode === 'tuvi') modeName = 'TuVi_DauSo';
       else if (currentDeckMode === 'calendar') modeName = 'LichAmDuong';
+      else if (currentDeckMode === 'tarot') modeName = 'Tarot_RiderWaite';
+      else if (currentDeckMode === 'lakinh') modeName = 'LaKinh_VeTinh';
 
       const filename = `${modeName}_${dateStr}.png`;
 
-      // 4. Xuất Data URL & Blob an toàn
-      const dataUrl = canvas.toDataURL('image/png');
       const binStr = atob(dataUrl.split(',')[1]);
       const len = binStr.length;
       const u8arr = new Uint8Array(len);
@@ -1667,7 +1833,7 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '7.7';
+  const CURRENT_APP_VERSION = '7.8';
   function registerServiceWorker() {
     const isFlutterApp = (typeof window !== 'undefined' && (
       window.NativeBridge !== undefined ||
@@ -1704,7 +1870,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=7.7')
+        navigator.serviceWorker.register('sw.js?v=7.8')
           .then((reg) => {
             reg.update();
           })
