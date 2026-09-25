@@ -2,1082 +2,676 @@
 <defs>
 <style>
 
-        text { font-family: 'Times New Roman', 'Arial', sans-serif; text-anchor: middle; dominant-baseline: central; }
-        .ring { fill: none; stroke: #8b0000; stroke-width: 1.2; }
-        .ring-bold { fill: none; stroke: #5c0000; stroke-width: 2.5; }
-        .ring-gold { fill: #fdf5e6; fill-opacity: 0.94; }
-        .ring-gold-alt { fill: #fcf0d5; fill-opacity: 0.94; }
-        .tick { stroke: #444; stroke-width: 0.8; }
-        .tick-major { stroke: #b22222; stroke-width: 1.8; }
-        .crosshair { stroke: #dc2626; stroke-width: 1.5; stroke-dasharray: 4, 3; }
-        .needle-n { fill: #dc2626; }
-        .needle-s { fill: #1e293b; }
-        .txt-deg { font-size: 10px; fill: #1e293b; font-weight: bold; }
-        .txt-tu { font-size: 11px; fill: #7c2d12; font-weight: bold; }
-        .txt-24son { font-size: 16px; fill: #0f172a; font-weight: bold; }
-        .txt-thienban { font-size: 12px; fill: #0284c7; font-weight: bold; }
-        .txt-nhanban { font-size: 12px; fill: #16a34a; font-weight: bold; }
-        .txt-batsat { font-size: 10px; fill: #b91c1c; font-weight: bold; }
-        .txt-quai { font-size: 18px; fill: #8b0000; font-weight: bold; }
-        .txt-long { font-size: 9px; fill: #475569; }
+        text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; text-anchor: middle; dominant-baseline: central; paint-order: stroke fill; stroke: rgba(255,255,255,0.95); stroke-width: 2.2px; stroke-linejoin: round; }
+        .ring { fill: none; stroke: rgba(185, 28, 28, 0.75); stroke-width: 1.2; }
+        .ring-bold { fill: none; stroke: #b91c1c; stroke-width: 2.5; }
+        .tick { stroke: rgba(255,255,255,0.85); stroke-width: 1; }
+        .tick-major { stroke: #dc2626; stroke-width: 2.4; }
+        .crosshair { stroke: #ef4444; stroke-width: 1.8; stroke-dasharray: 6, 4; }
+        .needle-n { fill: #ef4444; filter: drop-shadow(0 0 4px #ffffff); }
+        .needle-s { fill: #1e293b; filter: drop-shadow(0 0 4px #ffffff); }
+        .txt-deg { font-size: 11px; fill: #0f172a; font-weight: 800; }
+        .txt-tu { font-size: 12px; fill: #9a3412; font-weight: 800; }
+        .txt-24son { font-size: 18px; fill: #7f1d1d; font-weight: 900; }
+        .txt-thienban { font-size: 13px; fill: #0369a1; font-weight: 800; }
+        .txt-nhanban { font-size: 13px; fill: #15803d; font-weight: 800; }
+        .txt-batsat { font-size: 11px; fill: #b91c1c; font-weight: 800; }
+        .txt-quai { font-size: 20px; fill: #991b1b; font-weight: 900; }
     
 </style>
 </defs>
-<circle cx="900.0" cy="900.0" r="870.0" class="ring-gold" stroke="#5c0000" stroke-width="4"/>
-<circle cx="900.0" cy="900.0" r="838.0" class="ring"/>
-<line x1="900.0" y1="30.0" x2="900.0" y2="56.0" class="tick-major"/>
-<text x="900.0" y="46.0" class="txt-deg" transform="rotate(0 900.0 46.0)">0°</text>
-<line x1="915.2" y1="30.1" x2="915.0" y2="38.1" class="tick"/>
-<line x1="930.4" y1="30.5" x2="930.1" y2="38.5" class="tick"/>
-<line x1="945.5" y1="31.2" x2="945.1" y2="39.2" class="tick"/>
-<line x1="960.7" y1="32.1" x2="960.1" y2="40.1" class="tick"/>
-<line x1="975.8" y1="33.3" x2="973.6" y2="59.2" class="tick"/>
-<line x1="990.9" y1="34.8" x2="990.1" y2="42.7" class="tick"/>
-<line x1="1006.0" y1="36.5" x2="1005.1" y2="44.4" class="tick"/>
-<line x1="1021.1" y1="38.5" x2="1020.0" y2="46.4" class="tick"/>
-<line x1="1036.1" y1="40.7" x2="1034.8" y2="48.6" class="tick"/>
-<line x1="1051.1" y1="43.2" x2="1046.6" y2="68.8" class="tick-major"/>
-<text x="1048.3" y="59.0" class="txt-deg" transform="rotate(10 1048.3 59.0)">10°</text>
-<line x1="1066.0" y1="46.0" x2="1064.5" y2="53.8" class="tick"/>
-<line x1="1080.9" y1="49.0" x2="1079.2" y2="56.8" class="tick"/>
-<line x1="1095.7" y1="52.3" x2="1093.9" y2="60.1" class="tick"/>
-<line x1="1110.5" y1="55.8" x2="1108.5" y2="63.6" class="tick"/>
-<line x1="1125.2" y1="59.6" x2="1118.4" y2="84.8" class="tick"/>
-<line x1="1139.8" y1="63.7" x2="1137.6" y2="71.4" class="tick"/>
-<line x1="1154.4" y1="68.0" x2="1152.0" y2="75.7" class="tick"/>
-<line x1="1168.8" y1="72.6" x2="1166.4" y2="80.2" class="tick"/>
-<line x1="1183.2" y1="77.4" x2="1180.6" y2="85.0" class="tick"/>
-<line x1="1197.6" y1="82.5" x2="1188.7" y2="106.9" class="tick-major"/>
-<text x="1192.1" y="97.5" class="txt-deg" transform="rotate(20 1192.1 97.5)">20°</text>
-<line x1="1211.8" y1="87.8" x2="1208.9" y2="95.3" class="tick"/>
-<line x1="1225.9" y1="93.4" x2="1222.9" y2="100.8" class="tick"/>
-<line x1="1239.9" y1="99.2" x2="1236.8" y2="106.5" class="tick"/>
-<line x1="1253.9" y1="105.2" x2="1250.6" y2="112.5" class="tick"/>
-<line x1="1267.7" y1="111.5" x2="1256.7" y2="135.1" class="tick"/>
-<line x1="1281.4" y1="118.0" x2="1277.9" y2="125.2" class="tick"/>
-<line x1="1295.0" y1="124.8" x2="1291.3" y2="132.0" class="tick"/>
-<line x1="1308.4" y1="131.8" x2="1304.7" y2="138.9" class="tick"/>
-<line x1="1321.8" y1="139.1" x2="1317.9" y2="146.1" class="tick"/>
-<line x1="1335.0" y1="146.6" x2="1322.0" y2="169.1" class="tick-major"/>
-<text x="1327.0" y="160.4" class="txt-deg" transform="rotate(30 1327.0 160.4)">30°</text>
-<line x1="1348.1" y1="154.3" x2="1344.0" y2="161.1" class="tick"/>
-<line x1="1361.0" y1="162.2" x2="1356.8" y2="169.0" class="tick"/>
-<line x1="1373.8" y1="170.4" x2="1369.5" y2="177.1" class="tick"/>
-<line x1="1386.5" y1="178.7" x2="1382.0" y2="185.4" class="tick"/>
-<line x1="1399.0" y1="187.3" x2="1384.1" y2="208.6" class="tick"/>
-<line x1="1411.4" y1="196.2" x2="1406.7" y2="202.6" class="tick"/>
-<line x1="1423.6" y1="205.2" x2="1418.8" y2="211.6" class="tick"/>
-<line x1="1435.6" y1="214.4" x2="1430.7" y2="220.7" class="tick"/>
-<line x1="1447.5" y1="223.9" x2="1442.5" y2="230.1" class="tick"/>
-<line x1="1459.2" y1="233.5" x2="1442.5" y2="253.5" class="tick-major"/>
-<text x="1448.9" y="245.8" class="txt-deg" transform="rotate(40 1448.9 245.8)">40°</text>
-<line x1="1470.8" y1="243.4" x2="1465.5" y2="249.4" class="tick"/>
-<line x1="1482.1" y1="253.5" x2="1476.8" y2="259.4" class="tick"/>
-<line x1="1493.3" y1="263.7" x2="1487.9" y2="269.6" class="tick"/>
-<line x1="1504.4" y1="274.2" x2="1498.8" y2="279.9" class="tick"/>
-<line x1="1515.2" y1="284.8" x2="1496.8" y2="303.2" class="tick"/>
-<line x1="1525.8" y1="295.6" x2="1520.1" y2="301.2" class="tick"/>
-<line x1="1536.3" y1="306.7" x2="1530.4" y2="312.1" class="tick"/>
-<line x1="1546.5" y1="317.9" x2="1540.6" y2="323.2" class="tick"/>
-<line x1="1556.6" y1="329.2" x2="1550.6" y2="334.5" class="tick"/>
-<line x1="1566.5" y1="340.8" x2="1546.5" y2="357.5" class="tick-major"/>
-<text x="1554.2" y="351.1" class="txt-deg" transform="rotate(50 1554.2 351.1)">50°</text>
-<line x1="1576.1" y1="352.5" x2="1569.9" y2="357.5" class="tick"/>
-<line x1="1585.6" y1="364.4" x2="1579.3" y2="369.3" class="tick"/>
-<line x1="1594.8" y1="376.4" x2="1588.4" y2="381.2" class="tick"/>
-<line x1="1603.8" y1="388.6" x2="1597.4" y2="393.3" class="tick"/>
-<line x1="1612.7" y1="401.0" x2="1591.4" y2="415.9" class="tick"/>
-<line x1="1621.3" y1="413.5" x2="1614.6" y2="418.0" class="tick"/>
-<line x1="1629.6" y1="426.2" x2="1622.9" y2="430.5" class="tick"/>
-<line x1="1637.8" y1="439.0" x2="1631.0" y2="443.2" class="tick"/>
-<line x1="1645.7" y1="451.9" x2="1638.9" y2="456.0" class="tick"/>
-<line x1="1653.4" y1="465.0" x2="1630.9" y2="478.0" class="tick-major"/>
-<text x="1639.6" y="473.0" class="txt-deg" transform="rotate(60 1639.6 473.0)">60°</text>
-<line x1="1660.9" y1="478.2" x2="1653.9" y2="482.1" class="tick"/>
-<line x1="1668.2" y1="491.6" x2="1661.1" y2="495.3" class="tick"/>
-<line x1="1675.2" y1="505.0" x2="1668.0" y2="508.7" class="tick"/>
-<line x1="1682.0" y1="518.6" x2="1674.8" y2="522.1" class="tick"/>
-<line x1="1688.5" y1="532.3" x2="1664.9" y2="543.3" class="tick"/>
-<line x1="1694.8" y1="546.1" x2="1687.5" y2="549.4" class="tick"/>
-<line x1="1700.8" y1="560.1" x2="1693.5" y2="563.2" class="tick"/>
-<line x1="1706.6" y1="574.1" x2="1699.2" y2="577.1" class="tick"/>
-<line x1="1712.2" y1="588.2" x2="1704.7" y2="591.1" class="tick"/>
-<line x1="1717.5" y1="602.4" x2="1693.1" y2="611.3" class="tick-major"/>
-<text x="1702.5" y="607.9" class="txt-deg" transform="rotate(70 1702.5 607.9)">70°</text>
-<line x1="1722.6" y1="616.8" x2="1715.0" y2="619.4" class="tick"/>
-<line x1="1727.4" y1="631.2" x2="1719.8" y2="633.6" class="tick"/>
-<line x1="1732.0" y1="645.6" x2="1724.3" y2="648.0" class="tick"/>
-<line x1="1736.3" y1="660.2" x2="1728.6" y2="662.4" class="tick"/>
-<line x1="1740.4" y1="674.8" x2="1715.2" y2="681.6" class="tick"/>
-<line x1="1744.2" y1="689.5" x2="1736.4" y2="691.5" class="tick"/>
-<line x1="1747.7" y1="704.3" x2="1739.9" y2="706.1" class="tick"/>
-<line x1="1751.0" y1="719.1" x2="1743.2" y2="720.8" class="tick"/>
-<line x1="1754.0" y1="734.0" x2="1746.2" y2="735.5" class="tick"/>
-<line x1="1756.8" y1="748.9" x2="1731.2" y2="753.4" class="tick-major"/>
-<text x="1741.0" y="751.7" class="txt-deg" transform="rotate(80 1741.0 751.7)">80°</text>
-<line x1="1759.3" y1="763.9" x2="1751.4" y2="765.2" class="tick"/>
-<line x1="1761.5" y1="778.9" x2="1753.6" y2="780.0" class="tick"/>
-<line x1="1763.5" y1="794.0" x2="1755.6" y2="794.9" class="tick"/>
-<line x1="1765.2" y1="809.1" x2="1757.3" y2="809.9" class="tick"/>
-<line x1="1766.7" y1="824.2" x2="1740.8" y2="826.4" class="tick"/>
-<line x1="1767.9" y1="839.3" x2="1759.9" y2="839.9" class="tick"/>
-<line x1="1768.8" y1="854.5" x2="1760.8" y2="854.9" class="tick"/>
-<line x1="1769.5" y1="869.6" x2="1761.5" y2="869.9" class="tick"/>
-<line x1="1769.9" y1="884.8" x2="1761.9" y2="885.0" class="tick"/>
-<line x1="1770.0" y1="900.0" x2="1744.0" y2="900.0" class="tick-major"/>
-<text x="1754.0" y="900.0" class="txt-deg" transform="rotate(90 1754.0 900.0)">90°</text>
-<line x1="1769.9" y1="915.2" x2="1761.9" y2="915.0" class="tick"/>
-<line x1="1769.5" y1="930.4" x2="1761.5" y2="930.1" class="tick"/>
-<line x1="1768.8" y1="945.5" x2="1760.8" y2="945.1" class="tick"/>
-<line x1="1767.9" y1="960.7" x2="1759.9" y2="960.1" class="tick"/>
-<line x1="1766.7" y1="975.8" x2="1740.8" y2="973.6" class="tick"/>
-<line x1="1765.2" y1="990.9" x2="1757.3" y2="990.1" class="tick"/>
-<line x1="1763.5" y1="1006.0" x2="1755.6" y2="1005.1" class="tick"/>
-<line x1="1761.5" y1="1021.1" x2="1753.6" y2="1020.0" class="tick"/>
-<line x1="1759.3" y1="1036.1" x2="1751.4" y2="1034.8" class="tick"/>
-<line x1="1756.8" y1="1051.1" x2="1731.2" y2="1046.6" class="tick-major"/>
-<text x="1741.0" y="1048.3" class="txt-deg" transform="rotate(100 1741.0 1048.3)">100°</text>
-<line x1="1754.0" y1="1066.0" x2="1746.2" y2="1064.5" class="tick"/>
-<line x1="1751.0" y1="1080.9" x2="1743.2" y2="1079.2" class="tick"/>
-<line x1="1747.7" y1="1095.7" x2="1739.9" y2="1093.9" class="tick"/>
-<line x1="1744.2" y1="1110.5" x2="1736.4" y2="1108.5" class="tick"/>
-<line x1="1740.4" y1="1125.2" x2="1715.2" y2="1118.4" class="tick"/>
-<line x1="1736.3" y1="1139.8" x2="1728.6" y2="1137.6" class="tick"/>
-<line x1="1732.0" y1="1154.4" x2="1724.3" y2="1152.0" class="tick"/>
-<line x1="1727.4" y1="1168.8" x2="1719.8" y2="1166.4" class="tick"/>
-<line x1="1722.6" y1="1183.2" x2="1715.0" y2="1180.6" class="tick"/>
-<line x1="1717.5" y1="1197.6" x2="1693.1" y2="1188.7" class="tick-major"/>
-<text x="1702.5" y="1192.1" class="txt-deg" transform="rotate(110 1702.5 1192.1)">110°</text>
-<line x1="1712.2" y1="1211.8" x2="1704.7" y2="1208.9" class="tick"/>
-<line x1="1706.6" y1="1225.9" x2="1699.2" y2="1222.9" class="tick"/>
-<line x1="1700.8" y1="1239.9" x2="1693.5" y2="1236.8" class="tick"/>
-<line x1="1694.8" y1="1253.9" x2="1687.5" y2="1250.6" class="tick"/>
-<line x1="1688.5" y1="1267.7" x2="1664.9" y2="1256.7" class="tick"/>
-<line x1="1682.0" y1="1281.4" x2="1674.8" y2="1277.9" class="tick"/>
-<line x1="1675.2" y1="1295.0" x2="1668.0" y2="1291.3" class="tick"/>
-<line x1="1668.2" y1="1308.4" x2="1661.1" y2="1304.7" class="tick"/>
-<line x1="1660.9" y1="1321.8" x2="1653.9" y2="1317.9" class="tick"/>
-<line x1="1653.4" y1="1335.0" x2="1630.9" y2="1322.0" class="tick-major"/>
-<text x="1639.6" y="1327.0" class="txt-deg" transform="rotate(120 1639.6 1327.0)">120°</text>
-<line x1="1645.7" y1="1348.1" x2="1638.9" y2="1344.0" class="tick"/>
-<line x1="1637.8" y1="1361.0" x2="1631.0" y2="1356.8" class="tick"/>
-<line x1="1629.6" y1="1373.8" x2="1622.9" y2="1369.5" class="tick"/>
-<line x1="1621.3" y1="1386.5" x2="1614.6" y2="1382.0" class="tick"/>
-<line x1="1612.7" y1="1399.0" x2="1591.4" y2="1384.1" class="tick"/>
-<line x1="1603.8" y1="1411.4" x2="1597.4" y2="1406.7" class="tick"/>
-<line x1="1594.8" y1="1423.6" x2="1588.4" y2="1418.8" class="tick"/>
-<line x1="1585.6" y1="1435.6" x2="1579.3" y2="1430.7" class="tick"/>
-<line x1="1576.1" y1="1447.5" x2="1569.9" y2="1442.5" class="tick"/>
-<line x1="1566.5" y1="1459.2" x2="1546.5" y2="1442.5" class="tick-major"/>
-<text x="1554.2" y="1448.9" class="txt-deg" transform="rotate(130 1554.2 1448.9)">130°</text>
-<line x1="1556.6" y1="1470.8" x2="1550.6" y2="1465.5" class="tick"/>
-<line x1="1546.5" y1="1482.1" x2="1540.6" y2="1476.8" class="tick"/>
-<line x1="1536.3" y1="1493.3" x2="1530.4" y2="1487.9" class="tick"/>
-<line x1="1525.8" y1="1504.4" x2="1520.1" y2="1498.8" class="tick"/>
-<line x1="1515.2" y1="1515.2" x2="1496.8" y2="1496.8" class="tick"/>
-<line x1="1504.4" y1="1525.8" x2="1498.8" y2="1520.1" class="tick"/>
-<line x1="1493.3" y1="1536.3" x2="1487.9" y2="1530.4" class="tick"/>
-<line x1="1482.1" y1="1546.5" x2="1476.8" y2="1540.6" class="tick"/>
-<line x1="1470.8" y1="1556.6" x2="1465.5" y2="1550.6" class="tick"/>
-<line x1="1459.2" y1="1566.5" x2="1442.5" y2="1546.5" class="tick-major"/>
-<text x="1448.9" y="1554.2" class="txt-deg" transform="rotate(140 1448.9 1554.2)">140°</text>
-<line x1="1447.5" y1="1576.1" x2="1442.5" y2="1569.9" class="tick"/>
-<line x1="1435.6" y1="1585.6" x2="1430.7" y2="1579.3" class="tick"/>
-<line x1="1423.6" y1="1594.8" x2="1418.8" y2="1588.4" class="tick"/>
-<line x1="1411.4" y1="1603.8" x2="1406.7" y2="1597.4" class="tick"/>
-<line x1="1399.0" y1="1612.7" x2="1384.1" y2="1591.4" class="tick"/>
-<line x1="1386.5" y1="1621.3" x2="1382.0" y2="1614.6" class="tick"/>
-<line x1="1373.8" y1="1629.6" x2="1369.5" y2="1622.9" class="tick"/>
-<line x1="1361.0" y1="1637.8" x2="1356.8" y2="1631.0" class="tick"/>
-<line x1="1348.1" y1="1645.7" x2="1344.0" y2="1638.9" class="tick"/>
-<line x1="1335.0" y1="1653.4" x2="1322.0" y2="1630.9" class="tick-major"/>
-<text x="1327.0" y="1639.6" class="txt-deg" transform="rotate(150 1327.0 1639.6)">150°</text>
-<line x1="1321.8" y1="1660.9" x2="1317.9" y2="1653.9" class="tick"/>
-<line x1="1308.4" y1="1668.2" x2="1304.7" y2="1661.1" class="tick"/>
-<line x1="1295.0" y1="1675.2" x2="1291.3" y2="1668.0" class="tick"/>
-<line x1="1281.4" y1="1682.0" x2="1277.9" y2="1674.8" class="tick"/>
-<line x1="1267.7" y1="1688.5" x2="1256.7" y2="1664.9" class="tick"/>
-<line x1="1253.9" y1="1694.8" x2="1250.6" y2="1687.5" class="tick"/>
-<line x1="1239.9" y1="1700.8" x2="1236.8" y2="1693.5" class="tick"/>
-<line x1="1225.9" y1="1706.6" x2="1222.9" y2="1699.2" class="tick"/>
-<line x1="1211.8" y1="1712.2" x2="1208.9" y2="1704.7" class="tick"/>
-<line x1="1197.6" y1="1717.5" x2="1188.7" y2="1693.1" class="tick-major"/>
-<text x="1192.1" y="1702.5" class="txt-deg" transform="rotate(160 1192.1 1702.5)">160°</text>
-<line x1="1183.2" y1="1722.6" x2="1180.6" y2="1715.0" class="tick"/>
-<line x1="1168.8" y1="1727.4" x2="1166.4" y2="1719.8" class="tick"/>
-<line x1="1154.4" y1="1732.0" x2="1152.0" y2="1724.3" class="tick"/>
-<line x1="1139.8" y1="1736.3" x2="1137.6" y2="1728.6" class="tick"/>
-<line x1="1125.2" y1="1740.4" x2="1118.4" y2="1715.2" class="tick"/>
-<line x1="1110.5" y1="1744.2" x2="1108.5" y2="1736.4" class="tick"/>
-<line x1="1095.7" y1="1747.7" x2="1093.9" y2="1739.9" class="tick"/>
-<line x1="1080.9" y1="1751.0" x2="1079.2" y2="1743.2" class="tick"/>
-<line x1="1066.0" y1="1754.0" x2="1064.5" y2="1746.2" class="tick"/>
-<line x1="1051.1" y1="1756.8" x2="1046.6" y2="1731.2" class="tick-major"/>
-<text x="1048.3" y="1741.0" class="txt-deg" transform="rotate(170 1048.3 1741.0)">170°</text>
-<line x1="1036.1" y1="1759.3" x2="1034.8" y2="1751.4" class="tick"/>
-<line x1="1021.1" y1="1761.5" x2="1020.0" y2="1753.6" class="tick"/>
-<line x1="1006.0" y1="1763.5" x2="1005.1" y2="1755.6" class="tick"/>
-<line x1="990.9" y1="1765.2" x2="990.1" y2="1757.3" class="tick"/>
-<line x1="975.8" y1="1766.7" x2="973.6" y2="1740.8" class="tick"/>
-<line x1="960.7" y1="1767.9" x2="960.1" y2="1759.9" class="tick"/>
-<line x1="945.5" y1="1768.8" x2="945.1" y2="1760.8" class="tick"/>
-<line x1="930.4" y1="1769.5" x2="930.1" y2="1761.5" class="tick"/>
-<line x1="915.2" y1="1769.9" x2="915.0" y2="1761.9" class="tick"/>
-<line x1="900.0" y1="1770.0" x2="900.0" y2="1744.0" class="tick-major"/>
-<text x="900.0" y="1754.0" class="txt-deg" transform="rotate(180 900.0 1754.0)">180°</text>
-<line x1="884.8" y1="1769.9" x2="885.0" y2="1761.9" class="tick"/>
-<line x1="869.6" y1="1769.5" x2="869.9" y2="1761.5" class="tick"/>
-<line x1="854.5" y1="1768.8" x2="854.9" y2="1760.8" class="tick"/>
-<line x1="839.3" y1="1767.9" x2="839.9" y2="1759.9" class="tick"/>
-<line x1="824.2" y1="1766.7" x2="826.4" y2="1740.8" class="tick"/>
-<line x1="809.1" y1="1765.2" x2="809.9" y2="1757.3" class="tick"/>
-<line x1="794.0" y1="1763.5" x2="794.9" y2="1755.6" class="tick"/>
-<line x1="778.9" y1="1761.5" x2="780.0" y2="1753.6" class="tick"/>
-<line x1="763.9" y1="1759.3" x2="765.2" y2="1751.4" class="tick"/>
-<line x1="748.9" y1="1756.8" x2="753.4" y2="1731.2" class="tick-major"/>
-<text x="751.7" y="1741.0" class="txt-deg" transform="rotate(190 751.7 1741.0)">190°</text>
-<line x1="734.0" y1="1754.0" x2="735.5" y2="1746.2" class="tick"/>
-<line x1="719.1" y1="1751.0" x2="720.8" y2="1743.2" class="tick"/>
-<line x1="704.3" y1="1747.7" x2="706.1" y2="1739.9" class="tick"/>
-<line x1="689.5" y1="1744.2" x2="691.5" y2="1736.4" class="tick"/>
-<line x1="674.8" y1="1740.4" x2="681.6" y2="1715.2" class="tick"/>
-<line x1="660.2" y1="1736.3" x2="662.4" y2="1728.6" class="tick"/>
-<line x1="645.6" y1="1732.0" x2="648.0" y2="1724.3" class="tick"/>
-<line x1="631.2" y1="1727.4" x2="633.6" y2="1719.8" class="tick"/>
-<line x1="616.8" y1="1722.6" x2="619.4" y2="1715.0" class="tick"/>
-<line x1="602.4" y1="1717.5" x2="611.3" y2="1693.1" class="tick-major"/>
-<text x="607.9" y="1702.5" class="txt-deg" transform="rotate(200 607.9 1702.5)">200°</text>
-<line x1="588.2" y1="1712.2" x2="591.1" y2="1704.7" class="tick"/>
-<line x1="574.1" y1="1706.6" x2="577.1" y2="1699.2" class="tick"/>
-<line x1="560.1" y1="1700.8" x2="563.2" y2="1693.5" class="tick"/>
-<line x1="546.1" y1="1694.8" x2="549.4" y2="1687.5" class="tick"/>
-<line x1="532.3" y1="1688.5" x2="543.3" y2="1664.9" class="tick"/>
-<line x1="518.6" y1="1682.0" x2="522.1" y2="1674.8" class="tick"/>
-<line x1="505.0" y1="1675.2" x2="508.7" y2="1668.0" class="tick"/>
-<line x1="491.6" y1="1668.2" x2="495.3" y2="1661.1" class="tick"/>
-<line x1="478.2" y1="1660.9" x2="482.1" y2="1653.9" class="tick"/>
-<line x1="465.0" y1="1653.4" x2="478.0" y2="1630.9" class="tick-major"/>
-<text x="473.0" y="1639.6" class="txt-deg" transform="rotate(210 473.0 1639.6)">210°</text>
-<line x1="451.9" y1="1645.7" x2="456.0" y2="1638.9" class="tick"/>
-<line x1="439.0" y1="1637.8" x2="443.2" y2="1631.0" class="tick"/>
-<line x1="426.2" y1="1629.6" x2="430.5" y2="1622.9" class="tick"/>
-<line x1="413.5" y1="1621.3" x2="418.0" y2="1614.6" class="tick"/>
-<line x1="401.0" y1="1612.7" x2="415.9" y2="1591.4" class="tick"/>
-<line x1="388.6" y1="1603.8" x2="393.3" y2="1597.4" class="tick"/>
-<line x1="376.4" y1="1594.8" x2="381.2" y2="1588.4" class="tick"/>
-<line x1="364.4" y1="1585.6" x2="369.3" y2="1579.3" class="tick"/>
-<line x1="352.5" y1="1576.1" x2="357.5" y2="1569.9" class="tick"/>
-<line x1="340.8" y1="1566.5" x2="357.5" y2="1546.5" class="tick-major"/>
-<text x="351.1" y="1554.2" class="txt-deg" transform="rotate(220 351.1 1554.2)">220°</text>
-<line x1="329.2" y1="1556.6" x2="334.5" y2="1550.6" class="tick"/>
-<line x1="317.9" y1="1546.5" x2="323.2" y2="1540.6" class="tick"/>
-<line x1="306.7" y1="1536.3" x2="312.1" y2="1530.4" class="tick"/>
-<line x1="295.6" y1="1525.8" x2="301.2" y2="1520.1" class="tick"/>
-<line x1="284.8" y1="1515.2" x2="303.2" y2="1496.8" class="tick"/>
-<line x1="274.2" y1="1504.4" x2="279.9" y2="1498.8" class="tick"/>
-<line x1="263.7" y1="1493.3" x2="269.6" y2="1487.9" class="tick"/>
-<line x1="253.5" y1="1482.1" x2="259.4" y2="1476.8" class="tick"/>
-<line x1="243.4" y1="1470.8" x2="249.4" y2="1465.5" class="tick"/>
-<line x1="233.5" y1="1459.2" x2="253.5" y2="1442.5" class="tick-major"/>
-<text x="245.8" y="1448.9" class="txt-deg" transform="rotate(230 245.8 1448.9)">230°</text>
-<line x1="223.9" y1="1447.5" x2="230.1" y2="1442.5" class="tick"/>
-<line x1="214.4" y1="1435.6" x2="220.7" y2="1430.7" class="tick"/>
-<line x1="205.2" y1="1423.6" x2="211.6" y2="1418.8" class="tick"/>
-<line x1="196.2" y1="1411.4" x2="202.6" y2="1406.7" class="tick"/>
-<line x1="187.3" y1="1399.0" x2="208.6" y2="1384.1" class="tick"/>
-<line x1="178.7" y1="1386.5" x2="185.4" y2="1382.0" class="tick"/>
-<line x1="170.4" y1="1373.8" x2="177.1" y2="1369.5" class="tick"/>
-<line x1="162.2" y1="1361.0" x2="169.0" y2="1356.8" class="tick"/>
-<line x1="154.3" y1="1348.1" x2="161.1" y2="1344.0" class="tick"/>
-<line x1="146.6" y1="1335.0" x2="169.1" y2="1322.0" class="tick-major"/>
-<text x="160.4" y="1327.0" class="txt-deg" transform="rotate(240 160.4 1327.0)">240°</text>
-<line x1="139.1" y1="1321.8" x2="146.1" y2="1317.9" class="tick"/>
-<line x1="131.8" y1="1308.4" x2="138.9" y2="1304.7" class="tick"/>
-<line x1="124.8" y1="1295.0" x2="132.0" y2="1291.3" class="tick"/>
-<line x1="118.0" y1="1281.4" x2="125.2" y2="1277.9" class="tick"/>
-<line x1="111.5" y1="1267.7" x2="135.1" y2="1256.7" class="tick"/>
-<line x1="105.2" y1="1253.9" x2="112.5" y2="1250.6" class="tick"/>
-<line x1="99.2" y1="1239.9" x2="106.5" y2="1236.8" class="tick"/>
-<line x1="93.4" y1="1225.9" x2="100.8" y2="1222.9" class="tick"/>
-<line x1="87.8" y1="1211.8" x2="95.3" y2="1208.9" class="tick"/>
-<line x1="82.5" y1="1197.6" x2="106.9" y2="1188.7" class="tick-major"/>
-<text x="97.5" y="1192.1" class="txt-deg" transform="rotate(250 97.5 1192.1)">250°</text>
-<line x1="77.4" y1="1183.2" x2="85.0" y2="1180.6" class="tick"/>
-<line x1="72.6" y1="1168.8" x2="80.2" y2="1166.4" class="tick"/>
-<line x1="68.0" y1="1154.4" x2="75.7" y2="1152.0" class="tick"/>
-<line x1="63.7" y1="1139.8" x2="71.4" y2="1137.6" class="tick"/>
-<line x1="59.6" y1="1125.2" x2="84.8" y2="1118.4" class="tick"/>
-<line x1="55.8" y1="1110.5" x2="63.6" y2="1108.5" class="tick"/>
-<line x1="52.3" y1="1095.7" x2="60.1" y2="1093.9" class="tick"/>
-<line x1="49.0" y1="1080.9" x2="56.8" y2="1079.2" class="tick"/>
-<line x1="46.0" y1="1066.0" x2="53.8" y2="1064.5" class="tick"/>
-<line x1="43.2" y1="1051.1" x2="68.8" y2="1046.6" class="tick-major"/>
-<text x="59.0" y="1048.3" class="txt-deg" transform="rotate(260 59.0 1048.3)">260°</text>
-<line x1="40.7" y1="1036.1" x2="48.6" y2="1034.8" class="tick"/>
-<line x1="38.5" y1="1021.1" x2="46.4" y2="1020.0" class="tick"/>
-<line x1="36.5" y1="1006.0" x2="44.4" y2="1005.1" class="tick"/>
-<line x1="34.8" y1="990.9" x2="42.7" y2="990.1" class="tick"/>
-<line x1="33.3" y1="975.8" x2="59.2" y2="973.6" class="tick"/>
-<line x1="32.1" y1="960.7" x2="40.1" y2="960.1" class="tick"/>
-<line x1="31.2" y1="945.5" x2="39.2" y2="945.1" class="tick"/>
-<line x1="30.5" y1="930.4" x2="38.5" y2="930.1" class="tick"/>
-<line x1="30.1" y1="915.2" x2="38.1" y2="915.0" class="tick"/>
-<line x1="30.0" y1="900.0" x2="56.0" y2="900.0" class="tick-major"/>
-<text x="46.0" y="900.0" class="txt-deg" transform="rotate(270 46.0 900.0)">270°</text>
-<line x1="30.1" y1="884.8" x2="38.1" y2="885.0" class="tick"/>
-<line x1="30.5" y1="869.6" x2="38.5" y2="869.9" class="tick"/>
-<line x1="31.2" y1="854.5" x2="39.2" y2="854.9" class="tick"/>
-<line x1="32.1" y1="839.3" x2="40.1" y2="839.9" class="tick"/>
-<line x1="33.3" y1="824.2" x2="59.2" y2="826.4" class="tick"/>
-<line x1="34.8" y1="809.1" x2="42.7" y2="809.9" class="tick"/>
-<line x1="36.5" y1="794.0" x2="44.4" y2="794.9" class="tick"/>
-<line x1="38.5" y1="778.9" x2="46.4" y2="780.0" class="tick"/>
-<line x1="40.7" y1="763.9" x2="48.6" y2="765.2" class="tick"/>
-<line x1="43.2" y1="748.9" x2="68.8" y2="753.4" class="tick-major"/>
-<text x="59.0" y="751.7" class="txt-deg" transform="rotate(280 59.0 751.7)">280°</text>
-<line x1="46.0" y1="734.0" x2="53.8" y2="735.5" class="tick"/>
-<line x1="49.0" y1="719.1" x2="56.8" y2="720.8" class="tick"/>
-<line x1="52.3" y1="704.3" x2="60.1" y2="706.1" class="tick"/>
-<line x1="55.8" y1="689.5" x2="63.6" y2="691.5" class="tick"/>
-<line x1="59.6" y1="674.8" x2="84.8" y2="681.6" class="tick"/>
-<line x1="63.7" y1="660.2" x2="71.4" y2="662.4" class="tick"/>
-<line x1="68.0" y1="645.6" x2="75.7" y2="648.0" class="tick"/>
-<line x1="72.6" y1="631.2" x2="80.2" y2="633.6" class="tick"/>
-<line x1="77.4" y1="616.8" x2="85.0" y2="619.4" class="tick"/>
-<line x1="82.5" y1="602.4" x2="106.9" y2="611.3" class="tick-major"/>
-<text x="97.5" y="607.9" class="txt-deg" transform="rotate(290 97.5 607.9)">290°</text>
-<line x1="87.8" y1="588.2" x2="95.3" y2="591.1" class="tick"/>
-<line x1="93.4" y1="574.1" x2="100.8" y2="577.1" class="tick"/>
-<line x1="99.2" y1="560.1" x2="106.5" y2="563.2" class="tick"/>
-<line x1="105.2" y1="546.1" x2="112.5" y2="549.4" class="tick"/>
-<line x1="111.5" y1="532.3" x2="135.1" y2="543.3" class="tick"/>
-<line x1="118.0" y1="518.6" x2="125.2" y2="522.1" class="tick"/>
-<line x1="124.8" y1="505.0" x2="132.0" y2="508.7" class="tick"/>
-<line x1="131.8" y1="491.6" x2="138.9" y2="495.3" class="tick"/>
-<line x1="139.1" y1="478.2" x2="146.1" y2="482.1" class="tick"/>
-<line x1="146.6" y1="465.0" x2="169.1" y2="478.0" class="tick-major"/>
-<text x="160.4" y="473.0" class="txt-deg" transform="rotate(300 160.4 473.0)">300°</text>
-<line x1="154.3" y1="451.9" x2="161.1" y2="456.0" class="tick"/>
-<line x1="162.2" y1="439.0" x2="169.0" y2="443.2" class="tick"/>
-<line x1="170.4" y1="426.2" x2="177.1" y2="430.5" class="tick"/>
-<line x1="178.7" y1="413.5" x2="185.4" y2="418.0" class="tick"/>
-<line x1="187.3" y1="401.0" x2="208.6" y2="415.9" class="tick"/>
-<line x1="196.2" y1="388.6" x2="202.6" y2="393.3" class="tick"/>
-<line x1="205.2" y1="376.4" x2="211.6" y2="381.2" class="tick"/>
-<line x1="214.4" y1="364.4" x2="220.7" y2="369.3" class="tick"/>
-<line x1="223.9" y1="352.5" x2="230.1" y2="357.5" class="tick"/>
-<line x1="233.5" y1="340.8" x2="253.5" y2="357.5" class="tick-major"/>
-<text x="245.8" y="351.1" class="txt-deg" transform="rotate(310 245.8 351.1)">310°</text>
-<line x1="243.4" y1="329.2" x2="249.4" y2="334.5" class="tick"/>
-<line x1="253.5" y1="317.9" x2="259.4" y2="323.2" class="tick"/>
-<line x1="263.7" y1="306.7" x2="269.6" y2="312.1" class="tick"/>
-<line x1="274.2" y1="295.6" x2="279.9" y2="301.2" class="tick"/>
-<line x1="284.8" y1="284.8" x2="303.2" y2="303.2" class="tick"/>
-<line x1="295.6" y1="274.2" x2="301.2" y2="279.9" class="tick"/>
-<line x1="306.7" y1="263.7" x2="312.1" y2="269.6" class="tick"/>
-<line x1="317.9" y1="253.5" x2="323.2" y2="259.4" class="tick"/>
-<line x1="329.2" y1="243.4" x2="334.5" y2="249.4" class="tick"/>
-<line x1="340.8" y1="233.5" x2="357.5" y2="253.5" class="tick-major"/>
-<text x="351.1" y="245.8" class="txt-deg" transform="rotate(320 351.1 245.8)">320°</text>
-<line x1="352.5" y1="223.9" x2="357.5" y2="230.1" class="tick"/>
-<line x1="364.4" y1="214.4" x2="369.3" y2="220.7" class="tick"/>
-<line x1="376.4" y1="205.2" x2="381.2" y2="211.6" class="tick"/>
-<line x1="388.6" y1="196.2" x2="393.3" y2="202.6" class="tick"/>
-<line x1="401.0" y1="187.3" x2="415.9" y2="208.6" class="tick"/>
-<line x1="413.5" y1="178.7" x2="418.0" y2="185.4" class="tick"/>
-<line x1="426.2" y1="170.4" x2="430.5" y2="177.1" class="tick"/>
-<line x1="439.0" y1="162.2" x2="443.2" y2="169.0" class="tick"/>
-<line x1="451.9" y1="154.3" x2="456.0" y2="161.1" class="tick"/>
-<line x1="465.0" y1="146.6" x2="478.0" y2="169.1" class="tick-major"/>
-<text x="473.0" y="160.4" class="txt-deg" transform="rotate(330 473.0 160.4)">330°</text>
-<line x1="478.2" y1="139.1" x2="482.1" y2="146.1" class="tick"/>
-<line x1="491.6" y1="131.8" x2="495.3" y2="138.9" class="tick"/>
-<line x1="505.0" y1="124.8" x2="508.7" y2="132.0" class="tick"/>
-<line x1="518.6" y1="118.0" x2="522.1" y2="125.2" class="tick"/>
-<line x1="532.3" y1="111.5" x2="543.3" y2="135.1" class="tick"/>
-<line x1="546.1" y1="105.2" x2="549.4" y2="112.5" class="tick"/>
-<line x1="560.1" y1="99.2" x2="563.2" y2="106.5" class="tick"/>
-<line x1="574.1" y1="93.4" x2="577.1" y2="100.8" class="tick"/>
-<line x1="588.2" y1="87.8" x2="591.1" y2="95.3" class="tick"/>
-<line x1="602.4" y1="82.5" x2="611.3" y2="106.9" class="tick-major"/>
-<text x="607.9" y="97.5" class="txt-deg" transform="rotate(340 607.9 97.5)">340°</text>
-<line x1="616.8" y1="77.4" x2="619.4" y2="85.0" class="tick"/>
-<line x1="631.2" y1="72.6" x2="633.6" y2="80.2" class="tick"/>
-<line x1="645.6" y1="68.0" x2="648.0" y2="75.7" class="tick"/>
-<line x1="660.2" y1="63.7" x2="662.4" y2="71.4" class="tick"/>
-<line x1="674.8" y1="59.6" x2="681.6" y2="84.8" class="tick"/>
-<line x1="689.5" y1="55.8" x2="691.5" y2="63.6" class="tick"/>
-<line x1="704.3" y1="52.3" x2="706.1" y2="60.1" class="tick"/>
-<line x1="719.1" y1="49.0" x2="720.8" y2="56.8" class="tick"/>
-<line x1="734.0" y1="46.0" x2="735.5" y2="53.8" class="tick"/>
-<line x1="748.9" y1="43.2" x2="753.4" y2="68.8" class="tick-major"/>
-<text x="751.7" y="59.0" class="txt-deg" transform="rotate(350 751.7 59.0)">350°</text>
-<line x1="763.9" y1="40.7" x2="765.2" y2="48.6" class="tick"/>
-<line x1="778.9" y1="38.5" x2="780.0" y2="46.4" class="tick"/>
-<line x1="794.0" y1="36.5" x2="794.9" y2="44.4" class="tick"/>
-<line x1="809.1" y1="34.8" x2="809.9" y2="42.7" class="tick"/>
-<line x1="824.2" y1="33.3" x2="826.4" y2="59.2" class="tick"/>
-<line x1="839.3" y1="32.1" x2="839.9" y2="40.1" class="tick"/>
-<line x1="854.5" y1="31.2" x2="854.9" y2="39.2" class="tick"/>
-<line x1="869.6" y1="30.5" x2="869.9" y2="38.5" class="tick"/>
-<line x1="884.8" y1="30.1" x2="885.0" y2="38.1" class="tick"/>
-<circle cx="900.0" cy="900.0" r="806.0" class="ring"/>
-<line x1="900.0" y1="62.0" x2="900.0" y2="94.0" stroke="#a88" stroke-width="0.8"/>
-<text x="992.0" y="83.2" class="txt-tu" transform="rotate(6.428571428571429 992.0 83.2)">Hư</text>
-<line x1="1086.5" y1="83.0" x2="1079.4" y2="114.2" stroke="#a88" stroke-width="0.8"/>
-<text x="1171.5" y="124.1" class="txt-tu" transform="rotate(19.285714285714285 1171.5 124.1)">Nguy</text>
-<line x1="1263.6" y1="145.0" x2="1249.7" y2="173.8" stroke="#a88" stroke-width="0.8"/>
-<text x="1337.3" y="204.0" class="txt-tu" transform="rotate(32.142857142857146 1337.3 204.0)">Thất</text>
-<line x1="1422.5" y1="244.8" x2="1402.5" y2="269.8" stroke="#a88" stroke-width="0.8"/>
-<text x="1481.2" y="318.8" class="txt-tu" transform="rotate(45.0 1481.2 318.8)">Bích</text>
-<line x1="1555.2" y1="377.5" x2="1530.2" y2="397.5" stroke="#a88" stroke-width="0.8"/>
-<text x="1596.0" y="462.7" class="txt-tu" transform="rotate(57.85714285714286 1596.0 462.7)">Khuê</text>
-<line x1="1655.0" y1="536.4" x2="1626.2" y2="550.3" stroke="#a88" stroke-width="0.8"/>
-<text x="1675.9" y="628.5" class="txt-tu" transform="rotate(70.71428571428572 1675.9 628.5)">Lâu</text>
-<line x1="1717.0" y1="713.5" x2="1685.8" y2="720.6" stroke="#a88" stroke-width="0.8"/>
-<text x="1716.8" y="808.0" class="txt-tu" transform="rotate(83.57142857142857 1716.8 808.0)">Vị</text>
-<line x1="1738.0" y1="900.0" x2="1706.0" y2="900.0" stroke="#a88" stroke-width="0.8"/>
-<text x="1716.8" y="992.0" class="txt-tu" transform="rotate(96.42857142857143 1716.8 992.0)">Mão</text>
-<line x1="1717.0" y1="1086.5" x2="1685.8" y2="1079.4" stroke="#a88" stroke-width="0.8"/>
-<text x="1675.9" y="1171.5" class="txt-tu" transform="rotate(109.28571428571429 1675.9 1171.5)">Tất</text>
-<line x1="1655.0" y1="1263.6" x2="1626.2" y2="1249.7" stroke="#a88" stroke-width="0.8"/>
-<text x="1596.0" y="1337.3" class="txt-tu" transform="rotate(122.14285714285715 1596.0 1337.3)">Chủy</text>
-<line x1="1555.2" y1="1422.5" x2="1530.2" y2="1402.5" stroke="#a88" stroke-width="0.8"/>
-<text x="1481.2" y="1481.2" class="txt-tu" transform="rotate(135.0 1481.2 1481.2)">Sâm</text>
-<line x1="1422.5" y1="1555.2" x2="1402.5" y2="1530.2" stroke="#a88" stroke-width="0.8"/>
-<text x="1337.3" y="1596.0" class="txt-tu" transform="rotate(147.85714285714286 1337.3 1596.0)">Tỉnh</text>
-<line x1="1263.6" y1="1655.0" x2="1249.7" y2="1626.2" stroke="#a88" stroke-width="0.8"/>
-<text x="1171.5" y="1675.9" class="txt-tu" transform="rotate(160.7142857142857 1171.5 1675.9)">Quỷ</text>
-<line x1="1086.5" y1="1717.0" x2="1079.4" y2="1685.8" stroke="#a88" stroke-width="0.8"/>
-<text x="992.0" y="1716.8" class="txt-tu" transform="rotate(173.57142857142856 992.0 1716.8)">Liễu</text>
-<line x1="900.0" y1="1738.0" x2="900.0" y2="1706.0" stroke="#a88" stroke-width="0.8"/>
-<text x="808.0" y="1716.8" class="txt-tu" transform="rotate(186.42857142857142 808.0 1716.8)">Tinh</text>
-<line x1="713.5" y1="1717.0" x2="720.6" y2="1685.8" stroke="#a88" stroke-width="0.8"/>
-<text x="628.5" y="1675.9" class="txt-tu" transform="rotate(199.28571428571428 628.5 1675.9)">Trương</text>
-<line x1="536.4" y1="1655.0" x2="550.3" y2="1626.2" stroke="#a88" stroke-width="0.8"/>
-<text x="462.7" y="1596.0" class="txt-tu" transform="rotate(212.14285714285714 462.7 1596.0)">Dực</text>
-<line x1="377.5" y1="1555.2" x2="397.5" y2="1530.2" stroke="#a88" stroke-width="0.8"/>
-<text x="318.8" y="1481.2" class="txt-tu" transform="rotate(225.0 318.8 1481.2)">Chẩn</text>
-<line x1="244.8" y1="1422.5" x2="269.8" y2="1402.5" stroke="#a88" stroke-width="0.8"/>
-<text x="204.0" y="1337.3" class="txt-tu" transform="rotate(237.85714285714286 204.0 1337.3)">Giác</text>
-<line x1="145.0" y1="1263.6" x2="173.8" y2="1249.7" stroke="#a88" stroke-width="0.8"/>
-<text x="124.1" y="1171.5" class="txt-tu" transform="rotate(250.71428571428572 124.1 1171.5)">Cang</text>
-<line x1="83.0" y1="1086.5" x2="114.2" y2="1079.4" stroke="#a88" stroke-width="0.8"/>
-<text x="83.2" y="992.0" class="txt-tu" transform="rotate(263.5714285714286 83.2 992.0)">Đê</text>
-<line x1="62.0" y1="900.0" x2="94.0" y2="900.0" stroke="#a88" stroke-width="0.8"/>
-<text x="83.2" y="808.0" class="txt-tu" transform="rotate(276.42857142857144 83.2 808.0)">Phòng</text>
-<line x1="83.0" y1="713.5" x2="114.2" y2="720.6" stroke="#a88" stroke-width="0.8"/>
-<text x="124.1" y="628.5" class="txt-tu" transform="rotate(289.28571428571433 124.1 628.5)">Tâm</text>
-<line x1="145.0" y1="536.4" x2="173.8" y2="550.3" stroke="#a88" stroke-width="0.8"/>
-<text x="204.0" y="462.7" class="txt-tu" transform="rotate(302.14285714285717 204.0 462.7)">Vĩ</text>
-<line x1="244.8" y1="377.5" x2="269.8" y2="397.5" stroke="#a88" stroke-width="0.8"/>
-<text x="318.8" y="318.8" class="txt-tu" transform="rotate(315.0 318.8 318.8)">Cơ</text>
-<line x1="377.5" y1="244.8" x2="397.5" y2="269.8" stroke="#a88" stroke-width="0.8"/>
-<text x="462.7" y="204.0" class="txt-tu" transform="rotate(327.8571428571429 462.7 204.0)">Đẩu</text>
-<line x1="536.4" y1="145.0" x2="550.3" y2="173.8" stroke="#a88" stroke-width="0.8"/>
-<text x="628.5" y="124.1" class="txt-tu" transform="rotate(340.7142857142857 628.5 124.1)">Ngưu</text>
-<line x1="713.5" y1="83.0" x2="720.6" y2="114.2" stroke="#a88" stroke-width="0.8"/>
-<text x="808.0" y="83.2" class="txt-tu" transform="rotate(353.5714285714286 808.0 83.2)">Nữ</text>
-<circle cx="900.0" cy="900.0" r="776.0" class="ring"/>
-<line x1="900.0" y1="94.0" x2="900.0" y2="124.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="942.2" y1="95.1" x2="940.6" y2="125.1" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="984.2" y1="98.4" x2="981.1" y2="128.3" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1026.1" y1="103.9" x2="1021.4" y2="133.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1067.6" y1="111.6" x2="1061.3" y2="141.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1108.6" y1="121.5" x2="1100.8" y2="150.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1149.1" y1="133.4" x2="1139.8" y2="162.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1188.8" y1="147.5" x2="1178.1" y2="175.5" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1227.8" y1="163.7" x2="1215.6" y2="191.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1265.9" y1="181.8" x2="1252.3" y2="208.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1303.0" y1="202.0" x2="1288.0" y2="228.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1339.0" y1="224.0" x2="1322.6" y2="249.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1373.8" y1="247.9" x2="1356.1" y2="272.2" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1407.2" y1="273.6" x2="1388.4" y2="296.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1439.3" y1="301.0" x2="1419.2" y2="323.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1469.9" y1="330.1" x2="1448.7" y2="351.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1499.0" y1="360.7" x2="1476.7" y2="380.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1526.4" y1="392.8" x2="1503.1" y2="411.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1552.1" y1="426.2" x2="1527.8" y2="443.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1576.0" y1="461.0" x2="1550.8" y2="477.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1598.0" y1="497.0" x2="1572.0" y2="512.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1618.2" y1="534.1" x2="1591.4" y2="547.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1636.3" y1="572.2" x2="1608.9" y2="584.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1652.5" y1="611.2" x2="1624.5" y2="621.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1666.6" y1="650.9" x2="1638.0" y2="660.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1678.5" y1="691.4" x2="1649.6" y2="699.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1688.4" y1="732.4" x2="1659.0" y2="738.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1696.1" y1="773.9" x2="1666.4" y2="778.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1701.6" y1="815.8" x2="1671.7" y2="818.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1704.9" y1="857.8" x2="1674.9" y2="859.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1706.0" y1="900.0" x2="1676.0" y2="900.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1704.9" y1="942.2" x2="1674.9" y2="940.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1701.6" y1="984.2" x2="1671.7" y2="981.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1696.1" y1="1026.1" x2="1666.4" y2="1021.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1688.4" y1="1067.6" x2="1659.0" y2="1061.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1678.5" y1="1108.6" x2="1649.6" y2="1100.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1666.6" y1="1149.1" x2="1638.0" y2="1139.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1652.5" y1="1188.8" x2="1624.5" y2="1178.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1636.3" y1="1227.8" x2="1608.9" y2="1215.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1618.2" y1="1265.9" x2="1591.4" y2="1252.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1598.0" y1="1303.0" x2="1572.0" y2="1288.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1576.0" y1="1339.0" x2="1550.8" y2="1322.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1552.1" y1="1373.8" x2="1527.8" y2="1356.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1526.4" y1="1407.2" x2="1503.1" y2="1388.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1499.0" y1="1439.3" x2="1476.7" y2="1419.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1469.9" y1="1469.9" x2="1448.7" y2="1448.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1439.3" y1="1499.0" x2="1419.2" y2="1476.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1407.2" y1="1526.4" x2="1388.4" y2="1503.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1373.8" y1="1552.1" x2="1356.1" y2="1527.8" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1339.0" y1="1576.0" x2="1322.6" y2="1550.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1303.0" y1="1598.0" x2="1288.0" y2="1572.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1265.9" y1="1618.2" x2="1252.3" y2="1591.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1227.8" y1="1636.3" x2="1215.6" y2="1608.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1188.8" y1="1652.5" x2="1178.1" y2="1624.5" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="1149.1" y1="1666.6" x2="1139.8" y2="1638.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1108.6" y1="1678.5" x2="1100.8" y2="1649.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1067.6" y1="1688.4" x2="1061.3" y2="1659.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="1026.1" y1="1696.1" x2="1021.4" y2="1666.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="984.2" y1="1701.6" x2="981.1" y2="1671.7" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="942.2" y1="1704.9" x2="940.6" y2="1674.9" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="900.0" y1="1706.0" x2="900.0" y2="1676.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="857.8" y1="1704.9" x2="859.4" y2="1674.9" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="815.8" y1="1701.6" x2="818.9" y2="1671.7" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="773.9" y1="1696.1" x2="778.6" y2="1666.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="732.4" y1="1688.4" x2="738.7" y2="1659.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="691.4" y1="1678.5" x2="699.2" y2="1649.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="650.9" y1="1666.6" x2="660.2" y2="1638.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="611.2" y1="1652.5" x2="621.9" y2="1624.5" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="572.2" y1="1636.3" x2="584.4" y2="1608.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="534.1" y1="1618.2" x2="547.7" y2="1591.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="497.0" y1="1598.0" x2="512.0" y2="1572.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="461.0" y1="1576.0" x2="477.4" y2="1550.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="426.2" y1="1552.1" x2="443.9" y2="1527.8" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="392.8" y1="1526.4" x2="411.6" y2="1503.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="360.7" y1="1499.0" x2="380.8" y2="1476.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="330.1" y1="1469.9" x2="351.3" y2="1448.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="301.0" y1="1439.3" x2="323.3" y2="1419.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="273.6" y1="1407.2" x2="296.9" y2="1388.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="247.9" y1="1373.8" x2="272.2" y2="1356.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="224.0" y1="1339.0" x2="249.2" y2="1322.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="202.0" y1="1303.0" x2="228.0" y2="1288.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="181.8" y1="1265.9" x2="208.6" y2="1252.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="163.7" y1="1227.8" x2="191.1" y2="1215.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="147.5" y1="1188.8" x2="175.5" y2="1178.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="133.4" y1="1149.1" x2="162.0" y2="1139.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="121.5" y1="1108.6" x2="150.4" y2="1100.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="111.6" y1="1067.6" x2="141.0" y2="1061.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="103.9" y1="1026.1" x2="133.6" y2="1021.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="98.4" y1="984.2" x2="128.3" y2="981.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="95.1" y1="942.2" x2="125.1" y2="940.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="94.0" y1="900.0" x2="124.0" y2="900.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="95.1" y1="857.8" x2="125.1" y2="859.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="98.4" y1="815.8" x2="128.3" y2="818.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="103.9" y1="773.9" x2="133.6" y2="778.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="111.6" y1="732.4" x2="141.0" y2="738.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="121.5" y1="691.4" x2="150.4" y2="699.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="133.4" y1="650.9" x2="162.0" y2="660.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="147.5" y1="611.2" x2="175.5" y2="621.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="163.7" y1="572.2" x2="191.1" y2="584.4" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="181.8" y1="534.1" x2="208.6" y2="547.7" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="202.0" y1="497.0" x2="228.0" y2="512.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="224.0" y1="461.0" x2="249.2" y2="477.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="247.9" y1="426.2" x2="272.2" y2="443.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="273.6" y1="392.8" x2="296.9" y2="411.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="301.0" y1="360.7" x2="323.3" y2="380.8" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="330.1" y1="330.1" x2="351.3" y2="351.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="360.7" y1="301.0" x2="380.8" y2="323.3" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="392.8" y1="273.6" x2="411.6" y2="296.9" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="426.2" y1="247.9" x2="443.9" y2="272.2" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="461.0" y1="224.0" x2="477.4" y2="249.2" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="497.0" y1="202.0" x2="512.0" y2="228.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="534.1" y1="181.8" x2="547.7" y2="208.6" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="572.2" y1="163.7" x2="584.4" y2="191.1" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="611.2" y1="147.5" x2="621.9" y2="175.5" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="650.9" y1="133.4" x2="660.2" y2="162.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="691.4" y1="121.5" x2="699.2" y2="150.4" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="732.4" y1="111.6" x2="738.7" y2="141.0" stroke="#cbd5e1" stroke-width="0.6"/>
-<line x1="773.9" y1="103.9" x2="778.6" y2="133.6" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="815.8" y1="98.4" x2="818.9" y2="128.3" stroke="#dc2626" stroke-width="1.2"/>
-<line x1="857.8" y1="95.1" x2="859.4" y2="125.1" stroke="#cbd5e1" stroke-width="0.6"/>
-<circle cx="900.0" cy="900.0" r="741.0" class="ring"/>
-<line x1="900.0" y1="124.0" x2="900.0" y2="159.0" stroke="#b00" stroke-width="0.8"/>
-<text x="933.1" y="142.2" class="txt-long" transform="rotate(2.5 933.1 142.2)">1</text>
-<line x1="967.6" y1="127.0" x2="964.6" y2="161.8" stroke="#b00" stroke-width="0.8"/>
-<text x="999.0" y="148.0" class="txt-long" transform="rotate(7.5 999.0 148.0)">2</text>
-<line x1="1034.8" y1="135.8" x2="1028.7" y2="170.3" stroke="#b00" stroke-width="0.8"/>
-<text x="1064.2" y="159.5" class="txt-long" transform="rotate(12.5 1064.2 159.5)">3</text>
-<line x1="1100.8" y1="150.4" x2="1091.8" y2="184.2" stroke="#b00" stroke-width="0.8"/>
-<text x="1128.1" y="176.6" class="txt-long" transform="rotate(17.5 1128.1 176.6)">4</text>
-<line x1="1165.4" y1="170.8" x2="1153.4" y2="203.7" stroke="#b00" stroke-width="0.8"/>
-<text x="1190.3" y="199.2" class="txt-long" transform="rotate(22.5 1190.3 199.2)">5</text>
-<line x1="1228.0" y1="196.7" x2="1213.2" y2="228.4" stroke="#b00" stroke-width="0.8"/>
-<text x="1250.2" y="227.2" class="txt-long" transform="rotate(27.5 1250.2 227.2)">6</text>
-<line x1="1288.0" y1="228.0" x2="1270.5" y2="258.3" stroke="#b00" stroke-width="0.8"/>
-<text x="1307.5" y="260.3" class="txt-long" transform="rotate(32.5 1307.5 260.3)">7</text>
-<line x1="1345.1" y1="264.3" x2="1325.0" y2="293.0" stroke="#b00" stroke-width="0.8"/>
-<text x="1361.7" y="298.2" class="txt-long" transform="rotate(37.5 1361.7 298.2)">8</text>
-<line x1="1398.8" y1="305.5" x2="1376.3" y2="332.4" stroke="#b00" stroke-width="0.8"/>
-<text x="1412.4" y="340.8" class="txt-long" transform="rotate(42.5 1412.4 340.8)">9</text>
-<line x1="1448.7" y1="351.3" x2="1424.0" y2="376.0" stroke="#b00" stroke-width="0.8"/>
-<text x="1459.2" y="387.6" class="txt-long" transform="rotate(47.5 1459.2 387.6)">10</text>
-<line x1="1494.5" y1="401.2" x2="1467.6" y2="423.7" stroke="#b00" stroke-width="0.8"/>
-<text x="1501.8" y="438.3" class="txt-long" transform="rotate(52.5 1501.8 438.3)">11</text>
-<line x1="1535.7" y1="454.9" x2="1507.0" y2="475.0" stroke="#b00" stroke-width="0.8"/>
-<text x="1539.7" y="492.5" class="txt-long" transform="rotate(57.5 1539.7 492.5)">12</text>
-<line x1="1572.0" y1="512.0" x2="1541.7" y2="529.5" stroke="#b00" stroke-width="0.8"/>
-<text x="1572.8" y="549.8" class="txt-long" transform="rotate(62.5 1572.8 549.8)">13</text>
-<line x1="1603.3" y1="572.0" x2="1571.6" y2="586.8" stroke="#b00" stroke-width="0.8"/>
-<text x="1600.8" y="609.7" class="txt-long" transform="rotate(67.5 1600.8 609.7)">14</text>
-<line x1="1629.2" y1="634.6" x2="1596.3" y2="646.6" stroke="#b00" stroke-width="0.8"/>
-<text x="1623.4" y="671.9" class="txt-long" transform="rotate(72.5 1623.4 671.9)">15</text>
-<line x1="1649.6" y1="699.2" x2="1615.8" y2="708.2" stroke="#b00" stroke-width="0.8"/>
-<text x="1640.5" y="735.8" class="txt-long" transform="rotate(77.5 1640.5 735.8)">16</text>
-<line x1="1664.2" y1="765.2" x2="1629.7" y2="771.3" stroke="#b00" stroke-width="0.8"/>
-<text x="1652.0" y="801.0" class="txt-long" transform="rotate(82.5 1652.0 801.0)">17</text>
-<line x1="1673.0" y1="832.4" x2="1638.2" y2="835.4" stroke="#b00" stroke-width="0.8"/>
-<text x="1657.8" y="866.9" class="txt-long" transform="rotate(87.5 1657.8 866.9)">18</text>
-<line x1="1676.0" y1="900.0" x2="1641.0" y2="900.0" stroke="#b00" stroke-width="0.8"/>
-<text x="1657.8" y="933.1" class="txt-long" transform="rotate(92.5 1657.8 933.1)">19</text>
-<line x1="1673.0" y1="967.6" x2="1638.2" y2="964.6" stroke="#b00" stroke-width="0.8"/>
-<text x="1652.0" y="999.0" class="txt-long" transform="rotate(97.5 1652.0 999.0)">20</text>
-<line x1="1664.2" y1="1034.8" x2="1629.7" y2="1028.7" stroke="#b00" stroke-width="0.8"/>
-<text x="1640.5" y="1064.2" class="txt-long" transform="rotate(102.5 1640.5 1064.2)">21</text>
-<line x1="1649.6" y1="1100.8" x2="1615.8" y2="1091.8" stroke="#b00" stroke-width="0.8"/>
-<text x="1623.4" y="1128.1" class="txt-long" transform="rotate(107.5 1623.4 1128.1)">22</text>
-<line x1="1629.2" y1="1165.4" x2="1596.3" y2="1153.4" stroke="#b00" stroke-width="0.8"/>
-<text x="1600.8" y="1190.3" class="txt-long" transform="rotate(112.5 1600.8 1190.3)">23</text>
-<line x1="1603.3" y1="1228.0" x2="1571.6" y2="1213.2" stroke="#b00" stroke-width="0.8"/>
-<text x="1572.8" y="1250.2" class="txt-long" transform="rotate(117.5 1572.8 1250.2)">24</text>
-<line x1="1572.0" y1="1288.0" x2="1541.7" y2="1270.5" stroke="#b00" stroke-width="0.8"/>
-<text x="1539.7" y="1307.5" class="txt-long" transform="rotate(122.5 1539.7 1307.5)">25</text>
-<line x1="1535.7" y1="1345.1" x2="1507.0" y2="1325.0" stroke="#b00" stroke-width="0.8"/>
-<text x="1501.8" y="1361.7" class="txt-long" transform="rotate(127.5 1501.8 1361.7)">26</text>
-<line x1="1494.5" y1="1398.8" x2="1467.6" y2="1376.3" stroke="#b00" stroke-width="0.8"/>
-<text x="1459.2" y="1412.4" class="txt-long" transform="rotate(132.5 1459.2 1412.4)">27</text>
-<line x1="1448.7" y1="1448.7" x2="1424.0" y2="1424.0" stroke="#b00" stroke-width="0.8"/>
-<text x="1412.4" y="1459.2" class="txt-long" transform="rotate(137.5 1412.4 1459.2)">28</text>
-<line x1="1398.8" y1="1494.5" x2="1376.3" y2="1467.6" stroke="#b00" stroke-width="0.8"/>
-<text x="1361.7" y="1501.8" class="txt-long" transform="rotate(142.5 1361.7 1501.8)">29</text>
-<line x1="1345.1" y1="1535.7" x2="1325.0" y2="1507.0" stroke="#b00" stroke-width="0.8"/>
-<text x="1307.5" y="1539.7" class="txt-long" transform="rotate(147.5 1307.5 1539.7)">30</text>
-<line x1="1288.0" y1="1572.0" x2="1270.5" y2="1541.7" stroke="#b00" stroke-width="0.8"/>
-<text x="1250.2" y="1572.8" class="txt-long" transform="rotate(152.5 1250.2 1572.8)">31</text>
-<line x1="1228.0" y1="1603.3" x2="1213.2" y2="1571.6" stroke="#b00" stroke-width="0.8"/>
-<text x="1190.3" y="1600.8" class="txt-long" transform="rotate(157.5 1190.3 1600.8)">32</text>
-<line x1="1165.4" y1="1629.2" x2="1153.4" y2="1596.3" stroke="#b00" stroke-width="0.8"/>
-<text x="1128.1" y="1623.4" class="txt-long" transform="rotate(162.5 1128.1 1623.4)">33</text>
-<line x1="1100.8" y1="1649.6" x2="1091.8" y2="1615.8" stroke="#b00" stroke-width="0.8"/>
-<text x="1064.2" y="1640.5" class="txt-long" transform="rotate(167.5 1064.2 1640.5)">34</text>
-<line x1="1034.8" y1="1664.2" x2="1028.7" y2="1629.7" stroke="#b00" stroke-width="0.8"/>
-<text x="999.0" y="1652.0" class="txt-long" transform="rotate(172.5 999.0 1652.0)">35</text>
-<line x1="967.6" y1="1673.0" x2="964.6" y2="1638.2" stroke="#b00" stroke-width="0.8"/>
-<text x="933.1" y="1657.8" class="txt-long" transform="rotate(177.5 933.1 1657.8)">36</text>
-<line x1="900.0" y1="1676.0" x2="900.0" y2="1641.0" stroke="#b00" stroke-width="0.8"/>
-<text x="866.9" y="1657.8" class="txt-long" transform="rotate(182.5 866.9 1657.8)">37</text>
-<line x1="832.4" y1="1673.0" x2="835.4" y2="1638.2" stroke="#b00" stroke-width="0.8"/>
-<text x="801.0" y="1652.0" class="txt-long" transform="rotate(187.5 801.0 1652.0)">38</text>
-<line x1="765.2" y1="1664.2" x2="771.3" y2="1629.7" stroke="#b00" stroke-width="0.8"/>
-<text x="735.8" y="1640.5" class="txt-long" transform="rotate(192.5 735.8 1640.5)">39</text>
-<line x1="699.2" y1="1649.6" x2="708.2" y2="1615.8" stroke="#b00" stroke-width="0.8"/>
-<text x="671.9" y="1623.4" class="txt-long" transform="rotate(197.5 671.9 1623.4)">40</text>
-<line x1="634.6" y1="1629.2" x2="646.6" y2="1596.3" stroke="#b00" stroke-width="0.8"/>
-<text x="609.7" y="1600.8" class="txt-long" transform="rotate(202.5 609.7 1600.8)">41</text>
-<line x1="572.0" y1="1603.3" x2="586.8" y2="1571.6" stroke="#b00" stroke-width="0.8"/>
-<text x="549.8" y="1572.8" class="txt-long" transform="rotate(207.5 549.8 1572.8)">42</text>
-<line x1="512.0" y1="1572.0" x2="529.5" y2="1541.7" stroke="#b00" stroke-width="0.8"/>
-<text x="492.5" y="1539.7" class="txt-long" transform="rotate(212.5 492.5 1539.7)">43</text>
-<line x1="454.9" y1="1535.7" x2="475.0" y2="1507.0" stroke="#b00" stroke-width="0.8"/>
-<text x="438.3" y="1501.8" class="txt-long" transform="rotate(217.5 438.3 1501.8)">44</text>
-<line x1="401.2" y1="1494.5" x2="423.7" y2="1467.6" stroke="#b00" stroke-width="0.8"/>
-<text x="387.6" y="1459.2" class="txt-long" transform="rotate(222.5 387.6 1459.2)">45</text>
-<line x1="351.3" y1="1448.7" x2="376.0" y2="1424.0" stroke="#b00" stroke-width="0.8"/>
-<text x="340.8" y="1412.4" class="txt-long" transform="rotate(227.5 340.8 1412.4)">46</text>
-<line x1="305.5" y1="1398.8" x2="332.4" y2="1376.3" stroke="#b00" stroke-width="0.8"/>
-<text x="298.2" y="1361.7" class="txt-long" transform="rotate(232.5 298.2 1361.7)">47</text>
-<line x1="264.3" y1="1345.1" x2="293.0" y2="1325.0" stroke="#b00" stroke-width="0.8"/>
-<text x="260.3" y="1307.5" class="txt-long" transform="rotate(237.5 260.3 1307.5)">48</text>
-<line x1="228.0" y1="1288.0" x2="258.3" y2="1270.5" stroke="#b00" stroke-width="0.8"/>
-<text x="227.2" y="1250.2" class="txt-long" transform="rotate(242.5 227.2 1250.2)">49</text>
-<line x1="196.7" y1="1228.0" x2="228.4" y2="1213.2" stroke="#b00" stroke-width="0.8"/>
-<text x="199.2" y="1190.3" class="txt-long" transform="rotate(247.5 199.2 1190.3)">50</text>
-<line x1="170.8" y1="1165.4" x2="203.7" y2="1153.4" stroke="#b00" stroke-width="0.8"/>
-<text x="176.6" y="1128.1" class="txt-long" transform="rotate(252.5 176.6 1128.1)">51</text>
-<line x1="150.4" y1="1100.8" x2="184.2" y2="1091.8" stroke="#b00" stroke-width="0.8"/>
-<text x="159.5" y="1064.2" class="txt-long" transform="rotate(257.5 159.5 1064.2)">52</text>
-<line x1="135.8" y1="1034.8" x2="170.3" y2="1028.7" stroke="#b00" stroke-width="0.8"/>
-<text x="148.0" y="999.0" class="txt-long" transform="rotate(262.5 148.0 999.0)">53</text>
-<line x1="127.0" y1="967.6" x2="161.8" y2="964.6" stroke="#b00" stroke-width="0.8"/>
-<text x="142.2" y="933.1" class="txt-long" transform="rotate(267.5 142.2 933.1)">54</text>
-<line x1="124.0" y1="900.0" x2="159.0" y2="900.0" stroke="#b00" stroke-width="0.8"/>
-<text x="142.2" y="866.9" class="txt-long" transform="rotate(272.5 142.2 866.9)">55</text>
-<line x1="127.0" y1="832.4" x2="161.8" y2="835.4" stroke="#b00" stroke-width="0.8"/>
-<text x="148.0" y="801.0" class="txt-long" transform="rotate(277.5 148.0 801.0)">56</text>
-<line x1="135.8" y1="765.2" x2="170.3" y2="771.3" stroke="#b00" stroke-width="0.8"/>
-<text x="159.5" y="735.8" class="txt-long" transform="rotate(282.5 159.5 735.8)">57</text>
-<line x1="150.4" y1="699.2" x2="184.2" y2="708.2" stroke="#b00" stroke-width="0.8"/>
-<text x="176.6" y="671.9" class="txt-long" transform="rotate(287.5 176.6 671.9)">58</text>
-<line x1="170.8" y1="634.6" x2="203.7" y2="646.6" stroke="#b00" stroke-width="0.8"/>
-<text x="199.2" y="609.7" class="txt-long" transform="rotate(292.5 199.2 609.7)">59</text>
-<line x1="196.7" y1="572.0" x2="228.4" y2="586.8" stroke="#b00" stroke-width="0.8"/>
-<text x="227.2" y="549.8" class="txt-long" transform="rotate(297.5 227.2 549.8)">60</text>
-<line x1="228.0" y1="512.0" x2="258.3" y2="529.5" stroke="#b00" stroke-width="0.8"/>
-<text x="260.3" y="492.5" class="txt-long" transform="rotate(302.5 260.3 492.5)">61</text>
-<line x1="264.3" y1="454.9" x2="293.0" y2="475.0" stroke="#b00" stroke-width="0.8"/>
-<text x="298.2" y="438.3" class="txt-long" transform="rotate(307.5 298.2 438.3)">62</text>
-<line x1="305.5" y1="401.2" x2="332.4" y2="423.7" stroke="#b00" stroke-width="0.8"/>
-<text x="340.8" y="387.6" class="txt-long" transform="rotate(312.5 340.8 387.6)">63</text>
-<line x1="351.3" y1="351.3" x2="376.0" y2="376.0" stroke="#b00" stroke-width="0.8"/>
-<text x="387.6" y="340.8" class="txt-long" transform="rotate(317.5 387.6 340.8)">64</text>
-<line x1="401.2" y1="305.5" x2="423.7" y2="332.4" stroke="#b00" stroke-width="0.8"/>
-<text x="438.3" y="298.2" class="txt-long" transform="rotate(322.5 438.3 298.2)">65</text>
-<line x1="454.9" y1="264.3" x2="475.0" y2="293.0" stroke="#b00" stroke-width="0.8"/>
-<text x="492.5" y="260.3" class="txt-long" transform="rotate(327.5 492.5 260.3)">66</text>
-<line x1="512.0" y1="228.0" x2="529.5" y2="258.3" stroke="#b00" stroke-width="0.8"/>
-<text x="549.8" y="227.2" class="txt-long" transform="rotate(332.5 549.8 227.2)">67</text>
-<line x1="572.0" y1="196.7" x2="586.8" y2="228.4" stroke="#b00" stroke-width="0.8"/>
-<text x="609.7" y="199.2" class="txt-long" transform="rotate(337.5 609.7 199.2)">68</text>
-<line x1="634.6" y1="170.8" x2="646.6" y2="203.7" stroke="#b00" stroke-width="0.8"/>
-<text x="671.9" y="176.6" class="txt-long" transform="rotate(342.5 671.9 176.6)">69</text>
-<line x1="699.2" y1="150.4" x2="708.2" y2="184.2" stroke="#b00" stroke-width="0.8"/>
-<text x="735.8" y="159.5" class="txt-long" transform="rotate(347.5 735.8 159.5)">70</text>
-<line x1="765.2" y1="135.8" x2="771.3" y2="170.3" stroke="#b00" stroke-width="0.8"/>
-<text x="801.0" y="148.0" class="txt-long" transform="rotate(352.5 801.0 148.0)">71</text>
-<line x1="832.4" y1="127.0" x2="835.4" y2="161.8" stroke="#b00" stroke-width="0.8"/>
-<text x="866.9" y="142.2" class="txt-long" transform="rotate(357.5 866.9 142.2)">72</text>
-<circle cx="900.0" cy="900.0" r="706.0" class="ring"/>
-<line x1="900.0" y1="159.0" x2="900.0" y2="194.0" stroke="#880" stroke-width="0.8"/>
-<text x="937.9" y="177.5" class="txt-long" transform="rotate(3.0 937.9 177.5)">Đ1</text>
-<line x1="977.5" y1="163.1" x2="973.8" y2="197.9" stroke="#880" stroke-width="0.8"/>
-<text x="1013.2" y="185.4" class="txt-long" transform="rotate(9.0 1013.2 185.4)">Đ2</text>
-<line x1="1054.1" y1="175.2" x2="1046.8" y2="209.4" stroke="#880" stroke-width="0.8"/>
-<text x="1087.3" y="201.2" class="txt-long" transform="rotate(15.0 1087.3 201.2)">Đ3</text>
-<line x1="1129.0" y1="195.3" x2="1118.2" y2="228.6" stroke="#880" stroke-width="0.8"/>
-<text x="1159.3" y="224.6" class="txt-long" transform="rotate(21.0 1159.3 224.6)">Đ4</text>
-<line x1="1201.4" y1="223.1" x2="1187.2" y2="255.0" stroke="#880" stroke-width="0.8"/>
-<text x="1228.5" y="255.4" class="txt-long" transform="rotate(27.0 1228.5 255.4)">Đ5</text>
-<line x1="1270.5" y1="258.3" x2="1253.0" y2="288.6" stroke="#880" stroke-width="0.8"/>
-<text x="1294.0" y="293.2" class="txt-long" transform="rotate(33.0 1294.0 293.2)">Đ6</text>
-<line x1="1335.5" y1="300.5" x2="1315.0" y2="328.8" stroke="#880" stroke-width="0.8"/>
-<text x="1355.3" y="337.7" class="txt-long" transform="rotate(39.0 1355.3 337.7)">Đ7</text>
-<line x1="1395.8" y1="349.3" x2="1372.4" y2="375.3" stroke="#880" stroke-width="0.8"/>
-<text x="1411.6" y="388.4" class="txt-long" transform="rotate(45.0 1411.6 388.4)">Đ8</text>
-<line x1="1450.7" y1="404.2" x2="1424.7" y2="427.6" stroke="#880" stroke-width="0.8"/>
-<text x="1462.3" y="444.7" class="txt-long" transform="rotate(51.0 1462.3 444.7)">Đ9</text>
-<line x1="1499.5" y1="464.5" x2="1471.2" y2="485.0" stroke="#880" stroke-width="0.8"/>
-<text x="1506.8" y="506.0" class="txt-long" transform="rotate(57.0 1506.8 506.0)">Đ10</text>
-<line x1="1541.7" y1="529.5" x2="1511.4" y2="547.0" stroke="#880" stroke-width="0.8"/>
-<text x="1544.6" y="571.5" class="txt-long" transform="rotate(63.0 1544.6 571.5)">Đ11</text>
-<line x1="1576.9" y1="598.6" x2="1545.0" y2="612.8" stroke="#880" stroke-width="0.8"/>
-<text x="1575.4" y="640.7" class="txt-long" transform="rotate(69.0 1575.4 640.7)">Đ12</text>
-<line x1="1604.7" y1="671.0" x2="1571.4" y2="681.8" stroke="#880" stroke-width="0.8"/>
-<text x="1598.8" y="712.7" class="txt-long" transform="rotate(75.0 1598.8 712.7)">Đ13</text>
-<line x1="1624.8" y1="745.9" x2="1590.6" y2="753.2" stroke="#880" stroke-width="0.8"/>
-<text x="1614.6" y="786.8" class="txt-long" transform="rotate(81.0 1614.6 786.8)">Đ14</text>
-<line x1="1636.9" y1="822.5" x2="1602.1" y2="826.2" stroke="#880" stroke-width="0.8"/>
-<text x="1622.5" y="862.1" class="txt-long" transform="rotate(87.0 1622.5 862.1)">Đ15</text>
-<line x1="1641.0" y1="900.0" x2="1606.0" y2="900.0" stroke="#880" stroke-width="0.8"/>
-<text x="1622.5" y="937.9" class="txt-long" transform="rotate(93.0 1622.5 937.9)">Đ16</text>
-<line x1="1636.9" y1="977.5" x2="1602.1" y2="973.8" stroke="#880" stroke-width="0.8"/>
-<text x="1614.6" y="1013.2" class="txt-long" transform="rotate(99.0 1614.6 1013.2)">Đ17</text>
-<line x1="1624.8" y1="1054.1" x2="1590.6" y2="1046.8" stroke="#880" stroke-width="0.8"/>
-<text x="1598.8" y="1087.3" class="txt-long" transform="rotate(105.0 1598.8 1087.3)">Đ18</text>
-<line x1="1604.7" y1="1129.0" x2="1571.4" y2="1118.2" stroke="#880" stroke-width="0.8"/>
-<text x="1575.4" y="1159.3" class="txt-long" transform="rotate(111.0 1575.4 1159.3)">Đ19</text>
-<line x1="1576.9" y1="1201.4" x2="1545.0" y2="1187.2" stroke="#880" stroke-width="0.8"/>
-<text x="1544.6" y="1228.5" class="txt-long" transform="rotate(117.0 1544.6 1228.5)">Đ20</text>
-<line x1="1541.7" y1="1270.5" x2="1511.4" y2="1253.0" stroke="#880" stroke-width="0.8"/>
-<text x="1506.8" y="1294.0" class="txt-long" transform="rotate(123.0 1506.8 1294.0)">Đ21</text>
-<line x1="1499.5" y1="1335.5" x2="1471.2" y2="1315.0" stroke="#880" stroke-width="0.8"/>
-<text x="1462.3" y="1355.3" class="txt-long" transform="rotate(129.0 1462.3 1355.3)">Đ22</text>
-<line x1="1450.7" y1="1395.8" x2="1424.7" y2="1372.4" stroke="#880" stroke-width="0.8"/>
-<text x="1411.6" y="1411.6" class="txt-long" transform="rotate(135.0 1411.6 1411.6)">Đ23</text>
-<line x1="1395.8" y1="1450.7" x2="1372.4" y2="1424.7" stroke="#880" stroke-width="0.8"/>
-<text x="1355.3" y="1462.3" class="txt-long" transform="rotate(141.0 1355.3 1462.3)">Đ24</text>
-<line x1="1335.5" y1="1499.5" x2="1315.0" y2="1471.2" stroke="#880" stroke-width="0.8"/>
-<text x="1294.0" y="1506.8" class="txt-long" transform="rotate(147.0 1294.0 1506.8)">Đ25</text>
-<line x1="1270.5" y1="1541.7" x2="1253.0" y2="1511.4" stroke="#880" stroke-width="0.8"/>
-<text x="1228.5" y="1544.6" class="txt-long" transform="rotate(153.0 1228.5 1544.6)">Đ26</text>
-<line x1="1201.4" y1="1576.9" x2="1187.2" y2="1545.0" stroke="#880" stroke-width="0.8"/>
-<text x="1159.3" y="1575.4" class="txt-long" transform="rotate(159.0 1159.3 1575.4)">Đ27</text>
-<line x1="1129.0" y1="1604.7" x2="1118.2" y2="1571.4" stroke="#880" stroke-width="0.8"/>
-<text x="1087.3" y="1598.8" class="txt-long" transform="rotate(165.0 1087.3 1598.8)">Đ28</text>
-<line x1="1054.1" y1="1624.8" x2="1046.8" y2="1590.6" stroke="#880" stroke-width="0.8"/>
-<text x="1013.2" y="1614.6" class="txt-long" transform="rotate(171.0 1013.2 1614.6)">Đ29</text>
-<line x1="977.5" y1="1636.9" x2="973.8" y2="1602.1" stroke="#880" stroke-width="0.8"/>
-<text x="937.9" y="1622.5" class="txt-long" transform="rotate(177.0 937.9 1622.5)">Đ30</text>
-<line x1="900.0" y1="1641.0" x2="900.0" y2="1606.0" stroke="#880" stroke-width="0.8"/>
-<text x="862.1" y="1622.5" class="txt-long" transform="rotate(183.0 862.1 1622.5)">Đ31</text>
-<line x1="822.5" y1="1636.9" x2="826.2" y2="1602.1" stroke="#880" stroke-width="0.8"/>
-<text x="786.8" y="1614.6" class="txt-long" transform="rotate(189.0 786.8 1614.6)">Đ32</text>
-<line x1="745.9" y1="1624.8" x2="753.2" y2="1590.6" stroke="#880" stroke-width="0.8"/>
-<text x="712.7" y="1598.8" class="txt-long" transform="rotate(195.0 712.7 1598.8)">Đ33</text>
-<line x1="671.0" y1="1604.7" x2="681.8" y2="1571.4" stroke="#880" stroke-width="0.8"/>
-<text x="640.7" y="1575.4" class="txt-long" transform="rotate(201.0 640.7 1575.4)">Đ34</text>
-<line x1="598.6" y1="1576.9" x2="612.8" y2="1545.0" stroke="#880" stroke-width="0.8"/>
-<text x="571.5" y="1544.6" class="txt-long" transform="rotate(207.0 571.5 1544.6)">Đ35</text>
-<line x1="529.5" y1="1541.7" x2="547.0" y2="1511.4" stroke="#880" stroke-width="0.8"/>
-<text x="506.0" y="1506.8" class="txt-long" transform="rotate(213.0 506.0 1506.8)">Đ36</text>
-<line x1="464.5" y1="1499.5" x2="485.0" y2="1471.2" stroke="#880" stroke-width="0.8"/>
-<text x="444.7" y="1462.3" class="txt-long" transform="rotate(219.0 444.7 1462.3)">Đ37</text>
-<line x1="404.2" y1="1450.7" x2="427.6" y2="1424.7" stroke="#880" stroke-width="0.8"/>
-<text x="388.4" y="1411.6" class="txt-long" transform="rotate(225.0 388.4 1411.6)">Đ38</text>
-<line x1="349.3" y1="1395.8" x2="375.3" y2="1372.4" stroke="#880" stroke-width="0.8"/>
-<text x="337.7" y="1355.3" class="txt-long" transform="rotate(231.0 337.7 1355.3)">Đ39</text>
-<line x1="300.5" y1="1335.5" x2="328.8" y2="1315.0" stroke="#880" stroke-width="0.8"/>
-<text x="293.2" y="1294.0" class="txt-long" transform="rotate(237.0 293.2 1294.0)">Đ40</text>
-<line x1="258.3" y1="1270.5" x2="288.6" y2="1253.0" stroke="#880" stroke-width="0.8"/>
-<text x="255.4" y="1228.5" class="txt-long" transform="rotate(243.0 255.4 1228.5)">Đ41</text>
-<line x1="223.1" y1="1201.4" x2="255.0" y2="1187.2" stroke="#880" stroke-width="0.8"/>
-<text x="224.6" y="1159.3" class="txt-long" transform="rotate(249.0 224.6 1159.3)">Đ42</text>
-<line x1="195.3" y1="1129.0" x2="228.6" y2="1118.2" stroke="#880" stroke-width="0.8"/>
-<text x="201.2" y="1087.3" class="txt-long" transform="rotate(255.0 201.2 1087.3)">Đ43</text>
-<line x1="175.2" y1="1054.1" x2="209.4" y2="1046.8" stroke="#880" stroke-width="0.8"/>
-<text x="185.4" y="1013.2" class="txt-long" transform="rotate(261.0 185.4 1013.2)">Đ44</text>
-<line x1="163.1" y1="977.5" x2="197.9" y2="973.8" stroke="#880" stroke-width="0.8"/>
-<text x="177.5" y="937.9" class="txt-long" transform="rotate(267.0 177.5 937.9)">Đ45</text>
-<line x1="159.0" y1="900.0" x2="194.0" y2="900.0" stroke="#880" stroke-width="0.8"/>
-<text x="177.5" y="862.1" class="txt-long" transform="rotate(273.0 177.5 862.1)">Đ46</text>
-<line x1="163.1" y1="822.5" x2="197.9" y2="826.2" stroke="#880" stroke-width="0.8"/>
-<text x="185.4" y="786.8" class="txt-long" transform="rotate(279.0 185.4 786.8)">Đ47</text>
-<line x1="175.2" y1="745.9" x2="209.4" y2="753.2" stroke="#880" stroke-width="0.8"/>
-<text x="201.2" y="712.7" class="txt-long" transform="rotate(285.0 201.2 712.7)">Đ48</text>
-<line x1="195.3" y1="671.0" x2="228.6" y2="681.8" stroke="#880" stroke-width="0.8"/>
-<text x="224.6" y="640.7" class="txt-long" transform="rotate(291.0 224.6 640.7)">Đ49</text>
-<line x1="223.1" y1="598.6" x2="255.0" y2="612.8" stroke="#880" stroke-width="0.8"/>
-<text x="255.4" y="571.5" class="txt-long" transform="rotate(297.0 255.4 571.5)">Đ50</text>
-<line x1="258.3" y1="529.5" x2="288.6" y2="547.0" stroke="#880" stroke-width="0.8"/>
-<text x="293.2" y="506.0" class="txt-long" transform="rotate(303.0 293.2 506.0)">Đ51</text>
-<line x1="300.5" y1="464.5" x2="328.8" y2="485.0" stroke="#880" stroke-width="0.8"/>
-<text x="337.7" y="444.7" class="txt-long" transform="rotate(309.0 337.7 444.7)">Đ52</text>
-<line x1="349.3" y1="404.2" x2="375.3" y2="427.6" stroke="#880" stroke-width="0.8"/>
-<text x="388.4" y="388.4" class="txt-long" transform="rotate(315.0 388.4 388.4)">Đ53</text>
-<line x1="404.2" y1="349.3" x2="427.6" y2="375.3" stroke="#880" stroke-width="0.8"/>
-<text x="444.7" y="337.7" class="txt-long" transform="rotate(321.0 444.7 337.7)">Đ54</text>
-<line x1="464.5" y1="300.5" x2="485.0" y2="328.8" stroke="#880" stroke-width="0.8"/>
-<text x="506.0" y="293.2" class="txt-long" transform="rotate(327.0 506.0 293.2)">Đ55</text>
-<line x1="529.5" y1="258.3" x2="547.0" y2="288.6" stroke="#880" stroke-width="0.8"/>
-<text x="571.5" y="255.4" class="txt-long" transform="rotate(333.0 571.5 255.4)">Đ56</text>
-<line x1="598.6" y1="223.1" x2="612.8" y2="255.0" stroke="#880" stroke-width="0.8"/>
-<text x="640.7" y="224.6" class="txt-long" transform="rotate(339.0 640.7 224.6)">Đ57</text>
-<line x1="671.0" y1="195.3" x2="681.8" y2="228.6" stroke="#880" stroke-width="0.8"/>
-<text x="712.7" y="201.2" class="txt-long" transform="rotate(345.0 712.7 201.2)">Đ58</text>
-<line x1="745.9" y1="175.2" x2="753.2" y2="209.4" stroke="#880" stroke-width="0.8"/>
-<text x="786.8" y="185.4" class="txt-long" transform="rotate(351.0 786.8 185.4)">Đ59</text>
-<line x1="822.5" y1="163.1" x2="826.2" y2="197.9" stroke="#880" stroke-width="0.8"/>
-<text x="862.1" y="177.5" class="txt-long" transform="rotate(357.0 862.1 177.5)">Đ60</text>
-<circle cx="900.0" cy="900.0" r="661.0" class="ring"/>
-<line x1="900.0" y1="194.0" x2="900.0" y2="239.0" stroke="#0284c7" stroke-width="1.2"/>
-<text x="989.2" y="222.3" class="txt-thienban" transform="rotate(7.5 989.2 222.3)">Tý</text>
-<line x1="1082.7" y1="218.1" x2="1071.1" y2="261.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1161.6" y="268.5" class="txt-thienban" transform="rotate(22.5 1161.6 268.5)">Quý</text>
-<line x1="1253.0" y1="288.6" x2="1230.5" y2="327.6" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1316.1" y="357.7" class="txt-thienban" transform="rotate(37.5 1316.1 357.7)">Sửu</text>
-<line x1="1399.2" y1="400.8" x2="1367.4" y2="432.6" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1442.3" y="483.9" class="txt-thienban" transform="rotate(52.5 1442.3 483.9)">Cấn</text>
-<line x1="1511.4" y1="547.0" x2="1472.4" y2="569.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1531.5" y="638.4" class="txt-thienban" transform="rotate(67.5 1531.5 638.4)">Dần</text>
-<line x1="1581.9" y1="717.3" x2="1538.5" y2="728.9" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1577.7" y="810.8" class="txt-thienban" transform="rotate(82.5 1577.7 810.8)">Giáp</text>
-<line x1="1606.0" y1="900.0" x2="1561.0" y2="900.0" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1577.7" y="989.2" class="txt-thienban" transform="rotate(97.5 1577.7 989.2)">Mão</text>
-<line x1="1581.9" y1="1082.7" x2="1538.5" y2="1071.1" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1531.5" y="1161.6" class="txt-thienban" transform="rotate(112.5 1531.5 1161.6)">Ất</text>
-<line x1="1511.4" y1="1253.0" x2="1472.4" y2="1230.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1442.3" y="1316.1" class="txt-thienban" transform="rotate(127.5 1442.3 1316.1)">Thìn</text>
-<line x1="1399.2" y1="1399.2" x2="1367.4" y2="1367.4" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1316.1" y="1442.3" class="txt-thienban" transform="rotate(142.5 1316.1 1442.3)">Tốn</text>
-<line x1="1253.0" y1="1511.4" x2="1230.5" y2="1472.4" stroke="#0284c7" stroke-width="1.2"/>
-<text x="1161.6" y="1531.5" class="txt-thienban" transform="rotate(157.5 1161.6 1531.5)">Tỵ</text>
-<line x1="1082.7" y1="1581.9" x2="1071.1" y2="1538.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="989.2" y="1577.7" class="txt-thienban" transform="rotate(172.5 989.2 1577.7)">Bính</text>
-<line x1="900.0" y1="1606.0" x2="900.0" y2="1561.0" stroke="#0284c7" stroke-width="1.2"/>
-<text x="810.8" y="1577.7" class="txt-thienban" transform="rotate(187.5 810.8 1577.7)">Ngọ</text>
-<line x1="717.3" y1="1581.9" x2="728.9" y2="1538.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="638.4" y="1531.5" class="txt-thienban" transform="rotate(202.5 638.4 1531.5)">Đinh</text>
-<line x1="547.0" y1="1511.4" x2="569.5" y2="1472.4" stroke="#0284c7" stroke-width="1.2"/>
-<text x="483.9" y="1442.3" class="txt-thienban" transform="rotate(217.5 483.9 1442.3)">Mùi</text>
-<line x1="400.8" y1="1399.2" x2="432.6" y2="1367.4" stroke="#0284c7" stroke-width="1.2"/>
-<text x="357.7" y="1316.1" class="txt-thienban" transform="rotate(232.5 357.7 1316.1)">Khôn</text>
-<line x1="288.6" y1="1253.0" x2="327.6" y2="1230.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="268.5" y="1161.6" class="txt-thienban" transform="rotate(247.5 268.5 1161.6)">Thân</text>
-<line x1="218.1" y1="1082.7" x2="261.5" y2="1071.1" stroke="#0284c7" stroke-width="1.2"/>
-<text x="222.3" y="989.2" class="txt-thienban" transform="rotate(262.5 222.3 989.2)">Canh</text>
-<line x1="194.0" y1="900.0" x2="239.0" y2="900.0" stroke="#0284c7" stroke-width="1.2"/>
-<text x="222.3" y="810.8" class="txt-thienban" transform="rotate(277.5 222.3 810.8)">Dậu</text>
-<line x1="218.1" y1="717.3" x2="261.5" y2="728.9" stroke="#0284c7" stroke-width="1.2"/>
-<text x="268.5" y="638.4" class="txt-thienban" transform="rotate(292.5 268.5 638.4)">Tân</text>
-<line x1="288.6" y1="547.0" x2="327.6" y2="569.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="357.7" y="483.9" class="txt-thienban" transform="rotate(307.5 357.7 483.9)">Tuất</text>
-<line x1="400.8" y1="400.8" x2="432.6" y2="432.6" stroke="#0284c7" stroke-width="1.2"/>
-<text x="483.9" y="357.7" class="txt-thienban" transform="rotate(322.5 483.9 357.7)">Càn</text>
-<line x1="547.0" y1="288.6" x2="569.5" y2="327.6" stroke="#0284c7" stroke-width="1.2"/>
-<text x="638.4" y="268.5" class="txt-thienban" transform="rotate(337.5 638.4 268.5)">Hợi</text>
-<line x1="717.3" y1="218.1" x2="728.9" y2="261.5" stroke="#0284c7" stroke-width="1.2"/>
-<text x="810.8" y="222.3" class="txt-thienban" transform="rotate(352.5 810.8 222.3)">Nhâm</text>
-<circle cx="900.0" cy="900.0" r="616.0" class="ring"/>
-<line x1="728.9" y1="261.5" x2="740.6" y2="305.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="816.7" y="267.0" class="txt-nhanban" transform="rotate(352.5 816.7 267.0)">Tý</text>
-<line x1="900.0" y1="239.0" x2="900.0" y2="284.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="983.3" y="267.0" class="txt-nhanban" transform="rotate(7.5 983.3 267.0)">Quý</text>
-<line x1="1071.1" y1="261.5" x2="1059.4" y2="305.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1144.3" y="310.1" class="txt-nhanban" transform="rotate(22.5 1144.3 310.1)">Sửu</text>
-<line x1="1230.5" y1="327.6" x2="1208.0" y2="366.5" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1288.7" y="393.4" class="txt-nhanban" transform="rotate(37.5 1288.7 393.4)">Cấn</text>
-<line x1="1367.4" y1="432.6" x2="1335.6" y2="464.4" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1406.6" y="511.3" class="txt-nhanban" transform="rotate(52.5 1406.6 511.3)">Dần</text>
-<line x1="1472.4" y1="569.5" x2="1433.5" y2="592.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1489.9" y="655.7" class="txt-nhanban" transform="rotate(67.5 1489.9 655.7)">Giáp</text>
-<line x1="1538.5" y1="728.9" x2="1495.0" y2="740.6" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1533.0" y="816.7" class="txt-nhanban" transform="rotate(82.5 1533.0 816.7)">Mão</text>
-<line x1="1561.0" y1="900.0" x2="1516.0" y2="900.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1533.0" y="983.3" class="txt-nhanban" transform="rotate(97.5 1533.0 983.3)">Ất</text>
-<line x1="1538.5" y1="1071.1" x2="1495.0" y2="1059.4" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1489.9" y="1144.3" class="txt-nhanban" transform="rotate(112.5 1489.9 1144.3)">Thìn</text>
-<line x1="1472.4" y1="1230.5" x2="1433.5" y2="1208.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1406.6" y="1288.7" class="txt-nhanban" transform="rotate(127.5 1406.6 1288.7)">Tốn</text>
-<line x1="1367.4" y1="1367.4" x2="1335.6" y2="1335.6" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1288.7" y="1406.6" class="txt-nhanban" transform="rotate(142.5 1288.7 1406.6)">Tỵ</text>
-<line x1="1230.5" y1="1472.4" x2="1208.0" y2="1433.5" stroke="#16a34a" stroke-width="1.2"/>
-<text x="1144.3" y="1489.9" class="txt-nhanban" transform="rotate(157.5 1144.3 1489.9)">Bính</text>
-<line x1="1071.1" y1="1538.5" x2="1059.4" y2="1495.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="983.3" y="1533.0" class="txt-nhanban" transform="rotate(172.5 983.3 1533.0)">Ngọ</text>
-<line x1="900.0" y1="1561.0" x2="900.0" y2="1516.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="816.7" y="1533.0" class="txt-nhanban" transform="rotate(187.5 816.7 1533.0)">Đinh</text>
-<line x1="728.9" y1="1538.5" x2="740.6" y2="1495.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="655.7" y="1489.9" class="txt-nhanban" transform="rotate(202.5 655.7 1489.9)">Mùi</text>
-<line x1="569.5" y1="1472.4" x2="592.0" y2="1433.5" stroke="#16a34a" stroke-width="1.2"/>
-<text x="511.3" y="1406.6" class="txt-nhanban" transform="rotate(217.5 511.3 1406.6)">Khôn</text>
-<line x1="432.6" y1="1367.4" x2="464.4" y2="1335.6" stroke="#16a34a" stroke-width="1.2"/>
-<text x="393.4" y="1288.7" class="txt-nhanban" transform="rotate(232.5 393.4 1288.7)">Thân</text>
-<line x1="327.6" y1="1230.5" x2="366.5" y2="1208.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="310.1" y="1144.3" class="txt-nhanban" transform="rotate(247.5 310.1 1144.3)">Canh</text>
-<line x1="261.5" y1="1071.1" x2="305.0" y2="1059.4" stroke="#16a34a" stroke-width="1.2"/>
-<text x="267.0" y="983.3" class="txt-nhanban" transform="rotate(262.5 267.0 983.3)">Dậu</text>
-<line x1="239.0" y1="900.0" x2="284.0" y2="900.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="267.0" y="816.7" class="txt-nhanban" transform="rotate(277.5 267.0 816.7)">Tân</text>
-<line x1="261.5" y1="728.9" x2="305.0" y2="740.6" stroke="#16a34a" stroke-width="1.2"/>
-<text x="310.1" y="655.7" class="txt-nhanban" transform="rotate(292.5 310.1 655.7)">Tuất</text>
-<line x1="327.6" y1="569.5" x2="366.5" y2="592.0" stroke="#16a34a" stroke-width="1.2"/>
-<text x="393.4" y="511.3" class="txt-nhanban" transform="rotate(307.5 393.4 511.3)">Càn</text>
-<line x1="432.6" y1="432.6" x2="464.4" y2="464.4" stroke="#16a34a" stroke-width="1.2"/>
-<text x="511.3" y="393.4" class="txt-nhanban" transform="rotate(322.5 511.3 393.4)">Hợi</text>
-<line x1="569.5" y1="327.6" x2="592.0" y2="366.5" stroke="#16a34a" stroke-width="1.2"/>
-<text x="655.7" y="310.1" class="txt-nhanban" transform="rotate(337.5 655.7 310.1)">Nhâm</text>
-<circle cx="900.0" cy="900.0" r="546.0" class="ring-bold"/>
-<line x1="819.6" y1="289.3" x2="828.7" y2="358.7" stroke="#b22222" stroke-width="2"/>
-<text x="900.0" y="319.0" class="txt-24son" transform="rotate(0 900.0 319.0)">Tý</text>
-<text x="900.0" y="337.0" font-size="9" fill="#666" transform="rotate(0 900.0 337.0)">Thuỷ</text>
-<line x1="980.4" y1="289.3" x2="971.3" y2="358.7" stroke="#b22222" stroke-width="2"/>
-<text x="1050.4" y="338.8" class="txt-24son" transform="rotate(15 1050.4 338.8)">Quý</text>
-<text x="1045.7" y="356.2" font-size="9" fill="#666" transform="rotate(15 1045.7 356.2)">Thuỷ</text>
-<line x1="1135.7" y1="330.9" x2="1108.9" y2="395.6" stroke="#b22222" stroke-width="2"/>
-<text x="1190.5" y="396.8" class="txt-24son" transform="rotate(30 1190.5 396.8)">Sửu</text>
-<text x="1181.5" y="412.4" font-size="9" fill="#666" transform="rotate(30 1181.5 412.4)">Thổ</text>
-<line x1="1275.0" y1="411.3" x2="1232.4" y2="466.8" stroke="#b22222" stroke-width="2"/>
-<text x="1310.8" y="489.2" class="txt-24son" transform="rotate(45 1310.8 489.2)">Cấn</text>
-<text x="1298.1" y="501.9" font-size="9" fill="#666" transform="rotate(45 1298.1 501.9)">Thổ</text>
-<line x1="1388.7" y1="525.0" x2="1333.2" y2="567.6" stroke="#b22222" stroke-width="2"/>
-<text x="1403.2" y="609.5" class="txt-24son" transform="rotate(60 1403.2 609.5)">Dần</text>
-<text x="1387.6" y="618.5" font-size="9" fill="#666" transform="rotate(60 1387.6 618.5)">Mộc</text>
-<line x1="1469.1" y1="664.3" x2="1404.4" y2="691.1" stroke="#b22222" stroke-width="2"/>
-<text x="1461.2" y="749.6" class="txt-24son" transform="rotate(75 1461.2 749.6)">Giáp</text>
-<text x="1443.8" y="754.3" font-size="9" fill="#666" transform="rotate(75 1443.8 754.3)">Mộc</text>
-<line x1="1510.7" y1="819.6" x2="1441.3" y2="828.7" stroke="#b22222" stroke-width="2"/>
-<text x="1481.0" y="900.0" class="txt-24son" transform="rotate(90 1481.0 900.0)">Mão</text>
-<text x="1463.0" y="900.0" font-size="9" fill="#666" transform="rotate(90 1463.0 900.0)">Mộc</text>
-<line x1="1510.7" y1="980.4" x2="1441.3" y2="971.3" stroke="#b22222" stroke-width="2"/>
-<text x="1461.2" y="1050.4" class="txt-24son" transform="rotate(105 1461.2 1050.4)">Ất</text>
-<text x="1443.8" y="1045.7" font-size="9" fill="#666" transform="rotate(105 1443.8 1045.7)">Mộc</text>
-<line x1="1469.1" y1="1135.7" x2="1404.4" y2="1108.9" stroke="#b22222" stroke-width="2"/>
-<text x="1403.2" y="1190.5" class="txt-24son" transform="rotate(120 1403.2 1190.5)">Thìn</text>
-<text x="1387.6" y="1181.5" font-size="9" fill="#666" transform="rotate(120 1387.6 1181.5)">Thổ</text>
-<line x1="1388.7" y1="1275.0" x2="1333.2" y2="1232.4" stroke="#b22222" stroke-width="2"/>
-<text x="1310.8" y="1310.8" class="txt-24son" transform="rotate(135 1310.8 1310.8)">Tốn</text>
-<text x="1298.1" y="1298.1" font-size="9" fill="#666" transform="rotate(135 1298.1 1298.1)">Mộc</text>
-<line x1="1275.0" y1="1388.7" x2="1232.4" y2="1333.2" stroke="#b22222" stroke-width="2"/>
-<text x="1190.5" y="1403.2" class="txt-24son" transform="rotate(150 1190.5 1403.2)">Tỵ</text>
-<text x="1181.5" y="1387.6" font-size="9" fill="#666" transform="rotate(150 1181.5 1387.6)">Hoả</text>
-<line x1="1135.7" y1="1469.1" x2="1108.9" y2="1404.4" stroke="#b22222" stroke-width="2"/>
-<text x="1050.4" y="1461.2" class="txt-24son" transform="rotate(165 1050.4 1461.2)">Bính</text>
-<text x="1045.7" y="1443.8" font-size="9" fill="#666" transform="rotate(165 1045.7 1443.8)">Hoả</text>
-<line x1="980.4" y1="1510.7" x2="971.3" y2="1441.3" stroke="#b22222" stroke-width="2"/>
-<text x="900.0" y="1481.0" class="txt-24son" transform="rotate(180 900.0 1481.0)">Ngọ</text>
-<text x="900.0" y="1463.0" font-size="9" fill="#666" transform="rotate(180 900.0 1463.0)">Hoả</text>
-<line x1="819.6" y1="1510.7" x2="828.7" y2="1441.3" stroke="#b22222" stroke-width="2"/>
-<text x="749.6" y="1461.2" class="txt-24son" transform="rotate(195 749.6 1461.2)">Đinh</text>
-<text x="754.3" y="1443.8" font-size="9" fill="#666" transform="rotate(195 754.3 1443.8)">Hoả</text>
-<line x1="664.3" y1="1469.1" x2="691.1" y2="1404.4" stroke="#b22222" stroke-width="2"/>
-<text x="609.5" y="1403.2" class="txt-24son" transform="rotate(210 609.5 1403.2)">Mùi</text>
-<text x="618.5" y="1387.6" font-size="9" fill="#666" transform="rotate(210 618.5 1387.6)">Thổ</text>
-<line x1="525.0" y1="1388.7" x2="567.6" y2="1333.2" stroke="#b22222" stroke-width="2"/>
-<text x="489.2" y="1310.8" class="txt-24son" transform="rotate(225 489.2 1310.8)">Khôn</text>
-<text x="501.9" y="1298.1" font-size="9" fill="#666" transform="rotate(225 501.9 1298.1)">Thổ</text>
-<line x1="411.3" y1="1275.0" x2="466.8" y2="1232.4" stroke="#b22222" stroke-width="2"/>
-<text x="396.8" y="1190.5" class="txt-24son" transform="rotate(240 396.8 1190.5)">Thân</text>
-<text x="412.4" y="1181.5" font-size="9" fill="#666" transform="rotate(240 412.4 1181.5)">Kim</text>
-<line x1="330.9" y1="1135.7" x2="395.6" y2="1108.9" stroke="#b22222" stroke-width="2"/>
-<text x="338.8" y="1050.4" class="txt-24son" transform="rotate(255 338.8 1050.4)">Canh</text>
-<text x="356.2" y="1045.7" font-size="9" fill="#666" transform="rotate(255 356.2 1045.7)">Kim</text>
-<line x1="289.3" y1="980.4" x2="358.7" y2="971.3" stroke="#b22222" stroke-width="2"/>
-<text x="319.0" y="900.0" class="txt-24son" transform="rotate(270 319.0 900.0)">Dậu</text>
-<text x="337.0" y="900.0" font-size="9" fill="#666" transform="rotate(270 337.0 900.0)">Kim</text>
-<line x1="289.3" y1="819.6" x2="358.7" y2="828.7" stroke="#b22222" stroke-width="2"/>
-<text x="338.8" y="749.6" class="txt-24son" transform="rotate(285 338.8 749.6)">Tân</text>
-<text x="356.2" y="754.3" font-size="9" fill="#666" transform="rotate(285 356.2 754.3)">Kim</text>
-<line x1="330.9" y1="664.3" x2="395.6" y2="691.1" stroke="#b22222" stroke-width="2"/>
-<text x="396.8" y="609.5" class="txt-24son" transform="rotate(300 396.8 609.5)">Tuất</text>
-<text x="412.4" y="618.5" font-size="9" fill="#666" transform="rotate(300 412.4 618.5)">Thổ</text>
-<line x1="411.3" y1="525.0" x2="466.8" y2="567.6" stroke="#b22222" stroke-width="2"/>
-<text x="489.2" y="489.2" class="txt-24son" transform="rotate(315 489.2 489.2)">Càn</text>
-<text x="501.9" y="501.9" font-size="9" fill="#666" transform="rotate(315 501.9 501.9)">Kim</text>
-<line x1="525.0" y1="411.3" x2="567.6" y2="466.8" stroke="#b22222" stroke-width="2"/>
-<text x="609.5" y="396.8" class="txt-24son" transform="rotate(330 609.5 396.8)">Hợi</text>
-<text x="618.5" y="412.4" font-size="9" fill="#666" transform="rotate(330 618.5 412.4)">Thuỷ</text>
-<line x1="664.3" y1="330.9" x2="691.1" y2="395.6" stroke="#b22222" stroke-width="2"/>
-<text x="749.6" y="338.8" class="txt-24son" transform="rotate(345 749.6 338.8)">Nhâm</text>
-<text x="754.3" y="356.2" font-size="9" fill="#666" transform="rotate(345 754.3 356.2)">Thuỷ</text>
-<circle cx="900.0" cy="900.0" r="511.0" class="ring"/>
-<text x="900.0" y="371.5" class="txt-batsat" transform="rotate(0 900.0 371.5)">Sát: Thìn</text>
-<text x="526.3" y="1273.7" class="txt-batsat" transform="rotate(225 526.3 1273.7)">Sát: Mão</text>
-<text x="1428.5" y="900.0" class="txt-batsat" transform="rotate(90 1428.5 900.0)">Sát: Thân</text>
-<text x="1273.7" y="1273.7" class="txt-batsat" transform="rotate(135 1273.7 1273.7)">Sát: Dậu</text>
-<text x="526.3" y="526.3" class="txt-batsat" transform="rotate(315 526.3 526.3)">Sát: Ngọ</text>
-<text x="371.5" y="900.0" class="txt-batsat" transform="rotate(270 371.5 900.0)">Sát: Tỵ</text>
-<text x="1273.7" y="526.3" class="txt-batsat" transform="rotate(45 1273.7 526.3)">Sát: Dần</text>
-<text x="900.0" y="1428.5" class="txt-batsat" transform="rotate(180 900.0 1428.5)">Sát: Hợi</text>
-<circle cx="900.0" cy="900.0" r="451.0" class="ring-bold"/>
-<line x1="704.4" y1="427.9" x2="727.4" y2="483.3" stroke="#8b0000" stroke-width="2.5"/>
-<text x="900.0" y="419.0" class="txt-quai" transform="rotate(0 900.0 419.0)">KHẢM</text>
-<line x1="1095.6" y1="427.9" x2="1072.6" y2="483.3" stroke="#8b0000" stroke-width="2.5"/>
-<text x="1240.1" y="559.9" class="txt-quai" transform="rotate(45 1240.1 559.9)">CẤN</text>
-<line x1="1372.1" y1="704.4" x2="1316.7" y2="727.4" stroke="#8b0000" stroke-width="2.5"/>
-<text x="1381.0" y="900.0" class="txt-quai" transform="rotate(90 1381.0 900.0)">CHẤN</text>
-<line x1="1372.1" y1="1095.6" x2="1316.7" y2="1072.6" stroke="#8b0000" stroke-width="2.5"/>
-<text x="1240.1" y="1240.1" class="txt-quai" transform="rotate(135 1240.1 1240.1)">TỐN</text>
-<line x1="1095.6" y1="1372.1" x2="1072.6" y2="1316.7" stroke="#8b0000" stroke-width="2.5"/>
-<text x="900.0" y="1381.0" class="txt-quai" transform="rotate(180 900.0 1381.0)">LY</text>
-<line x1="704.4" y1="1372.1" x2="727.4" y2="1316.7" stroke="#8b0000" stroke-width="2.5"/>
-<text x="559.9" y="1240.1" class="txt-quai" transform="rotate(225 559.9 1240.1)">KHÔN</text>
-<line x1="427.9" y1="1095.6" x2="483.3" y2="1072.6" stroke="#8b0000" stroke-width="2.5"/>
-<text x="419.0" y="900.0" class="txt-quai" transform="rotate(270 419.0 900.0)">ĐOÀI</text>
-<line x1="427.9" y1="704.4" x2="483.3" y2="727.4" stroke="#8b0000" stroke-width="2.5"/>
-<text x="559.9" y="559.9" class="txt-quai" transform="rotate(315 559.9 559.9)">CÀN</text>
-<circle cx="900.0" cy="900.0" r="406.0" class="ring"/>
-<text x="900.0" y="471.5" font-size="26" fill="#8b0000" transform="rotate(0 900.0 471.5)">☵</text>
-<text x="1203.0" y="597.0" font-size="26" fill="#8b0000" transform="rotate(45 1203.0 597.0)">☶</text>
-<text x="1328.5" y="900.0" font-size="26" fill="#8b0000" transform="rotate(90 1328.5 900.0)">☳</text>
-<text x="1203.0" y="1203.0" font-size="26" fill="#8b0000" transform="rotate(135 1203.0 1203.0)">☴</text>
-<text x="900.0" y="1328.5" font-size="26" fill="#8b0000" transform="rotate(180 900.0 1328.5)">☲</text>
-<text x="597.0" y="1203.0" font-size="26" fill="#8b0000" transform="rotate(225 597.0 1203.0)">☷</text>
-<text x="471.5" y="900.0" font-size="26" fill="#8b0000" transform="rotate(270 471.5 900.0)">☱</text>
-<text x="597.0" y="597.0" font-size="26" fill="#8b0000" transform="rotate(315 597.0 597.0)">☰</text>
-<circle cx="900.0" cy="900.0" r="406.0" fill="#ffffff" stroke="#b22222" stroke-width="2.5"/>
-<line x1="900.0" y1="502.0" x2="900.0" y2="1298.0" class="crosshair"/>
-<line x1="502.0" y1="900.0" x2="1298.0" y2="900.0" class="crosshair"/>
-<polygon points="900.0,591.44 885.0,900.0 915.0,900.0" class="needle-n"/>
-<polygon points="900.0,1208.56 885.0,900.0 915.0,900.0" class="needle-s"/>
-<circle cx="900.0" cy="900.0" r="7" fill="#d4af37" stroke="#333" stroke-width="1.5"/>
-<circle cx="900.0" cy="900.0" r="3" fill="#ffffff"/>
-<text x="900.0" y="616.44" font-size="14" font-weight="bold" fill="#ffffff">N</text>
-<text x="900.0" y="1183.56" font-size="14" font-weight="bold" fill="#ffffff">S</text>
+<circle cx="900.0" cy="900.0" r="875.0" fill="none" stroke="#b91c1c" stroke-width="4"/>
+<circle cx="900.0" cy="900.0" r="843.0" class="ring"/>
+<line x1="900.0" y1="25.0" x2="900.0" y2="51.0" class="tick-major"/>
+<text x="900.0" y="41.0" class="txt-deg" transform="rotate(0 900.0 41.0)">0°</text>
+<line x1="915.3" y1="25.1" x2="915.1" y2="33.1" class="tick"/>
+<line x1="930.5" y1="25.5" x2="930.3" y2="33.5" class="tick"/>
+<line x1="945.8" y1="26.2" x2="945.4" y2="34.2" class="tick"/>
+<line x1="961.0" y1="27.1" x2="960.5" y2="35.1" class="tick"/>
+<line x1="976.3" y1="28.3" x2="974.0" y2="54.2" class="tick"/>
+<line x1="991.5" y1="29.8" x2="990.6" y2="37.7" class="tick"/>
+<line x1="1006.6" y1="31.5" x2="1005.7" y2="39.5" class="tick"/>
+<line x1="1021.8" y1="33.5" x2="1020.7" y2="41.4" class="tick"/>
+<line x1="1036.9" y1="35.8" x2="1035.6" y2="43.7" class="tick"/>
+<line x1="1051.9" y1="38.3" x2="1047.4" y2="63.9" class="tick-major"/>
+<text x="1049.2" y="54.1" class="txt-deg" transform="rotate(10 1049.2 54.1)">10°</text>
+<line x1="1067.0" y1="41.1" x2="1065.4" y2="48.9" class="tick"/>
+<line x1="1081.9" y1="44.1" x2="1080.3" y2="51.9" class="tick"/>
+<line x1="1096.8" y1="47.4" x2="1095.0" y2="55.2" class="tick"/>
+<line x1="1111.7" y1="51.0" x2="1109.7" y2="58.8" class="tick"/>
+<line x1="1126.5" y1="54.8" x2="1119.7" y2="79.9" class="tick"/>
+<line x1="1141.2" y1="58.9" x2="1139.0" y2="66.6" class="tick"/>
+<line x1="1155.8" y1="63.2" x2="1153.5" y2="70.9" class="tick"/>
+<line x1="1170.4" y1="67.8" x2="1167.9" y2="75.4" class="tick"/>
+<line x1="1184.9" y1="72.7" x2="1182.3" y2="80.2" class="tick"/>
+<line x1="1199.3" y1="77.8" x2="1190.4" y2="102.2" class="tick-major"/>
+<text x="1193.8" y="92.8" class="txt-deg" transform="rotate(20 1193.8 92.8)">20°</text>
+<line x1="1213.6" y1="83.1" x2="1210.7" y2="90.6" class="tick"/>
+<line x1="1227.8" y1="88.7" x2="1224.8" y2="96.1" class="tick"/>
+<line x1="1241.9" y1="94.6" x2="1238.8" y2="101.9" class="tick"/>
+<line x1="1255.9" y1="100.6" x2="1252.6" y2="108.0" class="tick"/>
+<line x1="1269.8" y1="107.0" x2="1258.8" y2="130.5" class="tick"/>
+<line x1="1283.6" y1="113.6" x2="1280.1" y2="120.7" class="tick"/>
+<line x1="1297.2" y1="120.4" x2="1293.6" y2="127.5" class="tick"/>
+<line x1="1310.8" y1="127.4" x2="1307.0" y2="134.5" class="tick"/>
+<line x1="1324.2" y1="134.7" x2="1320.3" y2="141.7" class="tick"/>
+<line x1="1337.5" y1="142.2" x2="1324.5" y2="164.7" class="tick-major"/>
+<text x="1329.5" y="156.1" class="txt-deg" transform="rotate(30 1329.5 156.1)">30°</text>
+<line x1="1350.7" y1="150.0" x2="1346.5" y2="156.8" class="tick"/>
+<line x1="1363.7" y1="158.0" x2="1359.4" y2="164.7" class="tick"/>
+<line x1="1376.6" y1="166.2" x2="1372.2" y2="172.9" class="tick"/>
+<line x1="1389.3" y1="174.6" x2="1384.8" y2="181.2" class="tick"/>
+<line x1="1401.9" y1="183.2" x2="1387.0" y2="204.5" class="tick"/>
+<line x1="1414.3" y1="192.1" x2="1409.6" y2="198.6" class="tick"/>
+<line x1="1426.6" y1="201.2" x2="1421.8" y2="207.6" class="tick"/>
+<line x1="1438.7" y1="210.5" x2="1433.8" y2="216.8" class="tick"/>
+<line x1="1450.7" y1="220.0" x2="1445.6" y2="226.2" class="tick"/>
+<line x1="1462.4" y1="229.7" x2="1445.7" y2="249.6" class="tick-major"/>
+<text x="1452.2" y="242.0" class="txt-deg" transform="rotate(40 1452.2 242.0)">40°</text>
+<line x1="1474.1" y1="239.6" x2="1468.8" y2="245.7" class="tick"/>
+<line x1="1485.5" y1="249.7" x2="1480.1" y2="255.7" class="tick"/>
+<line x1="1496.7" y1="260.1" x2="1491.3" y2="265.9" class="tick"/>
+<line x1="1507.8" y1="270.6" x2="1502.3" y2="276.3" class="tick"/>
+<line x1="1518.7" y1="281.3" x2="1500.3" y2="299.7" class="tick"/>
+<line x1="1529.4" y1="292.2" x2="1523.7" y2="297.7" class="tick"/>
+<line x1="1539.9" y1="303.3" x2="1534.1" y2="308.7" class="tick"/>
+<line x1="1550.3" y1="314.5" x2="1544.3" y2="319.9" class="tick"/>
+<line x1="1560.4" y1="325.9" x2="1554.3" y2="331.2" class="tick"/>
+<line x1="1570.3" y1="337.6" x2="1550.4" y2="354.3" class="tick-major"/>
+<text x="1558.0" y="347.8" class="txt-deg" transform="rotate(50 1558.0 347.8)">50°</text>
+<line x1="1580.0" y1="349.3" x2="1573.8" y2="354.4" class="tick"/>
+<line x1="1589.5" y1="361.3" x2="1583.2" y2="366.2" class="tick"/>
+<line x1="1598.8" y1="373.4" x2="1592.4" y2="378.2" class="tick"/>
+<line x1="1607.9" y1="385.7" x2="1601.4" y2="390.4" class="tick"/>
+<line x1="1616.8" y1="398.1" x2="1595.5" y2="413.0" class="tick"/>
+<line x1="1625.4" y1="410.7" x2="1618.8" y2="415.2" class="tick"/>
+<line x1="1633.8" y1="423.4" x2="1627.1" y2="427.8" class="tick"/>
+<line x1="1642.0" y1="436.3" x2="1635.3" y2="440.6" class="tick"/>
+<line x1="1650.0" y1="449.3" x2="1643.2" y2="453.5" class="tick"/>
+<line x1="1657.8" y1="462.5" x2="1635.3" y2="475.5" class="tick-major"/>
+<text x="1643.9" y="470.5" class="txt-deg" transform="rotate(60 1643.9 470.5)">60°</text>
+<line x1="1665.3" y1="475.8" x2="1658.3" y2="479.7" class="tick"/>
+<line x1="1672.6" y1="489.2" x2="1665.5" y2="493.0" class="tick"/>
+<line x1="1679.6" y1="502.8" x2="1672.5" y2="506.4" class="tick"/>
+<line x1="1686.4" y1="516.4" x2="1679.3" y2="519.9" class="tick"/>
+<line x1="1693.0" y1="530.2" x2="1669.5" y2="541.2" class="tick"/>
+<line x1="1699.4" y1="544.1" x2="1692.0" y2="547.4" class="tick"/>
+<line x1="1705.4" y1="558.1" x2="1698.1" y2="561.2" class="tick"/>
+<line x1="1711.3" y1="572.2" x2="1703.9" y2="575.2" class="tick"/>
+<line x1="1716.9" y1="586.4" x2="1709.4" y2="589.3" class="tick"/>
+<line x1="1722.2" y1="600.7" x2="1697.8" y2="609.6" class="tick-major"/>
+<text x="1707.2" y="606.2" class="txt-deg" transform="rotate(70 1707.2 606.2)">70°</text>
+<line x1="1727.3" y1="615.1" x2="1719.8" y2="617.7" class="tick"/>
+<line x1="1732.2" y1="629.6" x2="1724.6" y2="632.1" class="tick"/>
+<line x1="1736.8" y1="644.2" x2="1729.1" y2="646.5" class="tick"/>
+<line x1="1741.1" y1="658.8" x2="1733.4" y2="661.0" class="tick"/>
+<line x1="1745.2" y1="673.5" x2="1720.1" y2="680.3" class="tick"/>
+<line x1="1749.0" y1="688.3" x2="1741.2" y2="690.3" class="tick"/>
+<line x1="1752.6" y1="703.2" x2="1744.8" y2="705.0" class="tick"/>
+<line x1="1755.9" y1="718.1" x2="1748.1" y2="719.7" class="tick"/>
+<line x1="1758.9" y1="733.0" x2="1751.1" y2="734.6" class="tick"/>
+<line x1="1761.7" y1="748.1" x2="1736.1" y2="752.6" class="tick-major"/>
+<text x="1745.9" y="750.8" class="txt-deg" transform="rotate(80 1745.9 750.8)">80°</text>
+<line x1="1764.2" y1="763.1" x2="1756.3" y2="764.4" class="tick"/>
+<line x1="1766.5" y1="778.2" x2="1758.6" y2="779.3" class="tick"/>
+<line x1="1768.5" y1="793.4" x2="1760.5" y2="794.3" class="tick"/>
+<line x1="1770.2" y1="808.5" x2="1762.3" y2="809.4" class="tick"/>
+<line x1="1771.7" y1="823.7" x2="1745.8" y2="826.0" class="tick"/>
+<line x1="1772.9" y1="839.0" x2="1764.9" y2="839.5" class="tick"/>
+<line x1="1773.8" y1="854.2" x2="1765.8" y2="854.6" class="tick"/>
+<line x1="1774.5" y1="869.5" x2="1766.5" y2="869.7" class="tick"/>
+<line x1="1774.9" y1="884.7" x2="1766.9" y2="884.9" class="tick"/>
+<line x1="1775.0" y1="900.0" x2="1749.0" y2="900.0" class="tick-major"/>
+<text x="1759.0" y="900.0" class="txt-deg" transform="rotate(90 1759.0 900.0)">90°</text>
+<line x1="1774.9" y1="915.3" x2="1766.9" y2="915.1" class="tick"/>
+<line x1="1774.5" y1="930.5" x2="1766.5" y2="930.3" class="tick"/>
+<line x1="1773.8" y1="945.8" x2="1765.8" y2="945.4" class="tick"/>
+<line x1="1772.9" y1="961.0" x2="1764.9" y2="960.5" class="tick"/>
+<line x1="1771.7" y1="976.3" x2="1745.8" y2="974.0" class="tick"/>
+<line x1="1770.2" y1="991.5" x2="1762.3" y2="990.6" class="tick"/>
+<line x1="1768.5" y1="1006.6" x2="1760.5" y2="1005.7" class="tick"/>
+<line x1="1766.5" y1="1021.8" x2="1758.6" y2="1020.7" class="tick"/>
+<line x1="1764.2" y1="1036.9" x2="1756.3" y2="1035.6" class="tick"/>
+<line x1="1761.7" y1="1051.9" x2="1736.1" y2="1047.4" class="tick-major"/>
+<text x="1745.9" y="1049.2" class="txt-deg" transform="rotate(100 1745.9 1049.2)">100°</text>
+<line x1="1758.9" y1="1067.0" x2="1751.1" y2="1065.4" class="tick"/>
+<line x1="1755.9" y1="1081.9" x2="1748.1" y2="1080.3" class="tick"/>
+<line x1="1752.6" y1="1096.8" x2="1744.8" y2="1095.0" class="tick"/>
+<line x1="1749.0" y1="1111.7" x2="1741.2" y2="1109.7" class="tick"/>
+<line x1="1745.2" y1="1126.5" x2="1720.1" y2="1119.7" class="tick"/>
+<line x1="1741.1" y1="1141.2" x2="1733.4" y2="1139.0" class="tick"/>
+<line x1="1736.8" y1="1155.8" x2="1729.1" y2="1153.5" class="tick"/>
+<line x1="1732.2" y1="1170.4" x2="1724.6" y2="1167.9" class="tick"/>
+<line x1="1727.3" y1="1184.9" x2="1719.8" y2="1182.3" class="tick"/>
+<line x1="1722.2" y1="1199.3" x2="1697.8" y2="1190.4" class="tick-major"/>
+<text x="1707.2" y="1193.8" class="txt-deg" transform="rotate(110 1707.2 1193.8)">110°</text>
+<line x1="1716.9" y1="1213.6" x2="1709.4" y2="1210.7" class="tick"/>
+<line x1="1711.3" y1="1227.8" x2="1703.9" y2="1224.8" class="tick"/>
+<line x1="1705.4" y1="1241.9" x2="1698.1" y2="1238.8" class="tick"/>
+<line x1="1699.4" y1="1255.9" x2="1692.0" y2="1252.6" class="tick"/>
+<line x1="1693.0" y1="1269.8" x2="1669.5" y2="1258.8" class="tick"/>
+<line x1="1686.4" y1="1283.6" x2="1679.3" y2="1280.1" class="tick"/>
+<line x1="1679.6" y1="1297.2" x2="1672.5" y2="1293.6" class="tick"/>
+<line x1="1672.6" y1="1310.8" x2="1665.5" y2="1307.0" class="tick"/>
+<line x1="1665.3" y1="1324.2" x2="1658.3" y2="1320.3" class="tick"/>
+<line x1="1657.8" y1="1337.5" x2="1635.3" y2="1324.5" class="tick-major"/>
+<text x="1643.9" y="1329.5" class="txt-deg" transform="rotate(120 1643.9 1329.5)">120°</text>
+<line x1="1650.0" y1="1350.7" x2="1643.2" y2="1346.5" class="tick"/>
+<line x1="1642.0" y1="1363.7" x2="1635.3" y2="1359.4" class="tick"/>
+<line x1="1633.8" y1="1376.6" x2="1627.1" y2="1372.2" class="tick"/>
+<line x1="1625.4" y1="1389.3" x2="1618.8" y2="1384.8" class="tick"/>
+<line x1="1616.8" y1="1401.9" x2="1595.5" y2="1387.0" class="tick"/>
+<line x1="1607.9" y1="1414.3" x2="1601.4" y2="1409.6" class="tick"/>
+<line x1="1598.8" y1="1426.6" x2="1592.4" y2="1421.8" class="tick"/>
+<line x1="1589.5" y1="1438.7" x2="1583.2" y2="1433.8" class="tick"/>
+<line x1="1580.0" y1="1450.7" x2="1573.8" y2="1445.6" class="tick"/>
+<line x1="1570.3" y1="1462.4" x2="1550.4" y2="1445.7" class="tick-major"/>
+<text x="1558.0" y="1452.2" class="txt-deg" transform="rotate(130 1558.0 1452.2)">130°</text>
+<line x1="1560.4" y1="1474.1" x2="1554.3" y2="1468.8" class="tick"/>
+<line x1="1550.3" y1="1485.5" x2="1544.3" y2="1480.1" class="tick"/>
+<line x1="1539.9" y1="1496.7" x2="1534.1" y2="1491.3" class="tick"/>
+<line x1="1529.4" y1="1507.8" x2="1523.7" y2="1502.3" class="tick"/>
+<line x1="1518.7" y1="1518.7" x2="1500.3" y2="1500.3" class="tick"/>
+<line x1="1507.8" y1="1529.4" x2="1502.3" y2="1523.7" class="tick"/>
+<line x1="1496.7" y1="1539.9" x2="1491.3" y2="1534.1" class="tick"/>
+<line x1="1485.5" y1="1550.3" x2="1480.1" y2="1544.3" class="tick"/>
+<line x1="1474.1" y1="1560.4" x2="1468.8" y2="1554.3" class="tick"/>
+<line x1="1462.4" y1="1570.3" x2="1445.7" y2="1550.4" class="tick-major"/>
+<text x="1452.2" y="1558.0" class="txt-deg" transform="rotate(140 1452.2 1558.0)">140°</text>
+<line x1="1450.7" y1="1580.0" x2="1445.6" y2="1573.8" class="tick"/>
+<line x1="1438.7" y1="1589.5" x2="1433.8" y2="1583.2" class="tick"/>
+<line x1="1426.6" y1="1598.8" x2="1421.8" y2="1592.4" class="tick"/>
+<line x1="1414.3" y1="1607.9" x2="1409.6" y2="1601.4" class="tick"/>
+<line x1="1401.9" y1="1616.8" x2="1387.0" y2="1595.5" class="tick"/>
+<line x1="1389.3" y1="1625.4" x2="1384.8" y2="1618.8" class="tick"/>
+<line x1="1376.6" y1="1633.8" x2="1372.2" y2="1627.1" class="tick"/>
+<line x1="1363.7" y1="1642.0" x2="1359.4" y2="1635.3" class="tick"/>
+<line x1="1350.7" y1="1650.0" x2="1346.5" y2="1643.2" class="tick"/>
+<line x1="1337.5" y1="1657.8" x2="1324.5" y2="1635.3" class="tick-major"/>
+<text x="1329.5" y="1643.9" class="txt-deg" transform="rotate(150 1329.5 1643.9)">150°</text>
+<line x1="1324.2" y1="1665.3" x2="1320.3" y2="1658.3" class="tick"/>
+<line x1="1310.8" y1="1672.6" x2="1307.0" y2="1665.5" class="tick"/>
+<line x1="1297.2" y1="1679.6" x2="1293.6" y2="1672.5" class="tick"/>
+<line x1="1283.6" y1="1686.4" x2="1280.1" y2="1679.3" class="tick"/>
+<line x1="1269.8" y1="1693.0" x2="1258.8" y2="1669.5" class="tick"/>
+<line x1="1255.9" y1="1699.4" x2="1252.6" y2="1692.0" class="tick"/>
+<line x1="1241.9" y1="1705.4" x2="1238.8" y2="1698.1" class="tick"/>
+<line x1="1227.8" y1="1711.3" x2="1224.8" y2="1703.9" class="tick"/>
+<line x1="1213.6" y1="1716.9" x2="1210.7" y2="1709.4" class="tick"/>
+<line x1="1199.3" y1="1722.2" x2="1190.4" y2="1697.8" class="tick-major"/>
+<text x="1193.8" y="1707.2" class="txt-deg" transform="rotate(160 1193.8 1707.2)">160°</text>
+<line x1="1184.9" y1="1727.3" x2="1182.3" y2="1719.8" class="tick"/>
+<line x1="1170.4" y1="1732.2" x2="1167.9" y2="1724.6" class="tick"/>
+<line x1="1155.8" y1="1736.8" x2="1153.5" y2="1729.1" class="tick"/>
+<line x1="1141.2" y1="1741.1" x2="1139.0" y2="1733.4" class="tick"/>
+<line x1="1126.5" y1="1745.2" x2="1119.7" y2="1720.1" class="tick"/>
+<line x1="1111.7" y1="1749.0" x2="1109.7" y2="1741.2" class="tick"/>
+<line x1="1096.8" y1="1752.6" x2="1095.0" y2="1744.8" class="tick"/>
+<line x1="1081.9" y1="1755.9" x2="1080.3" y2="1748.1" class="tick"/>
+<line x1="1067.0" y1="1758.9" x2="1065.4" y2="1751.1" class="tick"/>
+<line x1="1051.9" y1="1761.7" x2="1047.4" y2="1736.1" class="tick-major"/>
+<text x="1049.2" y="1745.9" class="txt-deg" transform="rotate(170 1049.2 1745.9)">170°</text>
+<line x1="1036.9" y1="1764.2" x2="1035.6" y2="1756.3" class="tick"/>
+<line x1="1021.8" y1="1766.5" x2="1020.7" y2="1758.6" class="tick"/>
+<line x1="1006.6" y1="1768.5" x2="1005.7" y2="1760.5" class="tick"/>
+<line x1="991.5" y1="1770.2" x2="990.6" y2="1762.3" class="tick"/>
+<line x1="976.3" y1="1771.7" x2="974.0" y2="1745.8" class="tick"/>
+<line x1="961.0" y1="1772.9" x2="960.5" y2="1764.9" class="tick"/>
+<line x1="945.8" y1="1773.8" x2="945.4" y2="1765.8" class="tick"/>
+<line x1="930.5" y1="1774.5" x2="930.3" y2="1766.5" class="tick"/>
+<line x1="915.3" y1="1774.9" x2="915.1" y2="1766.9" class="tick"/>
+<line x1="900.0" y1="1775.0" x2="900.0" y2="1749.0" class="tick-major"/>
+<text x="900.0" y="1759.0" class="txt-deg" transform="rotate(180 900.0 1759.0)">180°</text>
+<line x1="884.7" y1="1774.9" x2="884.9" y2="1766.9" class="tick"/>
+<line x1="869.5" y1="1774.5" x2="869.7" y2="1766.5" class="tick"/>
+<line x1="854.2" y1="1773.8" x2="854.6" y2="1765.8" class="tick"/>
+<line x1="839.0" y1="1772.9" x2="839.5" y2="1764.9" class="tick"/>
+<line x1="823.7" y1="1771.7" x2="826.0" y2="1745.8" class="tick"/>
+<line x1="808.5" y1="1770.2" x2="809.4" y2="1762.3" class="tick"/>
+<line x1="793.4" y1="1768.5" x2="794.3" y2="1760.5" class="tick"/>
+<line x1="778.2" y1="1766.5" x2="779.3" y2="1758.6" class="tick"/>
+<line x1="763.1" y1="1764.2" x2="764.4" y2="1756.3" class="tick"/>
+<line x1="748.1" y1="1761.7" x2="752.6" y2="1736.1" class="tick-major"/>
+<text x="750.8" y="1745.9" class="txt-deg" transform="rotate(190 750.8 1745.9)">190°</text>
+<line x1="733.0" y1="1758.9" x2="734.6" y2="1751.1" class="tick"/>
+<line x1="718.1" y1="1755.9" x2="719.7" y2="1748.1" class="tick"/>
+<line x1="703.2" y1="1752.6" x2="705.0" y2="1744.8" class="tick"/>
+<line x1="688.3" y1="1749.0" x2="690.3" y2="1741.2" class="tick"/>
+<line x1="673.5" y1="1745.2" x2="680.3" y2="1720.1" class="tick"/>
+<line x1="658.8" y1="1741.1" x2="661.0" y2="1733.4" class="tick"/>
+<line x1="644.2" y1="1736.8" x2="646.5" y2="1729.1" class="tick"/>
+<line x1="629.6" y1="1732.2" x2="632.1" y2="1724.6" class="tick"/>
+<line x1="615.1" y1="1727.3" x2="617.7" y2="1719.8" class="tick"/>
+<line x1="600.7" y1="1722.2" x2="609.6" y2="1697.8" class="tick-major"/>
+<text x="606.2" y="1707.2" class="txt-deg" transform="rotate(200 606.2 1707.2)">200°</text>
+<line x1="586.4" y1="1716.9" x2="589.3" y2="1709.4" class="tick"/>
+<line x1="572.2" y1="1711.3" x2="575.2" y2="1703.9" class="tick"/>
+<line x1="558.1" y1="1705.4" x2="561.2" y2="1698.1" class="tick"/>
+<line x1="544.1" y1="1699.4" x2="547.4" y2="1692.0" class="tick"/>
+<line x1="530.2" y1="1693.0" x2="541.2" y2="1669.5" class="tick"/>
+<line x1="516.4" y1="1686.4" x2="519.9" y2="1679.3" class="tick"/>
+<line x1="502.8" y1="1679.6" x2="506.4" y2="1672.5" class="tick"/>
+<line x1="489.2" y1="1672.6" x2="493.0" y2="1665.5" class="tick"/>
+<line x1="475.8" y1="1665.3" x2="479.7" y2="1658.3" class="tick"/>
+<line x1="462.5" y1="1657.8" x2="475.5" y2="1635.3" class="tick-major"/>
+<text x="470.5" y="1643.9" class="txt-deg" transform="rotate(210 470.5 1643.9)">210°</text>
+<line x1="449.3" y1="1650.0" x2="453.5" y2="1643.2" class="tick"/>
+<line x1="436.3" y1="1642.0" x2="440.6" y2="1635.3" class="tick"/>
+<line x1="423.4" y1="1633.8" x2="427.8" y2="1627.1" class="tick"/>
+<line x1="410.7" y1="1625.4" x2="415.2" y2="1618.8" class="tick"/>
+<line x1="398.1" y1="1616.8" x2="413.0" y2="1595.5" class="tick"/>
+<line x1="385.7" y1="1607.9" x2="390.4" y2="1601.4" class="tick"/>
+<line x1="373.4" y1="1598.8" x2="378.2" y2="1592.4" class="tick"/>
+<line x1="361.3" y1="1589.5" x2="366.2" y2="1583.2" class="tick"/>
+<line x1="349.3" y1="1580.0" x2="354.4" y2="1573.8" class="tick"/>
+<line x1="337.6" y1="1570.3" x2="354.3" y2="1550.4" class="tick-major"/>
+<text x="347.8" y="1558.0" class="txt-deg" transform="rotate(220 347.8 1558.0)">220°</text>
+<line x1="325.9" y1="1560.4" x2="331.2" y2="1554.3" class="tick"/>
+<line x1="314.5" y1="1550.3" x2="319.9" y2="1544.3" class="tick"/>
+<line x1="303.3" y1="1539.9" x2="308.7" y2="1534.1" class="tick"/>
+<line x1="292.2" y1="1529.4" x2="297.7" y2="1523.7" class="tick"/>
+<line x1="281.3" y1="1518.7" x2="299.7" y2="1500.3" class="tick"/>
+<line x1="270.6" y1="1507.8" x2="276.3" y2="1502.3" class="tick"/>
+<line x1="260.1" y1="1496.7" x2="265.9" y2="1491.3" class="tick"/>
+<line x1="249.7" y1="1485.5" x2="255.7" y2="1480.1" class="tick"/>
+<line x1="239.6" y1="1474.1" x2="245.7" y2="1468.8" class="tick"/>
+<line x1="229.7" y1="1462.4" x2="249.6" y2="1445.7" class="tick-major"/>
+<text x="242.0" y="1452.2" class="txt-deg" transform="rotate(230 242.0 1452.2)">230°</text>
+<line x1="220.0" y1="1450.7" x2="226.2" y2="1445.6" class="tick"/>
+<line x1="210.5" y1="1438.7" x2="216.8" y2="1433.8" class="tick"/>
+<line x1="201.2" y1="1426.6" x2="207.6" y2="1421.8" class="tick"/>
+<line x1="192.1" y1="1414.3" x2="198.6" y2="1409.6" class="tick"/>
+<line x1="183.2" y1="1401.9" x2="204.5" y2="1387.0" class="tick"/>
+<line x1="174.6" y1="1389.3" x2="181.2" y2="1384.8" class="tick"/>
+<line x1="166.2" y1="1376.6" x2="172.9" y2="1372.2" class="tick"/>
+<line x1="158.0" y1="1363.7" x2="164.7" y2="1359.4" class="tick"/>
+<line x1="150.0" y1="1350.7" x2="156.8" y2="1346.5" class="tick"/>
+<line x1="142.2" y1="1337.5" x2="164.7" y2="1324.5" class="tick-major"/>
+<text x="156.1" y="1329.5" class="txt-deg" transform="rotate(240 156.1 1329.5)">240°</text>
+<line x1="134.7" y1="1324.2" x2="141.7" y2="1320.3" class="tick"/>
+<line x1="127.4" y1="1310.8" x2="134.5" y2="1307.0" class="tick"/>
+<line x1="120.4" y1="1297.2" x2="127.5" y2="1293.6" class="tick"/>
+<line x1="113.6" y1="1283.6" x2="120.7" y2="1280.1" class="tick"/>
+<line x1="107.0" y1="1269.8" x2="130.5" y2="1258.8" class="tick"/>
+<line x1="100.6" y1="1255.9" x2="108.0" y2="1252.6" class="tick"/>
+<line x1="94.6" y1="1241.9" x2="101.9" y2="1238.8" class="tick"/>
+<line x1="88.7" y1="1227.8" x2="96.1" y2="1224.8" class="tick"/>
+<line x1="83.1" y1="1213.6" x2="90.6" y2="1210.7" class="tick"/>
+<line x1="77.8" y1="1199.3" x2="102.2" y2="1190.4" class="tick-major"/>
+<text x="92.8" y="1193.8" class="txt-deg" transform="rotate(250 92.8 1193.8)">250°</text>
+<line x1="72.7" y1="1184.9" x2="80.2" y2="1182.3" class="tick"/>
+<line x1="67.8" y1="1170.4" x2="75.4" y2="1167.9" class="tick"/>
+<line x1="63.2" y1="1155.8" x2="70.9" y2="1153.5" class="tick"/>
+<line x1="58.9" y1="1141.2" x2="66.6" y2="1139.0" class="tick"/>
+<line x1="54.8" y1="1126.5" x2="79.9" y2="1119.7" class="tick"/>
+<line x1="51.0" y1="1111.7" x2="58.8" y2="1109.7" class="tick"/>
+<line x1="47.4" y1="1096.8" x2="55.2" y2="1095.0" class="tick"/>
+<line x1="44.1" y1="1081.9" x2="51.9" y2="1080.3" class="tick"/>
+<line x1="41.1" y1="1067.0" x2="48.9" y2="1065.4" class="tick"/>
+<line x1="38.3" y1="1051.9" x2="63.9" y2="1047.4" class="tick-major"/>
+<text x="54.1" y="1049.2" class="txt-deg" transform="rotate(260 54.1 1049.2)">260°</text>
+<line x1="35.8" y1="1036.9" x2="43.7" y2="1035.6" class="tick"/>
+<line x1="33.5" y1="1021.8" x2="41.4" y2="1020.7" class="tick"/>
+<line x1="31.5" y1="1006.6" x2="39.5" y2="1005.7" class="tick"/>
+<line x1="29.8" y1="991.5" x2="37.7" y2="990.6" class="tick"/>
+<line x1="28.3" y1="976.3" x2="54.2" y2="974.0" class="tick"/>
+<line x1="27.1" y1="961.0" x2="35.1" y2="960.5" class="tick"/>
+<line x1="26.2" y1="945.8" x2="34.2" y2="945.4" class="tick"/>
+<line x1="25.5" y1="930.5" x2="33.5" y2="930.3" class="tick"/>
+<line x1="25.1" y1="915.3" x2="33.1" y2="915.1" class="tick"/>
+<line x1="25.0" y1="900.0" x2="51.0" y2="900.0" class="tick-major"/>
+<text x="41.0" y="900.0" class="txt-deg" transform="rotate(270 41.0 900.0)">270°</text>
+<line x1="25.1" y1="884.7" x2="33.1" y2="884.9" class="tick"/>
+<line x1="25.5" y1="869.5" x2="33.5" y2="869.7" class="tick"/>
+<line x1="26.2" y1="854.2" x2="34.2" y2="854.6" class="tick"/>
+<line x1="27.1" y1="839.0" x2="35.1" y2="839.5" class="tick"/>
+<line x1="28.3" y1="823.7" x2="54.2" y2="826.0" class="tick"/>
+<line x1="29.8" y1="808.5" x2="37.7" y2="809.4" class="tick"/>
+<line x1="31.5" y1="793.4" x2="39.5" y2="794.3" class="tick"/>
+<line x1="33.5" y1="778.2" x2="41.4" y2="779.3" class="tick"/>
+<line x1="35.8" y1="763.1" x2="43.7" y2="764.4" class="tick"/>
+<line x1="38.3" y1="748.1" x2="63.9" y2="752.6" class="tick-major"/>
+<text x="54.1" y="750.8" class="txt-deg" transform="rotate(280 54.1 750.8)">280°</text>
+<line x1="41.1" y1="733.0" x2="48.9" y2="734.6" class="tick"/>
+<line x1="44.1" y1="718.1" x2="51.9" y2="719.7" class="tick"/>
+<line x1="47.4" y1="703.2" x2="55.2" y2="705.0" class="tick"/>
+<line x1="51.0" y1="688.3" x2="58.8" y2="690.3" class="tick"/>
+<line x1="54.8" y1="673.5" x2="79.9" y2="680.3" class="tick"/>
+<line x1="58.9" y1="658.8" x2="66.6" y2="661.0" class="tick"/>
+<line x1="63.2" y1="644.2" x2="70.9" y2="646.5" class="tick"/>
+<line x1="67.8" y1="629.6" x2="75.4" y2="632.1" class="tick"/>
+<line x1="72.7" y1="615.1" x2="80.2" y2="617.7" class="tick"/>
+<line x1="77.8" y1="600.7" x2="102.2" y2="609.6" class="tick-major"/>
+<text x="92.8" y="606.2" class="txt-deg" transform="rotate(290 92.8 606.2)">290°</text>
+<line x1="83.1" y1="586.4" x2="90.6" y2="589.3" class="tick"/>
+<line x1="88.7" y1="572.2" x2="96.1" y2="575.2" class="tick"/>
+<line x1="94.6" y1="558.1" x2="101.9" y2="561.2" class="tick"/>
+<line x1="100.6" y1="544.1" x2="108.0" y2="547.4" class="tick"/>
+<line x1="107.0" y1="530.2" x2="130.5" y2="541.2" class="tick"/>
+<line x1="113.6" y1="516.4" x2="120.7" y2="519.9" class="tick"/>
+<line x1="120.4" y1="502.8" x2="127.5" y2="506.4" class="tick"/>
+<line x1="127.4" y1="489.2" x2="134.5" y2="493.0" class="tick"/>
+<line x1="134.7" y1="475.8" x2="141.7" y2="479.7" class="tick"/>
+<line x1="142.2" y1="462.5" x2="164.7" y2="475.5" class="tick-major"/>
+<text x="156.1" y="470.5" class="txt-deg" transform="rotate(300 156.1 470.5)">300°</text>
+<line x1="150.0" y1="449.3" x2="156.8" y2="453.5" class="tick"/>
+<line x1="158.0" y1="436.3" x2="164.7" y2="440.6" class="tick"/>
+<line x1="166.2" y1="423.4" x2="172.9" y2="427.8" class="tick"/>
+<line x1="174.6" y1="410.7" x2="181.2" y2="415.2" class="tick"/>
+<line x1="183.2" y1="398.1" x2="204.5" y2="413.0" class="tick"/>
+<line x1="192.1" y1="385.7" x2="198.6" y2="390.4" class="tick"/>
+<line x1="201.2" y1="373.4" x2="207.6" y2="378.2" class="tick"/>
+<line x1="210.5" y1="361.3" x2="216.8" y2="366.2" class="tick"/>
+<line x1="220.0" y1="349.3" x2="226.2" y2="354.4" class="tick"/>
+<line x1="229.7" y1="337.6" x2="249.6" y2="354.3" class="tick-major"/>
+<text x="242.0" y="347.8" class="txt-deg" transform="rotate(310 242.0 347.8)">310°</text>
+<line x1="239.6" y1="325.9" x2="245.7" y2="331.2" class="tick"/>
+<line x1="249.7" y1="314.5" x2="255.7" y2="319.9" class="tick"/>
+<line x1="260.1" y1="303.3" x2="265.9" y2="308.7" class="tick"/>
+<line x1="270.6" y1="292.2" x2="276.3" y2="297.7" class="tick"/>
+<line x1="281.3" y1="281.3" x2="299.7" y2="299.7" class="tick"/>
+<line x1="292.2" y1="270.6" x2="297.7" y2="276.3" class="tick"/>
+<line x1="303.3" y1="260.1" x2="308.7" y2="265.9" class="tick"/>
+<line x1="314.5" y1="249.7" x2="319.9" y2="255.7" class="tick"/>
+<line x1="325.9" y1="239.6" x2="331.2" y2="245.7" class="tick"/>
+<line x1="337.6" y1="229.7" x2="354.3" y2="249.6" class="tick-major"/>
+<text x="347.8" y="242.0" class="txt-deg" transform="rotate(320 347.8 242.0)">320°</text>
+<line x1="349.3" y1="220.0" x2="354.4" y2="226.2" class="tick"/>
+<line x1="361.3" y1="210.5" x2="366.2" y2="216.8" class="tick"/>
+<line x1="373.4" y1="201.2" x2="378.2" y2="207.6" class="tick"/>
+<line x1="385.7" y1="192.1" x2="390.4" y2="198.6" class="tick"/>
+<line x1="398.1" y1="183.2" x2="413.0" y2="204.5" class="tick"/>
+<line x1="410.7" y1="174.6" x2="415.2" y2="181.2" class="tick"/>
+<line x1="423.4" y1="166.2" x2="427.8" y2="172.9" class="tick"/>
+<line x1="436.3" y1="158.0" x2="440.6" y2="164.7" class="tick"/>
+<line x1="449.3" y1="150.0" x2="453.5" y2="156.8" class="tick"/>
+<line x1="462.5" y1="142.2" x2="475.5" y2="164.7" class="tick-major"/>
+<text x="470.5" y="156.1" class="txt-deg" transform="rotate(330 470.5 156.1)">330°</text>
+<line x1="475.8" y1="134.7" x2="479.7" y2="141.7" class="tick"/>
+<line x1="489.2" y1="127.4" x2="493.0" y2="134.5" class="tick"/>
+<line x1="502.8" y1="120.4" x2="506.4" y2="127.5" class="tick"/>
+<line x1="516.4" y1="113.6" x2="519.9" y2="120.7" class="tick"/>
+<line x1="530.2" y1="107.0" x2="541.2" y2="130.5" class="tick"/>
+<line x1="544.1" y1="100.6" x2="547.4" y2="108.0" class="tick"/>
+<line x1="558.1" y1="94.6" x2="561.2" y2="101.9" class="tick"/>
+<line x1="572.2" y1="88.7" x2="575.2" y2="96.1" class="tick"/>
+<line x1="586.4" y1="83.1" x2="589.3" y2="90.6" class="tick"/>
+<line x1="600.7" y1="77.8" x2="609.6" y2="102.2" class="tick-major"/>
+<text x="606.2" y="92.8" class="txt-deg" transform="rotate(340 606.2 92.8)">340°</text>
+<line x1="615.1" y1="72.7" x2="617.7" y2="80.2" class="tick"/>
+<line x1="629.6" y1="67.8" x2="632.1" y2="75.4" class="tick"/>
+<line x1="644.2" y1="63.2" x2="646.5" y2="70.9" class="tick"/>
+<line x1="658.8" y1="58.9" x2="661.0" y2="66.6" class="tick"/>
+<line x1="673.5" y1="54.8" x2="680.3" y2="79.9" class="tick"/>
+<line x1="688.3" y1="51.0" x2="690.3" y2="58.8" class="tick"/>
+<line x1="703.2" y1="47.4" x2="705.0" y2="55.2" class="tick"/>
+<line x1="718.1" y1="44.1" x2="719.7" y2="51.9" class="tick"/>
+<line x1="733.0" y1="41.1" x2="734.6" y2="48.9" class="tick"/>
+<line x1="748.1" y1="38.3" x2="752.6" y2="63.9" class="tick-major"/>
+<text x="750.8" y="54.1" class="txt-deg" transform="rotate(350 750.8 54.1)">350°</text>
+<line x1="763.1" y1="35.8" x2="764.4" y2="43.7" class="tick"/>
+<line x1="778.2" y1="33.5" x2="779.3" y2="41.4" class="tick"/>
+<line x1="793.4" y1="31.5" x2="794.3" y2="39.5" class="tick"/>
+<line x1="808.5" y1="29.8" x2="809.4" y2="37.7" class="tick"/>
+<line x1="823.7" y1="28.3" x2="826.0" y2="54.2" class="tick"/>
+<line x1="839.0" y1="27.1" x2="839.5" y2="35.1" class="tick"/>
+<line x1="854.2" y1="26.2" x2="854.6" y2="34.2" class="tick"/>
+<line x1="869.5" y1="25.5" x2="869.7" y2="33.5" class="tick"/>
+<line x1="884.7" y1="25.1" x2="884.9" y2="33.1" class="tick"/>
+<circle cx="900.0" cy="900.0" r="815.0" class="ring"/>
+<line x1="900.0" y1="57.0" x2="900.0" y2="85.0" class="ring"/>
+<text x="992.8" y="76.2" class="txt-tu" transform="rotate(6.428571428571429 992.8 76.2)">Hư</text>
+<line x1="1087.6" y1="78.1" x2="1081.4" y2="105.4" class="ring"/>
+<text x="1173.8" y="117.5" class="txt-tu" transform="rotate(19.285714285714285 1173.8 117.5)">Nguy</text>
+<line x1="1265.8" y1="140.5" x2="1253.6" y2="165.7" class="ring"/>
+<text x="1341.1" y="198.1" class="txt-tu" transform="rotate(32.142857142857146 1341.1 198.1)">Thất</text>
+<line x1="1425.6" y1="240.9" x2="1408.1" y2="262.8" class="ring"/>
+<text x="1486.2" y="313.8" class="txt-tu" transform="rotate(45.0 1486.2 313.8)">Bích</text>
+<line x1="1559.1" y1="374.4" x2="1537.2" y2="391.9" class="ring"/>
+<text x="1601.9" y="458.9" class="txt-tu" transform="rotate(57.85714285714286 1601.9 458.9)">Khuê</text>
+<line x1="1659.5" y1="534.2" x2="1634.3" y2="546.4" class="ring"/>
+<text x="1682.5" y="626.2" class="txt-tu" transform="rotate(70.71428571428572 1682.5 626.2)">Lâu</text>
+<line x1="1721.9" y1="712.4" x2="1694.6" y2="718.6" class="ring"/>
+<text x="1723.8" y="807.2" class="txt-tu" transform="rotate(83.57142857142857 1723.8 807.2)">Vị</text>
+<line x1="1743.0" y1="900.0" x2="1715.0" y2="900.0" class="ring"/>
+<text x="1723.8" y="992.8" class="txt-tu" transform="rotate(96.42857142857143 1723.8 992.8)">Mão</text>
+<line x1="1721.9" y1="1087.6" x2="1694.6" y2="1081.4" class="ring"/>
+<text x="1682.5" y="1173.8" class="txt-tu" transform="rotate(109.28571428571429 1682.5 1173.8)">Tất</text>
+<line x1="1659.5" y1="1265.8" x2="1634.3" y2="1253.6" class="ring"/>
+<text x="1601.9" y="1341.1" class="txt-tu" transform="rotate(122.14285714285715 1601.9 1341.1)">Chủy</text>
+<line x1="1559.1" y1="1425.6" x2="1537.2" y2="1408.1" class="ring"/>
+<text x="1486.2" y="1486.2" class="txt-tu" transform="rotate(135.0 1486.2 1486.2)">Sâm</text>
+<line x1="1425.6" y1="1559.1" x2="1408.1" y2="1537.2" class="ring"/>
+<text x="1341.1" y="1601.9" class="txt-tu" transform="rotate(147.85714285714286 1341.1 1601.9)">Tỉnh</text>
+<line x1="1265.8" y1="1659.5" x2="1253.6" y2="1634.3" class="ring"/>
+<text x="1173.8" y="1682.5" class="txt-tu" transform="rotate(160.7142857142857 1173.8 1682.5)">Quỷ</text>
+<line x1="1087.6" y1="1721.9" x2="1081.4" y2="1694.6" class="ring"/>
+<text x="992.8" y="1723.8" class="txt-tu" transform="rotate(173.57142857142856 992.8 1723.8)">Liễu</text>
+<line x1="900.0" y1="1743.0" x2="900.0" y2="1715.0" class="ring"/>
+<text x="807.2" y="1723.8" class="txt-tu" transform="rotate(186.42857142857142 807.2 1723.8)">Tinh</text>
+<line x1="712.4" y1="1721.9" x2="718.6" y2="1694.6" class="ring"/>
+<text x="626.2" y="1682.5" class="txt-tu" transform="rotate(199.28571428571428 626.2 1682.5)">Trương</text>
+<line x1="534.2" y1="1659.5" x2="546.4" y2="1634.3" class="ring"/>
+<text x="458.9" y="1601.9" class="txt-tu" transform="rotate(212.14285714285714 458.9 1601.9)">Dực</text>
+<line x1="374.4" y1="1559.1" x2="391.9" y2="1537.2" class="ring"/>
+<text x="313.8" y="1486.2" class="txt-tu" transform="rotate(225.0 313.8 1486.2)">Chẩn</text>
+<line x1="240.9" y1="1425.6" x2="262.8" y2="1408.1" class="ring"/>
+<text x="198.1" y="1341.1" class="txt-tu" transform="rotate(237.85714285714286 198.1 1341.1)">Giác</text>
+<line x1="140.5" y1="1265.8" x2="165.7" y2="1253.6" class="ring"/>
+<text x="117.5" y="1173.8" class="txt-tu" transform="rotate(250.71428571428572 117.5 1173.8)">Cang</text>
+<line x1="78.1" y1="1087.6" x2="105.4" y2="1081.4" class="ring"/>
+<text x="76.2" y="992.8" class="txt-tu" transform="rotate(263.5714285714286 76.2 992.8)">Đê</text>
+<line x1="57.0" y1="900.0" x2="85.0" y2="900.0" class="ring"/>
+<text x="76.2" y="807.2" class="txt-tu" transform="rotate(276.42857142857144 76.2 807.2)">Phòng</text>
+<line x1="78.1" y1="712.4" x2="105.4" y2="718.6" class="ring"/>
+<text x="117.5" y="626.2" class="txt-tu" transform="rotate(289.28571428571433 117.5 626.2)">Tâm</text>
+<line x1="140.5" y1="534.2" x2="165.7" y2="546.4" class="ring"/>
+<text x="198.1" y="458.9" class="txt-tu" transform="rotate(302.14285714285717 198.1 458.9)">Vĩ</text>
+<line x1="240.9" y1="374.4" x2="262.8" y2="391.9" class="ring"/>
+<text x="313.8" y="313.8" class="txt-tu" transform="rotate(315.0 313.8 313.8)">Cơ</text>
+<line x1="374.4" y1="240.9" x2="391.9" y2="262.8" class="ring"/>
+<text x="458.9" y="198.1" class="txt-tu" transform="rotate(327.8571428571429 458.9 198.1)">Đẩu</text>
+<line x1="534.2" y1="140.5" x2="546.4" y2="165.7" class="ring"/>
+<text x="626.2" y="117.5" class="txt-tu" transform="rotate(340.7142857142857 626.2 117.5)">Ngưu</text>
+<line x1="712.4" y1="78.1" x2="718.6" y2="105.4" class="ring"/>
+<text x="807.2" y="76.2" class="txt-tu" transform="rotate(353.5714285714286 807.2 76.2)">Nữ</text>
+<circle cx="900.0" cy="900.0" r="780.0" class="ring"/>
+<line x1="900.0" y1="85.0" x2="900.0" y2="120.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1004.0" y="109.8" class="txt-thienban" transform="rotate(7.5 1004.0 109.8)">Tý</text>
+<line x1="1110.9" y1="112.8" x2="1101.9" y2="146.6" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1205.0" y="163.7" class="txt-thienban" transform="rotate(22.5 1205.0 163.7)">Quý</text>
+<line x1="1307.5" y1="194.2" x2="1290.0" y2="224.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1385.2" y="267.7" class="txt-thienban" transform="rotate(37.5 1385.2 267.7)">Sửu</text>
+<line x1="1476.3" y1="323.7" x2="1451.5" y2="348.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1532.3" y="414.8" class="txt-thienban" transform="rotate(52.5 1532.3 414.8)">Cấn</text>
+<line x1="1605.8" y1="492.5" x2="1575.5" y2="510.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1636.3" y="595.0" class="txt-thienban" transform="rotate(67.5 1636.3 595.0)">Dần</text>
+<line x1="1687.2" y1="689.1" x2="1653.4" y2="698.1" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1690.2" y="796.0" class="txt-thienban" transform="rotate(82.5 1690.2 796.0)">Giáp</text>
+<line x1="1715.0" y1="900.0" x2="1680.0" y2="900.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1690.2" y="1004.0" class="txt-thienban" transform="rotate(97.5 1690.2 1004.0)">Mão</text>
+<line x1="1687.2" y1="1110.9" x2="1653.4" y2="1101.9" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1636.3" y="1205.0" class="txt-thienban" transform="rotate(112.5 1636.3 1205.0)">Ất</text>
+<line x1="1605.8" y1="1307.5" x2="1575.5" y2="1290.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1532.3" y="1385.2" class="txt-thienban" transform="rotate(127.5 1532.3 1385.2)">Thìn</text>
+<line x1="1476.3" y1="1476.3" x2="1451.5" y2="1451.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1385.2" y="1532.3" class="txt-thienban" transform="rotate(142.5 1385.2 1532.3)">Tốn</text>
+<line x1="1307.5" y1="1605.8" x2="1290.0" y2="1575.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1205.0" y="1636.3" class="txt-thienban" transform="rotate(157.5 1205.0 1636.3)">Tỵ</text>
+<line x1="1110.9" y1="1687.2" x2="1101.9" y2="1653.4" stroke="#0369a1" stroke-width="0.8"/>
+<text x="1004.0" y="1690.2" class="txt-thienban" transform="rotate(172.5 1004.0 1690.2)">Bính</text>
+<line x1="900.0" y1="1715.0" x2="900.0" y2="1680.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="796.0" y="1690.2" class="txt-thienban" transform="rotate(187.5 796.0 1690.2)">Ngọ</text>
+<line x1="689.1" y1="1687.2" x2="698.1" y2="1653.4" stroke="#0369a1" stroke-width="0.8"/>
+<text x="595.0" y="1636.3" class="txt-thienban" transform="rotate(202.5 595.0 1636.3)">Đinh</text>
+<line x1="492.5" y1="1605.8" x2="510.0" y2="1575.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="414.8" y="1532.3" class="txt-thienban" transform="rotate(217.5 414.8 1532.3)">Mùi</text>
+<line x1="323.7" y1="1476.3" x2="348.5" y2="1451.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="267.7" y="1385.2" class="txt-thienban" transform="rotate(232.5 267.7 1385.2)">Khôn</text>
+<line x1="194.2" y1="1307.5" x2="224.5" y2="1290.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="163.7" y="1205.0" class="txt-thienban" transform="rotate(247.5 163.7 1205.0)">Thân</text>
+<line x1="112.8" y1="1110.9" x2="146.6" y2="1101.9" stroke="#0369a1" stroke-width="0.8"/>
+<text x="109.8" y="1004.0" class="txt-thienban" transform="rotate(262.5 109.8 1004.0)">Canh</text>
+<line x1="85.0" y1="900.0" x2="120.0" y2="900.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="109.8" y="796.0" class="txt-thienban" transform="rotate(277.5 109.8 796.0)">Dậu</text>
+<line x1="112.8" y1="689.1" x2="146.6" y2="698.1" stroke="#0369a1" stroke-width="0.8"/>
+<text x="163.7" y="595.0" class="txt-thienban" transform="rotate(292.5 163.7 595.0)">Tân</text>
+<line x1="194.2" y1="492.5" x2="224.5" y2="510.0" stroke="#0369a1" stroke-width="0.8"/>
+<text x="267.7" y="414.8" class="txt-thienban" transform="rotate(307.5 267.7 414.8)">Tuất</text>
+<line x1="323.7" y1="323.7" x2="348.5" y2="348.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="414.8" y="267.7" class="txt-thienban" transform="rotate(322.5 414.8 267.7)">Càn</text>
+<line x1="492.5" y1="194.2" x2="510.0" y2="224.5" stroke="#0369a1" stroke-width="0.8"/>
+<text x="595.0" y="163.7" class="txt-thienban" transform="rotate(337.5 595.0 163.7)">Hợi</text>
+<line x1="689.1" y1="112.8" x2="698.1" y2="146.6" stroke="#0369a1" stroke-width="0.8"/>
+<text x="796.0" y="109.8" class="txt-thienban" transform="rotate(352.5 796.0 109.8)">Nhâm</text>
+<circle cx="900.0" cy="900.0" r="745.0" class="ring"/>
+<line x1="698.1" y1="146.6" x2="707.2" y2="180.4" stroke="#15803d" stroke-width="0.8"/>
+<text x="800.5" y="144.5" class="txt-nhanban" transform="rotate(-7.5 800.5 144.5)">Tý</text>
+<line x1="900.0" y1="120.0" x2="900.0" y2="155.0" stroke="#15803d" stroke-width="0.8"/>
+<text x="999.5" y="144.5" class="txt-nhanban" transform="rotate(7.5 999.5 144.5)">Quý</text>
+<line x1="1101.9" y1="146.6" x2="1092.8" y2="180.4" stroke="#15803d" stroke-width="0.8"/>
+<text x="1191.6" y="196.0" class="txt-nhanban" transform="rotate(22.5 1191.6 196.0)">Sửu</text>
+<line x1="1290.0" y1="224.5" x2="1272.5" y2="254.8" stroke="#15803d" stroke-width="0.8"/>
+<text x="1363.9" y="295.5" class="txt-nhanban" transform="rotate(37.5 1363.9 295.5)">Cấn</text>
+<line x1="1451.5" y1="348.5" x2="1426.8" y2="373.2" stroke="#15803d" stroke-width="0.8"/>
+<text x="1504.5" y="436.1" class="txt-nhanban" transform="rotate(52.5 1504.5 436.1)">Dần</text>
+<line x1="1575.5" y1="510.0" x2="1545.2" y2="527.5" stroke="#15803d" stroke-width="0.8"/>
+<text x="1604.0" y="608.4" class="txt-nhanban" transform="rotate(67.5 1604.0 608.4)">Giáp</text>
+<line x1="1653.4" y1="698.1" x2="1619.6" y2="707.2" stroke="#15803d" stroke-width="0.8"/>
+<text x="1655.5" y="800.5" class="txt-nhanban" transform="rotate(82.5 1655.5 800.5)">Mão</text>
+<line x1="1680.0" y1="900.0" x2="1645.0" y2="900.0" stroke="#15803d" stroke-width="0.8"/>
+<text x="1655.5" y="999.5" class="txt-nhanban" transform="rotate(97.5 1655.5 999.5)">Ất</text>
+<line x1="1653.4" y1="1101.9" x2="1619.6" y2="1092.8" stroke="#15803d" stroke-width="0.8"/>
+<text x="1604.0" y="1191.6" class="txt-nhanban" transform="rotate(112.5 1604.0 1191.6)">Thìn</text>
+<line x1="1575.5" y1="1290.0" x2="1545.2" y2="1272.5" stroke="#15803d" stroke-width="0.8"/>
+<text x="1504.5" y="1363.9" class="txt-nhanban" transform="rotate(127.5 1504.5 1363.9)">Tốn</text>
+<line x1="1451.5" y1="1451.5" x2="1426.8" y2="1426.8" stroke="#15803d" stroke-width="0.8"/>
+<text x="1363.9" y="1504.5" class="txt-nhanban" transform="rotate(142.5 1363.9 1504.5)">Tỵ</text>
+<line x1="1290.0" y1="1575.5" x2="1272.5" y2="1545.2" stroke="#15803d" stroke-width="0.8"/>
+<text x="1191.6" y="1604.0" class="txt-nhanban" transform="rotate(157.5 1191.6 1604.0)">Bính</text>
+<line x1="1101.9" y1="1653.4" x2="1092.8" y2="1619.6" stroke="#15803d" stroke-width="0.8"/>
+<text x="999.5" y="1655.5" class="txt-nhanban" transform="rotate(172.5 999.5 1655.5)">Ngọ</text>
+<line x1="900.0" y1="1680.0" x2="900.0" y2="1645.0" stroke="#15803d" stroke-width="0.8"/>
+<text x="800.5" y="1655.5" class="txt-nhanban" transform="rotate(187.5 800.5 1655.5)">Đinh</text>
+<line x1="698.1" y1="1653.4" x2="707.2" y2="1619.6" stroke="#15803d" stroke-width="0.8"/>
+<text x="608.4" y="1604.0" class="txt-nhanban" transform="rotate(202.5 608.4 1604.0)">Mùi</text>
+<line x1="510.0" y1="1575.5" x2="527.5" y2="1545.2" stroke="#15803d" stroke-width="0.8"/>
+<text x="436.1" y="1504.5" class="txt-nhanban" transform="rotate(217.5 436.1 1504.5)">Khôn</text>
+<line x1="348.5" y1="1451.5" x2="373.2" y2="1426.8" stroke="#15803d" stroke-width="0.8"/>
+<text x="295.5" y="1363.9" class="txt-nhanban" transform="rotate(232.5 295.5 1363.9)">Thân</text>
+<line x1="224.5" y1="1290.0" x2="254.8" y2="1272.5" stroke="#15803d" stroke-width="0.8"/>
+<text x="196.0" y="1191.6" class="txt-nhanban" transform="rotate(247.5 196.0 1191.6)">Canh</text>
+<line x1="146.6" y1="1101.9" x2="180.4" y2="1092.8" stroke="#15803d" stroke-width="0.8"/>
+<text x="144.5" y="999.5" class="txt-nhanban" transform="rotate(262.5 144.5 999.5)">Dậu</text>
+<line x1="120.0" y1="900.0" x2="155.0" y2="900.0" stroke="#15803d" stroke-width="0.8"/>
+<text x="144.5" y="800.5" class="txt-nhanban" transform="rotate(277.5 144.5 800.5)">Tân</text>
+<line x1="146.6" y1="698.1" x2="180.4" y2="707.2" stroke="#15803d" stroke-width="0.8"/>
+<text x="196.0" y="608.4" class="txt-nhanban" transform="rotate(292.5 196.0 608.4)">Tuất</text>
+<line x1="224.5" y1="510.0" x2="254.8" y2="527.5" stroke="#15803d" stroke-width="0.8"/>
+<text x="295.5" y="436.1" class="txt-nhanban" transform="rotate(307.5 295.5 436.1)">Càn</text>
+<line x1="348.5" y1="348.5" x2="373.2" y2="373.2" stroke="#15803d" stroke-width="0.8"/>
+<text x="436.1" y="295.5" class="txt-nhanban" transform="rotate(322.5 436.1 295.5)">Hợi</text>
+<line x1="510.0" y1="224.5" x2="527.5" y2="254.8" stroke="#15803d" stroke-width="0.8"/>
+<text x="608.4" y="196.0" class="txt-nhanban" transform="rotate(337.5 608.4 196.0)">Nhâm</text>
+<circle cx="900.0" cy="900.0" r="690.0" class="ring-bold"/>
+<line x1="802.8" y1="161.4" x2="809.9" y2="215.9" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="900.0" y="182.0" class="txt-24son" transform="rotate(0.0 900.0 182.0)">Tý</text>
+<line x1="997.2" y1="161.4" x2="990.1" y2="215.9" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1085.8" y="206.5" class="txt-24son" transform="rotate(15.0 1085.8 206.5)">Quý</text>
+<line x1="1185.1" y1="211.7" x2="1164.1" y2="262.5" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1259.0" y="278.2" class="txt-24son" transform="rotate(30.0 1259.0 278.2)">Sửu</text>
+<line x1="1353.5" y1="309.0" x2="1320.0" y2="352.6" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1407.7" y="392.3" class="txt-24son" transform="rotate(45.0 1407.7 392.3)">Cấn</text>
+<line x1="1491.0" y1="446.5" x2="1447.4" y2="480.0" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1521.8" y="541.0" class="txt-24son" transform="rotate(60.0 1521.8 541.0)">Dần</text>
+<line x1="1588.3" y1="614.9" x2="1537.5" y2="635.9" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1593.5" y="714.2" class="txt-24son" transform="rotate(75.0 1593.5 714.2)">Giáp</text>
+<line x1="1638.6" y1="802.8" x2="1584.1" y2="809.9" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1618.0" y="900.0" class="txt-24son" transform="rotate(90.0 1618.0 900.0)">Mão</text>
+<line x1="1638.6" y1="997.2" x2="1584.1" y2="990.1" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1593.5" y="1085.8" class="txt-24son" transform="rotate(105.0 1593.5 1085.8)">Ất</text>
+<line x1="1588.3" y1="1185.1" x2="1537.5" y2="1164.1" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1521.8" y="1259.0" class="txt-24son" transform="rotate(120.0 1521.8 1259.0)">Thìn</text>
+<line x1="1491.0" y1="1353.5" x2="1447.4" y2="1320.0" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1407.7" y="1407.7" class="txt-24son" transform="rotate(135.0 1407.7 1407.7)">Tốn</text>
+<line x1="1353.5" y1="1491.0" x2="1320.0" y2="1447.4" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1259.0" y="1521.8" class="txt-24son" transform="rotate(150.0 1259.0 1521.8)">Tỵ</text>
+<line x1="1185.1" y1="1588.3" x2="1164.1" y2="1537.5" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="1085.8" y="1593.5" class="txt-24son" transform="rotate(165.0 1085.8 1593.5)">Bính</text>
+<line x1="997.2" y1="1638.6" x2="990.1" y2="1584.1" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="900.0" y="1618.0" class="txt-24son" transform="rotate(180.0 900.0 1618.0)">Ngọ</text>
+<line x1="802.8" y1="1638.6" x2="809.9" y2="1584.1" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="714.2" y="1593.5" class="txt-24son" transform="rotate(195.0 714.2 1593.5)">Đinh</text>
+<line x1="614.9" y1="1588.3" x2="635.9" y2="1537.5" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="541.0" y="1521.8" class="txt-24son" transform="rotate(210.0 541.0 1521.8)">Mùi</text>
+<line x1="446.5" y1="1491.0" x2="480.0" y2="1447.4" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="392.3" y="1407.7" class="txt-24son" transform="rotate(225.0 392.3 1407.7)">Khôn</text>
+<line x1="309.0" y1="1353.5" x2="352.6" y2="1320.0" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="278.2" y="1259.0" class="txt-24son" transform="rotate(240.0 278.2 1259.0)">Thân</text>
+<line x1="211.7" y1="1185.1" x2="262.5" y2="1164.1" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="206.5" y="1085.8" class="txt-24son" transform="rotate(255.0 206.5 1085.8)">Canh</text>
+<line x1="161.4" y1="997.2" x2="215.9" y2="990.1" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="182.0" y="900.0" class="txt-24son" transform="rotate(270.0 182.0 900.0)">Dậu</text>
+<line x1="161.4" y1="802.8" x2="215.9" y2="809.9" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="206.5" y="714.2" class="txt-24son" transform="rotate(285.0 206.5 714.2)">Tân</text>
+<line x1="211.7" y1="614.9" x2="262.5" y2="635.9" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="278.2" y="541.0" class="txt-24son" transform="rotate(300.0 278.2 541.0)">Tuất</text>
+<line x1="309.0" y1="446.5" x2="352.6" y2="480.0" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="392.3" y="392.3" class="txt-24son" transform="rotate(315.0 392.3 392.3)">Càn</text>
+<line x1="446.5" y1="309.0" x2="480.0" y2="352.6" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="541.0" y="278.2" class="txt-24son" transform="rotate(330.0 541.0 278.2)">Hợi</text>
+<line x1="614.9" y1="211.7" x2="635.9" y2="262.5" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="714.2" y="206.5" class="txt-24son" transform="rotate(345.0 714.2 206.5)">Nhâm</text>
+<circle cx="900.0" cy="900.0" r="655.0" class="ring"/>
+<line x1="635.9" y1="262.5" x2="649.3" y2="294.9" class="ring"/>
+<text x="900.0" y="228.0" class="txt-batsat" transform="rotate(0.0 900.0 228.0)">Sát: Thìn</text>
+<line x1="1164.1" y1="262.5" x2="1150.7" y2="294.9" class="ring"/>
+<text x="1375.2" y="424.8" class="txt-batsat" transform="rotate(45.0 1375.2 424.8)">Sát: Dần</text>
+<line x1="1537.5" y1="635.9" x2="1505.1" y2="649.3" class="ring"/>
+<text x="1572.0" y="900.0" class="txt-batsat" transform="rotate(90.0 1572.0 900.0)">Sát: Thân</text>
+<line x1="1537.5" y1="1164.1" x2="1505.1" y2="1150.7" class="ring"/>
+<text x="1375.2" y="1375.2" class="txt-batsat" transform="rotate(135.0 1375.2 1375.2)">Sát: Dậu</text>
+<line x1="1164.1" y1="1537.5" x2="1150.7" y2="1505.1" class="ring"/>
+<text x="900.0" y="1572.0" class="txt-batsat" transform="rotate(180.0 900.0 1572.0)">Sát: Hợi</text>
+<line x1="635.9" y1="1537.5" x2="649.3" y2="1505.1" class="ring"/>
+<text x="424.8" y="1375.2" class="txt-batsat" transform="rotate(225.0 424.8 1375.2)">Sát: Mão</text>
+<line x1="262.5" y1="1164.1" x2="294.9" y2="1150.7" class="ring"/>
+<text x="228.0" y="900.0" class="txt-batsat" transform="rotate(270.0 228.0 900.0)">Sát: Tỵ</text>
+<line x1="262.5" y1="635.9" x2="294.9" y2="649.3" class="ring"/>
+<text x="424.8" y="424.8" class="txt-batsat" transform="rotate(315.0 424.8 424.8)">Sát: Ngọ</text>
+<circle cx="900.0" cy="900.0" r="610.0" class="ring-bold"/>
+<line x1="649.3" y1="294.9" x2="666.6" y2="336.4" stroke="#8b0000" stroke-width="2.5"/>
+<text x="900.0" y="268.0" class="txt-quai" transform="rotate(0.0 900.0 268.0)">KHẢM</text>
+<line x1="1150.7" y1="294.9" x2="1133.4" y2="336.4" stroke="#8b0000" stroke-width="2.5"/>
+<text x="1346.9" y="453.1" class="txt-quai" transform="rotate(45.0 1346.9 453.1)">CẤN</text>
+<line x1="1505.1" y1="649.3" x2="1463.6" y2="666.6" stroke="#8b0000" stroke-width="2.5"/>
+<text x="1532.0" y="900.0" class="txt-quai" transform="rotate(90.0 1532.0 900.0)">CHẤN</text>
+<line x1="1505.1" y1="1150.7" x2="1463.6" y2="1133.4" stroke="#8b0000" stroke-width="2.5"/>
+<text x="1346.9" y="1346.9" class="txt-quai" transform="rotate(135.0 1346.9 1346.9)">TỐN</text>
+<line x1="1150.7" y1="1505.1" x2="1133.4" y2="1463.6" stroke="#8b0000" stroke-width="2.5"/>
+<text x="900.0" y="1532.0" class="txt-quai" transform="rotate(180.0 900.0 1532.0)">LY</text>
+<line x1="649.3" y1="1505.1" x2="666.6" y2="1463.6" stroke="#8b0000" stroke-width="2.5"/>
+<text x="453.1" y="1346.9" class="txt-quai" transform="rotate(225.0 453.1 1346.9)">KHÔN</text>
+<line x1="294.9" y1="1150.7" x2="336.4" y2="1133.4" stroke="#8b0000" stroke-width="2.5"/>
+<text x="268.0" y="900.0" class="txt-quai" transform="rotate(270.0 268.0 900.0)">ĐOÀI</text>
+<line x1="294.9" y1="649.3" x2="336.4" y2="666.6" stroke="#8b0000" stroke-width="2.5"/>
+<text x="453.1" y="453.1" class="txt-quai" transform="rotate(315.0 453.1 453.1)">CÀN</text>
+<circle cx="900.0" cy="900.0" r="565.0" class="ring"/>
+<text x="900.0" y="313.0" font-size="28" fill="#8b0000" transform="rotate(0.0 900.0 313.0)">☵</text>
+<text x="1315.1" y="484.9" font-size="28" fill="#8b0000" transform="rotate(45.0 1315.1 484.9)">☶</text>
+<text x="1487.0" y="900.0" font-size="28" fill="#8b0000" transform="rotate(90.0 1487.0 900.0)">☳</text>
+<text x="1315.1" y="1315.1" font-size="28" fill="#8b0000" transform="rotate(135.0 1315.1 1315.1)">☴</text>
+<text x="900.0" y="1487.0" font-size="28" fill="#8b0000" transform="rotate(180.0 900.0 1487.0)">☲</text>
+<text x="484.9" y="1315.1" font-size="28" fill="#8b0000" transform="rotate(225.0 484.9 1315.1)">☷</text>
+<text x="313.0" y="900.0" font-size="28" fill="#8b0000" transform="rotate(270.0 313.0 900.0)">☱</text>
+<text x="484.9" y="484.9" font-size="28" fill="#8b0000" transform="rotate(315.0 484.9 484.9)">☰</text>
+<circle cx="900.0" cy="900.0" r="565.0" fill="none" stroke="#b22222" stroke-width="2.5" stroke-dasharray="6, 4"/>
+<line x1="900.0" y1="345.0" x2="900.0" y2="1455.0" class="crosshair"/>
+<line x1="345.0" y1="900.0" x2="1455.0" y2="900.0" class="crosshair"/>
+<polygon points="900.0,493.2 888.0,900.0 912.0,900.0" class="needle-n"/>
+<polygon points="900.0,1306.8 888.0,900.0 912.0,900.0" class="needle-s"/>
+<circle cx="900.0" cy="900.0" r="8" fill="#d4af37" stroke="#ffffff" stroke-width="2"/>
+<circle cx="900.0" cy="900.0" r="3" fill="#ef4444"/>
+<text x="900.0" y="515.2" font-size="14" font-weight="900" fill="#ffffff" stroke="#b91c1c" stroke-width="2.5px">N</text>
+<text x="900.0" y="1284.8" font-size="14" font-weight="900" fill="#ffffff" stroke="#1e293b" stroke-width="2.5px">S</text>
 </svg>

@@ -16,9 +16,13 @@
   let userLocationLayerGroup = null;
 
   // Trạng thái vận hành
+  const defaultSize = (typeof window !== 'undefined' && window.innerWidth < 500)
+    ? Math.max(300, Math.min(Math.round(window.innerWidth * 0.92), 400))
+    : 480;
+
   let state = {
-    opacity: 0.65,
-    size: 480,
+    opacity: 0.85,
+    size: defaultSize,
     rotation: 0.0,
     isSensorActive: false,
     isLocked: false,
@@ -124,17 +128,17 @@
           <div class="sheet-control-group">
             <div class="sheet-control-label">
               <span>Độ trong suốt (Nhìn xuyên thấu địa hình)</span>
-              <span class="val" id="sheet-val-opacity">65%</span>
+              <span class="val" id="sheet-val-opacity">${Math.round(state.opacity * 100)}%</span>
             </div>
-            <input type="range" class="lakinh-slider" id="sheet-slider-opacity" min="5" max="100" value="65">
+            <input type="range" class="lakinh-slider" id="sheet-slider-opacity" min="5" max="100" value="${Math.round(state.opacity * 100)}">
           </div>
 
           <div class="sheet-control-group">
             <div class="sheet-control-label">
               <span>Kích thước La Kinh</span>
-              <span class="val" id="sheet-val-size">480 px</span>
+              <span class="val" id="sheet-val-size">${state.size} px</span>
             </div>
-            <input type="range" class="lakinh-slider" id="sheet-slider-size" min="260" max="950" value="480" step="10">
+            <input type="range" class="lakinh-slider" id="sheet-slider-size" min="260" max="950" value="${state.size}" step="10">
           </div>
 
           <!-- Xoay góc hướng nhà & Vi chỉnh -->
@@ -405,10 +409,11 @@
     };
 
     const onGpsFailHighAccuracy = (err) => {
-      console.warn('GPS phần cứng không phản hồi, chuyển sang tầng 2 định vị Mạng/Wifi...', err);
+      console.warn('GPS phần cứng không phản hồi, kiểm tra quyền...', err);
       if (err.code === 1) {
         if (btn) btn.classList.remove('pulse-radar-active');
-        showLaKinhToast('🚫 Quyền vị trí bị chặn. Vui lòng cho phép quyền Vị Trí trong cài đặt trình duyệt!');
+        showLaKinhToast('🚫 Quyền vị trí GPS đang bị chặn');
+        promptSearchLocation(true);
         return;
       }
 
@@ -418,11 +423,16 @@
         onGpsSuccess,
         (err2) => {
           if (btn) btn.classList.remove('pulse-radar-active');
+          if (err2.code === 1) {
+            showLaKinhToast('🚫 Quyền vị trí GPS đang bị chặn');
+            promptSearchLocation(true);
+            return;
+          }
           let errMsg = 'Không lấy được tọa độ';
-          if (err2.code === 1) errMsg = '🚫 Bạn đã chặn quyền vị trí GPS';
-          else if (err2.code === 2) errMsg = '⚠️ Vị trí không khả dụng (Hãy bật GPS điện thoại)';
+          if (err2.code === 2) errMsg = '⚠️ Vị trí không khả dụng (Hãy bật GPS điện thoại)';
           else if (err2.code === 3) errMsg = '⏳ Hết thời gian chờ tín hiệu GPS';
           showLaKinhToast(errMsg);
+          promptSearchLocation(false);
         },
         {
           enableHighAccuracy: false,
@@ -715,9 +725,14 @@
     }
   }
 
-  // Thao tác vẽ ranh đất
+  // Thao tác click trên bản đồ
   function onMapClick(e) {
-    if (!state.isTracingPlot) return;
+    if (!state.isTracingPlot) {
+      if (mapInstance && e.latlng) {
+        mapInstance.panTo(e.latlng, { animate: true });
+      }
+      return;
+    }
     state.polygonPoints.push(e.latlng);
 
     polygonLayerGroup.clearLayers();
@@ -751,39 +766,209 @@
     }
   }
 
-  // Tìm kiếm địa điểm
-  async function promptSearchLocation() {
-    const q = prompt('Nhập địa chỉ công trình hoặc tọa độ (Vĩ độ, Kinh độ):', 'Hồ Hoàn Kiếm, Hà Nội');
-    if (!q || !q.trim()) return;
+  // Tìm kiếm địa điểm & Hướng dẫn gỡ chặn GPS
+  function promptSearchLocation(isGpsBlocked = false) {
+    const modalBox = document.getElementById('lakinh-modal-container');
+    if (!modalBox) return;
 
-    const coordMatch = q.match(/^([-+]?[0-9]*\.?[0-9]+)[\s,]+([-+]?[0-9]*\.?[0-9]+)$/);
-    if (coordMatch) {
-      const lat = parseFloat(coordMatch[1]);
-      const lng = parseFloat(coordMatch[2]);
-      if (mapInstance) {
-        mapInstance.setView([lat, lng], 19);
-        showLaKinhToast(`Đã bay đến tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-      }
-      return;
+    const quickCities = [
+      { name: 'Hà Nội', lat: 21.028511, lng: 105.854167 },
+      { name: 'TP. Hồ Chí Minh', lat: 10.776889, lng: 106.700806 },
+      { name: 'Đà Nẵng', lat: 16.054407, lng: 108.202167 },
+      { name: 'Hải Phòng', lat: 20.844912, lng: 106.688084 },
+      { name: 'Cần Thơ', lat: 10.045162, lng: 105.746857 },
+      { name: 'Nha Trang', lat: 12.238791, lng: 109.196749 },
+      { name: 'Huế', lat: 16.463714, lng: 107.590866 },
+      { name: 'Vũng Tàu', lat: 10.345990, lng: 107.084260 }
+    ];
+
+    const chipsHtml = quickCities.map((c, i) => 
+      `<button type="button" class="lakinh-city-chip" data-city-idx="${i}">📍 ${c.name}</button>`
+    ).join('');
+
+    let guideHtml = '';
+    if (isGpsBlocked) {
+      guideHtml = `
+        <div class="lakinh-gps-guide-box">
+          <div style="font-weight: 800; color: #f59e0b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 1.1rem;">⚠️</span>
+            <span>QUYỀN ĐỊNH VỊ GPS ĐANG BỊ TRÌNH DUYỆT CHẶN</span>
+          </div>
+          <div style="font-size: 0.74rem; line-height: 1.5; color: #e2e8f0;">
+            Để thiết bị tự động lấy tọa độ ngôi nhà qua vệ tinh GPS:
+            <ol style="margin: 6px 0 6px 18px; padding: 0;">
+              <li>Chạm vào biểu tượng <b>🔒</b> (hoặc <b>⚙️ Cài đặt trang web</b>) ở góc trái thanh địa chỉ web trên cùng.</li>
+              <li>Chọn <b>Quyền (Permissions)</b> ➔ <b>Vị trí (Location)</b> ➔ Chọn <b>Cho phép (Allow)</b>.</li>
+              <li>Nhấn nút <b>"🔄 Thử Lại GPS"</b> bên dưới hoặc kéo vuốt để tải lại trang.</li>
+            </ol>
+          </div>
+        </div>
+      `;
     }
 
-    showLaKinhToast('🔍 Đang tìm kiếm...');
-    try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=vn&limit=1`;
-      const resp = await fetch(url, { headers: { 'User-Agent': 'NetaLight/1.6' } });
-      const data = await resp.json();
-      if (data && data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        if (mapInstance) {
-          mapInstance.setView([lat, lon], 19);
-          showLaKinhToast(`📍 ${data[0].display_name.split(',')[0]}`);
+    modalBox.innerHTML = `
+      <div class="lakinh-modal-overlay" id="modal-search-overlay">
+        <div class="lakinh-glass-panel lakinh-modal-dialog">
+          <div class="lakinh-modal-header">
+            <div class="lakinh-modal-title">
+              <span>🔍 ĐỊNH VỊ VỊ TRÍ KHẢO SÁT</span>
+            </div>
+            <button class="lakinh-modal-close" id="btn-close-search-modal">✕</button>
+          </div>
+
+          ${guideHtml}
+
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px;">
+            Nhập địa chỉ nhà, tên đường, phường xã hoặc tọa độ (VD: 21.0285, 105.8542):
+          </div>
+
+          <form id="lakinh-search-form" class="lakinh-search-box" onsubmit="return false;">
+            <input type="text" id="lakinh-search-input" class="lakinh-search-input" placeholder="VD: 123 Hoàn Kiếm, Hà Nội..." autocomplete="off">
+            <button type="submit" id="lakinh-search-submit" class="lakinh-action-btn" style="width: auto; padding: 0 16px;">
+              🚀 Tìm
+            </button>
+          </form>
+
+          <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 6px;">
+            Hoặc chọn nhanh khu vực:
+          </div>
+          <div class="lakinh-quick-cities" id="lakinh-quick-cities-container">
+            ${chipsHtml}
+          </div>
+
+          <!-- Danh sách kết quả tìm kiếm -->
+          <div id="lakinh-search-results" style="max-height: 180px; overflow-y: auto; margin-bottom: 12px; display: none;"></div>
+
+          <div style="background: rgba(56, 189, 248, 0.1); border: 1px dashed rgba(56, 189, 248, 0.35); border-radius: 8px; padding: 8px 10px; font-size: 0.73rem; color: #38bdf8; line-height: 1.4; margin-bottom: 12px;">
+            💡 <b>Mẹo khảo sát:</b> Bạn cũng có thể dùng tay <b>chạm và kéo trượt bản đồ vệ tinh</b> bên dưới để đặt tâm chữ thập đỏ chính xác vào nóc nhà hoặc tâm thửa đất cần đo!
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button type="button" id="btn-retry-gps" class="lakinh-action-btn primary" style="font-size: 0.75rem;">
+              🔄 Thử Lại GPS
+            </button>
+            <button type="button" id="btn-manual-pan" class="lakinh-action-btn secondary" style="font-size: 0.75rem;">
+              🗺️ Tự Kéo Bản Đồ
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Events in modal
+    const closeBtn = document.getElementById('btn-close-search-modal');
+    if (closeBtn) closeBtn.onclick = () => document.getElementById('modal-search-overlay')?.remove();
+
+    const manualPanBtn = document.getElementById('btn-manual-pan');
+    if (manualPanBtn) {
+      manualPanBtn.onclick = () => {
+        document.getElementById('modal-search-overlay')?.remove();
+        showLaKinhToast('👉 Chạm giữ và kéo bản đồ để đặt tâm vào vị trí ngôi nhà');
+      };
+    }
+
+    const retryGpsBtn = document.getElementById('btn-retry-gps');
+    if (retryGpsBtn) {
+      retryGpsBtn.onclick = () => {
+        document.getElementById('modal-search-overlay')?.remove();
+        getCurrentGPS();
+      };
+    }
+
+    // Quick cities
+    document.querySelectorAll('.lakinh-city-chip').forEach(btn => {
+      btn.onclick = () => {
+        const idx = parseInt(btn.getAttribute('data-city-idx'), 10);
+        const city = quickCities[idx];
+        if (city && mapInstance) {
+          mapInstance.setView([city.lat, city.lng], 17, { animate: true });
+          document.getElementById('modal-search-overlay')?.remove();
+          showLaKinhToast(`📍 Đã chuyển đến ${city.name}`);
         }
-      } else {
-        showLaKinhToast('Không tìm thấy địa điểm');
+      };
+    });
+
+    // Handle Search Form
+    const searchForm = document.getElementById('lakinh-search-form');
+    const searchInput = document.getElementById('lakinh-search-input');
+    const resultsContainer = document.getElementById('lakinh-search-results');
+
+    const executeSearch = async () => {
+      const q = searchInput.value.trim();
+      if (!q) return;
+
+      // 1. Tọa độ trực tiếp
+      const coordMatch = q.match(/^([-+]?[0-9]*\.?[0-9]+)[\s,]+([-+]?[0-9]*\.?[0-9]+)$/);
+      if (coordMatch) {
+        const lat = parseFloat(coordMatch[1]);
+        const lng = parseFloat(coordMatch[2]);
+        if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+          if (mapInstance) {
+            mapInstance.setView([lat, lng], 19, { animate: true });
+          }
+          document.getElementById('modal-search-overlay')?.remove();
+          showLaKinhToast(`🎯 Đã bay đến tọa độ: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+          return;
+        }
       }
-    } catch (e) {
-      showLaKinhToast('Lỗi kết nối tìm kiếm');
+
+      // 2. Tìm kiếm geocoding qua Komoot Photon (CORS-friendly, no-key)
+      resultsContainer.style.display = 'block';
+      resultsContainer.innerHTML = '<div style="padding:10px;text-align:center;color:#94a3b8;font-size:0.75rem;">⏳ Đang tìm kiếm địa chỉ...</div>';
+
+      try {
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`);
+        const data = await res.json();
+
+        if (!data || !data.features || data.features.length === 0) {
+          resultsContainer.innerHTML = '<div style="padding:10px;text-align:center;color:#ef4444;font-size:0.75rem;">❌ Không tìm thấy địa chỉ này. Hãy thử nhập tên đường hoặc tọa độ.</div>';
+          return;
+        }
+
+        let resHtml = '';
+        data.features.forEach((feat) => {
+          const props = feat.properties || {};
+          const geom = feat.geometry || {};
+          const coords = geom.coordinates || [];
+          const lng = coords[0];
+          const lat = coords[1];
+
+          const name = props.name || props.street || q;
+          const context = [props.district, props.city, props.state, props.country].filter(Boolean).join(', ');
+
+          resHtml += `
+            <div class="lakinh-search-item" style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);cursor:pointer;background:rgba(30,41,59,0.7);margin-bottom:4px;border-radius:6px;" data-lat="${lat}" data-lng="${lng}" data-name="${name}">
+              <div style="font-weight:700;font-size:0.78rem;color:#38bdf8;">📍 ${name}</div>
+              <div style="font-size:0.68rem;color:#cbd5e1;margin-top:2px;">${context}</div>
+            </div>
+          `;
+        });
+
+        resultsContainer.innerHTML = resHtml;
+
+        resultsContainer.querySelectorAll('.lakinh-search-item').forEach(item => {
+          item.onclick = () => {
+            const lat = parseFloat(item.getAttribute('data-lat'));
+            const lng = parseFloat(item.getAttribute('data-lng'));
+            const placeName = item.getAttribute('data-name');
+            if (mapInstance && !isNaN(lat) && !isNaN(lng)) {
+              mapInstance.setView([lat, lng], 19, { animate: true });
+              document.getElementById('modal-search-overlay')?.remove();
+              showLaKinhToast(`🎯 Đã chuyển đến: ${placeName}`);
+            }
+          };
+        });
+      } catch (err) {
+        console.error('Search geocoding error:', err);
+        resultsContainer.innerHTML = '<div style="padding:10px;text-align:center;color:#f59e0b;font-size:0.75rem;">⚠️ Lỗi kết nối dịch vụ tìm kiếm địa chỉ. Bạn có thể tự kéo bản đồ đến vị trí mong muốn.</div>';
+      }
+    };
+
+    if (searchForm) {
+      searchForm.onsubmit = (e) => {
+        e.preventDefault();
+        executeSearch();
+      };
     }
   }
 
