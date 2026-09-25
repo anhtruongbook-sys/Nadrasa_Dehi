@@ -37,6 +37,7 @@ const CORE_ASSETS = [
   'assets/lakinh/lakinh.css',
   'assets/lakinh/thuoc_lap_cuc.png',
   'assets/lakinh/thuoc_lap_cuc_trans.png',
+  'assets/lakinh/thuoc_lap_cuc_gold.png',
   'engines/lakinh_engine.js',
   'modules/lakinh_view.js'
 ];

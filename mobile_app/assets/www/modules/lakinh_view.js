@@ -22,7 +22,9 @@
     : 480;
 
   let state = {
-    opacity: 0.85,
+    bgOpacity: 0.35, // Độ mờ nền tròn lót (0.0 = trong suốt 100% thấy rõ địa hình, 0.35 = kính mờ cân bằng, 0.85 = nền trắng)
+    discOpacity: 1.0, // Độ đậm nét đĩa La Kinh
+    activePlate: 'thuoc_trans', // Mặc định là Mica trong suốt 'thuoc_trans'
     size: defaultSize,
     rotation: 0.0,
     isSensorActive: false,
@@ -63,7 +65,8 @@
 
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
         <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
-          <img id="lakinh-disc" src="assets/lakinh/thuoc_lap_cuc.png" alt="Thước Lập Cực 36 Tầng" style="opacity: ${state.opacity};">
+          <div id="lakinh-backdrop-circle" style="opacity: ${state.bgOpacity};"></div>
+          <img id="lakinh-disc" src="${state.activePlate === 'gold' ? 'assets/lakinh/thuoc_lap_cuc_gold.png' : (state.activePlate === 'thuoc_lap_cuc' ? 'assets/lakinh/thuoc_lap_cuc.png' : 'assets/lakinh/thuoc_lap_cuc_trans.png')}" alt="Thước Lập Cực 36 Tầng" style="opacity: ${state.discOpacity};">
           <div id="lakinh-target-pointer"></div>
         </div>
 
@@ -150,23 +153,34 @@
             <div class="sheet-control-label">
               <span>Mẫu La Kinh / Thước Lập Cực</span>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-              <button class="lakinh-step-btn active" id="btn-plate-thuoc" style="font-weight: 700; color: #38bdf8;">
-                🎯 Thước Lập Cực (Nét)
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+              <button class="lakinh-step-btn active" id="btn-plate-trans" style="font-weight: 700; color: #38bdf8;">
+                💎 Mica Trong
               </button>
-              <button class="lakinh-step-btn" id="btn-plate-trans">
-                💎 Mica Trong Suốt
+              <button class="lakinh-step-btn" id="btn-plate-gold" style="font-weight: 700; color: #fbbf24;">
+                ✨ Dạ Quang
+              </button>
+              <button class="lakinh-step-btn" id="btn-plate-thuoc">
+                📄 Giấy Trắng
               </button>
             </div>
           </div>
 
-          <!-- Nhóm trượt: Độ trong suốt & Kích thước -->
+          <!-- Nhóm trượt: Độ trong suốt nền lót (Thấy địa hình bên dưới) -->
           <div class="sheet-control-group">
             <div class="sheet-control-label">
-              <span>Độ trong suốt (Nhìn xuyên thấu địa hình)</span>
-              <span class="val" id="sheet-val-opacity">${Math.round(state.opacity * 100)}%</span>
+              <span>Độ mờ nền lót (Thấy địa hình bên dưới)</span>
+              <span class="val" id="sheet-val-bg-opacity">${Math.round(state.bgOpacity * 100)}%</span>
             </div>
-            <input type="range" class="lakinh-slider" id="sheet-slider-opacity" min="5" max="100" value="${Math.round(state.opacity * 100)}">
+            <input type="range" class="lakinh-slider" id="sheet-slider-bg-opacity" min="0" max="100" value="${Math.round(state.bgOpacity * 100)}">
+            <div class="lakinh-btn-row" style="margin-top: 6px;">
+              <button class="lakinh-step-btn" id="btn-bg-0" style="color:#38bdf8; font-weight: 600;">💎 Xuyên Thấu (0%)</button>
+              <button class="lakinh-step-btn active" id="btn-bg-35" style="color:#22c55e; font-weight: 600;">🌫️ Kính Mờ (35%)</button>
+              <button class="lakinh-step-btn" id="btn-bg-85" style="color:#f5b041; font-weight: 600;">🎯 Nền Sáng (85%)</button>
+            </div>
+            <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 4px; line-height: 1.3;">
+              💡 <em>Kéo về 0% để thấy 100% mái nhà/địa hình; chọn 35% để vừa thấy địa hình vừa nổi rõ chữ.</em>
+            </div>
           </div>
 
           <div class="sheet-control-group">
@@ -1567,15 +1581,20 @@
     // Chuyển đổi mẫu Đĩa La Kinh / Thước Lập Cực
     const btnPlateThuoc = document.getElementById('btn-plate-thuoc');
     const btnPlateTrans = document.getElementById('btn-plate-trans');
+    const btnPlateGold = document.getElementById('btn-plate-gold');
     const disc = document.getElementById('lakinh-disc');
+    const backdropCircle = document.getElementById('lakinh-backdrop-circle');
 
     const setPlate = (type) => {
       state.activePlate = type;
       if (disc) {
         if (type === 'thuoc_lap_cuc') {
           disc.src = 'assets/lakinh/thuoc_lap_cuc.png';
-          showLaKinhToast('🎯 Đã đổi sang: Thước Lập Cực (Nét)');
-        } else if (type === 'thuoc_trans') {
+          showLaKinhToast('📄 Đã đổi sang: Bản Giấy Trắng Cổ Điển');
+        } else if (type === 'gold') {
+          disc.src = 'assets/lakinh/thuoc_lap_cuc_gold.png';
+          showLaKinhToast('✨ Đã đổi sang: Thước Lập Cực Dạ Quang Vàng Kim (Chuyên Vệ Tinh)');
+        } else {
           disc.src = 'assets/lakinh/thuoc_lap_cuc_trans.png';
           showLaKinhToast('💎 Đã đổi sang: Thước Lập Cực Mica Trong Suốt');
         }
@@ -1590,21 +1609,55 @@
         btnPlateTrans.style.color = type === 'thuoc_trans' ? '#38bdf8' : '';
         btnPlateTrans.style.fontWeight = type === 'thuoc_trans' ? '700' : '';
       }
+      if (btnPlateGold) {
+        btnPlateGold.classList.toggle('active', type === 'gold');
+        btnPlateGold.style.color = type === 'gold' ? '#fbbf24' : '';
+        btnPlateGold.style.fontWeight = type === 'gold' ? '700' : '';
+      }
     };
 
     if (btnPlateThuoc) btnPlateThuoc.addEventListener('click', () => setPlate('thuoc_lap_cuc'));
     if (btnPlateTrans) btnPlateTrans.addEventListener('click', () => setPlate('thuoc_trans'));
+    if (btnPlateGold) btnPlateGold.addEventListener('click', () => setPlate('gold'));
 
-    // Sliders
-    const sOpacity = document.getElementById('sheet-slider-opacity');
-    const valOpacity = document.getElementById('sheet-val-opacity');
-    if (sOpacity) {
-      sOpacity.addEventListener('input', (e) => {
-        state.opacity = e.target.value / 100.0;
-        if (disc) disc.style.opacity = state.opacity;
-        if (valOpacity) valOpacity.textContent = `${e.target.value}%`;
+    // Sliders: Độ mờ nền lót độc lập (0% = xuyên thấu 100%, 35% = kính mờ, 85% = nền sáng)
+    const sBgOpacity = document.getElementById('sheet-slider-bg-opacity');
+    const valBgOpacity = document.getElementById('sheet-val-bg-opacity');
+    const btnBg0 = document.getElementById('btn-bg-0');
+    const btnBg35 = document.getElementById('btn-bg-35');
+    const btnBg85 = document.getElementById('btn-bg-85');
+
+    const updateBgOpacity = (val) => {
+      state.bgOpacity = Math.max(0.0, Math.min(1.0, val / 100.0));
+      if (backdropCircle) {
+        backdropCircle.style.opacity = state.bgOpacity;
+      }
+      if (sBgOpacity) sBgOpacity.value = Math.round(state.bgOpacity * 100);
+      if (valBgOpacity) valBgOpacity.textContent = `${Math.round(state.bgOpacity * 100)}%`;
+
+      if (btnBg0) btnBg0.classList.toggle('active', Math.round(state.bgOpacity * 100) === 0);
+      if (btnBg35) btnBg35.classList.toggle('active', Math.round(state.bgOpacity * 100) === 35);
+      if (btnBg85) btnBg85.classList.toggle('active', Math.round(state.bgOpacity * 100) === 85);
+    };
+
+    if (sBgOpacity) {
+      sBgOpacity.addEventListener('input', (e) => {
+        updateBgOpacity(parseFloat(e.target.value));
       });
     }
+
+    if (btnBg0) btnBg0.addEventListener('click', () => {
+      updateBgOpacity(0);
+      showLaKinhToast('💎 Nền 100% trong suốt: Thấy trọn vẹn địa hình bên dưới');
+    });
+    if (btnBg35) btnBg35.addEventListener('click', () => {
+      updateBgOpacity(35);
+      showLaKinhToast('🌫️ Nền kính mờ 35%: Vừa thấy địa hình vừa rõ chữ');
+    });
+    if (btnBg85) btnBg85.addEventListener('click', () => {
+      updateBgOpacity(85);
+      showLaKinhToast('🎯 Nền sáng 85%: Tương phản rõ nét tối đa');
+    });
 
     const sSize = document.getElementById('sheet-slider-size');
     const valSize = document.getElementById('sheet-val-size');
