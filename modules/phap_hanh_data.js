@@ -12,6 +12,10 @@ const PHAP_HANH_CATEGORIES = [
     "name": "18 Nơi Tại Phủ"
   },
   {
+    "id": "thong_phap",
+    "name": "Thông Pháp"
+  },
+  {
     "id": "tam_an",
     "name": "Tâm Ấn"
   },
@@ -414,5 +418,32 @@ const PHAP_HANH_BUILTIN_LESSONS = [
     "image": "assets/phap_hanh/lesson_23.jpg",
     "isBuiltIn": true,
     "order": 41
+  },
+  {
+    "id": "lesson_24",
+    "title": "24 - [Thông Pháp] Bảng Đo Thông Pháp NETA",
+    "category": "thong_phap",
+    "categoryName": "Thông Pháp",
+    "image": "assets/phap_hanh/lesson_24.jpg",
+    "isBuiltIn": true,
+    "order": 42
+  },
+  {
+    "id": "lesson_25",
+    "title": "25 - [Pháp Phục] Áo Kim Giáp Khi Hành Pháp",
+    "category": "phap_bao_khi",
+    "categoryName": "Pháp Bảo & Khí",
+    "image": "assets/phap_hanh/lesson_25.jpg",
+    "isBuiltIn": true,
+    "order": 43
+  },
+  {
+    "id": "lesson_26",
+    "title": "26 - [Pháp Khí] Ấn Ký - Hướng Dẫn Sử Dụng",
+    "category": "phap_bao_khi",
+    "categoryName": "Pháp Bảo & Khí",
+    "image": "assets/phap_hanh/lesson_26.jpg",
+    "isBuiltIn": true,
+    "order": 44
   }
 ];

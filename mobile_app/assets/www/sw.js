@@ -53,7 +53,7 @@ for (let i = 1; i <= 18; i++) {
   const num = i < 10 ? '0' + i : '' + i;
   CORE_ASSETS.push(`assets/phap_hanh/phu_${num}.jpg`);
 }
-for (let i = 1; i <= 23; i++) {
+for (let i = 1; i <= 26; i++) {
   const num = i < 10 ? '0' + i : '' + i;
   CORE_ASSETS.push(`assets/phap_hanh/lesson_${num}.jpg`);
 }

@@ -1,14 +1,15 @@
 import os
 import io
 import base64
+import shutil
 from PIL import Image
 
 def generate():
-    folder = 'assets/phap_hanh'
+    folder = r'c:\Books\Neta Light\assets\phap_hanh'
     files = sorted([f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))])
     print(f"Found {len(files)} files in {folder}")
 
-    out_file = 'phap_hanh_base64_data.js'
+    out_file = r'c:\Books\Neta Light\phap_hanh_base64_data.js'
     
     entries = []
     total_raw_bytes = 0
@@ -45,6 +46,17 @@ def generate():
     print(f"\nGenerated {out_file} successfully!")
     print(f"Total raw image bytes: {total_raw_bytes / (1024*1024):.2f} MB")
     print(f"JS file size: {os.path.getsize(out_file) / (1024*1024):.2f} MB")
+
+    # Copy to Neta Trio and to mobile_app/assets/www in both
+    targets = [
+        r'c:\Books\Neta Trio\phap_hanh_base64_data.js',
+        r'c:\Books\Neta Light\mobile_app\assets\www\phap_hanh_base64_data.js',
+        r'c:\Books\Neta Trio\mobile_app\assets\www\phap_hanh_base64_data.js'
+    ]
+    for t in targets:
+        os.makedirs(os.path.dirname(t), exist_ok=True)
+        shutil.copy2(out_file, t)
+        print(f"Synced to: {t}")
 
 if __name__ == '__main__':
     generate()

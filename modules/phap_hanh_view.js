@@ -405,15 +405,16 @@ const PhapHanhModule = (function() {
     const catSelect = document.getElementById('ph-selected-cat');
     const customCatInput = document.getElementById('ph-input-custom-cat');
 
-    const title = titleInput.value.trim();
+    let title = titleInput.value.trim();
     if (!title) {
-      alert('Vui lòng nhập tên bài học');
-      titleInput.focus();
-      return;
+      const catName = catSelect.options[catSelect.selectedIndex].text;
+      const now = new Date();
+      const timeStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      title = `[${catName}] Bài học ${timeStr}`;
     }
 
     if (selectedImagesBase64.length === 0) {
-      alert('Vui lòng chọn ít nhất 1 ảnh cho bài học');
+      showToast('⚠️ Vui lòng chụp hoặc chọn ít nhất 1 ảnh');
       return;
     }
 
@@ -443,14 +444,14 @@ const PhapHanhModule = (function() {
       showToast('Đã lưu bài học mới thành công!');
     }).catch(err => {
       console.error(err);
-      alert('Lỗi lưu bài học: ' + err.message);
+      showToast('⚠️ Lỗi: ' + err.message);
     });
   }
 
   // 10. Sao lưu & Phục hồi dữ liệu cá nhân (Backup & Restore)
   function exportBackup() {
     if (customLessons.length === 0) {
-      alert('Bạn chưa có bài học tự thêm nào để sao lưu.');
+      showToast('ℹ️ Bạn chưa có bài học tự thêm nào để sao lưu');
       return;
     }
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customLessons, null, 2));
@@ -471,7 +472,7 @@ const PhapHanhModule = (function() {
       try {
         const imported = JSON.parse(e.target.result);
         if (!Array.isArray(imported)) {
-          alert('Tệp sao lưu không hợp lệ.');
+          showToast('⚠️ Tệp sao lưu không hợp lệ');
           return;
         }
         let count = 0;
@@ -550,28 +551,54 @@ const PhapHanhModule = (function() {
       });
     }
 
-    // Chọn ảnh
+    // Cụm nút chọn ảnh thông minh (Mobile First: Camera & Thư viện ảnh)
+    const btnCam = document.getElementById('ph-btn-trigger-cam');
+    if (btnCam) {
+      btnCam.addEventListener('click', (e) => {
+        if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+          e.preventDefault();
+          window.NativeBridge.postMessage(JSON.stringify({ action: 'takePhoto' }));
+        }
+      });
+    }
+
+    const btnGal = document.getElementById('ph-btn-trigger-gal');
+    if (btnGal) {
+      btnGal.addEventListener('click', (e) => {
+        if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+          e.preventDefault();
+          window.NativeBridge.postMessage(JSON.stringify({ action: 'pickImage' }));
+        }
+      });
+    }
+
+    // Lắng nghe kết quả từ Native Android Kotlin
+    window._onNativeImagesReceived = function(images) {
+      if (Array.isArray(images) && images.length > 0) {
+        images.forEach(b64 => {
+          if (b64 && b64.startsWith('data:image')) {
+            selectedImagesBase64.push(b64);
+          }
+        });
+        renderImagePreviews();
+        showToast(`Đã thêm ${images.length} ảnh`);
+      }
+    };
+
+    // Web Fallback: Input file lắng nghe sự kiện thay đổi
+    const inputCam = document.getElementById('ph-input-cam');
+    if (inputCam) {
+      inputCam.addEventListener('change', (e) => {
+        handleFilesSelected(e.target.files);
+        inputCam.value = '';
+      });
+    }
+
     const fileInput = document.getElementById('ph-input-file');
     if (fileInput) {
       fileInput.addEventListener('change', (e) => {
         handleFilesSelected(e.target.files);
-      });
-    }
-
-    // Drag and drop ảnh
-    const dropZone = document.getElementById('ph-drop-zone');
-    if (dropZone) {
-      dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-      });
-      dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('dragover');
-      });
-      dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        handleFilesSelected(e.dataTransfer.files);
+        fileInput.value = '';
       });
     }
 

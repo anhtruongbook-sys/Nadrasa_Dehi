@@ -129,6 +129,16 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
               _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu tệp vào máy: $result');");
             }
           }
+        } else if (action == 'pickImage' || action == 'takePhoto') {
+          try {
+            final String? res = await _platform.invokeMethod<String>(action);
+            if (res != null && res.isNotEmpty) {
+              _controller.runJavaScript("if (typeof window._onNativeImagesReceived === 'function') window._onNativeImagesReceived($res);");
+            }
+          } catch (e) {
+            debugPrint('Error in $action: $e');
+            _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi chọn ảnh: $e');");
+          }
         } else if (action == 'getLocation') {
           try {
             final locResult = await _platform.invokeMethod('getLocation');

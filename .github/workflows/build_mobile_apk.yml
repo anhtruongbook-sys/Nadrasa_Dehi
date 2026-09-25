@@ -63,16 +63,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.8.2
-          name: "Neta Light & Huyền Học v1.8.2 (Sửa Lỗi Chữ Chìm Giao Diện Sáng & Chụp Ảnh Màn Hình Pháp Hành)"
+          tag_name: v1.8.3
+          name: "Neta Light & Huyền Học v1.8.3 (Cập Nhật 3 Bài Học Mới & Đại Tu Modal Thêm Bài Học Mobile-First)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.8.2
-            - **Khắc Phục Toàn Diện Lỗi Hiển Thị Chữ Bị Lẫn Vào Nền Ở Giao Diện Sáng (Light Theme)**:
-              + **Nút Thao Tác ("Sao Lưu", "Phục Hồi")**: Chuyển sang thẻ nền trắng viền ấm nổi bật với màu chữ nâu đậm `#47260e` sắc nét, loại bỏ hoàn toàn hiện tượng chữ trắng chìm trên nền kem.
-              + **Thanh Tìm Kiếm Pháp Hành**: Nền trắng tuyền `#ffffff`, viền vàng đất `#dccbb3`, chữ đen đậm `#1a0e05` và chữ gợi ý placeholder nâu trầm `#8c6d48` rõ ràng 100%.
-              + **Bộ Lọc Chuyên Đề (Filter Chips)**: Tất cả các thẻ chip chưa chọn (18 Nơi Tại Phủ, Tâm Ấn, Thủ Pháp, v.v.) hiển thị nền trắng với chữ nâu đậm `#5c351b` dễ đọc; thẻ đang chọn giữ tông vàng ánh kim `#d4af37` chữ đậm nổi bật.
-              + **Dòng Trạng Thái & Thẻ Bài Học**: Dòng đếm số lượng bài học và hướng dẫn chuyển sang màu nâu đậm; thẻ bài học sở hữu nền trắng thuần khiết, viền nổi khối và tiêu đề bài học đen tuyền sắc nét.
-              + **Hộp Thoại (Modal Thêm Bài Học)**: Thiết lập toàn bộ form nhập liệu, nhãn form, ô chọn và vùng kéo thả ảnh sang phong cách sáng màu trang nhã, tương phản chuẩn mực.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.8.3
+            - **Cập Nhật 3 Bài Học Mới Vào Pháp Hành Nadrasa Dehi (Nâng tổng số lên 44 bài học)**:
+              + `24 - [Thông Pháp] Bảng Đo Thông Pháp NETA`: Thước đo định lượng cấp độ thông pháp và chỉ số kết nối tâm thức.
+              + `25 - [Pháp Phục] Áo Kim Giáp Khi Hành Pháp`: Quy cách hộ thân và bảo vệ trường năng lượng khi hành pháp.
+              + `26 - [Pháp Khí] Ấn Ký - Hướng Dẫn Sử Dụng`: Hướng dẫn chi tiết cách thức kích hoạt và ứng dụng ấn ký hộ trì.
+              + Bổ sung chuyên đề mới **Thông Pháp** (`thong_phap`) vào bộ lọc nhanh.
+            - **Đại Tu Chức Năng "+ Thêm Bài Học Mới" Chuẩn Mobile-First Trên Điện Thoại**:
+              + **Hai Nút Thao Tác Chuyên Biệt Nổi Bật**: `📸 Chụp Ảnh Trực Tiếp` và `🖼️ Chọn Từ Thư Viện Ảnh` to rõ, một chạm mở ngay Camera hoặc Kho ảnh thiết bị.
+              + **Cơ Chế Kép (Native Android Bridge & HTML5 Fallback)**: Tích hợp sâu vào Android Intents (`MediaStore.ACTION_IMAGE_CAPTURE` & `Intent.ACTION_GET_CONTENT`), đồng thời hỗ trợ mượt mà trên trình duyệt web.
+              + **Tự Động Đặt Tên Thông Minh**: Nếu người dùng không nhập tiêu đề, app tự động điền theo định dạng `[Chuyên đề] Bài học <ngày giờ>` để thao tác thêm nhanh chóng nhất.
+              + **Nút Lưu Cố Định Đáy Màn Hình (Sticky Footer)**: Nút `Lưu & Thêm Vào Pháp Hành` luôn ghim chắc chắn ở đáy màn hình, không bị bàn phím ảo che khuất.
+              + **Loại Bỏ Hoàn Toàn Hộp Thoại Alert Gây Đơ Màn Hình**: Thay bằng thông báo Toast góc màn hình mượt mà, thân thiện.
             - **Khắc Phục Triệt Để Lỗi Chụp Ảnh Màn Hình Bài Học Bị Đen / Mất Hình Trong Module Pháp Hành**:
               + **Đóng Gói CSDL Base64 Nội Bộ (`phap_hanh_base64_data.js`)**: Tạo bộ dữ liệu Base64 Data URL tối ưu hóa Retina cho toàn bộ 41 bài học và cảnh giới cõi Phủ, triệt tiêu 100% lỗi Tainted Canvas và lỗi không nạp được asset cục bộ trên Android WebView.
               + **Bộ Nhớ Tốc Độ Cao & Trích Xuất Trực Tiếp**: Thẻ bài học nạp trực tiếp Data URL tức thì (0ms latency, không phụ thuộc network), đồng thời công cụ chụp màn hình tự động giải mã và bảo vệ hình ảnh bài học không bao giờ bị gỡ bỏ khi chụp.
