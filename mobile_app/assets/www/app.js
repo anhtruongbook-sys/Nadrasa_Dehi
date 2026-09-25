@@ -217,7 +217,13 @@
     const cfg = MODULE_CONFIG[mode];
     if (appMainTitle) appMainTitle.textContent = cfg.name;
     if (appSubTitle) appSubTitle.textContent = cfg.subtitle;
-    if (headerLogo && cfg.logo) headerLogo.src = cfg.logo;
+    if (headerLogo && cfg.logo) {
+      headerLogo.onerror = () => {
+        headerLogo.onerror = null;
+        headerLogo.src = 'neta_cards/phap_an.jpg';
+      };
+      headerLogo.src = cfg.logo;
+    }
 
     // Toggle View Containers
     const viewCards = document.getElementById('view-cards');
@@ -269,18 +275,24 @@
       if (guideSearchInput) guideSearchInput.value = '';
       resetDeck();
       renderGuideList();
-    } else if (mode === 'calendar' && window.NetaCalendarView) {
-      window.NetaCalendarView.render();
-    } else if (mode === 'qmdj' && window.NetaQMDJView) {
-      window.NetaQMDJView.render();
-    } else if (mode === 'bazi' && window.NetaBaziView) {
-      window.NetaBaziView.render();
-    } else if (mode === 'tuvi' && window.NetaTuViView) {
-      window.NetaTuViView.render();
-    } else if (mode === 'tarot' && window.NetaTarotView) {
-      window.NetaTarotView.render();
-    } else if (mode === 'lakinh' && window.NetaLaKinhView) {
-      window.NetaLaKinhView.render();
+    } else if (mode === 'calendar') {
+      const render = () => { if (window.NetaCalendarView) window.NetaCalendarView.render(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'qmdj') {
+      const render = () => { if (window.NetaQMDJView) window.NetaQMDJView.render(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'bazi') {
+      const render = () => { if (window.NetaBaziView) window.NetaBaziView.render(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'tuvi') {
+      const render = () => { if (window.NetaTuViView) window.NetaTuViView.render(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'tarot') {
+      const render = () => { if (window.NetaTarotView) window.NetaTarotView.render(); };
+      render(); setTimeout(render, 150); setTimeout(render, 350);
+    } else if (mode === 'lakinh') {
+      const render = () => { if (window.NetaLaKinhView) window.NetaLaKinhView.render(); };
+      render(); setTimeout(render, 150); setTimeout(render, 350);
     }
 
     playBellChime();
@@ -1655,9 +1667,27 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '7.6';
+  const CURRENT_APP_VERSION = '7.7';
   function registerServiceWorker() {
-    // Tự động xóa sạch toàn bộ các bộ nhớ đệm cache cũ
+    const isFlutterApp = (typeof window !== 'undefined' && (
+      window.NativeBridge !== undefined ||
+      window.flutter_inappwebview !== undefined ||
+      window.location.protocol === 'file:' ||
+      (window.location.hostname === 'localhost' && window.location.port === '') ||
+      window.location.hostname === 'appassets.androidplatform.net'
+    ));
+
+    // Nếu chạy trong ứng dụng di động Flutter APK: Huỷ toàn bộ Service Worker để WebView đọc trực tiếp assets từ bộ nhớ máy
+    if (isFlutterApp) {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then((regs) => {
+          regs.forEach((r) => r.unregister());
+        });
+      }
+      return;
+    }
+
+    // Tự động xóa sạch toàn bộ các bộ nhớ đệm cache cũ trên Web/PWA
     try {
       const savedVersion = localStorage.getItem('neta_poker_app_version');
       if (savedVersion !== CURRENT_APP_VERSION) {
@@ -1674,7 +1704,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=7.6')
+        navigator.serviceWorker.register('sw.js?v=7.7')
           .then((reg) => {
             reg.update();
           })

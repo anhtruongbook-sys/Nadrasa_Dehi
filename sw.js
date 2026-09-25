@@ -1,11 +1,12 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v7.6
-const CACHE_NAME = 'neta-poker-v7.6';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v7.7
+const CACHE_NAME = 'neta-poker-v7.7';
 
 const CORE_ASSETS = [
   './',
   'index.html',
   'styles.css',
   'html2canvas.min.js',
+  'modules/html2pdf.bundle.min.js',
   'cards_base64_data.js',
   'cards_data.js',
   'poker_data.js',
@@ -23,10 +24,14 @@ const CORE_ASSETS = [
   'engines/qmdj_engine.js',
   'engines/bazi_engine.js',
   'engines/tuvi_engine.js',
+  'engines/tarot_engine.js',
   'modules/calendar_view.js',
   'modules/qmdj_view.js',
   'modules/bazi_view.js',
   'modules/tuvi_view.js',
+  'modules/tarot_view.js',
+  'assets/tarot/Major_00_Fool.webp',
+  'assets/tarot/Back_Cover.webp',
   'assets/leaflet/leaflet.css',
   'assets/leaflet/leaflet.js',
   'assets/lakinh/lakinh.css',
