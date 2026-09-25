@@ -63,10 +63,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.8.0
-          name: "Neta Light & Huyền Học v1.8.0 (Tích hợp Module Pháp Hành Nadrasa Dehi & 41 Bài Học Gốc)"
+          tag_name: v1.8.1
+          name: "Neta Light & Huyền Học v1.8.1 (Khắc Phục Toàn Diện Định Vị GPS Phần Cứng Máy & Quyền Location)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.8.0
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.8.1
+            - **Khắc Phục Toàn Diện Lỗi Không Thể Sử Dụng Định Vị GPS Của Điện Thoại**:
+              + **Khai báo Đầy Đủ Quyền Android Hardware**: Bổ sung `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, tính năng phần cứng `android.hardware.location.gps` và `android.hardware.location.network` vào `AndroidManifest.xml`.
+              + **Cầu Nối Native Android Bridge (MethodChannel)**: Sử dụng trực tiếp `LocationManager` của hệ điều hành Android để đọc tọa độ thời gian thực từ chip GPS và mạng di động của thiết bị, thay vì phụ thuộc vào Geolocation của WebView (vốn bị chặn mặc định trong môi trường local asset trên Android 10+).
+              + **Cơ Chế Xin Quyền Chủ Động (Runtime Permission Flow)**: Tự động hiện hộp thoại xin cấp quyền vị trí của hệ điều hành Android ngay khi mở app và khi người dùng bấm nút GPS / La Kinh.
+              + **Nút Tương Tác Cài Đặt Thông Minh**: Nếu người dùng chưa cấp quyền hoặc GPS của máy đang tắt, ứng dụng hiển thị nút bấm trực tiếp dẫn vào màn hình **Cài Đặt Vị Trí (Location Settings)** hoặc **Cài Đặt Ứng Dụng (App Permissions Settings)** của Android chỉ với 1 chạm.
+              + **Tự Động Bắt Sóng Nhanh (Fast Cache + Hardware Listener)**: Ưu tiên nạp vị trí lưu gần nhất (< 5 phút) để bản đồ vệ tinh bay về nóc nhà lập tức mà không phải chờ đợi, song song kích hoạt bộ lắng nghe phần cứng với cơ chế timeout an toàn 10s.
             - **Tích Hợp Module Mới: Pháp Hành Nadrasa Dehi (🪷)**:
               + Thư viện 41 bài học & thánh cảnh cõi Phủ độ phân giải cao gốc từ Nadrasa Dehi:
                 * **18 Nơi Tại Phủ**: Đại Nghiệp, Thần Thú, Tiêu Hồn, U Minh Giới, Huyền Các, Tiên Giới, Đại Thất Sắc, Chúng Sinh Luân, Đại Nội Phủ, Bồ Tát Giới, Độc Minh Lâm, Đại Chính Quan, Vĩnh An Tự, Tàng Kinh Thư, Tuệ Giác Tâm Đường, Kim Cang Tâm Đường, Biến Thiên Tâm Đường, Liễu Tri Tâm Đường.

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +45,7 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
+    final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF120104))
       ..clearCache()
@@ -61,8 +62,22 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
             debugPrint('WebResourceError: ${error.description}');
           },
         ),
-      )
-      ..loadFlutterAsset('assets/www/index.html');
+      );
+
+    if (controller.platform is AndroidWebViewController) {
+      final androidController = controller.platform as AndroidWebViewController;
+      androidController.setGeolocationPermissionsPromptCallbacks(
+        onShowPrompt: (request) async {
+          return const GeolocationPermissionsResponse(allow: true, retain: true);
+        },
+      );
+    }
+
+    controller.loadFlutterAsset('assets/www/index.html');
+    _controller = controller;
+
+    // Proactively request location permission on launch
+    _platform.invokeMethod('requestLocationPermission');
   }
 
   Future<void> _handleJavaScriptMessage(String messageText) async {
@@ -114,11 +129,30 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
               _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu tệp vào máy: $result');");
             }
           }
+        } else if (action == 'getLocation') {
+          try {
+            final locResult = await _platform.invokeMethod('getLocation');
+            if (locResult is Map) {
+              final lat = locResult['lat'];
+              final lng = locResult['lng'];
+              final accuracy = locResult['accuracy'] ?? 10;
+              _controller.runJavaScript("if (typeof window._onNativeLocationReceived === 'function') window._onNativeLocationReceived($lat, $lng, $accuracy);");
+            } else {
+              _controller.runJavaScript("if (typeof window._onNativeLocationError === 'function') window._onNativeLocationError('Tọa độ không hợp lệ');");
+            }
+          } catch (e) {
+            final errMsg = e.toString();
+            _controller.runJavaScript("if (typeof window._onNativeLocationError === 'function') window._onNativeLocationError('$errMsg');");
+          }
+        } else if (action == 'openLocationSettings') {
+          await _platform.invokeMethod('openLocationSettings');
+        } else if (action == 'openAppSettings') {
+          await _platform.invokeMethod('openAppSettings');
         }
       }
     } catch (e) {
       debugPrint('Error in NativeBridge: $e');
-      _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi khi lưu tệp: $e');");
+      _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi: $e');");
     }
   }
 

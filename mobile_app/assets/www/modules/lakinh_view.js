@@ -443,8 +443,88 @@
   }
 
   // ================= 4. ĐỊNH VỊ GPS VỆ TINH 2 TẦNG (HIGH ACCURACY + FALLBACK) =================
+  // Callback toàn cục nhận tọa độ từ Native App (Flutter Android)
+  window._onNativeLocationReceived = function(lat, lng, accuracy) {
+    const btn = document.getElementById('lakinh-dock-gps');
+    const fab = document.getElementById('lakinh-btn-my-location');
+    if (btn) btn.classList.remove('pulse-radar-active');
+    if (fab) fab.classList.remove('pulse-radar-active');
+
+    state.userLocation = [lat, lng];
+    state.centerCoords = [lat, lng];
+
+    if (mapInstance && userLocationLayerGroup) {
+      userLocationLayerGroup.clearLayers();
+
+      // Vòng tròn bán kính sai số GPS
+      L.circle([lat, lng], {
+        radius: Math.max(accuracy || 10, 12),
+        color: '#38bdf8',
+        fillColor: '#38bdf8',
+        fillOpacity: 0.15,
+        weight: 1.5,
+        dashArray: '4, 4'
+      }).addTo(userLocationLayerGroup);
+
+      // Radar Beacon Marker nhấp nháy xanh tại vị trí thực
+      L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'gps-live-dot',
+          html: `<div class="gps-pulse-beacon"></div><div class="gps-inner-dot"></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        })
+      }).addTo(userLocationLayerGroup);
+
+      mapInstance.setView([lat, lng], 19, { animate: true });
+      showLaKinhToast(`🎯 Đã định vị chính xác qua GPS máy! (Sai số ~${Math.round(accuracy || 10)}m)`);
+      updateLocationHUD(lat, lng);
+    }
+  };
+
+  // Callback báo lỗi từ Native App
+  window._onNativeLocationError = function(errMsg) {
+    const btn = document.getElementById('lakinh-dock-gps');
+    const fab = document.getElementById('lakinh-btn-my-location');
+    if (btn) btn.classList.remove('pulse-radar-active');
+    if (fab) fab.classList.remove('pulse-radar-active');
+
+    console.warn('Native GPS Error:', errMsg);
+    const isPermission = errMsg && (errMsg.includes('PERMISSION') || errMsg.includes('từ chối') || errMsg.includes('denied'));
+    const isGpsOff = errMsg && (errMsg.includes('GPS_DISABLED') || errMsg.includes('bị tắt'));
+
+    if (isGpsOff) {
+      showLaKinhToast('⚠️ GPS của điện thoại đang bị tắt. Hãy bật Định vị (Vị trí)!');
+      promptSearchLocation(false, true);
+    } else if (isPermission) {
+      showLaKinhToast('🚫 Quyền vị trí chưa được cấp cho ứng dụng');
+      promptSearchLocation(true, false);
+    } else {
+      showLaKinhToast('⏳ Không bắt được tín hiệu vệ tinh GPS. Vui lòng thử lại hoặc kéo bản đồ.');
+      promptSearchLocation(false, false);
+    }
+  };
+
   function getCurrentGPS(silent = false) {
+    const btn = document.getElementById('lakinh-dock-gps');
+    const fab = document.getElementById('lakinh-btn-my-location');
+    if (btn) btn.classList.add('pulse-radar-active');
+    if (fab) fab.classList.add('pulse-radar-active');
+
+    // NẾU CHẠY TRONG APP FLUTTER ANDROID: Gọi cầu nối Native Bridge để truy cập GPS phần cứng máy
+    if (typeof window !== 'undefined' && window.NativeBridge) {
+      if (!silent) showLaKinhToast('🛰️ Đang lấy tọa độ GPS từ cảm biến máy...');
+      try {
+        window.NativeBridge.postMessage(JSON.stringify({ action: 'getLocation' }));
+        return;
+      } catch (err) {
+        console.warn('NativeBridge getLocation error:', err);
+      }
+    }
+
     if (!navigator.geolocation) {
+      if (btn) btn.classList.remove('pulse-radar-active');
+      if (fab) fab.classList.remove('pulse-radar-active');
       if (!silent) showLaKinhToast('⚠️ Thiết bị của bạn không hỗ trợ định vị Geolocation');
       return;
     }
@@ -456,11 +536,6 @@
     } else if (!silent) {
       showLaKinhToast('🛰️ Đang tìm kiếm tọa độ GPS vệ tinh...');
     }
-
-    const btn = document.getElementById('lakinh-dock-gps');
-    const fab = document.getElementById('lakinh-btn-my-location');
-    if (btn) btn.classList.add('pulse-radar-active');
-    if (fab) fab.classList.add('pulse-radar-active');
 
     const onGpsSuccess = (pos) => {
       if (btn) btn.classList.remove('pulse-radar-active');
@@ -1406,9 +1481,11 @@
   }
 
   // Tìm kiếm địa điểm & Hướng dẫn gỡ chặn GPS
-  function promptSearchLocation(isGpsBlocked = false) {
+  function promptSearchLocation(isGpsBlocked = false, isGpsDisabled = false) {
     const modalBox = document.getElementById('lakinh-modal-container');
     if (!modalBox) return;
+
+    const isNativeApp = typeof window !== 'undefined' && !!window.NativeBridge;
 
     const quickCities = [
       { name: 'Hà Nội', lat: 21.028511, lng: 105.854167 },
@@ -1426,23 +1503,61 @@
     ).join('');
 
     let guideHtml = '';
-    if (isGpsBlocked) {
+    if (isGpsDisabled) {
       guideHtml = `
         <div class="lakinh-gps-guide-box">
           <div style="font-weight: 800; color: #f59e0b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-            <span style="font-size: 1.1rem;">⚠️</span>
-            <span>QUYỀN ĐỊNH VỊ GPS ĐANG BỊ TRÌNH DUYỆT CHẶN</span>
+            <span style="font-size: 1.1rem;">🛰️</span>
+            <span>ĐỊNH VỊ GPS TRÊN ĐIỆN THOẠI ĐANG TẮT</span>
           </div>
-          <div style="font-size: 0.74rem; line-height: 1.5; color: #e2e8f0;">
-            Để thiết bị tự động lấy tọa độ ngôi nhà qua vệ tinh GPS:
-            <ol style="margin: 6px 0 6px 18px; padding: 0;">
-              <li>Chạm vào biểu tượng <b>🔒</b> (hoặc <b>⚙️ Cài đặt trang web</b>) ở góc trái thanh địa chỉ web trên cùng.</li>
-              <li>Chọn <b>Quyền (Permissions)</b> ➔ <b>Vị trí (Location)</b> ➔ Chọn <b>Cho phép (Allow)</b>.</li>
-              <li>Nhấn nút <b>"🔄 Thử Lại GPS"</b> bên dưới hoặc kéo vuốt để tải lại trang.</li>
-            </ol>
+          <div style="font-size: 0.74rem; line-height: 1.5; color: #e2e8f0; margin-bottom: 8px;">
+            Để thiết bị tự động lấy tọa độ ngôi nhà qua vệ tinh GPS, vui lòng bật dịch vụ <b>Vị trí (GPS)</b> trong cài đặt máy:
+          </div>
+          <div style="display: flex; gap: 8px;">
+            ${isNativeApp ? `
+              <button type="button" id="btn-open-location-settings" class="lakinh-action-btn primary" style="font-size: 0.75rem; padding: 6px 12px; width: 100%;">
+                🛰️ Bật GPS Trong Cài Đặt Máy
+              </button>
+            ` : ''}
           </div>
         </div>
       `;
+    } else if (isGpsBlocked) {
+      if (isNativeApp) {
+        guideHtml = `
+          <div class="lakinh-gps-guide-box">
+            <div style="font-weight: 800; color: #ef4444; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 1.1rem;">⚠️</span>
+              <span>QUYỀN VỊ TRÍ CHƯA ĐƯỢC CẤP CHO ỨNG DỤNG</span>
+            </div>
+            <div style="font-size: 0.74rem; line-height: 1.5; color: #e2e8f0; margin-bottom: 8px;">
+              Ứng dụng cần quyền Vị trí để xác định tọa độ nhà bạn. Hãy bấm nút dưới để mở Cài đặt ứng dụng và bật quyền <b>Vị trí</b>:
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" id="btn-open-app-settings" class="lakinh-action-btn primary" style="font-size: 0.75rem; padding: 6px 12px; width: 100%;">
+                ⚙️ Mở Cài Đặt Cấp Quyền Vị Trí
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        guideHtml = `
+          <div class="lakinh-gps-guide-box">
+            <div style="font-weight: 800; color: #f59e0b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 1.1rem;">⚠️</span>
+              <span>QUYỀN ĐỊNH VỊ GPS ĐANG BỊ TRÌNH DUYỆT CHẶN</span>
+            </div>
+            <div style="font-size: 0.74rem; line-height: 1.5; color: #e2e8f0;">
+              Để thiết bị tự động lấy tọa độ ngôi nhà qua vệ tinh GPS:
+              <ol style="margin: 6px 0 6px 18px; padding: 0;">
+                <li>Chạm vào biểu tượng <b>🔒</b> (hoặc <b>⚙️ Cài đặt trang web</b>) ở góc trái thanh địa chỉ web trên cùng.</li>
+                <li>Chọn <b>Quyền (Permissions)</b> ➔ <b>Vị trí (Location)</b> ➔ Chọn <b>Cho phép (Allow)</b>.</li>
+                <li>Nhấn nút <b>"🔄 Thử Lại GPS"</b> bên dưới hoặc kéo vuốt để tải lại trang.</li>
+              </ol>
+            </div>
+          </div>
+        `;
+      }
     }
 
     modalBox.innerHTML = `
@@ -1497,6 +1612,24 @@
     // Events in modal
     const closeBtn = document.getElementById('btn-close-search-modal');
     if (closeBtn) closeBtn.onclick = () => document.getElementById('modal-search-overlay')?.remove();
+
+    const btnLocSettings = document.getElementById('btn-open-location-settings');
+    if (btnLocSettings) {
+      btnLocSettings.onclick = () => {
+        if (window.NativeBridge) {
+          window.NativeBridge.postMessage(JSON.stringify({ action: 'openLocationSettings' }));
+        }
+      };
+    }
+
+    const btnAppSettings = document.getElementById('btn-open-app-settings');
+    if (btnAppSettings) {
+      btnAppSettings.onclick = () => {
+        if (window.NativeBridge) {
+          window.NativeBridge.postMessage(JSON.stringify({ action: 'openAppSettings' }));
+        }
+      };
+    }
 
     const manualPanBtn = document.getElementById('btn-manual-pan');
     if (manualPanBtn) {
