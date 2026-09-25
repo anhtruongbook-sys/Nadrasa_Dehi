@@ -75,6 +75,31 @@
   height: 26px;
 }
 
+/* Vạch ngắm hồng ngoại định hướng 12h (Thập đạo hồng tuyến) */
+#lakinh-target-pointer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 50%;
+  pointer-events: none;
+  z-index: 11;
+  border-left: 2px dashed rgba(239, 68, 68, 0.85);
+}
+
+#lakinh-target-pointer::before {
+  content: '▼';
+  position: absolute;
+  top: -12px;
+  left: -5.5px;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 900;
+  text-shadow: 0 0 6px #ffffff, 0 0 10px #ef4444;
+  line-height: 1;
+}
+
 /* Kính mờ siêu mỏng Glassmorphism */
 .lakinh-glass-panel {
   background: rgba(15, 23, 42, 0.88);

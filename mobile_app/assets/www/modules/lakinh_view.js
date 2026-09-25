@@ -55,6 +55,7 @@
         <!-- Đĩa La Kinh 36 Tầng Xuyên Thấu -->
         <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
           <img id="lakinh-disc" src="assets/lakinh/la_kinh_36_tang_vector.svg" alt="La Kinh 36 Tầng" style="opacity: ${state.opacity};">
+          <div id="lakinh-target-pointer"></div>
         </div>
 
         <!-- 1. Thanh Tiện Ích & HUD Siêu Mỏng Trên Cùng -->
@@ -149,6 +150,7 @@
             </div>
             <input type="range" class="lakinh-slider" id="sheet-slider-rotation" min="0" max="360" value="0" step="0.5">
             <div class="lakinh-btn-row">
+              <button class="lakinh-step-btn" id="btn-rot-zero" style="font-weight: 700; color: #38bdf8;">🧭 Chuẩn Bắc (0°)</button>
               <button class="lakinh-step-btn" id="btn-rot-m5">-5°</button>
               <button class="lakinh-step-btn" id="btn-rot-m1">-1°</button>
               <button class="lakinh-step-btn" id="btn-rot-p1">+1°</button>
@@ -305,7 +307,10 @@
 
     const disc = document.getElementById('lakinh-disc');
     if (disc) {
-      disc.style.transform = `rotate(${rounded}deg)`;
+      // Đĩa La Kinh xoay ngược chiều (-rounded) để:
+      // 1. Hướng đo (Sơn hướng nhà) nằm ở đỉnh 12h dưới vạch ngắm hồng ngoại
+      // 2. Kim La Bàn (và Sơn Tý 0°) luôn chỉ chính xác 100% về hướng Bắc Trái Đất
+      disc.style.transform = `rotate(${-rounded}deg)`;
     }
 
     const pillDeg = document.getElementById('hud-pill-deg');
@@ -631,16 +636,18 @@
     }
   }
 
-  // Cảm biến La Bàn & Bộ lọc thông thấp
+  let activeSensorListeners = null;
+  let hasReceivedAbsoluteEvent = false;
+
   function toggleCompassSensor() {
     const btnDock = document.getElementById('lakinh-dock-sensor');
     if (!state.isSensorActive) {
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission().then(resp => {
           if (resp === 'granted') startSensorListening(btnDock);
-          else showLaKinhToast('Cần cấp quyền cảm biến la bàn');
+          else showLaKinhToast('⚠️ Cần cấp quyền cảm biến la bàn');
         }).catch(err => {
-          showLaKinhToast('Thiết bị không hỗ trợ quyền cảm biến');
+          showLaKinhToast('⚠️ Thiết bị không hỗ trợ cấp quyền cảm biến');
         });
       } else {
         startSensorListening(btnDock);
@@ -656,9 +663,30 @@
       btn.classList.add('active-green');
       btn.innerHTML = '🧭 Đang Đọc La Bàn';
     }
-    window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
-    window.addEventListener('deviceorientation', handleOrientationEvent, true);
-    showLaKinhToast('🧭 Đã kích hoạt cảm biến la bàn thực địa');
+
+    hasReceivedAbsoluteEvent = false;
+
+    // 1. Luồng tuyệt đối True North / Magnetic chuẩn (Android Chrome / Chromium)
+    const onAbsolute = (e) => {
+      if (!state.isSensorActive || state.isLocked) return;
+      hasReceivedAbsoluteEvent = true;
+      processSensorHeading(e, true);
+    };
+
+    // 2. Luồng thông thường (iOS Safari webkitCompassHeading hoặc Android fallback)
+    const onStandard = (e) => {
+      if (!state.isSensorActive || state.isLocked) return;
+      // Nếu đã có luồng absolute và không phải iOS webkitCompassHeading thì bỏ qua để chống xung đột
+      if (hasReceivedAbsoluteEvent && !e.webkitCompassHeading) return;
+      processSensorHeading(e, false);
+    };
+
+    activeSensorListeners = { onAbsolute, onStandard };
+
+    window.addEventListener('deviceorientationabsolute', onAbsolute, true);
+    window.addEventListener('deviceorientation', onStandard, true);
+
+    showLaKinhToast('🧭 Đã bật cảm biến la bàn. Đầu điện thoại là hướng đo nhà.');
   }
 
   function stopSensorListening(btn) {
@@ -667,33 +695,53 @@
       btn.classList.remove('active-green');
       btn.innerHTML = '🧭 La Bàn Live';
     }
-    window.removeEventListener('deviceorientationabsolute', handleOrientationEvent, true);
-    window.removeEventListener('deviceorientation', handleOrientationEvent, true);
+    if (activeSensorListeners) {
+      window.removeEventListener('deviceorientationabsolute', activeSensorListeners.onAbsolute, true);
+      window.removeEventListener('deviceorientation', activeSensorListeners.onStandard, true);
+      activeSensorListeners = null;
+    }
+    hasReceivedAbsoluteEvent = false;
     showLaKinhToast('Đã dừng cảm biến la bàn');
   }
 
-  function handleOrientationEvent(e) {
+  function processSensorHeading(e, isAbsolute) {
     if (!state.isSensorActive || state.isLocked) return;
 
-    let heading = 0;
-    if (e.webkitCompassHeading != null) {
+    let heading = null;
+
+    // A. iOS Safari: webkitCompassHeading (0-360 chuẩn)
+    if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) {
       heading = e.webkitCompassHeading;
-    } else if (e.alpha != null) {
-      heading = 360 - e.alpha;
+    } 
+    // B. Android: alpha
+    else if (typeof e.alpha === 'number' && !isNaN(e.alpha)) {
+      // W3C: alpha đo ngược chiều kim đồng hồ từ Bắc
+      // Chuẩn la bàn số: heading = (360 - alpha) % 360
+      heading = (360 - e.alpha) % 360;
+
+      // Bù hướng xoay màn hình (Screen orientation angle)
+      const screenAngle = (window.screen && window.screen.orientation && typeof window.screen.orientation.angle === 'number')
+        ? window.screen.orientation.angle
+        : (typeof window.orientation === 'number' ? window.orientation : 0);
+
+      heading = (heading + screenAngle + 360) % 360;
     }
 
+    if (heading == null || isNaN(heading)) return;
+
+    // Tùy chọn bù từ thiên WMM
     const chkAutoDec = document.getElementById('lakinh-chk-autodec');
-    if (chkAutoDec && chkAutoDec.checked) {
+    if (chkAutoDec && chkAutoDec.checked && !isAbsolute) {
       heading = (heading + state.declination + 360) % 360;
     }
 
-    // Bộ lọc thông thấp chống rung (Low-pass smoothing: alpha = 0.18)
-    const alpha = 0.18;
+    // Bộ lọc thông thấp chống rung giật (Low-pass smoothing: alpha = 0.22)
     let diff = heading - state.rotation;
     while (diff < -180) diff += 360;
     while (diff > 180) diff -= 360;
 
-    const smoothed = state.rotation + alpha * diff;
+    const alphaFilter = 0.22;
+    const smoothed = (state.rotation + alphaFilter * diff + 360) % 360;
     updateRotationDisplay(smoothed);
   }
 
@@ -1177,6 +1225,14 @@
         });
       }
     };
+    const btnRotZero = document.getElementById('btn-rot-zero');
+    if (btnRotZero) {
+      btnRotZero.addEventListener('click', () => {
+        updateRotationDisplay(0.0);
+        showLaKinhToast('🧭 Đã quay về Chuẩn Bắc (0°), khớp hướng Bắc bản đồ vệ tinh');
+      });
+    }
+
     bindStep('btn-rot-m5', -5);
     bindStep('btn-rot-m1', -1);
     bindStep('btn-rot-p1', 1);
