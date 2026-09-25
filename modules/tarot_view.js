@@ -2010,6 +2010,15 @@
       await Promise.all(imgs.map(async (img) => {
         try {
           if (!img.src || img.src.startsWith('data:')) return;
+          const clean = decodeURIComponent(img.src).replace(/\\/g, '/');
+          const fname = clean.split('/').pop().split('?')[0];
+          const b64 = (typeof window.getCardBase64 === 'function' && window.getCardBase64(img.src)) ||
+                      (window.TAROT_BASE64_DATA && (window.TAROT_BASE64_DATA[fname] || window.TAROT_BASE64_DATA[clean])) ||
+                      (window.CARDS_BASE64_DATA && (window.CARDS_BASE64_DATA[fname] || window.CARDS_BASE64_DATA[clean]));
+          if (b64 && b64.startsWith('data:')) {
+            img.src = b64;
+            return;
+          }
           const res = await fetch(img.src);
           if (res.ok) {
             const blob = await res.blob();
@@ -2070,6 +2079,7 @@
           console.warn('First pass PDF export failed (possibly tainted canvas), switching to untainted typography pass:', firstPassErr);
           if (printWrapper) {
             printWrapper.querySelectorAll('img').forEach(img => {
+              if (img.src && img.src.startsWith('data:')) return; // Tuyệt đối giữ nguyên ảnh lá bài sạch Base64
               const cardName = img.alt || 'Lá Bài Tarot';
               const cardBox = document.createElement('div');
               cardBox.style.padding = '12px';

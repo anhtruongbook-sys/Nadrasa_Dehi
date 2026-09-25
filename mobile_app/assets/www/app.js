@@ -919,20 +919,8 @@
   function getResolvedCardImage(path) {
     if (!path) return '';
     if (path.startsWith('data:')) return path;
-    if (typeof window !== 'undefined' && window.CARDS_BASE64_DATA) {
-      try {
-        const clean = decodeURIComponent(path).replace(/\\/g, '/');
-        const filename = clean.split('/').pop().split('?')[0];
-        if (window.CARDS_BASE64_DATA[filename]) {
-          return window.CARDS_BASE64_DATA[filename];
-        }
-        for (const key in window.CARDS_BASE64_DATA) {
-          if (clean.endsWith(key)) {
-            return window.CARDS_BASE64_DATA[key];
-          }
-        }
-      } catch (e) {}
-    }
+    const b64 = getCardBase64(path);
+    if (b64) return b64;
     return path;
   }
 
@@ -1425,26 +1413,32 @@
     } catch (e) {}
   }
 
-  // Tra cứu dữ liệu Base64 Data URL tức thì cho mọi lá bài (loại bỏ hoàn toàn lỗi Tainted Canvas)
+  // Tra cứu dữ liệu Base64 Data URL tức thì cho mọi lá bài & đĩa La Kinh (loại bỏ hoàn toàn lỗi Tainted Canvas)
   function getCardBase64(src) {
     if (!src) return '';
     if (src.startsWith('data:')) return src;
-    if (typeof window !== 'undefined' && window.CARDS_BASE64_DATA) {
-      try {
-        const cleanSrc = decodeURIComponent(src).replace(/\\/g, '/');
-        const filename = cleanSrc.split('/').pop().split('?')[0];
-        if (window.CARDS_BASE64_DATA[filename]) {
-          return window.CARDS_BASE64_DATA[filename];
-        }
-        for (const key in window.CARDS_BASE64_DATA) {
-          if (cleanSrc.endsWith(key)) {
-            return window.CARDS_BASE64_DATA[key];
+    try {
+      const cleanSrc = decodeURIComponent(src).replace(/\\/g, '/');
+      const filename = cleanSrc.split('/').pop().split('?')[0];
+      const dicts = [
+        window.CARDS_BASE64_DATA,
+        window.TAROT_BASE64_DATA,
+        window.LAKINH_BASE64_DATA
+      ];
+      for (const dict of dicts) {
+        if (!dict) continue;
+        if (dict[cleanSrc]) return dict[cleanSrc];
+        if (dict[filename]) return dict[filename];
+        for (const key in dict) {
+          if (cleanSrc.endsWith(key) || key.endsWith(filename)) {
+            return dict[key];
           }
         }
-      } catch (e) {}
-    }
+      }
+    } catch (e) {}
     return '';
   }
+  window.getCardBase64 = getCardBase64;
 
   // Fallback chuyển đổi URL ảnh sang Base64 qua Fetch/XHR/Canvas
   const imageBase64Cache = new Map();
@@ -1456,15 +1450,7 @@
     if (prebaked) return prebaked;
     if (imageBase64Cache.has(url)) return imageBase64Cache.get(url);
 
-    // Xử lý thông minh ảnh vệ tinh Google: chuyển sang ArcGIS World Imagery tương đương để vượt rào CORS 100%
     let fetchUrl = url;
-    const googleTileMatch = url.match(/x=(\d+)&y=(\d+)&z=(\d+)/);
-    if (googleTileMatch) {
-      const gx = googleTileMatch[1];
-      const gy = googleTileMatch[2];
-      const gz = googleTileMatch[3];
-      fetchUrl = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${gz}/${gy}/${gx}`;
-    }
 
     // 1. Thử fetch thông thường (không gán mode cors) cho tệp cục bộ / Android assets / relative URLs
     try {
@@ -1603,22 +1589,42 @@
         clonedImgs.forEach((img) => {
           const fullSrc = img.src;
           const attrSrc = img.getAttribute('src');
-          const cleanB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || imgUrlMap.get(fullSrc) || imgUrlMap.get(attrSrc);
+          let cleanB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || imgUrlMap.get(fullSrc) || imgUrlMap.get(attrSrc);
+
+          if (img.id === 'lakinh-disc') {
+            // TUYỆT ĐỐI BẢO VỆ ĐĨA LA KINH 36 TẦNG: Không bao giờ được xoá!
+            if (!cleanB64 || !cleanB64.startsWith('data:')) {
+              cleanB64 = getCardBase64('thuoc_lap_cuc_trans.png') || getCardBase64('thuoc_lap_cuc_gold.png') || getCardBase64('thuoc_lap_cuc.png');
+            }
+            if (cleanB64 && cleanB64.startsWith('data:')) {
+              img.src = cleanB64;
+            }
+            return; // Đã bảo đảm đĩa La Kinh toàn vẹn
+          }
+
           if (cleanB64 && cleanB64.startsWith('data:')) {
             img.src = cleanB64;
           } else if (currentDeckMode === 'tarot') {
-            // Thay thế ảnh không an toàn bằng khung thẻ bài Tarot trang nhã
-            const cardBox = document.createElement('div');
-            cardBox.style.padding = '12px';
-            cardBox.style.borderRadius = '8px';
-            cardBox.style.background = isLight ? '#f1f5f9' : '#1e1b4b';
-            cardBox.style.border = isLight ? '1px solid #cbd5e1' : '1px solid #4338ca';
-            cardBox.style.textAlign = 'center';
-            cardBox.innerHTML = `<div style="font-size: 2rem; margin-bottom: 4px;">🃏</div><div style="font-weight: 700; font-size: 0.88rem; color: ${isLight ? '#1e293b' : '#e0e7ff'};">${img.alt || 'Lá Bài Tarot'}</div>`;
-            if (img.parentNode) img.parentNode.replaceChild(cardBox, img);
+            // Tìm trong từ điển Tarot
+            const tarotB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc);
+            if (tarotB64) {
+              img.src = tarotB64;
+            } else {
+              // Thay thế ảnh không an toàn bằng khung thẻ bài Tarot trang nhã
+              const cardBox = document.createElement('div');
+              cardBox.style.padding = '12px';
+              cardBox.style.borderRadius = '8px';
+              cardBox.style.background = isLight ? '#f1f5f9' : '#1e1b4b';
+              cardBox.style.border = isLight ? '1px solid #cbd5e1' : '1px solid #4338ca';
+              cardBox.style.textAlign = 'center';
+              cardBox.innerHTML = `<div style="font-size: 2rem; margin-bottom: 4px;">🃏</div><div style="font-weight: 700; font-size: 0.88rem; color: ${isLight ? '#1e293b' : '#e0e7ff'};">${img.alt || 'Lá Bài Tarot'}</div>`;
+              if (img.parentNode) img.parentNode.replaceChild(cardBox, img);
+            }
           } else if (currentDeckMode === 'lakinh') {
-            // Loại bỏ tile cross-origin không tải được để tuyệt đối không làm bẩn (taint) canvas
-            img.remove();
+            // Chỉ loại bỏ tile vệ tinh không tải được, tuyệt đối không loại bỏ logo hoặc đĩa
+            if (img.id !== 'lakinh-disc' && !img.classList.contains('dev-brand-logo') && !img.classList.contains('header-logo')) {
+              img.remove();
+            }
           }
         });
 

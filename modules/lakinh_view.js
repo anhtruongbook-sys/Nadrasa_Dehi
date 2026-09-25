@@ -310,14 +310,17 @@
       googleSat: L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 22,
         subdomains: '0123',
+        crossOrigin: true,
         attribution: 'Google Satellite'
       }),
       esriSat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19,
+        crossOrigin: true,
         attribution: 'Esri World Imagery'
       }),
       osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
+        crossOrigin: true,
         attribution: 'OpenStreetMap'
       })
     };

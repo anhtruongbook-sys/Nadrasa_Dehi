@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v8.1
-const CACHE_NAME = 'neta-poker-v8.1';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v8.2
+const CACHE_NAME = 'neta-poker-v8.2';
 
 const CORE_ASSETS = [
   './',
@@ -8,6 +8,8 @@ const CORE_ASSETS = [
   'html2canvas.min.js',
   'modules/html2pdf.bundle.min.js',
   'cards_base64_data.js',
+  'tarot_base64_data.js',
+  'lakinh_base64_data.js',
   'cards_data.js',
   'poker_data.js',
   'app.js',
