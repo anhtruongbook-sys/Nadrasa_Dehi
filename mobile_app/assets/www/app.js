@@ -1655,7 +1655,7 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '7.5';
+  const CURRENT_APP_VERSION = '7.6';
   function registerServiceWorker() {
     // Tự động xóa sạch toàn bộ các bộ nhớ đệm cache cũ
     try {
@@ -1674,7 +1674,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=7.5')
+        navigator.serviceWorker.register('sw.js?v=7.6')
           .then((reg) => {
             reg.update();
           })

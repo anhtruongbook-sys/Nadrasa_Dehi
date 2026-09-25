@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v7.5
-const CACHE_NAME = 'neta-poker-v7.5';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v7.6
+const CACHE_NAME = 'neta-poker-v7.6';
 
 const CORE_ASSETS = [
   './',
@@ -26,7 +26,14 @@ const CORE_ASSETS = [
   'modules/calendar_view.js',
   'modules/qmdj_view.js',
   'modules/bazi_view.js',
-  'modules/tuvi_view.js'
+  'modules/tuvi_view.js',
+  'assets/leaflet/leaflet.css',
+  'assets/leaflet/leaflet.js',
+  'assets/lakinh/lakinh.css',
+  'assets/lakinh/thuoc_lap_cuc.png',
+  'assets/lakinh/thuoc_lap_cuc_trans.png',
+  'engines/lakinh_engine.js',
+  'modules/lakinh_view.js'
 ];
 
 // Thêm toàn bộ 48 quân bài Neta Light

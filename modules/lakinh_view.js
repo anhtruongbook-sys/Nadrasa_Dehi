@@ -49,8 +49,9 @@
     const container = document.getElementById('view-lakinh');
     if (!container) return;
 
-    if (!container.querySelector('#lakinh-map')) {
-      container.innerHTML = `
+    try {
+      if (!container.querySelector('#lakinh-map')) {
+        container.innerHTML = `
         <div id="lakinh-map"></div>
         <div id="lakinh-crosshair"></div>
 
@@ -246,33 +247,42 @@
         <div id="lakinh-modal-container"></div>
       `;
 
-      initLeafletMap();
-      bindLaKinhEvents();
-    } else {
-      if (mapInstance) {
-        setTimeout(() => mapInstance.invalidateSize(), 100);
+        initLeafletMap();
+        bindLaKinhEvents();
+      } else {
+        if (mapInstance) {
+          mapInstance.invalidateSize();
+          setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 150);
+          setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 400);
+        } else {
+          initLeafletMap();
+        }
       }
+    } catch (err) {
+      console.error('Lỗi khi render La Kinh:', err);
     }
   }
 
   // Khởi tạo bản đồ Leaflet
   function initLeafletMap() {
     if (typeof L === 'undefined') {
-      console.warn('Leaflet thư viện chưa tải xong.');
+      console.warn('Leaflet thư viện chưa tải xong, đang thử lại sau 200ms...');
+      setTimeout(initLeafletMap, 200);
       return;
     }
 
-    if (mapInstance) {
-      mapInstance.remove();
-      mapInstance = null;
-    }
+    try {
+      if (mapInstance) {
+        mapInstance.remove();
+        mapInstance = null;
+      }
 
-    mapInstance = L.map('lakinh-map', {
-      center: state.centerCoords,
-      zoom: 18,
-      maxZoom: 22,
-      zoomControl: false
-    });
+      mapInstance = L.map('lakinh-map', {
+        center: state.centerCoords,
+        zoom: 18,
+        maxZoom: 22,
+        zoomControl: false
+      });
 
     // Zoom control ở góc phải
     L.control.zoom({ position: 'topright' }).addTo(mapInstance);
@@ -310,11 +320,18 @@
     // Cập nhật thông số vị trí ban đầu
     updateLocationHUD(state.centerCoords[0], state.centerCoords[1]);
 
+    // Force map to adapt to container layout
+    setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 100);
+    setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 350);
+
     // Tự động định vị ngầm vị trí hiện tại ngay khi mở bản đồ
     setTimeout(() => {
       getCurrentGPS(true);
     }, 1200);
+  } catch (err) {
+    console.error('Lỗi khởi tạo Leaflet map:', err);
   }
+}
 
   function onMapMove() {
     if (state.isRayActive) {
