@@ -557,13 +557,14 @@
           dashArray: '5, 5'
         }).addTo(elevationLayerGroup);
 
-        // Đánh dấu Thủy Khẩu điểm trũng nhất
+        // Đánh dấu Thủy Khẩu điểm trũng nhất (Thiên Bàn Phùng Châm)
+        const a = t.thuyKhau.analysis;
         L.marker([t.thuyKhau.lat, t.thuyKhau.lng], {
           icon: L.divIcon({
             className: 'custom-watermouth-marker',
-            html: `<div style="background:#0284c7;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 8px rgba(0,0,0,0.8);">💧 Thủy Khẩu ${t.name.split(' ')[0]} (${t.thuyKhau.son})</div>`,
-            iconSize: [90, 20],
-            iconAnchor: [45, 10]
+            html: `<div style="background:#0284c7;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 0 8px rgba(0,0,0,0.8);">💧 Thủy Khẩu ${t.name.split(' ')[0]} (${a.son} • ${a.songSon})</div>`,
+            iconSize: [110, 20],
+            iconAnchor: [55, 10]
           })
         }).addTo(elevationLayerGroup);
       });
@@ -588,16 +589,24 @@
 
       tiersHtml += `
         <div style="background: rgba(30,41,59,0.7); border: 1px solid ${t.color}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
-          <div style="font-weight: 700; font-size: 0.8rem; color: ${t.color}; margin-bottom: 6px;">
-            ${t.name} (Bán kính ${t.radiusM}m)
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="font-weight: 700; font-size: 0.82rem; color: ${t.color};">
+              ${t.name} (Bán kính ${t.radiusM}m)
+            </div>
+            <div style="font-size: 0.72rem; font-weight: 700; color: #38bdf8; background: rgba(56,189,248,0.15); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.3);">
+              ${a.cuc}
+            </div>
           </div>
-          <div style="font-size: 0.72rem; line-height: 1.5; color: #e2e8f0;">
-            • <strong>Thủy Khẩu (Điểm trũng nhất):</strong> Sơn ${tk.son} (${tk.bearing.toFixed(1)}°) • Cao độ: ${tk.elevation.toFixed(1)}m (Chênh ${tk.deltaElev >= 0 ? '+' : ''}${tk.deltaElev.toFixed(1)}m)<br>
+          <div style="font-size: 0.73rem; line-height: 1.6; color: #e2e8f0;">
+            • <strong>Thủy Khẩu (Thiên Bàn Phùng Châm):</strong> Sơn <span style="color:#f5b041; font-weight:700;">${a.son}</span> (${a.bearing}°) • Song Sơn <span style="color:#f5b041; font-weight:700;">${a.songSon}</span><br>
             • <strong>Tam Hợp Thủy Pháp:</strong> <span style="color: #38bdf8; font-weight: 700;">${a.cuc}</span> (${a.tamHop})<br>
-            • <strong>Cung vị:</strong> ${a.viTriTruongSinh} • <strong>Đánh giá:</strong> ${a.danhGia}<br>
-            • <strong>Lai Long (Gốc cao nhất):</strong> Sơn ${ll.son} (${ll.bearing.toFixed(1)}°) • Cao độ: ${ll.elevation.toFixed(1)}m (Chênh +${ll.deltaElev.toFixed(1)}m)<br>
+            • <strong>Tam Hợp Trường Sinh:</strong> ${a.sinhVuongMo}<br>
+            • <strong>Cung vị Thủy Khẩu:</strong> <span style="color: #4ade80; font-weight: 700;">${a.viTriTruongSinh}</span><br>
+            • <strong>Đánh giá Cát Hung:</strong> ${a.danhGia}<br>
+            • <strong>Cao độ Thủy Khẩu:</strong> ${tk.elevation.toFixed(1)}m (Chênh ${tk.deltaElev >= 0 ? '+' : ''}${tk.deltaElev.toFixed(1)}m so với tâm)<br>
+            • <strong>Lai Long (Địa Bàn Chính Châm):</strong> Sơn ${ll.son} (${ll.bearing.toFixed(1)}°) • Cao độ: ${ll.elevation.toFixed(1)}m (Chênh +${ll.deltaElev.toFixed(1)}m)<br>
             <div style="margin-top: 6px;">
-              <a href="${a.googleMapsUrl}" target="_blank" style="color: #f5b041; text-decoration: underline; font-size: 0.7rem;">📍 Mở vị trí Thủy Khẩu trên Google Maps</a>
+              <a href="${a.googleMapsUrl}" target="_blank" style="color: #38bdf8; text-decoration: underline; font-size: 0.72rem;">📍 Mở vị trí Thủy Khẩu trên Google Maps</a>
             </div>
           </div>
         </div>
@@ -608,7 +617,7 @@
       <div class="lakinh-modal-overlay" id="modal-minhduong-overlay">
         <div class="lakinh-glass-panel lakinh-modal-dialog">
           <div class="lakinh-modal-header">
-            <div class="lakinh-modal-title">🌊 KHẢO SÁT CAO ĐỘ MINH ĐƯỜNG CỤC</div>
+            <div class="lakinh-modal-title">🌊 KHẢO SÁT MINH ĐƯỜNG CỤC (THIÊN BÀN PHÙNG CHÂM)</div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-minhduong-overlay').remove()">✕</button>
           </div>
           <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 10px;">

@@ -155,14 +155,17 @@
       for (let i = 0; i < cfg.samples; i++) {
         const brg = i * step;
         const pt = getDestinationPoint(centerLat, centerLng, cfg.radiusM, brg);
-        const son = getSonInfo(brg);
+        const sonDiaBan = getSonInfo(brg);
+        const sonThienBan = getThienBanSon(brg);
         samplesMap[key].push({
           bearing: brg,
           lat: pt.lat,
           lng: pt.lng,
-          son: son.name,
-          cung: son.cung,
-          hanh: son.hanh,
+          son: sonDiaBan.name,
+          cung: sonDiaBan.cung,
+          hanh: sonDiaBan.hanh,
+          sonThienBan: sonThienBan.name,
+          songSon: sonThienBan.songSon,
           distanceM: cfg.radiusM
         });
         allPoints.push(pt);
@@ -182,9 +185,9 @@
         cursor++;
       });
 
-      // Điểm trũng nhất (Thủy Khẩu / Tụ Thủy)
+      // Điểm trũng nhất (Thủy Khẩu / Tụ Thủy - khảo sát trên Thiên Bàn Phùng Châm)
       let minPt = list[0];
-      // Điểm cao nhất (Lai Long / Tọa Sơn tựa lưng)
+      // Điểm cao nhất (Lai Long / Tọa Sơn tựa lưng - khảo sát trên Địa Bàn Chính Châm)
       let maxPt = list[0];
 
       list.forEach(item => {
@@ -195,9 +198,10 @@
       const deltaMin = Math.round((minPt.elevation - centerElev) * 10) / 10;
       const deltaMax = Math.round((maxPt.elevation - centerElev) * 10) / 10;
 
-      // Phân tích Tam Hợp Thủy Pháp cho điểm trũng Thủy Khẩu
+      // Phân tích Tam Hợp Thủy Pháp cho điểm trũng Thủy Khẩu theo Thiên Bàn Phùng Châm
+      const thuyKhauThienBan = getThienBanSon(minPt.bearing);
       const thuyKhauAnalysis = analyzeThuyKhauDinhCuc(
-        minPt.son,
+        thuyKhauThienBan,
         minPt.bearing,
         minPt.lat,
         minPt.lng,
@@ -213,6 +217,8 @@
         samples: list,
         thuyKhau: {
           ...minPt,
+          sonThienBan: thuyKhauThienBan.name,
+          songSon: thuyKhauThienBan.songSon,
           deltaElev: deltaMin,
           analysis: thuyKhauAnalysis
         },
@@ -234,76 +240,204 @@
   }
 
   // ===========================================================================
-  // 5. TAM HỢP THỦY PHÁP ĐỊNH TỨ ĐẠI CỤC
+  // 5. THIÊN BÀN PHÙNG CHÂM (縫針) & TAM HỢP THỦY PHÁP 12 SONG SƠN ĐỊNH CỤC
   // ===========================================================================
-  const THUY_KHAU_CUC_MAP = {
-    // Thủy Cục (Thân - Tý - Thìn)
-    "Ất": { cuc: "Thủy Cục", tam_hop: "Thân - Tý - Thìn", vi_tri: "Chính Mộ Khố (Dương Thủy Xuất Khẩu)", tinh_chat: "Cát (Đắc vị Mộ Khố)" },
-    "Thìn": { cuc: "Thủy Cục", tam_hop: "Thân - Tý - Thìn", vi_tri: "Chính Mộ Khố (Thìn Khố)", tinh_chat: "Cát (Chính Cục)" },
-    "Tốn": { cuc: "Thủy Cục", tam_hop: "Thân - Tý - Thìn", vi_tri: "Tuyệt vị xuất thủy", tinh_chat: "Cát (Tuyệt xứ hóa sinh)" },
-    "Tỵ": { cuc: "Thủy Cục", tam_hop: "Thân - Tý - Thìn", vi_tri: "Thai vị / Tuyệt vị", tinh_chat: "Thứ Cát" },
+  // Thiên Bàn Phùng Châm lệch +7.5° thuận chiều kim đồng hồ so với Địa Bàn Chính Châm.
+  // 24 Sơn trên Thiên Bàn chia đều 15° mỗi sơn với các mốc tròn 0°, 15°, 30°, ...
+  // Hợp thành 12 cặp Song Sơn (mỗi cặp 30°), phân định Cục tại cung Mộ, Tuyệt, Thai của Tam Hợp Trường Sinh.
+  const THIEN_BAN_24_SON = [
+    { name: "Tý", start: 0.0, end: 15.0, songSon: "Nhâm - Tý" },
+    { name: "Quý", start: 15.0, end: 30.0, songSon: "Quý - Sửu" },
+    { name: "Sửu", start: 30.0, end: 45.0, songSon: "Quý - Sửu" },
+    { name: "Cấn", start: 45.0, end: 60.0, songSon: "Cấn - Dần" },
+    { name: "Dần", start: 60.0, end: 75.0, songSon: "Cấn - Dần" },
+    { name: "Giáp", start: 75.0, end: 90.0, songSon: "Giáp - Mão" },
+    { name: "Mão", start: 90.0, end: 105.0, songSon: "Giáp - Mão" },
+    { name: "Ất", start: 105.0, end: 120.0, songSon: "Ất - Thìn" },
+    { name: "Thìn", start: 120.0, end: 135.0, songSon: "Ất - Thìn" },
+    { name: "Tốn", start: 135.0, end: 150.0, songSon: "Tốn - Tỵ" },
+    { name: "Tỵ", start: 150.0, end: 165.0, songSon: "Tốn - Tỵ" },
+    { name: "Bính", start: 165.0, end: 180.0, songSon: "Bính - Ngọ" },
+    { name: "Ngọ", start: 180.0, end: 195.0, songSon: "Bính - Ngọ" },
+    { name: "Đinh", start: 195.0, end: 210.0, songSon: "Đinh - Mùi" },
+    { name: "Mùi", start: 210.0, end: 225.0, songSon: "Đinh - Mùi" },
+    { name: "Khôn", start: 225.0, end: 240.0, songSon: "Khôn - Thân" },
+    { name: "Thân", start: 240.0, end: 255.0, songSon: "Khôn - Thân" },
+    { name: "Canh", start: 255.0, end: 270.0, songSon: "Canh - Dậu" },
+    { name: "Dậu", start: 270.0, end: 285.0, songSon: "Canh - Dậu" },
+    { name: "Tân", start: 285.0, end: 300.0, songSon: "Tân - Tuất" },
+    { name: "Tuất", start: 300.0, end: 315.0, songSon: "Tân - Tuất" },
+    { name: "Càn", start: 315.0, end: 330.0, songSon: "Càn - Hợi" },
+    { name: "Hợi", start: 330.0, end: 345.0, songSon: "Càn - Hợi" },
+    { name: "Nhâm", start: 345.0, end: 360.0, songSon: "Nhâm - Tý" }
+  ];
 
-    // Hỏa Cục (Dần - Ngọ - Tuất)
-    "Tân": { cuc: "Hỏa Cục", tam_hop: "Dần - Ngọ - Tuất", vi_tri: "Chính Mộ Khố (Dương Thủy Xuất Khẩu)", tinh_chat: "Cát (Đắc vị Mộ Khố)" },
-    "Tuất": { cuc: "Hỏa Cục", tam_hop: "Dần - Ngọ - Tuất", vi_tri: "Chính Mộ Khố (Tuất Khố)", tinh_chat: "Cát (Chính Cục)" },
-    "Càn": { cuc: "Hỏa Cục", tam_hop: "Dần - Ngọ - Tuất", vi_tri: "Tuyệt vị xuất thủy", tinh_chat: "Cát (Tuyệt xứ hóa sinh)" },
-    "Hợi": { cuc: "Hỏa Cục", tam_hop: "Dần - Ngọ - Tuất", vi_tri: "Thai vị / Tuyệt vị", tinh_chat: "Thứ Cát" },
+  function getThienBanSon(deg) {
+    const norm = ((deg % 360) + 360) % 360;
+    for (const s of THIEN_BAN_24_SON) {
+      if (norm >= s.start && norm < s.end) {
+        return {
+          name: s.name,
+          songSon: s.songSon,
+          start: s.start,
+          end: s.end,
+          system: "Thiên Bàn Phùng Châm"
+        };
+      }
+    }
+    return {
+      name: "Tý",
+      songSon: "Nhâm - Tý",
+      start: 0.0,
+      end: 15.0,
+      system: "Thiên Bàn Phùng Châm"
+    };
+  }
 
-    // Kim Cục (Tỵ - Dậu - Sửu)
-    "Quý": { cuc: "Kim Cục", tam_hop: "Tỵ - Dậu - Sửu", vi_tri: "Chính Mộ Khố (Dương Thủy Xuất Khẩu)", tinh_chat: "Cát (Đắc vị Mộ Khố)" },
-    "Sửu": { cuc: "Kim Cục", tam_hop: "Tỵ - Dậu - Sửu", vi_tri: "Chính Mộ Khố (Sửu Khố)", tinh_chat: "Cát (Chính Cục)" },
-    "Cấn": { cuc: "Kim Cục", tam_hop: "Tỵ - Dậu - Sửu", vi_tri: "Tuyệt vị xuất thủy", tinh_chat: "Cát (Tuyệt xứ hóa sinh)" },
-    "Dần": { cuc: "Kim Cục", tam_hop: "Tỵ - Dậu - Sửu", vi_tri: "Thai vị / Tuyệt vị", tinh_chat: "Thứ Cát" },
+  // 12 Song Sơn Tam Hợp Tứ Đại Cục (Định Cục tại Cung Mộ - Tuyệt - Thai theo Thủy Pháp Dương Công)
+  const SONG_SON_CUC_MAP = {
+    // 1. THỦY CỤC: Tam hợp Thân (Sinh) - Tý (Vượng) - Thìn (Mộ)
+    "Ất - Thìn": {
+      cuc: "Thủy Cục",
+      tamHop: "Thân - Tý - Thìn",
+      sinhVuongMo: "Sinh tại Thân • Vượng tại Tý • Mộ tại Thìn",
+      cungVi: "Cung Mộ (Chính Mộ Khố - Thìn Khố)",
+      danhGia: "Đại Cát (Chính Cục Mộ Khố - Nước về kho của, phú quý song toàn)",
+      tinhChat: "Đại Cát"
+    },
+    "Tốn - Tỵ": {
+      cuc: "Thủy Cục",
+      tamHop: "Thân - Tý - Thìn",
+      sinhVuongMo: "Sinh tại Thân • Vượng tại Tý • Mộ tại Thìn",
+      cungVi: "Cung Tuyệt (Tuyệt vị xuất thủy)",
+      danhGia: "Cát (Tuyệt xứ hóa sinh - Sinh cơ hồi chuyển, phát phúc tiêu tai)",
+      tinhChat: "Cát"
+    },
+    "Bính - Ngọ": {
+      cuc: "Thủy Cục",
+      tamHop: "Thân - Tý - Thìn",
+      sinhVuongMo: "Sinh tại Thân • Vượng tại Tý • Mộ tại Thìn",
+      cungVi: "Cung Thai (Bào Thai lưu thủy)",
+      danhGia: "Thứ Cát (Thai vị lưu thủy - Tụ dẫn sinh khí, hợp cách tiểu cát)",
+      tinhChat: "Thứ Cát"
+    },
 
-    // Mộc Cục (Hợi - Mão - Mùi)
-    "Đinh": { cuc: "Mộc Cục", tam_hop: "Hợi - Mão - Mùi", vi_tri: "Chính Mộ Khố (Dương Thủy Xuất Khẩu)", tinh_chat: "Cát (Đắc vị Mộ Khố)" },
-    "Mùi": { cuc: "Mộc Cục", tam_hop: "Hợi - Mão - Mùi", vi_tri: "Chính Mộ Khố (Mùi Khố)", tinh_chat: "Cát (Chính Cục)" },
-    "Khôn": { cuc: "Mộc Cục", tam_hop: "Hợi - Mão - Mùi", vi_tri: "Tuyệt vị xuất thủy", tinh_chat: "Cát (Tuyệt xứ hóa sinh)" },
-    "Thân": { cuc: "Mộc Cục", tam_hop: "Hợi - Mão - Mùi", vi_tri: "Thai vị / Tuyệt vị", tinh_chat: "Thứ Cát" }
+    // 2. HỎA CỤC: Tam hợp Dần (Sinh) - Ngọ (Vượng) - Tuất (Mộ)
+    "Tân - Tuất": {
+      cuc: "Hỏa Cục",
+      tamHop: "Dần - Ngọ - Tuất",
+      sinhVuongMo: "Sinh tại Dần • Vượng tại Ngọ • Mộ tại Tuất",
+      cungVi: "Cung Mộ (Chính Mộ Khố - Tuất Khố)",
+      danhGia: "Đại Cát (Chính Cục Mộ Khố - Văn chương cái thế, công danh hiển đạt)",
+      tinhChat: "Đại Cát"
+    },
+    "Càn - Hợi": {
+      cuc: "Hỏa Cục",
+      tamHop: "Dần - Ngọ - Tuất",
+      sinhVuongMo: "Sinh tại Dần • Vượng tại Ngọ • Mộ tại Tuất",
+      cungVi: "Cung Tuyệt (Tuyệt vị xuất thủy)",
+      danhGia: "Cát (Tuyệt xứ hóa sinh - Hóa giải suy vi, vượng gia cường tộc)",
+      tinhChat: "Cát"
+    },
+    "Nhâm - Tý": {
+      cuc: "Hỏa Cục",
+      tamHop: "Dần - Ngọ - Tuất",
+      sinhVuongMo: "Sinh tại Dần • Vượng tại Ngọ • Mộ tại Tuất",
+      cungVi: "Cung Thai (Bào Thai lưu thủy)",
+      danhGia: "Thứ Cát (Thai vị lưu thủy - Dòng nước sinh cơ, hợp cách tiểu cát)",
+      tinhChat: "Thứ Cát"
+    },
+
+    // 3. KIM CỤC: Tam hợp Tỵ (Sinh) - Dậu (Vượng) - Sửu (Mộ)
+    "Quý - Sửu": {
+      cuc: "Kim Cục",
+      tamHop: "Tỵ - Dậu - Sửu",
+      sinhVuongMo: "Sinh tại Tỵ • Vượng tại Dậu • Mộ tại Sửu",
+      cungVi: "Cung Mộ (Chính Mộ Khố - Sửu Khố)",
+      danhGia: "Đại Cát (Chính Cục Mộ Khố - Tài lộc sung túc, kho tàng dồi dào)",
+      tinhChat: "Đại Cát"
+    },
+    "Cấn - Dần": {
+      cuc: "Kim Cục",
+      tamHop: "Tỵ - Dậu - Sửu",
+      sinhVuongMo: "Sinh tại Tỵ • Vượng tại Dậu • Mộ tại Sửu",
+      cungVi: "Cung Tuyệt (Tuyệt vị xuất thủy)",
+      danhGia: "Cát (Tuyệt xứ hóa sinh - Vượt nạn trùng sinh, tài lộc bền vững)",
+      tinhChat: "Cát"
+    },
+    "Giáp - Mão": {
+      cuc: "Kim Cục",
+      tamHop: "Tỵ - Dậu - Sửu",
+      sinhVuongMo: "Sinh tại Tỵ • Vượng tại Dậu • Mộ tại Sửu",
+      cungVi: "Cung Thai (Bào Thai lưu thủy)",
+      danhGia: "Thứ Cát (Thai vị lưu thủy - Tụ thủy tụ khí, hợp cách tiểu cát)",
+      tinhChat: "Thứ Cát"
+    },
+
+    // 4. MỘC CỤC: Tam hợp Hợi (Sinh) - Mão (Vượng) - Mùi (Mộ)
+    "Đinh - Mùi": {
+      cuc: "Mộc Cục",
+      tamHop: "Hợi - Mão - Mùi",
+      sinhVuongMo: "Sinh tại Hợi • Vượng tại Mão • Mộ tại Mùi",
+      cungVi: "Cung Mộ (Chính Mộ Khố - Mùi Khố)",
+      danhGia: "Đại Cát (Chính Cục Mộ Khố - Phúc thọ an khang, tử tôn thịnh vượng)",
+      tinhChat: "Đại Cát"
+    },
+    "Khôn - Thân": {
+      cuc: "Mộc Cục",
+      tamHop: "Hợi - Mão - Mùi",
+      sinhVuongMo: "Sinh tại Hợi • Vượng tại Mão • Mộ tại Mùi",
+      cungVi: "Cung Tuyệt (Tuyệt vị xuất thủy)",
+      danhGia: "Cát (Tuyệt xứ hóa sinh - Chuyển hung hóa cát, tiền đồ xán lạn)",
+      tinhChat: "Cát"
+    },
+    "Canh - Dậu": {
+      cuc: "Mộc Cục",
+      tamHop: "Hợi - Mão - Mùi",
+      sinhVuongMo: "Sinh tại Hợi • Vượng tại Mão • Mộ tại Mùi",
+      cungVi: "Cung Thai (Bào Thai lưu thủy)",
+      danhGia: "Thứ Cát (Thai vị lưu thủy - Tinh hoa hòa tụ, hợp cách tiểu cát)",
+      tinhChat: "Thứ Cát"
+    }
   };
 
-  const PHAN_CU_TRUNG_GIAN = {
-    "Tý": { cuc: "Thủy Cục", vi_tri: "Xung phá Đế Vượng (Hung - Tránh dòng nước thoát)", tinh_chat: "Hung" },
-    "Ngọ": { cuc: "Hỏa Cục", vi_tri: "Xung phá Đế Vượng (Hung - Tránh dòng nước thoát)", tinh_chat: "Hung" },
-    "Mão": { cuc: "Mộc Cục", vi_tri: "Xung phá Đế Vượng (Hung - Tránh dòng nước thoát)", tinh_chat: "Hung" },
-    "Dậu": { cuc: "Kim Cục", vi_tri: "Xung phá Đế Vượng (Hung - Tránh dòng nước thoát)", tinh_chat: "Hung" },
-    "Giáp": { cuc: "Mộc Cục", vi_tri: "Bào Thai lưu thủy / Thiên Can thứ vị", tinh_chat: "Thứ Cát" },
-    "Bính": { cuc: "Hỏa Cục", vi_tri: "Bào Thai lưu thủy / Thiên Can thứ vị", tinh_chat: "Thứ Cát" },
-    "Canh": { cuc: "Kim Cục", vi_tri: "Bào Thai lưu thủy / Thiên Can thứ vị", tinh_chat: "Thứ Cát" },
-    "Nhâm": { cuc: "Thủy Cục", vi_tri: "Bào Thai lưu thủy / Thiên Can thứ vị", tinh_chat: "Thứ Cát" }
-  };
-
-  function analyzeThuyKhauDinhCuc(sonName, bearingDeg, lat, lng, elevM, deltaElev) {
+  function analyzeThuyKhauDinhCuc(thienBanArg, bearingDeg, lat, lng, elevM, deltaElev) {
     const mapsUrl = `https://www.google.com/maps?q=${lat.toFixed(7)},${lng.toFixed(7)}`;
-    const cucInfo = THUY_KHAU_CUC_MAP[sonName];
-
-    let cuc = '';
-    let tamHop = '';
-    let viTri = '';
-    let danhGia = '';
-
-    if (cucInfo) {
-      cuc = cucInfo.cuc;
-      tamHop = cucInfo.tam_hop;
-      viTri = cucInfo.vi_tri;
-      danhGia = cucInfo.tinh_chat;
+    let thienBanInfo;
+    if (typeof thienBanArg === 'object' && thienBanArg !== null && thienBanArg.songSon) {
+      thienBanInfo = thienBanArg;
+    } else if (typeof bearingDeg === 'number') {
+      thienBanInfo = getThienBanSon(bearingDeg);
+    } else if (typeof thienBanArg === 'string') {
+      const match = THIEN_BAN_24_SON.find(s => s.name === thienBanArg);
+      thienBanInfo = match ? { name: match.name, songSon: match.songSon, start: match.start, end: match.end, system: "Thiên Bàn Phùng Châm" } : getThienBanSon(0);
     } else {
-      const tg = PHAN_CU_TRUNG_GIAN[sonName] || { cuc: 'Chưa định cục', vi_tri: 'Thứ vị liên cung', tinh_chat: 'Bình' };
-      cuc = tg.cuc;
-      tamHop = 'Biến cục liên cung';
-      viTri = tg.vi_tri;
-      danhGia = tg.tinh_chat;
+      thienBanInfo = getThienBanSon(0);
     }
 
+    const songSon = thienBanInfo.songSon;
+    const info = SONG_SON_CUC_MAP[songSon] || {
+      cuc: "Chưa định cục",
+      tamHop: "Liên cung",
+      sinhVuongMo: "Chưa xác định",
+      cungVi: "Thứ vị liên cung",
+      danhGia: "Bình",
+      tinhChat: "Bình"
+    };
+
     return {
-      son: sonName,
+      son: thienBanInfo.name,
+      songSon: songSon,
       bearing: Math.round(bearingDeg * 10) / 10,
       elevation: Math.round(elevM * 10) / 10,
       deltaElev: Math.round(deltaElev * 10) / 10,
-      cuc: cuc,
-      tamHop: tamHop,
-      viTriTruongSinh: viTri,
-      danhGia: danhGia,
+      cuc: info.cuc,
+      tamHop: info.tamHop,
+      sinhVuongMo: info.sinhVuongMo,
+      viTriTruongSinh: info.cungVi,
+      danhGia: info.danhGia,
+      tinhChat: info.tinhChat,
+      system: "Thiên Bàn Phùng Châm",
       googleMapsUrl: mapsUrl,
       coordsFormatted: `${lat.toFixed(6)}, ${lng.toFixed(6)}`
     };
@@ -462,6 +596,7 @@
     calculateMagneticDeclination,
     convertMagneticToTrue,
     getSonInfo,
+    getThienBanSon,
     getDestinationPoint,
     fetchElevations,
     analyzeMinhDuongCuc,
@@ -470,6 +605,8 @@
     calculatePolygonCentroid,
     generateKML,
     SON_24_TABLE,
+    THIEN_BAN_24_SON,
+    SONG_SON_CUC_MAP,
     MINH_DUONG_CONFIG
   };
 
