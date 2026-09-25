@@ -87,10 +87,16 @@
       subtitle: '36 Tầng Định Vị Toạ Độ WMM',
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
+    },
+    phaphanh: {
+      name: 'PHÁP HÀNH',
+      subtitle: 'Nadrasa Dehi • 41 Bài Học & Cõi Phủ',
+      logo: 'assets/phap_hanh/phu_01.jpg',
+      isCardDeck: false
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'tarot', 'lakinh'];
+  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'tarot', 'lakinh', 'phaphanh'];
 
   // DOM Elements
   const tabModeNeta = document.getElementById('tab-mode-neta');
@@ -168,6 +174,9 @@
     resetDeck();
     bindEvents();
     renderGuideList();
+    if (window.PhapHanhModule) {
+      window.PhapHanhModule.init();
+    }
     registerServiceWorker();
     preloadAllCardImages();
   }
@@ -233,6 +242,7 @@
     const viewCalendar = document.getElementById('view-calendar');
     const viewTarot = document.getElementById('view-tarot');
     const viewLaKinh = document.getElementById('view-lakinh');
+    const viewPhapHanh = document.getElementById('view-phaphanh');
 
     const viewsMap = {
       neta: viewCards,
@@ -242,7 +252,8 @@
       tuvi: viewTuvi,
       calendar: viewCalendar,
       tarot: viewTarot,
-      lakinh: viewLaKinh
+      lakinh: viewLaKinh,
+      phaphanh: viewPhapHanh
     };
 
     // Hide all views first, then show active
@@ -293,6 +304,9 @@
     } else if (mode === 'lakinh') {
       const render = () => { if (window.NetaLaKinhView) window.NetaLaKinhView.render(); };
       render(); setTimeout(render, 150); setTimeout(render, 350);
+    } else if (mode === 'phaphanh') {
+      const render = () => { if (window.PhapHanhModule) window.PhapHanhModule.renderLessons(); };
+      render(); setTimeout(render, 150);
     }
 
     playBellChime();

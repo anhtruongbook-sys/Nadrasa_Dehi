@@ -1,0 +1,713 @@
+/**
+ * MODULE PHÁP HÀNH NADRASA DEHI
+ * Quản lý kho bài học, 18 Nơi Tại Phủ và tính năng thêm bài học/ảnh động (IndexedDB)
+ */
+
+const PhapHanhModule = (function() {
+  const DB_NAME = 'NetaPhapHanhDB';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'custom_lessons';
+
+  let db = null;
+  let customLessons = [];
+  let currentFilter = 'all';
+  let currentSearchQuery = '';
+  let activeViewerIndex = 0;
+  let currentFilteredList = [];
+
+  // Viewer Zoom & Pan state
+  let viewerScale = 1;
+  let viewerTranslateX = 0;
+  let viewerTranslateY = 0;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let initialPinchDistance = null;
+
+  // 1. Khởi tạo IndexedDB
+  function initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = function(e) {
+        const database = e.target.result;
+        if (!database.objectStoreNames.contains(STORE_NAME)) {
+          database.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = function(e) {
+        db = e.target.result;
+        loadCustomLessons().then(resolve);
+      };
+      request.onerror = function(e) {
+        console.error('Lỗi khởi tạo IndexedDB:', e);
+        resolve(); // Vẫn tiếp tục nếu lỗi DB
+      };
+    });
+  }
+
+  // 2. Tải danh sách bài học tự thêm
+  function loadCustomLessons() {
+    return new Promise((resolve) => {
+      if (!db) {
+        customLessons = [];
+        return resolve([]);
+      }
+      try {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        req.onsuccess = function() {
+          customLessons = req.result || [];
+          resolve(customLessons);
+        };
+        req.onerror = function() {
+          customLessons = [];
+          resolve([]);
+        };
+      } catch (err) {
+        console.error('Lỗi đọc custom lessons:', err);
+        customLessons = [];
+        resolve([]);
+      }
+    });
+  }
+
+  // 3. Lưu bài học mới hoặc cập nhật bài học tự thêm
+  function saveCustomLesson(lesson) {
+    return new Promise((resolve, reject) => {
+      if (!db) return reject(new Error('Chưa mở CSDL'));
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put(lesson);
+      req.onsuccess = function() {
+        loadCustomLessons().then(() => {
+          renderLessons();
+          resolve(lesson);
+        });
+      };
+      req.onerror = function(err) {
+        reject(err);
+      };
+    });
+  }
+
+  // 4. Xóa bài học tự thêm
+  function deleteCustomLesson(id) {
+    return new Promise((resolve, reject) => {
+      if (!db) return reject(new Error('Chưa mở CSDL'));
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.delete(id);
+      req.onsuccess = function() {
+        loadCustomLessons().then(() => {
+          renderLessons();
+          resolve();
+        });
+      };
+      req.onerror = function(err) {
+        reject(err);
+      };
+    });
+  }
+
+  // 5. Lấy danh sách hợp nhất (Builtin + Custom)
+  function getAllLessons() {
+    const builtins = (typeof PHAP_HANH_BUILTIN_LESSONS !== 'undefined') ? PHAP_HANH_BUILTIN_LESSONS : [];
+    // Custom lessons xếp lên đầu để người dùng dễ theo dõi bài mới
+    return [...customLessons, ...builtins];
+  }
+
+  // 6. Render giao diện bộ lọc danh mục
+  function renderCategoryChips() {
+    const container = document.getElementById('ph-category-chips');
+    if (!container) return;
+
+    const categories = (typeof PHAP_HANH_CATEGORIES !== 'undefined') ? PHAP_HANH_CATEGORIES : [
+      { id: 'all', name: 'Tất cả' }
+    ];
+
+    container.innerHTML = categories.map(cat => {
+      const activeClass = (cat.id === currentFilter) ? 'active' : '';
+      return `<button class="ph-chip-btn ${activeClass}" data-cat="${cat.id}">${cat.name}</button>`;
+    }).join('');
+
+    container.querySelectorAll('.ph-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.cat;
+        container.querySelectorAll('.ph-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderLessons();
+      });
+    });
+  }
+
+  // 7. Lọc và hiển thị danh sách bài học
+  function renderLessons() {
+    const grid = document.getElementById('ph-lessons-grid');
+    const emptyState = document.getElementById('ph-empty-state');
+    const countBadge = document.getElementById('ph-lessons-count');
+    if (!grid) return;
+
+    const all = getAllLessons();
+    const query = currentSearchQuery.trim().toLowerCase();
+
+    currentFilteredList = all.filter(item => {
+      // Lọc danh mục
+      if (currentFilter !== 'all') {
+        if (currentFilter === 'custom') {
+          if (!item.isCustom) return false;
+        } else if (item.category !== currentFilter) {
+          return false;
+        }
+      }
+      // Lọc từ khóa tìm kiếm
+      if (query) {
+        const titleMatch = item.title && item.title.toLowerCase().includes(query);
+        const catMatch = item.categoryName && item.categoryName.toLowerCase().includes(query);
+        const notesMatch = item.notes && item.notes.toLowerCase().includes(query);
+        if (!titleMatch && !catMatch && !notesMatch) return false;
+      }
+      return true;
+    });
+
+    if (countBadge) {
+      countBadge.textContent = `${currentFilteredList.length} bài học`;
+    }
+
+    if (currentFilteredList.length === 0) {
+      grid.style.display = 'none';
+      if (emptyState) emptyState.style.display = 'flex';
+      return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+    grid.style.display = 'grid';
+
+    grid.innerHTML = currentFilteredList.map((item, idx) => {
+      const isCustom = !!item.isCustom;
+      const displayImg = isCustom ? (item.images && item.images[0] ? item.images[0] : item.image) : item.image;
+      const multipleBadge = (isCustom && item.images && item.images.length > 1) 
+        ? `<span class="ph-multiple-badge">📷 ${item.images.length} ảnh</span>` 
+        : '';
+
+      return `
+        <div class="ph-card" data-index="${idx}">
+          <div class="ph-card-thumb-wrap">
+            <img src="${displayImg}" alt="${item.title}" class="ph-card-img" loading="lazy" />
+            <span class="ph-category-badge ${isCustom ? 'badge-custom' : ''}">${item.categoryName || 'Bài học'}</span>
+            ${multipleBadge}
+          </div>
+          <div class="ph-card-content">
+            <h3 class="ph-card-title">${item.title}</h3>
+            ${item.notes ? `<p class="ph-card-notes">${escapeHtml(item.notes)}</p>` : ''}
+          </div>
+          ${isCustom ? `
+            <div class="ph-card-actions" onclick="event.stopPropagation()">
+              <button class="ph-btn-card-del" data-id="${item.id}" title="Xóa bài học">🗑️</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    // Bắt sự kiện click vào card để mở Fullscreen Viewer
+    grid.querySelectorAll('.ph-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const idx = parseInt(card.dataset.index, 10);
+        openViewer(idx);
+      });
+    });
+
+    // Bắt sự kiện xóa bài học tự thêm
+    grid.querySelectorAll('.ph-btn-card-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (confirm('Bạn có chắc chắn muốn xóa bài học này khỏi ứng dụng không?')) {
+          deleteCustomLesson(id).then(() => {
+            showToast('Đã xóa bài học thành công');
+          });
+        }
+      });
+    });
+  }
+
+  // 8. Trình xem ảnh toàn màn hình HD (Viewer Lightbox)
+  function openViewer(index) {
+    if (!currentFilteredList || currentFilteredList.length === 0) return;
+    if (index < 0) index = 0;
+    if (index >= currentFilteredList.length) index = currentFilteredList.length - 1;
+
+    activeViewerIndex = index;
+    const item = currentFilteredList[activeViewerIndex];
+    const modal = document.getElementById('ph-viewer-modal');
+    if (!modal) return;
+
+    resetZoom();
+    updateViewerContent(item);
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function updateViewerContent(item) {
+    const titleEl = document.getElementById('ph-viewer-title');
+    const catEl = document.getElementById('ph-viewer-cat');
+    const counterEl = document.getElementById('ph-viewer-counter');
+    const imgEl = document.getElementById('ph-viewer-img');
+    const notesEl = document.getElementById('ph-viewer-notes');
+
+    const displayImg = item.isCustom ? (item.images && item.images[0] ? item.images[0] : item.image) : item.image;
+
+    if (titleEl) titleEl.textContent = item.title;
+    if (catEl) catEl.textContent = item.categoryName || '';
+    if (counterEl) counterEl.textContent = `${activeViewerIndex + 1} / ${currentFilteredList.length}`;
+    if (imgEl) {
+      imgEl.src = displayImg;
+      imgEl.alt = item.title;
+    }
+    if (notesEl) {
+      if (item.notes) {
+        notesEl.textContent = item.notes;
+        notesEl.style.display = 'block';
+      } else {
+        notesEl.style.display = 'none';
+      }
+    }
+  }
+
+  function closeViewer() {
+    const modal = document.getElementById('ph-viewer-modal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    resetZoom();
+  }
+
+  function prevViewer() {
+    if (activeViewerIndex > 0) {
+      resetZoom();
+      activeViewerIndex--;
+      updateViewerContent(currentFilteredList[activeViewerIndex]);
+    }
+  }
+
+  function nextViewer() {
+    if (activeViewerIndex < currentFilteredList.length - 1) {
+      resetZoom();
+      activeViewerIndex++;
+      updateViewerContent(currentFilteredList[activeViewerIndex]);
+    }
+  }
+
+  function resetZoom() {
+    viewerScale = 1;
+    viewerTranslateX = 0;
+    viewerTranslateY = 0;
+    applyViewerTransform();
+  }
+
+  function zoomIn() {
+    viewerScale = Math.min(viewerScale + 0.3, 4.0);
+    applyViewerTransform();
+  }
+
+  function zoomOut() {
+    viewerScale = Math.max(viewerScale - 0.3, 0.8);
+    if (viewerScale <= 1) {
+      viewerTranslateX = 0;
+      viewerTranslateY = 0;
+    }
+    applyViewerTransform();
+  }
+
+  function applyViewerTransform() {
+    const img = document.getElementById('ph-viewer-img');
+    if (img) {
+      img.style.transform = `translate(${viewerTranslateX}px, ${viewerTranslateY}px) scale(${viewerScale})`;
+      img.style.cursor = (viewerScale > 1) ? 'grab' : 'zoom-in';
+    }
+  }
+
+  // 9. Modal Thêm bài học mới
+  let selectedImagesBase64 = [];
+
+  function openAddModal() {
+    const modal = document.getElementById('ph-add-modal');
+    if (!modal) return;
+
+    selectedImagesBase64 = [];
+    document.getElementById('ph-input-title').value = '';
+    document.getElementById('ph-input-notes').value = '';
+    document.getElementById('ph-input-file').value = '';
+    document.getElementById('ph-selected-cat').value = 'thu_phap';
+    document.getElementById('ph-input-custom-cat').value = '';
+    document.getElementById('ph-custom-cat-wrap').style.display = 'none';
+    renderImagePreviews();
+
+    modal.classList.add('active');
+  }
+
+  function closeAddModal() {
+    const modal = document.getElementById('ph-add-modal');
+    if (modal) modal.classList.remove('active');
+    selectedImagesBase64 = [];
+  }
+
+  function renderImagePreviews() {
+    const previewContainer = document.getElementById('ph-image-previews');
+    if (!previewContainer) return;
+
+    if (selectedImagesBase64.length === 0) {
+      previewContainer.innerHTML = '<span class="ph-no-image-text">Chưa chọn ảnh nào</span>';
+      return;
+    }
+
+    previewContainer.innerHTML = selectedImagesBase64.map((src, idx) => `
+      <div class="ph-preview-thumb-wrap">
+        <img src="${src}" alt="Ảnh xem trước ${idx+1}" class="ph-preview-thumb" />
+        <button type="button" class="ph-btn-del-thumb" data-index="${idx}">×</button>
+      </div>
+    `).join('');
+
+    previewContainer.querySelectorAll('.ph-btn-del-thumb').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.index, 10);
+        selectedImagesBase64.splice(idx, 1);
+        renderImagePreviews();
+      });
+    });
+  }
+
+  // Xử lý nạp ảnh từ File Input
+  function handleFilesSelected(files) {
+    if (!files || files.length === 0) return;
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        selectedImagesBase64.push(e.target.result);
+        renderImagePreviews();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function saveNewLesson() {
+    const titleInput = document.getElementById('ph-input-title');
+    const notesInput = document.getElementById('ph-input-notes');
+    const catSelect = document.getElementById('ph-selected-cat');
+    const customCatInput = document.getElementById('ph-input-custom-cat');
+
+    const title = titleInput.value.trim();
+    if (!title) {
+      alert('Vui lòng nhập tên bài học');
+      titleInput.focus();
+      return;
+    }
+
+    if (selectedImagesBase64.length === 0) {
+      alert('Vui lòng chọn ít nhất 1 ảnh cho bài học');
+      return;
+    }
+
+    let category = catSelect.value;
+    let categoryName = catSelect.options[catSelect.selectedIndex].text;
+
+    if (category === 'other') {
+      const customName = customCatInput.value.trim();
+      category = 'custom_' + Date.now();
+      categoryName = customName || 'Khác';
+    }
+
+    const newLesson = {
+      id: 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+      title: title,
+      category: category,
+      categoryName: categoryName,
+      images: selectedImagesBase64,
+      image: selectedImagesBase64[0],
+      notes: notesInput.value.trim(),
+      createdAt: new Date().toISOString(),
+      isCustom: true
+    };
+
+    saveCustomLesson(newLesson).then(() => {
+      closeAddModal();
+      showToast('Đã lưu bài học mới thành công!');
+    }).catch(err => {
+      console.error(err);
+      alert('Lỗi lưu bài học: ' + err.message);
+    });
+  }
+
+  // 10. Sao lưu & Phục hồi dữ liệu cá nhân (Backup & Restore)
+  function exportBackup() {
+    if (customLessons.length === 0) {
+      alert('Bạn chưa có bài học tự thêm nào để sao lưu.');
+      return;
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customLessons, null, 2));
+    const dlAnchor = document.createElement('a');
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", `phap_hanh_backup_${dateStr}.json`);
+    document.body.appendChild(dlAnchor);
+    dlAnchor.click();
+    dlAnchor.remove();
+    showToast('Đã xuất file sao lưu bài học');
+  }
+
+  function importBackup(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) {
+          alert('Tệp sao lưu không hợp lệ.');
+          return;
+        }
+        let count = 0;
+        const promises = imported.map(item => {
+          if (item && item.id && item.title) {
+            count++;
+            return saveCustomLesson(item);
+          }
+          return Promise.resolve();
+        });
+
+        Promise.all(promises).then(() => {
+          showToast(`Đã phục hồi thành công ${count} bài học!`);
+        });
+      } catch (err) {
+        alert('Lỗi giải mã tệp JSON: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // Tiện ích hiển thị Toast
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+  }
+
+  // 11. Khởi tạo toàn bộ sự kiện của Module
+  function init() {
+    initDB().then(() => {
+      renderCategoryChips();
+      renderLessons();
+    });
+
+    // Ô tìm kiếm
+    const searchInput = document.getElementById('ph-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentSearchQuery = e.target.value;
+        renderLessons();
+      });
+    }
+
+    // Nút mở modal thêm bài học
+    const btnAdd = document.getElementById('btn-ph-add-lesson');
+    if (btnAdd) btnAdd.addEventListener('click', openAddModal);
+
+    const btnCloseAdd = document.getElementById('ph-modal-close-add');
+    if (btnCloseAdd) btnCloseAdd.addEventListener('click', closeAddModal);
+
+    const btnCancelAdd = document.getElementById('ph-modal-cancel-add');
+    if (btnCancelAdd) btnCancelAdd.addEventListener('click', closeAddModal);
+
+    const btnSaveAdd = document.getElementById('ph-modal-save-add');
+    if (btnSaveAdd) btnSaveAdd.addEventListener('click', saveNewLesson);
+
+    // Xử lý chọn danh mục có thêm tùy chọn "Khác"
+    const catSelect = document.getElementById('ph-selected-cat');
+    const customCatWrap = document.getElementById('ph-custom-cat-wrap');
+    if (catSelect && customCatWrap) {
+      catSelect.addEventListener('change', () => {
+        customCatWrap.style.display = (catSelect.value === 'other') ? 'block' : 'none';
+      });
+    }
+
+    // Chọn ảnh
+    const fileInput = document.getElementById('ph-input-file');
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        handleFilesSelected(e.target.files);
+      });
+    }
+
+    // Drag and drop ảnh
+    const dropZone = document.getElementById('ph-drop-zone');
+    if (dropZone) {
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      });
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+      });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        handleFilesSelected(e.dataTransfer.files);
+      });
+    }
+
+    // Nút sao lưu & phục hồi
+    const btnExport = document.getElementById('btn-ph-export');
+    if (btnExport) btnExport.addEventListener('click', exportBackup);
+
+    const btnImport = document.getElementById('btn-ph-import');
+    const importFileInput = document.getElementById('ph-input-import-file');
+    if (btnImport && importFileInput) {
+      btnImport.addEventListener('click', () => importFileInput.click());
+      importFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          importBackup(e.target.files[0]);
+          e.target.value = '';
+        }
+      });
+    }
+
+    // Sự kiện trong Fullscreen Viewer
+    const btnViewerClose = document.getElementById('ph-viewer-close');
+    if (btnViewerClose) btnViewerClose.addEventListener('click', closeViewer);
+
+    const btnViewerPrev = document.getElementById('ph-viewer-prev');
+    if (btnViewerPrev) btnViewerPrev.addEventListener('click', prevViewer);
+
+    const btnViewerNext = document.getElementById('ph-viewer-next');
+    if (btnViewerNext) btnViewerNext.addEventListener('click', nextViewer);
+
+    const btnZoomIn = document.getElementById('ph-viewer-zoom-in');
+    if (btnZoomIn) btnZoomIn.addEventListener('click', zoomIn);
+
+    const btnZoomOut = document.getElementById('ph-viewer-zoom-out');
+    if (btnZoomOut) btnZoomOut.addEventListener('click', zoomOut);
+
+    const btnZoomReset = document.getElementById('ph-viewer-zoom-reset');
+    if (btnZoomReset) btnZoomReset.addEventListener('click', resetZoom);
+
+    // Kéo thả ảnh khi đã phóng to
+    const viewerStage = document.getElementById('ph-viewer-stage');
+    if (viewerStage) {
+      viewerStage.addEventListener('mousedown', (e) => {
+        if (viewerScale <= 1) return;
+        isDragging = true;
+        dragStartX = e.clientX - viewerTranslateX;
+        dragStartY = e.clientY - viewerTranslateY;
+        const img = document.getElementById('ph-viewer-img');
+        if (img) img.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        viewerTranslateX = e.clientX - dragStartX;
+        viewerTranslateY = e.clientY - dragStartY;
+        applyViewerTransform();
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          const img = document.getElementById('ph-viewer-img');
+          if (img) img.style.cursor = (viewerScale > 1) ? 'grab' : 'zoom-in';
+        }
+      });
+
+      // Lăn chuột phóng to/thu nhỏ
+      viewerStage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (e.deltaY < 0) {
+          zoomIn();
+        } else {
+          zoomOut();
+        }
+      }, { passive: false });
+
+      // Double click phóng to / trở lại
+      viewerStage.addEventListener('dblclick', () => {
+        if (viewerScale > 1) {
+          resetZoom();
+        } else {
+          viewerScale = 2.0;
+          applyViewerTransform();
+        }
+      });
+
+      // Hỗ trợ Touch trên thiết bị di động (Pinch-to-zoom & Drag)
+      viewerStage.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+          initialPinchDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+        } else if (e.touches.length === 1 && viewerScale > 1) {
+          isDragging = true;
+          dragStartX = e.touches[0].clientX - viewerTranslateX;
+          dragStartY = e.touches[0].clientY - viewerTranslateY;
+        }
+      });
+
+      viewerStage.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && initialPinchDistance) {
+          const currentDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          const ratio = currentDistance / initialPinchDistance;
+          viewerScale = Math.min(Math.max(viewerScale * ratio, 0.8), 4.0);
+          initialPinchDistance = currentDistance;
+          applyViewerTransform();
+        } else if (e.touches.length === 1 && isDragging) {
+          viewerTranslateX = e.touches[0].clientX - dragStartX;
+          viewerTranslateY = e.touches[0].clientY - dragStartY;
+          applyViewerTransform();
+        }
+      });
+
+      viewerStage.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) initialPinchDistance = null;
+        if (e.touches.length === 0) isDragging = false;
+      });
+    }
+
+    // Điều hướng bàn phím (Mũi tên trái/phải/Escape)
+    window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('ph-viewer-modal');
+      if (modal && modal.classList.contains('active')) {
+        if (e.key === 'Escape') closeViewer();
+        if (e.key === 'ArrowLeft') prevViewer();
+        if (e.key === 'ArrowRight') nextViewer();
+      }
+    });
+  }
+
+  return {
+    init: init,
+    openViewer: openViewer,
+    renderLessons: renderLessons,
+    getAllLessons: getAllLessons
+  };
+})();
+
+if (typeof window !== 'undefined') {
+  window.PhapHanhModule = PhapHanhModule;
+}
+

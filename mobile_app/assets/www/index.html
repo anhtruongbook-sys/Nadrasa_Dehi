@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="assets/leaflet/leaflet.css">
   <link rel="stylesheet" href="assets/lakinh/lakinh.css?v=7.6">
   <link rel="stylesheet" href="styles.css?v=7.6">
+  <link rel="stylesheet" href="phap_hanh.css?v=1.0">
 </head>
 <body>
   <div id="app-container">
@@ -94,6 +95,14 @@
           <span class="dropdown-icon">🧭</span>
           <span class="dropdown-name">La Kinh Vệ Tinh (36 Tầng)</span>
           <span class="dropdown-check" id="check-mode-lakinh" style="opacity: 0;">✓</span>
+        </div>
+
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-section-title">PHÁP MÔN NADRASA DEHI</div>
+        <div class="deck-dropdown-item" id="tab-mode-phaphanh" data-mode="phaphanh">
+          <span class="dropdown-icon">🪷</span>
+          <span class="dropdown-name">Pháp Hành Nadrasa Dehi</span>
+          <span class="dropdown-check" id="check-mode-phaphanh" style="opacity: 0;">✓</span>
         </div>
       </div>
 
@@ -245,6 +254,37 @@
     <div id="view-lakinh" class="app-module-view" style="display: none;">
       <!-- Dynamically rendered by modules/lakinh_view.js -->
     </div>
+
+    <!-- View Module: Pháp Hành Nadrasa Dehi -->
+    <div id="view-phaphanh" class="app-module-view" style="display: none;">
+      <div class="ph-toolbar">
+        <div class="ph-toolbar-top">
+          <div class="ph-search-wrap">
+            <span class="ph-search-icon">🔍</span>
+            <input type="text" id="ph-search-input" class="ph-search-input" placeholder="Tìm kiếm bài học, thủ pháp, ấn chú, cõi phủ..." />
+          </div>
+          <div class="ph-toolbar-actions">
+            <button id="btn-ph-add-lesson" class="ph-btn-primary" title="Thêm bài học mới">+ Thêm Bài Học</button>
+            <button id="btn-ph-export" class="ph-btn-secondary" title="Sao lưu bài học cá nhân">📥 Sao Lưu</button>
+            <button id="btn-ph-import" class="ph-btn-secondary" title="Phục hồi bài học từ tệp">📤 Phục Hồi</button>
+            <input type="file" id="ph-input-import-file" accept=".json" style="display: none;" />
+          </div>
+        </div>
+        <div class="ph-chips-wrapper" id="ph-category-chips"></div>
+        <div class="ph-status-info">
+          <span id="ph-lessons-count">0 bài học</span>
+          <span>✨ Chạm vào bài học để xem chi tiết và phóng to</span>
+        </div>
+      </div>
+
+      <div class="ph-lessons-grid" id="ph-lessons-grid"></div>
+
+      <div class="ph-empty-state" id="ph-empty-state" style="display: none;">
+        <span class="ph-empty-icon">📭</span>
+        <h3>Không tìm thấy bài học phù hợp</h3>
+        <p>Thử tìm kiếm với từ khóa khác hoặc chuyển sang danh mục "Tất cả".</p>
+      </div>
+    </div>
   </div>
 
   <!-- Spiritual Reading Modal (Luận giải Tâm Linh Tụ & Bộ) -->
@@ -297,6 +337,80 @@
     </div>
   </div>
 
+  <!-- Modal Thêm Bài Học Mới -->
+  <div class="ph-modal-overlay" id="ph-add-modal">
+    <div class="ph-modal-box">
+      <div class="ph-modal-header">
+        <h3>+ Thêm Bài Học Pháp Hành Mới</h3>
+        <button class="ph-modal-close-btn" id="ph-modal-close-add">&times;</button>
+      </div>
+      <div class="ph-modal-body">
+        <div class="ph-form-group">
+          <label>Tên bài học / Pháp thực hành *</label>
+          <input type="text" id="ph-input-title" class="ph-form-input" placeholder="Ví dụ: [Thủ Pháp] Khai quang điểm nhãn..." />
+        </div>
+        <div class="ph-form-group">
+          <label>Chuyên đề / Danh mục *</label>
+          <select id="ph-selected-cat" class="ph-form-select">
+            <option value="thu_phap">Thủ Pháp Hành Trì</option>
+            <option value="tam_an">Tâm Ấn</option>
+            <option value="tran_phap">Trấn Pháp</option>
+            <option value="do_vong">Độ Vong</option>
+            <option value="phap_bao_khi">Pháp Bảo & Pháp Khí</option>
+            <option value="linh_phu_so">Linh Phù & Sớ Văn</option>
+            <option value="bi_phap_thien">Bí Pháp & Thiền Định</option>
+            <option value="18_phu">18 Nơi Tại Phủ</option>
+            <option value="other">-- Danh mục khác (Tự nhập) --</option>
+          </select>
+        </div>
+        <div class="ph-form-group" id="ph-custom-cat-wrap" style="display: none;">
+          <label>Nhập tên danh mục mới</label>
+          <input type="text" id="ph-input-custom-cat" class="ph-form-input" placeholder="Ví dụ: Nghi Lễ Cúng Tế, Bát Trạch..." />
+        </div>
+        <div class="ph-form-group">
+          <label>Tải ảnh bài học * (Có thể chọn nhiều ảnh hoặc chụp từ camera)</label>
+          <div class="ph-drop-zone" id="ph-drop-zone" onclick="document.getElementById('ph-input-file').click();">
+            <div class="ph-drop-icon">📷</div>
+            <div class="ph-drop-text">Chạm để chọn ảnh hoặc kéo thả ảnh vào đây</div>
+          </div>
+          <input type="file" id="ph-input-file" accept="image/*" multiple style="display: none;" />
+          <div class="ph-image-previews" id="ph-image-previews"></div>
+        </div>
+        <div class="ph-form-group">
+          <label>Ghi chú / Thần chú / Ý nghĩa thêm (Tùy chọn)</label>
+          <textarea id="ph-input-notes" class="ph-form-textarea" rows="3" placeholder="Nhập ghi chú, câu chú hoặc lưu ý khi hành trì..."></textarea>
+        </div>
+      </div>
+      <div class="ph-modal-footer">
+        <button class="ph-btn-secondary" id="ph-modal-cancel-add">Hủy</button>
+        <button class="ph-btn-primary" id="ph-modal-save-add">💾 Lưu Bài Học</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen HD Viewer Modal -->
+  <div class="ph-viewer-modal" id="ph-viewer-modal">
+    <div class="ph-viewer-header">
+      <div class="ph-viewer-header-info">
+        <span class="ph-viewer-cat-badge" id="ph-viewer-cat">Tâm Ấn</span>
+        <h3 class="ph-viewer-title" id="ph-viewer-title">Tên Bài Học</h3>
+        <span class="ph-viewer-counter" id="ph-viewer-counter">1 / 41</span>
+      </div>
+      <div class="ph-viewer-controls">
+        <button class="ph-btn-viewer-ctrl" id="ph-viewer-zoom-out" title="Thu nhỏ (-)">−</button>
+        <button class="ph-btn-viewer-ctrl" id="ph-viewer-zoom-reset" title="Tỷ lệ chuẩn (100%)">100%</button>
+        <button class="ph-btn-viewer-ctrl" id="ph-viewer-zoom-in" title="Phóng to (+)">+</button>
+        <button class="ph-btn-viewer-close" id="ph-viewer-close" title="Đóng">&times;</button>
+      </div>
+    </div>
+    <div class="ph-viewer-stage" id="ph-viewer-stage">
+      <button class="ph-viewer-nav-btn prev" id="ph-viewer-prev" title="Bài trước">&lsaquo;</button>
+      <img src="" alt="" class="ph-viewer-img" id="ph-viewer-img" draggable="false" />
+      <button class="ph-viewer-nav-btn next" id="ph-viewer-next" title="Bài tiếp theo">&rsaquo;</button>
+    </div>
+    <div class="ph-viewer-notes" id="ph-viewer-notes" style="display: none;"></div>
+  </div>
+
   <!-- Toast Notification -->
   <div class="toast-notification" id="toast"></div>
 
@@ -308,6 +422,8 @@
   <script src="lakinh_base64_data.js?v=7.6"></script>
   <script src="cards_data.js?v=7.6"></script>
   <script src="poker_data.js?v=7.5"></script>
+  <script src="modules/phap_hanh_data.js?v=1.0"></script>
+  <script src="modules/phap_hanh_view.js?v=1.0"></script>
   <script src="engines/calendar_engine.js?v=7.5"></script>
   <script src="engines/smart_picker.js?v=7.5"></script>
   <script src="modules/calendar_view.js?v=7.5"></script>

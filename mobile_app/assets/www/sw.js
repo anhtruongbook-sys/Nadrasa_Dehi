@@ -40,9 +40,22 @@ const CORE_ASSETS = [
   'assets/lakinh/thuoc_lap_cuc.png',
   'assets/lakinh/thuoc_lap_cuc_trans.png',
   'assets/lakinh/thuoc_lap_cuc_gold.png',
+  'phap_hanh.css',
+  'modules/phap_hanh_data.js',
+  'modules/phap_hanh_view.js',
   'engines/lakinh_engine.js',
   'modules/lakinh_view.js'
 ];
+
+// Thêm toàn bộ 18 Nơi Tại Phủ và 23 Bài học Pháp Hành
+for (let i = 1; i <= 18; i++) {
+  const num = i < 10 ? '0' + i : '' + i;
+  CORE_ASSETS.push(`assets/phap_hanh/phu_${num}.jpg`);
+}
+for (let i = 1; i <= 23; i++) {
+  const num = i < 10 ? '0' + i : '' + i;
+  CORE_ASSETS.push(`assets/phap_hanh/lesson_${num}.jpg`);
+}
 
 // Thêm toàn bộ 48 quân bài Neta Light
 for (let i = 1; i <= 48; i++) {

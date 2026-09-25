@@ -1,7 +1,7 @@
 name: neta_light_mobile
 description: Neta Light & Poker - Phap mon Nadrasa Dehi Mobile Client
 publish_to: 'none'
-version: 1.7.2+39
+version: 1.8.0+40
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -30,3 +30,5 @@ flutter:
     - assets/www/assets/tarot/
     - assets/www/assets/lakinh/
     - assets/www/assets/leaflet/
+    - assets/www/assets/phap_hanh/
+

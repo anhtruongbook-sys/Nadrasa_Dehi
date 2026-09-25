@@ -63,20 +63,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.7.2
-          name: "Neta Light & Huyền Học v1.7.2 (Chỉ Pin Địa Chỉ, Bỏ Nền Xanh Thủy Cục & Chống Che Khuất Bản Đồ)"
+          tag_name: v1.8.0
+          name: "Neta Light & Huyền Học v1.8.0 (Tích hợp Module Pháp Hành Nadrasa Dehi & 41 Bài Học Gốc)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.7.2
-            - **Chuyển Điểm Tìm Kiếm Địa Chỉ Thành Pin Chuẩn (📍 Pin Only)**:
-              + Loại bỏ hoàn toàn khối hộp chữ nền xanh che phủ bản đồ khi tìm kiếm địa chỉ.
-              + Sử dụng biểu tượng Pin đỏ viền trắng mũi nhọn định vị chính xác tâm tọa độ (tương tự Google Maps). Thông tin tên địa chỉ hiển thị trong popup khi chạm vào pin, không che khuất địa hình, đường sá, mái nhà và tên cửa hiệu xung quanh.
-            - **Xóa Bỏ Nền Xanh Khối Hộp Thủy Cục (💧 Transparent Watermouth Marker)**:
-              + Thủy Khẩu điểm trũng nhất (Tiểu, Trung, Đại Minh Đường) được thể hiện bằng biểu tượng Giọt Nước (Water Pin) chuyên biệt.
-              + Chữ phương vị Sơn Hướng hiển thị trong suốt (không nền che) kèm bóng đổ tương phản cao (text-shadow), giữ trọn vẹn 100% chi tiết ảnh vệ tinh và bản đồ bên dưới.
-            - **Đồng Bộ Hoàn Thiện Bản Sửa Lỗi v1.7.1**:
-              + Pháp Ấn tròn trịa 1:1 sắc nét 2560x2560.
-              + Chụp ảnh màn hình và xuất PDF phân hệ Tarot giữ nguyên hình ảnh màu các lá bài cổ điển RWS.
-              + Chụp ảnh màn hình La Kinh giữ trọn vẹn đĩa 36 tầng và bản đồ vệ tinh không bị trắng xóa.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.8.0
+            - **Tích Hợp Module Mới: Pháp Hành Nadrasa Dehi (🪷)**:
+              + Thư viện 41 bài học & thánh cảnh cõi Phủ độ phân giải cao gốc từ Nadrasa Dehi:
+                * **18 Nơi Tại Phủ**: Đại Nghiệp, Thần Thú, Tiêu Hồn, U Minh Giới, Huyền Các, Tiên Giới, Đại Thất Sắc, Chúng Sinh Luân, Đại Nội Phủ, Bồ Tát Giới, Độc Minh Lâm, Đại Chính Quan, Vĩnh An Tự, Tàng Kinh Thư, Tuệ Giác Tâm Đường, Kim Cang Tâm Đường, Biến Thiên Tâm Đường, Liễu Tri Tâm Đường.
+                * **23 Bài Học & Thủ Pháp**: Tâm Ấn, Pháp Bảo & Khí, Linh Phù & Sớ Văn, Thủ Pháp Hành Trì, Trấn Pháp, Độ Vong, Bí Pháp & Thiền Định.
+              + **Trình Đọc Chi Tiết & Soi Ảnh Toàn Màn Hình HD (LightBox)**: Phóng to/thu nhỏ cảm ứng Pinch-to-zoom, Pan kéo di chuyển ảnh mượt mà, điều hướng lật bài trước/sau liền mạch.
+              + **Tính Năng Động (Thêm Bài Học Mới)**: Cho phép người dùng tự thêm bài học và tải ảnh trực tiếp từ thiết bị vào ứng dụng trong quá trình sử dụng, lưu trữ Offline bền vững trên IndexedDB nội bộ.
+              + **Bộ Lọc Thông Minh & Quản Lý Cá Nhân**: Bộ lọc chuyên đề (Chips), tìm kiếm từ khóa tức thì, sao lưu (Export JSON) và phục hồi (Import JSON) dữ liệu bài học cá nhân.
+            - **Đồng Bộ Hoàn Toàn Tài Nguyên Offline Vào Ứng Dụng Flutter**:
+              + Tích hợp toàn bộ ảnh và mã nguồn module vào `mobile_app/assets/www/`.
+              + Cập nhật cấu hình `pubspec.yaml` sẵn sàng cho bản phát hành APK chạy 100% Offline.
+            - **Kế Thừa Đầy Đủ Các Cải Tiến v1.7.2**:
+              + Điểm tìm kiếm địa chỉ dạng Pin chuẩn (📍 Pin Only), không che khuất địa hình bản đồ.
+              + Thủy Khẩu hiển thị dạng Giọt Nước (💧) với chữ trong suốt chống che lấp ảnh vệ tinh.
+              + Pháp Ấn tròn trịa 1:1, Chụp ảnh màn hình & Xuất PDF Tarot/La Kinh Retina sắc nét.
             - **Khắc phục Triệt Để Lỗi Chụp Ảnh Màn Hình (📷 Tainted Canvas Error) Cho Cả 2 Module Mới**:
               + **Tarot Rider-Waite**: Định tuyến container `#view-tarot`, nạp toàn bộ ảnh lá bài sang Base64 Data URL sạch via FileReader nội bộ, loại bỏ hoàn toàn lỗi `Tainted canvases may not be exported`. Tự động mở rộng toàn bộ bảng quẻ và luận giải chi tiết, ẩn thanh công cụ điều khiển để xuất ảnh báo cáo quẻ bài Retina sắc nét (`Tarot_RiderWaite_*.png`).
               + **La Kinh Vệ Tinh (Thước Lập Cực 36 Tầng)**: Tự động chuyển đổi các mảnh vệ tinh Google (không có CORS) sang tọa độ tương đương trên ArcGIS World Imagery (`server.arcgisonline.com`) có sẵn `Access-Control-Allow-Origin: *`, nạp sạch vào Base64 canvas. Bảo tồn đĩa La Kinh 36 tầng xuyên thấu, kim chỉ hướng, tâm nhà và bảng thông số phong thủy; gắn watermark khảo sát vệ tinh chuyên nghiệp (`LaKinh_VeTinh_*.png`).
