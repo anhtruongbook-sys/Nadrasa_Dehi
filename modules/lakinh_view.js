@@ -34,6 +34,7 @@
     declination: -1.34,
     centerElevation: 19.0,
     centerCoords: [21.028511, 105.854167], // Mặc định Hà Nội
+    userLocation: null, // [lat, lng] vị trí GPS thực tế của người dùng
     activeLayerName: 'googleSat'
   };
 
@@ -51,6 +52,12 @@
       container.innerHTML = `
         <div id="lakinh-map"></div>
         <div id="lakinh-crosshair"></div>
+
+        <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB) -->
+        <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn">
+          <span style="font-size: 1.15rem; line-height: 1;">🎯</span>
+          <span>Về Vị Trí Hiện Tại</span>
+        </button>
 
         <!-- Đĩa La Kinh 36 Tầng Xuyên Thấu -->
         <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
@@ -102,8 +109,8 @@
           <button class="lakinh-dock-btn" id="lakinh-dock-sensor" title="Bật/Tắt cảm biến la bàn">
             🧭 La Bàn Live
           </button>
-          <button class="lakinh-dock-btn primary" id="lakinh-dock-gps" title="Định vị vị trí GPS thực tế">
-            🎯 Định Vị GPS
+          <button class="lakinh-dock-btn primary" id="lakinh-dock-gps" title="Bay về vị trí GPS thực tế hiện tại">
+            🎯 Vị Trí Hiện Tại
           </button>
           <button class="lakinh-dock-btn" id="lakinh-dock-dem" title="Quét cao độ & Tam Hợp Thủy Pháp">
             🌊 Quét Cục
@@ -274,6 +281,11 @@
 
     // Cập nhật thông số vị trí ban đầu
     updateLocationHUD(state.centerCoords[0], state.centerCoords[1]);
+
+    // Tự động định vị ngầm vị trí hiện tại ngay khi mở bản đồ
+    setTimeout(() => {
+      getCurrentGPS(true);
+    }, 1200);
   }
 
   function onMapMove() {
@@ -365,22 +377,33 @@
   }
 
   // ================= 4. ĐỊNH VỊ GPS VỆ TINH 2 TẦNG (HIGH ACCURACY + FALLBACK) =================
-  function getCurrentGPS() {
+  function getCurrentGPS(silent = false) {
     if (!navigator.geolocation) {
-      showLaKinhToast('⚠️ Thiết bị của bạn không hỗ trợ định vị Geolocation');
+      if (!silent) showLaKinhToast('⚠️ Thiết bị của bạn không hỗ trợ định vị Geolocation');
       return;
     }
 
-    showLaKinhToast('🛰️ Đang tìm kiếm tọa độ GPS vệ tinh...');
+    // Nếu đã có tọa độ GPS đã lưu trước đó, bay về ngay lập tức để người dùng không phải chờ
+    if (state.userLocation && mapInstance && !silent) {
+      mapInstance.flyTo(state.userLocation, 19, { animate: true });
+      showLaKinhToast('🎯 Đang bay về vị trí GPS hiện tại của bạn...');
+    } else if (!silent) {
+      showLaKinhToast('🛰️ Đang tìm kiếm tọa độ GPS vệ tinh...');
+    }
+
     const btn = document.getElementById('lakinh-dock-gps');
+    const fab = document.getElementById('lakinh-btn-my-location');
     if (btn) btn.classList.add('pulse-radar-active');
+    if (fab) fab.classList.add('pulse-radar-active');
 
     const onGpsSuccess = (pos) => {
       if (btn) btn.classList.remove('pulse-radar-active');
+      if (fab) fab.classList.remove('pulse-radar-active');
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       const accuracy = Math.round(pos.coords.accuracy || 0);
 
+      state.userLocation = [lat, lng];
       state.centerCoords = [lat, lng];
 
       if (mapInstance && userLocationLayerGroup) {
@@ -408,36 +431,46 @@
 
         // Đưa tâm bản đồ về vị trí người dùng
         mapInstance.setView([lat, lng], 19, { animate: true });
-        showLaKinhToast(`🎯 Đã định vị thành công! (Sai số ~${accuracy}m)`);
+        if (!silent) {
+          showLaKinhToast(`🎯 Đã định vị vị trí hiện tại! (Sai số ~${accuracy}m)`);
+        }
         updateLocationHUD(lat, lng);
       }
     };
 
     const onGpsFailHighAccuracy = (err) => {
-      console.warn('GPS phần cứng không phản hồi, kiểm tra quyền...', err);
+      console.warn('GPS phần cứng không phản hồi, kiểm tra fallback...', err);
       if (err.code === 1) {
         if (btn) btn.classList.remove('pulse-radar-active');
-        showLaKinhToast('🚫 Quyền vị trí GPS đang bị chặn');
-        promptSearchLocation(true);
+        if (fab) fab.classList.remove('pulse-radar-active');
+        if (!silent) {
+          showLaKinhToast('🚫 Quyền vị trí GPS đang bị chặn');
+          promptSearchLocation(true);
+        }
         return;
       }
 
       // Tầng 2: Fallback định vị mạng / trạm BTS / Wifi
-      showLaKinhToast('🛰️ Đang chuyển sang định vị mạng Wifi/4G...');
+      if (!silent) showLaKinhToast('🛰️ Đang chuyển sang định vị mạng Wifi/4G...');
       navigator.geolocation.getCurrentPosition(
         onGpsSuccess,
         (err2) => {
           if (btn) btn.classList.remove('pulse-radar-active');
+          if (fab) fab.classList.remove('pulse-radar-active');
           if (err2.code === 1) {
-            showLaKinhToast('🚫 Quyền vị trí GPS đang bị chặn');
-            promptSearchLocation(true);
+            if (!silent) {
+              showLaKinhToast('🚫 Quyền vị trí GPS đang bị chặn');
+              promptSearchLocation(true);
+            }
             return;
           }
-          let errMsg = 'Không lấy được tọa độ';
-          if (err2.code === 2) errMsg = '⚠️ Vị trí không khả dụng (Hãy bật GPS điện thoại)';
-          else if (err2.code === 3) errMsg = '⏳ Hết thời gian chờ tín hiệu GPS';
-          showLaKinhToast(errMsg);
-          promptSearchLocation(false);
+          if (!silent) {
+            let errMsg = 'Không lấy được tọa độ';
+            if (err2.code === 2) errMsg = '⚠️ Vị trí không khả dụng (Hãy bật GPS điện thoại)';
+            else if (err2.code === 3) errMsg = '⏳ Hết thời gian chờ tín hiệu GPS';
+            showLaKinhToast(errMsg);
+            promptSearchLocation(false);
+          }
         },
         {
           enableHighAccuracy: false,
@@ -1163,12 +1196,19 @@
       });
     }
 
-    // 2. Bottom Dock buttons
+    // 2. Nút Bay Về Vị Trí Hiện Tại (Floating FAB & Bottom Dock)
+    const btnMyLocation = document.getElementById('lakinh-btn-my-location');
+    if (btnMyLocation) {
+      btnMyLocation.addEventListener('click', () => getCurrentGPS(false));
+    }
+
     const dockSensor = document.getElementById('lakinh-dock-sensor');
     if (dockSensor) dockSensor.addEventListener('click', toggleCompassSensor);
 
     const dockGps = document.getElementById('lakinh-dock-gps');
-    if (dockGps) dockGps.addEventListener('click', getCurrentGPS);
+    if (dockGps) {
+      dockGps.addEventListener('click', () => getCurrentGPS(false));
+    }
 
     const dockDem = document.getElementById('lakinh-dock-dem');
     if (dockDem) dockDem.addEventListener('click', scanElevationAndTiers);
