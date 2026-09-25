@@ -63,10 +63,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.6.0
-          name: "Neta Light & Huyền Học v1.6.0 (Tích hợp La Kinh 36 Tầng Vệ Tinh, WMM, DEM & Huyền Không)"
+          tag_name: v1.7.0
+          name: "Neta Light & Huyền Học v1.7.0 (Sửa lỗi Tainted Canvas Chụp Ảnh Màn Hình, Cập Nhật 48 Lá Bài Neta HD & Ẩn Thanh Tìm Kiếm La Kinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.6.0
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.7.0
+            - **Khắc phục Triệt Để Lỗi Chụp Ảnh Màn Hình (📷 Tainted Canvas Error) Cho Cả 2 Module Mới**:
+              + **Tarot Rider-Waite**: Định tuyến container `#view-tarot`, nạp toàn bộ ảnh lá bài sang Base64 Data URL sạch via FileReader nội bộ, loại bỏ hoàn toàn lỗi `Tainted canvases may not be exported`. Tự động mở rộng toàn bộ bảng quẻ và luận giải chi tiết, ẩn thanh công cụ điều khiển để xuất ảnh báo cáo quẻ bài Retina sắc nét (`Tarot_RiderWaite_*.png`).
+              + **La Kinh Vệ Tinh (Thước Lập Cực 36 Tầng)**: Tự động chuyển đổi các mảnh vệ tinh Google (không có CORS) sang tọa độ tương đương trên ArcGIS World Imagery (`server.arcgisonline.com`) có sẵn `Access-Control-Allow-Origin: *`, nạp sạch vào Base64 canvas. Bảo tồn đĩa La Kinh 36 tầng xuyên thấu, kim chỉ hướng, tâm nhà và bảng thông số phong thủy; gắn watermark khảo sát vệ tinh chuyên nghiệp (`LaKinh_VeTinh_*.png`).
+              + **Cơ Chế Phục Hồi Tự Động 2 Lớp (Auto-Recovery Fallback)**: Tự động khử sạch ảnh không an toàn nếu có lỗi tainted canvas đột xuất, cam kết 100% không bao giờ ném lỗi đỏ ra màn hình.
+            - **Cập Nhật 48 Quân Bài Neta Light & Mặt Lưng HD Sắc Nét 100%**:
+              + Thay thế toàn bộ 48 lá bài cũ bằng ảnh chất lượng cao từ thư mục `Bai Neta` gốc.
+              + Cập nhật mặt lưng bài mới sắc nét (`00 - Mặt sau.jpg` $\rightarrow$ `card_back.png`).
+              + Tái tạo toàn bộ CSDL Base64 nội bộ `cards_base64_data.js` hoạt động độc lập 100% Offline.
+            - **Tự Động Ẩn Thanh Tìm Kiếm La Kinh Sau Khi Chọn Địa Điểm**:
+              + Khi chọn xong địa chỉ từ danh sách gợi ý hoặc chạm vào bản đồ, thanh tìm kiếm `#lakinh-search-bar-wrap` tự động thu gọn để trả lại toàn bộ không gian quan sát địa hình và mái nhà.
+              + Bổ sung nút đóng `▲` (`#lakinh-search-bar-close`) và nút kích hoạt mở lại `🔍` (`#lakinh-btn-search`) trên thanh HUD trên cùng.
+            - **Đại Tu Động Cơ Xuất PDF Luận Giải Tarot Trực Tiếp**:
+              + Sửa lỗi canvas bị tainted khi tạo PDF bằng cơ chế pre-convert Data URL và fallback hai lớp chữ - hình chuẩn mực. Tự động lưu thẳng file PDF về máy qua NativeBridge không cần popup.
             - **Tích Hợp Toàn Diện Phân Hệ Phong Thủy Địa Lý - La Kinh Vệ Tinh (36 Tầng)**:
               + **Đồ họa Vector Đa Tầng Toán Học (36-Ring Luopan Vector SVG)**: Tích hợp trọn vẹn đĩa La Kinh 36 tầng vector độ phân giải cực cao (90 KB), hỗ trợ nhìn xuyên thấu với thanh trượt chỉnh độ mờ (5% - 100%) và kích thước (260px - 950px), đè phủ trực tiếp lên mái nhà và thửa đất trên ảnh vệ tinh mà không làm che khuất địa vật.
               + **Bản Đồ Viễn Thám Đa Lớp (Leaflet Multi-Layer WebGIS)**: Tích hợp ảnh vệ tinh Google Earth độ nét cao, Esri World Imagery và bản đồ đường phố OpenStreetMap; hỗ trợ phóng to chi tiết đến cấp công trình (Zoom 18-22).
