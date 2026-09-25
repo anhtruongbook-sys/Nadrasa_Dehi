@@ -40,6 +40,9 @@
     userLocation: null, // [lat, lng] vị trí GPS thực tế của người dùng
     activeLayerName: 'googleSat'
   };
+  if (typeof window !== 'undefined') {
+    window.lakinhState = state;
+  }
 
   function initLaKinhView() {
     const container = document.getElementById('view-lakinh');
@@ -1003,12 +1006,54 @@
       { name: 'Cần Thơ', lat: 10.045162, lng: 105.746857 }
     ];
 
+    const removeVietnameseTones = (str) => {
+      if (!str) return '';
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+        .toLowerCase()
+        .trim();
+    };
+
+    const extractNumberAndStreet = (raw) => {
+      const q = raw.trim();
+      const m1 = q.match(/^(?:số\s*)?(\d+[\w\/-]*)\s+(.+)$/i);
+      if (m1) return { num: m1[1], street: m1[2].trim() };
+      const m2 = q.match(/^(.+?)\s+(?:số\s*)?(\d+[\w\/-]*)$/i);
+      if (m2) return { num: m2[2], street: m2[1].trim() };
+      return { num: null, street: q };
+    };
+
     const localPlaces = [
+      // Hà Nội - Địa danh & Trục đường huyết mạch
+      { name: 'Đường Nguyễn Tuân, Thanh Xuân, Hà Nội', lat: 20.9975, lng: 105.8045 },
+      { name: 'Đường Lê Văn Lương, Cầu Giấy / Thanh Xuân, Hà Nội', lat: 21.0062, lng: 105.8038 },
+      { name: 'Đường Khuất Duy Tiến, Thanh Xuân, Hà Nội', lat: 20.9934, lng: 105.7958 },
+      { name: 'Đường Hoàng Đạo Thúy, Cầu Giấy / Thanh Xuân, Hà Nội', lat: 21.0076, lng: 105.8012 },
+      { name: 'Đường Nguyễn Trãi, Thanh Xuân, Hà Nội', lat: 20.9942, lng: 105.8115 },
+      { name: 'Đường Trần Duy Hưng, Cầu Giấy, Hà Nội', lat: 21.0088, lng: 105.7981 },
+      { name: 'Đường Cầu Giấy, Cầu Giấy, Hà Nội', lat: 21.0333, lng: 105.7937 },
+      { name: 'Đường Xuân Thủy, Cầu Giấy, Hà Nội', lat: 21.0366, lng: 105.7831 },
+      { name: 'Đường Trần Cung, Bắc Từ Liêm, Hà Nội', lat: 21.0475, lng: 105.7958 },
+      { name: 'Viện Khoa học Công nghệ Xây dựng (IBST), Hà Nội', lat: 21.0475, lng: 105.7958 },
+      { name: 'Đường Hoàng Quốc Việt, Cầu Giấy, Hà Nội', lat: 21.0456, lng: 105.7984 },
+      { name: 'Đường Phạm Hùng, Nam Từ Liêm, Hà Nội', lat: 21.0232, lng: 105.7779 },
+      { name: 'Đường Mễ Trì, Nam Từ Liêm, Hà Nội', lat: 21.0163, lng: 105.7792 },
+      { name: 'Đường Kim Mã, Ba Đình, Hà Nội', lat: 21.0318, lng: 105.8235 },
+      { name: 'Đường Liễu Giai, Ba Đình, Hà Nội', lat: 21.0345, lng: 105.8142 },
+      { name: 'Đường Hoàng Hoa Thám, Ba Đình / Tây Hồ, Hà Nội', lat: 21.0415, lng: 105.8180 },
+      { name: 'Đường Láng, Đống Đa, Hà Nội', lat: 21.0116, lng: 105.8095 },
+      { name: 'Đường Xã Đàn, Đống Đa, Hà Nội', lat: 21.0152, lng: 105.8324 },
+      { name: 'Đường Giải Phóng, Hoàng Mai, Hà Nội', lat: 20.9854, lng: 105.8421 },
+      { name: 'Đường Võ Chí Công, Tây Hồ, Hà Nội', lat: 21.0635, lng: 105.8012 },
+      { name: 'Đường Lạc Long Quân, Tây Hồ, Hà Nội', lat: 21.0612, lng: 105.8105 },
+      { name: 'Đường Phố Huế, Hai Bà Trưng, Hà Nội', lat: 21.0145, lng: 105.8521 },
+      { name: 'Đường Bà Triệu, Hoàn Kiếm / Hai Bà Trưng, Hà Nội', lat: 21.0182, lng: 105.8496 },
+      { name: 'Đường Quang Trung, Hà Đông, Hà Nội', lat: 20.9702, lng: 105.7758 },
       { name: 'Hồ Hoàn Kiếm, Hà Nội', lat: 21.028511, lng: 105.854167 },
       { name: 'Quận Hoàn Kiếm, Hà Nội', lat: 21.0312, lng: 105.8525 },
       { name: 'Quận Cầu Giấy, Hà Nội', lat: 21.0333, lng: 105.7937 },
-      { name: 'Đường Trần Cung, Hà Nội', lat: 21.0475, lng: 105.7958 },
-      { name: 'Viện Khoa học Công nghệ Xây dựng (IBST), Hà Nội', lat: 21.0475, lng: 105.7958 },
       { name: 'Quận Ba Đình, Hà Nội', lat: 21.0346, lng: 105.8239 },
       { name: 'Quận Đống Đa, Hà Nội', lat: 21.0182, lng: 105.8277 },
       { name: 'Quận Hai Bà Trưng, Hà Nội', lat: 21.0076, lng: 105.8524 },
@@ -1019,6 +1064,18 @@
       { name: 'Quận Thanh Xuân, Hà Nội', lat: 20.9983, lng: 105.8078 },
       { name: 'Quận Hoàng Mai, Hà Nội', lat: 20.9734, lng: 105.8456 },
       { name: 'Quận Hà Đông, Hà Nội', lat: 20.9634, lng: 105.7725 },
+
+      // TP. Hồ Chí Minh
+      { name: 'Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh', lat: 10.7744, lng: 106.7032 },
+      { name: 'Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh', lat: 10.7735, lng: 106.6998 },
+      { name: 'Đường Đồng Khởi, Quận 1, TP. Hồ Chí Minh', lat: 10.7762, lng: 106.7028 },
+      { name: 'Chợ Bến Thành, Quận 1, TP. Hồ Chí Minh', lat: 10.7725, lng: 106.6980 },
+      { name: 'Đường Pasteur, Quận 1 / Quận 3, TP. Hồ Chí Minh', lat: 10.7812, lng: 106.6934 },
+      { name: 'Đường Nam Kỳ Khởi Nghĩa, Quận 3, TP. Hồ Chí Minh', lat: 10.7876, lng: 106.6854 },
+      { name: 'Đường Điện Biên Phủ, TP. Hồ Chí Minh', lat: 10.7963, lng: 106.6987 },
+      { name: 'Đường Cách Mạng Tháng Tám, Quận 3, TP. Hồ Chí Minh', lat: 10.7825, lng: 106.6781 },
+      { name: 'Đường Võ Văn Kiệt, TP. Hồ Chí Minh', lat: 10.7582, lng: 106.6874 },
+      { name: 'Đường Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh', lat: 10.7302, lng: 106.7125 },
       { name: 'Quận 1, TP. Hồ Chí Minh', lat: 10.7769, lng: 106.7008 },
       { name: 'Quận 3, TP. Hồ Chí Minh', lat: 10.7844, lng: 106.6844 },
       { name: 'TP. Thủ Đức, TP. Hồ Chí Minh', lat: 10.8494, lng: 106.7717 },
@@ -1026,7 +1083,11 @@
       { name: 'Quận Tân Bình, TP. Hồ Chí Minh', lat: 10.8015, lng: 106.6548 },
       { name: 'Quận Phú Nhuận, TP. Hồ Chí Minh', lat: 10.7992, lng: 106.6803 },
       { name: 'Quận 7, TP. Hồ Chí Minh', lat: 10.7340, lng: 106.7218 },
+
+      // Các thành phố lớn khác
       { name: 'TP. Đà Nẵng', lat: 16.0544, lng: 108.2022 },
+      { name: 'Đường Bạch Đằng, Hải Châu, Đà Nẵng', lat: 16.0682, lng: 108.2241 },
+      { name: 'Cầu Rồng, Đà Nẵng', lat: 16.0610, lng: 108.2272 },
       { name: 'TP. Hải Phòng', lat: 20.8449, lng: 106.6881 },
       { name: 'TP. Cần Thơ', lat: 10.0452, lng: 105.7469 },
       { name: 'TP. Nha Trang, Khánh Hòa', lat: 12.2388, lng: 109.1967 },
@@ -1043,7 +1104,7 @@
         html += `<button type="button" class="lakinh-city-chip" style="font-size:0.7rem; padding:3px 8px;" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${c.name}">📍 ${c.name}</button>`;
       });
       html += `</div>
-        <div style="font-size:0.68rem; color:#64748b; margin-top:6px;">💡 Nhập tên đường, phường xã hoặc tọa độ GPS (VD: 21.0475, 105.7958)</div>
+        <div style="font-size:0.68rem; color:#64748b; margin-top:6px;">💡 Nhập tên đường, số nhà, địa chỉ hoặc tọa độ GPS (VD: 82 Nguyễn Tuân hoặc 21.0475, 105.7958)</div>
       `;
       dropdown.innerHTML = html;
       dropdown.style.display = 'block';
@@ -1078,23 +1139,37 @@
         `;
       }
 
-      // 2. Tìm kiếm trong danh mục ngoại tuyến (Instant Local Match)
-      const qLower = q.toLowerCase();
-      const localMatches = localPlaces.filter(p => p.name.toLowerCase().includes(qLower)).slice(0, 4);
+      // 2. Tìm kiếm trong danh mục ngoại tuyến (Instant Local Match & Smart Street Matching)
+      const qNorm = removeVietnameseTones(q);
+      const parsed = extractNumberAndStreet(q);
+      const streetNorm = removeVietnameseTones(parsed.street);
+
+      const matchedLocal = [];
+      localPlaces.forEach(p => {
+        const pNorm = removeVietnameseTones(p.name);
+        if (pNorm.includes(qNorm) || (streetNorm.length >= 3 && pNorm.includes(streetNorm))) {
+          matchedLocal.push(p);
+        }
+      });
+
       let localHtml = '';
-      if (localMatches.length > 0) {
-        localMatches.forEach(p => {
+      if (matchedLocal.length > 0) {
+        matchedLocal.slice(0, 4).forEach(p => {
+          let displayName = p.name;
+          if (parsed.num) {
+            displayName = `Số ${parsed.num} ${p.name}`;
+          }
           localHtml += `
-            <div class="lakinh-search-suggest-item" data-lat="${p.lat}" data-lng="${p.lng}" data-name="${p.name}">
-              <div style="font-weight:700; font-size:0.76rem; color:#f5b041;">📍 ${p.name}</div>
-              <div style="font-size:0.68rem; color:#94a3b8; margin-top:2px;">Tọa độ: ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</div>
+            <div class="lakinh-search-suggest-item" data-lat="${p.lat}" data-lng="${p.lng}" data-name="${displayName.replace(/"/g, '&quot;')}">
+              <div style="font-weight:700; font-size:0.76rem; color:#f5b041;">📍 ${displayName}</div>
+              <div style="font-size:0.68rem; color:#94a3b8; margin-top:2px;">⚡ Ngoại tuyến | Tọa độ: ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</div>
             </div>
           `;
         });
       }
 
       dropdown.style.display = 'block';
-      dropdown.innerHTML = coordHtml + localHtml + '<div style="padding:6px; text-align:center; color:#94a3b8; font-size:0.72rem;">⏳ Đang tìm kiếm thêm từ máy chủ bản đồ...</div>';
+      dropdown.innerHTML = coordHtml + localHtml + '<div style="padding:6px; text-align:center; color:#94a3b8; font-size:0.72rem;">⏳ Đang tìm kiếm thêm từ máy chủ bản đồ vệ tinh...</div>';
 
       const bindItems = () => {
         dropdown.querySelectorAll('.lakinh-search-suggest-item').forEach(item => {
@@ -1109,25 +1184,101 @@
       };
       bindItems();
 
-      // 3. Tìm kiếm trực tuyến qua Photon Komoot
+      // 3. Tìm kiếm trực tuyến đa máy chủ: Photon Komoot (Ưu tiên) + Nominatim (Dự phòng)
       try {
-        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`);
-        const data = await res.json();
+        const center = (state && state.centerCoords) ? { lat: state.centerCoords[0], lng: state.centerCoords[1] } : { lat: 21.0285, lng: 105.8542 };
+        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${center.lat}&lon=${center.lng}&limit=6`;
+        
+        let fetchedFeatures = [];
+        try {
+          const controller = new AbortController();
+          const tId = setTimeout(() => controller.abort(), 4500);
+          const res = await fetch(photonUrl, { signal: controller.signal });
+          clearTimeout(tId);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.features && data.features.length > 0) {
+              fetchedFeatures = data.features;
+            }
+          }
+        } catch (pe) {
+          console.warn('Photon fetch failed:', pe);
+        }
+
+        // Dự phòng Nominatim nếu Photon không trả kết quả
+        if (fetchedFeatures.length === 0) {
+          try {
+            const nomQuery = (q.toLowerCase().includes('việt') || q.toLowerCase().includes('viet')) ? q : `${q}, Việt Nam`;
+            const nomUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(nomQuery)}&format=json&addressdetails=1&limit=6`;
+            const controller = new AbortController();
+            const tId = setTimeout(() => controller.abort(), 4500);
+            const res = await fetch(nomUrl, {
+              signal: controller.signal,
+              headers: { 'Accept-Language': 'vi,en;q=0.8' }
+            });
+            clearTimeout(tId);
+            if (res.ok) {
+              const nomData = await res.json();
+              if (Array.isArray(nomData)) {
+                fetchedFeatures = nomData.map(item => ({
+                  properties: {
+                    name: item.display_name.split(',')[0],
+                    street: item.address ? (item.address.road || item.address.pedestrian || item.address.suburb) : '',
+                    housenumber: item.address ? item.address.house_number : '',
+                    district: item.address ? (item.address.suburb || item.address.quarter || item.address.county || item.address.city_district) : '',
+                    city: item.address ? (item.address.city || item.address.town || item.address.province) : '',
+                    country: 'Việt Nam'
+                  },
+                  geometry: {
+                    coordinates: [parseFloat(item.lon), parseFloat(item.lat)]
+                  }
+                }));
+              }
+            }
+          } catch (ne) {
+            console.warn('Nominatim fallback failed:', ne);
+          }
+        }
 
         let placesHtml = '';
-        if (data && data.features && data.features.length > 0) {
-          data.features.forEach((feat) => {
+        if (fetchedFeatures.length > 0) {
+          fetchedFeatures.forEach((feat) => {
             const props = feat.properties || {};
             const geom = feat.geometry || {};
             const c = geom.coordinates || [];
             const lng = c[0];
             const lat = c[1];
-            const name = props.name || props.street || q;
-            const context = [props.district, props.city, props.state, props.country].filter(Boolean).join(', ');
+            if (!lat || !lng) return;
+
+            let title = '';
+            if (props.housenumber && props.street) {
+              title = `${props.housenumber} ${props.street}`;
+              if (props.name && props.name !== props.street && props.name !== props.housenumber) {
+                title = `${props.name} (${props.housenumber} ${props.street})`;
+              }
+            } else if (props.name) {
+              title = props.name;
+              if (props.street && props.street !== props.name) {
+                title += ` - ${props.street}`;
+              }
+            } else if (props.street) {
+              title = props.street;
+            } else {
+              title = q;
+            }
+
+            const contextParts = [];
+            if (props.district) contextParts.push(props.district);
+            if (props.city && !contextParts.includes(props.city)) contextParts.push(props.city);
+            if (props.state && !contextParts.includes(props.state) && props.state !== props.city) contextParts.push(props.state);
+            if (props.country && !contextParts.includes(props.country)) contextParts.push(props.country);
+            const context = contextParts.join(', ');
+
+            const fullName = [title, context].filter(Boolean).join(', ');
 
             placesHtml += `
-              <div class="lakinh-search-suggest-item" data-lat="${lat}" data-lng="${lng}" data-name="${name}">
-                <div style="font-weight:700; font-size:0.76rem; color:#38bdf8;">📍 ${name}</div>
+              <div class="lakinh-search-suggest-item" data-lat="${lat}" data-lng="${lng}" data-name="${fullName.replace(/"/g, '&quot;')}">
+                <div style="font-weight:700; font-size:0.76rem; color:#38bdf8;">📍 ${title}</div>
                 <div style="font-size:0.68rem; color:#cbd5e1; margin-top:2px;">${context}</div>
               </div>
             `;
@@ -1136,7 +1287,7 @@
 
         dropdown.innerHTML = coordHtml + localHtml + placesHtml;
         if (!coordHtml && !localHtml && !placesHtml) {
-          dropdown.innerHTML = '<div style="padding:8px; text-align:center; color:#ef4444; font-size:0.73rem;">❌ Không tìm thấy địa chỉ này. Hãy thử nhập tên đường hoặc tọa độ.</div>';
+          dropdown.innerHTML = '<div style="padding:8px; text-align:center; color:#ef4444; font-size:0.73rem;">❌ Không tìm thấy địa chỉ này. Hãy thử nhập tên đường hoặc tọa độ (VD: 21.0285, 105.8542).</div>';
         }
         bindItems();
       } catch (err) {
