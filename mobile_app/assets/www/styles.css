@@ -4842,6 +4842,61 @@ body.theme-light .text-view-year {
   white-space: nowrap;
 }
 
+.ucc-btn-picker {
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.45);
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-weight: 700;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.ucc-btn-picker:hover {
+  background: rgba(245, 176, 65, 0.28);
+  color: #ffffff;
+}
+
+.ucc-date-display-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: #f1f5f9;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: border-color 0.15s ease;
+}
+
+.ucc-date-display-badge:hover {
+  border-color: rgba(245, 176, 65, 0.55);
+}
+
+.ucc-date-display-badge .solar-highlight {
+  font-weight: 800;
+  color: #fbbf24;
+}
+
+.ucc-date-display-badge .lunar-sub {
+  font-size: 0.70rem;
+  color: #94a3b8;
+}
+
 .ucc-btn-submit {
   background: linear-gradient(135deg, #f5b041 0%, #d4ac0d 100%);
   border: 1px solid #ffd700;
@@ -5192,10 +5247,25 @@ body.theme-light .ucc-btn-year {
 }
 
 body.theme-light .ucc-btn-now,
+body.theme-light .ucc-btn-picker,
 body.theme-light .cal-btn-today {
   background: #fef3c7 !important;
   border-color: #d97706 !important;
   color: #92400e !important;
+}
+
+body.theme-light .ucc-date-display-badge {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+body.theme-light .ucc-date-display-badge .solar-highlight {
+  color: #b45309 !important;
+}
+
+body.theme-light .ucc-date-display-badge .lunar-sub {
+  color: #64748b !important;
 }
 
 body.theme-light .ucc-btn-submit,
