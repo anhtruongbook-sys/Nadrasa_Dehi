@@ -230,7 +230,7 @@
       <div class="tuvi-grid-wrapper">
         <div class="tuvi-grid-4x4">
           <!-- Thiên Bàn Center (Modern Flat Masterpiece) -->
-          <div class="tuvi-center-box">
+          <div class="tuvi-center-box" style="grid-row: 2 / span 2; grid-column: 2 / span 2; height: 100%;">
             <div class="tc-inner-border">
               <div class="tc-header">
                 <div class="tc-title">LÁ SỐ TỬ VI</div>

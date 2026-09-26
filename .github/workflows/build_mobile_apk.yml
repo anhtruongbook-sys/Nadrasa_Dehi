@@ -63,10 +63,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.1
-          name: "Neta Light & Huyền Học v1.9.1 (16 Tinh Bàn Huyền Không Phi Tinh Cửu Vận, 3 Chế Độ Kỳ Môn Độn Giáp, Huyền Không Đại Quái)"
+          tag_name: v1.9.2
+          name: "Neta Light & Huyền Học v1.9.2 (Khắc Phục Tràn Lưới Kỳ Môn, Viền Khung Thiên Bàn Tử Vi, Tối Ưu Hiệu Năng Mobile)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.1
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.2
+            - **Khắc Phục Triệt Để Tràn Lưới Cửu Cung Kỳ Môn Độn Giáp (Dương Bàn & Âm Bàn)**:
+              + Cấu hình `repeat(3, minmax(0, 1fr))` và `min-width: 0` triệt tiêu lỗi phình cột ra cạnh phải màn hình (chống mất thông tin cột 3).
+              + Tinh chỉnh tỷ lệ hiển thị Thần, Cửa, Tinh, Can Khí, Cung Số và Ngựa/Không Vong vừa vặn 100% trên màn hình điện thoại 360px.
+            - **Khắc Phục Viền Khung Thiên Bàn Trung Tâm Lá Số Tử Vi**:
+              + Bổ sung định vị lưới động `grid-row: 2 / span 2` và `height: 100%` kết hợp loại bỏ `contain: layout` giúp viền chữ nhật bao bọc trọn vẹn toàn bộ thông tin Đương số xuống hết tầng thứ 3, thẳng hàng chuẩn xác với các cung kế bên.
+            - **Bảo Toàn 100% Chất Lượng Hình Ảnh & Tài Liệu**:
+              + Tối ưu hóa hiệu năng render DOM và GPU mà không nén hay làm giảm bất kỳ pixel ảnh hoặc văn bản tài liệu nào.
             - **16 Tinh Bàn Huyền Không Phi Tinh Chuẩn Thẩm Thị Học Cho Cả 9 Vận (Tam Nguyên Cửu Vận 1–9)**:
               + Phân biệt rõ rệt Sơn 1 (Địa Nguyên Long) với Sơn 2/3 (Thiên/Nhân Nguyên Long).
               + Lưới Cửu Cung định hướng trực quan (Hàng trên là Hướng, hàng dưới là Tọa, Vận Tinh trên cùng, Sơn Tinh dưới trái, Hướng Tinh dưới phải) chuẩn khớp 100% Poster phong thủy Tường Minh.
