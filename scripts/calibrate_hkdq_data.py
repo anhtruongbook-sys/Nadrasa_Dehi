@@ -107,12 +107,26 @@ def calibrate_hkdq_data():
         lk["son_24"] = son_str
         lk["cung_phuong_vi"] = cung_str
 
-        # Cập nhật độ số từng hào (6 hào từ hào 1 ở deg_start đến hào 6 ở deg_end)
+        # Cung bát quái
+        cung = q.get("cung_bat_quai", "")
+        # 4 Cung Dương (Càn, Chấn, Khảm, Cấn) -> Quẻ Dương đi Thuận (Hào 1 -> 6)
+        # 4 Cung Âm (Khôn, Tốn, Ly, Đoài) -> Quẻ Âm đi Nghịch (Hào 6 -> 1)
+        DUONG_CUNGS = {"Càn", "Chấn", "Khảm", "Cấn"}
+        is_duong = cung in DUONG_CUNGS
+        lk["am_duong"] = "Dương" if is_duong else "Âm"
+        lk["chieu_hao"] = "Thuận (1 → 6)" if is_duong else "Nghịch (6 → 1)"
+
+        # Cập nhật độ số từng hào theo chiều Thuận / Nghịch
         haos = q.get("haos", [])
         for h in haos:
             h_idx = h["hao_index"] # 1 to 6
-            h_deg_start = round(deg_start + (h_idx - 1) * 0.9375, 4)
-            h_deg_end = round(deg_start + h_idx * 0.9375, 4)
+            if is_duong:
+                slot = h_idx - 1 # Quẻ Dương đi thuận: Hào 1 ở deg_start, Hào 6 ở deg_end
+            else:
+                slot = 6 - h_idx # Quẻ Âm đi nghịch: Hào 6 ở deg_start, Hào 1 ở deg_end
+
+            h_deg_start = round(deg_start + slot * 0.9375, 4)
+            h_deg_end = round(deg_start + (slot + 1) * 0.9375, 4)
             h["deg_start"] = h_deg_start
             h["deg_end"] = h_deg_end
             h["deg_range"] = f"{h_deg_start:.2f}° - {h_deg_end:.2f}°"

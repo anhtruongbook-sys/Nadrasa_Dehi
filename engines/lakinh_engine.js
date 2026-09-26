@@ -620,12 +620,27 @@
 
     // Xác định Hào vi phân 0.9375° (1 quẻ = 6 hào, mỗi hào = 5.625° / 6 = 0.9375°)
     const degStart = matchedQue.la_kinh ? matchedQue.la_kinh.deg_start : 0;
-    const offset = deg - degStart;
-    let hIdx = Math.floor(offset / 0.9375) + 1;
+    const offset = Math.max(0, deg - degStart);
+    let slot = Math.floor(offset / 0.9375);
+    if (slot > 5) slot = 5;
+    if (slot < 0) slot = 0;
+
+    // Nguyên lý Dịch học HKĐQ: Quẻ Dương đi Thuận (1 -> 6), Quẻ Âm đi Nghịch (6 -> 1)
+    // Phân theo 8 Cung: 4 Cung Dương (Càn, Chấn, Khảm, Cấn) đi Thuận; 4 Cung Âm (Khôn, Tốn, Ly, Đoài) đi Nghịch
+    const duongCungs = ['Càn', 'Chấn', 'Khảm', 'Cấn'];
+    const cung = matchedQue.cung_bat_quai || '';
+    const isDuong = (matchedQue.la_kinh && matchedQue.la_kinh.am_duong)
+      ? (matchedQue.la_kinh.am_duong === 'Dương')
+      : duongCungs.includes(cung);
+
+    let hIdx = isDuong ? (slot + 1) : (6 - slot);
     if (hIdx > 6) hIdx = 6;
     if (hIdx < 1) hIdx = 1;
 
-    const selectedHao = matchedQue.haos ? matchedQue.haos[hIdx - 1] : null;
+    let selectedHao = null;
+    if (matchedQue.haos && matchedQue.haos.length) {
+      selectedHao = matchedQue.haos.find(h => h.hao_index === hIdx) || matchedQue.haos[hIdx - 1];
+    }
 
     // Kiểm tra ranh giới Không Vong (<= 0.4° sát mép quẻ)
     const distStart = Math.abs(deg - degStart);
@@ -689,6 +704,8 @@
       cung_phuong_vi: matchedQue.la_kinh ? matchedQue.la_kinh.cung_phuong_vi : '',
       son_24: matchedQue.la_kinh ? matchedQue.la_kinh.son_24 : '',
       deg_range_que: matchedQue.la_kinh ? matchedQue.la_kinh.deg_range : '',
+      am_duong: isDuong ? 'Dương' : 'Âm',
+      chieu_hao: isDuong ? 'Thuận (1 → 6)' : 'Nghịch (6 → 1)',
       danh_gia_van_9: matchedQue.la_kinh ? matchedQue.la_kinh.danh_gia_van_9 : '',
       tai_ton_info: matchedQue.la_kinh ? matchedQue.la_kinh.tai_ton_info : '',
       nam_phat_mac_dinh: matchedQue.nam_phat_mac_dinh,

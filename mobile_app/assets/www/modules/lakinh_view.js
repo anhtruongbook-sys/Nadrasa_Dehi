@@ -1026,9 +1026,14 @@
       else if (lt === 'Huynh Đệ') badgeClass = 'luc-than-huynh';
       else if (lt === 'Phụ Mẫu') badgeClass = 'luc-than-phu';
 
-      // Tính tọa độ tâm hào
-      const qStart = parseFloat((hkdq.deg_range_que || '').split('-')[0]) || 0;
-      const haoCenterDeg = Math.round((qStart + (hNum - 0.5) * 0.9375) * 100) / 100;
+      // Tính tọa độ tâm hào dựa trên dải độ chuẩn xác của hào (Thuận hoặc Nghịch)
+      let haoCenterDeg;
+      if (typeof hao.deg_start === 'number' && typeof hao.deg_end === 'number') {
+        haoCenterDeg = Math.round(((hao.deg_start + hao.deg_end) / 2) * 100) / 100;
+      } else {
+        const qStart = parseFloat((hkdq.deg_range_que || '').split('-')[0]) || 0;
+        haoCenterDeg = Math.round((qStart + (hNum - 0.5) * 0.9375) * 100) / 100;
+      }
 
       // Xác định vạch âm / dương từ quẻ chuẩn Dịch học
       const isYang = (queLines[i] === 1);
@@ -1072,6 +1077,8 @@
               <span>🧭 ${hkdq.degree.toFixed(2)}° (${hkdq.son_24})</span>
               <span>•</span>
               <span>Cung ${hkdq.cung_bat_quai} (${hkdq.ngu_hanh_cung})</span>
+              <span>•</span>
+              <span style="color: ${hkdq.am_duong === 'Dương' ? '#fbbf24' : '#38bdf8'}; font-weight: 600;">${hkdq.am_duong || 'Quẻ'} • ${hkdq.chieu_hao || 'Thuận'}</span>
               <span>•</span>
               <span>Dải độ: ${hkdq.deg_range_que}</span>
             </div>
