@@ -2,12 +2,12 @@ import requests
 import json
 import os
 
-TOKEN = "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"
+TOKEN = "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"
 headers = {"Authorization": f"Bearer {TOKEN}"}
 
-print("Fetching release v1.7.0 info...")
+print("Fetching release v1.9.1 info...")
 rel = requests.get(
-    "https://api.github.com/repos/anhtruongbook-sys/Nadrasa_Dehi/releases/tags/v1.7.0",
+    "https://api.github.com/repos/anhtruongbook-sys/Nadrasa_Dehi/releases/tags/v1.9.1",
     headers=headers
 ).json()
 

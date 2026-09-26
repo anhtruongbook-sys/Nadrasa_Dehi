@@ -1,7 +1,7 @@
 import urllib.request
 import os
 
-TOKEN = "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"
+TOKEN = ""
 REPO = "anhtruongbook-sys/Nadrasa_Dehi"
 ASSET_ID = 585848316
 TARGET_FILE = os.path.join(os.getcwd(), "NetaLight.apk")

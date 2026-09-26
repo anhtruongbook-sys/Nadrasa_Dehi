@@ -29,7 +29,7 @@ class FastCardHandler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    port = 8080
+    port = 8088
     host = '0.0.0.0'
     server = ThreadingHTTPServer((host, port), FastCardHandler)
     print(f'Neta Light High-Performance Server running on port {port}...')

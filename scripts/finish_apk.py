@@ -6,7 +6,7 @@ import time
 
 socket.setdefaulttimeout(15)
 
-token = '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'
+token = ''
 asset_id = 584293152
 total_size = 60280087
 chunk_size = 2 * 1024 * 1024

@@ -987,7 +987,15 @@
                 `).join('')}
               </select>
               <select id="hk-period-select" class="lakinh-period-select">
-                ${[1,2,3,4,5,6,7,8,9].map(v => `<option value="${v}" ${v === period ? 'selected' : ''}>Vận ${v} ${v === 9 ? '(2024–2043)' : ''}</option>`).join('')}
+                <option value="9" ${period === 9 ? 'selected' : ''}>Vận 9 (2024–2043)</option>
+                <option value="8" ${period === 8 ? 'selected' : ''}>Vận 8 (2004–2023)</option>
+                <option value="7" ${period === 7 ? 'selected' : ''}>Vận 7 (1984–2003)</option>
+                <option value="6" ${period === 6 ? 'selected' : ''}>Vận 6 (1964–1983)</option>
+                <option value="5" ${period === 5 ? 'selected' : ''}>Vận 5 (1944–1963)</option>
+                <option value="4" ${period === 4 ? 'selected' : ''}>Vận 4 (1924–1943)</option>
+                <option value="3" ${period === 3 ? 'selected' : ''}>Vận 3 (1904–1923)</option>
+                <option value="2" ${period === 2 ? 'selected' : ''}>Vận 2 (1884–1903)</option>
+                <option value="1" ${period === 1 ? 'selected' : ''}>Vận 1 (1864–1883)</option>
               </select>
             </div>
 

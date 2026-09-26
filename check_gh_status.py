@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-token = "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"
+token = "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"
 url = "https://api.github.com/repos/anhtruongbook-sys/Nadrasa_Dehi/actions/runs?per_page=5"
 
 req = urllib.request.Request(url, headers={

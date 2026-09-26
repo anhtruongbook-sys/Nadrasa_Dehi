@@ -4,7 +4,7 @@ import time
 import sys
 import os
 
-TOKEN = "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"
+TOKEN = ""
 REPO = "anhtruongbook-sys/Nadrasa_Dehi"
 API_URL = f"https://api.github.com/repos/{REPO}/actions/runs"
 DEFAULT_TAG = "v1.4.2"

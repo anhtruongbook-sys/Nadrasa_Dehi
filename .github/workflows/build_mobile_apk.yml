@@ -63,23 +63,29 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.0
-          name: "Neta Light & Huyền Học v1.9.0 (Hiệu Chuẩn La Kinh 384 Hào Tiên Thiên, Chụp Ảnh Ultra-HD 4x & Khắc Phục Lỗi Xoay Bài Tarot)"
+          tag_name: v1.9.1
+          name: "Neta Light & Huyền Học v1.9.1 (16 Tinh Bàn Huyền Không Phi Tinh Cửu Vận, 3 Chế Độ Kỳ Môn Độn Giáp, Huyền Không Đại Quái)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.0
-            - **Khắc Phục Triệt Để Lỗi Ảnh Chụp Màn Hình Tarot Bị Xoay Nghiêng Chéo & Lật Chữ**:
-              + Thuật toán lộn ảnh 180° trên Canvas 2D chuyên biệt ở mức điểm ảnh cho bài đảo ngược, triệt tiêu 100% lỗi xoay xiên 110° của html2canvas.
-              + Bảo toàn nguyên vẹn cấu trúc xoay không gian 3D của các thẻ bài trên bàn trải bài; nhãn đỏ hiển thị chữ **NGƯỢC** thẳng đứng, xuôi mắt, rõ ràng.
-            - **Nâng Cấp Độ Phân Giải Chụp Ảnh La Kinh Vệ Tinh Lên Siêu Nét Ultra-HD Gấp 4 Lần (5.3 MP)**:
-              + Tăng hệ số scale lên 4x, giúp toàn bộ 36 tầng La Kinh và sơ đồ mái nhà vệ tinh rõ nét từng chi tiết nhỏ khi in ấn hoặc phóng to.
-            - **Hiển Thị Trực Quan Lục Thân & Hào Động Trên La Kinh**:
-              + Tích hợp thẻ Hero và dải phân tầng trực quan hiển thị Lục Thân (Phụ mẫu, Tử tôn, Huynh đệ, Thê tài, Quan quỷ) tương ứng với từng hào được kích hoạt.
-            - **Hiệu Chuẩn Chiều Đi 384 Hào Phân Kim Chuẩn Khớp 100% La Kinh Tiên Thiên**:
-              + Nửa vòng Đông (0° - 180°): Dương hào đi Thuận (Hào 1 đến Hào 6 theo chiều kim đồng hồ).
-              + Nửa vòng Tây (180° - 360°): Âm hào đi Nghịch (Hào 1 đến Hào 6 ngược chiều kim đồng hồ).
-            - **Tích Hợp Module Mới: Dịch Học & Bốc Quẻ Kinh Dịch**:
-              + Động cơ gieo quẻ 6 hào, tra cứu quẻ gốc và quẻ biến, phân tích thoán từ, hào từ và tượng quẻ.
-            - **Kế Thừa Đầy Đủ Các Phân Hệ & Tính Năng v1.8.3**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.1
+            - **16 Tinh Bàn Huyền Không Phi Tinh Chuẩn Thẩm Thị Học Cho Cả 9 Vận (Tam Nguyên Cửu Vận 1–9)**:
+              + Phân biệt rõ rệt Sơn 1 (Địa Nguyên Long) với Sơn 2/3 (Thiên/Nhân Nguyên Long).
+              + Lưới Cửu Cung định hướng trực quan (Hàng trên là Hướng, hàng dưới là Tọa, Vận Tinh trên cùng, Sơn Tinh dưới trái, Hướng Tinh dưới phải) chuẩn khớp 100% Poster phong thủy Tường Minh.
+              + Tự động nhận diện 4 đại cách cục: Vượng Sơn Vượng Hướng, Song Tinh Đáo Tọa, Song Tinh Đáo Hướng, Thượng Sơn Hạ Thủy.
+              + Bảng chọn nhanh 16 Tinh Bàn và tùy chọn chuyển đổi linh hoạt giữa lưới Định Hướng và Địa Bàn Lạc Thư.
+            - **3 Chế Độ Lập Quẻ Kỳ Môn Độn Giáp Toàn Diện**:
+              + **Thời Gia Kỳ Môn**: Dương Độn / Âm Độn tự động tính theo Tiết Khí và Tam Nguyên (Thượng, Trung, Hạ Nguyên).
+              + **Âm Bàn Kỳ Môn Độn Giáp**: Cơ chế phi cung linh hoạt, hỗ trợ bấm quẻ tâm linh và dự trắc sự vụ.
+              + **Kỳ Môn Phong Thủy**: Trực quan hóa Cửu Cung phối Bát Môn, Cửu Tinh, Bát Thần và đề xuất bố cục phong thủy Lục Sự (Cửa, Bếp, Phòng ngủ, Bàn làm việc, Két sắt, Bể cá/Thủy tụ).
+            - **Tích Hợp Huyền Không Đại Quái & Nhị Thập Bát Tú**:
+              + Tra cứu 64 Quẻ Huyền Không Đại Quái (Quái Khí 1–9, Quái Vận 1–9).
+              + 28 Tú (Nhị Thập Bát Tú) phân bổ 360° với ngũ hành và độ số cát hung.
+            - **Tối Ưu Hóa Giao Diện & Lịch Tiết Khí Thiên Văn**:
+              + Tích hợp động cơ thiên văn VSOP87D tính thời điểm chuyển Tiết Khí chính xác đến từng giây.
+              + Thiết kế dải hiển thị Tiết Khí cô lập chuyên biệt, triệt tiêu hoàn toàn lỗi tràn chữ trên màn hình điện thoại.
+            - **Kế Thừa Toàn Bộ Các Tính Năng Bản v1.9.0 & v1.8.3**:
+              + La Kinh Vệ Tinh 36 tầng siêu nét Ultra-HD 4x, Thước Lập Cực 3 mẫu (Mica Trong, Dạ Quang, Giấy Trắng).
+              + Lục Thân & 384 Hào Phân Kim Tiên Thiên.
+              + Tarot Rider-Waite, Neta Light 48 lá, Bốc Quẻ Kinh Dịch, Pháp Hành Nadrasa Dehi 41 bài học Offline 100%.
             - **Đại Tu Chức Năng "+ Thêm Bài Học Mới" Chuẩn Mobile-First Trên Điện Thoại**:
               + **Hai Nút Thao Tác Chuyên Biệt Nổi Bật**: `📸 Chụp Ảnh Trực Tiếp` và `🖼️ Chọn Từ Thư Viện Ảnh` to rõ, một chạm mở ngay Camera hoặc Kho ảnh thiết bị.
               + **Cơ Chế Kép (Native Android Bridge & HTML5 Fallback)**: Tích hợp sâu vào Android Intents (`MediaStore.ACTION_IMAGE_CAPTURE` & `Intent.ACTION_GET_CONTENT`), đồng thời hỗ trợ mượt mà trên trình duyệt web.

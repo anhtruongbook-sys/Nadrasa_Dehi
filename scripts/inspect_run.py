@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-TOKEN = "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"
+TOKEN = ""
 RUN_ID = "36097871218"
 
 req = urllib.request.Request(

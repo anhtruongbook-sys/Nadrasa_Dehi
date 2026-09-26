@@ -475,27 +475,31 @@
 
   /**
    * Xác định chiều bay (Thuận +1 hoặc Nghịch -1) cho Tọa Tinh hoặc Hướng Tinh khi nhập Trung Cung
+   * Chuẩn mực Thẩm Thị Huyền Không Học cho TOÀN BỘ 9 VẬN (Tam Nguyên Cửu Vận 1 - 9)
    * @param {number} star - Số sao nhập trung cung (1-9)
    * @param {number} longIdx - Thứ tự Nguyên Long (1: Địa, 2: Thiên, 3: Nhân)
    * @param {number} currentPeriod - Vận hiện tại (1-9)
+   * @param {string} sonCungId - Cung vị của Sơn tọa hoặc Sơn hướng
    */
-  function getFlyDirection(star, longIdx, currentPeriod) {
+  function getFlyDirection(star, longIdx, currentPeriod, sonCungId) {
     if (star !== 5) {
+      // Với các sao 1, 2, 3, 4, 6, 7, 8, 9:
+      // Tìm về Cung gốc Lạc Thư của sao đó, lấy Sơn cùng Nguyên Long để định Âm/Dương
       const palaceId = STAR_TO_PALACE[star];
-      // Tìm Sơn cùng Nguyên Long tại Cung gốc của sao
       const matchingSon = SON_24_TABLE.find(s => s.cungId === palaceId && s.long === longIdx);
       return matchingSon ? matchingSon.sign : 1;
     } else {
-      // Sao số 5 (Ngũ Hoàng) nhập Trung Cung:
-      // Xét theo tính chất chẵn/lẻ của Vận Tinh tại Trung Cung:
-      // - Với Vận lẻ (1, 3, 7, 9): Sơn 1 (Địa) bay Thuận (+1); Sơn 2 (Thiên) & Sơn 3 (Nhân) bay Nghịch (-1)
-      // - Với Vận chẵn (2, 4, 6, 8): Sơn 1 (Địa) bay Nghịch (-1); Sơn 2 (Thiên) & Sơn 3 (Nhân) bay Thuận (+1)
-      // - Với Vận 5: Nửa đầu quy ước theo Khôn (chẵn: 1 nghịch, 2/3 thuận); nửa sau theo Cấn (lẻ: 1 thuận, 2/3 nghịch)
-      if ([1, 3, 7, 9].includes(currentPeriod)) {
-        return longIdx === 1 ? 1 : -1;
-      } else {
-        return longIdx === 1 ? -1 : 1;
-      }
+      // Với sao số 5 (Ngũ Hoàng) nhập Trung Cung:
+      // Trong Thẩm Thị Huyền Không, sao 5 ở Trung Cung không có 24 sơn riêng,
+      // nên mượn tính chất của Cung vị mà sao 5 đang đóng trên Vận bàn của Vận đó:
+      // - Vận lẻ (1, 3, 7, 9): Sao 5 đóng tại các cung Tứ Chánh (Ly, Đoài, Chấn, Khảm) -> Sơn 1 bay Thuận (+1), Sơn 2/3 bay Nghịch (-1)
+      // - Vận chẵn (2, 4, 6, 8): Sao 5 đóng tại các cung Tứ Duy (Cấn, Càn, Tốn, Khôn) -> Sơn 1 bay Nghịch (-1), Sơn 2/3 bay Thuận (+1)
+      // - Vận 5: Sao 5 ở Trung Cung Vận bàn -> lấy theo chính Cung vị của Sơn Tọa / Hướng đó
+      const k5 = ((5 - currentPeriod) % 9 + 9) % 9;
+      const palace5 = FLYING_PATH_IDS[k5] || 'C';
+      const targetPalace = (palace5 === 'C' && sonCungId) ? sonCungId : palace5;
+      const matchingSon = SON_24_TABLE.find(s => s.cungId === targetPalace && s.long === longIdx);
+      return matchingSon ? matchingSon.sign : (longIdx === 1 ? 1 : -1);
     }
   }
 
@@ -568,8 +572,8 @@
     const facingCenterStar = vanMap[sonFacing.cungId];
 
     // 3. Xác định chiều bay (Thuận +1 hoặc Nghịch -1)
-    const mountainFlyDir = getFlyDirection(mountainCenterStar, sonToa.long, period);
-    const facingFlyDir = getFlyDirection(facingCenterStar, sonFacing.long, period);
+    const mountainFlyDir = getFlyDirection(mountainCenterStar, sonToa.long, period, sonToa.cungId);
+    const facingFlyDir = getFlyDirection(facingCenterStar, sonFacing.long, period, sonFacing.cungId);
 
     // 4. Phi tinh cho 9 Cung
     const mountainMap = {};
