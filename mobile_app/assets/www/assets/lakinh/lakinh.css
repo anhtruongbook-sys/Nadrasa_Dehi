@@ -1277,7 +1277,182 @@ body.light-theme .lakinh-palace-name {
 
 body.light-theme .lakinh-star-mountain { color: #0284c7; }
 body.light-theme .lakinh-star-facing { color: #e11d48; }
-body.light-theme .lakinh-star-period { color: #475569; }
+.lakinh-hk-header-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+body.light-theme .lakinh-hk-header-card {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+body.light-theme .lakinh-hk-header-card span,
+body.light-theme .lakinh-hk-header-card div,
+body.light-theme .lakinh-hk-header-card label {
+  color: #334155;
+}
+
+body.light-theme .lakinh-hk-header-card strong {
+  color: #0f172a;
+}
+
+.lakinh-hk-title-sub {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+body.light-theme .lakinh-hk-title-sub {
+  color: #0f172a;
+}
+
+.lakinh-hk-label {
+  font-size: 0.68rem;
+  color: #cbd5e1;
+}
+
+body.light-theme .lakinh-hk-label {
+  color: #475569;
+}
+
+.lakinh-hk-details {
+  font-size: 0.68rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 5px;
+}
+
+body.light-theme .lakinh-hk-details {
+  color: #334155;
+  border-top-color: #e2e8f0;
+}
+
+.lakinh-hk-desc {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+body.light-theme .lakinh-hk-desc {
+  color: #475569;
+}
+
+.lakinh-hk-footnote {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+body.light-theme .lakinh-hk-footnote {
+  color: #64748b;
+}
+
+body.light-theme .lakinh-period-select {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.lakinh-hk-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.lakinh-hk-badge.badge-gold {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+}
+
+body.light-theme .lakinh-hk-badge.badge-gold {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  border-color: #d97706;
+}
+
+.lakinh-hk-badge.badge-emerald {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border: 1px solid #10b981;
+}
+
+body.light-theme .lakinh-hk-badge.badge-emerald {
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
+  border-color: #059669;
+}
+
+.lakinh-hk-badge.badge-blue {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+}
+
+body.light-theme .lakinh-hk-badge.badge-blue {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0369a1;
+  border-color: #0284c7;
+}
+
+.lakinh-hk-badge.badge-red {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+body.light-theme .lakinh-hk-badge.badge-red {
+  background: rgba(239, 68, 68, 0.15);
+  color: #b91c1c;
+  border-color: #dc2626;
+}
+
+.lakinh-hk-badge.badge-slate {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+  border: 1px solid #94a3b8;
+}
+
+body.light-theme .lakinh-hk-badge.badge-slate {
+  background: #e2e8f0;
+  color: #475569;
+  border-color: #94a3b8;
+}
+
+.lakinh-tag-toa {
+  font-size: 0.55rem;
+  font-weight: 700;
+  background: rgba(56, 189, 248, 0.25);
+  color: #38bdf8;
+  padding: 1px 3px;
+  border-radius: 3px;
+  margin-left: 2px;
+}
+
+.lakinh-tag-facing {
+  font-size: 0.55rem;
+  font-weight: 700;
+  background: rgba(244, 63, 94, 0.25);
+  color: #f43f5e;
+  padding: 1px 3px;
+  border-radius: 3px;
+  margin-left: 2px;
+}
+
+.lakinh-palace-cell.prime-star {
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.35);
+  border-color: rgba(245, 158, 11, 0.6);
+}
 
 /* ================= 6. TÌM KIẾM ĐỊA CHỈ & HƯỚNG DẪN MỞ KHÓA GPS ================= */
 .lakinh-search-box {

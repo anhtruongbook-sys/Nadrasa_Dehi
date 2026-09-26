@@ -44,44 +44,43 @@
   }
 
   // ===========================================================================
-  // 2. BẢNG 24 SƠN HƯỚNG & QUY CHIẾU LẬP CỰC
+  // 2. BẢNG 24 SƠN HƯỚNG & QUY CHIẾU LẬP CỰC (TAM NGUYÊN LONG & ÂM DƯƠNG CHUẨN)
   // ===========================================================================
+  // Mỗi hướng gồm 3 Sơn: Sơn 1 (Địa Nguyên Long), Sơn 2 (Thiên Nguyên Long), Sơn 3 (Nhân Nguyên Long)
+  // Dấu Âm Dương: +1 (Dương - Bay Thuận), -1 (Âm - Bay Nghịch)
   const SON_24_TABLE = [
-    { name: "Tý", cung: "Khảm", hanh: "Thuỷ", deg: 0, toa: "Ngọ", quai: 1, am_duong: "Dương" },
-    { name: "Quý", cung: "Khảm", hanh: "Thuỷ", deg: 15, toa: "Đinh", quai: 1, am_duong: "Âm" },
-    { name: "Sửu", cung: "Cấn", hanh: "Thổ", deg: 30, toa: "Mùi", quai: 8, am_duong: "Âm" },
-    { name: "Cấn", cung: "Cấn", hanh: "Thổ", deg: 45, toa: "Khôn", quai: 8, am_duong: "Dương" },
-    { name: "Dần", cung: "Cấn", hanh: "Mộc", deg: 60, toa: "Thân", quai: 8, am_duong: "Dương" },
-    { name: "Giáp", cung: "Chấn", hanh: "Mộc", deg: 75, toa: "Canh", quai: 3, am_duong: "Dương" },
-    { name: "Mão", cung: "Chấn", hanh: "Mộc", deg: 90, toa: "Dậu", quai: 3, am_duong: "Âm" },
-    { name: "Ất", cung: "Chấn", hanh: "Mộc", deg: 105, toa: "Tân", quai: 3, am_duong: "Âm" },
-    { name: "Thìn", cung: "Tốn", hanh: "Thổ", deg: 120, toa: "Tuất", quai: 4, am_duong: "Âm" },
-    { name: "Tốn", cung: "Tốn", hanh: "Mộc", deg: 135, toa: "Càn", quai: 4, am_duong: "Dương" },
-    { name: "Tỵ", cung: "Tốn", hanh: "Hoả", deg: 150, toa: "Hợi", quai: 4, am_duong: "Dương" },
-    { name: "Bính", cung: "Ly", hanh: "Hoả", deg: 165, toa: "Nhâm", quai: 9, am_duong: "Dương" },
-    { name: "Ngọ", cung: "Ly", hanh: "Hoả", deg: 180, toa: "Tý", quai: 9, am_duong: "Âm" },
-    { name: "Đinh", cung: "Ly", hanh: "Hoả", deg: 195, toa: "Quý", quai: 9, am_duong: "Âm" },
-    { name: "Mùi", cung: "Khôn", hanh: "Thổ", deg: 210, toa: "Sửu", quai: 2, am_duong: "Âm" },
-    { name: "Khôn", cung: "Khôn", hanh: "Thổ", deg: 225, toa: "Cấn", quai: 2, am_duong: "Dương" },
-    { name: "Thân", cung: "Khôn", hanh: "Kim", deg: 240, toa: "Dần", quai: 2, am_duong: "Dương" },
-    { name: "Canh", cung: "Đoài", hanh: "Kim", deg: 255, toa: "Giáp", quai: 7, am_duong: "Dương" },
-    { name: "Dậu", cung: "Đoài", hanh: "Kim", deg: 270, toa: "Mão", quai: 7, am_duong: "Âm" },
-    { name: "Tân", cung: "Đoài", hanh: "Kim", deg: 285, toa: "Ất", quai: 7, am_duong: "Âm" },
-    { name: "Tuất", cung: "Càn", hanh: "Thổ", deg: 300, toa: "Thìn", quai: 6, am_duong: "Âm" },
-    { name: "Càn", cung: "Càn", hanh: "Kim", deg: 315, toa: "Tốn", quai: 6, am_duong: "Dương" },
-    { name: "Hợi", cung: "Càn", hanh: "Thuỷ", deg: 330, toa: "Tỵ", quai: 6, am_duong: "Dương" },
-    { name: "Nhâm", cung: "Khảm", hanh: "Thuỷ", deg: 345, toa: "Bính", quai: 1, am_duong: "Dương" }
+    { name: "Tý", cung: "Khảm", cungId: "N", hanh: "Thuỷ", deg: 0, toa: "Ngọ", quai: 1, long: 2, long_name: "Thiên", sign: -1, am_duong: "Âm" },
+    { name: "Quý", cung: "Khảm", cungId: "N", hanh: "Thuỷ", deg: 15, toa: "Đinh", quai: 1, long: 3, long_name: "Nhân", sign: -1, am_duong: "Âm" },
+    { name: "Sửu", cung: "Cấn", cungId: "NE", hanh: "Thổ", deg: 30, toa: "Mùi", quai: 8, long: 1, long_name: "Địa", sign: -1, am_duong: "Âm" },
+    { name: "Cấn", cung: "Cấn", cungId: "NE", hanh: "Thổ", deg: 45, toa: "Khôn", quai: 8, long: 2, long_name: "Thiên", sign: 1, am_duong: "Dương" },
+    { name: "Dần", cung: "Cấn", cungId: "NE", hanh: "Mộc", deg: 60, toa: "Thân", quai: 8, long: 3, long_name: "Nhân", sign: 1, am_duong: "Dương" },
+    { name: "Giáp", cung: "Chấn", cungId: "E", hanh: "Mộc", deg: 75, toa: "Canh", quai: 3, long: 1, long_name: "Địa", sign: 1, am_duong: "Dương" },
+    { name: "Mão", cung: "Chấn", cungId: "E", hanh: "Mộc", deg: 90, toa: "Dậu", quai: 3, long: 2, long_name: "Thiên", sign: -1, am_duong: "Âm" },
+    { name: "Ất", cung: "Chấn", cungId: "E", hanh: "Mộc", deg: 105, toa: "Tân", quai: 3, long: 3, long_name: "Nhân", sign: -1, am_duong: "Âm" },
+    { name: "Thìn", cung: "Tốn", cungId: "SE", hanh: "Thổ", deg: 120, toa: "Tuất", quai: 4, long: 1, long_name: "Địa", sign: -1, am_duong: "Âm" },
+    { name: "Tốn", cung: "Tốn", cungId: "SE", hanh: "Mộc", deg: 135, toa: "Càn", quai: 4, long: 2, long_name: "Thiên", sign: 1, am_duong: "Dương" },
+    { name: "Tỵ", cung: "Tốn", cungId: "SE", hanh: "Hoả", deg: 150, toa: "Hợi", quai: 4, long: 3, long_name: "Nhân", sign: 1, am_duong: "Dương" },
+    { name: "Bính", cung: "Ly", cungId: "S", hanh: "Hoả", deg: 165, toa: "Nhâm", quai: 9, long: 1, long_name: "Địa", sign: 1, am_duong: "Dương" },
+    { name: "Ngọ", cung: "Ly", cungId: "S", hanh: "Hoả", deg: 180, toa: "Tý", quai: 9, long: 2, long_name: "Thiên", sign: -1, am_duong: "Âm" },
+    { name: "Đinh", cung: "Ly", cungId: "S", hanh: "Hoả", deg: 195, toa: "Quý", quai: 9, long: 3, long_name: "Nhân", sign: -1, am_duong: "Âm" },
+    { name: "Mùi", cung: "Khôn", cungId: "SW", hanh: "Thổ", deg: 210, toa: "Sửu", quai: 2, long: 1, long_name: "Địa", sign: -1, am_duong: "Âm" },
+    { name: "Khôn", cung: "Khôn", cungId: "SW", hanh: "Thổ", deg: 225, toa: "Cấn", quai: 2, long: 2, long_name: "Thiên", sign: 1, am_duong: "Dương" },
+    { name: "Thân", cung: "Khôn", cungId: "SW", hanh: "Kim", deg: 240, toa: "Dần", quai: 2, long: 3, long_name: "Nhân", sign: 1, am_duong: "Dương" },
+    { name: "Canh", cung: "Đoài", cungId: "W", hanh: "Kim", deg: 255, toa: "Giáp", quai: 7, long: 1, long_name: "Địa", sign: 1, am_duong: "Dương" },
+    { name: "Dậu", cung: "Đoài", cungId: "W", hanh: "Kim", deg: 270, toa: "Mão", quai: 7, long: 2, long_name: "Thiên", sign: -1, am_duong: "Âm" },
+    { name: "Tân", cung: "Đoài", cungId: "W", hanh: "Kim", deg: 285, toa: "Ất", quai: 7, long: 3, long_name: "Nhân", sign: -1, am_duong: "Âm" },
+    { name: "Tuất", cung: "Càn", cungId: "NW", hanh: "Thổ", deg: 300, toa: "Thìn", quai: 6, long: 1, long_name: "Địa", sign: -1, am_duong: "Âm" },
+    { name: "Càn", cung: "Càn", cungId: "NW", hanh: "Kim", deg: 315, toa: "Tốn", quai: 6, long: 2, long_name: "Thiên", sign: 1, am_duong: "Dương" },
+    { name: "Hợi", cung: "Càn", cungId: "NW", hanh: "Thuỷ", deg: 330, toa: "Tỵ", quai: 6, long: 3, long_name: "Nhân", sign: 1, am_duong: "Dương" },
+    { name: "Nhâm", cung: "Khảm", cungId: "N", hanh: "Thuỷ", deg: 345, toa: "Bính", quai: 1, long: 1, long_name: "Địa", sign: 1, am_duong: "Dương" }
   ];
 
   function getSonInfo(deg) {
     const norm = (deg % 360 + 360) % 360;
     for (const s of SON_24_TABLE) {
-      const min = (s.deg - 7.5 + 360) % 360;
-      const max = (s.deg + 7.5) % 360;
-      if (min > max) {
-        if (norm >= min || norm < max) return s;
-      } else {
-        if (norm >= min && norm < max) return s;
+      const diff = ((norm - s.deg + 180) % 360 + 360) % 360 - 180;
+      if (diff >= -7.5 && diff < 7.5) {
+        return s;
       }
     }
     return SON_24_TABLE[0];
@@ -444,7 +443,7 @@
   }
 
   // ===========================================================================
-  // 6. HUYỀN KHÔNG PHI TINH HẠ NGUYÊN VẬN 9 (2024 - 2043)
+  // 6. HUYỀN KHÔNG PHI TINH CHÍNH TÔNG (TAM NGUYÊN CỬU VẬN - THẨM THỊ HUYỀN KHÔNG)
   // ===========================================================================
   // Lạc thư 9 cung: Khảm(1), Khôn(2), Chấn(3), Tốn(4), Trung(5), Càn(6), Đoài(7), Cấn(8), Ly(9)
   const LUO_SHU_POSITIONS = [
@@ -459,49 +458,145 @@
     { id: 'NW', name: 'Tây Bắc (Càn)', quai: 6 }
   ];
 
-  // Thứ tự bay Lạc Thư chuẩn: 5 -> 6 -> 7 -> 8 -> 9 -> 1 -> 2 -> 3 -> 4
-  const FLYING_PATH = [4, 8, 0, 7, 2, 6, 1, 5, 3]; // index mapping relative to LUO_SHU_POSITIONS
+  // Thứ tự 9 cung theo đường Lường Thiên Xích (quỹ đạo Lạc Thư phi tinh)
+  const FLYING_PATH_IDS = ['C', 'NW', 'W', 'NE', 'S', 'N', 'SW', 'E', 'SE'];
+
+  // Ánh xạ số Lạc Thư sang Cung vị tương ứng
+  const STAR_TO_PALACE = {
+    1: 'N',
+    2: 'SW',
+    3: 'E',
+    4: 'SE',
+    6: 'NW',
+    7: 'W',
+    8: 'NE',
+    9: 'S'
+  };
+
+  /**
+   * Xác định chiều bay (Thuận +1 hoặc Nghịch -1) cho Tọa Tinh hoặc Hướng Tinh khi nhập Trung Cung
+   * @param {number} star - Số sao nhập trung cung (1-9)
+   * @param {number} longIdx - Thứ tự Nguyên Long (1: Địa, 2: Thiên, 3: Nhân)
+   * @param {number} currentPeriod - Vận hiện tại (1-9)
+   */
+  function getFlyDirection(star, longIdx, currentPeriod) {
+    if (star !== 5) {
+      const palaceId = STAR_TO_PALACE[star];
+      // Tìm Sơn cùng Nguyên Long tại Cung gốc của sao
+      const matchingSon = SON_24_TABLE.find(s => s.cungId === palaceId && s.long === longIdx);
+      return matchingSon ? matchingSon.sign : 1;
+    } else {
+      // Sao số 5 (Ngũ Hoàng) nhập Trung Cung:
+      // Xét theo tính chất chẵn/lẻ của Vận Tinh tại Trung Cung:
+      // - Với Vận lẻ (1, 3, 7, 9): Sơn 1 (Địa) bay Thuận (+1); Sơn 2 (Thiên) & Sơn 3 (Nhân) bay Nghịch (-1)
+      // - Với Vận chẵn (2, 4, 6, 8): Sơn 1 (Địa) bay Nghịch (-1); Sơn 2 (Thiên) & Sơn 3 (Nhân) bay Thuận (+1)
+      // - Với Vận 5: Nửa đầu quy ước theo Khôn (chẵn: 1 nghịch, 2/3 thuận); nửa sau theo Cấn (lẻ: 1 thuận, 2/3 nghịch)
+      if ([1, 3, 7, 9].includes(currentPeriod)) {
+        return longIdx === 1 ? 1 : -1;
+      } else {
+        return longIdx === 1 ? -1 : 1;
+      }
+    }
+  }
 
   function generateHuyenKhongMatrix(facingDeg, period = 9) {
     const sonFacing = getSonInfo(facingDeg);
-    const sonToa = getSonInfo((facingDeg + 180) % 360);
+    const toaDeg = (facingDeg + 180) % 360;
+    const sonToa = getSonInfo(toaDeg);
 
-    // Vận 9: Số 9 nhập trung cung, bay thuận:
-    // Cung vị các sao Vận:
-    const vanStars = {
-      'C': 9, 'NW': 1, 'W': 2, 'NE': 3, 'S': 4, 'N': 5, 'SW': 6, 'E': 7, 'SE': 8
-    };
+    // 1. Lập Vận Tinh Bàn (Luôn bay thuận theo Lường Thiên Xích từ số Vận)
+    const vanMap = {};
+    FLYING_PATH_IDS.forEach((id, k) => {
+      vanMap[id] = ((period - 1 + k) % 9) + 1;
+    });
 
-    // Tọa tinh và Hướng tinh nhập trung cung
-    // Tọa tinh lấy từ sao vận tại cung tọa
-    // Hướng tinh lấy từ sao vận tại cung hướng
-    // Với Vận 9, cung Khảm (1) có sao 5, cung Ly (9) có sao 4, etc.
-    const mountainStarCenter = 9;
-    const facingStarCenter = 9;
+    // 2. Tọa Tinh (Sơn Tinh) và Hướng Tinh nhập Trung Cung
+    const mountainCenterStar = vanMap[sonToa.cungId];
+    const facingCenterStar = vanMap[sonFacing.cungId];
 
-    // Chi tiết từng cung Lạc Thư cho Vận 9
+    // 3. Xác định chiều bay (Thuận +1 hoặc Nghịch -1)
+    const mountainFlyDir = getFlyDirection(mountainCenterStar, sonToa.long, period);
+    const facingFlyDir = getFlyDirection(facingCenterStar, sonFacing.long, period);
+
+    // 4. Phi tinh cho 9 Cung
+    const mountainMap = {};
+    const facingMap = {};
+    FLYING_PATH_IDS.forEach((id, k) => {
+      if (mountainFlyDir === 1) {
+        mountainMap[id] = ((mountainCenterStar - 1 + k) % 9) + 1;
+      } else {
+        mountainMap[id] = ((mountainCenterStar - 1 - k + 81) % 9) + 1;
+      }
+
+      if (facingFlyDir === 1) {
+        facingMap[id] = ((facingCenterStar - 1 + k) % 9) + 1;
+      } else {
+        facingMap[id] = ((facingCenterStar - 1 - k + 81) % 9) + 1;
+      }
+    });
+
+    // 5. Tổng hợp lưới Lạc Thư 9 Cung
     const grid = LUO_SHU_POSITIONS.map(pos => {
-      let van = vanStars[pos.id] || 9;
-      // Thuật toán phi tinh tính Sơn/Hướng cho từng cung
-      let mountain = ((van + sonToa.quai - 1) % 9) + 1;
-      let facing = ((van + sonFacing.quai - 1) % 9) + 1;
+      const isCenter = pos.id === 'C';
+      const mStar = mountainMap[pos.id];
+      const fStar = facingMap[pos.id];
+      const vStar = vanMap[pos.id];
 
       return {
         id: pos.id,
         name: pos.name,
         quai: pos.quai,
-        isCenter: pos.id === 'C',
-        vanStar: van,
-        mountainStar: mountain,
-        facingStar: facing
+        isCenter: isCenter,
+        vanStar: vStar,
+        mountainStar: mStar,
+        facingStar: fStar,
+        isToa: pos.id === sonToa.cungId,
+        isFacing: pos.id === sonFacing.cungId,
+        hasPrimeStar: mStar === period || fStar === period
       };
     });
+
+    // 6. Phân định Cách Cục Tinh Bàn (4 đại cách cục kinh điển)
+    const mAtToa = mountainMap[sonToa.cungId];
+    const fAtFacing = facingMap[sonFacing.cungId];
+    const mAtFacing = mountainMap[sonFacing.cungId];
+    const fAtToa = facingMap[sonToa.cungId];
+
+    let patternCode = 'normal';
+    let patternName = 'Thường Cục';
+    let patternDesc = 'Bố cục cân bằng, cần phối hợp loan đầu hình thế và công năng mở cửa hợp lý.';
+
+    if (mAtToa === period && fAtFacing === period) {
+      patternCode = 'vuong_son_vuong_huong';
+      patternName = 'Vượng Sơn Vượng Hướng';
+      patternDesc = 'Đinh tài lưỡng đắc: Phía sau cần tọa sơn cao vững, phía trước cần minh đường thoáng đãng có thủy để phát tài đại quý.';
+    } else if (mAtToa === period && fAtToa === period) {
+      patternCode = 'song_tinh_dao_toa';
+      patternName = 'Song Tinh Đáo Tọa';
+      patternDesc = 'Vượng đinh tài tụ hậu phương: Sau nhà nên có thủy rồi có sơn (hoặc hồ nước/sân trong rồi tới nhà cao). Tiền phương nên thông thoáng.';
+    } else if (mAtFacing === period && fAtFacing === period) {
+      patternCode = 'song_tinh_dao_huong';
+      patternName = 'Song Tinh Đáo Hướng';
+      patternDesc = 'Vượng tài đại phát tiền phương: Mặt tiền trước nhà rất cần tụ thủy (hồ nước, ngã ba, đường rộng) và phía sau thủy có án sơn hoặc nhà cao.';
+    } else if (mAtFacing === period && fAtToa === period) {
+      patternCode = 'thuong_son_ha_thuy';
+      patternName = 'Thượng Sơn Hạ Thủy';
+      patternDesc = 'Tổn đinh phá tài (bố cục đảo nghịch): Trước nhà gặp núi cao, sau nhà gặp nước lớn là đại kỵ, cần thiết kế non bộ / tiểu cảnh phong thủy hóa giải.';
+    }
 
     return {
       period: period,
       facingDeg: Math.round(facingDeg * 10) / 10,
+      toaDeg: Math.round(toaDeg * 10) / 10,
       sonFacing: sonFacing,
       sonToa: sonToa,
+      mountainCenterStar: mountainCenterStar,
+      facingCenterStar: facingCenterStar,
+      mountainFlyDir: mountainFlyDir,
+      facingFlyDir: facingFlyDir,
+      patternCode: patternCode,
+      patternName: patternName,
+      patternDesc: patternDesc,
       grid: grid
     };
   }
