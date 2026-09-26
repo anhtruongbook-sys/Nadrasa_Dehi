@@ -44,6 +44,19 @@
     window.lakinhState = state;
   }
 
+  function getPlateSrc(type) {
+    if (type === 'thuoc_lap_cuc') {
+      return (window.LAKINH_BASE64_DATA && window.LAKINH_BASE64_DATA['thuoc_lap_cuc.png'])
+        || 'assets/lakinh/thuoc_lap_cuc.png';
+    } else if (type === 'gold') {
+      return (window.LAKINH_BASE64_DATA && window.LAKINH_BASE64_DATA['thuoc_lap_cuc_gold.png'])
+        || 'assets/lakinh/thuoc_lap_cuc_gold.png';
+    } else {
+      return (window.LAKINH_BASE64_DATA && window.LAKINH_BASE64_DATA['thuoc_lap_cuc_trans.png'])
+        || 'assets/lakinh/thuoc_lap_cuc_trans.png';
+    }
+  }
+
   function initLaKinhView() {
     const container = document.getElementById('view-lakinh');
     if (!container) return;
@@ -60,39 +73,64 @@
         <div id="lakinh-map"></div>
         <div id="lakinh-crosshair"></div>
 
-        <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB) -->
-        <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn">
+        <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Siêu Gọn) -->
+        <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn" aria-label="Về vị trí hiện tại">
           <span style="font-size: 1.15rem; line-height: 1;">🎯</span>
-          <span>Về Vị Trí Hiện Tại</span>
         </button>
 
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
         <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
           <div id="lakinh-backdrop-circle" style="opacity: ${state.bgOpacity};"></div>
-          <img id="lakinh-disc" src="${state.activePlate === 'gold' ? 'assets/lakinh/thuoc_lap_cuc_gold.png' : (state.activePlate === 'thuoc_lap_cuc' ? 'assets/lakinh/thuoc_lap_cuc.png' : 'assets/lakinh/thuoc_lap_cuc_trans.png')}" alt="Thước Lập Cực 36 Tầng" style="opacity: ${state.discOpacity};">
-          <div id="lakinh-target-pointer"></div>
+          <img id="lakinh-disc" src="${getPlateSrc(state.activePlate)}" alt="Thước Lập Cực 36 Tầng" style="opacity: ${state.discOpacity};" />
+          <!-- Thập Đạo Chỉ Tuyến Trục Dọc (Hướng 12h - Tọa 6h) Chuẩn Xác Tuyệt Đối -->
+          <div id="lakinh-target-pointer">
+            <div class="pointer-line-vertical"></div>
+            <div class="pointer-huong-marker">
+              <div class="pointer-huong-badge">HƯỚNG ĐO 12h</div>
+              <div class="pointer-huong-arrow"></div>
+            </div>
+            <div class="pointer-toa-marker">
+              <div class="pointer-toa-arrow"></div>
+              <div class="pointer-toa-badge">TỌA SƠN 6h</div>
+            </div>
+          </div>
         </div>
 
-        <!-- 1. Thanh Tiện Ích & HUD Siêu Mỏng Trên Cùng -->
-        <div id="lakinh-top-strip">
-          <button class="lakinh-float-btn icon-only" id="lakinh-btn-search" title="Tìm địa chỉ / tọa độ">
-            🔍
-          </button>
-
-          <!-- HUD Pill Căn Giữa -->
-          <div id="lakinh-hud-pill" title="Chạm để xem thông số chi tiết">
-            <span class="hud-pill-deg" id="hud-pill-deg">0.0°</span>
-            <span class="hud-pill-son" id="hud-pill-son">Sơn Tý (Khảm)</span>
-            <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
+        <!-- 1. Cụm HUD Tọa Hướng & Huyền Không Đại Quái Tích Hợp Trên Cùng (Master Top Panel) -->
+        <div id="lakinh-top-panel" class="lakinh-glass-panel">
+          <!-- Hàng 1: Công Cụ Điều Khiển & Độ Số Tọa Hướng -->
+          <div class="lakinh-top-row">
+            <button class="lakinh-float-btn icon-only" id="lakinh-btn-search" title="Tìm địa chỉ / tọa độ GPS">
+              🔍
+            </button>
+            <div id="lakinh-hud-pill" class="lakinh-deg-center" title="Chạm để xem thông số tọa hướng chi tiết">
+              <span class="hud-pill-deg" id="hud-pill-deg">0.0°</span>
+              <span class="hud-capsule-sep">•</span>
+              <span class="hud-pill-son" id="hud-pill-son">Sơn Tý (Khảm)</span>
+              <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
+            </div>
+            <div class="lakinh-top-right-group">
+              <button class="lakinh-float-btn icon-only" id="lakinh-btn-layer" title="Chuyển lớp bản đồ (Google / Esri / Phố)">
+                🛰️
+              </button>
+              <button class="lakinh-float-btn icon-only" id="lakinh-btn-projects" title="Hồ sơ khảo sát">
+                📁
+              </button>
+            </div>
           </div>
 
-          <div style="display: flex; gap: 4px;">
-            <button class="lakinh-float-btn" id="lakinh-btn-layer" title="Chuyển lớp bản đồ">
-              🛰️ Vệ Tinh
-            </button>
-            <button class="lakinh-float-btn icon-only" id="lakinh-btn-projects" title="Hồ sơ khảo sát">
-              📁
-            </button>
+          <!-- Hàng 2: Huyền Không Đại Quái Trải Rộng Toàn Bộ Bề Ngang, Chữ To Rõ, Đầy Đủ 100% Thông Tin -->
+          <div id="lakinh-hkdq-quick-strip" class="lakinh-hkdq-full-row" title="Chạm để mở bảng phân kim 64 Quẻ 384 Hào chi tiết">
+            <div class="hkdq-row-left">
+              <span class="hkdq-qp-icon">🔱</span>
+              <span class="hkdq-qp-que" id="hkdq-quick-que">Bát Thuần Khôn</span>
+            </div>
+            <div class="hkdq-row-right">
+              <span class="hkdq-qp-khivan" id="hkdq-quick-khivan">Khí 1 • Vận 1</span>
+              <span class="hkdq-qp-sep">•</span>
+              <span class="hkdq-qp-hao" id="hkdq-quick-hao">Hào 6</span>
+              <span class="hkdq-qp-tag" id="hkdq-quick-tag">Linh Thần V9</span>
+            </div>
           </div>
         </div>
 
@@ -118,7 +156,22 @@
             <span>Cung & Ngũ Hành:</span>
             <span id="hud-detail-cung-hanh">Cung Khảm • Hành Thủy</span>
           </div>
-          <div class="hud-card-row" style="margin-top: 6px;">
+          <div class="hud-card-divider"></div>
+          <div class="hud-card-row hud-card-clickable" id="hud-row-hkdq-que" title="Chạm để mở bảng tra cứu 384 Hào">
+            <span>Đại Quái 64 Quẻ:</span>
+            <strong id="hud-detail-hkdq-que" style="color: #38bdf8;">Đang nạp...</strong>
+          </div>
+          <div class="hud-card-row hud-card-clickable" id="hud-row-hkdq-hao" title="Chạm để mở bảng tra cứu 384 Hào">
+            <span>Phân Kim 384 Hào:</span>
+            <span id="hud-detail-hkdq-hao" style="color: #4ade80;">Đang nạp...</span>
+          </div>
+          <div class="hud-card-row hud-card-clickable" id="hud-row-hkdq-badges" style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center;" title="Chạm để mở bảng tra cứu 384 Hào">
+            <span class="hud-card-badge" id="hud-detail-hkdq-van9" style="background: rgba(2,132,199,0.18); color: #38bdf8; border-color: rgba(56,189,248,0.4);">🌊 Linh Thần Vận 9</span>
+            <span class="hud-card-badge" id="hud-detail-hkdq-tkv" style="background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.3);">🛡️ Tuyến An Toàn</span>
+            <span style="font-size: 0.68rem; color: #f5b041; margin-left: auto; font-weight: 700;">[Xem 384 Hào ↗]</span>
+          </div>
+          <div class="hud-card-divider"></div>
+          <div class="hud-card-row" style="margin-top: 4px;">
             <span class="hud-card-badge" id="hud-detail-dec">🧭 Từ thiên (WMM): -1.34° (Tây)</span>
             <span class="hud-card-badge" id="hud-detail-elev" style="background: rgba(34,197,94,0.15); color:#22c55e; border-color:rgba(34,197,94,0.3);">⛰️ Cao độ: 19.0 m</span>
           </div>
@@ -131,6 +184,9 @@
           </button>
           <button class="lakinh-dock-btn primary" id="lakinh-dock-gps" title="Bay về vị trí GPS thực tế hiện tại">
             🎯 Vị Trí
+          </button>
+          <button class="lakinh-dock-btn gold" id="lakinh-dock-hkdq" title="Phân Kim Huyền Không Đại Quái 64 Quẻ 384 Hào">
+            🔱 Đại Quái
           </button>
           <button class="lakinh-dock-btn" id="lakinh-dock-dem" title="Quét cao độ & Tam Hợp Thủy Pháp">
             🌊 Quét Cục
@@ -189,10 +245,16 @@
 
           <div class="sheet-control-group">
             <div class="sheet-control-label">
-              <span>Kích thước La Kinh</span>
+              <span>Kích thước La Kinh (Thu phóng soi 36 tầng)</span>
               <span class="val" id="sheet-val-size">${state.size} px</span>
             </div>
             <input type="range" class="lakinh-slider" id="sheet-slider-size" min="260" max="1400" value="${state.size}" step="10">
+            <div class="lakinh-btn-row" style="margin-top: 6px;">
+              <button class="lakinh-step-btn active" id="btn-size-fit">📱 Chuẩn (1x)</button>
+              <button class="lakinh-step-btn" id="btn-size-15x" style="color: #38bdf8; font-weight: 600;">🔍 Rõ Nét (1.5x)</button>
+              <button class="lakinh-step-btn" id="btn-size-2x" style="color: #f5b041; font-weight: 600;">🔬 Soi Chi Tiết (2x)</button>
+              <button class="lakinh-step-btn" id="btn-size-max" style="color: #ef4444; font-weight: 600;">👑 Cực Đại</button>
+            </div>
           </div>
 
           <!-- Xoay góc hướng nhà & Vi chỉnh -->
@@ -243,6 +305,9 @@
             <button id="sheet-btn-huyenkhong" class="lakinh-action-btn purple">
               ☯️ Lập Tinh Bàn Huyền Không Vận 9
             </button>
+            <button id="sheet-btn-hkdq" class="lakinh-action-btn gold">
+              🔱 Phân Kim Đại Quái 64 Quẻ (384 Hào)
+            </button>
             <button id="sheet-btn-centroid" class="lakinh-action-btn secondary">
               📐 Vẽ Ranh Đất / Tìm Tim Nhà
             </button>
@@ -267,6 +332,7 @@
 
         initLeafletMap();
         bindLaKinhEvents();
+        updateRotationDisplay(state.rotation);
       } else {
         if (mapInstance) {
           mapInstance.invalidateSize();
@@ -415,6 +481,93 @@
       }
       if (detailCungHanh) {
         detailCungHanh.textContent = `Cung ${son.cung} • Hành ${son.hanh} (${son.am_duong})`;
+      }
+
+      if (global.NetaLaKinhEngine.getHKDQInfo) {
+        const hkdq = global.NetaLaKinhEngine.getHKDQInfo(rounded);
+        if (hkdq) {
+          const detailHkdqQue = document.getElementById('hud-detail-hkdq-que');
+          const detailHkdqHao = document.getElementById('hud-detail-hkdq-hao');
+          const badgeVan9 = document.getElementById('hud-detail-hkdq-van9');
+          const badgeTkv = document.getElementById('hud-detail-hkdq-tkv');
+
+          if (detailHkdqQue) {
+            detailHkdqQue.innerHTML = `${hkdq.que_name} <span style="font-size:0.75rem; color:#94a3b8; font-weight:normal;">(Khí ${hkdq.quai_khi || hkdq.quai_so} • Vận ${hkdq.quai_van})</span>`;
+          }
+          if (detailHkdqHao && hkdq.hao_vi_phan) {
+            const h = hkdq.hao_vi_phan;
+            const ltColor = (h.luc_than === 'Thê Tài' || h.luc_than === 'Tử Tôn') ? '#4ade80' : (h.luc_than === 'Quan Quỷ' ? '#f87171' : '#fb923c');
+            detailHkdqHao.innerHTML = `${h.ten_hao} (${h.can_chi} • <b style="color:${ltColor}">${h.luc_than}</b>)`;
+          }
+          if (badgeVan9 && hkdq.van_9_role) {
+            if (hkdq.van_9_role.is_duong_van_9) {
+              badgeVan9.style.background = 'rgba(234, 179, 8, 0.22)';
+              badgeVan9.style.color = '#facc15';
+              badgeVan9.style.borderColor = 'rgba(250, 204, 21, 0.5)';
+              badgeVan9.innerHTML = `✨ Đương Vận 9 (Đại Phát)`;
+            } else if (hkdq.van_9_role.is_linh_than) {
+              badgeVan9.style.background = 'rgba(2, 132, 199, 0.18)';
+              badgeVan9.style.color = '#38bdf8';
+              badgeVan9.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+              badgeVan9.innerHTML = `🌊 Linh Thần Vận 9 (Nạp Thủy)`;
+            } else {
+              badgeVan9.style.background = 'rgba(147, 51, 234, 0.18)';
+              badgeVan9.style.color = '#c084fc';
+              badgeVan9.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+              badgeVan9.innerHTML = `⛰️ Chính Thần Vận 9 (Tọa Sơn)`;
+            }
+          }
+          if (badgeTkv && hkdq.canh_bao_khong_vong) {
+            if (hkdq.canh_bao_khong_vong.is_near_boundary) {
+              badgeTkv.style.background = 'rgba(239, 68, 68, 0.2)';
+              badgeTkv.style.color = '#f87171';
+              badgeTkv.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+              badgeTkv.innerHTML = `⚠️ Sát Ranh (${hkdq.canh_bao_khong_vong.distance}°)!`;
+            } else {
+              badgeTkv.style.background = 'rgba(34, 197, 94, 0.15)';
+              badgeTkv.style.color = '#4ade80';
+              badgeTkv.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+              badgeTkv.innerHTML = `🛡️ Tuyến Khí Thuần (An Toàn)`;
+            }
+          }
+
+          // Cập nhật Banner Nổi Huyền Không Đại Quái trên màn hình chính
+          const qQue = document.getElementById('hkdq-quick-que');
+          const qKhivan = document.getElementById('hkdq-quick-khivan');
+          const qHao = document.getElementById('hkdq-quick-hao');
+          const qTag = document.getElementById('hkdq-quick-tag');
+
+          if (qQue) qQue.textContent = hkdq.que_name || '';
+          if (qKhivan) qKhivan.textContent = `Khí ${hkdq.quai_khi || hkdq.quai_so} • Vận ${hkdq.quai_van}`;
+          if (qHao && hkdq.hao_vi_phan) qHao.textContent = hkdq.hao_vi_phan.ten_hao || `Hào ${hkdq.hao_vi_phan.hao_index}`;
+          if (qTag && hkdq.van_9_role) {
+            if (hkdq.canh_bao_khong_vong && hkdq.canh_bao_khong_vong.is_near_boundary) {
+              qTag.className = 'hkdq-qp-tag warn';
+              qTag.style.background = '';
+              qTag.style.color = '';
+              qTag.style.borderColor = '';
+              qTag.textContent = `⚠️ Ranh ${hkdq.canh_bao_khong_vong.distance}°`;
+            } else if (hkdq.van_9_role.is_duong_van_9) {
+              qTag.className = 'hkdq-qp-tag duong';
+              qTag.style.background = 'rgba(234, 179, 8, 0.25)';
+              qTag.style.color = '#facc15';
+              qTag.style.borderColor = 'rgba(250, 204, 21, 0.6)';
+              qTag.textContent = '✨ Đương Vận 9';
+            } else if (hkdq.van_9_role.is_linh_than) {
+              qTag.className = 'hkdq-qp-tag linh';
+              qTag.style.background = '';
+              qTag.style.color = '';
+              qTag.style.borderColor = '';
+              qTag.textContent = '🌊 Linh Thần V9';
+            } else {
+              qTag.className = 'hkdq-qp-tag chinh';
+              qTag.style.background = '';
+              qTag.style.color = '';
+              qTag.style.borderColor = '';
+              qTag.textContent = '⛰️ Chính Thần V9';
+            }
+          }
+        }
       }
     }
 
@@ -642,19 +795,28 @@
       mapInstance.removeLayer(layers.googleSat);
       currentLayer = layers.esriSat;
       currentLayer.addTo(mapInstance);
-      if (btn) btn.innerHTML = '🌍 Esri Sat';
+      if (btn) {
+        btn.innerHTML = '🌍';
+        btn.title = 'Lớp bản đồ: Vệ Tinh Esri (Chạm để đổi)';
+      }
       showLaKinhToast('Chuyển sang: Ảnh Vệ Tinh Esri');
     } else if (currentLayer === layers.esriSat) {
       mapInstance.removeLayer(layers.esriSat);
       currentLayer = layers.osm;
       currentLayer.addTo(mapInstance);
-      if (btn) btn.innerHTML = '🗺️ Bản Đồ Phố';
+      if (btn) {
+        btn.innerHTML = '🗺️';
+        btn.title = 'Lớp bản đồ: Đường Phố OSM (Chạm để đổi)';
+      }
       showLaKinhToast('Chuyển sang: Bản Đồ Đường Phố');
     } else {
       mapInstance.removeLayer(layers.osm);
       currentLayer = layers.googleSat;
       currentLayer.addTo(mapInstance);
-      if (btn) btn.innerHTML = '🛰️ Vệ Tinh';
+      if (btn) {
+        btn.innerHTML = '🛰️';
+        btn.title = 'Lớp bản đồ: Vệ Tinh Google (Chạm để đổi)';
+      }
       showLaKinhToast('Chuyển sang: Vệ Tinh Google Earth');
     }
   }
@@ -807,6 +969,189 @@
         </div>
       </div>
     `;
+  }
+
+  // Mở Modal Huyền Không Đại Quái (64 Quẻ & 384 Hào Vi Phân)
+  function openHKDQModal() {
+    const modalBox = document.getElementById('lakinh-modal-container');
+    if (!modalBox || !global.NetaLaKinhEngine || !global.NetaLaKinhEngine.getHKDQInfo) return;
+
+    closeBottomSheet();
+    const hkdq = global.NetaLaKinhEngine.getHKDQInfo(state.rotation);
+    if (!hkdq) {
+      showLaKinhToast('⚠️ Chưa nạp được CSDL Huyền Không Đại Quái');
+      return;
+    }
+
+    const hVp = hkdq.hao_vi_phan;
+    const curHIdx = hVp ? hVp.hao_index : 1;
+    const tkv = hkdq.canh_bao_khong_vong;
+
+    // Bát Quái vạch hào chuẩn (Hào 1 -> 3)
+    const TRIGRAM_LINES = {
+      'Càn': [1, 1, 1],
+      'Đoài': [1, 1, 0],
+      'Ly': [1, 0, 1],
+      'Chấn': [1, 0, 0],
+      'Tốn': [0, 1, 1],
+      'Khảm': [0, 1, 0],
+      'Cấn': [0, 0, 1],
+      'Khôn': [0, 0, 0]
+    };
+
+    let queLines = [1, 1, 1, 1, 1, 1];
+    if (hkdq.ha_thuong_quai) {
+      const parts = hkdq.ha_thuong_quai.split('/');
+      if (parts.length === 2) {
+        const haName = parts[0].replace('Hạ', '').trim();
+        const thuongName = parts[1].replace('Thượng', '').trim();
+        const haLines = TRIGRAM_LINES[haName] || [1, 1, 1];
+        const thuongLines = TRIGRAM_LINES[thuongName] || [1, 1, 1];
+        queLines = [...haLines, ...thuongLines];
+      }
+    }
+
+    // Render 6 Hào (từ hào 6 xuống hào 1 theo nguyên tắc Dịch học)
+    let haosHtml = '';
+    const haos = hkdq.haos || [];
+    for (let i = 5; i >= 0; i--) {
+      const hao = haos[i] || {};
+      const hNum = i + 1;
+      const isActive = (hNum === curHIdx);
+      const lt = hao.luc_than || '';
+
+      let badgeClass = 'luc-than-tai';
+      if (lt === 'Tử Tôn') badgeClass = 'luc-than-ton';
+      else if (lt === 'Quan Quỷ') badgeClass = 'luc-than-quy';
+      else if (lt === 'Huynh Đệ') badgeClass = 'luc-than-huynh';
+      else if (lt === 'Phụ Mẫu') badgeClass = 'luc-than-phu';
+
+      // Tính tọa độ tâm hào
+      const qStart = parseFloat((hkdq.deg_range_que || '').split('-')[0]) || 0;
+      const haoCenterDeg = Math.round((qStart + (hNum - 0.5) * 0.9375) * 100) / 100;
+
+      // Xác định vạch âm / dương từ quẻ chuẩn Dịch học
+      const isYang = (queLines[i] === 1);
+      const symbol = isYang ? '━━━' : '━ ━';
+
+      haosHtml += `
+        <div class="hkdq-hao-item ${isActive ? 'active-hao' : ''}" data-hao-deg="${haoCenterDeg}">
+          <div class="hkdq-hao-left">
+            <span class="hkdq-hao-symbol" style="color: ${isActive ? '#fbbf24' : '#94a3b8'}; font-weight: ${isYang ? '900' : '700'};">${symbol}</span>
+            <div>
+              <div class="hkdq-hao-title">
+                Hào ${hNum}: ${hao.can_chi || ''}
+                ${isActive ? '<span style="color:#fbbf24; font-size:0.65rem; margin-left:4px;">(Đang chỉ)</span>' : ''}
+              </div>
+              <div class="hkdq-hao-deg">${hao.deg_range || ''} • Tâm: ${haoCenterDeg}°</div>
+            </div>
+          </div>
+          <div class="hkdq-hao-right">
+            <span class="hkdq-hao-badge ${badgeClass}">${lt || 'Lục Thân'}</span>
+            ${!isActive ? `<button type="button" class="hkdq-btn-rotate-hao" data-target-deg="${haoCenterDeg}">🎯 Xoay</button>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    modalBox.innerHTML = `
+      <div class="lakinh-modal-overlay" id="modal-hkdq-overlay">
+        <div class="lakinh-glass-panel lakinh-modal-dialog hkdq-modal-dialog">
+          <div class="lakinh-modal-header">
+            <div class="lakinh-modal-title">🔱 HUYỀN KHÔNG ĐẠI QUÁI</div>
+            <button class="lakinh-modal-close" onclick="document.getElementById('modal-hkdq-overlay').remove()">✕</button>
+          </div>
+
+          <!-- Hero Card Quẻ Hiện Tại -->
+          <div class="hkdq-hero-card">
+            <div class="hkdq-hero-title">
+              <span class="hkdq-hero-name">${hkdq.que_name}</span>
+              <span class="hkdq-hero-fraction">Khí ${hkdq.quai_khi || hkdq.quai_so} / Vận ${hkdq.quai_van}</span>
+            </div>
+            <div class="hkdq-hero-sub">
+              <span>🧭 ${hkdq.degree.toFixed(2)}° (${hkdq.son_24})</span>
+              <span>•</span>
+              <span>Cung ${hkdq.cung_bat_quai} (${hkdq.ngu_hanh_cung})</span>
+              <span>•</span>
+              <span>Dải độ: ${hkdq.deg_range_que}</span>
+            </div>
+          </div>
+
+          <!-- Trạng Thái Vận 9 & Tuyến Không Vong -->
+          <div class="hkdq-status-grid">
+            <div class="hkdq-status-card ${hkdq.van_9_role.is_duong_van_9 ? 'role-duong' : (hkdq.van_9_role.is_linh_than ? 'role-linh' : 'role-chinh')}">
+              <div class="hkdq-card-label" style="color: ${hkdq.van_9_role.is_duong_van_9 ? '#facc15' : (hkdq.van_9_role.is_linh_than ? '#38bdf8' : '#c084fc')};">
+                ${hkdq.van_9_role.is_duong_van_9 ? '✨ Đương Vận 9' : (hkdq.van_9_role.is_linh_than ? '🌊 Linh Thần Vận 9' : '⛰️ Chính Thần Vận 9')}
+              </div>
+              <div class="hkdq-card-val" style="color: ${hkdq.van_9_role.is_duong_van_9 ? '#eab308' : (hkdq.van_9_role.is_linh_than ? '#0284c7' : '#9333ea')};">
+                ${hkdq.van_9_role.role}
+              </div>
+              <div class="hkdq-card-desc">
+                ${hkdq.van_9_role.is_duong_van_9 ? 'Đương Vận 9 tối vượng (2024-2043), sinh khí tột đỉnh, đại cát đại lợi.' : (hkdq.van_9_role.is_linh_than ? 'Cần Nạp Thủy, mở Cổng Cửa, kê bàn làm việc kích tài lộc.' : 'Cần Tọa Sơn tĩnh tại, tựa lưng vững chãi, kỵ nước động.')}
+              </div>
+            </div>
+
+            <div class="hkdq-status-card ${tkv.is_near_boundary ? 'tkv-warn' : 'tkv-safe'}">
+              <div class="hkdq-card-label" style="color: ${tkv.is_near_boundary ? '#ef4444' : '#22c55e'};">
+                ${tkv.is_near_boundary ? '⚠️ Tuyến Không Vong' : '🛡️ Khí Trường Thuần'}
+              </div>
+              <div class="hkdq-card-val" style="color: ${tkv.is_near_boundary ? '#dc2626' : '#16a34a'};">
+                ${tkv.is_near_boundary ? (tkv.details && tkv.details.the_vi ? `${tkv.details.the_vi} (${tkv.distance}°)` : `Lệch ranh ${tkv.distance}°`) : 'An Toàn (Đắc Khí)'}
+              </div>
+              <div class="hkdq-card-desc">
+                ${tkv.is_near_boundary ? (tkv.details ? `${tkv.details.tuyen_do_so}: ${tkv.details.the_vi} (${tkv.details.dang_hop_thanh || 'Ranh giới quẻ'})` : 'Sát ranh giới hào/quẻ, nên vi chỉnh về tâm hào để nạp khí thuần khiết.') : 'Khí trường thuần nhất, không bị lẫn lộn tạp khí.'}
+              </div>
+            </div>
+          </div>
+
+          <!-- Lời khuyên Hào Đang Chỉ -->
+          ${hVp ? `
+            <div style="background: rgba(30, 41, 59, 0.6); border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 4px; margin-bottom: 10px; font-size: 0.72rem; line-height: 1.4;">
+              <strong style="color: #fbbf24;">⚡ Phân kim ${hVp.ten_hao} (${hVp.can_chi} • ${hVp.luc_than}):</strong>
+              <div style="color: #cbd5e1; margin-top: 3px;">${hVp.advice || ''}</div>
+              ${hVp.nam_phat ? `<div style="color: #94a3b8; font-size: 0.68rem; margin-top: 2px;">• Ứng nghiệm: Năm ${hVp.nam_phat} • Người phát: ${hVp.nguoi_phat}</div>` : ''}
+            </div>
+          ` : ''}
+
+          <!-- Danh Sách 6 Hào Vi Phân (0.9375°/hào) -->
+          <div style="font-weight: 700; font-size: 0.75rem; color: #f5b041; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span>🔱 6 HÀO VI PHÂN (0.9375° / HÀO)</span>
+            <span style="font-size: 0.65rem; color: #94a3b8;">Chạm để vi chỉnh</span>
+          </div>
+          <div class="hkdq-haos-container">
+            ${haosHtml}
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="lakinh-action-btn secondary" style="width: 100%;" onclick="document.getElementById('modal-hkdq-overlay').remove()">Đóng</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Gắn sự kiện click cho các nút Xoay về hào
+    modalBox.querySelectorAll('.hkdq-btn-rotate-hao').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const tDeg = parseFloat(btn.getAttribute('data-target-deg'));
+        if (!isNaN(tDeg)) {
+          updateRotationDisplay(tDeg);
+          showLaKinhToast(`🎯 Đã vi chỉnh La Kinh về ${tDeg}°`);
+          openHKDQModal();
+        }
+      };
+    });
+
+    modalBox.querySelectorAll('.hkdq-hao-item').forEach(item => {
+      item.onclick = () => {
+        const tDeg = parseFloat(item.getAttribute('data-hao-deg'));
+        if (!isNaN(tDeg)) {
+          updateRotationDisplay(tDeg);
+          showLaKinhToast(`🎯 Đã vi chỉnh La Kinh về ${tDeg}°`);
+          openHKDQModal();
+        }
+      };
+    });
   }
 
   // Quản lý Bottom Sheet
@@ -1873,6 +2218,9 @@
         state.isHudDetailOpen = !state.isHudDetailOpen;
         hudCard.style.display = state.isHudDetailOpen ? 'block' : 'none';
         if (hudArrow) hudArrow.textContent = state.isHudDetailOpen ? '▴' : '▾';
+        if (state.isHudDetailOpen) {
+          updateRotationDisplay(state.rotation);
+        }
       });
     }
 
@@ -1908,6 +2256,27 @@
     const dockDem = document.getElementById('lakinh-dock-dem');
     if (dockDem) dockDem.addEventListener('click', scanElevationAndTiers);
 
+    const dockHkdq = document.getElementById('lakinh-dock-hkdq');
+    if (dockHkdq) dockHkdq.addEventListener('click', openHKDQModal);
+
+    const quickHkdq = document.getElementById('lakinh-hkdq-quick-strip');
+    if (quickHkdq) {
+      quickHkdq.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openHKDQModal();
+      });
+    }
+
+    ['hud-row-hkdq-que', 'hud-row-hkdq-hao', 'hud-row-hkdq-badges'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openHKDQModal();
+        });
+      }
+    });
+
     const dockTools = document.getElementById('lakinh-dock-tools');
     if (dockTools) dockTools.addEventListener('click', openBottomSheet);
 
@@ -1928,14 +2297,12 @@
     const setPlate = (type) => {
       state.activePlate = type;
       if (disc) {
+        disc.src = getPlateSrc(type);
         if (type === 'thuoc_lap_cuc') {
-          disc.src = 'assets/lakinh/thuoc_lap_cuc.png';
           showLaKinhToast('📄 Đã đổi sang: Bản Giấy Trắng Cổ Điển');
         } else if (type === 'gold') {
-          disc.src = 'assets/lakinh/thuoc_lap_cuc_gold.png';
           showLaKinhToast('✨ Đã đổi sang: Thước Lập Cực Dạ Quang Vàng Kim (Chuyên Vệ Tinh)');
         } else {
-          disc.src = 'assets/lakinh/thuoc_lap_cuc_trans.png';
           showLaKinhToast('💎 Đã đổi sang: Thước Lập Cực Mica Trong Suốt');
         }
       }
@@ -2002,16 +2369,42 @@
     const sSize = document.getElementById('sheet-slider-size');
     const valSize = document.getElementById('sheet-val-size');
     const container = document.getElementById('lakinh-overlay-container');
+
+    const updateSize = (newSize) => {
+      state.size = newSize;
+      if (container) {
+        container.style.width = `${state.size}px`;
+        container.style.height = `${state.size}px`;
+      }
+      if (sSize) sSize.value = state.size;
+      if (valSize) valSize.textContent = `${state.size} px`;
+    };
+
     if (sSize) {
       sSize.addEventListener('input', (e) => {
-        state.size = parseInt(e.target.value, 10);
-        if (container) {
-          container.style.width = `${state.size}px`;
-          container.style.height = `${state.size}px`;
-        }
-        if (valSize) valSize.textContent = `${state.size} px`;
+        updateSize(parseInt(e.target.value, 10));
       });
     }
+
+    const btnSizeFits = [
+      { id: 'btn-size-fit', size: defaultSize, toast: '📱 Kích thước chuẩn màn hình (1x)' },
+      { id: 'btn-size-15x', size: Math.round(defaultSize * 1.5), toast: '🔍 Phóng đại 1.5x: Đọc rõ các vòng phân kim' },
+      { id: 'btn-size-2x', size: Math.min(1400, Math.round(defaultSize * 2.0)), toast: '🔬 Soi chi tiết 2x: Đọc siêu nét từng hào quẻ & 36 tầng' },
+      { id: 'btn-size-max', size: 1000, toast: '👑 Kích thước cực đại 1000px: Độ phân giải HD tối đa' }
+    ];
+    btnSizeFits.forEach(item => {
+      const b = document.getElementById(item.id);
+      if (b) {
+        b.addEventListener('click', () => {
+          updateSize(item.size);
+          btnSizeFits.forEach(it => {
+            const ob = document.getElementById(it.id);
+            if (ob) ob.classList.toggle('active', it.id === item.id);
+          });
+          showLaKinhToast(item.toast);
+        });
+      }
+    });
 
     const sRot = document.getElementById('sheet-slider-rotation');
     if (sRot) {
@@ -2081,6 +2474,9 @@
     const btnHK = document.getElementById('sheet-btn-huyenkhong');
     if (btnHK) btnHK.addEventListener('click', openHuyenKhongModal);
 
+    const btnHKDQ = document.getElementById('sheet-btn-hkdq');
+    if (btnHKDQ) btnHKDQ.addEventListener('click', openHKDQModal);
+
     const btnCentroid = document.getElementById('sheet-btn-centroid');
     if (btnCentroid) {
       btnCentroid.addEventListener('click', () => {
@@ -2132,7 +2528,9 @@
     loadProject: loadProject,
     deleteProject: deleteProject,
     openBottomSheet: openBottomSheet,
-    closeBottomSheet: closeBottomSheet
+    closeBottomSheet: closeBottomSheet,
+    openHKDQModal: openHKDQModal,
+    updateRotation: updateRotationDisplay
   };
 
   global.NetaLaKinhView = NetaLaKinhView;

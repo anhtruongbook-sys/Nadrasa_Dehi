@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v8.3
-const CACHE_NAME = 'neta-poker-v8.3';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v9.3
+const CACHE_NAME = 'neta-poker-v9.3';
 
 const CORE_ASSETS = [
   './',
@@ -8,6 +8,7 @@ const CORE_ASSETS = [
   'html2canvas.min.js',
   'modules/html2pdf.bundle.min.js',
   'cards_base64_data.js',
+  'poker_base64_data.js',
   'tarot_base64_data.js',
   'lakinh_base64_data.js',
   'phap_hanh_base64_data.js',
@@ -44,8 +45,12 @@ const CORE_ASSETS = [
   'phap_hanh.css',
   'modules/phap_hanh_data.js',
   'modules/phap_hanh_view.js',
+  'engines/hkdq_data.js',
   'engines/lakinh_engine.js',
-  'modules/lakinh_view.js'
+  'modules/lakinh_view.js',
+  'assets/dichhoc/dichhoc.css',
+  'engines/dichhoc_engine.js',
+  'modules/dichhoc_view.js'
 ];
 
 // Thêm toàn bộ 18 Nơi Tại Phủ và 23 Bài học Pháp Hành
