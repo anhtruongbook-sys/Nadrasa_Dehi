@@ -248,6 +248,39 @@
     };
   }
 
+  // Khẩu quyết An Quái Thân (Quái Thần):
+  // Âm thế khởi Ngọ thuận hành chi, Dương thế khởi Tý thuận hành chi.
+  function tinhQuaiThan(thePos, theBit) {
+    // thePos: 1..6; theBit: 0 (Âm), 1 (Dương)
+    const zhiOrder = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+    const startZhi = (theBit === 1) ? 'Tý' : 'Ngọ';
+    const startIdx = zhiOrder.indexOf(startZhi);
+    const quaiThanIdx = (startIdx + (thePos - 1)) % 12;
+    return zhiOrder[quaiThanIdx];
+  }
+
+  // Nhận diện Quẻ Lục Xung & Lục Hợp kinh điển
+  function getHexagramSpecialType(bits) {
+    const haKey = bitsToKey(bits[0], bits[1], bits[2]);
+    const thuongKey = bitsToKey(bits[3], bits[4], bits[5]);
+    const combo = `${thuongKey},${haKey}`;
+    // 8 Bát Thuần + Thiên Lôi Vô Vọng + Lôi Thiên Đại Tráng
+    const lucXungKeys = [
+      'Can,Can', 'Khon,Khon', 'Chan,Chan', 'Ton,Ton',
+      'Kham,Kham', 'Ly,Ly', 'Can_M,Can_M', 'Doai,Doai',
+      'Can,Chan', 'Chan,Can'
+    ];
+    if (lucXungKeys.includes(combo)) return 'LỤC XUNG';
+
+    // Lục Hợp: Địa Thiên Thái, Thiên Địa Bĩ, Thủy Hỏa Ký Tế, Hỏa Thủy Vị Tế, Địa Lôi Phục, Sơn Hỏa Bí, Phong Lôi Ích
+    const lucHopKeys = [
+      'Khon,Can', 'Can,Khon', 'Kham,Ly', 'Ly,Kham',
+      'Khon,Chan', 'Can_M,Ly', 'Ton,Chan'
+    ];
+    if (lucHopKeys.includes(combo)) return 'LỤC HỢP';
+    return '';
+  }
+
   function tinhVuongSuy(thangChi, haoChi) {
     if (!thangChi || !haoChi) return '-';
     const thangElm = DIA_CHI_NGU_HANH[thangChi];
@@ -338,7 +371,7 @@
   // 8. ĐỘNG CƠ MAI HOA DỊCH SỐ (THIỆU KHANG TIẾT)
   // =========================================================================
   const MaiHoaEngine = {
-    lapQueThoiGian(namZhiIndex, thangAm, ngayAm, gioZhiIndex) {
+    lapQueThoiGian(namZhiIndex, thangAm, ngayAm, gioZhiIndex, calendarContext = {}) {
       // namZhiIndex: 1..12 (Tý=1, Sửu=2...)
       // gioZhiIndex: 1..12
       let sumThuong = namZhiIndex + thangAm + ngayAm;
@@ -352,10 +385,10 @@
       let dongNum = sumHa % 6;
       if (dongNum === 0) dongNum = 6;
 
-      return this.xayDungQue(thuongNum, haNum, dongNum);
+      return this.xayDungQue(thuongNum, haNum, dongNum, calendarContext);
     },
 
-    lapQueTheoHaiSo(soA, soB, gioZhiIndex = 0) {
+    lapQueTheoHaiSo(soA, soB, gioZhiIndex = 0, calendarContext = {}) {
       let thuongNum = soA % 8;
       if (thuongNum === 0) thuongNum = 8;
 
@@ -366,10 +399,10 @@
       let dongNum = tong % 6;
       if (dongNum === 0) dongNum = 6;
 
-      return this.xayDungQue(thuongNum, haNum, dongNum);
+      return this.xayDungQue(thuongNum, haNum, dongNum, calendarContext);
     },
 
-    xayDungQue(thuongNum, haNum, dongNum) {
+    xayDungQue(thuongNum, haNum, dongNum, calendarContext = {}) {
       const thuongKey = tienThienToKey(thuongNum);
       const haKey = tienThienToKey(haNum);
 
@@ -382,6 +415,7 @@
       const haHoKey = bitsToKey(chuBits[1], chuBits[2], chuBits[3]);
       // Thượng hỗ: hào 3, 4, 5
       const thuongHoKey = bitsToKey(chuBits[2], chuBits[3], chuBits[4]);
+      const hoBits = [chuBits[1], chuBits[2], chuBits[3], chuBits[2], chuBits[3], chuBits[4]];
 
       // Quẻ Biến:
       const bienBits = [...chuBits];
@@ -390,6 +424,22 @@
 
       const haBienKey = bitsToKey(bienBits[0], bienBits[1], bienBits[2]);
       const thuongBienKey = bitsToKey(bienBits[3], bienBits[4], bienBits[5]);
+
+      // Bát Cung & Lục Xung cho 3 Quẻ
+      const chuKey = chuBits.join(',');
+      const chuPalaceInfo = HEXAGRAM_TO_PALACE_MAP[chuKey] || { palace: 'Can', type: 'Bản Cung' };
+      const chuCungName = TRIGRAM_DATA[chuPalaceInfo.palace].name;
+      const chuSpecial = getHexagramSpecialType(chuBits);
+
+      const hoKey = hoBits.join(',');
+      const hoPalaceInfo = HEXAGRAM_TO_PALACE_MAP[hoKey] || { palace: 'Can', type: 'Bản Cung' };
+      const hoCungName = TRIGRAM_DATA[hoPalaceInfo.palace].name;
+      const hoSpecial = getHexagramSpecialType(hoBits);
+
+      const bienKey = bienBits.join(',');
+      const bienPalaceInfo = HEXAGRAM_TO_PALACE_MAP[bienKey] || { palace: 'Can', type: 'Bản Cung' };
+      const bienCungName = TRIGRAM_DATA[bienPalaceInfo.palace].name;
+      const bienSpecial = getHexagramSpecialType(bienBits);
 
       // Thể - Dụng:
       let theKey, theViTri, dungKey, dungViTri;
@@ -438,11 +488,29 @@
       const hoInfo = HEXAGRAM_NAMES[`${thuongHoKey},${haHoKey}`] || { name: 'Chưa đặt tên', tuong: '', tho: '' };
       const bienInfo = HEXAGRAM_NAMES[`${thuongBienKey},${haBienKey}`] || { name: 'Chưa đặt tên', tuong: '', tho: '' };
 
+      // Lập bảng Lục Hào Nạp Giáp cho Mai Hoa (chuẩn Bốc Phệ)
+      const haoCoins = [];
+      for (let i = 0; i < 6; i++) {
+        if (i === idxDong) {
+          haoCoins.push(chuBits[i] === 0 ? 6 : 9); // Động
+        } else {
+          haoCoins.push(chuBits[i] === 0 ? 8 : 7); // Tĩnh
+        }
+      }
+      let lucHaoResult = null;
+      try {
+        lucHaoResult = LucHaoEngine.lapQue(haoCoins, calendarContext);
+      } catch (e) {
+        console.error('Error generating LucHao for MaiHoa:', e);
+      }
+
       return {
         que_chu: {
           name: chuInfo.name,
           tuong: chuInfo.tuong,
           tho: chuInfo.tho,
+          cung: chuCungName,
+          cungSpecial: chuSpecial,
           thuong_quai: TRIGRAM_DATA[thuongKey],
           ha_quai: TRIGRAM_DATA[haKey],
           bits: chuBits
@@ -451,14 +519,18 @@
           name: hoInfo.name,
           tuong: hoInfo.tuong,
           tho: hoInfo.tho,
+          cung: hoCungName,
+          cungSpecial: hoSpecial,
           thuong_ho: TRIGRAM_DATA[thuongHoKey],
           ha_ho: TRIGRAM_DATA[haHoKey],
-          bits: [chuBits[1], chuBits[2], chuBits[3], chuBits[2], chuBits[3], chuBits[4]]
+          bits: hoBits
         },
         que_bien: {
           name: bienInfo.name,
           tuong: bienInfo.tuong,
           tho: bienInfo.tho,
+          cung: bienCungName,
+          cungSpecial: bienSpecial,
           thuong_bien: TRIGRAM_DATA[thuongBienKey],
           ha_bien: TRIGRAM_DATA[haBienKey],
           bits: bienBits
@@ -470,7 +542,8 @@
           quan_he: quanHe,
           danh_gia: danhGia,
           muc_do: mucDo
-        }
+        },
+        luc_hao: lucHaoResult
       };
     }
   };
@@ -536,6 +609,11 @@
       const thePos = palaceInfo.the;
       const ungPos = palaceInfo.ung;
       const queType = palaceInfo.type;
+      const gocSpecial = getHexagramSpecialType(gocBits);
+
+      // Quái Thân (Quái Thần QT)
+      const theBit = gocBits[thePos - 1];
+      const quaiThanZhi = tinhQuaiThan(thePos, theBit);
 
       // 3. Tên Quẻ Gốc
       const haGocKey = bitsToKey(gocBits[0], gocBits[1], gocBits[2]);
@@ -573,11 +651,17 @@
         const isTK = tuanKhongChis.includes(chiHao);
         const vsMark = tinhVuongSuy(thangChi, chiHao);
 
+        const isLoc = thanSatInfo.loc_than.includes(chiHao);
+        const isMa = thanSatInfo.dich_ma.includes(chiHao);
+        const isQuy = thanSatInfo.quy_nhan.includes(chiHao);
+        const isDao = thanSatInfo.dao_hoa.includes(chiHao);
+        const isQT = (chiHao === quaiThanZhi);
+
         const tsApplied = [];
-        if (thanSatInfo.quy_nhan.includes(chiHao)) tsApplied.push('Q.Nhân');
-        if (thanSatInfo.loc_than.includes(chiHao)) tsApplied.push('Lộc');
-        if (thanSatInfo.dich_ma.includes(chiHao)) tsApplied.push('Mã');
-        if (thanSatInfo.dao_hoa.includes(chiHao)) tsApplied.push('ĐàoHoa');
+        if (isQuy) tsApplied.push('Q.Nhân');
+        if (isLoc) tsApplied.push('Lộc');
+        if (isMa) tsApplied.push('Mã');
+        if (isDao) tsApplied.push('ĐàoHoa');
 
         haosGocDetail.push({
           pos: pos,
@@ -593,6 +677,11 @@
           isDong: isDong,
           isTuanKhong: isTK,
           vuongSuy: vsMark,
+          isLoc: isLoc,
+          isMa: isMa,
+          isQuy: isQuy,
+          isDao: isDao,
+          isQuaiThan: isQT,
           thanSat: tsApplied.join(', ')
         });
       }
@@ -633,6 +722,11 @@
         const thuongBienKey = bitsToKey(bienBits[3], bienBits[4], bienBits[5]);
         const bienMeta = HEXAGRAM_NAMES[`${thuongBienKey},${haBienKey}`] || { name: 'Chưa đặt tên', tuong: '', tho: '' };
 
+        const bienKey = bienBits.join(',');
+        const bienPalaceInfo = HEXAGRAM_TO_PALACE_MAP[bienKey] || { palace: 'Can', type: 'Bản Cung' };
+        const bienCungName = TRIGRAM_DATA[bienPalaceInfo.palace].name;
+        const bienSpecial = getHexagramSpecialType(bienBits);
+
         const noiBienNap = NAP_GIAP[haBienKey].noi;
         const ngoaiBienNap = NAP_GIAP[thuongBienKey].ngoai;
         const allNapBien = [...noiBienNap, ...ngoaiBienNap];
@@ -646,6 +740,12 @@
           const isTKB = tuanKhongChis.includes(chiB);
           const vsB = tinhVuongSuy(thangChi, chiB);
 
+          const isLocB = thanSatInfo.loc_than.includes(chiB);
+          const isMaB = thanSatInfo.dich_ma.includes(chiB);
+          const isQuyB = thanSatInfo.quy_nhan.includes(chiB);
+          const isDaoB = thanSatInfo.dao_hoa.includes(chiB);
+          const isQTB = (chiB === quaiThanZhi);
+
           haosBienDetail.push({
             pos: pos,
             bit: bienBits[i],
@@ -655,7 +755,12 @@
             lucThan: lucThanB,
             isDong: dongFlags[i],
             isTuanKhong: isTKB,
-            vuongSuy: vsB
+            vuongSuy: vsB,
+            isLoc: isLocB,
+            isMa: isMaB,
+            isQuy: isQuyB,
+            isDao: isDaoB,
+            isQuaiThan: isQTB
           });
         }
 
@@ -663,6 +768,8 @@
           name: bienMeta.name,
           tuong: bienMeta.tuong,
           tho: bienMeta.tho,
+          cung: bienCungName,
+          cungSpecial: bienSpecial,
           bits: bienBits,
           haos: haosBienDetail
         };
@@ -675,6 +782,7 @@
           tho: chuMeta.tho,
           cung: cungName,
           cungKey: cungKey,
+          cungSpecial: gocSpecial,
           cungElement: cungElement,
           thePos: thePos,
           ungPos: ungPos,

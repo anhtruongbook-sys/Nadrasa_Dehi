@@ -1,40 +1,165 @@
 /**
  * NETA LIGHT - DỊCH HỌC VIEW CONTROLLER (modules/dichhoc_view.js)
  * Giao diện Bốc Quẻ Dịch Lý (Lục Hào Nạp Giáp & Mai Hoa Dịch Số).
- * Đồng bộ 100% với NetaCalendarEngine (Tiết Khí, Can Chi, Nguyệt Lệnh, Nhật Thần).
+ * Tối ưu hóa tinh tế theo chuẩn mực TRANG DỊCH QUÁI của Học Viện Lý Số (Bốc Phệ Cổ Truyền).
+ * Đồ họa đồng tiền Càn Long Thông Bảo 3D, âm thanh kim loại Web Audio API, và bảng đối sánh 2 cột chuẩn mực.
  */
 
 (function (global) {
   'use strict';
 
-  // State cục bộ của module Dịch Học
+  // State quản lý của module Dịch Học
   const state = {
-    method: 'luchao', // 'luchao' hoặc 'maihoa'
+    method: 'luchao', // 'luchao' | 'maihoa'
+    viewMode: 'chart', // 'chart' (Trang Dịch Quái chuẩn) | 'detailed' (Thuyết minh luận giải)
     selectedDate: new Date(),
+    purpose: 'Hợp tác phát triển', // Việc cần xem
     haoCoins: [], // Danh sách các hào đã gieo (1 -> 6), mỗi hào nhận 6, 7, 8, 9
-    coinStates: [3, 2, 3], // 3 đồng xu hiện tại (2: Âm, 3: Dương)
+    coinStates: [3, 2, 3], // 3 đồng xu hiện tại (2: Âm - Càn Long, 3: Dương - Mãn Châu)
+    coinAngles: [12, -25, 38], // Góc xoay tự nhiên sau khi rơi
     isFlipping: false,
-    maiHoaMode: 'time', // 'time' hoặc 'numbers'
+    maiHoaMode: 'time', // 'time' | 'numbers'
     soA: 7,
     soB: 8,
     result: null
   };
 
-  // Helper lấy thông tin lịch & tiết khí chuẩn xác từ NetaCalendarEngine
+  // Web Audio API mô phỏng tiếng kim loại tiền đồng cổ va chạm leng keng
+  function playCoinAudio(type = 'clink') {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
+
+      if (type === 'done') {
+        // Chuông thiền kết quẻ ngân vang
+        [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.18 / (idx + 1), now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 1.25);
+        });
+      } else {
+        // Tiếng leng keng kim loại tiền đồng
+        const freqs = [1520, 2350, 3450, 4900];
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq + (Math.random() * 80 - 40), now);
+          gain.gain.setValueAtTime(0.12 / (idx + 1), now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35 + Math.random() * 0.15);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        });
+      }
+    } catch (e) {
+      // Audio không khả dụng không gây lỗi
+    }
+  }
+
+  // Rung phản hồi xúc giác nhẹ (Haptic)
+  function triggerHaptic(duration = 25) {
+    if (navigator.vibrate) {
+      try { navigator.vibrate(duration); } catch (e) {}
+    }
+  }
+
+  // Helper lấy thông tin lịch & tiết khí từ NetaCalendarEngine
   function getCalendarInfo(date = new Date()) {
     if (global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
       return global.NetaCalendarEngine.getFullDayInfo(date);
     }
-    // Fallback nếu chưa load calendar engine
     const d = date.getDate();
     const m = date.getMonth() + 1;
     const y = date.getFullYear();
     return {
       solar: { day: d, month: m, year: y, dateStr: `${d}/${m}/${y}` },
       lunar: { day: d, month: m, year: y, dateStr: `Ngày ${d} tháng ${m}` },
-      canChi: { year: 'Bính Ngọ', month: 'Đinh Dậu', day: 'Nhâm Dần', hour: 'Tân Hợi', dayGan: 'Nhâm', dayZhi: 'Dần', monthZhi: 'Dậu' },
+      canChi: { year: 'Bính Ngọ', month: 'Đinh Dậu', day: 'Nhâm Dần', hour: 'Tân Hợi', dayGan: 'Nhâm', dayZhi: 'Dần', monthZhi: 'Dậu', yearZhi: 'Ngọ', hourZhi: 'Hợi' },
       solarTerm: 'Thu phân'
     };
+  }
+
+  // Render SVG đồng tiền Càn Long Thông Bảo cổ pháp
+  function renderCoinSVG(val, isFlipping, idx) {
+    const isYang = (val === 3); // 3 = Dương (Lưng Mãn Châu), 2 = Âm (Mặt chữ Càn Long)
+    const angle = state.coinAngles[idx] || 0;
+
+    return `
+      <div class="dh-coin-wrapper ${isFlipping ? 'is-tossing' : ''}" style="transform: rotate(${isFlipping ? 0 : angle}deg);" data-coin-idx="${idx}" title="${isYang ? 'Mặt Dương / Lưng Mãn Châu (3 điểm)' : 'Mặt Âm / Càn Long Thông Bảo (2 điểm)'}">
+        ${isYang ? `
+          <!-- MẶT DƯƠNG: CHỮ MÃN CHÂU (3 ĐIỂM) -->
+          <svg class="dh-coin-svg" viewBox="0 0 100 100">
+            <defs>
+              <radialGradient id="gradYang${idx}" cx="45%" cy="38%" r="60%">
+                <stop offset="0%" stop-color="#eed58f" />
+                <stop offset="35%" stop-color="#bf9543" />
+                <stop offset="75%" stop-color="#7e5d22" />
+                <stop offset="100%" stop-color="#4a3511" />
+              </radialGradient>
+              <filter id="shadowYang${idx}">
+                <feDropShadow dx="0" dy="1.2" stdDeviation="0.6" flood-color="#fff2be" flood-opacity="0.65" />
+                <feDropShadow dx="0" dy="-1" stdDeviation="0.6" flood-color="#1f1404" flood-opacity="0.9" />
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#gradYang${idx})" stroke="#382509" stroke-width="2.5" />
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#fae8ab" stroke-width="1.2" opacity="0.65" />
+            <circle cx="50" cy="50" r="41.5" fill="none" stroke="#2a1b06" stroke-width="1.2" opacity="0.8" />
+            
+            <rect x="36.5" y="36.5" width="27" height="27" fill="none" stroke="#251604" stroke-width="2.2" />
+            <rect x="38" y="38" width="24" height="24" fill="#18130c" stroke="#d5b058" stroke-width="1" />
+
+            <!-- Ký tự Mãn Châu (Boo Ciowan) -->
+            <text x="21" y="58" font-family="'KaiTi', 'STKaiti', serif" font-size="18" font-weight="900" text-anchor="middle" fill="#2d1b06" filter="url(#shadowYang${idx})">ᠪᠣᠣ</text>
+            <text x="79" y="58" font-family="'KaiTi', 'STKaiti', serif" font-size="18" font-weight="900" text-anchor="middle" fill="#2d1b06" filter="url(#shadowYang${idx})">ᠴᡳᠶᠣ</text>
+            
+            <!-- Chấm họa tiết cung đình đỉnh đáy -->
+            <circle cx="50" cy="22" r="3" fill="#2d1b06" opacity="0.6" />
+            <circle cx="50" cy="78" r="3" fill="#2d1b06" opacity="0.6" />
+          </svg>
+        ` : `
+          <!-- MẶT ÂM: 4 CHỮ CÀN LONG THÔNG BẢO (2 ĐIỂM) -->
+          <svg class="dh-coin-svg" viewBox="0 0 100 100">
+            <defs>
+              <radialGradient id="gradYin${idx}" cx="45%" cy="38%" r="60%">
+                <stop offset="0%" stop-color="#e2bf70" />
+                <stop offset="35%" stop-color="#b08637" />
+                <stop offset="75%" stop-color="#73521a" />
+                <stop offset="100%" stop-color="#422f0d" />
+              </radialGradient>
+              <filter id="shadowYin${idx}">
+                <feDropShadow dx="0" dy="1.2" stdDeviation="0.6" flood-color="#fdf1c2" flood-opacity="0.65" />
+                <feDropShadow dx="0" dy="-1" stdDeviation="0.6" flood-color="#1f1404" flood-opacity="0.9" />
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#gradYin${idx})" stroke="#382509" stroke-width="2.5" />
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#fae8ab" stroke-width="1.2" opacity="0.65" />
+            <circle cx="50" cy="50" r="41.5" fill="none" stroke="#2a1b06" stroke-width="1.2" opacity="0.8" />
+            
+            <rect x="36.5" y="36.5" width="27" height="27" fill="none" stroke="#251604" stroke-width="2.2" />
+            <rect x="38" y="38" width="24" height="24" fill="#18130c" stroke="#d5b058" stroke-width="1" />
+
+            <!-- 4 Chữ Hán Càn Long Thông Bảo -->
+            <text x="50" y="27" font-family="'KaiTi', 'STKaiti', 'SimSun', serif" font-size="16.5" font-weight="900" text-anchor="middle" fill="#281704" filter="url(#shadowYin${idx})">乾</text>
+            <text x="50" y="87" font-family="'KaiTi', 'STKaiti', 'SimSun', serif" font-size="16.5" font-weight="900" text-anchor="middle" fill="#281704" filter="url(#shadowYin${idx})">隆</text>
+            <text x="20.5" y="56.5" font-family="'KaiTi', 'STKaiti', 'SimSun', serif" font-size="16.5" font-weight="900" text-anchor="middle" fill="#281704" filter="url(#shadowYin${idx})">通</text>
+            <text x="79.5" y="56.5" font-family="'KaiTi', 'STKaiti', 'SimSun', serif" font-size="16.5" font-weight="900" text-anchor="middle" fill="#281704" filter="url(#shadowYin${idx})">寶</text>
+          </svg>
+        `}
+        <div class="dh-coin-val-tag">${isYang ? '3 (Dương)' : '2 (Âm)'}</div>
+      </div>
+    `;
   }
 
   // Khởi tạo và render giao diện
@@ -48,17 +173,15 @@
     const chiNgay = canChi.dayZhi || 'Dần';
     const chiThang = canChi.monthZhi || 'Dậu';
 
-    // Ngũ hành Nhật thần & Nguyệt lệnh
     const eng = global.NetaDichHocEngine;
     const elmNgay = eng ? (eng.DIA_CHI_NGU_HANH[chiNgay] || 'Mộc') : 'Mộc';
     const elmThang = eng ? (eng.DIA_CHI_NGU_HANH[chiThang] || 'Kim') : 'Kim';
 
-    // Nếu chưa có quẻ, tự động lập 1 quẻ mặc định để hiển thị
+    // Đảm bảo luôn có quẻ khởi tạo mẫu nếu chưa gieo
     if (!state.result) {
       if (state.method === 'luchao') {
         if (state.haoCoins.length === 0) {
-          // Mặc định sinh 6 hào mẫu nếu chưa gieo
-          state.haoCoins = [7, 7, 7, 6, 7, 7]; // Phong Thiên Tiểu Súc động hào 4
+          state.haoCoins = [7, 7, 7, 6, 7, 7]; // Phong Thiên Tiểu Súc động Hào 4
         }
         chayLapQueLucHao();
       } else {
@@ -68,7 +191,7 @@
 
     container.innerHTML = `
       <div class="dichhoc-container">
-        <!-- 1. Thanh Menu Tab & Công Cụ -->
+        <!-- 1. Thanh Menu Tab & Điều Khiển Nhanh -->
         <div class="dh-nav-bar">
           <div class="dh-tab-group">
             <button class="dh-tab-btn ${state.method === 'luchao' ? 'active' : ''}" id="dh-tab-luchao">
@@ -79,54 +202,27 @@
             </button>
           </div>
           <div class="dh-action-right">
-            <button class="dh-icon-btn" id="dh-btn-now" title="Lấy giờ hiện tại">
+            <button class="dh-icon-btn ${state.viewMode === 'chart' ? 'active-mode' : ''}" id="dh-btn-mode-toggle" title="Chuyển chế độ xem">
+              ${state.viewMode === 'chart' ? '📖 Luận Giải' : '📜 Trang Dịch Quái'}
+            </button>
+            <button class="dh-icon-btn" id="dh-btn-now" title="Đồng bộ thời gian thực">
               🕒 Hiện Tại
             </button>
-            <button class="dh-icon-btn" id="dh-btn-picker" title="Chọn ngày giờ khác">
+            <button class="dh-icon-btn" id="dh-btn-picker" title="Chọn ngày giờ chiêm quẻ">
               📅 Chọn Giờ
             </button>
-            <button class="dh-icon-btn" id="dh-btn-save-shot" title="Lưu ảnh quẻ">
-              📷 Lưu Ảnh
+            <button class="dh-icon-btn primary-save" id="dh-btn-save-shot" title="Lưu ảnh Trang Dịch Quái Ultra-HD">
+              📷 Lưu Ảnh Quẻ
             </button>
           </div>
         </div>
 
-        <!-- 2. Thẻ Thông Tin Thiên Văn & Tiết Khí Đồng Bộ -->
-        <div class="dh-meta-card" id="dh-meta-box">
-          <div class="dh-meta-header">
-            <div class="dh-meta-title">
-              <span>☯️ THÔNG TIN THỜI ĐIỂM CHIÊM QUẺ</span>
-            </div>
-            <div class="dh-meta-stamp">${state.method === 'luchao' ? '六爻預測' : '梅花易數'}</div>
-          </div>
-          <div class="dh-meta-grid">
-            <div class="dh-meta-item">
-              Dương lịch: <strong>${calInfo.solar.dateStr} (${state.selectedDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })})</strong>
-            </div>
-            <div class="dh-meta-item">
-              Âm lịch: <strong>${calInfo.lunar.dateStr || ''}</strong>
-            </div>
-            <div class="dh-meta-item">
-              Tứ Trụ Can Chi: <strong>${canChi.hour || ''}, ${canChi.day || ''}, ${canChi.month || ''}, ${canChi.year || ''}</strong>
-            </div>
-            <div class="dh-meta-item">
-              Tiết khí: <em>${solarTerm}</em> | Tuần không: <em>${(state.result && state.result.thoi_gian && state.result.thoi_gian.tuanKhong) ? state.result.thoi_gian.tuanKhong.join(', ') : 'Tuất, Hợi'}</em>
-            </div>
-            <div class="dh-meta-item">
-              Nhật thần: <strong>${chiNgay} (${elmNgay})</strong> | Nguyệt lệnh: <strong>${chiThang} (${elmThang})</strong>
-            </div>
-            <div class="dh-meta-item">
-              Phương pháp: <strong>${state.method === 'luchao' ? 'Lục Hào (3 Đồng Xu Càn Long)' : (state.maiHoaMode === 'time' ? 'Mai Hoa (Thời Gian Tiết Khí)' : 'Mai Hoa (Hai Số Học)')}</strong>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Khu Vực Tương Tác Gieo Quẻ -->
+        <!-- 2. Khu Vực Tương Tác Gieo Quẻ Tinh Tế -->
         ${renderInteractionPanel()}
 
-        <!-- 4. Khu Vực Hiển Thị Bản Quẻ Trực Quan (3 Quẻ) -->
+        <!-- 3. Khu Vực Hiển Thị Kết Quả Quẻ (Trang Dịch Quái Chuẩn Mực hoặc Luận Giải Chi Tiết) -->
         <div id="dh-result-section">
-          ${renderResultSection()}
+          ${state.viewMode === 'chart' ? renderTrangDichQuaiChart() : renderDetailedReport()}
         </div>
       </div>
     `;
@@ -134,60 +230,69 @@
     bindEvents();
   }
 
-  // Render khu vực gieo quẻ tương tác
+  // Render khu vực gieo quẻ tinh tế
   function renderInteractionPanel() {
+    const curHaoCount = state.haoCoins.length;
+
     if (state.method === 'luchao') {
-      const curHaoCount = state.haoCoins.length;
+      const sum = state.coinStates.reduce((a, b) => a + b, 0);
+      let sumDesc = '';
+      if (sum === 6) sumDesc = '2 + 2 + 2 = 6 • Lão Âm (Hào Âm Động ☷ ➔ ☰)';
+      else if (sum === 7) sumDesc = '2 + 2 + 3 = 7 • Thiếu Dương (Hào Dương Tĩnh ☰)';
+      else if (sum === 8) sumDesc = '2 + 3 + 3 = 8 • Thiếu Âm (Hào Âm Tĩnh ☷)';
+      else if (sum === 9) sumDesc = '3 + 3 + 3 = 9 • Lão Dương (Hào Dương Động ☰ ➔ ☷)';
+
       return `
         <div class="dh-cast-panel">
-          <div style="font-weight: 700; font-size: 0.85rem; color: #f5b041; margin-bottom: 6px;">
-            🪙 BÀN GIEO QUẺ LỤC HÀO (3 ĐỒNG XU CỔ)
-          </div>
-          <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 12px;">
-            Chạm vào đồng xu hoặc bấm nút bên dưới để gieo lần lượt từ Hào 1 (dưới cùng) đến Hào 6 (trên cùng).
-          </div>
-
-          <!-- 3 Đồng Xu Cổ -->
-          <div class="dh-coins-stage">
-            ${[0, 1, 2].map(idx => {
-              const val = state.coinStates[idx] || 3;
-              const isYang = (val === 3);
-              return `
-                <div class="dh-coin ${isYang ? 'is-yang' : 'is-yin'} ${state.isFlipping ? 'flipping' : ''}" data-coin-idx="${idx}" title="${isYang ? 'Mặt Trơn / Chữ Số (Dương = 3)' : 'Mặt 4 Chữ Hán Càn Long (Âm = 2)'}">
-                  <div class="dh-coin-hole"></div>
-                  <span class="dh-coin-text top">${isYang ? '•' : 'Càn'}</span>
-                  <span class="dh-coin-text bottom">${isYang ? '•' : 'Long'}</span>
-                  <span class="dh-coin-text left">${isYang ? '3' : 'Thông'}</span>
-                  <span class="dh-coin-text right">${isYang ? 'D' : 'Bảo'}</span>
-                </div>
-              `;
-            }).join('')}
+          <div class="dh-cast-panel-header">
+            <div class="dh-panel-title">
+              <span class="dh-panel-icon">🪙</span> BÀN GIEO XU CỔ PHÁP (3 ĐỒNG TIỀN CÀN LONG)
+            </div>
+            <div class="dh-panel-sub">
+              Chạm vào đĩa đồng hoặc bấm nút để gieo lần lượt từ Hào 1 (Sơ hào ở dưới) lên Hào 6 (Thượng hào ở trên).
+            </div>
           </div>
 
-          <!-- Thang Tiến Trình 6 Hào -->
-          <div class="dh-progress-bar">
-            ${[1, 2, 3, 4, 5, 6].map(h => {
-              const isDone = h <= curHaoCount;
-              const isCur = (h === curHaoCount + 1);
-              let valText = '';
-              if (isDone) {
-                const cVal = state.haoCoins[h - 1];
-                if (cVal === 6) valText = '6 (L.Âm)';
-                else if (cVal === 7) valText = '7 (T.Dương)';
-                else if (cVal === 8) valText = '8 (T.Âm)';
-                else if (cVal === 9) valText = '9 (L.Dương)';
-              }
-              return `
-                <div class="dh-step-pill ${isDone ? 'done' : ''} ${isCur ? 'active' : ''}">
-                  H${h}${valText ? '<br>' + valText.split(' ')[0] : ''}
-                </div>
-              `;
-            }).join('')}
+          <!-- Khay Gieo Xu Thiền Môn -->
+          <div class="dh-sacred-tray" id="dh-sacred-tray" title="Chạm để gieo hào tiếp theo">
+            <div class="dh-tray-rim"></div>
+            <div class="dh-coins-cluster">
+              ${[0, 1, 2].map(idx => renderCoinSVG(state.coinStates[idx] || 3, state.isFlipping, idx)).join('')}
+            </div>
+            <div class="dh-tray-result-pill ${state.isFlipping ? 'animating' : ''}">
+              ${state.isFlipping ? '✨ Đang tung 3 đồng tiền cổ...' : `🪙 ${sumDesc}`}
+            </div>
           </div>
 
+          <!-- Thang Tiến Trình 6 Hào Mọc Từ Dưới Lên -->
+          <div class="dh-progress-container">
+            <div class="dh-progress-label">Tiến trình hào quái (Gieo từ dưới lên):</div>
+            <div class="dh-progress-bar">
+              ${[1, 2, 3, 4, 5, 6].map(h => {
+                const isDone = h <= curHaoCount;
+                const isCur = (h === curHaoCount + 1);
+                let tag = '';
+                if (isDone) {
+                  const val = state.haoCoins[h - 1];
+                  if (val === 6) tag = '6 (L.Âm)';
+                  else if (val === 7) tag = '7 (Dương)';
+                  else if (val === 8) tag = '8 (Âm)';
+                  else if (val === 9) tag = '9 (L.Dương)';
+                }
+                return `
+                  <div class="dh-step-pill ${isDone ? 'done' : ''} ${isCur ? 'active' : ''}">
+                    <span class="h-name">Hào ${h}</span>
+                    <span class="h-val">${tag || '-'}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Dãy Nút Thao Tác -->
           <div class="dh-buttons-row">
-            <button class="dh-btn primary" id="dh-btn-cast-step" ${curHaoCount >= 6 ? 'disabled style="opacity:0.6;"' : ''}>
-              🎲 Gieo Hào ${Math.min(6, curHaoCount + 1)}/6
+            <button class="dh-btn primary" id="dh-btn-cast-step" ${curHaoCount >= 6 ? 'disabled style="opacity:0.55;"' : ''}>
+              🎲 Gieo Hào ${Math.min(6, curHaoCount + 1)} / 6
             </button>
             <button class="dh-btn auto-speed" id="dh-btn-cast-auto">
               ⚡ Gieo Tự Động 6 Hào
@@ -202,32 +307,38 @@
       // Mai Hoa Dịch Số
       return `
         <div class="dh-cast-panel">
-          <div style="font-weight: 700; font-size: 0.85rem; color: #f5b041; margin-bottom: 6px;">
-            🌸 KHỞI QUẺ MAI HOA DỊCH SỐ (THIỆU KHANG TIẾT)
+          <div class="dh-cast-panel-header">
+            <div class="dh-panel-title">
+              <span class="dh-panel-icon">🌸</span> KHỞI QUẺ MAI HOA DỊCH SỐ (THIỆU KHANG TIẾT)
+            </div>
+            <div class="dh-panel-sub">
+              Khởi quẻ theo Tiên Thiên Bát Quái dựa vào thời điểm tiết khí hoặc hai con số linh cảm.
+            </div>
           </div>
-          <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 14px;">
-            <button class="dh-tab-btn ${state.maiHoaMode === 'time' ? 'active' : ''}" id="dh-mh-tab-time">
+
+          <div class="dh-mh-mode-switcher">
+            <button class="dh-mh-pill-btn ${state.maiHoaMode === 'time' ? 'active' : ''}" id="dh-mh-tab-time">
               🕒 Theo Niên Nguyệt Nhật Thời
             </button>
-            <button class="dh-tab-btn ${state.maiHoaMode === 'numbers' ? 'active' : ''}" id="dh-mh-tab-numbers">
+            <button class="dh-mh-pill-btn ${state.maiHoaMode === 'numbers' ? 'active' : ''}" id="dh-mh-tab-numbers">
               🔢 Theo 2 Con Số (Số Học)
             </button>
           </div>
 
           ${state.maiHoaMode === 'numbers' ? `
-            <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; max-width: 320px; margin-left: auto; margin-right: auto;">
-              <div style="flex: 1; text-align: left;">
-                <label style="font-size: 0.72rem; color: #94a3b8; font-weight: 700;">Số A (Thượng quái):</label>
-                <input type="number" id="dh-inp-num-a" class="dh-input-box" value="${state.soA}" min="1" max="9999">
+            <div class="dh-mh-numbers-box">
+              <div class="dh-inp-col">
+                <label>Số A (Thượng quái):</label>
+                <input type="number" id="dh-inp-num-a" class="dh-input-box" value="${state.soA}" min="1" max="99999">
               </div>
-              <div style="flex: 1; text-align: left;">
-                <label style="font-size: 0.72rem; color: #94a3b8; font-weight: 700;">Số B (Hạ quái):</label>
-                <input type="number" id="dh-inp-num-b" class="dh-input-box" value="${state.soB}" min="1" max="9999">
+              <div class="dh-inp-col">
+                <label>Số B (Hạ quái):</label>
+                <input type="number" id="dh-inp-num-b" class="dh-input-box" value="${state.soB}" min="1" max="99999">
               </div>
             </div>
           ` : `
-            <div style="font-size: 0.74rem; color: #cbd5e1; margin-bottom: 14px; line-height: 1.5;">
-              Khởi quẻ theo quy tắc Tiên Thiên: <strong>(Năm + Tháng + Ngày) mod 8</strong> làm Thượng Quái; <strong>(Năm + Tháng + Ngày + Giờ) mod 8</strong> làm Hạ Quái; <strong>Tổng mod 6</strong> tìm Hào Động.
+            <div class="dh-mh-time-formula">
+              Công thức Tiên Thiên: <strong>(Năm + Tháng + Ngày) mod 8</strong> làm Thượng Quái • <strong>(Năm + Tháng + Ngày + Giờ) mod 8</strong> làm Hạ Quái • <strong>Tổng mod 6</strong> tìm Hào Động.
             </div>
           `}
 
@@ -241,281 +352,457 @@
     }
   }
 
-  // Render bản quẻ trực quan (Quẻ Chủ - Quẻ Hỗ - Quẻ Biến)
-  function renderResultSection() {
+  // =========================================================================
+  // 4. RENDER "TRANG DỊCH QUÁI" CHUẨN MỰC HỌC VIỆN LÝ SỐ (Y HỆT 2 ẢNH)
+  // =========================================================================
+  function renderTrangDichQuaiChart() {
     if (!state.result) return '';
 
-    if (state.method === 'luchao') {
-      return renderLucHaoResult(state.result);
-    } else {
-      return renderMaiHoaResult(state.result);
-    }
-  }
+    const calInfo = getCalendarInfo(state.selectedDate);
+    const canChi = calInfo.canChi || {};
+    const solarTerm = calInfo.solarTerm || 'Thu phân';
+    const chiNgay = canChi.dayZhi || 'Dần';
+    const chiThang = canChi.monthZhi || 'Dậu';
+    const eng = global.NetaDichHocEngine;
+    const elmNgay = eng ? (eng.DIA_CHI_NGU_HANH[chiNgay] || 'Mộc') : 'Mộc';
+    const elmThang = eng ? (eng.DIA_CHI_NGU_HANH[chiThang] || 'Kim') : 'Kim';
 
-  // Render kết quả Lục Hào
-  function renderLucHaoResult(res) {
-    const goc = res.que_goc || {};
-    const bien = res.que_bien;
-    const phuc = res.phuc_than || [];
+    // Dữ liệu quẻ
+    const isLucHao = (state.method === 'luchao');
+    const res = isLucHao ? state.result : (state.result.luc_hao || state.result);
+    const goc = isLucHao ? res.que_goc : {
+      name: state.result.que_chu.name,
+      tuong: state.result.que_chu.tuong,
+      tho: state.result.que_chu.tho,
+      cung: state.result.que_chu.cung,
+      cungSpecial: state.result.que_chu.cungSpecial,
+      bits: state.result.que_chu.bits,
+      haos: (res && res.que_goc) ? res.que_goc.haos : []
+    };
+    const ho = !isLucHao ? state.result.que_ho : null;
+    const bien = isLucHao ? res.que_bien : (res ? res.que_bien : {
+      name: state.result.que_bien.name,
+      tuong: state.result.que_bien.tuong,
+      tho: state.result.que_bien.tho,
+      cung: state.result.que_bien.cung,
+      cungSpecial: state.result.que_bien.cungSpecial,
+      bits: state.result.que_bien.bits,
+      haos: (res && res.que_bien) ? res.que_bien.haos : []
+    });
+
+    const phuc = res ? (res.phuc_than || []) : [];
+    const dongCount = isLucHao ? (res.dong_count || 0) : 1;
 
     return `
-      <!-- 3 Quẻ Lục Hào Trực Quan -->
-      <div class="dh-que-stage">
-        <!-- Quẻ Gốc -->
-        <div class="dh-que-card is-main">
-          <span class="dh-que-role-badge chu">Bản Quái (${goc.queType || 'Bản Cung'})</span>
-          <div class="dh-que-name">${goc.name || ''}</div>
-          <div class="dh-que-cung">Họ ${goc.cung} (${goc.cungElement}) • Thế Hào ${goc.thePos}, Ứng Hào ${goc.ungPos}</div>
-          <div class="dh-lines-wrap">
-            ${renderLinesVertical(goc.bits, goc.haos.map(h => h.isDong))}
+      <div class="dh-trang-dich-quai" id="dh-capture-target">
+        <!-- HEADER TRANG DỊCH QUÁI -->
+        <div class="dh-tdq-header">
+          <div class="dh-tdq-title-box">
+            <h1 class="dh-tdq-main-title">TRANG DỊCH QUÁI</h1>
+            
+            <div class="dh-tdq-meta-lines">
+              <div class="dh-tdq-line">
+                <span class="lbl">Thời gian lập quẻ:</span>
+                <span class="val">${state.selectedDate.toLocaleTimeString('vi-VN')} - ${calInfo.solar.dateStr} (giờ ${canChi.hourZhi || 'Hợi'}, ngày ${calInfo.lunar.day || 15}/${calInfo.lunar.month || 8}/${calInfo.solar.year} ÂD hợp lịch)</span>
+              </div>
+              <div class="dh-tdq-line">
+                <span class="lbl">Can Chi:</span>
+                <span class="val">Giờ ${canChi.hour || 'Tân Hợi'}, ngày ${canChi.day || 'Nhâm Dần'}, tháng ${canChi.month || 'Đinh Dậu'}, năm ${canChi.year || 'Bính Ngọ'}</span>
+              </div>
+              <div class="dh-tdq-line">
+                <span class="lbl">Tiết khí:</span> <strong class="val-bold">${solarTerm}</strong>
+                <span class="spacer-inline"></span>
+                <span class="lbl">Nhật thần:</span> <strong class="val-bold">${chiNgay}-${elmNgay}</strong>
+                <span class="spacer-inline"></span>
+                <span class="lbl">Nguyệt lệnh:</span> <strong class="val-bold">${chiThang}-${elmThang}</strong>
+              </div>
+              <div class="dh-tdq-line">
+                <span class="lbl">Phương pháp lập quẻ:</span>
+                <span class="val-bold">${isLucHao ? 'Lục hào' : 'Mai hoa'}</span>
+              </div>
+              <div class="dh-tdq-line purpose-line">
+                <span class="lbl">Việc cần xem:</span>
+                <input type="text" id="dh-purpose-input" class="dh-tdq-purpose-input" value="${state.purpose}" placeholder="Nhập sự vụ cần chiêm bái...">
+              </div>
+            </div>
           </div>
-          <div class="dh-que-tuong">⚡ ${goc.tuong || ''}</div>
+
+          <!-- ICON ĐỒ HỌA GÓC TRÊN BÊN PHẢI -->
+          <div class="dh-tdq-corner-art">
+            ${isLucHao ? `
+              <!-- 3 ĐỒNG XU CÀN LONG XẾP LỚP (Ảnh 1) -->
+              <div class="dh-art-coins-cluster" title="3 đồng tiền Càn Long Thông Bảo">
+                <div class="art-coin c1">
+                  <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#bf9543" stroke="#382509" stroke-width="3"/><rect x="38" y="38" width="24" height="24" fill="#18130c" stroke="#382509"/><text x="50" y="27" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">乾</text><text x="50" y="87" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">隆</text><text x="21" y="56" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">通</text><text x="79" y="56" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">寶</text></svg>
+                </div>
+                <div class="art-coin c2">
+                  <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#ab8235" stroke="#382509" stroke-width="3"/><rect x="38" y="38" width="24" height="24" fill="#18130c" stroke="#382509"/><text x="22" y="58" font-size="17" font-weight="bold" text-anchor="middle" fill="#281704">ᠪᠣᠣ</text><text x="78" y="58" font-size="17" font-weight="bold" text-anchor="middle" fill="#281704">ᠴᡳᠶᠣ</text></svg>
+                </div>
+                <div class="art-coin c3">
+                  <svg viewBox="0 0 100 100"><circle cx="50" cy="48" r="46" fill="#c69f4c" stroke="#382509" stroke-width="3"/><rect x="38" y="36" width="24" height="24" fill="#18130c" stroke="#382509"/><text x="50" y="25" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">乾</text><text x="50" y="85" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">隆</text><text x="21" y="54" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">通</text><text x="79" y="54" font-size="15" font-weight="900" text-anchor="middle" fill="#281704">寶</text></svg>
+                </div>
+              </div>
+            ` : `
+              <!-- CÀNH HOA MAI THỦY MẶC & THƯ PHÁP (Ảnh 2) -->
+              <div class="dh-art-plum-blossom" title="Mai Hoa Dịch Số">
+                <svg viewBox="0 0 130 90" class="dh-plum-svg">
+                  <!-- Cành cây thủy mặc -->
+                  <path d="M10,80 Q50,45 85,30 T125,15" fill="none" stroke="#5c4033" stroke-width="3.5" stroke-linecap="round"/>
+                  <path d="M50,48 Q70,60 95,65" fill="none" stroke="#5c4033" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M75,34 Q85,18 95,12" fill="none" stroke="#5c4033" stroke-width="1.8" stroke-linecap="round"/>
+                  <!-- Hoa mai hồng nhạt -->
+                  <circle cx="85" cy="30" r="7" fill="#f43f5e" opacity="0.85"/>
+                  <circle cx="85" cy="30" r="3" fill="#ffe4e6"/>
+                  <circle cx="95" cy="12" r="6" fill="#f43f5e" opacity="0.85"/>
+                  <circle cx="95" cy="12" r="2.5" fill="#ffe4e6"/>
+                  <circle cx="95" cy="65" r="6" fill="#f43f5e" opacity="0.85"/>
+                  <circle cx="120" cy="16" r="5" fill="#f43f5e" opacity="0.8"/>
+                  <circle cx="65" cy="40" r="5.5" fill="#f43f5e" opacity="0.85"/>
+                  <circle cx="40" cy="55" r="4.5" fill="#fb7185" opacity="0.75"/>
+                </svg>
+                <div class="dh-calligraphy-text">梅花易數</div>
+              </div>
+            `}
+          </div>
         </div>
 
-        <!-- Quẻ Biến (nếu có động) -->
-        ${bien ? `
-          <div class="dh-que-card">
-            <span class="dh-que-role-badge bien">Biến Quái (${res.dong_count} Hào Động)</span>
-            <div class="dh-que-name">${bien.name || ''}</div>
-            <div class="dh-que-cung">Quẻ Biến Sau Khi Động Hào Hóa Khí</div>
-            <div class="dh-lines-wrap">
-              ${renderLinesVertical(bien.bits, [])}
-            </div>
-            <div class="dh-que-tuong">🔮 ${bien.tuong || ''}</div>
-          </div>
-        ` : `
-          <div class="dh-que-card">
-            <span class="dh-que-role-badge ho">Quẻ Tĩnh (Bất Động)</span>
-            <div class="dh-que-name">Thuần Tĩnh An Định</div>
-            <div class="dh-que-cung">Không có hào động, việc bình ổn lâu dài</div>
-            <div style="font-size: 0.74rem; color: #94a3b8; padding: 24px 0;">
-              Khi quẻ không có hào động, sự việc giữ nguyên trạng thái ban đầu, lấy hào Thế làm trung tâm luận giải.
-            </div>
-          </div>
-        `}
-      </div>
+        <!-- ĐƯỜNG PHÂN CÁCH TRANG TRỌNG -->
+        <div class="dh-tdq-divider"></div>
 
-      <!-- Bảng Chi Tiết Từng Hào Lục Hào -->
-      <div class="dh-table-card">
-        <div style="font-weight: 700; font-size: 0.8rem; color: #f5b041; margin-bottom: 8px; display: flex; justify-content: space-between;">
-          <span>📋 BẢNG PHÂN TÍCH LỤC HÀO NẠP GIÁP CHI TIẾT</span>
-          <span style="font-size: 0.68rem; color: #94a3b8;">* Thứ tự từ Hào 6 (trên) xuống Hào 1 (dưới)</span>
+        <!-- KHỐI ĐỒ HÌNH QUẺ (LỤC HÀO: 2 QUẺ | MAI HOA: 3 QUẺ) -->
+        <div class="dh-tdq-hexagrams-stage ${ho ? 'is-triple' : 'is-dual'}">
+          <!-- QUẺ CHỦ -->
+          <div class="dh-tdq-hex-col">
+            <h2 class="dh-tdq-hex-name">${goc.name}</h2>
+            <div class="dh-tdq-bars-wrap">
+              ${renderThickBars(goc.bits, goc.haos ? goc.haos.map(h => h.isDong) : [state.result.hao_dong === 1, state.result.hao_dong === 2, state.result.hao_dong === 3, state.result.hao_dong === 4, state.result.hao_dong === 5, state.result.hao_dong === 6])}
+            </div>
+            <div class="dh-tdq-house-name">HỌ ${goc.cung.toUpperCase()}${goc.cungSpecial ? ` (${goc.cungSpecial})` : ''}</div>
+            <div class="dh-tdq-oracle-poem">${goc.tuong ? goc.tuong.toUpperCase() : ''}</div>
+          </div>
+
+          <!-- QUẺ HỖ (NẾU LÀ MAI HOA) -->
+          ${ho ? `
+            <div class="dh-tdq-hex-col">
+              <h2 class="dh-tdq-hex-name">${ho.name}</h2>
+              <div class="dh-tdq-bars-wrap">
+                ${renderThickBars(ho.bits, [])}
+              </div>
+              <div class="dh-tdq-house-name">HỌ ${ho.cung.toUpperCase()}${ho.cungSpecial ? ` (${ho.cungSpecial})` : ''}</div>
+              <div class="dh-tdq-oracle-poem">${ho.tuong ? ho.tuong.toUpperCase() : ''}</div>
+            </div>
+          ` : ''}
+
+          <!-- QUẺ BIẾN -->
+          <div class="dh-tdq-hex-col">
+            <h2 class="dh-tdq-hex-name">${bien.name}</h2>
+            <div class="dh-tdq-bars-wrap">
+              ${renderThickBars(bien.bits, [])}
+            </div>
+            <div class="dh-tdq-house-name">HỌ ${bien.cung.toUpperCase()}${bien.cungSpecial ? ` (${bien.cungSpecial})` : ''}</div>
+            <div class="dh-tdq-oracle-poem">${bien.tuong ? bien.tuong.toUpperCase() : ''}</div>
+          </div>
         </div>
-        <table class="dh-data-table">
-          <thead>
-            <tr>
-              <th style="width: 46px;">Hào</th>
-              <th style="width: 50px;">Thế/Ứng</th>
-              <th style="width: 85px;">Lục Thú</th>
-              <th>Lục Thân Bản Quái</th>
-              <th style="width: 90px;">Can Chi</th>
-              <th style="width: 40px;">TK</th>
-              <th style="width: 50px;">V-S</th>
-              <th style="width: 70px;">Thần Sát</th>
-              ${bien ? `<th>Quẻ Biến (${bien.name})</th>` : ''}
-            </tr>
-          </thead>
-          <tbody>
-            ${[5, 4, 3, 2, 1, 0].map(i => {
-              const h = goc.haos[i];
-              const hBien = bien ? bien.haos[i] : null;
-              return `
-                <tr class="${h.isDong ? 'dong-row' : ''}">
-                  <td>Hào ${h.pos}</td>
-                  <td>
-                    ${h.isThe ? '<span class="badge-the">Thế</span>' : ''}
-                    ${h.isUng ? '<span class="badge-ung">Ứng</span>' : ''}
-                  </td>
-                  <td>${h.lucThu}</td>
-                  <td style="font-weight: 700; color: ${h.lucThan === 'Thê Tài' ? '#4ade80' : (h.lucThan === 'Quan Quỷ' ? '#f87171' : (h.lucThan === 'Tử Tôn' ? '#38bdf8' : '#fbbf24'))};">
-                    ${h.lucThan}
-                  </td>
-                  <td><strong>${h.can}${h.chi}</strong> (${h.chiElement})</td>
-                  <td>${h.isTuanKhong ? '<span class="badge-tk">K</span>' : ''}</td>
-                  <td>${h.vuongSuy}</td>
-                  <td style="font-size: 0.68rem; color: #38bdf8;">${h.thanSat || '-'}</td>
-                  ${bien ? `
-                    <td style="text-align: left; padding-left: 8px;">
-                      ${h.isDong ? `<strong>&rarr; ${hBien.lucThan} ${hBien.can}${hBien.chi} (${hBien.chiElement})</strong>` : '<span style="color:#64748b;">-</span>'}
+
+        <!-- BẢNG LỤC HÀO NẠP GIÁP CHI TIẾT (ĐỐI XỨNG 2 CỘT CHUẨN XÁC NHƯ ẢNH) -->
+        <div class="dh-tdq-table-wrap">
+          <table class="dh-tdq-main-table">
+            <thead>
+              <tr class="header-main-titles">
+                <th colspan="6" class="th-goc-head">${goc.tuong ? goc.tuong.toUpperCase() : 'BẢN QUÁI'}</th>
+                <th colspan="5" class="th-bien-head">${bien.tuong ? bien.tuong.toUpperCase() : 'BIẾN QUÁI'}</th>
+              </tr>
+              <tr class="header-columns">
+                <!-- Nửa Trái: Quẻ Gốc -->
+                <th style="width: 44px;">Hào</th>
+                <th style="width: 44px;">T/Ứ</th>
+                <th style="width: 80px;">Lục Thân</th>
+                <th style="width: 86px;">Can Chi</th>
+                <th style="width: 90px;">Phục thần</th>
+                <th style="width: 38px;">TK</th>
+
+                <!-- Nửa Phải: Quẻ Biến & Lục Thú -->
+                <th style="width: 80px;">Lục Thân</th>
+                <th style="width: 86px;">Can Chi</th>
+                <th style="width: 38px;">TK</th>
+                <th style="width: 88px;">Lục Thú</th>
+                <th style="width: 44px;">Hào</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${[5, 4, 3, 2, 1, 0].map(i => {
+                const hGoc = goc.haos ? goc.haos[i] : null;
+                const hBien = bien.haos ? bien.haos[i] : null;
+                if (!hGoc) return '';
+                const isDong = hGoc.isDong;
+
+                // Tìm phục thần ở vị trí hào này
+                const phucItem = phuc.find(p => p.pos === hGoc.pos);
+
+                return `
+                  <tr class="${isDong ? 'row-is-dong' : ''}">
+                    <!-- Nửa Trái (Quẻ Gốc) -->
+                    <td class="cell-mini-bar">${renderMiniYaoBar(hGoc.bit, isDong)}</td>
+                    <td class="cell-the-ung">
+                      ${hGoc.isThe ? '<strong class="the-tag">Thế</strong>' : ''}
+                      ${hGoc.isUng ? '<strong class="ung-tag">Ứng</strong>' : ''}
                     </td>
-                  ` : ''}
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+                    <td class="cell-luc-than ${isDong ? 'text-dong' : ''}">${hGoc.lucThan}</td>
+                    <td class="cell-can-chi ${isDong ? 'text-dong' : ''}">${hGoc.can}-${hGoc.chi}</td>
+                    <td class="cell-phuc-than">${phucItem ? `${phucItem.lucThan.split(' ')[0]}-${phucItem.chi}` : ''}</td>
+                    <td class="cell-tk">${hGoc.isTuanKhong ? '<span class="tk-k">K</span>' : ''}</td>
 
-        <!-- Phục Thần Banner -->
-        ${phuc.length > 0 ? `
-          <div class="phuc-than-banner">
-            <strong>🔍 Phục Thần:</strong>
-            ${phuc.map(p => `Hào ${p.pos} <b>${p.lucThan} ${p.can}${p.chi} (${p.chiElement})</b> phục dưới Phi Thần <b>${p.phiThan.lucThan} ${p.phiThan.can}${p.phiThan.chi}</b>`).join('; ')}.
-          </div>
-        ` : ''}
-      </div>
-    `;
-  }
-
-  // Render kết quả Mai Hoa
-  function renderMaiHoaResult(res) {
-    const chu = res.que_chu || {};
-    const ho = res.que_ho || {};
-    const bien = res.que_bien || {};
-    const td = res.the_dung || {};
-
-    return `
-      <!-- 3 Quẻ Mai Hoa Trực Quan (Chủ - Hỗ - Biến) -->
-      <div class="dh-que-stage">
-        <!-- Quẻ Chủ -->
-        <div class="dh-que-card is-main">
-          <span class="dh-que-role-badge chu">Quẻ Chủ (Bản Thể)</span>
-          <div class="dh-que-name">${chu.name || ''}</div>
-          <div class="dh-que-cung">${chu.thuong_quai.name} (${chu.thuong_quai.element}) trên ${chu.ha_quai.name} (${chu.ha_quai.element})</div>
-          <div class="dh-lines-wrap">
-            ${renderLinesVertical(chu.bits, [res.hao_dong === 1, res.hao_dong === 2, res.hao_dong === 3, res.hao_dong === 4, res.hao_dong === 5, res.hao_dong === 6])}
-          </div>
-          <div class="dh-que-tuong">⚡ ${chu.tuong || ''}</div>
+                    <!-- Nửa Phải (Quẻ Biến & Lục Thú) -->
+                    <td class="cell-luc-than ${isDong ? 'text-dong' : ''}">${hBien ? hBien.lucThan : ''}</td>
+                    <td class="cell-can-chi ${isDong ? 'text-dong' : ''}">${hBien ? `${hBien.can}-${hBien.chi}` : ''}</td>
+                    <td class="cell-tk">${(hBien && hBien.isTuanKhong) ? '<span class="tk-k">K</span>' : ''}</td>
+                    <td class="cell-luc-thu ${isDong ? 'text-dong' : ''}">${hGoc.lucThu}</td>
+                    <td class="cell-mini-bar">${hBien ? renderMiniYaoBar(hBien.bit, false) : ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
         </div>
 
-        <!-- Quẻ Hỗ -->
-        <div class="dh-que-card">
-          <span class="dh-que-role-badge ho">Quẻ Hỗ (Trung Gian)</span>
-          <div class="dh-que-name">${ho.name || ''}</div>
-          <div class="dh-que-cung">${ho.thuong_ho.name} (${ho.thuong_ho.element}) trên ${ho.ha_ho.name} (${ho.ha_ho.element})</div>
-          <div class="dh-lines-wrap">
-            ${renderLinesVertical(ho.bits, [])}
-          </div>
-          <div class="dh-que-tuong">🌱 ${ho.tuong || ''}</div>
+        <!-- BẢNG DƯỚI: VƯỢNG SUY & THẦN SÁT (LỘC, MÃ, QUÝ, ĐÀO) ĐỐI XỨNG -->
+        <div class="dh-tdq-bottom-grid">
+          <table class="dh-tdq-sub-table">
+            <thead>
+              <tr>
+                <!-- Quẻ Gốc -->
+                <th style="width: 76px;">Hào</th>
+                <th style="width: 50px;">V-S</th>
+                <th style="width: 58px;">Quái thần</th>
+                <th style="width: 36px;">Lộc</th>
+                <th style="width: 36px;">Mã</th>
+                <th style="width: 36px;">Quý</th>
+                <th style="width: 36px;">Đào</th>
+
+                <!-- Quẻ Biến -->
+                <th style="width: 76px; border-left: 2px solid #cbd5e1;">Hào</th>
+                <th style="width: 50px;">V-S</th>
+                <th style="width: 36px;">Lộc</th>
+                <th style="width: 36px;">Mã</th>
+                <th style="width: 36px;">Quý</th>
+                <th style="width: 36px;">Đào</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${[5, 4, 3, 2, 1, 0].map(i => {
+                const hGoc = goc.haos ? goc.haos[i] : null;
+                const hBien = bien.haos ? bien.haos[i] : null;
+                if (!hGoc) return '';
+                const isDong = hGoc.isDong;
+
+                return `
+                  <tr class="${isDong ? 'row-is-dong' : ''}">
+                    <!-- Quẻ Gốc -->
+                    <td class="cell-name-chi ${isDong ? 'text-dong' : ''}">${hGoc.can} ${hGoc.chi}</td>
+                    <td class="cell-vs ${isDong ? 'text-dong' : ''}">${hGoc.vuongSuy}</td>
+                    <td>${hGoc.isQuaiThan ? '<strong class="qt-mark">QT</strong>' : '-'}</td>
+                    <td>${hGoc.isLoc ? '<strong class="ts-mark">L</strong>' : '-'}</td>
+                    <td>${hGoc.isMa ? '<strong class="ts-mark">M</strong>' : '-'}</td>
+                    <td>${hGoc.isQuy ? '<strong class="ts-mark">Q</strong>' : '-'}</td>
+                    <td>${hGoc.isDao ? '<strong class="ts-mark">Đ</strong>' : '-'}</td>
+
+                    <!-- Quẻ Biến -->
+                    <td class="cell-name-chi ${isDong ? 'text-dong' : ''}" style="border-left: 2px solid #cbd5e1;">${hBien ? `${hBien.can} ${hBien.chi}` : '-'}</td>
+                    <td class="cell-vs ${isDong ? 'text-dong' : ''}">${hBien ? hBien.vuongSuy : '-'}</td>
+                    <td>${(hBien && hBien.isLoc) ? '<strong class="ts-mark">L</strong>' : '-'}</td>
+                    <td>${(hBien && hBien.isMa) ? '<strong class="ts-mark">M</strong>' : '-'}</td>
+                    <td>${(hBien && hBien.isQuy) ? '<strong class="ts-mark">Q</strong>' : '-'}</td>
+                    <td>${(hBien && hBien.isDao) ? '<strong class="ts-mark">Đ</strong>' : '-'}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
         </div>
 
-        <!-- Quẻ Biến -->
-        <div class="dh-que-card">
-          <span class="dh-que-role-badge bien">Quẻ Biến (Kết Cục)</span>
-          <div class="dh-que-name">${bien.name || ''}</div>
-          <div class="dh-que-cung">${bien.thuong_bien.name} (${bien.thuong_bien.element}) trên ${bien.ha_bien.name} (${bien.ha_bien.element})</div>
-          <div class="dh-lines-wrap">
-            ${renderLinesVertical(bien.bits, [])}
-          </div>
-          <div class="dh-que-tuong">🔮 ${bien.tuong || ''}</div>
-        </div>
-      </div>
-
-      <!-- Thẻ Luận Giải Thể - Dụng -->
-      <div class="dh-the-dung-card">
-        <div style="font-weight: 700; font-size: 0.8rem; color: #f5b041; margin-bottom: 10px; display: flex; justify-content: space-between;">
-          <span>⚖️ LUẬN GIẢI THỂ - DỤNG SINH KHẮC (HÀO ĐỘNG: HÀO ${res.hao_dong})</span>
-          <span style="font-size: 0.72rem; color: #38bdf8;">${td.the ? td.the.vi_tri : ''}</span>
-        </div>
-
-        <div class="dh-td-grid">
-          <div class="dh-td-box">
-            <div class="dh-td-label">THỂ QUÁI (Chủ Sự)</div>
-            <div class="dh-td-name">${td.the ? td.the.info.name : ''} (${td.the ? td.the.info.element : ''})</div>
-            <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">Tượng: ${td.the ? td.the.info.nature : ''} (${td.the ? td.the.vi_tri : ''})</div>
-          </div>
-          <div class="dh-td-box">
-            <div class="dh-td-label">DỤNG QUÁI (Hoàn Cảnh / Đối Tác)</div>
-            <div class="dh-td-name" style="color: #ef4444;">${td.dung ? td.dung.info.name : ''} (${td.dung ? td.dung.info.element : ''})</div>
-            <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">Tượng: ${td.dung ? td.dung.info.nature : ''} (Chứa Hào ${res.hao_dong})</div>
-          </div>
-        </div>
-
-        <div class="dh-td-verdict ${td.muc_do || 'cat'}">
-          ${td.danh_gia || ''}
+        <!-- FOOTER TRANG DỊCH QUÁI -->
+        <div class="dh-tdq-footer">
+          <span>Lập tại <strong>Neta Light & Huyền Học</strong> • Hệ Thống Dịch Lý Cổ Truyền Chuẩn Mực</span>
+          <span class="dh-tdq-footer-link">Bản quyền học thuật Dã Hạc & Thiệu Ung</span>
         </div>
       </div>
     `;
   }
 
-  // Render 6 vạch hào theo chiều dọc (Hào 6 trên cùng, Hào 1 dưới cùng)
-  function renderLinesVertical(bits, dongFlags = []) {
+  // Render 6 vạch hào to rõ (Blue navy cho hào tĩnh, Red cho hào động)
+  function renderThickBars(bits, dongFlags = []) {
     let html = '';
-    // i chạy từ 5 xuống 0 (hào 6 -> hào 1)
+    // Hào 6 (i=5) ở trên cùng -> Hào 1 (i=0) ở dưới cùng
     for (let i = 5; i >= 0; i--) {
       const bit = bits[i];
       const isDong = dongFlags[i] || false;
       const isYang = (bit === 1);
 
       html += `
-        <div class="dh-line-item ${isDong ? 'dong' : ''}" title="Hào ${i + 1}: ${isYang ? 'Dương' : 'Âm'} ${isDong ? '(Động)' : '(Tĩnh)'}">
+        <div class="dh-thick-line-row ${isDong ? 'is-dong' : ''}">
           ${isYang ? `
-            <div class="dh-line-yang"></div>
+            <!-- Hào Dương: 1 Thanh Liền -->
+            <div class="dh-thick-bar yang ${isDong ? 'dong' : ''}"></div>
           ` : `
-            <div class="dh-line-yin">
-              <div class="dh-line-yin-bar"></div>
-              <div class="dh-line-yin-bar"></div>
+            <!-- Hào Âm: 2 Thanh Đứt -->
+            <div class="dh-thick-bar yin ${isDong ? 'dong' : ''}">
+              <div class="yin-seg"></div>
+              <div class="yin-space"></div>
+              <div class="yin-seg"></div>
             </div>
           `}
-          ${isDong ? `<span class="dh-line-dong-mark">${isYang ? 'o' : 'x'}</span>` : ''}
         </div>
       `;
     }
     return html;
   }
 
-  // Tính toán quẻ Lục Hào
+  // Render vạch hào mini trong bảng Lục Hào
+  function renderMiniYaoBar(bit, isDong) {
+    const isYang = (bit === 1);
+    if (isYang) {
+      return `<div class="mini-yao-yang ${isDong ? 'dong' : ''}"></div>`;
+    } else {
+      return `
+        <div class="mini-yao-yin ${isDong ? 'dong' : ''}">
+          <span class="seg"></span>
+          <span class="seg"></span>
+        </div>
+      `;
+    }
+  }
+
+  // =========================================================================
+  // 5. RENDER THUYẾT MINH LUẬN GIẢI HIỆN ĐẠI (CHẾ ĐỘ XEM THỨ HAI)
+  // =========================================================================
+  function renderDetailedReport() {
+    if (!state.result) return '';
+    const isLucHao = (state.method === 'luchao');
+    const res = state.result;
+
+    if (isLucHao) {
+      const goc = res.que_goc;
+      const bien = res.que_bien;
+      return `
+        <div class="dh-detailed-wrap">
+          <div class="dh-card-box">
+            <h3 class="dh-box-title">⚖️ THUYẾT MINH LUẬN GIẢI BỐC PHỆ LỤC HÀO</h3>
+            <p style="font-size: 0.82rem; line-height: 1.6; color: #cbd5e1;">
+              Quẻ chiêm được: <strong>${goc.name}</strong> (${goc.queType}, thuộc Cung ${goc.cung} - ${goc.cungElement}). 
+              ${res.dong_count > 0 ? `Có <strong>${res.dong_count} hào động</strong> hóa thành quẻ <strong>${bien.name}</strong> (Cung ${bien.cung}).` : 'Quẻ thuần tĩnh an định, không có hào động.'}
+            </p>
+            <div class="dh-info-callout">
+              <div>📍 <strong>Hào Thế (Chủ Thể):</strong> Hào ${goc.thePos} (${goc.haos[goc.thePos - 1].lucThan} ${goc.haos[goc.thePos - 1].can}${goc.haos[goc.thePos - 1].chi}) • Là tâm điểm đại diện cho đương số chiêm quẻ.</div>
+              <div style="margin-top: 4px;">🎯 <strong>Hào Ứng (Đối Tác / Hoàn Cảnh):</strong> Hào ${goc.ungPos} (${goc.haos[goc.ungPos - 1].lucThan} ${goc.haos[goc.ungPos - 1].can}${goc.haos[goc.ungPos - 1].chi}) • Đại diện cho đối phương hoặc sự vụ cần xem.</div>
+            </div>
+            <div class="dh-tho-box">
+              <div class="tho-title">Lời Kinh Dịch Cốt Tủy:</div>
+              <div class="tho-body">"${goc.tho || 'Cương kiện trung chính, hanh thông đại cát.'}"</div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      // Mai Hoa Thể Dụng
+      const td = res.the_dung;
+      return `
+        <div class="dh-detailed-wrap">
+          <div class="dh-card-box">
+            <h3 class="dh-box-title">🌸 LUẬN GIẢI THỂ - DỤNG MAI HOA DỊCH SỐ (HÀO ĐỘNG: HÀO ${res.hao_dong})</h3>
+            <div class="dh-td-grid">
+              <div class="dh-td-box">
+                <div class="dh-td-label">THỂ QUÁI (Chủ Sự)</div>
+                <div class="dh-td-name">${td.the.info.name} (${td.the.info.element})</div>
+                <div class="dh-td-sub">Tượng: ${td.the.info.nature} • ${td.the.vi_tri}</div>
+              </div>
+              <div class="dh-td-box">
+                <div class="dh-td-label">DỤNG QUÁI (Khách / Sự Vụ)</div>
+                <div class="dh-td-name" style="color: #ef4444;">${td.dung.info.name} (${td.dung.info.element})</div>
+                <div class="dh-td-sub">Tượng: ${td.dung.info.nature} • ${td.dung.vi_tri}</div>
+              </div>
+            </div>
+            <div class="dh-td-verdict ${td.muc_do || 'cat'}">
+              ${td.danh_gia}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // =========================================================================
+  // 6. TÍNH TOÁN & CÁC HÀM XỬ LÝ SỰ KIỆN
+  // =========================================================================
   function chayLapQueLucHao() {
     const eng = global.NetaDichHocEngine;
     if (!eng || !eng.LucHaoEngine) return;
-
     const cal = getCalendarInfo(state.selectedDate);
     state.result = eng.LucHaoEngine.lapQue(state.haoCoins, cal);
   }
 
-  // Tính toán quẻ Mai Hoa
   function chayLapQueMaiHoa() {
     const eng = global.NetaDichHocEngine;
     if (!eng || !eng.MaiHoaEngine) return;
+    const cal = getCalendarInfo(state.selectedDate);
 
     if (state.maiHoaMode === 'time') {
-      const cal = getCalendarInfo(state.selectedDate);
       const canChi = cal.canChi || {};
       const zhiNames = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
-
-      // Địa chi năm: 1..12
       const namZhi = canChi.yearZhi || 'Ngọ';
       const namIdx = zhiNames.indexOf(namZhi) + 1;
-
-      // Tháng âm: 1..12
       const thangAm = cal.lunar ? cal.lunar.month : (state.selectedDate.getMonth() + 1);
-      // Ngày âm: 1..30
       const ngayAm = cal.lunar ? cal.lunar.day : state.selectedDate.getDate();
-
-      // Địa chi giờ: 1..12
       const gioZhi = canChi.hourZhi || 'Hợi';
       const gioIdx = zhiNames.indexOf(gioZhi) + 1;
 
-      state.result = eng.MaiHoaEngine.lapQueThoiGian(namIdx, thangAm, ngayAm, gioIdx);
+      state.result = eng.MaiHoaEngine.lapQueThoiGian(namIdx, thangAm, ngayAm, gioIdx, cal);
     } else {
-      state.result = eng.MaiHoaEngine.lapQueTheoHaiSo(state.soA, state.soB);
+      state.result = eng.MaiHoaEngine.lapQueTheoHaiSo(state.soA, state.soB, 0, cal);
     }
   }
 
-  // Gieo 1 hào ngẫu nhiên (3 đồng xu)
+  // Gieo 1 hào ngẫu nhiên (3 đồng xu tung lên với vật lý và âm thanh)
   function gieoMotHao() {
     if (state.isFlipping) return;
-    state.isFlipping = true;
+    if (state.haoCoins.length >= 6) {
+      if (global.showToast) global.showToast('✅ Đã gieo đủ 6 hào. Bấm "Gieo Lại" nếu muốn lập quẻ mới.');
+      return;
+    }
 
-    // Tung ngẫu nhiên 3 đồng xu: mỗi xu nhận 2 (Âm) hoặc 3 (Dương)
+    state.isFlipping = true;
+    triggerHaptic(30);
+    playCoinAudio('clink');
+
+    // 3 đồng xu tung ngẫu nhiên: mỗi xu nhận 2 (Âm) hoặc 3 (Dương)
     const c1 = Math.random() < 0.5 ? 2 : 3;
     const c2 = Math.random() < 0.5 ? 2 : 3;
     const c3 = Math.random() < 0.5 ? 2 : 3;
+
     state.coinStates = [c1, c2, c3];
-    const total = c1 + c2 + c3; // 6, 7, 8, hoặc 9
+    state.coinAngles = [
+      Math.floor(Math.random() * 60) - 30,
+      Math.floor(Math.random() * 60) - 30,
+      Math.floor(Math.random() * 60) - 30
+    ];
 
     render();
 
     setTimeout(() => {
       state.isFlipping = false;
+      const total = c1 + c2 + c3; // 6, 7, 8, hoặc 9
       state.haoCoins.push(total);
+      triggerHaptic(15);
+      playCoinAudio('clink');
+
       if (state.haoCoins.length >= 6) {
         chayLapQueLucHao();
+        setTimeout(() => playCoinAudio('done'), 200);
       }
       render();
-    }, 600);
+    }, 650);
   }
 
-  // Gieo tự động toàn bộ 6 hào
+  // Gieo nhanh 6 hào
   function gieoTuDong6Hao() {
     state.haoCoins = [];
     for (let i = 0; i < 6; i++) {
@@ -529,20 +816,25 @@
       Math.random() < 0.5 ? 2 : 3,
       Math.random() < 0.5 ? 2 : 3
     ];
+    state.coinAngles = [
+      Math.floor(Math.random() * 60) - 30,
+      Math.floor(Math.random() * 60) - 30,
+      Math.floor(Math.random() * 60) - 30
+    ];
     chayLapQueLucHao();
+    playCoinAudio('done');
+    triggerHaptic(40);
     render();
   }
 
   // Gắn sự kiện giao diện
   function bindEvents() {
-    // 1. Chuyển tab Lục Hào / Mai Hoa
+    // 1. Chuyển Tab Lục Hào / Mai Hoa
     const tabLucHao = document.getElementById('dh-tab-luchao');
     if (tabLucHao) {
       tabLucHao.onclick = () => {
         state.method = 'luchao';
-        if (state.haoCoins.length === 0) {
-          state.haoCoins = [7, 7, 7, 6, 7, 7];
-        }
+        if (state.haoCoins.length === 0) state.haoCoins = [7, 7, 7, 6, 7, 7];
         chayLapQueLucHao();
         render();
       };
@@ -557,7 +849,35 @@
       };
     }
 
-    // 2. Chế độ Mai Hoa (Thời gian / Số học)
+    // 2. Chuyển chế độ xem (Trang Dịch Quái / Luận Giải Chi Tiết)
+    const btnModeToggle = document.getElementById('dh-btn-mode-toggle');
+    if (btnModeToggle) {
+      btnModeToggle.onclick = () => {
+        state.viewMode = (state.viewMode === 'chart') ? 'detailed' : 'chart';
+        render();
+      };
+    }
+
+    // 3. Gieo quẻ tương tác
+    const btnCastStep = document.getElementById('dh-btn-cast-step');
+    if (btnCastStep) btnCastStep.onclick = gieoMotHao;
+
+    const tray = document.getElementById('dh-sacred-tray');
+    if (tray) tray.onclick = gieoMotHao;
+
+    const btnCastAuto = document.getElementById('dh-btn-cast-auto');
+    if (btnCastAuto) btnCastAuto.onclick = gieoTuDong6Hao;
+
+    const btnResetCast = document.getElementById('dh-btn-reset-cast');
+    if (btnResetCast) {
+      btnResetCast.onclick = () => {
+        state.haoCoins = [];
+        state.result = null;
+        render();
+      };
+    }
+
+    // 4. Mai Hoa modes
     const mhTabTime = document.getElementById('dh-mh-tab-time');
     if (mhTabTime) {
       mhTabTime.onclick = () => {
@@ -598,27 +918,15 @@
       };
     }
 
-    // 3. Nút Gieo Quẻ Lục Hào
-    const btnCastStep = document.getElementById('dh-btn-cast-step');
-    if (btnCastStep) {
-      btnCastStep.onclick = gieoMotHao;
-    }
-
-    const btnCastAuto = document.getElementById('dh-btn-cast-auto');
-    if (btnCastAuto) {
-      btnCastAuto.onclick = gieoTuDong6Hao;
-    }
-
-    const btnResetCast = document.getElementById('dh-btn-reset-cast');
-    if (btnResetCast) {
-      btnResetCast.onclick = () => {
-        state.haoCoins = [];
-        state.result = null;
-        render();
+    // 5. Ô nhập mục đích "Việc cần xem"
+    const purposeInput = document.getElementById('dh-purpose-input');
+    if (purposeInput) {
+      purposeInput.oninput = (e) => {
+        state.purpose = e.target.value;
       };
     }
 
-    // 4. Header buttons: Hiện Tại & Chọn Giờ & Lưu Ảnh
+    // 6. Header Buttons: Hiện Tại, Chọn Giờ, Lưu Ảnh
     const btnNow = document.getElementById('dh-btn-now');
     if (btnNow) {
       btnNow.onclick = () => {
@@ -631,23 +939,56 @@
     }
 
     const btnPicker = document.getElementById('dh-btn-picker');
-    if (btnPicker) {
-      btnPicker.onclick = openDateTimePickerModal;
-    }
+    if (btnPicker) btnPicker.onclick = openDateTimePickerModal;
 
     const btnSaveShot = document.getElementById('dh-btn-save-shot');
     if (btnSaveShot) {
-      btnSaveShot.onclick = () => {
-        if (typeof global.captureArenaScreenshot === 'function') {
-          global.captureArenaScreenshot();
-        } else {
-          alert('Chụp ảnh màn hình lưu vào máy');
-        }
-      };
+      btnSaveShot.onclick = exportDichQuaiScreenshot;
     }
   }
 
-  // Modal chọn ngày giờ tùy ý (kế thừa từ logic smart_picker hoặc native date input)
+  // Chụp ảnh màn hình Trang Dịch Quái Ultra-HD
+  function exportDichQuaiScreenshot() {
+    const target = document.getElementById('dh-capture-target') || document.querySelector('.dichhoc-container');
+    if (!target) return;
+
+    if (global.showToast) global.showToast('⏳ Đang kết xuất ảnh Trang Dịch Quái Ultra-HD...');
+
+    if (typeof html2canvas === 'function') {
+      html2canvas(target, {
+        scale: 3, // Ultra-HD 3x nét căng như in ấn
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const dataUrl = canvas.toDataURL('image/png');
+        const filename = `TrangDichQuai_${state.method}_${Date.now()}.png`;
+
+        if (global.NativeBridge && typeof global.NativeBridge.saveImageToGallery === 'function') {
+          global.NativeBridge.saveImageToGallery(dataUrl, filename);
+        } else {
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
+        if (global.showToast) global.showToast(`✅ Đã lưu ảnh Trang Dịch Quái: ${filename}`);
+      }).catch(err => {
+        console.error('Screenshot error:', err);
+        if (global.showToast) global.showToast('❌ Không thể xuất ảnh: ' + err.message);
+      });
+    } else {
+      if (typeof global.captureArenaScreenshot === 'function') {
+        global.captureArenaScreenshot();
+      } else {
+        alert('Trình duyệt chưa hỗ trợ xuất ảnh canvas.');
+      }
+    }
+  }
+
+  // Modal chọn ngày giờ tùy ý
   function openDateTimePickerModal() {
     let overlay = document.getElementById('dh-picker-modal-overlay');
     if (overlay) overlay.remove();
@@ -666,7 +1007,7 @@
           <button class="dh-icon-btn" id="dh-modal-close-btn" style="border:none; background:transparent;">✕</button>
         </div>
         <div style="font-size: 0.74rem; color: #94a3b8; margin-bottom: 10px;">
-          Chọn mốc thời gian để động cơ tự động tính Can Chi 4 trụ, Tiết Khí, Nguyệt Lệnh & Nhật Thần:
+          Chọn mốc thời gian để tự động tính Can Chi 4 trụ, Tiết Khí, Nguyệt Lệnh & Nhật Thần:
         </div>
         <input type="datetime-local" id="dh-custom-dt-input" class="dh-input-box" value="${curVal}">
         <div style="display: flex; gap: 8px; margin-top: 14px;">
@@ -687,17 +1028,36 @@
         if (state.method === 'luchao') chayLapQueLucHao();
         else chayLapQueMaiHoa();
         render();
-        if (global.showToast) global.showToast(`📅 Đã cập nhật mốc thời gian: ${state.selectedDate.toLocaleString('vi-VN')}`);
+        if (global.showToast) global.showToast(`📅 Đã cập nhật thời gian: ${state.selectedDate.toLocaleString('vi-VN')}`);
       }
       close();
     };
   }
 
+  // Lắc điện thoại để gieo quẻ (Accelerometer shake sensor)
+  let lastX, lastY, lastZ;
+  let lastShakeTime = 0;
+  window.addEventListener('devicemotion', (e) => {
+    if (state.method !== 'luchao' || state.isFlipping || state.haoCoins.length >= 6) return;
+    const current = e.accelerationIncludingGravity;
+    if (!current) return;
+    const now = Date.now();
+    if ((now - lastShakeTime) > 1000) {
+      const diffTime = now - lastShakeTime;
+      const speed = Math.abs(current.x + current.y + current.z - (lastX + lastY + lastZ || 0)) / diffTime * 10000;
+      if (speed > 800) {
+        lastShakeTime = now;
+        gieoMotHao();
+      }
+      lastX = current.x;
+      lastY = current.y;
+      lastZ = current.z;
+    }
+  });
+
   // Public module API
   const NetaDichHocView = {
-    init: () => {
-      // Đăng ký render khi DOM sẵn sàng
-    },
+    init: () => {},
     render: render,
     setMethod: (m) => {
       state.method = m;
