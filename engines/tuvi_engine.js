@@ -31,6 +31,26 @@
     "Phá Quân":   ["M", "V", "Đ", "H", "V", "H", "M", "V", "Đ", "H", "V", "H"]
   };
 
+  // Độ sáng Phụ Tinh & Sát Tinh tại 12 Cung (Tý -> Hợi) chuẩn Thái Thứ Lang & Nam Phái
+  const BRIGHTNESS_SECONDARY = {
+    "Kình Dương": ["H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H"],
+    "Đà La":      ["H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H"],
+    "Địa Không":  ["H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ"],
+    "Địa Kiếp":   ["H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ"],
+    "Hỏa Tinh":   ["H", "H", "Đ", "H", "Đ", "Đ", "Đ", "Đ", "H", "H", "Đ", "H"],
+    "Linh Tinh":  ["H", "H", "Đ", "H", "Đ", "Đ", "Đ", "Đ", "H", "H", "Đ", "H"],
+    "Văn Xương":  ["B", "Đ", "H", "B", "Đ", "Đ", "B", "Đ", "H", "B", "Đ", "Đ"],
+    "Văn Khúc":   ["B", "Đ", "H", "B", "Đ", "Đ", "B", "Đ", "H", "B", "Đ", "Đ"],
+    "Thiên Khốc": ["Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H"],
+    "Thiên Hư":   ["Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H"],
+    "Thiên Hình": ["H", "H", "Đ", "Đ", "H", "H", "H", "H", "Đ", "Đ", "H", "H"],
+    "Thiên Diêu": ["H", "H", "H", "Đ", "H", "H", "H", "H", "H", "Đ", "Đ", "H"],
+    "Đại Hao":    ["H", "H", "Đ", "Đ", "H", "H", "H", "H", "Đ", "Đ", "H", "H"],
+    "Tiểu Hao":   ["H", "H", "Đ", "Đ", "H", "H", "H", "H", "Đ", "Đ", "H", "H"],
+    "Thiên Mã":   ["H", "H", "Đ", "H", "H", "H", "H", "H", "Đ", "H", "H", "H"],
+    "Hóa Kỵ":     ["H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H", "H", "Đ", "H"]
+  };
+
   const STAR_INFO = {
     // 14 Chính Tinh
     "Tử Vi": { hanh: "Thổ", type: "main" }, "Liêm Trinh": { hanh: "Hỏa", type: "main" },
@@ -65,7 +85,7 @@
     "Thiên Phúc": { hanh: "Thổ", type: "lucky" }, "Thiên Trù": { hanh: "Thổ", type: "lucky" },
     "Thiên Tài": { hanh: "Hỏa", type: "lucky" }, "Thiên Thọ": { hanh: "Thổ", type: "lucky" },
     "Hoa Cái": { hanh: "Kim", type: "lucky" }, "Thai Phụ": { hanh: "Kim", type: "lucky" },
-    "Phong Cáo": { hanh: "Thổ", type: "lucky" },
+    "Phong Cáo": { hanh: "Thổ", type: "lucky" }, "Văn Tinh": { hanh: "Hỏa", type: "lucky" },
 
     // Hung Tinh / Sát Tinh
     "Kình Dương": { hanh: "Kim", type: "bad" }, "Đà La": { hanh: "Kim", type: "bad" },
@@ -360,6 +380,86 @@
     starsByPos[4].bad.push("Thiên La");
     starsByPos[10].bad.push("Địa Võng");
 
+    // 1. Tam Thai, Bát Tọa (khởi từ Tả Phụ / Hữu Bật theo ngày sinh âm lịch)
+    const tamThaiPos = mod12(taPhuPos + (lunarDay - 1));
+    const batToaPos = mod12(huuBatPos - (lunarDay - 1));
+    starsByPos[tamThaiPos].lucky.push("Tam Thai");
+    starsByPos[batToaPos].lucky.push("Bát Tọa");
+
+    // 2. Ân Quang, Thiên Quý (khởi từ Văn Xương / Văn Khúc theo ngày sinh âm lịch)
+    const anQuangPos = mod12(vanXuongPos + lunarDay - 2);
+    const thienQuyPos = mod12(2 - anQuangPos);
+    starsByPos[anQuangPos].lucky.push("Ân Quang");
+    starsByPos[thienQuyPos].lucky.push("Thiên Quý");
+
+    // 3. Thai Phụ, Phong Cáo (theo Văn Khúc)
+    const thaiPhuPos = mod12(vanKhucPos + 2);
+    const phongCaoPos = mod12(vanKhucPos - 2);
+    starsByPos[thaiPhuPos].lucky.push("Thai Phụ");
+    starsByPos[phongCaoPos].lucky.push("Phong Cáo");
+
+    // 4. Thiên Quan, Thiên Phúc (theo Can năm sinh)
+    const thienQuanMap = [7, 4, 5, 2, 3, 9, 11, 9, 10, 6];
+    const thienPhucMap = [9, 8, 0, 11, 3, 2, 6, 5, 6, 5];
+    starsByPos[thienQuanMap[yGanIdx]].lucky.push("Thiên Quan");
+    starsByPos[thienPhucMap[yGanIdx]].lucky.push("Thiên Phúc");
+
+    // 5. Thiên Trù, Lưu Hà (theo Can năm sinh)
+    const thienTruMap = [5, 6, 0, 5, 6, 8, 2, 6, 9, 10];
+    const luuHaMap = [9, 10, 7, 4, 5, 6, 8, 3, 11, 2];
+    starsByPos[thienTruMap[yGanIdx]].lucky.push("Thiên Trù");
+    starsByPos[luuHaMap[yGanIdx]].bad.push("Lưu Hà");
+
+    // 6. Quốc Ấn, Đường Phù (theo Lộc Tồn)
+    const quocAnPos = mod12(locTonPos + 8);
+    const duongPhuPos = mod12(locTonPos + 5);
+    starsByPos[quocAnPos].lucky.push("Quốc Ấn");
+    starsByPos[duongPhuPos].lucky.push("Đường Phù");
+
+    // 7. Cô Thần, Quả Tú (theo Chi năm sinh)
+    const coThanMap = [2, 2, 5, 5, 5, 8, 8, 8, 11, 11, 11, 2];
+    const quaTuMap = [10, 10, 1, 1, 1, 4, 4, 4, 7, 7, 7, 10];
+    starsByPos[coThanMap[yZhiIdx]].bad.push("Cô Thần");
+    starsByPos[quaTuMap[yZhiIdx]].bad.push("Quả Tú");
+
+    // 8. Kiếp Sát, Hoa Cái (theo Chi năm sinh)
+    const kiepSatMap = [5, 2, 11, 8, 5, 2, 11, 8, 5, 2, 11, 8];
+    const hoaCaiMap = [4, 1, 10, 7, 4, 1, 10, 7, 4, 1, 10, 7];
+    starsByPos[kiepSatMap[yZhiIdx]].bad.push("Kiếp Sát");
+    starsByPos[hoaCaiMap[yZhiIdx]].lucky.push("Hoa Cái");
+
+    // 9. Phá Toái, Đẩu Quân
+    const phaToaiMap = [9, 1, 5, 9, 1, 5, 9, 1, 5, 9, 1, 5];
+    starsByPos[phaToaiMap[yZhiIdx]].bad.push("Phá Toái");
+    const dauQuanPos = mod12(yZhiIdx - (lunarMonth - 1) + hourIdx);
+    starsByPos[dauQuanPos].bad.push("Đẩu Quân");
+
+    // 10. Thiên Tài, Thiên Thọ (theo Mệnh, Thân và Chi năm)
+    const thienTaiPos = mod12(menhIdx + yZhiIdx);
+    const thienThoPos = mod12(thanIdx + yZhiIdx);
+    starsByPos[thienTaiPos].lucky.push("Thiên Tài");
+    starsByPos[thienThoPos].lucky.push("Thiên Thọ");
+
+    // 11. Thiên Thương, Thiên Sứ (theo Mệnh: Nô Bộc và Tật Ách)
+    const thienThuongPos = mod12(menhIdx + 5);
+    const thienSuPos = mod12(menhIdx + 7);
+    starsByPos[thienThuongPos].bad.push("Thiên Thương");
+    starsByPos[thienSuPos].bad.push("Thiên Sứ");
+
+    // 12. Thiên Giải, Địa Giải
+    const thienGiaiPos = mod12(8 + 2 * (lunarMonth - 1));
+    const diaGiaiPos = mod12(taPhuPos + 3);
+    starsByPos[thienGiaiPos].lucky.push("Thiên Giải");
+    starsByPos[diaGiaiPos].lucky.push("Địa Giải");
+
+    // 13. Thiên Không (kế tiếp sau Thái Tuế)
+    const thienKhongPos = mod12(yZhiIdx + 1);
+    starsByPos[thienKhongPos].bad.push("Thiên Không");
+
+    // 14. Văn Tinh (sau Kình Dương 2 cung thuận)
+    const vanTinhPos = mod12(locTonPos + 1 + 2);
+    starsByPos[vanTinhPos].lucky.push("Văn Tinh");
+
     // An Tứ Hóa
     addTuHoa(hLoc, "Lộc", false);
     addTuHoa(hQuyen, "Quyền", false);
@@ -462,15 +562,25 @@
         };
       });
 
-      const luckyStarsFormatted = starsByPos[i].lucky.map(s => ({
-        name: s,
-        hanh: (STAR_INFO[s] && STAR_INFO[s].hanh) || 'Mộc'
-      }));
+      const luckyStarsFormatted = starsByPos[i].lucky.map(s => {
+        const b = (BRIGHTNESS_SECONDARY[s] && BRIGHTNESS_SECONDARY[s][i]) ? BRIGHTNESS_SECONDARY[s][i] : "";
+        return {
+          name: s,
+          brightness: b,
+          fullName: b ? `${s} (${b})` : s,
+          hanh: (STAR_INFO[s] && STAR_INFO[s].hanh) || 'Mộc'
+        };
+      });
 
-      const badStarsFormatted = starsByPos[i].bad.map(s => ({
-        name: s,
-        hanh: (STAR_INFO[s] && STAR_INFO[s].hanh) || 'Hỏa'
-      }));
+      const badStarsFormatted = starsByPos[i].bad.map(s => {
+        const b = (BRIGHTNESS_SECONDARY[s] && BRIGHTNESS_SECONDARY[s][i]) ? BRIGHTNESS_SECONDARY[s][i] : "";
+        return {
+          name: s,
+          brightness: b,
+          fullName: b ? `${s} (${b})` : s,
+          hanh: (STAR_INFO[s] && STAR_INFO[s].hanh) || 'Hỏa'
+        };
+      });
 
       const isTuan = (i === tuanPos1 || i === tuanPos2);
       const isTriet = (i === trietPos1 || i === trietPos2);
@@ -579,6 +689,7 @@
     generateTuViChart,
     getStarColorClass,
     BRIGHTNESS,
+    BRIGHTNESS_SECONDARY,
     STAR_INFO,
     CAN,
     CHI

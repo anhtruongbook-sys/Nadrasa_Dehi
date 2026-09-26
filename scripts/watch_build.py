@@ -19,7 +19,7 @@ def get_token():
 TOKEN = get_token()
 REPO = "anhtruongbook-sys/Nadrasa_Dehi"
 API_URL = f"https://api.github.com/repos/{REPO}/actions/runs"
-DEFAULT_TAG = "v1.9.2"
+DEFAULT_TAG = "v1.9.3"
 
 def get_runs():
     req = urllib.request.Request(API_URL, headers={

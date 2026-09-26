@@ -63,13 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.2
-          name: "Neta Light & Huyền Học v1.9.2 (Khắc Phục Tràn Lưới Kỳ Môn, Viền Khung Thiên Bàn Tử Vi, Tối Ưu Hiệu Năng Mobile)"
+          tag_name: v1.9.3
+          name: "Neta Light & Huyền Học v1.9.3 (Đại Tu Nâng Cấp Toàn Diện Thuật Toán Tử Vi Nam Phái Chuẩn Thái Thứ Lang, Đắc Hãm Toàn Tinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.2
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.3
+            - **Đại Tu Nâng Cấp Toàn Diện Thuật Toán Tử Vi Nam Phái Chuẩn Thái Thứ Lang**:
+              + An trọn vẹn 100% hệ thống 26 Phụ tinh và Tạp tinh thứ cấp: Tam Thai, Bát Tọa, Ân Quang, Thiên Quý, Thai Phụ, Phong Cáo, Thiên Quan, Thiên Phúc, Thiên Trù, Lưu Hà, Quốc Ấn, Đường Phù, Cô Thần, Quả Tú, Kiếp Sát, Hoa Cái, Phá Toái, Đẩu Quân, Thiên Tài, Thiên Thọ, Thiên Thương, Thiên Sứ, Thiên Giải, Địa Giải, Thiên Không, Văn Tinh.
+              + Phân định đầy đủ cấp độ Miếu / Vượng / Đắc / Hãm cho cả Lục Sát Tinh và Phụ tinh trọng yếu: Kình Dương, Đà La, Không Kiếp, Hỏa Linh, Xương Khúc, Khốc Hư, Hình Diêu, Đại Tiểu Hao, Thiên Mã, Hóa Kỵ.
+              + Bảo tồn chuẩn xác 100% khẩu quyết kinh điển Nam Phái Thái Thứ Lang: Hỏa Linh nhóm Tỵ Dậu Sửu (Hỏa khởi Mão, Linh khởi Tuất); Tứ Hóa can Canh (*Nhật Vũ Âm Đồng* - Thiên Đồng hóa Kỵ); Tứ Hóa can Nhâm (*Lương Vi Phụ Vũ* - Tả Phụ hóa Khoa).
+            - **Tích Hợp Hệ Thống 9 Sao Lưu Niên Theo Năm Xem (`viewYear`)**:
+              + Tự động an Lưu Thái Tuế, Lưu Kình, Lưu Đà, Lưu Tang Môn, Lưu Bạch Hổ, Lưu Khốc, Lưu Hư, Lưu Lộc Tồn, Lưu Thiên Mã.
+            - **Tối Ưu Hiển Thị Lá Số 4x4 Grid & Chi Tiết Cung Modal**:
+              + Hiển thị nhãn Đắc Hãm trực quan `(Đ)`, `(H)`, `(M)`, `(V)`, `(B)` đồng bộ giữa màn hình chính và Modal chi tiết cung.
             - **Khắc Phục Triệt Để Tràn Lưới Cửu Cung Kỳ Môn Độn Giáp (Dương Bàn & Âm Bàn)**:
               + Cấu hình `repeat(3, minmax(0, 1fr))` và `min-width: 0` triệt tiêu lỗi phình cột ra cạnh phải màn hình (chống mất thông tin cột 3).
-              + Tinh chỉnh tỷ lệ hiển thị Thần, Cửa, Tinh, Can Khí, Cung Số và Ngựa/Không Vong vừa vặn 100% trên màn hình điện thoại 360px.
             - **Khắc Phục Viền Khung Thiên Bàn Trung Tâm Lá Số Tử Vi**:
               + Bổ sung định vị lưới động `grid-row: 2 / span 2` và `height: 100%` kết hợp loại bỏ `contain: layout` giúp viền chữ nhật bao bọc trọn vẹn toàn bộ thông tin Đương số xuống hết tầng thứ 3, thẳng hàng chuẩn xác với các cung kế bên.
             - **Bảo Toàn 100% Chất Lượng Hình Ảnh & Tài Liệu**:

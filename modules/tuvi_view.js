@@ -323,13 +323,13 @@
                 <div class="tc-sec-stars-grid">
                   <div class="tc-col-lucky">
                     ${p.luckyStars.slice(0, 5).map(s => `
-                      <span class="star-sec lucky ${getColorClass(s.hanh)}">${s.name}</span>
+                      <span class="star-sec lucky ${getColorClass(s.hanh)}">${s.fullName || s.name}</span>
                     `).join('')}
                     ${p.luckyStars.length > 5 ? `<span class="star-more">+${p.luckyStars.length - 5}</span>` : ''}
                   </div>
                   <div class="tc-col-bad">
                     ${p.badStars.slice(0, 5).map(s => `
-                      <span class="star-sec bad ${getColorClass(s.hanh)}">${s.name}</span>
+                      <span class="star-sec bad ${getColorClass(s.hanh)}">${s.fullName || s.name}</span>
                     `).join('')}
                     ${p.badStars.length > 5 ? `<span class="star-more">+${p.badStars.length - 5}</span>` : ''}
                   </div>
@@ -398,7 +398,7 @@
                   <span class="tlc-sec-lbl">Cát tinh:</span>
                   <div class="tlc-sec-chips">
                     ${p.luckyStars.map(s => `
-                      <span class="tlc-sec-chip lucky ${getColorClass(s.hanh)}">${s.name}</span>
+                      <span class="tlc-sec-chip lucky ${getColorClass(s.hanh)}">${s.fullName || s.name}</span>
                     `).join('')}
                   </div>
                 </div>
@@ -406,7 +406,7 @@
                   <span class="tlc-sec-lbl">Sát tinh:</span>
                   <div class="tlc-sec-chips">
                     ${p.badStars.map(s => `
-                      <span class="tlc-sec-chip bad ${getColorClass(s.hanh)}">${s.name}</span>
+                      <span class="tlc-sec-chip bad ${getColorClass(s.hanh)}">${s.fullName || s.name}</span>
                     `).join('')}
                   </div>
                 </div>
@@ -784,7 +784,7 @@
           <h4>✨ CÁT TINH (${p.luckyStars.length})</h4>
           <div class="tm-chips-wrap">
             ${p.luckyStars.map(s => `
-              <span class="tm-chip lucky ${getColorClass(s.hanh)}">${s.name}</span>
+              <span class="tm-chip lucky ${getColorClass(s.hanh)}">${s.fullName || s.name}</span>
             `).join('')}
           </div>
         </div>
@@ -793,7 +793,7 @@
           <h4>⚡ HUNG TINH / SÁT TINH (${p.badStars.length})</h4>
           <div class="tm-chips-wrap">
             ${p.badStars.map(s => `
-              <span class="tm-chip bad ${getColorClass(s.hanh)}">${s.name}</span>
+              <span class="tm-chip bad ${getColorClass(s.hanh)}">${s.fullName || s.name}</span>
             `).join('')}
           </div>
         </div>
