@@ -520,12 +520,16 @@ const PhapHanhModule = (function() {
       renderLessons();
     });
 
-    // Ô tìm kiếm
+    // Ô tìm kiếm với Debounce tối ưu hiệu năng (tránh re-render dồn dập khi gõ phím)
     const searchInput = document.getElementById('ph-search-input');
     if (searchInput) {
+      let debounceTimer = null;
       searchInput.addEventListener('input', (e) => {
         currentSearchQuery = e.target.value;
-        renderLessons();
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          renderLessons();
+        }, 120);
       });
     }
 
@@ -700,6 +704,7 @@ const PhapHanhModule = (function() {
 
       viewerStage.addEventListener('touchmove', (e) => {
         if (e.touches.length === 2 && initialPinchDistance) {
+          if (e.cancelable) e.preventDefault();
           const currentDistance = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
@@ -709,11 +714,12 @@ const PhapHanhModule = (function() {
           initialPinchDistance = currentDistance;
           applyViewerTransform();
         } else if (e.touches.length === 1 && isDragging) {
+          if (e.cancelable) e.preventDefault();
           viewerTranslateX = e.touches[0].clientX - dragStartX;
           viewerTranslateY = e.touches[0].clientY - dragStartY;
           applyViewerTransform();
         }
-      });
+      }, { passive: false });
 
       viewerStage.addEventListener('touchend', (e) => {
         if (e.touches.length < 2) initialPinchDistance = null;

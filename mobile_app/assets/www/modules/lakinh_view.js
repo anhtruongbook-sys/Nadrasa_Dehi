@@ -1425,7 +1425,16 @@
     // Xoay nhanh thì bắt nhạy (alphaFilter = 0.45), xoay chậm thì làm mượt đầm êm (alphaFilter = 0.20)
     const alphaFilter = Math.abs(diff) > 15 ? 0.45 : 0.20;
     const smoothed = (state.rotation + alphaFilter * diff + 360) % 360;
-    updateRotationDisplay(smoothed);
+    state.targetSmoothedHeading = smoothed;
+    if (!state.rafHeadingPending) {
+      state.rafHeadingPending = true;
+      requestAnimationFrame(() => {
+        state.rafHeadingPending = false;
+        if (state.targetSmoothedHeading !== undefined) {
+          updateRotationDisplay(state.targetSmoothedHeading);
+        }
+      });
+    }
   }
 
   function toggleLockHeading() {

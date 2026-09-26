@@ -50,6 +50,9 @@
     renderTuVi();
   }
 
+  let lastChartKey = '';
+  let cachedChartData = null;
+
   function computeTuViChart() {
     if (!global.NetaTuViEngine) {
       console.error("NetaTuViEngine not found!");
@@ -60,11 +63,17 @@
       const m = currentTuViDate.getMonth() + 1;
       const y = currentTuViDate.getFullYear();
       const h = currentTuViDate.getHours();
+      const chartKey = `${d}_${m}_${y}_${h}_${currentIsMale}_${currentViewYear}`;
+      if (chartKey === lastChartKey && cachedChartData) {
+        return cachedChartData;
+      }
       const chart = global.NetaTuViEngine.generateTuViChart({
         day: d, month: m, year: y, hour: h,
         isMale: currentIsMale,
         viewYear: currentViewYear
       });
+      lastChartKey = chartKey;
+      cachedChartData = chart;
       currentChartData = chart;
       return chart;
     } catch (e) {
@@ -339,8 +348,10 @@
                 <div class="tc-cell-footer">
                   <span class="tc-canchi-val">${p.canChi}</span>
                   <span class="tc-trangsinh-val">${p.trangSinh}</span>
-                  <span class="tc-daihan-val">${p.daiHan}</span>
-                  ${p.isTieuHanYear ? `<span class="tc-tieuhan-badge" title="Tiểu Hạn năm ${meta.viewYear} (${meta.viewYearCanChi})">HẠN</span>` : ''}
+                  <div class="tc-footer-right">
+                    <span class="tc-daihan-val">${p.daiHan}</span>
+                    ${p.isTieuHanYear ? `<span class="tc-tieuhan-badge" title="Tiểu Hạn năm ${meta.viewYear} (${meta.viewYearCanChi})">HẠN</span>` : ''}
+                  </div>
                 </div>
               </div>
             `;
