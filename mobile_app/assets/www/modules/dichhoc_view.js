@@ -1,27 +1,38 @@
 /**
  * NETA LIGHT - DỊCH HỌC VIEW CONTROLLER (modules/dichhoc_view.js)
  * Giao diện Bốc Quẻ Dịch Lý (Lục Hào Nạp Giáp & Mai Hoa Dịch Số).
- * Thiết kế Tinh Hoa Á Đông: Khung 3 Quẻ Live Slots, Bát Quái Tiên Thiên, Ống Quẻ Thái Cực Tương Tác.
- * Hiển thị đầy đủ 100% dữ liệu gốc: Bảng Lục Hào Nạp Giáp & Bảng Vượng Suy Thần Sát đối chiếu 2 quẻ.
- * Tương thích hoàn hảo Dark Theme & Light Theme, tuyệt đối không tràn màn hình.
+ * Phân định rạch ròi 100% State độc lập giữa Lục Hào và Mai Hoa:
+ * - Chuyển Tab chuyển đổi lập tức giao diện & kết quả tương ứng.
+ * - Loại bỏ nút lưu ảnh trùng lặp trong thanh công cụ (dùng nút 📷 tại header chung).
+ * - Thanh công cụ co dãn trên 1 hàng duy nhất, tuyệt đối không vỡ dòng.
+ * - Bảng I và Bảng II hiển thị chuẩn xác danh xưng 64 quẻ Kinh Dịch.
  */
 
 (function (global) {
   'use strict';
 
-  // State quản lý của module Dịch Học
+  // State độc lập cho từng phân hệ
   const state = {
     method: 'luchao', // 'luchao' | 'maihoa'
     selectedDate: new Date(),
     purpose: '', // Việc cần xem
-    haoCoins: [], // Danh sách các hào đã gieo (1 -> 6), mỗi hào nhận 6, 7, 8, 9
-    coinStates: [3, 2, 3], // 3 đồng xu hiện tại (2: Âm, 3: Dương)
-    coinAngles: [15, -20, 35], // Góc xoay tự nhiên ngẫu nhiên
-    isFlipping: false,
-    maiHoaMode: 'time', // 'time' | 'numbers'
-    soA: 7,
-    soB: 8,
-    result: null
+    
+    // 1. Phân hệ Lục Hào Nạp Giáp
+    lucHao: {
+      coins: [], // Mảng 6 hào đã gieo (6, 7, 8, 9)
+      coinStates: [3, 2, 3], // 3 đồng xu hiện tại (2: Âm, 3: Dương)
+      coinAngles: [15, -20, 35],
+      isFlipping: false,
+      result: null // Kết quả lập quẻ khi đủ 6 hào
+    },
+
+    // 2. Phân hệ Mai Hoa Dịch Số
+    maiHoa: {
+      mode: 'time', // 'time' | 'numbers'
+      soA: 7,
+      soB: 8,
+      result: null // Kết quả lập quẻ Mai Hoa
+    }
   };
 
   // Web Audio API mô phỏng tiếng kim loại tiền đồng cổ va chạm leng keng & lắc ống tre
@@ -47,7 +58,6 @@
           osc.stop(now + idx * 0.08 + 0.85);
         });
       } else if (type === 'shake') {
-        // Âm thanh lắc ống quẻ xào xạc
         const bufferSize = ctx.sampleRate * 0.35;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
@@ -111,7 +121,7 @@
   // Render SVG đồng tiền Càn Long tinh xảo
   function renderCoinSVG(val, isFlipping, idx) {
     const isYang = (val === 3);
-    const angle = state.coinAngles[idx] || 0;
+    const angle = state.lucHao.coinAngles[idx] || 0;
 
     return `
       <div class="dh-coin-item ${isFlipping ? 'is-flipping' : ''}" style="transform: rotate(${isFlipping ? 0 : angle}deg);" data-coin-idx="${idx}" title="${isYang ? 'Mặt Dương (3 điểm)' : 'Mặt Âm (2 điểm)'}">
@@ -176,24 +186,22 @@
     }
   }
 
-  // Render 6 vạch hào slot live trên thẻ hiển thị 3 quẻ (Hình 2)
+  // Render 6 vạch hào slot live trên thẻ hiển thị 3 quẻ Lục Hào
   function renderSlotBars(type) {
-    const curCount = state.haoCoins.length;
+    const curCount = state.lucHao.coins.length;
     let html = '';
 
-    // Hào 6 ở trên cùng, Hào 1 ở dưới cùng
     for (let h = 6; h >= 1; h--) {
       const isCast = (h <= curCount);
 
       if (!isCast) {
-        // Chưa gieo: vạch placeholder xám nét đứt
         html += `
           <div class="slot-line placeholder">
             <span class="p-dash"></span>
           </div>
         `;
       } else {
-        const val = state.haoCoins[h - 1];
+        const val = state.lucHao.coins[h - 1];
         let isYang = false;
         let isDong = false;
 
@@ -201,14 +209,12 @@
           isDong = (val === 6 || val === 9);
           isYang = (val === 7 || val === 9);
         } else if (type === 'bien') {
-          // Biến quái: 6 (Lão âm) biến Dương; 9 (Lão dương) biến Âm
           isDong = (val === 6 || val === 9);
           if (val === 6) isYang = true;
           else if (val === 9) isYang = false;
           else isYang = (val === 7);
         } else if (type === 'ho') {
-          // Quẻ hỗ: chỉ hiển thị khi đã có đủ thông tin các hào liên quan (H2, H3, H4, H5)
-          const gocBits = state.haoCoins.map(v => (v === 7 || v === 9 ? 1 : 0));
+          const gocBits = state.lucHao.coins.map(v => (v === 7 || v === 9 ? 1 : 0));
           const hoBitsMap = { 1: gocBits[1], 2: gocBits[2], 3: gocBits[3], 4: gocBits[2], 5: gocBits[3], 6: gocBits[4] };
           isYang = (hoBitsMap[h] === 1);
           isDong = false;
@@ -249,16 +255,22 @@
     const elmNgay = eng ? (eng.DIA_CHI_NGU_HANH[chiNgay] || 'Mộc') : 'Mộc';
     const elmThang = eng ? (eng.DIA_CHI_NGU_HANH[chiThang] || 'Kim') : 'Kim';
 
+    // Xác định kết quả hiện tại theo tab
+    const activeResult = (state.method === 'luchao') ? state.lucHao.result : state.maiHoa.result;
+    const tuanKhongStr = (activeResult && activeResult.thoi_gian && activeResult.thoi_gian.tuanKhong)
+      ? activeResult.thoi_gian.tuanKhong.join(', ')
+      : 'Thìn, Tỵ';
+
     container.innerHTML = `
       <div class="dichhoc-container">
-        <!-- 1. Thanh Menu Tab Gọn Gàng -->
+        <!-- 1. Thanh Menu Tab Gọn Gàng (1 Dòng Duy Nhất - Không Tràn) -->
         <div class="dh-nav-bar">
           <div class="dh-tab-group">
             <button class="dh-tab-btn ${state.method === 'luchao' ? 'active' : ''}" id="dh-tab-luchao">
-              🪙 Lục Hào Nạp Giáp
+              🪙 Lục Hào
             </button>
             <button class="dh-tab-btn ${state.method === 'maihoa' ? 'active' : ''}" id="dh-tab-maihoa">
-              🌸 Mai Hoa Dịch Số
+              🌸 Mai Hoa
             </button>
           </div>
           <div class="dh-action-right">
@@ -268,9 +280,7 @@
             <button class="dh-icon-btn" id="dh-btn-picker" title="Chọn ngày giờ chiêm quẻ">
               📅 Giờ Khác
             </button>
-            <button class="dh-icon-btn primary-save" id="dh-btn-save-shot" title="Lưu ảnh quẻ chiêm bái">
-              📷 Lưu Ảnh
-            </button>
+            <input type="datetime-local" id="dh-hidden-datetime" style="position:fixed; top:-1000px; left:-1000px; opacity:0; pointer-events:none;" />
           </div>
         </div>
 
@@ -290,7 +300,7 @@
             <div><span class="m-lbl">Tiết khí:</span> <em>${solarTerm}</em></div>
             <div><span class="m-lbl">Nhật thần:</span> <strong>${chiNgay}-${elmNgay}</strong></div>
             <div><span class="m-lbl">Nguyệt lệnh:</span> <strong>${chiThang}-${elmThang}</strong></div>
-            <div><span class="m-lbl">Tuần không:</span> <strong style="color:#f59e0b;">${(state.result && state.result.thoi_gian && state.result.thoi_gian.tuanKhong) ? state.result.thoi_gian.tuanKhong.join(', ') : 'Thìn, Tỵ'}</strong></div>
+            <div><span class="m-lbl">Tuần không:</span> <strong style="color:#f59e0b;">${tuanKhongStr}</strong></div>
           </div>
           <div class="dh-purpose-row">
             <span class="m-lbl">Việc cần xem:</span>
@@ -298,10 +308,10 @@
           </div>
         </div>
 
-        <!-- 3. Khu Vực Gieo Quẻ Tinh Tế Cổ Điển (Hình 2: 3 Quẻ Slots, Bát Quái, Ống Quẻ Thái Cực) -->
+        <!-- 3. Khu Vực Tương Tác Theo Tab (Lục Hào: Gieo Xu Ống Quẻ / Mai Hoa: Khởi Quẻ Thời Gian & Số) -->
         ${renderInteractionPanel()}
 
-        <!-- 4. Bản Phân Tích Lục Hào Nạp Giáp & Thần Sát Đầy Đủ 100% Theo Đúng 2 Ảnh Mẫu -->
+        <!-- 4. Bản Phân Tích Lục Hào Nạp Giáp & Thần Sát (Chuẩn 100% Theo Đúng Tab Đang Xem) -->
         <div id="dh-result-section">
           ${renderResultSection()}
         </div>
@@ -311,13 +321,11 @@
     bindEvents();
   }
 
-  // Render khu vực gieo quẻ tinh tế theo phong cách Cổ điển Á Đông (Hình 2)
+  // Render khu vực tương tác theo tab được chọn
   function renderInteractionPanel() {
-    const curHaoCount = state.haoCoins.length;
-    const isLucHao = (state.method === 'luchao');
-
-    if (isLucHao) {
-      const sum = state.coinStates.reduce((a, b) => a + b, 0);
+    if (state.method === 'luchao') {
+      const curHaoCount = state.lucHao.coins.length;
+      const sum = state.lucHao.coinStates.reduce((a, b) => a + b, 0);
       let sumDesc = '';
       if (sum === 6) sumDesc = '2 + 2 + 2 = 6 • Lão Âm (Hào Âm Động ☷ ➔ ☰)';
       else if (sum === 7) sumDesc = '2 + 2 + 3 = 7 • Thiếu Dương (Hào Dương Tĩnh ☰)';
@@ -333,22 +341,20 @@
         quoteText = 'Đã hoàn tất gieo đủ 6 Hào! Xem toàn văn Bảng Nạp Giáp & Thần Sát chi tiết bên dưới.';
       }
 
-      // Tên 3 quẻ hiển thị trên đầu
       let nameChinh = '-';
       let nameHo = '-';
       let nameBien = '-';
-      if (state.result && state.result.que_goc) {
-        nameChinh = state.result.que_goc.name;
-        nameHo = state.result.que_ho ? state.result.que_ho.name : '-';
-        nameBien = state.result.que_bien ? state.result.que_bien.name : 'Thuần Tĩnh';
+      if (state.lucHao.result && state.lucHao.result.que_goc) {
+        nameChinh = state.lucHao.result.que_goc.name;
+        nameHo = state.lucHao.result.que_ho ? state.lucHao.result.que_ho.name : '-';
+        nameBien = state.lucHao.result.que_bien ? state.lucHao.result.que_bien.name : 'Thuần Tĩnh';
       }
 
       return `
         <div class="dh-toss-card">
-          <!-- A. 3 THẺ QUẺ TRÊN ĐẦU (QUẺ CHÍNH | QUẺ HỖ | QUẺ BIẾN) THEO HÌNH 2 -->
+          <!-- A. 3 THẺ QUẺ TRÊN ĐẦU (QUẺ CHÍNH | QUẺ HỖ | QUẺ BIẾN) -->
           <div class="dh-casting-slots-card">
             <div class="dh-slots-header">
-              <!-- Cột Quẻ Chính -->
               <div class="dh-slot-col">
                 <div class="slot-title">QUẺ CHÍNH</div>
                 <div class="slot-bars-box">
@@ -358,7 +364,6 @@
               </div>
               <div class="dh-slot-divider"></div>
 
-              <!-- Cột Quẻ Hỗ -->
               <div class="dh-slot-col">
                 <div class="slot-title">QUẺ HỖ</div>
                 <div class="slot-bars-box">
@@ -368,7 +373,6 @@
               </div>
               <div class="dh-slot-divider"></div>
 
-              <!-- Cột Quẻ Biến -->
               <div class="dh-slot-col">
                 <div class="slot-title">QUẺ BIẾN</div>
                 <div class="slot-bars-box">
@@ -383,7 +387,7 @@
             </div>
           </div>
 
-          <!-- B. LỜI DẪN NHẮC NHỞ (QUOTE NHƯ HÌNH 2) -->
+          <!-- B. LỜI DẪN NHẮC NHỞ -->
           <div class="dh-prompt-quote">
             <span class="quote-mark">“</span>
             <span class="quote-text">${quoteText}</span>
@@ -392,13 +396,11 @@
 
           <!-- C. TRUNG TÂM TƯƠNG TÁC: BÁT QUÁI TIÊN THIÊN & ỐNG QUẺ THÁI CỰC -->
           <div class="dh-stage-arena">
-            <!-- Bát Quái Đồ Đẹp Mắt Ở Phía Sau -->
             <div class="dh-bagua-bg">
               <svg class="dh-bagua-svg" viewBox="0 0 200 200">
                 <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35" />
                 <circle cx="100" cy="100" r="62" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.25" />
                 
-                <!-- 8 Hướng Bát Quái: Càn (Thiên), Đoài (Trạch), Ly (Hỏa), Chấn (Lôi), Tốn (Phong), Khảm (Thủy), Cấn (Sơn), Khôn (Địa) -->
                 <text x="100" y="24" font-size="8.5" font-weight="700" text-anchor="middle" fill="currentColor">Thiên</text>
                 <rect x="88" y="28" width="24" height="2" fill="currentColor" opacity="0.75" />
                 <rect x="88" y="32" width="24" height="2" fill="currentColor" opacity="0.75" />
@@ -417,7 +419,6 @@
                 <text x="44" y="160" font-size="8" font-weight="700" text-anchor="middle" fill="currentColor">Lôi</text>
                 <text x="156" y="160" font-size="8" font-weight="700" text-anchor="middle" fill="currentColor">Sơn</text>
 
-                <!-- Vòng Âm Dương Trung Tâm -->
                 <g transform="translate(100, 100)">
                   <circle cx="0" cy="0" r="32" fill="#0f172a" stroke="#d97706" stroke-width="1.5" />
                   <path d="M 0 -32 A 32 32 0 0 1 0 32 A 16 16 0 0 1 0 0 A 16 16 0 0 0 0 -32" fill="#f8fafc" />
@@ -427,8 +428,7 @@
               </svg>
             </div>
 
-            <!-- Ống Quẻ Thái Cực Tương Tác (Chạm Để Lắc & Gieo) -->
-            <div class="dh-tube-container ${state.isFlipping ? 'tube-shaking' : ''}" id="dh-interactive-tube" title="Chạm vào Ống Quẻ để gieo Hào!">
+            <div class="dh-tube-container ${state.lucHao.isFlipping ? 'tube-shaking' : ''}" id="dh-interactive-tube" title="Chạm vào Ống Quẻ để gieo Hào!">
               <svg class="dh-tube-svg" viewBox="0 0 140 180">
                 <defs>
                   <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -449,24 +449,19 @@
                   </radialGradient>
                 </defs>
 
-                <!-- Miệng Ống Quẻ (Oval Top Rim) -->
                 <ellipse cx="70" cy="24" rx="46" ry="13" fill="url(#rimGrad)" stroke="#221206" stroke-width="2.2" />
                 <ellipse cx="70" cy="24" rx="40" ry="9" fill="#120902" />
 
-                <!-- Thân Ống Tre / Gỗ Bát Giác Khắc Thái Cực -->
                 <path d="M 24 24 L 29 158 Q 70 170 111 158 L 116 24 Z" fill="url(#woodGrad)" stroke="#2a1406" stroke-width="2" />
                 
-                <!-- Gân nan tre dọc -->
                 <line x1="44" y1="26" x2="47" y2="162" stroke="#2c1507" stroke-width="1.5" opacity="0.6" />
                 <line x1="63" y1="27" x2="64" y2="165" stroke="#2c1507" stroke-width="1.5" opacity="0.6" />
                 <line x1="77" y1="27" x2="76" y2="165" stroke="#2c1507" stroke-width="1.5" opacity="0.6" />
                 <line x1="96" y1="26" x2="93" y2="162" stroke="#2c1507" stroke-width="1.5" opacity="0.6" />
 
-                <!-- Đai Đồng Cố Định Thân Ống -->
                 <path d="M 25 46 Q 70 54 115 46" fill="none" stroke="#d97706" stroke-width="2.5" opacity="0.75" />
                 <path d="M 28 138 Q 70 146 112 138" fill="none" stroke="#d97706" stroke-width="2.5" opacity="0.75" />
 
-                <!-- Huy Hiệu Thái Cực Bằng Vàng Ở Thân Ống Quẻ -->
                 <circle cx="70" cy="94" r="21" fill="url(#goldGlow)" stroke="#3f1e06" stroke-width="1.8" />
                 <g transform="translate(70, 94)">
                   <path d="M 0 -17 A 17 17 0 0 1 0 17 A 8.5 8.5 0 0 1 0 0 A 8.5 8.5 0 0 0 0 -17" fill="#1e1309" />
@@ -483,7 +478,7 @@
 
           <!-- D. 3 ĐỒNG TIỀN XU CÀN LONG & KẾT QUẢ ĐIỂM SỐ -->
           <div class="dh-coins-row">
-            ${state.coinStates.map((val, idx) => renderCoinSVG(val, state.isFlipping, idx)).join('')}
+            ${state.lucHao.coinStates.map((val, idx) => renderCoinSVG(val, state.lucHao.isFlipping, idx)).join('')}
           </div>
 
           <div class="dh-coin-formula">
@@ -515,23 +510,23 @@
       return `
         <div class="dh-toss-card">
           <div class="dh-mh-selector">
-            <button class="dh-mh-btn ${state.maiHoaMode === 'time' ? 'active' : ''}" id="dh-mh-tab-time">
+            <button class="dh-mh-btn ${state.maiHoa.mode === 'time' ? 'active' : ''}" id="dh-mh-tab-time">
               🕒 Theo Thời Gian Tiết Khí
             </button>
-            <button class="dh-mh-btn ${state.maiHoaMode === 'numbers' ? 'active' : ''}" id="dh-mh-tab-numbers">
+            <button class="dh-mh-btn ${state.maiHoa.mode === 'numbers' ? 'active' : ''}" id="dh-mh-tab-numbers">
               🔢 Theo 2 Số Tâm Linh
             </button>
           </div>
 
-          ${state.maiHoaMode === 'numbers' ? `
+          ${state.maiHoa.mode === 'numbers' ? `
             <div class="dh-numbers-row">
               <div class="num-col">
                 <label>Số A (Thượng quái):</label>
-                <input type="number" id="dh-inp-num-a" class="dh-num-input" value="${state.soA}" min="1" max="9999">
+                <input type="number" id="dh-inp-num-a" class="dh-num-input" value="${state.maiHoa.soA}" min="1" max="9999">
               </div>
               <div class="num-col">
                 <label>Số B (Hạ quái):</label>
-                <input type="number" id="dh-inp-num-b" class="dh-num-input" value="${state.soB}" min="1" max="9999">
+                <input type="number" id="dh-inp-num-b" class="dh-num-input" value="${state.maiHoa.soB}" min="1" max="9999">
               </div>
             </div>
           ` : `
@@ -544,8 +539,8 @@
             <button class="dh-action-btn primary" id="dh-btn-run-maihoa" style="min-width: 180px;">
               🌸 Khởi Quẻ Mai Hoa
             </button>
-            <button class="dh-action-btn outline" id="dh-btn-reset-cast">
-              🔄 Đặt Lại
+            <button class="dh-action-btn outline" id="dh-btn-reset-maihoa">
+              🔄 Làm Mới
             </button>
           </div>
         </div>
@@ -554,30 +549,42 @@
   }
 
   // =========================================================================
-  // 4. RENDER BẢN QUẺ & PHÂN TÍCH LỤC HÀO NẠP GIÁP TOÀN DIỆN (THEO ĐÚNG 2 ẢNH MẪU)
+  // 4. RENDER BẢN QUẺ & PHÂN TÍCH LỤC HÀO NẠP GIÁP TOÀN DIỆN (THEO ĐÚNG TAB)
   // =========================================================================
   function renderResultSection() {
-    if (!state.result) return '';
-
     const isLucHao = (state.method === 'luchao');
-    const res = isLucHao ? state.result : (state.result.luc_hao || state.result);
+    
+    // Nếu là Lục Hào mà chưa đủ 6 hào thì chưa hiển thị bảng phân tích (đang trong quá trình gieo)
+    if (isLucHao && (!state.lucHao.result || state.lucHao.coins.length < 6)) {
+      return '';
+    }
+
+    // Nếu là Mai Hoa mà chưa có kết quả thì tính ngay
+    if (!isLucHao && !state.maiHoa.result) {
+      chayLapQueMaiHoa();
+    }
+
+    const curResult = isLucHao ? state.lucHao.result : state.maiHoa.result;
+    if (!curResult) return '';
+
+    const res = isLucHao ? curResult : (curResult.luc_hao || curResult);
     const goc = isLucHao ? res.que_goc : {
-      name: state.result.que_chu.name,
-      tuong: state.result.que_chu.tuong,
-      tho: state.result.que_chu.tho,
-      cung: state.result.que_chu.cung,
-      cungSpecial: state.result.que_chu.cungSpecial,
-      bits: state.result.que_chu.bits,
+      name: curResult.que_chu.name,
+      tuong: curResult.que_chu.tuong,
+      tho: curResult.que_chu.tho,
+      cung: curResult.que_chu.cung,
+      cungSpecial: curResult.que_chu.cungSpecial,
+      bits: curResult.que_chu.bits,
       haos: (res && res.que_goc) ? res.que_goc.haos : []
     };
-    const ho = isLucHao ? (res.que_ho || null) : state.result.que_ho;
+    const ho = isLucHao ? (res.que_ho || null) : curResult.que_ho;
     const bien = isLucHao ? res.que_bien : (res ? res.que_bien : {
-      name: state.result.que_bien.name,
-      tuong: state.result.que_bien.tuong,
-      tho: state.result.que_bien.tho,
-      cung: state.result.que_bien.cung,
-      cungSpecial: state.result.que_bien.cungSpecial,
-      bits: state.result.que_bien.bits,
+      name: curResult.que_bien.name,
+      tuong: curResult.que_bien.tuong,
+      tho: curResult.que_bien.tho,
+      cung: curResult.que_bien.cung,
+      cungSpecial: curResult.que_bien.cungSpecial,
+      bits: curResult.que_bien.bits,
       haos: (res && res.que_bien) ? res.que_bien.haos : []
     });
 
@@ -631,14 +638,12 @@
                   <th colspan="5" class="th-group-right">${bien ? `QUẺ ${bien.name.toUpperCase()}` : 'BẤT BIẾN (THUẦN TĨNH)'}</th>
                 </tr>
                 <tr class="th-cols-row">
-                  <!-- Quẻ Gốc (6 cột) -->
                   <th style="width: 32px;">Hào</th>
                   <th style="width: 36px;">T/Ứ</th>
                   <th>Lục Thân</th>
                   <th>Can Chi</th>
                   <th>Phục thần</th>
                   <th style="width: 28px;">TK</th>
-                  <!-- Quẻ Biến (5 cột) -->
                   <th>Lục Thân</th>
                   <th>Can Chi</th>
                   <th style="width: 28px;">TK</th>
@@ -656,31 +661,20 @@
 
                   return `
                     <tr class="dh-row ${isDong ? 'row-dong' : ''}">
-                      <!-- Gốc: Vạch Hào -->
                       <td class="td-center td-bar">${renderMiniYaoBar(hGoc.bit, isDong)}</td>
-                      <!-- Gốc: Thế / Ứng -->
                       <td class="td-center">
                         ${hGoc.isThe ? '<span class="pill-the">Thế</span>' : ''}
                         ${hGoc.isUng ? '<span class="pill-ung">Ứng</span>' : ''}
                       </td>
-                      <!-- Gốc: Lục Thân -->
                       <td class="td-bold ${isDong ? 'text-red' : ''}">${hGoc.lucThan}</td>
-                      <!-- Gốc: Can Chi -->
                       <td class="${isDong ? 'text-red' : ''}">${hGoc.can}-${hGoc.chi} <small>(${hGoc.chiElement})</small></td>
-                      <!-- Gốc: Phục thần -->
                       <td class="td-phuc">${phucItem ? `${phucItem.lucThan.split(' ')[0]}-${phucItem.chi}` : '-'}</td>
-                      <!-- Gốc: Tuần không -->
                       <td class="td-center ${hGoc.isTuanKhong ? 'text-tk' : ''}">${hGoc.isTuanKhong ? 'K' : ''}</td>
 
-                      <!-- Biến: Lục Thân -->
                       <td class="td-bold ${isDong && hBien ? 'text-red' : 'td-dim'}">${hBien ? hBien.lucThan : '-'}</td>
-                      <!-- Biến: Can Chi -->
                       <td class="${isDong && hBien ? 'text-red' : 'td-dim'}">${hBien ? `${hBien.can}-${hBien.chi} <small>(${hBien.chiElement})</small>` : '-'}</td>
-                      <!-- Biến: Tuần không -->
                       <td class="td-center ${hBien && hBien.isTuanKhong ? 'text-tk' : ''}">${(hBien && hBien.isTuanKhong) ? 'K' : ''}</td>
-                      <!-- Lục Thú -->
                       <td class="td-thu ${isDong ? 'text-red' : ''}">${hGoc.lucThu}</td>
-                      <!-- Biến: Vạch Hào -->
                       <td class="td-center td-bar">${hBien ? renderMiniYaoBar(hBien.bit, false) : '-'}</td>
                     </tr>
                   `;
@@ -703,7 +697,6 @@
                   <th colspan="6" class="th-group-right">${bien ? `QUẺ ${bien.name.toUpperCase()}` : 'BẤT BIẾN (THUẦN TĨNH)'}</th>
                 </tr>
                 <tr class="th-cols-row">
-                  <!-- Quẻ Gốc (7 cột) -->
                   <th>Hào</th>
                   <th style="width: 38px;">V-S</th>
                   <th style="width: 48px;">Quái thần</th>
@@ -711,7 +704,6 @@
                   <th style="width: 32px;">Mã</th>
                   <th style="width: 32px;">Quý</th>
                   <th style="width: 32px;">Đào</th>
-                  <!-- Quẻ Biến (6 cột) -->
                   <th>Hào</th>
                   <th style="width: 38px;">V-S</th>
                   <th style="width: 32px;">Lộc</th>
@@ -729,32 +721,19 @@
 
                   return `
                     <tr class="dh-row ${isDong ? 'row-dong' : ''}">
-                      <!-- Gốc: Hào Can Chi -->
                       <td class="td-bold ${isDong ? 'text-red' : ''}">${hGoc.can} ${hGoc.chi}</td>
-                      <!-- Gốc: Vượng Suy -->
                       <td class="td-center ${hGoc.vuongSuy === 'Vượng' ? 'text-green' : (hGoc.vuongSuy === 'Tướng' ? 'text-cyan' : '')}">${hGoc.vuongSuy}</td>
-                      <!-- Gốc: Quái Thần -->
                       <td class="td-center">${hGoc.isQuaiThan ? '<strong class="badge-ts qt">QT</strong>' : '-'}</td>
-                      <!-- Gốc: Lộc -->
                       <td class="td-center">${hGoc.isLoc ? '<strong class="badge-ts loc">L</strong>' : '-'}</td>
-                      <!-- Gốc: Mã -->
                       <td class="td-center">${hGoc.isMa ? '<strong class="badge-ts ma">M</strong>' : '-'}</td>
-                      <!-- Gốc: Quý -->
                       <td class="td-center">${hGoc.isQuy ? '<strong class="badge-ts quy">Q</strong>' : '-'}</td>
-                      <!-- Gốc: Đào -->
                       <td class="td-center">${hGoc.isDao ? '<strong class="badge-ts dao">Đ</strong>' : '-'}</td>
 
-                      <!-- Biến: Hào Can Chi -->
                       <td class="td-bold ${isDong && hBien ? 'text-red' : 'td-dim'}">${hBien ? `${hBien.can} ${hBien.chi}` : '-'}</td>
-                      <!-- Biến: Vượng Suy -->
                       <td class="td-center ${hBien && hBien.vuongSuy === 'Vượng' ? 'text-green' : (hBien && hBien.vuongSuy === 'Tướng' ? 'text-cyan' : 'td-dim')}">${hBien ? hBien.vuongSuy : '-'}</td>
-                      <!-- Biến: Lộc -->
                       <td class="td-center">${(hBien && hBien.isLoc) ? '<strong class="badge-ts loc">L</strong>' : '-'}</td>
-                      <!-- Biến: Mã -->
                       <td class="td-center">${(hBien && hBien.isMa) ? '<strong class="badge-ts ma">M</strong>' : '-'}</td>
-                      <!-- Biến: Quý -->
                       <td class="td-center">${(hBien && hBien.isQuy) ? '<strong class="badge-ts quy">Q</strong>' : '-'}</td>
-                      <!-- Biến: Đào -->
                       <td class="td-center">${(hBien && hBien.isDao) ? '<strong class="badge-ts dao">Đ</strong>' : '-'}</td>
                     </tr>
                   `;
@@ -764,23 +743,23 @@
           </div>
         </div>
 
-        <!-- D. THUYẾT MINH THỂ - DỤNG (NẾU LÀ MAI HOA) HOẶC LỜI THOÁN QUẺ -->
-        ${!isLucHao && state.result.the_dung ? `
+        <!-- D. THUYẾT MINH THỂ - DỤNG (KHI LÀ MAI HOA) -->
+        ${!isLucHao && curResult.the_dung ? `
           <div class="dh-the-dung-card">
             <div class="td-header">
-              <span>⚖️ THỂ DỤNG MAI HOA (HÀO ĐỘNG: HÀO ${state.result.hao_dong})</span>
+              <span>⚖️ THỂ DỤNG MAI HOA (HÀO ĐỘNG: HÀO ${curResult.hao_dong})</span>
             </div>
             <div class="td-content">
               <div class="td-col">
-                <strong>THỂ QUÁI:</strong> ${state.result.the_dung.the.info.name} (${state.result.the_dung.the.info.element}) • Ở ${state.result.the_dung.the.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
+                <strong>THỂ QUÁI:</strong> ${curResult.the_dung.the.info.name} (${curResult.the_dung.the.info.element}) • Ở ${curResult.the_dung.the.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
               </div>
               <div class="td-col">
-                <strong>DỤNG QUÁI:</strong> ${state.result.the_dung.dung.info.name} (${state.result.the_dung.dung.info.element}) • Ở ${state.result.the_dung.dung.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
+                <strong>DỤNG QUÁI:</strong> ${curResult.the_dung.dung.info.name} (${curResult.the_dung.dung.info.element}) • Ở ${curResult.the_dung.dung.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
               </div>
             </div>
             <div class="td-summary">
-              <span class="badge-eval ${state.result.the_dung.danh_gia.includes('ĐẠI CÁT') ? 'cat' : (state.result.the_dung.danh_gia.includes('HUNG') ? 'hung' : 'binh')}">${state.result.the_dung.danh_gia}</span>
-              <span>${state.result.the_dung.quan_he}</span>
+              <span class="badge-eval ${curResult.the_dung.danh_gia.includes('ĐẠI CÁT') ? 'cat' : (curResult.the_dung.danh_gia.includes('HUNG') ? 'hung' : 'binh')}">${curResult.the_dung.danh_gia}</span>
+              <span>${curResult.the_dung.quan_he}</span>
             </div>
           </div>
         ` : ''}
@@ -820,13 +799,13 @@
   }
 
   // =========================================================================
-  // 5. CÁC HÀM XỬ LÝ SỰ KIỆN & TÍNH TOÁN
+  // 5. CÁC HÀM TÍNH TOÁN & XỬ LÝ SỰ KIỆN
   // =========================================================================
   function chayLapQueLucHao() {
     const eng = global.NetaDichHocEngine;
     if (!eng || !eng.LucHaoEngine) return;
     const cal = getCalendarInfo(state.selectedDate);
-    state.result = eng.LucHaoEngine.lapQue(state.haoCoins, cal);
+    state.lucHao.result = eng.LucHaoEngine.lapQue(state.lucHao.coins, cal);
   }
 
   function chayLapQueMaiHoa() {
@@ -834,7 +813,7 @@
     if (!eng || !eng.MaiHoaEngine) return;
     const cal = getCalendarInfo(state.selectedDate);
 
-    if (state.maiHoaMode === 'time') {
+    if (state.maiHoa.mode === 'time') {
       const canChi = cal.canChi || {};
       const zhiNames = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
       const namZhi = canChi.yearZhi || 'Ngọ';
@@ -844,21 +823,21 @@
       const gioZhi = canChi.hourZhi || 'Hợi';
       const gioIdx = zhiNames.indexOf(gioZhi) + 1;
 
-      state.result = eng.MaiHoaEngine.lapQueThoiGian(namIdx, thangAm, ngayAm, gioIdx, cal);
+      state.maiHoa.result = eng.MaiHoaEngine.lapQueThoiGian(namIdx, thangAm, ngayAm, gioIdx, cal);
     } else {
-      state.result = eng.MaiHoaEngine.lapQueTheoHaiSo(state.soA, state.soB, 0, cal);
+      state.maiHoa.result = eng.MaiHoaEngine.lapQueTheoHaiSo(state.maiHoa.soA, state.maiHoa.soB, 0, cal);
     }
   }
 
-  // Gieo 1 hào ngẫu nhiên khi chạm vào Ống Quẻ hoặc nút Gieo Hào
+  // Gieo 1 hào ngẫu nhiên
   function gieoMotHao() {
-    if (state.isFlipping) return;
-    if (state.haoCoins.length >= 6) {
+    if (state.lucHao.isFlipping) return;
+    if (state.lucHao.coins.length >= 6) {
       if (global.showToast) global.showToast('✅ Đã gieo đủ 6 hào. Bấm "Gieo Lại Từ Đầu" nếu muốn bốc quẻ mới.');
       return;
     }
 
-    state.isFlipping = true;
+    state.lucHao.isFlipping = true;
     triggerHaptic(30);
     playCoinAudio('shake');
 
@@ -866,8 +845,8 @@
     const c2 = Math.random() < 0.5 ? 2 : 3;
     const c3 = Math.random() < 0.5 ? 2 : 3;
 
-    state.coinStates = [c1, c2, c3];
-    state.coinAngles = [
+    state.lucHao.coinStates = [c1, c2, c3];
+    state.lucHao.coinAngles = [
       Math.floor(Math.random() * 50) - 25,
       Math.floor(Math.random() * 50) - 25,
       Math.floor(Math.random() * 50) - 25
@@ -876,13 +855,13 @@
     render();
 
     setTimeout(() => {
-      state.isFlipping = false;
+      state.lucHao.isFlipping = false;
       const total = c1 + c2 + c3;
-      state.haoCoins.push(total);
+      state.lucHao.coins.push(total);
       triggerHaptic(20);
       playCoinAudio('clink');
 
-      if (state.haoCoins.length >= 6) {
+      if (state.lucHao.coins.length >= 6) {
         chayLapQueLucHao();
         setTimeout(() => playCoinAudio('done'), 180);
       }
@@ -892,14 +871,14 @@
 
   // Gieo nhanh 6 hào
   function gieoTuDong6Hao() {
-    state.haoCoins = [];
+    state.lucHao.coins = [];
     for (let i = 0; i < 6; i++) {
       const c1 = Math.random() < 0.5 ? 2 : 3;
       const c2 = Math.random() < 0.5 ? 2 : 3;
       const c3 = Math.random() < 0.5 ? 2 : 3;
-      state.haoCoins.push(c1 + c2 + c3);
+      state.lucHao.coins.push(c1 + c2 + c3);
     }
-    state.coinStates = [
+    state.lucHao.coinStates = [
       Math.random() < 0.5 ? 2 : 3,
       Math.random() < 0.5 ? 2 : 3,
       Math.random() < 0.5 ? 2 : 3
@@ -910,30 +889,34 @@
     render();
   }
 
-  // Đặt lại từ đầu
-  function resetCasting() {
-    state.haoCoins = [];
-    state.result = null;
-    state.coinStates = [3, 2, 3];
+  // Đặt lại Lục Hào
+  function resetCastingLucHao() {
+    state.lucHao.coins = [];
+    state.lucHao.result = null;
+    state.lucHao.coinStates = [3, 2, 3];
     playCoinAudio('clink');
     render();
   }
 
   // Gắn sự kiện giao diện
   function bindEvents() {
+    // Chuyển Tab Lục Hào
     const tabLucHao = document.getElementById('dh-tab-luchao');
     if (tabLucHao) {
       tabLucHao.onclick = () => {
+        if (state.method === 'luchao') return;
         state.method = 'luchao';
         render();
       };
     }
 
+    // Chuyển Tab Mai Hoa (luôn cập nhật quẻ Mai Hoa ngay)
     const tabMaiHoa = document.getElementById('dh-tab-maihoa');
     if (tabMaiHoa) {
       tabMaiHoa.onclick = () => {
+        if (state.method === 'maihoa') return;
         state.method = 'maihoa';
-        if (!state.result) chayLapQueMaiHoa();
+        chayLapQueMaiHoa();
         render();
       };
     }
@@ -944,7 +927,7 @@
       interactiveTube.onclick = () => gieoMotHao();
     }
 
-    // Nút gieo từng bước
+    // Nút gieo từng bước Lục Hào
     const btnCastStep = document.getElementById('dh-btn-cast-step');
     if (btnCastStep) {
       btnCastStep.onclick = () => gieoMotHao();
@@ -956,10 +939,10 @@
       btnCastAuto.onclick = () => gieoTuDong6Hao();
     }
 
-    // Nút gieo lại từ đầu
+    // Nút gieo lại từ đầu Lục Hào
     const btnResetCast = document.getElementById('dh-btn-reset-cast');
     if (btnResetCast) {
-      btnResetCast.onclick = () => resetCasting();
+      btnResetCast.onclick = () => resetCastingLucHao();
     }
 
     // Nút chạy Mai Hoa
@@ -969,6 +952,17 @@
         chayLapQueMaiHoa();
         playCoinAudio('done');
         render();
+        if (global.showToast) global.showToast('🌸 Đã khởi quẻ Mai Hoa thành công!');
+      };
+    }
+
+    // Nút làm mới Mai Hoa
+    const btnResetMh = document.getElementById('dh-btn-reset-maihoa');
+    if (btnResetMh) {
+      btnResetMh.onclick = () => {
+        state.selectedDate = new Date();
+        chayLapQueMaiHoa();
+        render();
       };
     }
 
@@ -976,7 +970,7 @@
     const btnMhTime = document.getElementById('dh-mh-tab-time');
     if (btnMhTime) {
       btnMhTime.onclick = () => {
-        state.maiHoaMode = 'time';
+        state.maiHoa.mode = 'time';
         chayLapQueMaiHoa();
         render();
       };
@@ -984,15 +978,15 @@
     const btnMhNums = document.getElementById('dh-mh-tab-numbers');
     if (btnMhNums) {
       btnMhNums.onclick = () => {
-        state.maiHoaMode = 'numbers';
+        state.maiHoa.mode = 'numbers';
         render();
       };
     }
 
     const inpA = document.getElementById('dh-inp-num-a');
-    if (inpA) inpA.onchange = (e) => { state.soA = parseInt(e.target.value, 10) || 1; };
+    if (inpA) inpA.onchange = (e) => { state.maiHoa.soA = parseInt(e.target.value, 10) || 1; };
     const inpB = document.getElementById('dh-inp-num-b');
-    if (inpB) inpB.onchange = (e) => { state.soB = parseInt(e.target.value, 10) || 1; };
+    if (inpB) inpB.onchange = (e) => { state.maiHoa.soB = parseInt(e.target.value, 10) || 1; };
 
     // Input mục đích chiêm quẻ
     const inpPurpose = document.getElementById('dh-purpose-input');
@@ -1005,7 +999,7 @@
     if (btnNow) {
       btnNow.onclick = () => {
         state.selectedDate = new Date();
-        if (state.method === 'luchao' && state.haoCoins.length === 6) {
+        if (state.method === 'luchao' && state.lucHao.coins.length === 6) {
           chayLapQueLucHao();
         } else if (state.method === 'maihoa') {
           chayLapQueMaiHoa();
@@ -1015,28 +1009,27 @@
       };
     }
 
-    // Nút chụp ảnh quẻ chiêm
-    const btnSaveShot = document.getElementById('dh-btn-save-shot');
-    if (btnSaveShot) {
-      btnSaveShot.onclick = async () => {
-        const target = document.getElementById('dh-capture-target');
-        if (!target) {
-          if (global.showToast) global.showToast('⚠️ Vui lòng gieo đủ quẻ trước khi lưu ảnh.');
-          return;
-        }
-        if (typeof global.html2canvas === 'function') {
-          try {
-            const canvas = await global.html2canvas(target, { backgroundColor: '#0f172a', scale: 2 });
-            const link = document.createElement('a');
-            link.download = `Que_Dich_${Date.now()}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-            if (global.showToast) global.showToast('📷 Đã lưu ảnh quẻ thành công!');
-          } catch (err) {
-            console.error(err);
-          }
+    // Nút chọn ngày giờ khác
+    const btnPicker = document.getElementById('dh-btn-picker');
+    const hiddenDate = document.getElementById('dh-hidden-datetime');
+    if (btnPicker && hiddenDate) {
+      btnPicker.onclick = () => {
+        if (typeof hiddenDate.showPicker === 'function') {
+          hiddenDate.showPicker();
         } else {
-          if (global.showToast) global.showToast('📷 Vui lòng dùng tính năng chụp màn hình thiết bị.');
+          hiddenDate.click();
+        }
+      };
+      hiddenDate.onchange = (e) => {
+        if (e.target.value) {
+          state.selectedDate = new Date(e.target.value);
+          if (state.method === 'luchao' && state.lucHao.coins.length === 6) {
+            chayLapQueLucHao();
+          } else if (state.method === 'maihoa') {
+            chayLapQueMaiHoa();
+          }
+          render();
+          if (global.showToast) global.showToast('📅 Đã cập nhật thời gian chiêm quẻ!');
         }
       };
     }
