@@ -1316,16 +1316,36 @@
       btn.innerHTML = '🧭 Đang Đọc';
     }
 
+    // 1. Luồng Cảm biến Phần cứng Cấp cao (Native Hardware Compass) qua NativeBridge
+    // Áp dụng cho Ứng dụng Di Động Android APK (Flutter Native SensorManager)
+    if (window.NativeBridge) {
+      window._onNativeCompassHeading = (heading, accuracy) => {
+        if (!state.isSensorActive || state.isLocked) return;
+        state.isHardwareNative = true;
+        updateRotationDisplay(heading);
+      };
+      window._onNativeCompassError = (err) => {
+        showLaKinhToast('⚠️ Lỗi cảm biến phần cứng: ' + err);
+      };
+      try {
+        window.NativeBridge.postMessage(JSON.stringify({ action: 'startCompass' }));
+        showLaKinhToast('🧭 Đã bật La Bàn Phần Cứng (3D Hardware Compass - Kalman Filter)');
+        return;
+      } catch (e) {
+        console.warn('NativeBridge startCompass failed, falling back to web events', e);
+      }
+    }
+
     hasReceivedAbsoluteEvent = false;
 
-    // 1. Luồng tuyệt đối True North / Magnetic chuẩn (Android Chrome / Chromium)
+    // 2. Luồng tuyệt đối True North / Magnetic chuẩn (Android Chrome / Chromium)
     const onAbsolute = (e) => {
       if (!state.isSensorActive || state.isLocked) return;
       hasReceivedAbsoluteEvent = true;
       processSensorHeading(e, true);
     };
 
-    // 2. Luồng thông thường (iOS Safari webkitCompassHeading hoặc Android fallback)
+    // 3. Luồng thông thường (iOS Safari webkitCompassHeading hoặc Android fallback)
     const onStandard = (e) => {
       if (!state.isSensorActive || state.isLocked) return;
       if (hasReceivedAbsoluteEvent && !e.webkitCompassHeading) return;
@@ -1346,6 +1366,16 @@
       btn.classList.remove('active-green');
       btn.innerHTML = '🧭 La Bàn';
     }
+
+    // Tắt cảm biến phần cứng native nếu đang mở
+    if (window.NativeBridge) {
+      try {
+        window.NativeBridge.postMessage(JSON.stringify({ action: 'stopCompass' }));
+      } catch (e) {}
+      window._onNativeCompassHeading = null;
+      window._onNativeCompassError = null;
+    }
+
     if (activeSensorListeners) {
       window.removeEventListener('deviceorientationabsolute', activeSensorListeners.onAbsolute, true);
       window.removeEventListener('deviceorientation', activeSensorListeners.onStandard, true);
@@ -1373,30 +1403,38 @@
       const gamma = typeof e.gamma === 'number' && !isNaN(e.gamma) ? e.gamma : 0;
 
       const degToRad = Math.PI / 180;
-      const cB = Math.cos(beta * degToRad);
+      const aRad = alpha * degToRad;
+      const bRad = beta * degToRad;
+      const gRad = gamma * degToRad;
 
-      // Khi điện thoại ở tư thế cầm tay khảo sát thực địa (màn hình ngửa lên trời, |beta| < 75 độ):
-      // Vector đỉnh 12h (trục Y) chiếu xuống mặt phẳng ngang Trái Đất có phương vị chính xác = (360 - alpha) % 360
-      if (cB > 0.25) {
-        heading = (360 - alpha) % 360;
-      } else if (cB < -0.25) {
-        // Điện thoại úp ngược xuống mặt đất
-        heading = (180 - alpha + 360) % 360;
+      const cA = Math.cos(aRad), sA = Math.sin(aRad);
+      const cB = Math.cos(bRad), sB = Math.sin(bRad);
+      const cG = Math.cos(gRad), sG = Math.sin(gRad);
+
+      const pitch = Math.abs(beta);
+
+      // 1. Khi cầm điện thoại ngắm phẳng hoặc nghiêng đọc bài (|beta| <= 60 độ):
+      // Đỉnh 12h (trục Y) chiếu xuống mặt phẳng ngang Trái Đất có phương vị = (360 - alpha) % 360
+      const hFlat = (360 - alpha + 360) % 360;
+
+      // 2. Khi dựng máy đứng ngắm qua camera (|beta| >= 80 độ):
+      // Hướng ngắm là pháp tuyến lưng máy (-Z)
+      const vEast = -cA * sG - sA * sB * cG;
+      const vNorth = -sA * sG + cA * sB * cG;
+      let hCam = Math.atan2(vEast, vNorth) * (180 / Math.PI);
+      if (hCam < 0) hCam += 360;
+
+      if (pitch <= 60) {
+        heading = hFlat;
+      } else if (pitch >= 80) {
+        heading = hCam;
       } else {
-        // Điện thoại dựng gần thẳng đứng 90 độ (pitch ~ 90 độ)
-        const aRad = alpha * degToRad;
-        const bRad = beta * degToRad;
-        const gRad = gamma * degToRad;
-        const cA = Math.cos(aRad);
-        const sA = Math.sin(aRad);
-        const sB = Math.sin(bRad);
-        const cG = Math.cos(gRad);
-        const sG = Math.sin(gRad);
-        const rA = -cA * sG - sA * sB * cG;
-        const rB = -sA * sG + cA * sB * cG;
-        let h = Math.atan2(rA, rB) * (180 / Math.PI);
-        if (h < 0) h += 360;
-        heading = h;
+        // Chuyển tiếp mượt mà giữa 60 và 80 độ, loại bỏ hoàn toàn nhảy số đột ngột
+        let diffCam = hCam - hFlat;
+        while (diffCam < -180) diffCam += 360;
+        while (diffCam > 180) diffCam -= 360;
+        const t = (pitch - 60) / 20;
+        heading = (hFlat + t * diffCam + 360) % 360;
       }
 
       // Bù hướng xoay màn hình (Screen orientation angle)
@@ -1405,6 +1443,12 @@
         : (typeof window.orientation === 'number' ? window.orientation : 0);
 
       heading = (heading + screenAngle + 360) % 360;
+
+      // Cảnh báo nếu đang dùng cảm biến tương đối trên trình duyệt web (không có dữ liệu từ trường)
+      if (!isAbsolute && !hasReceivedAbsoluteEvent && !state._hasWarnedRelative) {
+        state._hasWarnedRelative = true;
+        showLaKinhToast('💡 Gợi ý: Dùng app Neta Light APK để kích hoạt La Bàn Phần Cứng chuẩn Bắc 100%');
+      }
 
       // Tùy chọn bù từ thiên WMM: chỉ bù khi nguồn cảm biến là Bắc Từ (relative) chứ không phải True North
       const chkAutoDec = document.getElementById('lakinh-chk-autodec');

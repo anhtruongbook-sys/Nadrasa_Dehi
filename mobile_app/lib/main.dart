@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,33 @@ class NetaLightWebViewScreen extends StatefulWidget {
 class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
   late final WebViewController _controller;
   static const MethodChannel _platform = MethodChannel('com.nadrasadehi.netalight/save_image');
+  static const EventChannel _compassChannel = EventChannel('com.nadrasadehi.netalight/compass_stream');
+  StreamSubscription? _compassSub;
+
+  void _startCompass() {
+    _compassSub?.cancel();
+    _compassSub = _compassChannel.receiveBroadcastStream().listen((dynamic event) {
+      if (event is Map) {
+        final heading = event['heading'];
+        final accuracy = event['accuracy'] ?? 3;
+        _controller.runJavaScript("if (typeof window._onNativeCompassHeading === 'function') window._onNativeCompassHeading($heading, $accuracy);");
+      }
+    }, onError: (err) {
+      debugPrint('Compass stream error: $err');
+      _controller.runJavaScript("if (typeof window._onNativeCompassError === 'function') window._onNativeCompassError('$err');");
+    });
+  }
+
+  void _stopCompass() {
+    _compassSub?.cancel();
+    _compassSub = null;
+  }
+
+  @override
+  void dispose() {
+    _stopCompass();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -158,6 +186,10 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
           await _platform.invokeMethod('openLocationSettings');
         } else if (action == 'openAppSettings') {
           await _platform.invokeMethod('openAppSettings');
+        } else if (action == 'startCompass') {
+          _startCompass();
+        } else if (action == 'stopCompass') {
+          _stopCompass();
         }
       }
     } catch (e) {

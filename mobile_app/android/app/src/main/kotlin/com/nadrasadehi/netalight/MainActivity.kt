@@ -25,6 +25,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.io.FileOutputStream
@@ -32,14 +37,119 @@ import java.io.OutputStream
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.nadrasadehi.netalight/save_image"
+    private val COMPASS_CHANNEL = "com.nadrasadehi.netalight/compass_stream"
     private val LOCATION_REQ_CODE = 2001
     private val PICK_IMAGE_REQ = 4001
     private val TAKE_PHOTO_REQ = 4002
     private var pendingImageResult: MethodChannel.Result? = null
     private var pendingLocationResult: MethodChannel.Result? = null
 
+    // Native Hardware Compass Sensors
+    private var sensorManager: SensorManager? = null
+    private var compassEventSink: EventChannel.EventSink? = null
+    private var rotationSensor: Sensor? = null
+    private var accelerometerSensor: Sensor? = null
+    private var magnetometerSensor: Sensor? = null
+    private val lastAccelerometer = FloatArray(3)
+    private val lastMagnetometer = FloatArray(3)
+    private var hasAccelerometer = false
+    private var hasMagnetometer = false
+    private var smoothedHeading = -1.0
+    private var lastCompassEmittedTime = 0L
+
+    private val compassListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val now = System.currentTimeMillis()
+            if (now - lastCompassEmittedTime < 33) return // Cap at ~30 FPS
+
+            val rMatrix = FloatArray(9)
+            var hasMatrix = false
+
+            if (event.sensor.type == Sensor.TYPE_ROTATION_VECTOR ||
+                event.sensor.type == Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR) {
+                SensorManager.getRotationMatrixFromVector(rMatrix, event.values)
+                hasMatrix = true
+            } else if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+                System.arraycopy(event.values, 0, lastAccelerometer, 0, 3)
+                hasAccelerometer = true
+                if (hasMagnetometer) {
+                    hasMatrix = SensorManager.getRotationMatrix(rMatrix, null, lastAccelerometer, lastMagnetometer)
+                }
+            } else if (event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
+                System.arraycopy(event.values, 0, lastMagnetometer, 0, 3)
+                hasMagnetometer = true
+                if (hasAccelerometer) {
+                    hasMatrix = SensorManager.getRotationMatrix(rMatrix, null, lastAccelerometer, lastMagnetometer)
+                }
+            }
+
+            if (hasMatrix) {
+                // R[1] = East component of top of phone (Y-axis)
+                // R[4] = North component of top of phone (Y-axis)
+                // R[7] = Up component of top of phone (Y-axis)
+                val east = rMatrix[1].toDouble()
+                val north = rMatrix[4].toDouble()
+                val up = rMatrix[7].toDouble()
+
+                var azimuthRad = Math.atan2(east, north)
+
+                // If held upright (> 60 deg pitch, up > 0.85):
+                // Aiming through back camera (-Z axis):
+                if (up > 0.85) {
+                    val eastCam = -rMatrix[2].toDouble()
+                    val northCam = -rMatrix[5].toDouble()
+                    val azCam = Math.atan2(eastCam, northCam)
+                    val factor = ((up - 0.85) / 0.15).coerceIn(0.0, 1.0)
+                    var diff = azCam - azimuthRad
+                    while (diff < -Math.PI) diff += 2 * Math.PI
+                    while (diff > Math.PI) diff -= 2 * Math.PI
+                    azimuthRad += factor * diff
+                }
+
+                var headingDeg = Math.toDegrees(azimuthRad)
+                headingDeg = (headingDeg % 360.0 + 360.0) % 360.0
+
+                // Exponential Moving Average filter across 0/360 boundary
+                if (smoothedHeading < 0) {
+                    smoothedHeading = headingDeg
+                } else {
+                    var diff = headingDeg - smoothedHeading
+                    while (diff < -180.0) diff += 360.0
+                    while (diff > 180.0) diff -= 360.0
+                    if (Math.abs(diff) > 0.1) {
+                        val filterFactor = if (Math.abs(diff) > 15.0) 0.50 else 0.25
+                        smoothedHeading = (smoothedHeading + filterFactor * diff + 360.0) % 360.0
+                    }
+                }
+
+                lastCompassEmittedTime = now
+                val rounded = Math.round(smoothedHeading * 10.0) / 10.0
+                val res = mapOf(
+                    "heading" to rounded,
+                    "accuracy" to event.accuracy
+                )
+                runOnUiThread {
+                    compassEventSink?.success(res)
+                }
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, COMPASS_CHANNEL).setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                compassEventSink = events
+                startCompassSensors()
+            }
+            override fun onCancel(arguments: Any?) {
+                stopCompassSensors()
+                compassEventSink = null
+            }
+        })
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
@@ -439,5 +549,46 @@ class MainActivity: FlutterActivity() {
             outputStream?.close()
         }
         return false
+    }
+
+    private fun startCompassSensors() {
+        if (sensorManager == null) {
+            sensorManager = getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+        }
+        val sm = sensorManager ?: return
+
+        // 1. Ưu tiên TYPE_ROTATION_VECTOR (Hợp nhất Con quay hồi chuyển + Từ kế + Gia tốc kế với bộ lọc Kalman phần cứng)
+        val rot = sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+            ?: sm.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR)
+
+        if (rot != null) {
+            rotationSensor = rot
+            sm.registerListener(compassListener, rot, SensorManager.SENSOR_DELAY_UI)
+        } else {
+            // 2. Dự phòng: Gia tốc kế + Từ kế (SensorManager.getRotationMatrix)
+            val acc = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+            val mag = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+            if (acc != null && mag != null) {
+                accelerometerSensor = acc
+                magnetometerSensor = mag
+                sm.registerListener(compassListener, acc, SensorManager.SENSOR_DELAY_UI)
+                sm.registerListener(compassListener, mag, SensorManager.SENSOR_DELAY_UI)
+            }
+        }
+    }
+
+    private fun stopCompassSensors() {
+        sensorManager?.unregisterListener(compassListener)
+        rotationSensor = null
+        accelerometerSensor = null
+        magnetometerSensor = null
+        hasAccelerometer = false
+        hasMagnetometer = false
+        smoothedHeading = -1.0
+    }
+
+    override fun onDestroy() {
+        stopCompassSensors()
+        super.onDestroy()
     }
 }

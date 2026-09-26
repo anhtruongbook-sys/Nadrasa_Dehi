@@ -63,15 +63,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.4
-          name: "Neta Light & Huyền Học v1.9.4 (Khắc phục triệt để tràn viền thanh thông tin đương số Tử Vi)"
+          tag_name: v1.9.5
+          name: "Neta Light & Huyền Học v1.9.5 (Nâng Cấp La Bàn Phần Cứng 3D Hardware Compass, Khắc Phục Triệt Để Độ Số La Kinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.4
-            - **Khắc phục Triệt để Lỗi Tràn Viền / Cắt Ngang Chữ Thanh Thông Tin Đương Số Tử Vi**:
-              + Tự động co giãn chiều cao linh hoạt (`height: auto !important; min-height: unset !important; flex-shrink: 0 !important;`) cho `.tuvi-master-strip` trên mọi kích thước màn hình mobile.
-              + Triệt tiêu hiện tượng flex-shrink ép khung container xuống 22px gây cắt đôi dòng chữ thứ 2.
-              + Căn chỉnh khoảng đệm (padding) và khoảng cách dòng (line-height) hài hòa, cân đối tuyệt đối trên cả Giao diện Sáng (Light Mode) và Giao diện Tối (Dark Mode).
-            - **Bảo Toàn Toàn Vẹn Hệ Thống Lá Số Tử Vi Nam Phái & Cửu Cung Kỳ Môn Độn Giáp**.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.5
+            - **Đại Tu Thuật Toán Cảm Biến La Kinh & Tích Hợp La Bàn Phần Cứng Cấp Cao (Native Hardware Compass)**:
+              + Tích hợp trực tiếp cảm biến phần cứng Android qua Android Sensor Framework (`Sensor.TYPE_ROTATION_VECTOR` và `Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR`) với bộ lọc Kalman phần cứng kết hợp từ kế, con quay hồi chuyển và gia tốc kế.
+              + Bù góc nghiêng 3D toàn diện (Full 3D Tilt Compensation): Độ số La Kinh giữ nguyên vẹn độ chuẩn xác tuyệt đối khi người dùng cầm nghiêng xem màn hình hoặc dựng đứng ngắm qua camera.
+              + Khắc phục triệt để lỗi "mỗi lúc một số" do Chromium WebView không đọc được la bàn tuyệt đối (chỉ đọc tương đối từ lúc mở trang).
+              + Bộ lọc làm mượt chống rung tay (EMA Low-Pass Filter) với vùng chết (deadband 0.1°) tạo cảm giác xoay đầm, êm ái, khớp 100% với phương vị thực địa.
+            - **Khắc phục Triệt để Lỗi Tràn Viền Thanh Thông Tin Đương Số Tử Vi**:
+              + Tự động co giãn chiều cao linh hoạt trên mọi kích thước màn hình điện thoại.
             - **Đại Tu Nâng Cấp Toàn Diện Thuật Toán Tử Vi Nam Phái Chuẩn Thái Thứ Lang**:
               + An trọn vẹn 100% hệ thống 26 Phụ tinh và Tạp tinh thứ cấp: Tam Thai, Bát Tọa, Ân Quang, Thiên Quý, Thai Phụ, Phong Cáo, Thiên Quan, Thiên Phúc, Thiên Trù, Lưu Hà, Quốc Ấn, Đường Phù, Cô Thần, Quả Tú, Kiếp Sát, Hoa Cái, Phá Toái, Đẩu Quân, Thiên Tài, Thiên Thọ, Thiên Thương, Thiên Sứ, Thiên Giải, Địa Giải, Thiên Không, Văn Tinh.
               + Phân định đầy đủ cấp độ Miếu / Vượng / Đắc / Hãm cho cả Lục Sát Tinh và Phụ tinh trọng yếu: Kình Dương, Đà La, Không Kiếp, Hỏa Linh, Xương Khúc, Khốc Hư, Hình Diêu, Đại Tiểu Hao, Thiên Mã, Hóa Kỵ.
