@@ -1,5 +1,5 @@
 /**
- * CSDL PHÁP HÀNH NADRASA DEHI (41 BÀI HỌC VÀ CẢNH GIỚI GỐC)
+ * CSDL PHÁP HÀNH NADRASA DEHI (BÀI HỌC VÀ CẢNH GIỚI GỐC)
  */
 
 const PHAP_HANH_CATEGORIES = [
@@ -42,6 +42,10 @@ const PHAP_HANH_CATEGORIES = [
   {
     "id": "bi_phap_thien",
     "name": "Bí Pháp & Thiền"
+  },
+  {
+    "id": "ho_phap",
+    "name": "Hộ Pháp"
   },
   {
     "id": "custom",
@@ -445,5 +449,68 @@ const PHAP_HANH_BUILTIN_LESSONS = [
     "image": "assets/phap_hanh/lesson_26.jpg",
     "isBuiltIn": true,
     "order": 44
+  },
+  {
+    "id": "lesson_27",
+    "title": "27 - [Hộ Pháp] Ngọc Bảo Hộ Pháp",
+    "category": "ho_phap",
+    "categoryName": "Hộ Pháp",
+    "image": "assets/phap_hanh/lesson_27.jpg",
+    "isBuiltIn": true,
+    "order": 45
+  },
+  {
+    "id": "lesson_28",
+    "title": "28 - [Hộ Pháp] Thanh Cương Hộ Pháp",
+    "category": "ho_phap",
+    "categoryName": "Hộ Pháp",
+    "image": "assets/phap_hanh/lesson_28.jpg",
+    "isBuiltIn": true,
+    "order": 46
+  },
+  {
+    "id": "lesson_29",
+    "title": "29 - [Hộ Pháp] Đông Phương Sứ Giả Hộ Pháp",
+    "category": "ho_phap",
+    "categoryName": "Hộ Pháp",
+    "image": "assets/phap_hanh/lesson_29.jpg",
+    "isBuiltIn": true,
+    "order": 47
+  },
+  {
+    "id": "lesson_30",
+    "title": "30 - [Hộ Pháp] Bất Động Hộ Pháp",
+    "category": "ho_phap",
+    "categoryName": "Hộ Pháp",
+    "image": "assets/phap_hanh/lesson_30.jpg",
+    "isBuiltIn": true,
+    "order": 48
+  },
+  {
+    "id": "lesson_31",
+    "title": "31 - [Hộ Pháp] Lưỡng Thần Hộ Pháp",
+    "category": "ho_phap",
+    "categoryName": "Hộ Pháp",
+    "image": "assets/phap_hanh/lesson_31.jpg",
+    "isBuiltIn": true,
+    "order": 49
+  },
+  {
+    "id": "lesson_32",
+    "title": "32 - [Hộ Pháp] Cảm Thán Hộ Pháp",
+    "category": "ho_phap",
+    "categoryName": "Hộ Pháp",
+    "image": "assets/phap_hanh/lesson_32.jpg",
+    "isBuiltIn": true,
+    "order": 50
+  },
+  {
+    "id": "lesson_33",
+    "title": "33 - [Hộ Pháp] Chướng Ngại Hộ Pháp",
+    "category": "ho_phap",
+    "categoryName": "Hộ Pháp",
+    "image": "assets/phap_hanh/lesson_33.jpg",
+    "isBuiltIn": true,
+    "order": 51
   }
 ];

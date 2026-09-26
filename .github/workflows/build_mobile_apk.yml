@@ -85,7 +85,7 @@ jobs:
             - **Kế Thừa Toàn Bộ Các Tính Năng Bản v1.9.0 & v1.8.3**:
               + La Kinh Vệ Tinh 36 tầng siêu nét Ultra-HD 4x, Thước Lập Cực 3 mẫu (Mica Trong, Dạ Quang, Giấy Trắng).
               + Lục Thân & 384 Hào Phân Kim Tiên Thiên.
-              + Tarot Rider-Waite, Neta Light 48 lá, Bốc Quẻ Kinh Dịch, Pháp Hành Nadrasa Dehi 41 bài học Offline 100%.
+              + Tarot Rider-Waite, Neta Light 48 lá, Bốc Quẻ Kinh Dịch, Pháp Hành Nadrasa Dehi Offline 100%.
             - **Đại Tu Chức Năng "+ Thêm Bài Học Mới" Chuẩn Mobile-First Trên Điện Thoại**:
               + **Hai Nút Thao Tác Chuyên Biệt Nổi Bật**: `📸 Chụp Ảnh Trực Tiếp` và `🖼️ Chọn Từ Thư Viện Ảnh` to rõ, một chạm mở ngay Camera hoặc Kho ảnh thiết bị.
               + **Cơ Chế Kép (Native Android Bridge & HTML5 Fallback)**: Tích hợp sâu vào Android Intents (`MediaStore.ACTION_IMAGE_CAPTURE` & `Intent.ACTION_GET_CONTENT`), đồng thời hỗ trợ mượt mà trên trình duyệt web.
@@ -93,16 +93,16 @@ jobs:
               + **Nút Lưu Cố Định Đáy Màn Hình (Sticky Footer)**: Nút `Lưu & Thêm Vào Pháp Hành` luôn ghim chắc chắn ở đáy màn hình, không bị bàn phím ảo che khuất.
               + **Loại Bỏ Hoàn Toàn Hộp Thoại Alert Gây Đơ Màn Hình**: Thay bằng thông báo Toast góc màn hình mượt mà, thân thiện.
             - **Khắc Phục Triệt Để Lỗi Chụp Ảnh Màn Hình Bài Học Bị Đen / Mất Hình Trong Module Pháp Hành**:
-              + **Đóng Gói CSDL Base64 Nội Bộ (`phap_hanh_base64_data.js`)**: Tạo bộ dữ liệu Base64 Data URL tối ưu hóa Retina cho toàn bộ 41 bài học và cảnh giới cõi Phủ, triệt tiêu 100% lỗi Tainted Canvas và lỗi không nạp được asset cục bộ trên Android WebView.
+              + **Đóng Gói CSDL Base64 Nội Bộ (`phap_hanh_base64_data.js`)**: Tạo bộ dữ liệu Base64 Data URL tối ưu hóa Retina cho toàn bộ các bài học và cảnh giới cõi Phủ, triệt tiêu 100% lỗi Tainted Canvas và lỗi không nạp được asset cục bộ trên Android WebView.
               + **Bộ Nhớ Tốc Độ Cao & Trích Xuất Trực Tiếp**: Thẻ bài học nạp trực tiếp Data URL tức thì (0ms latency, không phụ thuộc network), đồng thời công cụ chụp màn hình tự động giải mã và bảo vệ hình ảnh bài học không bao giờ bị gỡ bỏ khi chụp.
               + **Ảnh Chụp Xuất Bản Chuẩn Retina**: Ảnh chụp lưu vào máy trọn vẹn 100% hình ảnh các bài học, đồ hình tu tập, ấn chú và lời giảng với độ phân giải siêu nét (`PhapHanh_NadrasaDehi_*.png`).
             - **Kế Thừa Định Vị GPS Phần Cứng Android Vệ Tinh (v1.8.1)**:
               + Khai báo quyền phần cứng `ACCESS_FINE_LOCATION` và `ACCESS_COARSE_LOCATION`.
               + Tự động xin cấp quyền Android và tích hợp nút điều hướng Cài đặt máy tiện lợi.
-            - **Tích Hợp Module Mới: Pháp Hành Nadrasa Dehi (🪷)**:
-              + Thư viện 41 bài học & thánh cảnh cõi Phủ độ phân giải cao gốc từ Nadrasa Dehi:
+            - **Tích Hợp Module Pháp Hành Nadrasa Dehi (🪷)**:
+              + Thư viện bài học & thánh cảnh cõi Phủ độ phân giải cao gốc từ Nadrasa Dehi:
                 * **18 Nơi Tại Phủ**: Đại Nghiệp, Thần Thú, Tiêu Hồn, U Minh Giới, Huyền Các, Tiên Giới, Đại Thất Sắc, Chúng Sinh Luân, Đại Nội Phủ, Bồ Tát Giới, Độc Minh Lâm, Đại Chính Quan, Vĩnh An Tự, Tàng Kinh Thư, Tuệ Giác Tâm Đường, Kim Cang Tâm Đường, Biến Thiên Tâm Đường, Liễu Tri Tâm Đường.
-                * **23 Bài Học & Thủ Pháp**: Tâm Ấn, Pháp Bảo & Khí, Linh Phù & Sớ Văn, Thủ Pháp Hành Trì, Trấn Pháp, Độ Vong, Bí Pháp & Thiền Định.
+                * **Bài Học, Thủ Pháp & Hộ Pháp**: Tâm Ấn, Pháp Bảo & Khí, Linh Phù & Sớ Văn, Thủ Pháp Hành Trì, Trấn Pháp, Độ Vong, Bí Pháp & Thiền Định, Hộ Pháp (Ngọc Bảo, Thanh Cương, Đông Phương Sứ Giả, Bất Động, Lưỡng Thần, Cảm Thán, Chướng Ngại).
               + **Trình Đọc Chi Tiết & Soi Ảnh Toàn Màn Hình HD (LightBox)**: Phóng to/thu nhỏ cảm ứng Pinch-to-zoom, Pan kéo di chuyển ảnh mượt mà, điều hướng lật bài trước/sau liền mạch.
               + **Tính Năng Động (Thêm Bài Học Mới)**: Cho phép người dùng tự thêm bài học và tải ảnh trực tiếp từ thiết bị vào ứng dụng trong quá trình sử dụng, lưu trữ Offline bền vững trên IndexedDB nội bộ.
               + **Bộ Lọc Thông Minh & Quản Lý Cá Nhân**: Bộ lọc chuyên đề (Chips), tìm kiếm từ khóa tức thì, sao lưu (Export JSON) và phục hồi (Import JSON) dữ liệu bài học cá nhân.

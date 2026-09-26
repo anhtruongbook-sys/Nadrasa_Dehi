@@ -90,7 +90,7 @@
     },
     phaphanh: {
       name: 'PHÁP HÀNH',
-      subtitle: 'Nadrasa Dehi • 41 Bài Học & Cõi Phủ',
+      subtitle: 'Nadrasa Dehi • Bài Học & Cõi Phủ',
       logo: 'assets/phap_hanh/phu_01.jpg',
       isCardDeck: false
     },
