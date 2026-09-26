@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v9.8
-const CACHE_NAME = 'neta-poker-v9.8';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v9.9
+const CACHE_NAME = 'neta-poker-v9.9';
 
 const CORE_ASSETS = [
   './',

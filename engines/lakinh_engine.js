@@ -625,13 +625,13 @@
     if (slot > 5) slot = 5;
     if (slot < 0) slot = 0;
 
-    // Nguyên lý Dịch học HKĐQ: Quẻ Dương đi Thuận (1 -> 6), Quẻ Âm đi Nghịch (6 -> 1)
-    // Phân theo 8 Cung: 4 Cung Dương (Càn, Chấn, Khảm, Cấn) đi Thuận; 4 Cung Âm (Khôn, Tốn, Ly, Đoài) đi Nghịch
-    const duongCungs = ['Càn', 'Chấn', 'Khảm', 'Cấn'];
-    const cung = matchedQue.cung_bat_quai || '';
+    // Nguyên lý Dịch học HKĐQ Vòng 384 Hào Phân Kim La Kinh:
+    // "Dương tòng tả biên đoàn đoàn chuyển, Âm tòng hữu lộ thứ đệ phô"
+    // - Bán cầu Dương (0° - 180°, Hạ quái Chấn, Ly, Đoài, Càn - Hào Sơ Dương): Quẻ Dương đi THUẬN (Hào 1 -> 6)
+    // - Bán cầu Âm (180° - 360°, Hạ quái Tốn, Khảm, Cấn, Khôn - Hào Sơ Âm): Quẻ Âm đi NGHỊCH (Hào 6 -> 1)
     const isDuong = (matchedQue.la_kinh && matchedQue.la_kinh.am_duong)
       ? (matchedQue.la_kinh.am_duong === 'Dương')
-      : duongCungs.includes(cung);
+      : (degStart < 180.0);
 
     let hIdx = isDuong ? (slot + 1) : (6 - slot);
     if (hIdx > 6) hIdx = 6;

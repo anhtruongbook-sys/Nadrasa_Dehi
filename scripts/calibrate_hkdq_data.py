@@ -107,12 +107,11 @@ def calibrate_hkdq_data():
         lk["son_24"] = son_str
         lk["cung_phuong_vi"] = cung_str
 
-        # Cung bát quái
-        cung = q.get("cung_bat_quai", "")
-        # 4 Cung Dương (Càn, Chấn, Khảm, Cấn) -> Quẻ Dương đi Thuận (Hào 1 -> 6)
-        # 4 Cung Âm (Khôn, Tốn, Ly, Đoài) -> Quẻ Âm đi Nghịch (Hào 6 -> 1)
-        DUONG_CUNGS = {"Càn", "Chấn", "Khảm", "Cấn"}
-        is_duong = cung in DUONG_CUNGS
+        # Quy luật Bất Biến của Vòng 384 Hào La Kinh (Tiên Thiên 64 Quái Viên Đồ / Thanh Nang Áo Ngữ):
+        # "Dương tòng tả biên đoàn đoàn chuyển, Âm tòng hữu lộ thứ đệ phô"
+        # - Bán cầu Dương (0° - 180°, Hạ quái Chấn, Ly, Đoài, Càn - Hào Sơ Dương): Quẻ Dương đi THUẬN (Hào 1 -> 6)
+        # - Bán cầu Âm (180° - 360°, Hạ quái Tốn, Khảm, Cấn, Khôn - Hào Sơ Âm): Quẻ Âm đi NGHỊCH (Hào 6 -> 1)
+        is_duong = (deg_start < 180.0)
         lk["am_duong"] = "Dương" if is_duong else "Âm"
         lk["chieu_hao"] = "Thuận (1 → 6)" if is_duong else "Nghịch (6 → 1)"
 
