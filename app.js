@@ -1635,10 +1635,10 @@
         })
       );
 
-      // 2b. Xử lý triệt để bài đảo ngược (reversed): Lộn ngược 180° điểm ảnh trực tiếp trên Canvas 2D
-      // Triệt tiêu 100% sự phụ thuộc vào bộ phân giải CSS transform của html2canvas (loại bỏ hoàn toàn lỗi xoay chéo/lệch bài)
+      // 2b. Xử lý triệt để ảnh bài chi tiết đảo ngược (reversed): Lộn ngược 180° điểm ảnh trực tiếp trên Canvas 2D
+      // Chỉ áp dụng cho reading-card-thumb và pdf-card-thumb để chống lệch nghiêng html2canvas, tuyệt đối không can thiệp thẻ bài 3D trên bàn
       const reversedCardsMap = new Map();
-      const reversedSelector = '.is-reversed, .reading-card-thumb.is-reversed, .tarot-card-front.is-reversed img, .pdf-card-thumb.is-reversed, .journal-mini-card img.is-reversed';
+      const reversedSelector = 'img.reading-card-thumb.is-reversed, img.pdf-card-thumb.is-reversed';
       const reversedElements = targetElement.querySelectorAll(reversedSelector);
       reversedElements.forEach(el => {
         const img = el.tagName === 'IMG' ? el : el.querySelector('img');
@@ -1718,10 +1718,10 @@
           const fullSrc = img.src;
           const attrSrc = img.getAttribute('src');
 
-          // Ưu tiên nạp ảnh lộn ngược 180° pixel-level cho bài ngược để html2canvas vẽ phẳng hoàn hảo
-          const isReversedCard = img.classList.contains('is-reversed') || (img.closest && img.closest('.is-reversed'));
+          // Ưu tiên nạp ảnh lộn ngược 180° pixel-level cho ảnh bài chi tiết bị đảo ngược
+          const isReadingThumbReversed = (img.classList.contains('reading-card-thumb') || img.classList.contains('pdf-card-thumb')) && img.classList.contains('is-reversed');
           const flippedB64 = reversedCardsMap.get(fullSrc) || reversedCardsMap.get(attrSrc);
-          if (isReversedCard && flippedB64) {
+          if (isReadingThumbReversed && flippedB64) {
             img.src = flippedB64;
             img.classList.remove('is-reversed');
             img.style.setProperty('transform', 'none', 'important');
@@ -1777,14 +1777,6 @@
               img.remove();
             }
           }
-        });
-
-        // Triệt tiêu triệt để mọi class is-reversed và transform còn sót lại trên toàn bộ cây cloned DOM
-        clonedDoc.querySelectorAll('.is-reversed').forEach(el => {
-          el.classList.remove('is-reversed');
-          el.style.setProperty('transform', 'none', 'important');
-          el.style.setProperty('webkitTransform', 'none', 'important');
-          el.style.setProperty('transition', 'none', 'important');
         });
 
         // Xử lý riêng cho Tarot: mở rộng vùng cuộn, ẩn nút thao tác để quẻ bài và luận giải hiển thị trọn vẹn

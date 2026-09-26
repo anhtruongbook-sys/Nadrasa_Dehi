@@ -2049,10 +2049,9 @@
       await new Promise(r => setTimeout(r, 200));
 
       // 3b. Xử lý triệt để bài ngược trong PDF: Lộn ngược 180° pixel trên Canvas 2D
-      // Triệt tiêu CSS transform để html2pdf / html2canvas in ra chuẩn xác 100%, không bị xoay chéo
-      const reversedPdfImgs = printWrapper.querySelectorAll('.is-reversed, .pdf-card-thumb.is-reversed, .reading-card-thumb.is-reversed');
-      reversedPdfImgs.forEach(el => {
-        const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+      // Chỉ can thiệp img.reading-card-thumb và img.pdf-card-thumb, bảo toàn các cấu trúc khác
+      const reversedPdfImgs = printWrapper.querySelectorAll('img.reading-card-thumb.is-reversed, img.pdf-card-thumb.is-reversed');
+      reversedPdfImgs.forEach(img => {
         if (img && img.complete && img.naturalWidth > 0) {
           try {
             const cRot = document.createElement('canvas');
@@ -2068,12 +2067,6 @@
             img.style.setProperty('webkitTransform', 'none', 'important');
             img.style.setProperty('transition', 'none', 'important');
           } catch (e) {}
-        }
-        if (el.tagName !== 'IMG') {
-          el.classList.remove('is-reversed');
-          el.style.setProperty('transform', 'none', 'important');
-          el.style.setProperty('webkitTransform', 'none', 'important');
-          el.style.setProperty('transition', 'none', 'important');
         }
       });
 
