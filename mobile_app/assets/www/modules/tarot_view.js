@@ -2048,6 +2048,35 @@
       // Small render stabilization tick
       await new Promise(r => setTimeout(r, 200));
 
+      // 3b. Xử lý triệt để bài ngược trong PDF: Lộn ngược 180° pixel trên Canvas 2D
+      // Triệt tiêu CSS transform để html2pdf / html2canvas in ra chuẩn xác 100%, không bị xoay chéo
+      const reversedPdfImgs = printWrapper.querySelectorAll('.is-reversed, .pdf-card-thumb.is-reversed, .reading-card-thumb.is-reversed');
+      reversedPdfImgs.forEach(el => {
+        const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+        if (img && img.complete && img.naturalWidth > 0) {
+          try {
+            const cRot = document.createElement('canvas');
+            cRot.width = img.naturalWidth;
+            cRot.height = img.naturalHeight;
+            const ctxRot = cRot.getContext('2d');
+            ctxRot.translate(cRot.width / 2, cRot.height / 2);
+            ctxRot.rotate(Math.PI);
+            ctxRot.drawImage(img, -cRot.width / 2, -cRot.height / 2);
+            img.src = cRot.toDataURL('image/jpeg', 0.95);
+            img.classList.remove('is-reversed');
+            img.style.setProperty('transform', 'none', 'important');
+            img.style.setProperty('webkitTransform', 'none', 'important');
+            img.style.setProperty('transition', 'none', 'important');
+          } catch (e) {}
+        }
+        if (el.tagName !== 'IMG') {
+          el.classList.remove('is-reversed');
+          el.style.setProperty('transform', 'none', 'important');
+          el.style.setProperty('webkitTransform', 'none', 'important');
+          el.style.setProperty('transition', 'none', 'important');
+        }
+      });
+
       // 4. html2pdf options
       const safeQuestion = (report.question || 'Neta')
         .replace(/[^a-zA-Z0-9\u00C0-\u024F\u1EA0-\u1EF9]/g, '_')

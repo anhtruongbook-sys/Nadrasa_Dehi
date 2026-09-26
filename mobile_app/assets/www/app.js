@@ -1635,6 +1635,31 @@
         })
       );
 
+      // 2b. Xử lý triệt để bài đảo ngược (reversed): Lộn ngược 180° điểm ảnh trực tiếp trên Canvas 2D
+      // Triệt tiêu 100% sự phụ thuộc vào bộ phân giải CSS transform của html2canvas (loại bỏ hoàn toàn lỗi xoay chéo/lệch bài)
+      const reversedCardsMap = new Map();
+      const reversedSelector = '.is-reversed, .reading-card-thumb.is-reversed, .tarot-card-front.is-reversed img, .pdf-card-thumb.is-reversed, .journal-mini-card img.is-reversed';
+      const reversedElements = targetElement.querySelectorAll(reversedSelector);
+      reversedElements.forEach(el => {
+        const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+        if (!img || !img.complete || !img.naturalWidth) return;
+        try {
+          const cRot = document.createElement('canvas');
+          cRot.width = img.naturalWidth;
+          cRot.height = img.naturalHeight;
+          const ctxRot = cRot.getContext('2d');
+          ctxRot.translate(cRot.width / 2, cRot.height / 2);
+          ctxRot.rotate(Math.PI);
+          ctxRot.drawImage(img, -cRot.width / 2, -cRot.height / 2);
+          const flippedData = cRot.toDataURL('image/jpeg', 0.95);
+          if (flippedData && flippedData.startsWith('data:')) {
+            reversedCardsMap.set(img.src, flippedData);
+            const aSrc = img.getAttribute('src');
+            if (aSrc) reversedCardsMap.set(aSrc, flippedData);
+          }
+        } catch (e) {}
+      });
+
       // 3. Chuẩn bị hàm onclone chống Tainted Canvas 100%
       const sanitizeClone = (clonedDoc) => {
         // Xóa hoàn toàn các lớp phủ flash, thông báo toast hoặc hiệu ứng phủ mờ tạm thời
@@ -1692,6 +1717,19 @@
 
           const fullSrc = img.src;
           const attrSrc = img.getAttribute('src');
+
+          // Ưu tiên nạp ảnh lộn ngược 180° pixel-level cho bài ngược để html2canvas vẽ phẳng hoàn hảo
+          const isReversedCard = img.classList.contains('is-reversed') || (img.closest && img.closest('.is-reversed'));
+          const flippedB64 = reversedCardsMap.get(fullSrc) || reversedCardsMap.get(attrSrc);
+          if (isReversedCard && flippedB64) {
+            img.src = flippedB64;
+            img.classList.remove('is-reversed');
+            img.style.setProperty('transform', 'none', 'important');
+            img.style.setProperty('webkitTransform', 'none', 'important');
+            img.style.setProperty('transition', 'none', 'important');
+            return;
+          }
+
           let cleanB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc) || imgUrlMap.get(fullSrc) || imgUrlMap.get(attrSrc);
 
           if (img.id === 'lakinh-disc') {
@@ -1739,6 +1777,14 @@
               img.remove();
             }
           }
+        });
+
+        // Triệt tiêu triệt để mọi class is-reversed và transform còn sót lại trên toàn bộ cây cloned DOM
+        clonedDoc.querySelectorAll('.is-reversed').forEach(el => {
+          el.classList.remove('is-reversed');
+          el.style.setProperty('transform', 'none', 'important');
+          el.style.setProperty('webkitTransform', 'none', 'important');
+          el.style.setProperty('transition', 'none', 'important');
         });
 
         // Xử lý riêng cho Tarot: mở rộng vùng cuộn, ẩn nút thao tác để quẻ bài và luận giải hiển thị trọn vẹn
@@ -1994,7 +2040,7 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '7.9';
+  const CURRENT_APP_VERSION = '8.0';
   function registerServiceWorker() {
     const isFlutterApp = (typeof window !== 'undefined' && (
       window.NativeBridge !== undefined ||
