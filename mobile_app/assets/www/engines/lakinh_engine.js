@@ -499,6 +499,59 @@
     }
   }
 
+  // Danh sách 16 Tinh Bàn chuẩn mực (Tam Nguyên Cửu Vận)
+  // Mỗi hướng gồm 2 tinh bàn: Sơn 1 (Địa Nguyên Long) và Sơn 2/3 (Thiên/Nhân Nguyên Long)
+  const TINH_BAN_16_LIST = [
+    { index: 1,  id: "nam_1",       name: "1. Hướng Nam 1",      deg: 165, cung: "S",  sons: "Bính",       group: "1" },
+    { index: 2,  id: "nam_2_3",     name: "2. Hướng Nam 2/3",    deg: 180, cung: "S",  sons: "Ngọ, Đinh",   group: "2/3" },
+    { index: 3,  id: "taynam_1",    name: "3. Hướng Tây Nam 1",  deg: 210, cung: "SW", sons: "Mùi",        group: "1" },
+    { index: 4,  id: "taynam_2_3",  name: "4. Hướng Tây Nam 2/3",deg: 225, cung: "SW", sons: "Khôn, Thân", group: "2/3" },
+    { index: 5,  id: "tay_1",       name: "5. Hướng Tây 1",      deg: 255, cung: "W",  sons: "Canh",       group: "1" },
+    { index: 6,  id: "tay_2_3",     name: "6. Hướng Tây 2/3",    deg: 270, cung: "W",  sons: "Dậu, Tân",   group: "2/3" },
+    { index: 7,  id: "taybac_1",    name: "7. Hướng Tây Bắc 1",  deg: 300, cung: "NW", sons: "Tuất",       group: "1" },
+    { index: 8,  id: "taybac_2_3",  name: "8. Hướng Tây Bắc 2/3",deg: 315, cung: "NW", sons: "Càn, Hợi",   group: "2/3" },
+    { index: 9,  id: "bac_1",       name: "9. Hướng Bắc 1",      deg: 345, cung: "N",  sons: "Nhâm",       group: "1" },
+    { index: 10, id: "bac_2_3",     name: "10. Hướng Bắc 2/3",   deg: 0,   cung: "N",  sons: "Tý, Quý",    group: "2/3" },
+    { index: 11, id: "dongbac_1",   name: "11. Hướng Đông Bắc 1",deg: 30,  cung: "NE", sons: "Sửu",        group: "1" },
+    { index: 12, id: "dongbac_2_3", name: "12. Hướng Đông Bắc 2/3",deg: 45,cung: "NE", sons: "Cấn, Dần",   group: "2/3" },
+    { index: 13, id: "dong_1",      name: "13. Hướng Đông 1",     deg: 75,  cung: "E",  sons: "Giáp",       group: "1" },
+    { index: 14, id: "dong_2_3",    name: "14. Hướng Đông 2/3",   deg: 90,  cung: "E",  sons: "Mão, Ất",    group: "2/3" },
+    { index: 15, id: "dongnam_1",   name: "15. Hướng Đông Nam 1", deg: 120, cung: "SE", sons: "Thìn",       group: "1" },
+    { index: 16, id: "dongnam_2_3", name: "16. Hướng Đông Nam 2/3",deg: 135,cung: "SE", sons: "Tốn, Tị",    group: "2/3" }
+  ];
+
+  // 8 hướng theo chiều kim đồng hồ để xoay đồ hình theo Hướng nhà
+  const CW_PALACE_DIRS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  const PALACE_NAME_MAP = {
+    'N': 'Chính Bắc (Khảm)',
+    'NE': 'Đông Bắc (Cấn)',
+    'E': 'Chính Đông (Chấn)',
+    'SE': 'Đông Nam (Tốn)',
+    'S': 'Chính Nam (Ly)',
+    'SW': 'Tây Nam (Khôn)',
+    'W': 'Chính Tây (Đoài)',
+    'NW': 'Tây Bắc (Càn)',
+    'C': 'Trung Cung (Thiên Tâm)'
+  };
+
+  /**
+   * Tạo lưới 3x3 định hướng theo HƯỚNG NHÀ (Hàng trên là Hướng, hàng dưới là Tọa)
+   * Chuẩn mực bảng tra phong thủy kinh điển
+   */
+  function getOrientedGridIds(facingPalace) {
+    const idx = CW_PALACE_DIRS.indexOf(facingPalace);
+    if (idx === -1) return [
+      ['NW', 'N', 'NE'],
+      ['W',  'C', 'E'],
+      ['SW', 'S', 'SE']
+    ];
+    return [
+      [CW_PALACE_DIRS[(idx - 1 + 8) % 8], CW_PALACE_DIRS[idx], CW_PALACE_DIRS[(idx + 1) % 8]],
+      [CW_PALACE_DIRS[(idx - 2 + 8) % 8], 'C',                 CW_PALACE_DIRS[(idx + 2) % 8]],
+      [CW_PALACE_DIRS[(idx - 3 + 8) % 8], CW_PALACE_DIRS[(idx + 4) % 8], CW_PALACE_DIRS[(idx + 3) % 8]]
+    ];
+  }
+
   function generateHuyenKhongMatrix(facingDeg, period = 9) {
     const sonFacing = getSonInfo(facingDeg);
     const toaDeg = (facingDeg + 180) % 360;
@@ -535,8 +588,38 @@
       }
     });
 
-    // 5. Tổng hợp lưới Lạc Thư 9 Cung
-    const grid = LUO_SHU_POSITIONS.map(pos => {
+    // 5. Xác định Tinh Bàn chuẩn trong danh mục 16 Tinh Bàn
+    const groupKey = sonFacing.long === 1 ? "1" : "2/3";
+    const tinhBanItem = TINH_BAN_16_LIST.find(t => t.cung === sonFacing.cungId && t.group === groupKey) || TINH_BAN_16_LIST[9];
+
+    // 6. Tổng hợp Đồ Hình Định Hướng (HƯỚNG ở hàng trên cùng - Chuẩn Bảng Tra Phong Thủy)
+    const orientedIds = getOrientedGridIds(sonFacing.cungId);
+    const orientedGrid = [];
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        const pId = orientedIds[r][c];
+        const isCenter = pId === 'C';
+        const mStar = mountainMap[pId];
+        const fStar = facingMap[pId];
+        const vStar = vanMap[pId];
+        orientedGrid.push({
+          id: pId,
+          name: PALACE_NAME_MAP[pId],
+          isCenter: isCenter,
+          vanStar: vStar,
+          mountainStar: mStar,
+          facingStar: fStar,
+          isToa: pId === sonToa.cungId,
+          isFacing: pId === sonFacing.cungId,
+          hasPrimeStar: mStar === period || fStar === period,
+          row: r,
+          col: c
+        });
+      }
+    }
+
+    // 7. Tổng hợp lưới Địa Bàn Lạc Thư tĩnh (Bắc dưới, Nam trên)
+    const geoGrid = LUO_SHU_POSITIONS.map(pos => {
       const isCenter = pos.id === 'C';
       const mStar = mountainMap[pos.id];
       const fStar = facingMap[pos.id];
@@ -556,7 +639,7 @@
       };
     });
 
-    // 6. Phân định Cách Cục Tinh Bàn (4 đại cách cục kinh điển)
+    // 8. Phân định Cách Cục Tinh Bàn (4 đại cách cục kinh điển)
     const mAtToa = mountainMap[sonToa.cungId];
     const fAtFacing = facingMap[sonFacing.cungId];
     const mAtFacing = mountainMap[sonFacing.cungId];
@@ -590,6 +673,9 @@
       toaDeg: Math.round(toaDeg * 10) / 10,
       sonFacing: sonFacing,
       sonToa: sonToa,
+      tinhBanItem: tinhBanItem,
+      tinhBanName: tinhBanItem.name,
+      groupKey: groupKey,
       mountainCenterStar: mountainCenterStar,
       facingCenterStar: facingCenterStar,
       mountainFlyDir: mountainFlyDir,
@@ -597,7 +683,9 @@
       patternCode: patternCode,
       patternName: patternName,
       patternDesc: patternDesc,
-      grid: grid
+      grid: orientedGrid,
+      orientedGrid: orientedGrid,
+      geoGrid: geoGrid
     };
   }
 
@@ -851,7 +939,8 @@
     SON_24_TABLE,
     THIEN_BAN_24_SON,
     SONG_SON_CUC_MAP,
-    MINH_DUONG_CONFIG
+    MINH_DUONG_CONFIG,
+    TINH_BAN_16_LIST
   };
 
   global.NetaLaKinhEngine = NetaLaKinhEngine;

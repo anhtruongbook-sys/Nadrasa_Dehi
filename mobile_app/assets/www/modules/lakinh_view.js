@@ -931,17 +931,19 @@
     `;
   }
 
-  // Mở Modal Huyền Không Phi Tinh Chính Tông
-  function openHuyenKhongModal(selectedPeriod = 9) {
+  // Mở Modal Huyền Không Phi Tinh Chính Tông (Chuẩn 16 Tinh Bàn - Vận 9)
+  function openHuyenKhongModal(selectedPeriod = 9, explicitDeg = null, useGeoGrid = false) {
     const modalBox = document.getElementById('lakinh-modal-container');
     if (!modalBox || !global.NetaLaKinhEngine) return;
 
     closeBottomSheet();
     const period = parseInt(selectedPeriod, 10) || 9;
-    const hk = global.NetaLaKinhEngine.generateHuyenKhongMatrix(state.rotation, period);
+    const currentDeg = explicitDeg !== null ? parseFloat(explicitDeg) : state.rotation;
+    const hk = global.NetaLaKinhEngine.generateHuyenKhongMatrix(currentDeg, period);
+    const activeGrid = useGeoGrid ? hk.geoGrid : hk.orientedGrid;
 
     let cellsHtml = '';
-    hk.grid.forEach(cell => {
+    activeGrid.forEach(cell => {
       let roleTag = '';
       if (cell.isToa) roleTag = '<span class="lakinh-tag-toa">TỌA</span>';
       else if (cell.isFacing) roleTag = '<span class="lakinh-tag-facing">HƯỚNG</span>';
@@ -950,11 +952,11 @@
       cellsHtml += `
         <div class="lakinh-palace-cell ${cell.isCenter ? 'center' : ''} ${isPrime ? 'prime-star' : ''}">
           <div class="lakinh-palace-name">${cell.name} ${roleTag}</div>
-          <div class="lakinh-palace-stars">
-            <span class="lakinh-star-mountain" title="Tọa Tinh (${hk.mountainFlyDir > 0 ? 'Thuận +' : 'Nghịch -'})">${cell.mountainStar}</span>
-            <span class="lakinh-star-facing" title="Hướng Tinh (${hk.facingFlyDir > 0 ? 'Thuận +' : 'Nghịch -'})">${cell.facingStar}</span>
+          <div class="lakinh-star-period-top" title="Vận Tinh">${cell.vanStar}</div>
+          <div class="lakinh-palace-stars-bottom">
+            <span class="lakinh-star-mountain" title="Sơn Tinh (Tọa Tinh) - Bay ${hk.mountainFlyDir > 0 ? 'Thuận +' : 'Nghịch -'}">${cell.mountainStar}</span>
+            <span class="lakinh-star-facing" title="Hướng Tinh - Bay ${hk.facingFlyDir > 0 ? 'Thuận +' : 'Nghịch -'}">${cell.facingStar}</span>
           </div>
-          <div class="lakinh-star-period" title="Vận Tinh">${cell.vanStar}</div>
         </div>
       `;
     });
@@ -964,31 +966,44 @@
                       (hk.patternCode === 'song_tinh_dao_toa' ? 'badge-blue' :
                       (hk.patternCode === 'thuong_son_ha_thuy' ? 'badge-red' : 'badge-slate')));
 
+    const tinhBanList = global.NetaLaKinhEngine.TINH_BAN_16_LIST || [];
+
     modalBox.innerHTML = `
       <div class="lakinh-modal-overlay" id="modal-hk-overlay">
         <div class="lakinh-glass-panel lakinh-modal-dialog">
           <div class="lakinh-modal-header">
-            <div class="lakinh-modal-title">☯️ HUYỀN KHÔNG PHI TINH CHÍNH TÔNG</div>
+            <div class="lakinh-modal-title">☯️ HUYỀN KHÔNG PHI TINH VẬN ${period}</div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-hk-overlay').remove()">✕</button>
           </div>
 
-          <!-- Chọn Vận & Tọa Hướng -->
+          <!-- Bảng Chọn Nhanh 16 Tinh Bàn & Vận -->
           <div class="lakinh-hk-header-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 6px;">
+              <select id="hk-chart-select" class="lakinh-chart-select" style="flex: 1;">
+                ${tinhBanList.map(item => `
+                  <option value="${item.deg}" ${item.id === hk.tinhBanItem.id ? 'selected' : ''}>
+                    ${item.name}
+                  </option>
+                `).join('')}
+              </select>
+              <select id="hk-period-select" class="lakinh-period-select">
+                ${[1,2,3,4,5,6,7,8,9].map(v => `<option value="${v}" ${v === period ? 'selected' : ''}>Vận ${v} ${v === 9 ? '(2024–2043)' : ''}</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Tọa Hướng & Độ Số -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <span class="lakinh-hk-title-sub">
-                Tọa ${hk.sonToa.name} • Hướng ${hk.sonFacing.name} (${hk.facingDeg.toFixed(1)}°)
+                ${hk.tinhBanItem.name} • Tọa ${hk.sonToa.name} Hướng ${hk.sonFacing.name} (${hk.facingDeg.toFixed(1)}°)
               </span>
-              <div style="display: flex; align-items: center; gap: 4px;">
-                <label class="lakinh-hk-label">Vận:</label>
-                <select id="hk-period-select" class="lakinh-period-select">
-                  ${[1,2,3,4,5,6,7,8,9].map(v => `<option value="${v}" ${v === period ? 'selected' : ''}>Vận ${v} ${v === 9 ? '(2024-2043)' : ''}</option>`).join('')}
-                </select>
-              </div>
+              <button id="hk-toggle-grid-mode" class="lakinh-grid-toggle-btn" title="Chuyển đổi góc nhìn đồ hình">
+                ${useGeoGrid ? '🗺️ Địa Bàn' : '🧭 Hướng Trên'}
+              </button>
             </div>
 
             <!-- Chi tiết Tam Nguyên Long & Chiều Phi Tinh -->
             <div class="lakinh-hk-details">
-              <div>• <strong>Tọa Sơn:</strong> Sơn ${hk.sonToa.name} (${hk.sonToa.cung} - Sơn ${hk.sonToa.long}: ${hk.sonToa.long_name} Nguyên Long - ${hk.sonToa.am_duong}) ➔ Tọa Tinh <strong>${hk.mountainCenterStar}</strong> (${hk.mountainFlyDir > 0 ? 'Bay Thuận +' : 'Bay Nghịch -'})</div>
+              <div>• <strong>Tọa Sơn:</strong> Sơn ${hk.sonToa.name} (${hk.sonToa.cung} - Sơn ${hk.sonToa.long}: ${hk.sonToa.long_name} Nguyên Long - ${hk.sonToa.am_duong}) ➔ Sơn Tinh <strong>${hk.mountainCenterStar}</strong> (${hk.mountainFlyDir > 0 ? 'Bay Thuận +' : 'Bay Nghịch -'})</div>
               <div>• <strong>Hướng Sơn:</strong> Sơn ${hk.sonFacing.name} (${hk.sonFacing.cung} - Sơn ${hk.sonFacing.long}: ${hk.sonFacing.long_name} Nguyên Long - ${hk.sonFacing.am_duong}) ➔ Hướng Tinh <strong>${hk.facingCenterStar}</strong> (${hk.facingFlyDir > 0 ? 'Bay Thuận +' : 'Bay Nghịch -'})</div>
             </div>
 
@@ -1001,24 +1016,44 @@
             </div>
           </div>
 
-          <!-- Lưới Cửu Cung -->
+          <!-- Lưới Cửu Cung Chuẩn Bảng Tra (Hàng trên là HƯỚNG, hàng dưới là TỌA) -->
           <div class="lakinh-nine-grid">
             ${cellsHtml}
           </div>
 
           <div class="lakinh-hk-footnote">
-            * Chú giải: Số bên trái (xanh lam) là <strong>Tọa Tinh</strong> (quản sức khỏe, nhân đinh); Số bên phải (đỏ) là <strong>Hướng Tinh</strong> (quản tài lộc); Số ở dưới là <strong>Vận Tinh</strong>. Ô viền sáng là vị trí sao Đương Lệnh (sao ${period}) đáo tới.
+            * <strong>Quy chuẩn Bảng Tra:</strong> Số lớn màu đỏ ở trên là <strong>Vận Tinh</strong>; Số dưới bên trái (xanh lam) là <strong>Sơn Tinh (Tọa Tinh)</strong>; Số dưới bên phải (đỏ) là <strong>Hướng Tinh</strong>. Ô viền sáng là vị trí sao Đương Lệnh (sao ${period}) đáo tới.
           </div>
           <button class="lakinh-action-btn" onclick="document.getElementById('modal-hk-overlay').remove()">Đóng</button>
         </div>
       </div>
     `;
 
+    // Lắng nghe sự kiện chuyển đổi Tinh Bàn (1-16)
+    const selectChart = document.getElementById('hk-chart-select');
+    if (selectChart) {
+      selectChart.addEventListener('change', (e) => {
+        const deg = parseFloat(e.target.value);
+        if (typeof updateRotationDisplay === 'function') {
+          updateRotationDisplay(deg);
+        }
+        openHuyenKhongModal(period, deg, useGeoGrid);
+      });
+    }
+
     // Lắng nghe sự kiện chuyển đổi Vận
     const selectPeriod = document.getElementById('hk-period-select');
     if (selectPeriod) {
       selectPeriod.addEventListener('change', (e) => {
-        openHuyenKhongModal(e.target.value);
+        openHuyenKhongModal(e.target.value, currentDeg, useGeoGrid);
+      });
+    }
+
+    // Lắng nghe sự kiện toggle đổi chế độ hiển thị lưới
+    const btnToggleGrid = document.getElementById('hk-toggle-grid-mode');
+    if (btnToggleGrid) {
+      btnToggleGrid.addEventListener('click', () => {
+        openHuyenKhongModal(period, currentDeg, !useGeoGrid);
       });
     }
   }
