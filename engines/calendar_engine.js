@@ -70,20 +70,22 @@
     month = e < 14 ? e - 1 : e - 13;
     year = month > 2 ? c - 4716 : c - 4715;
 
-    let totalMinutes = Math.round(F * 1440);
-    let hours = Math.floor(totalMinutes / 60);
-    let minutes = totalMinutes % 60;
+    let totalSeconds = Math.round(F * 86400);
+    let hours = Math.floor(totalSeconds / 3600);
+    let rem = totalSeconds % 3600;
+    let minutes = Math.floor(rem / 60);
+    let seconds = rem % 60;
     if (hours >= 24) {
       hours -= 24;
       day += 1;
     }
     const pad = (n) => String(n).padStart(2, '0');
     return {
-      day, month, year, hours, minutes,
+      day, month, year, hours, minutes, seconds,
       dateStr: `${pad(day)}/${pad(month)}/${year}`,
-      timeStr: `${pad(hours)}:${pad(minutes)}`,
-      formatted: `${pad(day)}/${pad(month)}/${year} ${pad(hours)}:${pad(minutes)}`,
-      shortStr: `${pad(day)}/${pad(month)} ${pad(hours)}:${pad(minutes)}`
+      timeStr: `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+      formatted: `${pad(day)}/${pad(month)}/${year} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+      shortStr: `${pad(day)}/${pad(month)} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
     };
   }
 
@@ -414,8 +416,58 @@
       return SOLAR_TERMS[termIdx] ? SOLAR_TERMS[termIdx].name : "Xuân Phân";
     },
 
-    // Lấy chi tiết Tiết Khí và thời điểm chuyển tiết khí chính xác từng phút
+    // Lấy chi tiết Tiết Khí và thời điểm chuyển tiết khí chính xác từng giây
     getSolarTermDetails(d, m, y, hour = 12, minute = 0, tz = 7) {
+      // 1. Ưu tiên sử dụng động cơ thiên văn VSOP87D chuẩn xác đến từng giây từ QMDJCore nếu có
+      if (global.QMDJCore && global.QMDJCore.TheArtOfBecomingInvisible) {
+        try {
+          const dateObj = new Date(y, m - 1, d, hour, minute, 0);
+          const tao = new global.QMDJCore.TheArtOfBecomingInvisible(dateObj);
+          const idx = tao.solarTerms;
+          const curDate = tao.during[idx];
+          const nextIdx = (idx + 1) % 24;
+          const nextDate = tao.during[nextIdx];
+          const pad = n => String(n).padStart(2, '0');
+          const toDetail = (dt) => {
+            const day = dt.getDate();
+            const month = dt.getMonth() + 1;
+            const year = dt.getFullYear();
+            const hours = dt.getHours();
+            const minutes = dt.getMinutes();
+            const seconds = dt.getSeconds();
+            return {
+              day, month, year, hours, minutes, seconds,
+              dateStr: `${pad(day)}/${pad(month)}/${year}`,
+              timeStr: `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+              formatted: `${pad(day)}/${pad(month)}/${year} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+              shortStr: `${pad(day)}/${pad(month)} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+            };
+          };
+          const curTrans = toDetail(curDate);
+          const nextTrans = toDetail(nextDate);
+          const SOLAR_TERMS_24 = [
+            'Tiểu Hàn', 'Đại Hàn', 'Lập Xuân', 'Vũ Thủy', 'Kinh Trập', 'Xuân Phân',
+            'Thanh Minh', 'Cốc Vũ', 'Lập Hạ', 'Tiểu Mãn', 'Mang Chủng', 'Hạ Chí',
+            'Tiểu Thử', 'Đại Thử', 'Lập Thu', 'Xử Thử', 'Bạch Lộ', 'Thu Phân',
+            'Hàn Lộ', 'Sương Giáng', 'Lập Đông', 'Tiểu Tuyết', 'Đại Tuyết', 'Đông Chí'
+          ];
+          const termName = SOLAR_TERMS_24[idx] || (SOLAR_TERMS[idx] ? SOLAR_TERMS[idx].name : '');
+          const nextTermName = SOLAR_TERMS_24[nextIdx] || (SOLAR_TERMS[nextIdx] ? SOLAR_TERMS[nextIdx].name : '');
+          return {
+            term: termName,
+            index: idx,
+            transition: curTrans,
+            nextTerm: nextTermName,
+            nextTransition: nextTrans,
+            displayStr: `${termName} (Chuyển: ${curTrans.shortStr})`,
+            fullDisplayStr: `${termName} (Chuyển: ${curTrans.formatted})`
+          };
+        } catch (e) {
+          // Fallback sang giải thuật giải tích
+        }
+      }
+
+      // 2. Thuật toán giải tích (Fallback độc lập chuẩn xác đến từng giây)
       const jd = jdFromDate(d, m, y);
       const dayFraction = (hour + minute / 60) / 24;
       const jdNow = jd + dayFraction - 0.5 - tz / 24;
@@ -438,7 +490,7 @@
         }
         let low = searchStart;
         let high = searchEnd;
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 40; i++) {
           const mid = (low + high) / 2;
           const dMid = getDiff(mid);
           if (dMid < 0) low = mid;
