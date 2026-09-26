@@ -414,6 +414,8 @@
     // Sử dụng NetaCalendarEngine tính Can Chi theo Tiết Khí chuẩn
     let canChiData = null;
     let solarTerm = 'Thu Phân';
+    let solarTermStr = 'Thu Phân';
+    let solarTermFullStr = '';
     if (global.NetaCalendarEngine) {
       if (typeof global.NetaCalendarEngine.getSolarTermCanChi === 'function') {
         canChiData = global.NetaCalendarEngine.getSolarTermCanChi(d, m, y, h, minute);
@@ -421,6 +423,8 @@
         canChiData = global.NetaCalendarEngine.getCanChi(d, m, y, h);
       }
       solarTerm = canChiData.solarTerm || global.NetaCalendarEngine.getSolarTerm(d, m, y, h, minute);
+      solarTermStr = canChiData.solarTermStr || solarTerm;
+      solarTermFullStr = canChiData.solarTermFullStr || '';
     } else {
       // Fallback tính tay
       const [yG, yZ] = getYearGanZhi(y);
@@ -495,6 +499,8 @@
         seasonStatus
       },
       solarTerm,
+      solarTermStr,
+      solarTermFullStr,
       tuTru,
       interactions,
       mangPai: {

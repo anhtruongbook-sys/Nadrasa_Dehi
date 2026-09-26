@@ -114,7 +114,8 @@
       solar: { day: d, month: m, year: y, dateStr: `${d}/${m}/${y}` },
       lunar: { day: d, month: m, year: y, dateStr: `Ngày ${d} tháng ${m}` },
       canChi: { year: 'Bính Ngọ', month: 'Đinh Dậu', day: 'Nhâm Dần', hour: 'Tân Hợi', dayGan: 'Nhâm', dayZhi: 'Dần', monthZhi: 'Dậu', yearZhi: 'Ngọ', hourZhi: 'Hợi' },
-      solarTerm: 'Thu phân'
+      solarTerm: 'Thu Phân',
+      solarTermStr: 'Thu Phân (Chuyển: 23/09 07:05)'
     };
   }
 
@@ -247,7 +248,7 @@
 
     const calInfo = getCalendarInfo(state.selectedDate);
     const canChi = calInfo.canChi || {};
-    const solarTerm = calInfo.solarTerm || 'Thu phân';
+    const solarTermStr = calInfo.solarTermStr || calInfo.solarTerm || 'Thu Phân';
     const chiNgay = canChi.dayZhi || 'Dần';
     const chiThang = canChi.monthZhi || 'Dậu';
 
@@ -297,7 +298,7 @@
             </div>
           </div>
           <div class="dh-meta-row sub-row">
-            <div><span class="m-lbl">Tiết khí:</span> <em>${solarTerm}</em></div>
+            <div title="${calInfo.solarTermFullStr || ''}"><span class="m-lbl">Tiết khí:</span> <em>${solarTermStr}</em></div>
             <div><span class="m-lbl">Nhật thần:</span> <strong>${chiNgay}-${elmNgay}</strong></div>
             <div><span class="m-lbl">Nguyệt lệnh:</span> <strong>${chiThang}-${elmThang}</strong></div>
             <div><span class="m-lbl">Tuần không:</span> <strong style="color:#f59e0b;">${tuanKhongStr}</strong></div>
@@ -751,15 +752,14 @@
             </div>
             <div class="td-content">
               <div class="td-col">
-                <strong>THỂ QUÁI:</strong> ${curResult.the_dung.the.info.name} (${curResult.the_dung.the.info.element}) • Ở ${curResult.the_dung.the.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
+                <span class="td-label">THỂ QUÁI:</span> <strong>${curResult.the_dung.the.info.name}</strong> (${curResult.the_dung.the.info.element}) • Ở ${curResult.the_dung.the.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
               </div>
               <div class="td-col">
-                <strong>DỤNG QUÁI:</strong> ${curResult.the_dung.dung.info.name} (${curResult.the_dung.dung.info.element}) • Ở ${curResult.the_dung.dung.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
+                <span class="td-label">DỤNG QUÁI:</span> <strong>${curResult.the_dung.dung.info.name}</strong> (${curResult.the_dung.dung.info.element}) • Ở ${curResult.the_dung.dung.vi_tri === 'thuong' ? 'Thượng Quái' : 'Hạ Quái'}
               </div>
             </div>
             <div class="td-summary">
-              <span class="badge-eval ${curResult.the_dung.danh_gia.includes('ĐẠI CÁT') ? 'cat' : (curResult.the_dung.danh_gia.includes('HUNG') ? 'hung' : 'binh')}">${curResult.the_dung.danh_gia}</span>
-              <span>${curResult.the_dung.quan_he}</span>
+              <span class="badge-eval ${(curResult.the_dung.muc_do || '').includes('cat') ? 'cat' : ((curResult.the_dung.muc_do || '').includes('hung') ? 'hung' : 'binh')}">${curResult.the_dung.danh_gia}</span>
             </div>
           </div>
         ` : ''}

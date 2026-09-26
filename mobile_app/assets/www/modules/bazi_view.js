@@ -61,7 +61,7 @@
       return;
     }
 
-    const { dayMaster, solarTerm, tuTru, interactions, mangPai, daYun, input } = chart;
+    const { dayMaster, solarTerm, solarTermStr, solarTermFullStr, tuTru, interactions, mangPai, daYun, input } = chart;
     const pad = n => String(n).padStart(2, '0');
     const dStr = `${input.year}-${pad(input.month)}-${pad(input.day)}`;
     const timeFormatted = `${pad(input.hour)}:${pad(input.minute)} • ${pad(input.day)}/${pad(input.month)}/${input.year}`;
@@ -144,7 +144,7 @@
             </div>
             <div class="bm-details">
               <div class="bm-title">NHẬT CHỦ: <strong class="${getWxClass(dayMaster.wx)}">${dayMaster.gan} ${dayMaster.wx}</strong> • ${dayMaster.yinYang}</div>
-              <div class="bm-birth">📅 ${timeFormatted} • ${currentIsMale ? 'Nam' : 'Nữ'} • Tiết Khí: <strong>${solarTerm}</strong> • Mệnh Cung: <strong>${mangPai.mengGong}</strong></div>
+              <div class="bm-birth">📅 ${timeFormatted} • ${currentIsMale ? 'Nam' : 'Nữ'} • Tiết Khí: <strong title="${solarTermFullStr || ''}">${solarTermStr || solarTerm}</strong> • Mệnh Cung: <strong>${mangPai.mengGong}</strong></div>
             </div>
           </div>
           <div class="bm-season-status">

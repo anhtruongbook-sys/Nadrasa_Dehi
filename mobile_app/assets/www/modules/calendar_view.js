@@ -74,7 +74,7 @@
           <button class="cal-nav-arrow" id="btn-cal-prev" title="${currentCalendarMode === 'month' ? 'Tháng trước' : 'Ngày trước'}">◀</button>
           <div class="cal-nav-title">
             <span class="cal-nav-solar">${currentCalendarMode === 'month' ? `THÁNG ${m} / ${y}` : `NGÀY ${d} THÁNG ${m} / ${y}`}</span>
-            <span class="cal-nav-lunar">${currentCalendarMode === 'month' ? `Năm ${dayInfo.canChi.year} (${dayInfo.canChi.yearNapAm})` : `Ngày ${dayInfo.canChi.day} (${dayInfo.canChi.dayNapAm}) • ${dayInfo.solarTerm}`}</span>
+            <span class="cal-nav-lunar">${currentCalendarMode === 'month' ? `Năm ${dayInfo.canChi.year} (${dayInfo.canChi.yearNapAm})` : `Ngày ${dayInfo.canChi.day} (${dayInfo.canChi.dayNapAm}) • ${dayInfo.solarTermStr || dayInfo.solarTerm}`}</span>
           </div>
           <button class="cal-nav-arrow" id="btn-cal-next" title="${currentCalendarMode === 'month' ? 'Tháng sau' : 'Ngày sau'}">▶</button>
         </div>
@@ -148,7 +148,7 @@
         </div>
         <div class="qs-lunar-row">
           <span class="qs-lunar-text">Âm lịch: <strong>Ngày ${info.lunar.day} tháng ${info.lunar.month}${info.lunar.isLeap ? ' (Nhuận)' : ''}</strong></span>
-          <span class="qs-term-text">🌿 ${info.solarTerm}</span>
+          <span class="qs-term-text" title="${info.solarTermFullStr || ''}">🌿 ${info.solarTermStr || info.solarTerm}</span>
         </div>
         <div class="qs-canchi-grid">
           <div><small>Năm:</small> <strong>${info.canChi.year}</strong></div>
@@ -200,7 +200,7 @@
           <div class="bloc-lunar-main">
             Ngày <strong>${info.lunar.day}</strong> Tháng <strong>${info.lunar.month}</strong> ${info.lunar.isLeap ? '(Nhuận)' : ''}
           </div>
-          <div class="bloc-lunar-sub">Năm ${info.canChi.year} • Tiết ${info.solarTerm}</div>
+          <div class="bloc-lunar-sub" title="${info.solarTermFullStr || ''}">Năm ${info.canChi.year} • Tiết ${info.solarTermStr || info.solarTerm}</div>
         </div>
 
         <!-- Tứ Trụ Can Chi & Nạp Âm -->

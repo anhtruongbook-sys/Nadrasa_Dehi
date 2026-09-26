@@ -51,6 +51,42 @@
     return [day, month, year];
   }
 
+  function jdToDateTime(jd, tz = 7) {
+    let localJd = jd + 0.5 + tz / 24;
+    let Z = Math.floor(localJd);
+    let F = localJd - Z;
+    let a, b, c, d, e, m, day, month, year;
+    if (Z > 2299160) {
+      let alpha = Math.floor((Z - 1867216.25) / 36524.25);
+      a = Z + 1 + alpha - Math.floor(alpha / 4);
+    } else {
+      a = Z;
+    }
+    b = a + 1524;
+    c = Math.floor((b - 122.1) / 365.25);
+    d = Math.floor(365.25 * c);
+    e = Math.floor((b - d) / 30.6001);
+    day = b - d - Math.floor(30.6001 * e);
+    month = e < 14 ? e - 1 : e - 13;
+    year = month > 2 ? c - 4716 : c - 4715;
+
+    let totalMinutes = Math.round(F * 1440);
+    let hours = Math.floor(totalMinutes / 60);
+    let minutes = totalMinutes % 60;
+    if (hours >= 24) {
+      hours -= 24;
+      day += 1;
+    }
+    const pad = (n) => String(n).padStart(2, '0');
+    return {
+      day, month, year, hours, minutes,
+      dateStr: `${pad(day)}/${pad(month)}/${year}`,
+      timeStr: `${pad(hours)}:${pad(minutes)}`,
+      formatted: `${pad(day)}/${pad(month)}/${year} ${pad(hours)}:${pad(minutes)}`,
+      shortStr: `${pad(day)}/${pad(month)} ${pad(hours)}:${pad(minutes)}`
+    };
+  }
+
   function NewMoon(k) {
     let T, T2, T3, dr, Jd1, M, Mpr, F, C1, JdNew;
     T = k / 1236.85;
@@ -378,6 +414,57 @@
       return SOLAR_TERMS[termIdx] ? SOLAR_TERMS[termIdx].name : "Xuân Phân";
     },
 
+    // Lấy chi tiết Tiết Khí và thời điểm chuyển tiết khí chính xác từng phút
+    getSolarTermDetails(d, m, y, hour = 12, minute = 0, tz = 7) {
+      const jd = jdFromDate(d, m, y);
+      const dayFraction = (hour + minute / 60) / 24;
+      const jdNow = jd + dayFraction - 0.5 - tz / 24;
+      const sunRad = SunLongitude(jdNow);
+      const sunDeg = ((sunRad * 180 / PI) % 360 + 360) % 360;
+
+      const termIdx = Math.floor(sunDeg / 15);
+      const currentTerm = SOLAR_TERMS[termIdx] || { name: 'Xuân Phân', angle: 0 };
+      const nextIdx = (termIdx + 1) % 24;
+      const nextTerm = SOLAR_TERMS[nextIdx] || { name: 'Thanh Minh', angle: 15 };
+
+      function solveAngle(targetAngle, searchStart, searchEnd) {
+        function getDiff(j) {
+          const rad = SunLongitude(j);
+          const deg = ((rad * 180 / PI) % 360 + 360) % 360;
+          let diff = deg - targetAngle;
+          while (diff > 180) diff -= 360;
+          while (diff < -180) diff += 360;
+          return diff;
+        }
+        let low = searchStart;
+        let high = searchEnd;
+        for (let i = 0; i < 30; i++) {
+          const mid = (low + high) / 2;
+          const dMid = getDiff(mid);
+          if (dMid < 0) low = mid;
+          else high = mid;
+        }
+        return (low + high) / 2;
+      }
+
+      const curJd = solveAngle(currentTerm.angle, jdNow - 18, jdNow);
+      const nextJd = solveAngle(nextTerm.angle, jdNow, jdNow + 18);
+
+      const curTrans = jdToDateTime(curJd, tz);
+      const nextTrans = jdToDateTime(nextJd, tz);
+
+      return {
+        term: currentTerm.name,
+        angle: currentTerm.angle,
+        currentDeg: parseFloat(sunDeg.toFixed(2)),
+        transition: curTrans,
+        nextTerm: nextTerm.name,
+        nextTransition: nextTrans,
+        displayStr: `${currentTerm.name} (Chuyển: ${curTrans.shortStr})`,
+        fullDisplayStr: `${currentTerm.name} (Chuyển: ${curTrans.formatted})`
+      };
+    },
+
     // Lấy Can Chi Tứ Trụ chuẩn xác theo LỊCH TIẾT KHÍ (Bát Tự Tứ Trụ & Kỳ Môn)
     getSolarTermCanChi(d, m, y, hour = 12, minute = 0, tz = 7) {
       const jd = jdFromDate(d, m, y);
@@ -385,9 +472,9 @@
       const sunRad = SunLongitude(jd + dayFraction - 0.5 - tz / 24);
       const sunDeg = ((sunRad * 180 / PI) % 360 + 360) % 360;
 
-      // 1. Tiết khí
-      const termIdx = Math.floor(sunDeg / 15);
-      const solarTerm = SOLAR_TERMS[termIdx] ? SOLAR_TERMS[termIdx].name : "Xuân Phân";
+      // 1. Tiết khí & thời điểm chuyển tiết khí
+      const solarTermDetails = this.getSolarTermDetails(d, m, y, hour, minute, tz);
+      const solarTerm = solarTermDetails.term;
 
       // 2. Can Chi Năm (theo Lập Xuân 315 độ)
       let baziYear = y;
@@ -436,6 +523,9 @@
         dayNapAm,
         hour: hourCanChi,
         solarTerm,
+        solarTermDetails,
+        solarTermStr: solarTermDetails.displayStr,
+        solarTermFullStr: solarTermDetails.fullDisplayStr,
         sunDeg,
         baziYear,
         monthStep,
@@ -544,10 +634,12 @@
       const m = date.getMonth() + 1;
       const y = date.getFullYear();
       const hour = date.getHours();
+      const minute = date.getMinutes();
 
       const lunar = this.solar2Lunar(d, m, y);
       const canChi = this.getCanChi(d, m, y, hour);
-      const solarTerm = this.getSolarTerm(d, m, y);
+      const solarTermDetails = this.getSolarTermDetails(d, m, y, hour, minute);
+      const solarTerm = solarTermDetails.term;
       const mansion = this.getMansion(d, m, y);
       const truc = this.getTruc(d, m, y);
       const dayHD = this.getDayHoangDao(d, m, y);
@@ -573,6 +665,9 @@
         },
         canChi: canChi,
         solarTerm: solarTerm,
+        solarTermDetails: solarTermDetails,
+        solarTermStr: solarTermDetails.displayStr,
+        solarTermFullStr: solarTermDetails.fullDisplayStr,
         mansion: mansion,
         truc: truc,
         hoangDao: dayHD,

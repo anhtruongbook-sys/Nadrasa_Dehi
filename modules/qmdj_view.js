@@ -118,8 +118,18 @@
 
     // Get 24 Solar term from calendar engine
     let solarTerm = "Xuân Phân";
+    let solarTermStr = "Xuân Phân";
+    let solarTermFullStr = "";
     if (global.NetaCalendarEngine) {
-      solarTerm = global.NetaCalendarEngine.getSolarTerm(d.getDate(), d.getMonth() + 1, d.getFullYear());
+      if (typeof global.NetaCalendarEngine.getSolarTermDetails === 'function') {
+        const std = global.NetaCalendarEngine.getSolarTermDetails(d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes());
+        solarTerm = std.term;
+        solarTermStr = std.displayStr;
+        solarTermFullStr = std.fullDisplayStr;
+      } else {
+        solarTerm = global.NetaCalendarEngine.getSolarTerm(d.getDate(), d.getMonth() + 1, d.getFullYear());
+        solarTermStr = solarTerm;
+      }
     }
 
     let dayVal = d.getDate();
@@ -186,10 +196,10 @@
           <!-- Row 3: Actions (Giờ thực, Cục badge, Lập Bàn) -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
-            <div class="qmdj-cuc-badge" title="Cục số và Tiết khí">
+            <div class="qmdj-cuc-badge" title="Cục số và Tiết khí: ${solarTermFullStr || solarTermStr}">
               <span>${roundText}</span>
               <span class="cuc-dot">•</span>
-              <span>${solarTerm}</span>
+              <span>${solarTermStr}</span>
             </div>
             <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
           </div>
