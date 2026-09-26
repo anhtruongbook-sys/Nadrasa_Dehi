@@ -284,7 +284,7 @@
               </button>
             </div>
             <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #94a3b8; margin-top: 8px;">
-              <input type="checkbox" id="lakinh-chk-autodec" checked style="accent-color: #38bdf8;">
+              <input type="checkbox" id="lakinh-chk-autodec" style="accent-color: #38bdf8;">
               <span>Tự động bù từ thiên WMM cho cảm biến thực địa</span>
             </label>
           </div>
@@ -2476,6 +2476,17 @@
         btnRay.classList.toggle('success', state.isRayActive);
         btnRay.innerHTML = state.isRayActive ? '🎯 Đang Bật Tia Ngắm' : '🎯 Bật Tia Ngắm Viễn Thám';
         renderSurveyRay();
+      });
+    }
+
+    const chkAutoDec = document.getElementById('lakinh-chk-autodec');
+    if (chkAutoDec) {
+      chkAutoDec.addEventListener('change', () => {
+        if (chkAutoDec.checked) {
+          showLaKinhToast(`🧭 Đã bật bù từ thiên (Bắc Thực WMM: ${state.declination > 0 ? '+' : ''}${state.declination}°)`);
+        } else {
+          showLaKinhToast('🧭 Đã dùng Bắc Từ (Chuẩn kim La Kinh vật lý)');
+        }
       });
     }
 
