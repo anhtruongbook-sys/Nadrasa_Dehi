@@ -1,8 +1,20 @@
 import requests
 import json
 import os
+import subprocess
 
-TOKEN = "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"
+def get_token():
+    try:
+        proc = subprocess.Popen(["git", "credential", "fill"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        out, _ = proc.communicate("protocol=https\nhost=github.com\n")
+        for line in out.splitlines():
+            if line.startswith("password="):
+                return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
+TOKEN = get_token()
 headers = {"Authorization": f"Bearer {TOKEN}"}
 
 print("Fetching release v1.9.1 info...")

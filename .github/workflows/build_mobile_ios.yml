@@ -1,11 +1,6 @@
 name: Build Flutter iOS Client (IPA)
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'mobile_app/**'
-      - '.github/workflows/build_mobile_ios.yml'
   workflow_dispatch:
 
 permissions:

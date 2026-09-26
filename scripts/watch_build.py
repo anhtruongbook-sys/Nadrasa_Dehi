@@ -2,12 +2,23 @@ import urllib.request
 import json
 import time
 import sys
-import os
+import subprocess
 
-TOKEN = ""
+def get_token():
+    try:
+        proc = subprocess.Popen(["git", "credential", "fill"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        out, _ = proc.communicate("protocol=https\nhost=github.com\n")
+        for line in out.splitlines():
+            if line.startswith("password="):
+                return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
+TOKEN = get_token()
 REPO = "anhtruongbook-sys/Nadrasa_Dehi"
 API_URL = f"https://api.github.com/repos/{REPO}/actions/runs"
-DEFAULT_TAG = "v1.4.2"
+DEFAULT_TAG = "v1.9.1"
 
 def get_runs():
     req = urllib.request.Request(API_URL, headers={
