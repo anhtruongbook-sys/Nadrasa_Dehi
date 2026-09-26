@@ -144,14 +144,21 @@
             </div>
             <div class="bm-details">
               <div class="bm-title">NHẬT CHỦ: <strong class="${getWxClass(dayMaster.wx)}">${dayMaster.gan} ${dayMaster.wx}</strong> • ${dayMaster.yinYang}</div>
-              <div class="bm-birth">📅 ${timeFormatted} • ${currentIsMale ? 'Nam' : 'Nữ'} • Tiết Khí: <strong title="${solarTermFullStr || ''}">${solarTermStr || solarTerm}</strong> • Mệnh Cung: <strong>${mangPai.mengGong}</strong></div>
+              <div class="bm-birth">📅 ${timeFormatted} • ${currentIsMale ? 'Nam' : 'Nữ'} • Mệnh: <strong>${mangPai.mengGong}</strong></div>
             </div>
           </div>
           <div class="bm-season-status">
-            <span class="bm-season-tag ${dayMaster.seasonStatus.stateCode === 'VUONG' || dayMaster.seasonStatus.stateCode === 'TUONG' ? 'season-strong' : 'season-weak'}">
-              ${dayMaster.seasonStatus.status}
+            <span class="bm-season-tag ${dayMaster.seasonStatus.stateCode === 'VUONG' || dayMaster.seasonStatus.stateCode === 'TUONG' ? 'season-strong' : 'season-weak'}" title="${dayMaster.seasonStatus.status}">
+              <strong>${dayMaster.seasonStatus.status.split(' ')[0]}</strong><span class="bm-season-desc"> ${dayMaster.seasonStatus.status.includes('(') ? dayMaster.seasonStatus.status.slice(dayMaster.seasonStatus.status.indexOf('(')) : ''}</span>
             </span>
           </div>
+        </div>
+
+        <!-- Bát Tự Tiết Khí Info Strip -->
+        <div class="bazi-term-strip">
+          <span>🌿 Tiết Khí: <strong>${solarTerm}</strong></span>
+          <span class="term-sep">•</span>
+          <span>Chuyển tiết: <strong class="tk-exact-time">${chart.solarTermDetails ? chart.solarTermDetails.transition.formatted : (solarTermFullStr.includes('Chuyển: ') ? solarTermFullStr.split('Chuyển: ')[1].replace(')', '') : '')}</strong></span>
         </div>
 
         <!-- 4 Pillars Grid (Tứ Trụ) -->

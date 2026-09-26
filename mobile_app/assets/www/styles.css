@@ -2188,6 +2188,36 @@ body.theme-light .dropdown-check {
   font-weight: 700;
 }
 
+.qs-term-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  background: rgba(245, 176, 65, 0.08);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 6px;
+  padding: 3px 6px;
+  margin-bottom: 6px;
+  color: #f7dc6f;
+  box-sizing: border-box;
+}
+
+body.theme-light .qs-term-strip {
+  background: #fefce8;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+.qs-term-strip .tk-exact-time {
+  color: #38bdf8;
+  font-family: monospace;
+  font-size: 0.67rem;
+}
+
+body.theme-light .qs-term-strip .tk-exact-time {
+  color: #0284c7;
+}
+
 .qs-canchi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2346,6 +2376,36 @@ body.theme-light .dropdown-check {
   font-size: 0.72rem;
   color: var(--text-secondary);
   margin-top: 3px;
+}
+
+.bloc-term-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  background: rgba(245, 176, 65, 0.08);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 6px;
+  padding: 3px 6px;
+  margin-top: 4px;
+  color: #f7dc6f;
+  box-sizing: border-box;
+}
+
+body.theme-light .bloc-term-strip {
+  background: #fefce8;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+.bloc-term-strip .tk-exact-time {
+  color: #38bdf8;
+  font-family: monospace;
+  font-size: 0.67rem;
+}
+
+body.theme-light .bloc-term-strip .tk-exact-time {
+  color: #0284c7;
 }
 
 /* Pillars Box */
@@ -4939,6 +4999,37 @@ body.theme-light .text-view-year {
   font-size: 0.6rem;
 }
 
+.qmdj-term-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(245, 176, 65, 0.08);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin: 4px 0 6px 0;
+  font-size: 0.65rem;
+  color: #f7dc6f;
+  box-sizing: border-box;
+}
+
+body.theme-light .qmdj-term-strip {
+  background: #fefce8;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+.qmdj-term-strip .tk-exact-time {
+  color: #38bdf8;
+  font-family: monospace;
+  font-size: 0.67rem;
+}
+
+body.theme-light .qmdj-term-strip .tk-exact-time {
+  color: #0284c7;
+}
+
 /* Calendar Top Bar - 2 Clean Non-overflowing Rows */
 .cal-top-bar {
   background: rgba(20, 2, 5, 0.95);
@@ -5095,6 +5186,43 @@ body.theme-light .text-view-year {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.bazi-term-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(20, 2, 5, 0.7);
+  border: 1px solid rgba(245, 176, 65, 0.22);
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin: 4px 0 6px 0;
+  font-size: 0.65rem;
+  color: #f7dc6f;
+  box-sizing: border-box;
+}
+
+body.theme-light .bazi-term-strip {
+  background: #faf4e8;
+  border-color: #dccbb3;
+  color: #854d0e;
+}
+
+.bazi-term-strip .tk-exact-time {
+  color: #38bdf8;
+  font-family: monospace;
+  font-size: 0.67rem;
+}
+
+body.theme-light .bazi-term-strip .tk-exact-time {
+  color: #0284c7;
+}
+
+@media (max-width: 440px) {
+  .bm-season-desc {
+    display: none;
+  }
 }
 
 .bm-season-tag {

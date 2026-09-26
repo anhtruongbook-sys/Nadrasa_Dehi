@@ -298,10 +298,15 @@
             </div>
           </div>
           <div class="dh-meta-row sub-row">
-            <div title="${calInfo.solarTermFullStr || ''}"><span class="m-lbl">Tiết khí:</span> <em>${solarTermStr}</em></div>
+            <div><span class="m-lbl">Tiết khí:</span> <strong>${calInfo.solarTerm || 'Thu Phân'}</strong></div>
             <div><span class="m-lbl">Nhật thần:</span> <strong>${chiNgay}-${elmNgay}</strong></div>
             <div><span class="m-lbl">Nguyệt lệnh:</span> <strong>${chiThang}-${elmThang}</strong></div>
             <div><span class="m-lbl">Tuần không:</span> <strong style="color:#f59e0b;">${tuanKhongStr}</strong></div>
+          </div>
+          <div class="dh-term-sub-strip">
+            <span>🌿 Tiết: <strong>${calInfo.solarTerm || 'Thu Phân'}</strong></span>
+            <span class="term-sep">•</span>
+            <span>Chuyển tiết: <strong class="tk-exact-time">${calInfo.solarTermDetails ? calInfo.solarTermDetails.transition.formatted : (calInfo.solarTermFullStr && calInfo.solarTermFullStr.includes('Chuyển: ') ? calInfo.solarTermFullStr.split('Chuyển: ')[1].replace(')', '') : '')}</strong></span>
           </div>
           <div class="dh-purpose-row">
             <span class="m-lbl">Việc cần xem:</span>

@@ -120,9 +120,10 @@
     let solarTerm = "Xuân Phân";
     let solarTermStr = "Xuân Phân";
     let solarTermFullStr = "";
+    let std = null;
     if (global.NetaCalendarEngine) {
       if (typeof global.NetaCalendarEngine.getSolarTermDetails === 'function') {
-        const std = global.NetaCalendarEngine.getSolarTermDetails(d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes());
+        std = global.NetaCalendarEngine.getSolarTermDetails(d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes());
         solarTerm = std.term;
         solarTermStr = std.displayStr;
         solarTermFullStr = std.fullDisplayStr;
@@ -199,10 +200,17 @@
             <div class="qmdj-cuc-badge" title="Cục số và Tiết khí: ${solarTermFullStr || solarTermStr}">
               <span>${roundText}</span>
               <span class="cuc-dot">•</span>
-              <span>${solarTermStr}</span>
+              <span>${solarTerm}</span>
             </div>
             <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
           </div>
+        </div>
+
+        <!-- Solar Term Info Strip -->
+        <div class="qmdj-term-strip">
+          <span>🌿 Tiết: <strong>${solarTerm}</strong></span>
+          <span class="term-sep">•</span>
+          <span>Chuyển tiết: <strong class="tk-exact-time">${std ? std.transition.formatted : (solarTermFullStr.includes('Chuyển: ') ? solarTermFullStr.split('Chuyển: ')[1].replace(')', '') : '')}</strong></span>
         </div>
 
         <!-- 4 Pillars Summary Header -->
