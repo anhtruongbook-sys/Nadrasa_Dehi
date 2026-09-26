@@ -122,33 +122,70 @@
       solarTerm = global.NetaCalendarEngine.getSolarTerm(d.getDate(), d.getMonth() + 1, d.getFullYear());
     }
 
-    const lInfo = global.NetaCalendarEngine ? global.NetaCalendarEngine.getFullDayInfo(d) : null;
-    const lunarText = lInfo ? `ÂL: ${lInfo.lunar.day}/${lInfo.lunar.month} • ${pillars.day}` : '';
+    let dayVal = d.getDate();
+    let monthVal = d.getMonth() + 1;
+    let yearVal = d.getFullYear();
+    if (isQmdjLunarMode && global.NetaCalendarEngine) {
+      const lInfo = global.NetaCalendarEngine.getFullDayInfo(d);
+      dayVal = lInfo.lunar.day;
+      monthVal = lInfo.lunar.month;
+      yearVal = lInfo.lunar.year;
+    }
 
     container.innerHTML = `
       <div class="qmdj-view-container">
-        <!-- Unified Control Card (Native Wheel Picker & Steppers) -->
+        <!-- Unified Control Card -->
         <div class="unified-ctrl-card">
-          <!-- Row 1: Date display & Quick Native Picker -->
-          <div class="ucc-row" style="justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <div class="ucc-date-display-badge" id="btn-qmdj-badge" title="Chạm để mở vòng quay chọn ngày giờ">
-              <span>📅</span>
-              <span class="solar-highlight">${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}</span>
-              <span class="lunar-sub">(${lunarText})</span>
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-lunar">🌙 Âm</button>
             </div>
-            <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
-              <button type="button" class="ucc-btn-now" id="btn-qmdj-now" title="Về thời điểm hiện tại">🕒 Hiện Tại</button>
-              <button type="button" class="ucc-btn-picker" id="btn-qmdj-picker" title="Chọn ngày giờ chiêm quẻ">📅 Giờ Khác</button>
-              <input type="datetime-local" id="qmdj-hidden-datetime" style="position:fixed; top:-1000px; left:-1000px; opacity:0; pointer-events:none;" />
+            <div class="ucc-date-box" id="qmdj-ucc-date-box" title="Nhập ngày tháng hoặc chạm vào dấu gạch/nút lịch để mở bảng chọn">
+              <input type="number" id="qmdj-input-day" class="num-box num-day" min="1" max="31" value="${dayVal}" placeholder="Ngày" title="Nhập Ngày (1-31)">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-month" class="num-box num-month" min="1" max="12" value="${monthVal}" placeholder="Tháng" title="Nhập Tháng (1-12)">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-year" class="num-box num-year" min="1900" max="2100" value="${yearVal}" placeholder="Năm" title="Nhập Năm">
+              <button type="button" class="ucc-btn-year" id="btn-qmdj-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
+              <label class="btn-picker-cal" id="qmdj-btn-native-cal" title="Mở bảng chọn Ngày & Giờ (Hình 3)">
+                📅
+                <input type="datetime-local" id="qmdj-date-picker" value="${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}" class="native-hidden-date">
+              </label>
             </div>
           </div>
 
-          <!-- Row 2: Canh stepping, Cục badge, Lập Bàn -->
-          <div class="ucc-row ucc-row-actions" style="justify-content: space-between; align-items: center;">
-            <div class="ucc-step-group">
-              <button class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 1 Canh Giờ (2 tiếng)">◀ 2h</button>
-              <button class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 1 Canh Giờ (2 tiếng)">2h ▶</button>
+          <!-- Row 2: Can Chi + Numeric Time & Hour Stepping -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
+              <select id="qmdj-select-canchi" class="select-canchi">
+                <option value="0" ${[23, 0].includes(d.getHours()) ? 'selected' : ''}>Tý (23-01h)</option>
+                <option value="2" ${[1, 2].includes(d.getHours()) ? 'selected' : ''}>Sửu (01-03h)</option>
+                <option value="4" ${[3, 4].includes(d.getHours()) ? 'selected' : ''}>Dần (03-05h)</option>
+                <option value="6" ${[5, 6].includes(d.getHours()) ? 'selected' : ''}>Mão (05-07h)</option>
+                <option value="8" ${[7, 8].includes(d.getHours()) ? 'selected' : ''}>Thìn (07-09h)</option>
+                <option value="10" ${[9, 10].includes(d.getHours()) ? 'selected' : ''}>Tỵ (09-11h)</option>
+                <option value="12" ${[11, 12].includes(d.getHours()) ? 'selected' : ''}>Ngọ (11-13h)</option>
+                <option value="14" ${[13, 14].includes(d.getHours()) ? 'selected' : ''}>Mùi (13-15h)</option>
+                <option value="16" ${[15, 16].includes(d.getHours()) ? 'selected' : ''}>Thân (15-17h)</option>
+                <option value="18" ${[17, 18].includes(d.getHours()) ? 'selected' : ''}>Dậu (17-19h)</option>
+                <option value="20" ${[19, 20].includes(d.getHours()) ? 'selected' : ''}>Tuất (19-21h)</option>
+                <option value="22" ${[21, 22].includes(d.getHours()) ? 'selected' : ''}>Hợi (21-23h)</option>
+              </select>
+              <input type="number" id="qmdj-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(d.getHours())}" placeholder="Giờ" title="Nhập Giờ (0-23)">
+              <span class="num-colon">:</span>
+              <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}" placeholder="Phút" title="Nhập Phút (0-59)">
             </div>
+            <div class="ucc-step-group">
+              <button class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀ 2h</button>
+              <button class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">2h ▶</button>
+            </div>
+          </div>
+
+          <!-- Row 3: Actions (Giờ thực, Cục badge, Lập Bàn) -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
             <div class="qmdj-cuc-badge" title="Cục số và Tiết khí">
               <span>${roundText}</span>
               <span class="cuc-dot">•</span>
@@ -288,44 +325,185 @@
   function bindQmdjEvents(chart, patterns) {
     const pad = n => String(n).padStart(2, '0');
 
-    const pickerBtn = document.getElementById('btn-qmdj-picker');
-    const badgeBtn = document.getElementById('btn-qmdj-badge');
-    const hiddenInput = document.getElementById('qmdj-hidden-datetime');
+    // Sync elements
+    const inputDay = document.getElementById('qmdj-input-day');
+    const inputMonth = document.getElementById('qmdj-input-month');
+    const inputYear = document.getElementById('qmdj-input-year');
+    const datePicker = document.getElementById('qmdj-date-picker');
+    const selectCanChi = document.getElementById('qmdj-select-canchi');
+    const inputHour = document.getElementById('qmdj-input-hour');
+    const inputMin = document.getElementById('qmdj-input-minute');
+    const btnSolar = document.getElementById('btn-qmdj-solar');
+    const btnLunar = document.getElementById('btn-qmdj-lunar');
 
-    const openPicker = () => {
-      if (!hiddenInput) return;
-      const d = currentQmdjDate;
-      hiddenInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-      if (typeof hiddenInput.showPicker === 'function') {
-        hiddenInput.showPicker();
-      } else {
-        hiddenInput.click();
-      }
-    };
-
-    if (pickerBtn) pickerBtn.onclick = openPicker;
-    if (badgeBtn) badgeBtn.onclick = openPicker;
-
-    if (hiddenInput) {
-      hiddenInput.onchange = (e) => {
-        if (e.target.value) {
-          currentQmdjDate = new Date(e.target.value);
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isQmdjLunarMode) {
+          isQmdjLunarMode = false;
+          renderQmdj();
+        }
+      };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isQmdjLunarMode) {
+          isQmdjLunarMode = true;
           renderQmdj();
         }
       };
     }
 
-    const btnNow = document.getElementById('btn-qmdj-now');
-    if (btnNow) {
-      btnNow.onclick = () => {
-        currentQmdjDate = new Date();
+    // Sync native datepicker (datetime-local) -> numeric boxes & chart
+    if (datePicker) {
+      datePicker.addEventListener('change', () => {
+        if (!datePicker.value) return;
+        const [datePart, timePart] = datePicker.value.split('T');
+        const [y, m, d] = datePart.split('-').map(Number);
+        let h = 12, min = 0;
+        if (timePart) {
+          [h, min] = timePart.split(':').map(Number);
+        }
+        isQmdjLunarMode = false;
+        if (inputDay) inputDay.value = d;
+        if (inputMonth) inputMonth.value = m;
+        if (inputYear) inputYear.value = y;
+        if (inputHour) inputHour.value = pad(h);
+        if (inputMin) inputMin.value = pad(min);
+
+        if (selectCanChi) {
+          const CAN_CHI_MAP = [
+            { val: 0, match: [23, 0] }, { val: 2, match: [1, 2] },
+            { val: 4, match: [3, 4] }, { val: 6, match: [5, 6] },
+            { val: 8, match: [7, 8] }, { val: 10, match: [9, 10] },
+            { val: 12, match: [11, 12] }, { val: 14, match: [13, 14] },
+            { val: 16, match: [15, 16] }, { val: 18, match: [17, 18] },
+            { val: 20, match: [19, 20] }, { val: 22, match: [21, 22] }
+          ];
+          const found = CAN_CHI_MAP.find(c => c.match.includes(h));
+          if (found) selectCanChi.value = String(found.val);
+        }
+
+        currentQmdjDate = new Date(y, m - 1, d, h, min, 0);
         renderQmdj();
+      });
+
+      const pickerLabel = document.getElementById('qmdj-btn-native-cal');
+      const dateBox = document.getElementById('qmdj-ucc-date-box');
+
+      const triggerWheelPicker = (e) => {
+        if (e && e.target === datePicker) return;
+        if (e) e.preventDefault();
+        const curD = currentQmdjDate;
+        datePicker.value = `${curD.getFullYear()}-${pad(curD.getMonth() + 1)}-${pad(curD.getDate())}T${pad(curD.getHours())}:${pad(curD.getMinutes())}`;
+        if (typeof datePicker.showPicker === 'function') {
+          datePicker.showPicker();
+        } else {
+          datePicker.click();
+        }
       };
+
+      if (pickerLabel) {
+        pickerLabel.onclick = triggerWheelPicker;
+      }
+      if (dateBox) {
+        dateBox.addEventListener('click', (e) => {
+          // Bấm vào khoảng trống/dấu slash '/' thì mở bảng chọn ngày giờ như hình 3
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            triggerWheelPicker(e);
+          }
+        });
+      }
     }
 
+    // Smart auto advance and decade jumper
+    const btnYearJumper = document.getElementById('btn-qmdj-year-jumper');
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        hourInput: inputHour,
+        minuteInput: inputMin,
+        onSubmit: () => {
+          if (btnSubmit) btnSubmit.click();
+        }
+      });
+
+      if (btnYearJumper && inputYear) {
+        btnYearJumper.onclick = () => {
+          const curY = parseInt(inputYear.value) || currentQmdjDate.getFullYear();
+          global.NetaSmartPicker.openYearJumperModal(curY, (selectedYear) => {
+            inputYear.value = selectedYear;
+            syncDateBoxesToPicker();
+          });
+        };
+      }
+    }
+
+    // Sync numeric boxes -> native datepicker
+    function syncDateBoxesToPicker() {
+      if (!inputDay || !inputMonth || !inputYear || !datePicker) return;
+      const d = parseInt(inputDay.value) || 1;
+      const m = parseInt(inputMonth.value) || 1;
+      const y = parseInt(inputYear.value) || 2026;
+      const h = parseInt(inputHour ? inputHour.value : 12) || 12;
+      const min = parseInt(inputMin ? inputMin.value : 0) || 0;
+      datePicker.value = `${y}-${pad(m)}-${pad(d)}T${pad(h)}:${pad(min)}`;
+    }
+    if (inputDay) inputDay.addEventListener('input', syncDateBoxesToPicker);
+    if (inputMonth) inputMonth.addEventListener('input', syncDateBoxesToPicker);
+    if (inputYear) inputYear.addEventListener('input', syncDateBoxesToPicker);
+    if (inputHour) inputHour.addEventListener('input', syncDateBoxesToPicker);
+    if (inputMin) inputMin.addEventListener('input', syncDateBoxesToPicker);
+
+    // Sync Can Chi hour -> numeric hour box
+    if (selectCanChi) {
+      selectCanChi.addEventListener('change', () => {
+        if (inputHour) inputHour.value = pad(selectCanChi.value);
+      });
+    }
+
+    // Sync numeric hour box -> Can Chi select
+    if (inputHour) {
+      inputHour.addEventListener('input', () => {
+        const h = parseInt(inputHour.value);
+        if (isNaN(h)) return;
+        const CAN_CHI_MAP = [
+          { val: 0, match: [23, 0] }, { val: 2, match: [1, 2] },
+          { val: 4, match: [3, 4] }, { val: 6, match: [5, 6] },
+          { val: 8, match: [7, 8] }, { val: 10, match: [9, 10] },
+          { val: 12, match: [11, 12] }, { val: 14, match: [13, 14] },
+          { val: 16, match: [15, 16] }, { val: 18, match: [17, 18] },
+          { val: 20, match: [19, 20] }, { val: 22, match: [21, 22] }
+        ];
+        const found = CAN_CHI_MAP.find(c => c.match.includes(h));
+        if (found && selectCanChi) selectCanChi.value = String(found.val);
+      });
+    }
+
+    // Submit button: Cast chart with input date & time
     const btnSubmit = document.getElementById('btn-qmdj-submit');
     if (btnSubmit) {
       btnSubmit.onclick = () => {
+        let d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
+        let m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
+        let rawYear = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (global.NetaSmartPicker && rawYear < 100) {
+          rawYear = global.NetaSmartPicker.parseSmartYear(rawYear);
+          if (inputYear) inputYear.value = rawYear;
+        }
+        let y = Math.min(2100, Math.max(1900, rawYear));
+        const h = Math.min(23, Math.max(0, parseInt(inputHour ? inputHour.value : 12) || 12));
+        const min = Math.min(59, Math.max(0, parseInt(inputMin ? inputMin.value : 0) || 0));
+
+        if (isQmdjLunarMode && global.NetaCalendarEngine && global.NetaCalendarEngine.lunar2Solar) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y, false, 7);
+          d = solar.day;
+          m = solar.month;
+          y = solar.year;
+        }
+
+        currentQmdjDate = new Date(y, m - 1, d, h, min, 0);
         renderQmdj();
       };
     }
@@ -333,6 +511,8 @@
     // Hour steps: 2 hours per step (1 canh giờ)
     const btnPrev = document.getElementById('btn-qmdj-prev-hour');
     const btnNext = document.getElementById('btn-qmdj-next-hour');
+    const btnNow = document.getElementById('btn-qmdj-now');
+
     if (btnPrev) {
       btnPrev.onclick = () => {
         currentQmdjDate = new Date(currentQmdjDate.getTime() - 2 * 3600000);

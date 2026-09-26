@@ -99,40 +99,72 @@
 
     container.innerHTML = `
       <div class="tuvi-view-container">
-        <!-- Unified Control Card (Native Wheel Picker, Gender & Viewing Year) -->
+        <!-- Unified Control Card -->
         <div class="unified-ctrl-card">
-          <!-- Row 1: Birth Date display & Quick Native Picker -->
-          <div class="ucc-row" style="justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <div class="ucc-date-display-badge" id="btn-tuvi-badge" title="Chạm để mở vòng quay chọn ngày giờ sinh">
-              <span>👶</span>
-              <span class="solar-highlight">${pad(meta.solarDay)}/${pad(meta.solarMonth)}/${meta.solarYear} ${pad(meta.solarHour)}:${pad(currentTuViDate.getMinutes())}</span>
-              <span class="lunar-sub">(${meta.lunarDay}/${meta.lunarMonth} ÂL)</span>
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isLunarMode ? 'active' : ''}" id="tuvi-btn-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isLunarMode ? 'active' : ''}" id="tuvi-btn-lunar">🌙 Âm</button>
             </div>
-            <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
-              <button type="button" class="ucc-btn-now" id="btn-tuvi-now" title="Về thời điểm hiện tại">🕒 Hiện Tại</button>
-              <button type="button" class="ucc-btn-picker" id="btn-tuvi-picker" title="Chọn ngày giờ sinh">📅 Giờ Sinh</button>
-              <input type="datetime-local" id="tuvi-hidden-datetime" style="position:fixed; top:-1000px; left:-1000px; opacity:0; pointer-events:none;" />
+            <div class="ucc-date-box" id="tuvi-ucc-date-box" title="Nhập ngày tháng hoặc chạm vào dấu gạch/nút lịch để mở bảng chọn">
+              <input type="number" id="tuvi-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày" title="Nhập Ngày (1-31)">
+              <span class="num-slash">/</span>
+              <input type="number" id="tuvi-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng" title="Nhập Tháng (1-12)">
+              <span class="num-slash">/</span>
+              <input type="number" id="tuvi-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm" title="Nhập Năm (gõ 2 số: 79 -> 1979)">
+              <button type="button" class="ucc-btn-year" id="tuvi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc">⚡Năm</button>
+              <label class="btn-picker-cal" id="tuvi-btn-native-cal" title="Mở bảng chọn Ngày & Giờ (Hình 3)">
+                📅
+                <input type="datetime-local" id="tuvi-date-picker" value="${dStr}T${pad(meta.solarHour)}:${pad(currentTuViDate.getMinutes())}" class="native-hidden-date">
+              </label>
             </div>
           </div>
 
-          <!-- Row 2: Gender & Năm Xem Vận Hạn -->
-          <div class="ucc-row ucc-row-view-year" style="justify-content: space-between; align-items: center;">
+          <!-- Row 2: Can Chi + Numeric Time & Gender -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
+              <select id="tuvi-select-canchi" class="select-canchi">
+                <option value="0" ${[23, 0].includes(meta.solarHour) ? 'selected' : ''}>Tý (23-01h)</option>
+                <option value="2" ${[1, 2].includes(meta.solarHour) ? 'selected' : ''}>Sửu (01-03h)</option>
+                <option value="4" ${[3, 4].includes(meta.solarHour) ? 'selected' : ''}>Dần (03-05h)</option>
+                <option value="6" ${[5, 6].includes(meta.solarHour) ? 'selected' : ''}>Mão (05-07h)</option>
+                <option value="8" ${[7, 8].includes(meta.solarHour) ? 'selected' : ''}>Thìn (07-09h)</option>
+                <option value="10" ${[9, 10].includes(meta.solarHour) ? 'selected' : ''}>Tỵ (09-11h)</option>
+                <option value="12" ${[11, 12].includes(meta.solarHour) ? 'selected' : ''}>Ngọ (11-13h)</option>
+                <option value="14" ${[13, 14].includes(meta.solarHour) ? 'selected' : ''}>Mùi (13-15h)</option>
+                <option value="16" ${[15, 16].includes(meta.solarHour) ? 'selected' : ''}>Thân (15-17h)</option>
+                <option value="18" ${[17, 18].includes(meta.solarHour) ? 'selected' : ''}>Dậu (17-19h)</option>
+                <option value="20" ${[19, 20].includes(meta.solarHour) ? 'selected' : ''}>Tuất (19-21h)</option>
+                <option value="22" ${[21, 22].includes(meta.solarHour) ? 'selected' : ''}>Hợi (21-23h)</option>
+              </select>
+              <input type="number" id="tuvi-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(meta.solarHour)}" placeholder="Giờ" title="Nhập Giờ (0-23)">
+              <span class="num-colon">:</span>
+              <input type="number" id="tuvi-input-minute" class="num-box num-min" min="0" max="59" value="${pad(currentTuViDate.getMinutes())}" placeholder="Phút" title="Nhập Phút (0-59)">
+            </div>
             <div class="ucc-pill-gender">
               <button type="button" class="ucc-gender-btn ${currentIsMale ? 'active male' : ''}" id="tuvi-btn-male">♂ Nam</button>
               <button type="button" class="ucc-gender-btn ${!currentIsMale ? 'active female' : ''}" id="tuvi-btn-female">♀ Nữ</button>
             </div>
+          </div>
+
+          <!-- Row 3: Năm Xem Vận Hạn & Sao Lưu -->
+          <div class="ucc-row ucc-row-view-year">
             <div class="ucc-view-year-box">
               <span class="ucc-lbl-view-year">🎯 Năm xem:</span>
               <button type="button" class="ucc-btn-year-step" id="btn-view-year-prev" title="Lùi 1 năm">◀</button>
               <input type="number" id="tuvi-input-view-year" class="num-box num-view-year" min="1900" max="2100" value="${currentViewYear}" title="Nhập Năm xem hạn">
               <button type="button" class="ucc-btn-year-step" id="btn-view-year-next" title="Tiến 1 năm">▶</button>
               <span class="ucc-tag-canchi-year" id="tuvi-tag-canchi-year">(${meta.viewYearCanChi})</span>
-              <button type="button" class="ucc-btn-year-now" id="btn-view-year-now" title="Về năm nay">⚡</button>
             </div>
+            <button type="button" class="ucc-btn-year-now" id="btn-view-year-now" title="Về năm hiện tại (${new Date().getFullYear()})">⚡ Năm nay</button>
           </div>
 
-          <!-- Row 3: Action row (4x4 / 12 Cung, Lập Lá Số) -->
-          <div class="ucc-row ucc-row-actions" style="justify-content: space-between; align-items: center;">
+          <!-- Row 4: Action row (Giờ thực, 4x4 / 12 Cung, Lập Lá Số) -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-tuvi-now" title="Về thời điểm hiện tại">
+              ⚡ Giờ thực
+            </button>
             <div class="ucc-pill-view">
               <button class="ucc-view-btn ${currentViewMode === 'grid' ? 'active' : ''}" id="btn-tuvi-mode-grid" title="Bàn 4x4 truyền thống">
                 🏛️ 4x4
@@ -432,32 +464,132 @@
 
     const pad = n => String(n).padStart(2, '0');
 
-    const pickerBtn = document.getElementById('btn-tuvi-picker');
-    const badgeBtn = document.getElementById('btn-tuvi-badge');
-    const hiddenInput = document.getElementById('tuvi-hidden-datetime');
+    // Sync elements
+    const inputDay = document.getElementById('tuvi-input-day');
+    const inputMonth = document.getElementById('tuvi-input-month');
+    const inputYear = document.getElementById('tuvi-input-year');
+    const datePicker = document.getElementById('tuvi-date-picker');
+    const selectCanChi = document.getElementById('tuvi-select-canchi');
+    const inputHour = document.getElementById('tuvi-input-hour');
+    const inputMin = document.getElementById('tuvi-input-minute');
+    const btnSubmit = document.getElementById('btn-tuvi-submit');
 
-    const openPicker = () => {
-      if (!hiddenInput) return;
-      const d = currentTuViDate;
-      hiddenInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-      if (typeof hiddenInput.showPicker === 'function') {
-        hiddenInput.showPicker();
-      } else {
-        hiddenInput.click();
-      }
-    };
-
-    if (pickerBtn) pickerBtn.onclick = openPicker;
-    if (badgeBtn) badgeBtn.onclick = openPicker;
-
-    if (hiddenInput) {
-      hiddenInput.onchange = (e) => {
-        if (e.target.value) {
+    // Chuyển đổi Dương Lịch <-> Âm Lịch
+    const btnSolar = document.getElementById('tuvi-btn-solar');
+    const btnLunar = document.getElementById('tuvi-btn-lunar');
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isLunarMode) {
           isLunarMode = false;
-          currentTuViDate = new Date(e.target.value);
           renderTuVi();
         }
       };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isLunarMode) {
+          isLunarMode = true;
+          renderTuVi();
+        }
+      };
+    }
+
+    // Nút Chọn Năm Siêu Tốc (Decade & Year Jumper)
+    const btnQuickYear = document.getElementById('tuvi-btn-quick-year');
+    if (btnQuickYear && inputYear) {
+      btnQuickYear.onclick = (e) => {
+        e.preventDefault();
+        if (global.NetaSmartPicker) {
+          global.NetaSmartPicker.openYearJumperModal(inputYear.value, (newYear) => {
+            inputYear.value = newYear;
+            if (btnSubmit) btnSubmit.click();
+          });
+        }
+      };
+    }
+
+    // Tự động nhảy ô thông minh (Auto-advance) & Nhận diện năm 2 chữ số (79 -> 1979)
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        hourInput: inputHour,
+        minuteInput: inputMin,
+        onSubmit: () => { if (btnSubmit) btnSubmit.click(); }
+      });
+      // Kết nối Date Picker gốc của hệ điều hành di động (datetime-local Hình 3)
+      if (datePicker) {
+        datePicker.addEventListener('change', () => {
+          if (!datePicker.value) return;
+          const [dPart, tPart] = datePicker.value.split('T');
+          const [y, m, d] = dPart.split('-').map(Number);
+          let h = 12, min = 0;
+          if (tPart) {
+            [h, min] = tPart.split(':').map(Number);
+          }
+          isLunarMode = false;
+          if (inputDay) inputDay.value = d;
+          if (inputMonth) inputMonth.value = m;
+          if (inputYear) inputYear.value = y;
+          if (inputHour) inputHour.value = pad(h);
+          if (inputMin) inputMin.value = pad(min);
+
+          if (selectCanChi && global.NetaSmartPicker) {
+            const zhiObj = global.NetaSmartPicker.getZhiByHour(h);
+            if (zhiObj) selectCanChi.value = String(zhiObj.val);
+          }
+
+          currentTuViDate = new Date(y, m - 1, d, h, min, 0);
+          renderTuVi();
+        });
+
+        const pickerLabel = document.getElementById('tuvi-btn-native-cal');
+        const dateBox = document.getElementById('tuvi-ucc-date-box');
+
+        const triggerWheelPicker = (e) => {
+          if (e && e.target === datePicker) return;
+          if (e) e.preventDefault();
+          const curD = currentTuViDate;
+          datePicker.value = `${curD.getFullYear()}-${pad(curD.getMonth() + 1)}-${pad(curD.getDate())}T${pad(curD.getHours())}:${pad(curD.getMinutes())}`;
+          if (typeof datePicker.showPicker === 'function') {
+            datePicker.showPicker();
+          } else {
+            datePicker.click();
+          }
+        };
+
+        if (pickerLabel) {
+          pickerLabel.onclick = triggerWheelPicker;
+        }
+        if (dateBox) {
+          dateBox.addEventListener('click', (e) => {
+            // Bấm vào khoảng trống/dấu slash '/' thì mở bảng chọn ngày giờ như hình 3
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+              triggerWheelPicker(e);
+            }
+          });
+        }
+      }
+    }
+
+    // Sync Can Chi hour -> numeric hour box
+    if (selectCanChi) {
+      selectCanChi.addEventListener('change', () => {
+        if (inputHour) inputHour.value = pad(selectCanChi.value);
+      });
+    }
+
+    // Sync numeric hour box -> Can Chi select
+    if (inputHour) {
+      inputHour.addEventListener('input', () => {
+        const h = parseInt(inputHour.value);
+        if (isNaN(h)) return;
+        if (global.NetaSmartPicker) {
+          const zhiObj = global.NetaSmartPicker.getZhiByHour(h);
+          if (zhiObj && selectCanChi) selectCanChi.value = String(zhiObj.val);
+        }
+      });
     }
 
     // Điều khiển Năm Xem Vận Hạn & Sao Lưu
@@ -531,9 +663,33 @@
     }
 
     // Submit button
-    const btnSubmit = document.getElementById('btn-tuvi-submit');
     if (btnSubmit) {
       btnSubmit.onclick = () => {
+        let d = parseInt(inputDay ? inputDay.value : 1) || 1;
+        let m = parseInt(inputMonth ? inputMonth.value : 1) || 1;
+        let y = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (inputYear && inputYear.value.length === 2 && global.NetaSmartPicker) {
+          y = global.NetaSmartPicker.parseSmartYear(inputYear.value);
+          inputYear.value = y;
+        }
+        if (inputViewYear) {
+          const vy = parseInt(inputViewYear.value, 10);
+          if (!isNaN(vy) && vy >= 1900 && vy <= 2100) currentViewYear = vy;
+        }
+        const h = Math.min(23, Math.max(0, parseInt(inputHour ? inputHour.value : 12) || 12));
+        const min = Math.min(59, Math.max(0, parseInt(inputMin ? inputMin.value : 0) || 0));
+
+        // Nếu người dùng nhập ngày Âm lịch, tự động quy đổi sang Dương lịch
+        if (isLunarMode && global.NetaCalendarEngine) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y);
+          if (solar) {
+            d = solar.day;
+            m = solar.month;
+            y = solar.year;
+          }
+        }
+
+        currentTuViDate = new Date(y, m - 1, d, h, min, 0);
         renderTuVi();
       };
     }

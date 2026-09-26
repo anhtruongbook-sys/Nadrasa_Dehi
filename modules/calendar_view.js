@@ -34,9 +34,8 @@
     container.innerHTML = `
       <div class="calendar-module-container">
         <!-- Top Calendar Navigation Bar (2 Clean Non-overflowing Rows) -->
-        <!-- Top Calendar Navigation Bar (1 Clean Unified Row) -->
         <div class="cal-top-bar">
-          <div class="cal-top-row-1" style="justify-content: space-between; align-items: center; width: 100%;">
+          <div class="cal-top-row-1">
             <div class="cal-mode-toggle">
               <button class="cal-btn-tab ${currentCalendarMode === 'month' ? 'active' : ''}" id="btn-cal-tab-month">
                 📅 Tháng
@@ -45,15 +44,28 @@
                 📆 Ngày
               </button>
             </div>
-            <div style="display: flex; gap: 4px; align-items: center;">
-              <button class="cal-btn-today" id="btn-cal-today" title="Về hôm nay">
-                🕒 Hôm nay
-              </button>
-              <button type="button" class="ucc-btn-picker" id="btn-cal-picker" title="Chọn ngày trên lịch">
-                📅 Chọn Ngày
-              </button>
-              <input type="date" id="cal-native-picker" style="position:fixed; top:-1000px; left:-1000px; opacity:0; pointer-events:none;" />
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isCalLunarMode ? 'active' : ''}" id="btn-cal-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isCalLunarMode ? 'active' : ''}" id="btn-cal-lunar">🌙 Âm</button>
             </div>
+            <button class="cal-btn-today" id="btn-cal-today" title="Về hôm nay">
+              ⚡ Hôm nay
+            </button>
+          </div>
+          <div class="cal-top-row-2">
+            <div class="ucc-date-box" id="cal-ucc-date-box" title="Nhập ngày tháng hoặc chạm vào dấu gạch/nút lịch để mở bảng chọn">
+              <input type="number" id="cal-jump-day" class="num-box num-day" min="1" max="31" value="${isCalLunarMode ? dayInfo.lunar.day : d}" placeholder="Ngày" title="Nhập Ngày">
+              <span class="num-slash">/</span>
+              <input type="number" id="cal-jump-month" class="num-box num-month" min="1" max="12" value="${isCalLunarMode ? dayInfo.lunar.month : m}" placeholder="Tháng" title="Nhập Tháng">
+              <span class="num-slash">/</span>
+              <input type="number" id="cal-jump-year" class="num-box num-year" min="1900" max="2100" value="${isCalLunarMode ? dayInfo.lunar.year : y}" placeholder="Năm" title="Nhập Năm">
+              <button type="button" class="ucc-btn-year" id="btn-cal-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
+              <label class="btn-picker-cal" id="cal-btn-native-cal" title="Mở bảng chọn Ngày (Hình 3)">
+                📅
+                <input type="datetime-local" id="cal-native-picker" value="${y}-${pad(m)}-${pad(d)}T12:00" class="native-hidden-date">
+              </label>
+            </div>
+            <button class="cal-btn-jump" id="btn-cal-jump" title="Đến ngày">🚀 Xem</button>
           </div>
         </div>
 
@@ -277,29 +289,113 @@
       };
     }
 
-    // Native picker support
-    const btnCalPicker = document.getElementById('btn-cal-picker');
+    // Jump button (Direct numeric date)
+    const btnJump = document.getElementById('btn-cal-jump');
+    const inputDay = document.getElementById('cal-jump-day');
+    const inputMonth = document.getElementById('cal-jump-month');
+    const inputYear = document.getElementById('cal-jump-year');
     const nativePicker = document.getElementById('cal-native-picker');
-    const pad = n => String(n).padStart(2, '0');
+    const btnYearJumper = document.getElementById('btn-cal-year-jumper');
+    const btnSolar = document.getElementById('btn-cal-solar');
+    const btnLunar = document.getElementById('btn-cal-lunar');
 
-    if (btnCalPicker && nativePicker) {
-      btnCalPicker.onclick = () => {
-        const d = currentSelectedDate;
-        nativePicker.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isCalLunarMode) {
+          isCalLunarMode = false;
+          renderCalendar();
+        }
+      };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isCalLunarMode) {
+          isCalLunarMode = true;
+          renderCalendar();
+        }
+      };
+    }
+
+    if (btnJump) {
+      btnJump.onclick = () => {
+        const d = Math.min(31, Math.max(1, parseInt(inputDay ? inputDay.value : 1) || 1));
+        const m = Math.min(12, Math.max(1, parseInt(inputMonth ? inputMonth.value : 1) || 1));
+        let rawYear = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (global.NetaSmartPicker && rawYear < 100) {
+          rawYear = global.NetaSmartPicker.parseSmartYear(rawYear);
+          if (inputYear) inputYear.value = rawYear;
+        }
+        const y = Math.min(2100, Math.max(1900, rawYear));
+
+        if (isCalLunarMode && global.NetaCalendarEngine && global.NetaCalendarEngine.lunar2Solar) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y, false, 7);
+          currentSelectedDate = new Date(solar.year, solar.month - 1, solar.day);
+        } else {
+          currentSelectedDate = new Date(y, m - 1, d);
+        }
+        renderCalendar();
+      };
+    }
+
+    // Native picker support (datetime-local Hình 3)
+    if (nativePicker) {
+      nativePicker.addEventListener('change', () => {
+        if (!nativePicker.value) return;
+        const [dPart] = nativePicker.value.split('T');
+        const [py, pm, pd] = dPart.split('-').map(Number);
+        isCalLunarMode = false;
+        currentSelectedDate = new Date(py, pm - 1, pd);
+        renderCalendar();
+      });
+
+      const pickerLabel = document.getElementById('cal-btn-native-cal');
+      const dateBox = document.getElementById('cal-ucc-date-box');
+
+      const triggerWheelPicker = (e) => {
+        if (e && e.target === nativePicker) return;
+        if (e) e.preventDefault();
+        const curD = currentSelectedDate;
+        nativePicker.value = `${curD.getFullYear()}-${pad(curD.getMonth() + 1)}-${pad(curD.getDate())}T12:00`;
         if (typeof nativePicker.showPicker === 'function') {
           nativePicker.showPicker();
         } else {
           nativePicker.click();
         }
       };
-      nativePicker.onchange = (e) => {
-        if (e.target.value) {
-          const [py, pm, pd] = e.target.value.split('-').map(Number);
-          isCalLunarMode = false;
-          currentSelectedDate = new Date(py, pm - 1, pd);
-          renderCalendar();
+
+      if (pickerLabel) {
+        pickerLabel.onclick = triggerWheelPicker;
+      }
+      if (dateBox) {
+        dateBox.addEventListener('click', (e) => {
+          // Bấm vào khoảng trống/dấu slash '/' thì mở bảng chọn ngày giờ như hình 3
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            triggerWheelPicker(e);
+          }
+        });
+      }
+    }
+
+    // Smart auto-advance and decade jumper
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        onSubmit: () => {
+          if (btnJump) btnJump.click();
         }
-      };
+      });
+
+      if (btnYearJumper && inputYear) {
+        btnYearJumper.onclick = () => {
+          const curY = parseInt(inputYear.value) || currentSelectedDate.getFullYear();
+          global.NetaSmartPicker.openYearJumperModal(curY, (selectedYear) => {
+            inputYear.value = selectedYear;
+            if (btnJump) btnJump.click();
+          });
+        };
+      }
     }
 
     // Prev / Next Month

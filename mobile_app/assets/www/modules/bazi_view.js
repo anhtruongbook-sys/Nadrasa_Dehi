@@ -75,29 +75,63 @@
 
     container.innerHTML = `
       <div class="bazi-view-container">
-        <!-- Unified Control Card (Native Wheel Picker & Gender) -->
+        <!-- Unified Control Card -->
         <div class="unified-ctrl-card">
-          <!-- Row 1: Birth Date display & Quick Native Picker -->
-          <div class="ucc-row" style="justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <div class="ucc-date-display-badge" id="btn-bazi-badge" title="Chạm để mở vòng quay chọn ngày giờ sinh">
-              <span>👶</span>
-              <span class="solar-highlight">${pad(input.day)}/${pad(input.month)}/${input.year} ${pad(input.hour)}:${pad(input.minute)}</span>
-              <span class="lunar-sub">(${lunarObj ? `ÂL: ${lunarObj.day}/${lunarObj.month}` : ''})</span>
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isLunarMode ? 'active' : ''}" id="bazi-btn-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isLunarMode ? 'active' : ''}" id="bazi-btn-lunar">🌙 Âm</button>
             </div>
-            <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
-              <button type="button" class="ucc-btn-now" id="btn-bazi-now" title="Về thời điểm hiện tại">🕒 Hiện Tại</button>
-              <button type="button" class="ucc-btn-picker" id="btn-bazi-picker" title="Chọn ngày giờ sinh">📅 Chọn Giờ Sinh</button>
-              <input type="datetime-local" id="bazi-hidden-datetime" style="position:fixed; top:-1000px; left:-1000px; opacity:0; pointer-events:none;" />
+            <div class="ucc-date-box" id="bazi-ucc-date-box" title="Nhập ngày tháng hoặc chạm vào dấu gạch/nút lịch để mở bảng chọn">
+              <input type="number" id="bazi-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày" title="Nhập Ngày (1-31)">
+              <span class="num-slash">/</span>
+              <input type="number" id="bazi-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng" title="Nhập Tháng (1-12)">
+              <span class="num-slash">/</span>
+              <input type="number" id="bazi-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm" title="Nhập Năm (gõ 2 số: 79 -> 1979)">
+              <button type="button" class="ucc-btn-year" id="bazi-btn-quick-year" title="Bảng chọn Thập niên & Năm siêu tốc">⚡Năm</button>
+              <label class="btn-picker-cal" id="bazi-btn-native-cal" title="Mở bảng chọn Ngày & Giờ (Hình 3)">
+                📅
+                <input type="datetime-local" id="bazi-date-picker" value="${dStr}T${pad(input.hour)}:${pad(input.minute)}" class="native-hidden-date">
+              </label>
             </div>
           </div>
 
-          <!-- Row 2: Gender & Lập Bát Tự -->
-          <div class="ucc-row ucc-row-actions" style="justify-content: space-between; align-items: center;">
+          <!-- Row 2: Can Chi + Numeric Time & Gender -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
+              <select id="bazi-select-canchi" class="select-canchi">
+                <option value="0" ${[23, 0].includes(input.hour) ? 'selected' : ''}>Tý (23-01h)</option>
+                <option value="2" ${[1, 2].includes(input.hour) ? 'selected' : ''}>Sửu (01-03h)</option>
+                <option value="4" ${[3, 4].includes(input.hour) ? 'selected' : ''}>Dần (03-05h)</option>
+                <option value="6" ${[5, 6].includes(input.hour) ? 'selected' : ''}>Mão (05-07h)</option>
+                <option value="8" ${[7, 8].includes(input.hour) ? 'selected' : ''}>Thìn (07-09h)</option>
+                <option value="10" ${[9, 10].includes(input.hour) ? 'selected' : ''}>Tỵ (09-11h)</option>
+                <option value="12" ${[11, 12].includes(input.hour) ? 'selected' : ''}>Ngọ (11-13h)</option>
+                <option value="14" ${[13, 14].includes(input.hour) ? 'selected' : ''}>Mùi (13-15h)</option>
+                <option value="16" ${[15, 16].includes(input.hour) ? 'selected' : ''}>Thân (15-17h)</option>
+                <option value="18" ${[17, 18].includes(input.hour) ? 'selected' : ''}>Dậu (17-19h)</option>
+                <option value="20" ${[19, 20].includes(input.hour) ? 'selected' : ''}>Tuất (19-21h)</option>
+                <option value="22" ${[21, 22].includes(input.hour) ? 'selected' : ''}>Hợi (21-23h)</option>
+              </select>
+              <input type="number" id="bazi-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(input.hour)}" placeholder="Giờ" title="Nhập Giờ (0-23)">
+              <span class="num-colon">:</span>
+              <input type="number" id="bazi-input-minute" class="num-box num-min" min="0" max="59" value="${pad(input.minute)}" placeholder="Phút" title="Nhập Phút (0-59)">
+            </div>
             <div class="ucc-pill-gender">
               <button type="button" class="ucc-gender-btn ${currentIsMale ? 'active male' : ''}" id="bazi-btn-male">♂ Nam</button>
               <button type="button" class="ucc-gender-btn ${!currentIsMale ? 'active female' : ''}" id="bazi-btn-female">♀ Nữ</button>
             </div>
-            <button class="ucc-btn-submit" id="btn-bazi-submit" title="Lập lại Bát Tự">🔮 Lập Bát Tự</button>
+          </div>
+
+          <!-- Row 3: Actions (Giờ thực on left, Lập Bát Tự on right) -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-bazi-now" title="Về thời điểm hiện tại">
+              ⚡ Giờ thực
+            </button>
+            <button class="ucc-btn-submit" id="btn-bazi-submit" title="Lập lại Bát Tự">
+              🔮 Lập Bát Tự
+            </button>
           </div>
         </div>
 
@@ -327,32 +361,132 @@
   function bindBaziEvents(chart) {
     const pad = n => String(n).padStart(2, '0');
 
-    const pickerBtn = document.getElementById('btn-bazi-picker');
-    const badgeBtn = document.getElementById('btn-bazi-badge');
-    const hiddenInput = document.getElementById('bazi-hidden-datetime');
+    // Sync elements
+    const inputDay = document.getElementById('bazi-input-day');
+    const inputMonth = document.getElementById('bazi-input-month');
+    const inputYear = document.getElementById('bazi-input-year');
+    const datePicker = document.getElementById('bazi-date-picker');
+    const selectCanChi = document.getElementById('bazi-select-canchi');
+    const inputHour = document.getElementById('bazi-input-hour');
+    const inputMin = document.getElementById('bazi-input-minute');
+    const btnSubmit = document.getElementById('btn-bazi-submit');
 
-    const openPicker = () => {
-      if (!hiddenInput) return;
-      const d = currentBaziDate;
-      hiddenInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-      if (typeof hiddenInput.showPicker === 'function') {
-        hiddenInput.showPicker();
-      } else {
-        hiddenInput.click();
-      }
-    };
-
-    if (pickerBtn) pickerBtn.onclick = openPicker;
-    if (badgeBtn) badgeBtn.onclick = openPicker;
-
-    if (hiddenInput) {
-      hiddenInput.onchange = (e) => {
-        if (e.target.value) {
+    // Chuyển đổi Dương Lịch <-> Âm Lịch
+    const btnSolar = document.getElementById('bazi-btn-solar');
+    const btnLunar = document.getElementById('bazi-btn-lunar');
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (isLunarMode) {
           isLunarMode = false;
-          currentBaziDate = new Date(e.target.value);
           renderBazi();
         }
       };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!isLunarMode) {
+          isLunarMode = true;
+          renderBazi();
+        }
+      };
+    }
+
+    // Nút Chọn Năm Siêu Tốc (Decade & Year Jumper)
+    const btnQuickYear = document.getElementById('bazi-btn-quick-year');
+    if (btnQuickYear && inputYear) {
+      btnQuickYear.onclick = (e) => {
+        e.preventDefault();
+        if (global.NetaSmartPicker) {
+          global.NetaSmartPicker.openYearJumperModal(inputYear.value, (newYear) => {
+            inputYear.value = newYear;
+            if (btnSubmit) btnSubmit.click();
+          });
+        }
+      };
+    }
+
+    // Tự động nhảy ô thông minh (Auto-advance) & Nhận diện năm 2 chữ số (79 -> 1979)
+    if (global.NetaSmartPicker) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYear,
+        hourInput: inputHour,
+        minuteInput: inputMin,
+        onSubmit: () => { if (btnSubmit) btnSubmit.click(); }
+      });
+      // Kết nối Date Picker gốc của hệ điều hành di động (datetime-local Hình 3)
+      if (datePicker) {
+        datePicker.addEventListener('change', () => {
+          if (!datePicker.value) return;
+          const [dPart, tPart] = datePicker.value.split('T');
+          const [y, m, d] = dPart.split('-').map(Number);
+          let h = 12, min = 0;
+          if (tPart) {
+            [h, min] = tPart.split(':').map(Number);
+          }
+          isLunarMode = false;
+          if (inputDay) inputDay.value = d;
+          if (inputMonth) inputMonth.value = m;
+          if (inputYear) inputYear.value = y;
+          if (inputHour) inputHour.value = pad(h);
+          if (inputMin) inputMin.value = pad(min);
+
+          if (selectCanChi && global.NetaSmartPicker) {
+            const zhiObj = global.NetaSmartPicker.getZhiByHour(h);
+            if (zhiObj) selectCanChi.value = String(zhiObj.val);
+          }
+
+          currentBaziDate = new Date(y, m - 1, d, h, min, 0);
+          renderBazi();
+        });
+
+        const pickerLabel = document.getElementById('bazi-btn-native-cal');
+        const dateBox = document.getElementById('bazi-ucc-date-box');
+
+        const triggerWheelPicker = (e) => {
+          if (e && e.target === datePicker) return;
+          if (e) e.preventDefault();
+          const curD = currentBaziDate;
+          datePicker.value = `${curD.getFullYear()}-${pad(curD.getMonth() + 1)}-${pad(curD.getDate())}T${pad(curD.getHours())}:${pad(curD.getMinutes())}`;
+          if (typeof datePicker.showPicker === 'function') {
+            datePicker.showPicker();
+          } else {
+            datePicker.click();
+          }
+        };
+
+        if (pickerLabel) {
+          pickerLabel.onclick = triggerWheelPicker;
+        }
+        if (dateBox) {
+          dateBox.addEventListener('click', (e) => {
+            // Bấm vào khoảng trống/dấu slash '/' thì mở bảng chọn ngày giờ như hình 3
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+              triggerWheelPicker(e);
+            }
+          });
+        }
+      }
+    }
+
+    // Sync Can Chi hour -> numeric hour box
+    if (selectCanChi) {
+      selectCanChi.addEventListener('change', () => {
+        if (inputHour) inputHour.value = pad(selectCanChi.value);
+      });
+    }
+
+    // Sync numeric hour box -> Can Chi select
+    if (inputHour) {
+      inputHour.addEventListener('input', () => {
+        const h = parseInt(inputHour.value);
+        if (isNaN(h)) return;
+        if (global.NetaSmartPicker) {
+          const zhiObj = global.NetaSmartPicker.getZhiByHour(h);
+          if (zhiObj && selectCanChi) selectCanChi.value = String(zhiObj.val);
+        }
+      });
     }
 
     // Gender toggle
@@ -386,9 +520,29 @@
     }
 
     // Submit button
-    const btnSubmit = document.getElementById('btn-bazi-submit');
     if (btnSubmit) {
       btnSubmit.onclick = () => {
+        let d = parseInt(inputDay ? inputDay.value : 1) || 1;
+        let m = parseInt(inputMonth ? inputMonth.value : 1) || 1;
+        let y = parseInt(inputYear ? inputYear.value : 2026) || 2026;
+        if (inputYear && inputYear.value.length === 2 && global.NetaSmartPicker) {
+          y = global.NetaSmartPicker.parseSmartYear(inputYear.value);
+          inputYear.value = y;
+        }
+        const h = Math.min(23, Math.max(0, parseInt(inputHour ? inputHour.value : 12) || 12));
+        const min = Math.min(59, Math.max(0, parseInt(inputMin ? inputMin.value : 0) || 0));
+
+        // Nếu người dùng nhập ngày Âm lịch, tự động quy đổi sang Dương lịch
+        if (isLunarMode && global.NetaCalendarEngine) {
+          const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y);
+          if (solar) {
+            d = solar.day;
+            m = solar.month;
+            y = solar.year;
+          }
+        }
+
+        currentBaziDate = new Date(y, m - 1, d, h, min, 0);
         renderBazi();
       };
     }
