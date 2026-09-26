@@ -1,7 +1,8 @@
 /* ==========================================================================
-   NETA LIGHT - DỊCH HỌC MODULE (LỤC HÀO & MAI HOA DỊCH SỐ)
-   Thiết kế Mobile-First tinh gọn, sang trọng, vừa vặn 100% trong khung màn hình
-   Triệt tiêu hoàn toàn tràn ngang, bảo toàn trọn vẹn ngôn ngữ thiết kế Neta Light
+   NETA LIGHT - DỊCH HỌC MODULE (LỤC HÀO NẠP GIÁP & MAI HOA DỊCH SỐ)
+   Thiết kế Cổ Điển Tinh Tế: Bát Quái Tiên Thiên, Ống Quẻ Thái Cực, 3 Quẻ Live Slots
+   Đầy đủ 100% dữ liệu gốc: Bảng Lục Hào Nạp Giáp & Bảng Vượng Suy Thần Sát
+   Tuyệt đối không tràn màn hình, tương thích hoàn hảo Light Theme & Dark Theme
    ========================================================================== */
 
 #view-dichhoc {
@@ -33,9 +34,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 680px; /* Chuẩn công thái học giống Tarot & Bát Tự */
+  max-width: 680px;
   margin: 0 auto;
-  padding: 10px 12px calc(env(safe-area-inset-bottom, 20px) + 85px);
+  padding: 8px 10px calc(env(safe-area-inset-bottom, 20px) + 85px);
   box-sizing: border-box;
   color: var(--text-primary, #f8fafc);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -53,9 +54,10 @@
   border: 1px solid rgba(245, 176, 65, 0.25);
   border-radius: 12px;
   padding: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  gap: 6px;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 
 body.theme-light .dh-nav-bar {
@@ -75,7 +77,7 @@ body.theme-light .dh-nav-bar {
   color: #94a3b8;
   font-size: 0.78rem;
   font-weight: 700;
-  padding: 7px 12px;
+  padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -113,7 +115,7 @@ body.theme-light .dh-tab-btn.active {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border-radius: 8px;
   font-size: 0.72rem;
   font-weight: 600;
@@ -143,15 +145,15 @@ body.theme-light .dh-icon-btn {
   color: #1e293b;
 }
 
-/* 2. Metadata Strip (Gọn Gàng & Thanh Lịch) */
+/* 2. Metadata Strip (Tứ Trụ, Tiết Khí, Tuần Không & Việc Cần Xem) */
 .dh-meta-strip {
   background: rgba(30, 41, 59, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  padding: 8px 12px;
-  margin-bottom: 10px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
   font-size: 0.72rem;
   line-height: 1.45;
 }
@@ -165,13 +167,13 @@ body.theme-light .dh-meta-strip {
 .dh-meta-row {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .dh-meta-row.sub-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   margin-top: 3px;
   padding-top: 4px;
   border-top: 1px dashed rgba(255, 255, 255, 0.08);
@@ -203,6 +205,8 @@ body.theme-light .m-val {
   margin-top: 4px;
   padding-top: 4px;
   border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 body.theme-light .dh-purpose-row {
@@ -211,15 +215,17 @@ body.theme-light .dh-purpose-row {
 
 .dh-purpose-input {
   flex: 1;
+  min-width: 0;
   background: transparent;
   border: none;
   border-bottom: 1px dashed rgba(245, 176, 65, 0.5);
   color: #f5b041;
   font-size: 0.74rem;
   font-weight: 600;
-  padding: 1px 6px;
+  padding: 2px 6px;
   outline: none;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 body.theme-light .dh-purpose-input {
@@ -233,170 +239,355 @@ body.theme-light .dh-purpose-input {
 }
 
 /* ==========================================================================
-   3. KHU VỰC GIEO XU TINH TẾ & GỌN GÀNG (TOSS CARD)
+   3. KHU VỰC GIEO QUẺ CỔ ĐIỂN TINH TẾ (HÌNH 2)
    ========================================================================== */
 .dh-toss-card {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(15, 23, 42, 0.8);
   border: 1px solid rgba(245, 176, 65, 0.25);
   border-radius: 14px;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
   text-align: center;
-  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 body.theme-light .dh-toss-card {
   background: #ffffff;
   border-color: rgba(180, 83, 9, 0.2);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-/* 3 Đồng Xu Nhỏ Gọn Tinh Xảo */
-.dh-coins-tray {
+/* A. Thẻ 3 Quẻ Live Slots (QUẺ CHÍNH | QUẺ HỖ | QUẺ BIẾN) */
+.dh-casting-slots-card {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 10px;
+  padding: 8px 6px;
+  margin-bottom: 8px;
+}
+
+body.theme-light .dh-casting-slots-card {
+  background: #fdfbf7;
+  border-color: #e2e8f0;
+}
+
+.dh-slots-header {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 4px;
+}
+
+.dh-slot-col {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 8px;
-  cursor: pointer;
-  user-select: none;
 }
 
-.dh-coins-group {
+.slot-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #f5b041;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+body.theme-light .slot-title {
+  color: #b45309;
+}
+
+.slot-bars-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 78px;
+  margin-bottom: 5px;
+}
+
+.slot-line {
+  width: 100%;
+  height: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-line.placeholder .p-dash {
+  width: 100%;
+  height: 2px;
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 1px;
+}
+
+.slot-line.filled.yang .bar-solid {
+  width: 100%;
+  height: 100%;
+  background: #2563eb;
+  border-radius: 1px;
+}
+
+.slot-line.filled.yang.dong .bar-solid {
+  background: #ef4444; /* Hào động màu đỏ cam */
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.7);
+}
+
+.slot-line.filled.yin {
+  justify-content: space-between;
+}
+
+.slot-line.filled.yin .bar-seg {
+  width: 44%;
+  height: 100%;
+  background: #2563eb;
+  border-radius: 1px;
+}
+
+.slot-line.filled.yin .bar-gap {
+  width: 12%;
+}
+
+.slot-line.filled.yin.dong .bar-seg {
+  background: #ef4444;
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.7);
+}
+
+.slot-name-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  white-space: nowrap;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.theme-light .slot-name-label {
+  color: #334155;
+}
+
+.dh-slot-divider {
+  width: 1px;
+  background: rgba(245, 176, 65, 0.2);
+  margin: 0 2px;
+}
+
+body.theme-light .dh-slot-divider {
+  background: #e2e8f0;
+}
+
+.dh-slots-note {
+  font-size: 0.62rem;
+  color: #94a3b8;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+body.theme-light .dh-slots-note {
+  border-top-color: #e2e8f0;
+  color: #64748b;
+}
+
+.dot-static { color: #3b82f6; font-size: 0.75rem; }
+.dot-dong { color: #ef4444; font-size: 0.75rem; }
+
+/* B. Lời Dẫn Nhắc Nhở (Quote Prompts như Hình 2) */
+.dh-prompt-quote {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #f8fafc;
+  margin: 6px 0 10px;
+  padding: 4px 10px;
+}
+
+body.theme-light .dh-prompt-quote {
+  color: #1e293b;
+}
+
+.quote-mark {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #f5b041;
+  vertical-align: -2px;
+}
+
+body.theme-light .quote-mark {
+  color: #d97706;
+}
+
+/* C. Sân Khấu Bát Quái & Ống Quẻ Thái Cực Tương Tác */
+.dh-stage-arena {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  height: 190px;
+  margin: 0 auto 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dh-bagua-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #d97706;
+  opacity: 0.85;
+}
+
+body.theme-light .dh-bagua-bg {
+  color: #b45309;
+  opacity: 0.75;
+}
+
+.dh-bagua-svg {
+  width: 185px;
+  height: 185px;
+}
+
+/* Ống Quẻ Tương Tác */
+.dh-tube-container {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dh-tube-container:hover {
+  transform: scale(1.03);
+}
+
+.dh-tube-container:active {
+  transform: scale(0.96);
+}
+
+.dh-tube-svg {
+  width: 95px;
+  height: 125px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+}
+
+body.theme-light .dh-tube-svg {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+}
+
+.dh-tube-badge {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border: 1px solid #f59e0b;
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  margin-top: -6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.3px;
+}
+
+/* Rung Lắc Ống Quẻ Khi Chạm */
+.tube-shaking {
+  animation: tubeShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes tubeShake {
+  0%, 100% { transform: rotate(0deg) translate(0, 0); }
+  15% { transform: rotate(-9deg) translate(-4px, -2px); }
+  30% { transform: rotate(9deg) translate(4px, 2px); }
+  45% { transform: rotate(-6deg) translate(-3px, 1px); }
+  60% { transform: rotate(6deg) translate(3px, -1px); }
+  75% { transform: rotate(-3deg) translate(-1px, 0); }
+  90% { transform: rotate(2deg) translate(1px, 0); }
+}
+
+/* D. 3 Đồng Tiền Xu Càn Long */
+.dh-coins-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  min-height: 60px;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
 .dh-coin-item {
-  width: 54px;
-  height: 54px;
+  width: 52px;
+  height: 52px;
   position: relative;
-  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
-}
-
-.dh-coin-item.is-flipping {
-  animation: coin-flip-micro 0.55s ease-in-out forwards;
-}
-
-@keyframes coin-flip-micro {
-  0% { transform: translateY(0) scale(1) rotateX(0deg); }
-  45% { transform: translateY(-24px) scale(1.18) rotateX(540deg) rotateY(360deg); }
-  75% { transform: translateY(-4px) scale(1.04) rotateX(900deg) rotateY(720deg); }
-  100% { transform: translateY(0) scale(1) rotateX(1080deg) rotateY(1080deg); }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 .dh-coin-svg {
   width: 100%;
   height: 100%;
-  display: block;
 }
 
 .dh-coin-badge {
   position: absolute;
-  bottom: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.6rem;
-  font-weight: 700;
+  bottom: -4px;
+  font-size: 0.65rem;
+  font-weight: 900;
   color: #fbbf24;
+  text-shadow: 0 1px 2px #000;
 }
 
-.dh-toss-sum-pill {
-  margin-top: 18px;
-  display: inline-block;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(245, 176, 65, 0.3);
-  padding: 3px 12px;
+body.theme-light .dh-coin-badge {
+  color: #b45309;
+  text-shadow: 0 1px 2px #fff;
+}
+
+.dh-coin-formula {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(245, 176, 65, 0.25);
   border-radius: 9999px;
+  padding: 4px 10px;
+  display: inline-block;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #fef08a;
+  color: #f5b041;
+  margin-bottom: 10px;
 }
 
-body.theme-light .dh-toss-sum-pill {
+body.theme-light .dh-coin-formula {
   background: #fef3c7;
-  color: #92400e;
-  border-color: #fcd34d;
+  color: #b45309;
+  border-color: #fde68a;
 }
 
-.dh-toss-sum-pill.flipping {
-  color: #38bdf8;
-  border-color: #38bdf8;
-}
-
-/* Thang Tiến Trình 6 Hào Gọn Gàng */
-.dh-steps-row {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin: 10px 0;
-}
-
-.dh-mini-step {
-  flex: 1;
-  max-width: 58px;
-  padding: 4px 2px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: all 0.15s ease;
-}
-
-body.theme-light .dh-mini-step {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-.dh-mini-step .step-num {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #94a3b8;
-}
-
-.dh-mini-step .step-val {
-  font-size: 0.62rem;
-  color: #64748b;
-  margin-top: 1px;
-}
-
-.dh-mini-step.done {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.35);
-}
-.dh-mini-step.done .step-num { color: #4ade80; }
-.dh-mini-step.done .step-val { color: #86efac; font-weight: 700; }
-
-.dh-mini-step.active {
-  background: rgba(245, 176, 65, 0.2);
-  border-color: #f59e0b;
-}
-.dh-mini-step.active .step-num { color: #fbbf24; }
-
-/* Cụm Nút Thao Tác */
+/* E. Cụm Nút Điều Khiển */
 .dh-btn-actions {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .dh-action-btn {
-  padding: 7px 15px;
+  padding: 7px 12px;
   border-radius: 8px;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
-  border: none;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 4px;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .dh-action-btn:active {
@@ -499,14 +690,18 @@ body.theme-light .dh-num-input {
   line-height: 1.4;
 }
 
+body.theme-light .dh-mh-note {
+  color: #475569;
+}
+
 /* ==========================================================================
-   4. BẢN QUẺ & PHÂN TÍCH LỤC HÀO NẠP GIÁP (MOBILE-FIRST)
+   4. BẢN QUẺ & PHÂN TÍCH LỤC HÀO NẠP GIÁP TOÀN DIỆN (THEO ĐÚNG 2 ẢNH MẪU)
    ========================================================================== */
 .dh-main-result-card {
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid rgba(245, 176, 65, 0.25);
   border-radius: 14px;
-  padding: 12px;
+  padding: 10px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
@@ -516,13 +711,13 @@ body.theme-light .dh-main-result-card {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-/* A. ĐỒ HÌNH CÁC QUẺ (VỪA VẶN TRÊN CÙNG 1 HÀNG) */
+/* ĐỒ HÌNH 3 QUẺ (QUẺ CHÍNH - QUẺ HỖ - QUẺ BIẾN) */
 .dh-hex-arena {
   display: flex;
   justify-content: space-around;
-  gap: 8px;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -541,7 +736,7 @@ body.theme-light .dh-hex-arena {
 .hex-badge {
   font-size: 0.62rem;
   font-weight: 700;
-  padding: 1px 7px;
+  padding: 1px 6px;
   border-radius: 9999px;
   margin-bottom: 4px;
   display: inline-block;
@@ -552,7 +747,7 @@ body.theme-light .dh-hex-arena {
 .hex-badge.bien { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
 
 .hex-name {
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 800;
   color: #f8fafc;
   margin-bottom: 6px;
@@ -566,14 +761,14 @@ body.theme-light .hex-name {
 .hex-bars {
   display: flex;
   flex-direction: column;
-  gap: 4.5px;
-  width: 90px;
+  gap: 4px;
+  width: 78px;
   margin-bottom: 6px;
 }
 
 .dh-bar-row {
   width: 100%;
-  height: 8px;
+  height: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -587,7 +782,7 @@ body.theme-light .hex-name {
 }
 
 .dh-bar.yang.dong {
-  background: #ef4444; /* Đỏ động */
+  background: #ef4444;
   box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
 }
 
@@ -610,7 +805,7 @@ body.theme-light .hex-name {
 }
 
 .dh-bar.yin.dong .seg {
-  background: #ef4444; /* Đỏ động */
+  background: #ef4444;
   box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
 }
 
@@ -620,8 +815,12 @@ body.theme-light .hex-name {
   color: #94a3b8;
 }
 
+body.theme-light .hex-cung {
+  color: #64748b;
+}
+
 .hex-samtru {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 800;
   color: #fbbf24;
   margin-top: 1px;
@@ -631,88 +830,167 @@ body.theme-light .hex-samtru {
   color: #b45309;
 }
 
-/* B. PHÂN TÍCH 6 HÀO THEO TẦNG TRỰC QUAN (MOBILE-FIRST NO-SCROLL) */
-.dh-yao-list-box {
+/* BẢNG BIỂU CHUẨN XÁC 100% THEO 2 ẢNH MẪU (RESPONSIVE CHỐNG TRÀN) */
+.dh-table-container {
+  margin-bottom: 12px;
   width: 100%;
 }
 
-.dh-box-header {
+.dh-table-title {
   font-size: 0.72rem;
   font-weight: 800;
   color: #f5b041;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 4px;
 }
 
-body.theme-light .dh-box-header {
+body.theme-light .dh-table-title {
   color: #b45309;
 }
 
-.dh-yao-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.dh-yao-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 8px;
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+.dh-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid rgba(245, 176, 65, 0.25);
   border-radius: 8px;
-  font-size: 0.75rem;
-  transition: all 0.15s ease;
-  gap: 6px;
+  background: rgba(15, 23, 42, 0.6);
 }
 
-body.theme-light .dh-yao-row {
+body.theme-light .dh-table-scroll {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.dh-spec-table {
+  width: 100%;
+  min-width: 540px; /* Đảm bảo đủ không gian cho các cột dữ liệu không bị xô lệch */
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.dh-spec-table th,
+.dh-spec-table td {
+  padding: 5px 6px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+body.theme-light .dh-spec-table {
+  color: #1e293b;
+}
+
+body.theme-light .dh-spec-table th,
+body.theme-light .dh-spec-table td {
+  border-bottom-color: #e2e8f0;
+  color: #1e293b;
+}
+
+body.theme-light .td-bold {
+  color: #0f172a;
+}
+
+body.theme-light .td-phuc {
+  color: #b45309;
+}
+
+body.theme-light .td-thu {
+  color: #334155;
+}
+
+body.theme-light .td-dim {
+  color: #94a3b8;
+}
+
+/* Header Group Row (Tượng Quẻ Gốc & Biến) */
+.th-group-row th {
+  background: rgba(245, 176, 65, 0.15);
+  color: #fbbf24;
+  font-weight: 800;
+  text-align: center;
+  font-size: 0.74rem;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.3);
+  padding: 6px;
+}
+
+body.theme-light .th-group-row th {
+  background: #fef3c7;
+  color: #b45309;
+  border-bottom-color: #fde68a;
+}
+
+.th-group-left {
+  border-right: 2px solid rgba(245, 176, 65, 0.35);
+}
+
+body.theme-light .th-group-left {
+  border-right-color: #cbd5e1;
+}
+
+/* Header Cols Row */
+.th-cols-row th {
+  background: rgba(30, 41, 59, 0.7);
+  color: #94a3b8;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+body.theme-light .th-cols-row th {
   background: #f8fafc;
-  border-color: #e2e8f0;
+  color: #475569;
 }
 
-/* Dòng Hào Động Được Nổi Bật Tinh Tế */
-.dh-yao-row.is-dong {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.35);
-  box-shadow: inset 0 0 8px rgba(239, 68, 68, 0.1);
+/* Dòng dữ liệu */
+.dh-row {
+  transition: background 0.1s ease;
 }
 
-body.theme-light .dh-yao-row.is-dong {
+.dh-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.theme-light .dh-row:hover {
+  background: #f8fafc;
+}
+
+/* Dòng Hào Động (Tô đỏ nổi bật đúng y hệt ảnh mẫu) */
+.dh-row.row-dong {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+body.theme-light .dh-row.row-dong {
   background: #fef2f2;
-  border-color: #fca5a5;
 }
 
-.text-dong {
+.text-red {
   color: #ef4444 !important;
   font-weight: 800 !important;
 }
 
-/* Cột 1: Vị trí & Vạch Hào */
-.yao-col-pos {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 68px;
-  flex-shrink: 0;
+.td-center {
+  text-align: center !important;
 }
 
-.pos-text {
-  font-weight: 800;
-  font-size: 0.72rem;
-  color: #94a3b8;
+.td-bold {
+  font-weight: 700;
 }
 
-.mini-bar-wrap {
-  width: 20px;
+.td-bar {
+  width: 28px;
+}
+
+.mini-bar {
+  width: 22px;
+  height: 4px;
+  display: inline-block;
 }
 
 .mini-bar.yang {
-  width: 100%;
-  height: 4px;
   background: #3b82f6;
   border-radius: 1px;
 }
@@ -722,9 +1000,7 @@ body.theme-light .dh-yao-row.is-dong {
 }
 
 .mini-bar.yin {
-  width: 100%;
-  height: 4px;
-  display: flex;
+  display: inline-flex;
   justify-content: space-between;
 }
 
@@ -742,7 +1018,7 @@ body.theme-light .dh-yao-row.is-dong {
 .pill-the, .pill-ung {
   font-size: 0.6rem;
   font-weight: 800;
-  padding: 0 4px;
+  padding: 1px 4px;
   border-radius: 3px;
 }
 
@@ -752,291 +1028,146 @@ body.theme-light .dh-yao-row.is-dong {
   border: 1px solid rgba(245, 176, 65, 0.5);
 }
 
+body.theme-light .pill-the {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #d97706;
+}
+
 .pill-ung {
   background: rgba(56, 189, 248, 0.25);
   color: #38bdf8;
   border: 1px solid rgba(56, 189, 248, 0.5);
 }
 
-/* Cột 2: Nội Dung Chính 2 Tầng Siêu Gọn & Không Bao Giờ Tràn */
-.yao-col-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+body.theme-light .pill-ung {
+  background: #e0f2fe;
+  color: #0284c7;
+  border-color: #38bdf8;
 }
 
-.yao-sub-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.yao-thu-tag {
+.td-phuc {
   font-size: 0.65rem;
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.yao-phuc-inline {
   color: #f59e0b;
   font-style: italic;
-  font-size: 0.62rem;
 }
 
-.yao-sub-main {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 0.76rem;
-  line-height: 1.3;
-}
-
-.yao-goc-main,
-.yao-bien-inline {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  white-space: nowrap;
-}
-
-.yao-canchi {
-  color: #e2e8f0;
-  font-weight: 700;
-}
-
-body.theme-light .yao-canchi {
-  color: #1e293b;
-}
-
-.yao-elm {
-  font-size: 0.68rem;
-  color: #64748b;
-}
-
-.yao-bien-inline {
-  color: #ef4444;
-}
-
-.arrow-dong {
+.text-tk {
   color: #ef4444;
   font-weight: 900;
-  font-size: 0.82rem;
-  margin: 0 2px;
 }
 
-/* Thần Sát & Vượng Suy */
-
-.sat-badges {
-  display: flex;
-  gap: 3px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.tag-tk {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  font-size: 0.58rem;
-  font-weight: 800;
-  padding: 0 3px;
-  border-radius: 3px;
-}
-
-.tag-vs {
-  font-size: 0.62rem;
+.td-thu {
+  color: #cbd5e1;
   font-weight: 600;
-  color: #94a3b8;
-  padding: 0 3px;
 }
 
-.tag-vs.v-vuong {
-  color: #4ade80;
-  font-weight: 800;
-}
-
-.tag-qt, .tag-ts {
-  font-size: 0.58rem;
-  font-weight: 700;
-  padding: 0 3px;
-  border-radius: 3px;
-}
-
-.tag-qt {
-  background: rgba(168, 85, 247, 0.2);
-  color: #d8b4fe;
-  border: 1px solid rgba(168, 85, 247, 0.4);
-}
-
-.tag-ts {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-}
-
-/* Thể Dụng Mai Hoa Card */
-.dh-the-dung-card {
-  margin-top: 10px;
-  padding: 10px;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(245, 176, 65, 0.2);
-  border-radius: 10px;
-}
-
-body.theme-light .dh-the-dung-card {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-.td-header {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: #f5b041;
-  margin-bottom: 6px;
-}
-
-.td-flex {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.td-cell {
-  flex: 1;
-  font-size: 0.74rem;
-}
-
-.td-lbl {
-  color: #94a3b8;
-  margin-right: 4px;
-}
-
-.td-verdict {
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.74rem;
-  font-weight: 700;
-  line-height: 1.4;
-  text-align: center;
-}
-
-.td-verdict.dai_cat, .td-verdict.cat {
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-  color: #4ade80;
-}
-
-.td-verdict.dai_hung, .td-verdict.tieu_hung {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  color: #f87171;
-}
-
-/* Lời Thoán Card */
-.dh-tho-card {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border-left: 2.5px solid #a855f7;
-  border-radius: 0 8px 8px 0;
-}
-
-body.theme-light .dh-tho-card {
-  background: #f8fafc;
-  border-left-color: #7e22ce;
-}
-
-.tho-lbl {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #c084fc;
-}
-
-body.theme-light .tho-lbl {
-  color: #7e22ce;
-}
-
-.tho-txt {
-  font-size: 0.74rem;
-  font-style: italic;
-  color: #e2e8f0;
-  margin-top: 1px;
-}
-
-body.theme-light .tho-txt {
+body.theme-light .td-thu {
   color: #334155;
 }
 
-/* Modal Date Picker */
-.dh-modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
+.td-dim {
+  color: #64748b;
 }
 
-.dh-modal-dialog {
-  background: #1e293b;
-  border: 1px solid rgba(245, 176, 65, 0.35);
-  border-radius: 14px;
-  padding: 16px;
-  width: 90%;
-  max-width: 360px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  color: #ffffff;
+/* Thần Sát Badges (L, M, Q, Đ, QT) */
+.badge-ts {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0 4px;
+  border-radius: 3px;
 }
 
-body.theme-light .dh-modal-dialog {
-  background: #ffffff;
-  color: #0f172a;
-  border-color: #cbd5e1;
-}
+.badge-ts.qt { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+.badge-ts.loc { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+.badge-ts.ma { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+.badge-ts.quy { background: rgba(245, 176, 65, 0.2); color: #fbbf24; border: 1px solid rgba(245, 176, 65, 0.4); }
+.badge-ts.dao { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
 
-.dh-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.text-green { color: #4ade80; font-weight: 700; }
+.text-cyan { color: #38bdf8; font-weight: 700; }
+
+body.theme-light .text-green { color: #16a34a; }
+body.theme-light .text-cyan { color: #0284c7; }
+
+/* D. Thẻ Thể - Dụng (Mai Hoa) */
+.dh-the-dung-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  border-radius: 10px;
+  padding: 8px 10px;
   margin-bottom: 10px;
+  font-size: 0.72rem;
 }
 
-.dh-modal-title {
-  font-size: 0.85rem;
+body.theme-light .dh-the-dung-card {
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+
+.td-header {
+  font-weight: 800;
+  color: #fb7185;
+  margin-bottom: 6px;
+}
+
+body.theme-light .td-header {
+  color: #e11d48;
+}
+
+.td-content {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.td-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-eval {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge-eval.cat { background: rgba(34, 197, 94, 0.25); color: #4ade80; }
+.badge-eval.hung { background: rgba(239, 68, 68, 0.25); color: #f87171; }
+.badge-eval.binh { background: rgba(148, 163, 184, 0.25); color: #cbd5e1; }
+
+/* E. Thẻ Thoán Quẻ Kinh Dịch */
+.dh-thoan-card {
+  background: rgba(245, 176, 65, 0.08);
+  border-left: 3px solid #f5b041;
+  padding: 8px 10px;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.74rem;
+}
+
+body.theme-light .dh-thoan-card {
+  background: #fefce8;
+  border-left-color: #ca8a04;
+}
+
+.thoan-title {
   font-weight: 800;
   color: #f5b041;
+  margin-bottom: 2px;
 }
 
-/* Mobile Tweaks */
-@media (max-width: 480px) {
-  .dichhoc-container {
-    padding: 8px 8px calc(env(safe-area-inset-bottom, 20px) + 85px);
-  }
-  .hex-bars {
-    width: 76px;
-  }
-  .dh-bar-row {
-    height: 7px;
-  }
-  .dh-yao-row {
-    padding: 5px 6px;
-    font-size: 0.72rem;
-  }
-  .yao-col-pos {
-    min-width: 58px;
-  }
-  .yao-col-bien {
-    min-width: 72px;
-  }
-  .yao-col-sat {
-    min-width: 62px;
-  }
+body.theme-light .thoan-title {
+  color: #a16207;
+}
+
+.thoan-text {
+  font-style: italic;
+  color: #cbd5e1;
+}
+
+body.theme-light .thoan-text {
+  color: #334155;
 }

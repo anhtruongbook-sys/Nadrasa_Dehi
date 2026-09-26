@@ -775,6 +775,23 @@
         };
       }
 
+      // Quẻ Hỗ của quẻ gốc (Hạ hỗ: hào 2,3,4; Thượng hỗ: hào 3,4,5)
+      const haHoKey = bitsToKey(gocBits[1], gocBits[2], gocBits[3]);
+      const thuongHoKey = bitsToKey(gocBits[2], gocBits[3], gocBits[4]);
+      const hoBits = [gocBits[1], gocBits[2], gocBits[3], gocBits[2], gocBits[3], gocBits[4]];
+      const hoMeta = HEXAGRAM_NAMES[`${thuongHoKey},${haHoKey}`] || { name: 'Chưa đặt tên', tuong: '', tho: '' };
+      const hoPalaceInfo = HEXAGRAM_TO_PALACE_MAP[hoBits.join(',')] || { palace: 'Can' };
+      const hoCungName = TRIGRAM_DATA[hoPalaceInfo.palace].name;
+      const hoSpecial = getHexagramSpecialType(hoBits);
+      const hoData = {
+        name: hoMeta.name,
+        tuong: hoMeta.tuong,
+        tho: hoMeta.tho,
+        cung: hoCungName,
+        cungSpecial: hoSpecial,
+        bits: hoBits
+      };
+
       return {
         que_goc: {
           name: chuMeta.name,
@@ -790,6 +807,7 @@
           bits: gocBits,
           haos: haosGocDetail
         },
+        que_ho: hoData,
         phuc_than: phucThanInfo,
         que_bien: bienData,
         has_dong: hasDong,
