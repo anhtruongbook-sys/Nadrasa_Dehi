@@ -63,10 +63,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.3
-          name: "Neta Light & Huyền Học v1.9.3 (Đại Tu Nâng Cấp Toàn Diện Thuật Toán Tử Vi Nam Phái Chuẩn Thái Thứ Lang, Đắc Hãm Toàn Tinh)"
+          tag_name: v1.9.4
+          name: "Neta Light & Huyền Học v1.9.4 (Khắc phục triệt để tràn viền thanh thông tin đương số Tử Vi)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.3
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.4
+            - **Khắc phục Triệt để Lỗi Tràn Viền / Cắt Ngang Chữ Thanh Thông Tin Đương Số Tử Vi**:
+              + Tự động co giãn chiều cao linh hoạt (`height: auto !important; min-height: unset !important; flex-shrink: 0 !important;`) cho `.tuvi-master-strip` trên mọi kích thước màn hình mobile.
+              + Triệt tiêu hiện tượng flex-shrink ép khung container xuống 22px gây cắt đôi dòng chữ thứ 2.
+              + Căn chỉnh khoảng đệm (padding) và khoảng cách dòng (line-height) hài hòa, cân đối tuyệt đối trên cả Giao diện Sáng (Light Mode) và Giao diện Tối (Dark Mode).
+            - **Bảo Toàn Toàn Vẹn Hệ Thống Lá Số Tử Vi Nam Phái & Cửu Cung Kỳ Môn Độn Giáp**.
             - **Đại Tu Nâng Cấp Toàn Diện Thuật Toán Tử Vi Nam Phái Chuẩn Thái Thứ Lang**:
               + An trọn vẹn 100% hệ thống 26 Phụ tinh và Tạp tinh thứ cấp: Tam Thai, Bát Tọa, Ân Quang, Thiên Quý, Thai Phụ, Phong Cáo, Thiên Quan, Thiên Phúc, Thiên Trù, Lưu Hà, Quốc Ấn, Đường Phù, Cô Thần, Quả Tú, Kiếp Sát, Hoa Cái, Phá Toái, Đẩu Quân, Thiên Tài, Thiên Thọ, Thiên Thương, Thiên Sứ, Thiên Giải, Địa Giải, Thiên Không, Văn Tinh.
               + Phân định đầy đủ cấp độ Miếu / Vượng / Đắc / Hãm cho cả Lục Sát Tinh và Phụ tinh trọng yếu: Kình Dương, Đà La, Không Kiếp, Hỏa Linh, Xương Khúc, Khốc Hư, Hình Diêu, Đại Tiểu Hao, Thiên Mã, Hóa Kỵ.
