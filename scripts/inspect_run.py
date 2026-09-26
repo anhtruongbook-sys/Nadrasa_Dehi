@@ -1,4 +1,6 @@
 import subprocess
+import urllib.request
+import json
 
 def get_token():
     try:
@@ -12,7 +14,7 @@ def get_token():
     return ""
 
 TOKEN = get_token()
-RUN_ID = "36256073141"
+RUN_ID = "36256632140"
 
 req = urllib.request.Request(
     f"https://api.github.com/repos/anhtruongbook-sys/Nadrasa_Dehi/actions/runs/{RUN_ID}/jobs",
@@ -34,7 +36,9 @@ try:
         data = json.loads(resp.read().decode("utf-8"))
         for job in data.get("jobs", []):
             job_id = job.get('id')
-            print(f"Job ID: {job_id} | Name: {job.get('name')} | Conclusion: {job.get('conclusion')}")
+            print(f"Job ID: {job_id} | Name: {job.get('name')} | Status: {job.get('status')} | Conclusion: {job.get('conclusion')}")
+            for step in job.get("steps", []):
+                print(f"  Step: {step.get('name')} - {step.get('status')} ({step.get('conclusion')})")
             # Try fetching job logs
             log_url = f"https://api.github.com/repos/anhtruongbook-sys/Nadrasa_Dehi/actions/jobs/{job_id}/logs"
             try:

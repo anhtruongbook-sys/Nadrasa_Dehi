@@ -570,29 +570,29 @@
             <div class="pt-field-group">
               <label class="pt-field-lbl" for="pt-select-van">🏛️ VẬN:</label>
               <select id="pt-select-van" class="pt-select">
-                <option value="9" ${ptState.van === 9 ? 'selected' : ''}>Vận 9 (2024-2043) ★</option>
-                <option value="8" ${ptState.van === 8 ? 'selected' : ''}>Vận 8 (2004-2023)</option>
-                <option value="7" ${ptState.van === 7 ? 'selected' : ''}>Vận 7 (1984-2003)</option>
-                <option value="1" ${ptState.van === 1 ? 'selected' : ''}>Vận 1 (1864-1883)</option>
-                <option value="2" ${ptState.van === 2 ? 'selected' : ''}>Vận 2 (1884-1903)</option>
-                <option value="3" ${ptState.van === 3 ? 'selected' : ''}>Vận 3 (1904-1923)</option>
-                <option value="4" ${ptState.van === 4 ? 'selected' : ''}>Vận 4 (1924-1943)</option>
-                <option value="5" ${ptState.van === 5 ? 'selected' : ''}>Vận 5 (1944-1963)</option>
-                <option value="6" ${ptState.van === 6 ? 'selected' : ''}>Vận 6 (1964-1983)</option>
+                <option value="9" ${ptState.van === 9 ? 'selected' : ''}>Vận 9 (2024) ★</option>
+                <option value="8" ${ptState.van === 8 ? 'selected' : ''}>Vận 8 (2004)</option>
+                <option value="7" ${ptState.van === 7 ? 'selected' : ''}>Vận 7 (1984)</option>
+                <option value="6" ${ptState.van === 6 ? 'selected' : ''}>Vận 6 (1964)</option>
+                <option value="5" ${ptState.van === 5 ? 'selected' : ''}>Vận 5 (1944)</option>
+                <option value="4" ${ptState.van === 4 ? 'selected' : ''}>Vận 4 (1924)</option>
+                <option value="3" ${ptState.van === 3 ? 'selected' : ''}>Vận 3 (1904)</option>
+                <option value="2" ${ptState.van === 2 ? 'selected' : ''}>Vận 2 (1884)</option>
+                <option value="1" ${ptState.van === 1 ? 'selected' : ''}>Vận 1 (1864)</option>
               </select>
             </div>
 
             <div class="pt-field-group">
-              <label class="pt-field-lbl" for="pt-select-huong">🧭 HƯỚNG NHÀ:</label>
+              <label class="pt-field-lbl" for="pt-select-huong">🧭 HƯỚNG:</label>
               <select id="pt-select-huong" class="pt-select">
-                <option value="6" ${ptState.huongPalace === 6 ? 'selected' : ''}>Càn 6 (Tây Bắc)</option>
-                <option value="1" ${ptState.huongPalace === 1 ? 'selected' : ''}>Khảm 1 (Bắc)</option>
-                <option value="8" ${ptState.huongPalace === 8 ? 'selected' : ''}>Cấn 8 (Đông Bắc)</option>
-                <option value="3" ${ptState.huongPalace === 3 ? 'selected' : ''}>Chấn 3 (Đông)</option>
-                <option value="4" ${ptState.huongPalace === 4 ? 'selected' : ''}>Tốn 4 (Đông Nam)</option>
-                <option value="9" ${ptState.huongPalace === 9 ? 'selected' : ''}>Ly 9 (Nam)</option>
-                <option value="2" ${ptState.huongPalace === 2 ? 'selected' : ''}>Khôn 2 (Tây Nam)</option>
-                <option value="7" ${ptState.huongPalace === 7 ? 'selected' : ''}>Đoài 7 (Tây)</option>
+                <option value="6" ${ptState.huongPalace === 6 ? 'selected' : ''}>Càn (Tây Bắc)</option>
+                <option value="1" ${ptState.huongPalace === 1 ? 'selected' : ''}>Khảm (Bắc)</option>
+                <option value="8" ${ptState.huongPalace === 8 ? 'selected' : ''}>Cấn (Đông Bắc)</option>
+                <option value="3" ${ptState.huongPalace === 3 ? 'selected' : ''}>Chấn (Đông)</option>
+                <option value="4" ${ptState.huongPalace === 4 ? 'selected' : ''}>Tốn (Đông Nam)</option>
+                <option value="9" ${ptState.huongPalace === 9 ? 'selected' : ''}>Ly (Nam)</option>
+                <option value="2" ${ptState.huongPalace === 2 ? 'selected' : ''}>Khôn (Tây Nam)</option>
+                <option value="7" ${ptState.huongPalace === 7 ? 'selected' : ''}>Đoài (Tây)</option>
               </select>
             </div>
           </div>
@@ -600,7 +600,7 @@
           <!-- Row 2: Vị Cửa 24 Sơn & Lập Bàn -->
           <div class="ucc-row pt-row-cua">
             <div class="pt-field-group" style="flex: 1.4;">
-              <label class="pt-field-lbl" for="pt-select-cua">🚪 VỊ CỬA (24 SƠN):</label>
+              <label class="pt-field-lbl" for="pt-select-cua">🚪 VỊ CỬA:</label>
               <select id="pt-select-cua" class="pt-select">
                 ${SƠN_LIST.map(son => `
                   <option value="${son}" ${ptState.sonCua === son ? 'selected' : ''}>Sơn ${son} (Phù: ${DOOR_24_SON[son]})</option>
@@ -614,22 +614,22 @@
         </div>
 
         <!-- Phong Thủy Info Strip -->
-        <div class="qmdj-term-strip">
-          <span>🏡 <strong>Kỳ Môn Cửu Cung Phong Thủy</strong></span>
+        <div class="qmdj-term-strip pt-term-strip">
+          <span>🏡 <strong>Phong Thủy Cửu Cung</strong></span>
           <span class="term-sep">•</span>
           <span>Vận: <strong>${chart.van}</strong></span>
           <span class="term-sep">•</span>
-          <span>Phù Thủ: <strong class="tk-exact-time">${chart.phuThu}</strong></span>
+          <span>Phù: <strong class="tk-exact-time">${chart.phuThu}</strong></span>
           <span class="term-sep">•</span>
-          <span>Trực Sử: <strong class="tk-exact-time">${chart.trucSuPalaceName}</strong></span>
+          <span>Sử: <strong class="tk-exact-time">${chart.trucSuPalaceName}</strong></span>
         </div>
 
         <!-- Parameters Summary Header -->
         <div class="qmdj-pillars-strip pt-summary-strip">
-          <div class="q-pillar"><span class="q-lbl">VẬN NHÀ</span><strong class="q-val">Vận ${chart.van}</strong></div>
-          <div class="q-pillar"><span class="q-lbl">HƯỚNG NHÀ</span><strong class="q-val">${PALACE_DIRECTIONS[chart.huongPalace]}</strong></div>
-          <div class="q-pillar"><span class="q-lbl">VỊ CỬA</span><strong class="q-val">Sơn ${chart.sonCua}</strong></div>
-          <div class="q-pillar highlight-hour"><span class="q-lbl">TRỰC PHÙ</span><strong class="q-val">${chart.rootStar}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">VẬN:</span><strong class="q-val">Vận ${chart.van}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">HƯỚNG:</span><strong class="q-val">${PALACE_DIRECTIONS[chart.huongPalace]}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">CỬA:</span><strong class="q-val">Sơn ${chart.sonCua}</strong></div>
+          <div class="q-pillar highlight-hour"><span class="q-lbl">TRỰC PHÙ:</span><strong class="q-val">${chart.rootStar}</strong></div>
         </div>
 
         <!-- 9-Palace Matrix -->
@@ -791,7 +791,10 @@
                   </div>
                 </div>
                 <div class="p-stems-right">
-                  ${hcs.map(stem => `<span class="p-hcs ${getCatClass(stem)}">${stem}</span>`).join('')}
+                  ${hcs.map(stem => {
+                    const isDouble = String(stem).length > 2 || String(stem).includes('/');
+                    return `<span class="p-hcs ${isDouble ? 'p-hcs-double' : ''} ${getCatClass(stem)}">${stem}</span>`;
+                  }).join('')}
                 </div>
               </div>
 
@@ -802,7 +805,10 @@
                   ${isHorse ? '<span class="p-horse" title="Mã Tinh">🐎</span>' : ''}
                 </div>
                 <div class="p-ecs">
-                  ${ecs.map(stem => `<span class="p-ecs-stem ${getCatClass(stem)}">${stem}</span>`).join(' ')}
+                  ${ecs.map(stem => {
+                    const isDouble = String(stem).length > 2 || String(stem).includes('/');
+                    return `<span class="p-ecs-stem ${isDouble ? 'p-ecs-stem-double' : ''} ${getCatClass(stem)}">${stem}</span>`;
+                  }).join(' ')}
                 </div>
               </div>
 
