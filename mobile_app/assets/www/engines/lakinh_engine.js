@@ -591,6 +591,137 @@
 </kml>`;
   }
 
+  // ===========================================================================
+  // 7. HUYỀN KHÔNG ĐẠI QUÁI: 64 QUẺ & 384 HÀO VI PHÂN (0.9375°/HÀO)
+  // ===========================================================================
+  function getHKDQInfo(degree) {
+    const rawData = global.HKDQ_CORE_DATA;
+    if (!rawData || !rawData.hexagrams) {
+      return null;
+    }
+
+    let deg = ((parseFloat(degree) % 360) + 360) % 360;
+    if (deg === 0) deg = 360.0;
+
+    let matchedQue = null;
+    for (const key in rawData.hexagrams) {
+      const q = rawData.hexagrams[key];
+      const start = q.la_kinh ? q.la_kinh.deg_start : 0;
+      const end = q.la_kinh ? q.la_kinh.deg_end : 0;
+      if ((deg >= start && deg < end) || (end === 360.0 && deg === 360.0)) {
+        matchedQue = q;
+        break;
+      }
+    }
+
+    if (!matchedQue) {
+      matchedQue = rawData.hexagrams['Thuần Khôn'] || Object.values(rawData.hexagrams)[0];
+    }
+
+    // Xác định Hào vi phân 0.9375° (1 quẻ = 6 hào, mỗi hào = 5.625° / 6 = 0.9375°)
+    const degStart = matchedQue.la_kinh ? matchedQue.la_kinh.deg_start : 0;
+    const offset = deg - degStart;
+    let hIdx = Math.floor(offset / 0.9375) + 1;
+    if (hIdx > 6) hIdx = 6;
+    if (hIdx < 1) hIdx = 1;
+
+    const selectedHao = matchedQue.haos ? matchedQue.haos[hIdx - 1] : null;
+
+    // Kiểm tra ranh giới Không Vong (<= 0.4° sát mép quẻ)
+    const distStart = Math.abs(deg - degStart);
+    const distEnd = Math.abs(deg - (matchedQue.la_kinh ? matchedQue.la_kinh.deg_end : 360));
+    const distToBoundary = Math.min(distStart, distEnd);
+    const isNearBoundary = distToBoundary <= 0.4;
+
+    let tkvInfo = null;
+    if (isNearBoundary && rawData.tieu_khong_vong) {
+      for (const item of rawData.tieu_khong_vong) {
+        const matches = (item.tuyen_do_so || '').match(/(\d+\.?\d*)/);
+        if (matches) {
+          const tDeg = parseFloat(matches[1]);
+          let angularDiff = Math.abs(deg - tDeg) % 360;
+          if (angularDiff > 180) angularDiff = 360 - angularDiff;
+          if (angularDiff <= 1.0) {
+            tkvInfo = item;
+            break;
+          }
+        }
+      }
+    }
+
+    // Đánh giá Chính Thần / Linh Thần trong Vận 9 (2024 - 2043)
+    const qKhi = matchedQue.quai_khi || matchedQue.quai_so || 0;
+    const qVan = matchedQue.quai_van || 0;
+    const isLinhThan = [1, 2, 3, 4].includes(qVan);
+    const isChinhThan = [6, 7, 8, 9].includes(qVan);
+    const isDuongVan9 = (qVan === 9);
+
+    let roleName = isDuongVan9 ? "Đương Vận 9" : (isLinhThan ? "Linh Thần" : "Chính Thần");
+    let roleAdvice = isDuongVan9
+      ? `Quẻ Đương Vận 9 (Khí ${qKhi} • Vận ${qVan}) - TRỰC VẬN ĐẠI PHÁT! Là Chính Thần đương thời tối cao, đắc vượng khí tột đỉnh trong đại vận 2024 - 2043.`
+      : (isLinhThan
+        ? `Quẻ mang Quái Vận ${qVan} (Khí ${qKhi}) là LINH THẦN của Vận 9. Phương vị này CẦN ĐỘNG KHÍ, mở Cửa, Cổng, kê Bàn làm việc hoặc đặt Hồ cá, Phong thủy luân nạp Thủy chiêu tài đại cát.`
+        : `Quẻ mang Quái Vận ${qVan} (Khí ${qKhi}) là CHÍNH THẦN của Vận 9. Phương vị này CẦN YÊN TĨNH, tựa lưng vững chắc (Tọa nhà, Bàn thờ, Giường ngủ, Két sắt), tuyệt đối kỵ nước động.`);
+
+    // Đánh giá Lục Thân của Hào (Khai Môn / Kích Tài)
+    let lucThanAdvice = '';
+    const lt = selectedHao ? selectedHao.luc_than : '';
+    if (lt === 'Thê Tài' || lt === 'Tử Tôn') {
+      lucThanAdvice = `Hào ${hIdx} mang ${lt} (${selectedHao.can_chi}): Cực kỳ cát lợi để Khai Môn, đặt Cửa chính/Thành Môn hoặc kích hoạt tài lộc kinh doanh.`;
+    } else if (lt === 'Quan Quỷ') {
+      lucThanAdvice = `Hào ${hIdx} mang Quan Quỷ (${selectedHao.can_chi}): Kỵ mở Cửa chính, dễ vướng kiện tụng, thị phi, tai ách; chỉ hợp đặt phòng thờ trang nghiêm.`;
+    } else if (lt === 'Huynh Đệ') {
+      lucThanAdvice = `Hào ${hIdx} mang Huynh Đệ (${selectedHao.can_chi}): Tránh làm cửa chính hoặc nạp tài, chủ về cạnh tranh, hao tán tiền của.`;
+    } else if (lt === 'Phụ Mẫu') {
+      lucThanAdvice = `Hào ${hIdx} mang Phụ Mẫu (${selectedHao.can_chi}): Chủ về che chở, học vấn, giấy tờ bằng cấp, vững chắc cho gia trạch.`;
+    }
+
+    return {
+      degree: Math.round(deg * 100) / 100,
+      que_name: matchedQue.ten_que,
+      ten_chuan_hoa: matchedQue.ten_chuan_hoa,
+      quai_khi: qKhi,
+      quai_van: qVan,
+      quai_so: qKhi, // alias tương thích ngược
+      ha_thuong_quai: matchedQue.ha_thuong_quai || '',
+      cung_bat_quai: matchedQue.cung_bat_quai,
+      ngu_hanh_cung: matchedQue.ngu_hanh_cung,
+      cung_phuong_vi: matchedQue.la_kinh ? matchedQue.la_kinh.cung_phuong_vi : '',
+      son_24: matchedQue.la_kinh ? matchedQue.la_kinh.son_24 : '',
+      deg_range_que: matchedQue.la_kinh ? matchedQue.la_kinh.deg_range : '',
+      danh_gia_van_9: matchedQue.la_kinh ? matchedQue.la_kinh.danh_gia_van_9 : '',
+      tai_ton_info: matchedQue.la_kinh ? matchedQue.la_kinh.tai_ton_info : '',
+      nam_phat_mac_dinh: matchedQue.nam_phat_mac_dinh,
+      nguoi_phat_mac_dinh: matchedQue.nguoi_phat_mac_dinh,
+      haos: matchedQue.haos || [],
+      hao_vi_phan: selectedHao ? {
+        hao_index: hIdx,
+        ten_hao: `Hào ${hIdx}`,
+        can_chi: selectedHao.can_chi,
+        luc_than: selectedHao.luc_than,
+        deg_range: selectedHao.deg_range,
+        nam_phat: selectedHao.nam_phat || matchedQue.nam_phat_mac_dinh,
+        nguoi_phat: selectedHao.nguoi_phat || matchedQue.nguoi_phat_mac_dinh,
+        advice: lucThanAdvice
+      } : null,
+      van_9_role: {
+        role: roleName,
+        is_linh_than: isLinhThan,
+        is_chinh_than: isChinhThan,
+        is_duong_van_9: isDuongVan9,
+        quai_khi: qKhi,
+        quai_van: qVan,
+        quai_so: qKhi,
+        advice: roleAdvice
+      },
+      canh_bao_khong_vong: {
+        is_near_boundary: isNearBoundary,
+        distance: Math.round(distToBoundary * 1000) / 1000,
+        details: tkvInfo
+      }
+    };
+  }
+
   // Export engine ra global window
   const NetaLaKinhEngine = {
     calculateMagneticDeclination,
@@ -604,6 +735,7 @@
     generateHuyenKhongMatrix,
     calculatePolygonCentroid,
     generateKML,
+    getHKDQInfo,
     SON_24_TABLE,
     THIEN_BAN_24_SON,
     SONG_SON_CUC_MAP,

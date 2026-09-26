@@ -93,10 +93,16 @@
       subtitle: 'Nadrasa Dehi • 41 Bài Học & Cõi Phủ',
       logo: 'assets/phap_hanh/phu_01.jpg',
       isCardDeck: false
+    },
+    dichhoc: {
+      name: 'BỐC QUẺ DỊCH LÝ',
+      subtitle: 'Lục Hào Nạp Giáp & Mai Hoa Dịch Số',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'tarot', 'lakinh', 'phaphanh'];
+  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'tarot', 'lakinh', 'phaphanh', 'dichhoc'];
 
   // DOM Elements
   const tabModeNeta = document.getElementById('tab-mode-neta');
@@ -243,6 +249,7 @@
     const viewTarot = document.getElementById('view-tarot');
     const viewLaKinh = document.getElementById('view-lakinh');
     const viewPhapHanh = document.getElementById('view-phaphanh');
+    const viewDichHoc = document.getElementById('view-dichhoc');
 
     const viewsMap = {
       neta: viewCards,
@@ -253,7 +260,8 @@
       calendar: viewCalendar,
       tarot: viewTarot,
       lakinh: viewLaKinh,
-      phaphanh: viewPhapHanh
+      phaphanh: viewPhapHanh,
+      dichhoc: viewDichHoc
     };
 
     // Hide all views first, then show active
@@ -306,6 +314,9 @@
       render(); setTimeout(render, 150); setTimeout(render, 350);
     } else if (mode === 'phaphanh') {
       const render = () => { if (window.PhapHanhModule) window.PhapHanhModule.renderLessons(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'dichhoc') {
+      const render = () => { if (window.NetaDichHocView) window.NetaDichHocView.render(); };
       render(); setTimeout(render, 150);
     }
 
@@ -1436,6 +1447,7 @@
       const filename = cleanSrc.split('/').pop().split('?')[0];
       const dicts = [
         window.CARDS_BASE64_DATA,
+        window.POKER_BASE64_DATA,
         window.TAROT_BASE64_DATA,
         window.LAKINH_BASE64_DATA,
         window.PHAP_HANH_BASE64_DATA
@@ -1536,7 +1548,6 @@
       return;
     }
 
-    triggerCameraFlash();
     playCameraShutterSound();
     showToast('📸 Đang chụp và lưu ảnh vào Thư viện ảnh...');
 
@@ -1580,6 +1591,11 @@
         bgColor = isLight ? '#fdfbf7' : '#120104';
         captureScale = 2;
         captureHeight = targetElement.scrollHeight || null;
+      } else if (currentDeckMode === 'dichhoc') {
+        targetElement = document.getElementById('view-dichhoc') || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#0a0d18';
+        captureScale = 2;
+        captureHeight = targetElement.scrollHeight || null;
       } else {
         targetElement = document.getElementById('card-arena-container') || appContainer;
       }
@@ -1621,6 +1637,54 @@
 
       // 3. Chuẩn bị hàm onclone chống Tainted Canvas 100%
       const sanitizeClone = (clonedDoc) => {
+        // Xóa hoàn toàn các lớp phủ flash, thông báo toast hoặc hiệu ứng phủ mờ tạm thời
+        clonedDoc.querySelectorAll('.camera-flash-overlay, #toast, .toast-notification, .tarot-floating-toast, .toast').forEach(el => el.remove());
+
+        // Đảm bảo không có CSS animation / transition nào đang dở dang làm lệch độ tương phản hoặc độ trong suốt
+        const allCloned = clonedDoc.querySelectorAll('*');
+        allCloned.forEach(el => {
+          el.style.animation = 'none';
+          el.style.transition = 'none';
+        });
+
+        // Xử lý 3D Card Flip thành 2D phẳng cho html2canvas (loại bỏ hoàn toàn lỗi thẻ trắng xóa)
+        clonedDoc.querySelectorAll('.card-item.flipped').forEach(item => {
+          const inner = item.querySelector('.card-inner');
+          const back = item.querySelector('.card-back');
+          const front = item.querySelector('.card-front');
+          if (inner) {
+            inner.style.transform = 'none';
+            inner.style.webkitTransform = 'none';
+          }
+          if (back) back.style.display = 'none';
+          if (front) {
+            front.style.transform = 'none';
+            front.style.webkitTransform = 'none';
+            front.style.position = 'static';
+            front.style.display = 'flex';
+            front.style.width = '100%';
+            front.style.height = '100%';
+          }
+        });
+        clonedDoc.querySelectorAll('.card-item:not(.flipped)').forEach(item => {
+          const inner = item.querySelector('.card-inner');
+          const back = item.querySelector('.card-back');
+          const front = item.querySelector('.card-front');
+          if (inner) {
+            inner.style.transform = 'none';
+            inner.style.webkitTransform = 'none';
+          }
+          if (front) front.style.display = 'none';
+          if (back) {
+            back.style.transform = 'none';
+            back.style.webkitTransform = 'none';
+            back.style.position = 'static';
+            back.style.display = 'flex';
+            back.style.width = '100%';
+            back.style.height = '100%';
+          }
+        });
+
         const clonedImgs = clonedDoc.querySelectorAll('img');
         clonedImgs.forEach((img) => {
           img.removeAttribute('loading');
@@ -1647,6 +1711,11 @@
             const phB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc);
             if (phB64 && phB64.startsWith('data:')) {
               img.src = phB64;
+            }
+          } else if (fullSrc.includes('Porker') || fullSrc.includes('poker') || (attrSrc && attrSrc.includes('Porker'))) {
+            const pkB64 = getCardBase64(fullSrc) || getCardBase64(attrSrc);
+            if (pkB64 && pkB64.startsWith('data:')) {
+              img.src = pkB64;
             }
           } else if (currentDeckMode === 'tarot') {
             // Tìm trong từ điển Tarot
@@ -1740,9 +1809,31 @@
           if (vLaKinh) vLaKinh.appendChild(footerBadge);
         }
 
+        // Xử lý riêng cho Dịch Học: mở rộng chiều cao, ẩn nút thao tác để quẻ và luận giải trang nhã
+        if (currentDeckMode === 'dichhoc') {
+          const vDichHoc = clonedDoc.getElementById('view-dichhoc');
+          if (vDichHoc) {
+            vDichHoc.style.height = 'auto';
+            vDichHoc.style.maxHeight = 'none';
+            vDichHoc.style.overflow = 'visible';
+            vDichHoc.style.padding = '16px';
+            vDichHoc.style.background = bgColor;
+          }
+          const hideDhControls = [
+            '.dh-action-right',
+            '.dh-toss-actions',
+            '.dh-cast-bar',
+            '.dh-tab-group'
+          ];
+          hideDhControls.forEach(sel => {
+            const els = clonedDoc.querySelectorAll(sel);
+            els.forEach(el => el.style.display = 'none');
+          });
+        }
+
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #app-container'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #view-dichhoc, .dichhoc-container, #app-container'
         );
         scrollViews.forEach(v => {
           v.style.height = 'auto';
@@ -1753,7 +1844,7 @@
         });
 
         // Ẩn thanh công cụ nhập liệu để ảnh chụp là một lá số/bảng số thuần túy, trang nhã, không rác giao diện
-        const ctrlBars = clonedDoc.querySelectorAll('.tuvi-ctrl-bar, .bazi-ctrl-bar, .qmdj-ctrl-bar');
+        const ctrlBars = clonedDoc.querySelectorAll('.tuvi-ctrl-bar, .bazi-ctrl-bar, .qmdj-ctrl-bar, .unified-ctrl-card');
         ctrlBars.forEach(b => {
           b.style.display = 'none';
         });
@@ -1784,6 +1875,16 @@
         imageTimeout: 8000,
         scrollX: 0,
         scrollY: 0,
+        ignoreElements: (el) => {
+          if (!el) return false;
+          if (el.id === 'toast') return true;
+          if (el.classList && (
+            el.classList.contains('camera-flash-overlay') ||
+            el.classList.contains('toast-notification') ||
+            el.classList.contains('tarot-floating-toast')
+          )) return true;
+          return false;
+        },
         onclone: sanitizeClone
       };
       if (captureHeight) {
@@ -1792,6 +1893,9 @@
       }
 
       let canvas = await html2canvas(targetElement, html2canvasOptions);
+
+      // Kích hoạt hiệu ứng chớp sáng máy ảnh (sau khi canvas đã chụp xong toàn vẹn, chống phủ mờ 100%)
+      triggerCameraFlash();
 
       // 5. Xuất Data URL an toàn với cơ chế Tainted Canvas Auto-Recovery (Pass 2 Fallback)
       let dataUrl = null;
@@ -1834,6 +1938,7 @@
       else if (currentDeckMode === 'tarot') modeName = 'Tarot_RiderWaite';
       else if (currentDeckMode === 'lakinh') modeName = 'LaKinh_VeTinh';
       else if (currentDeckMode === 'phaphanh') modeName = 'PhapHanh_NadrasaDehi';
+      else if (currentDeckMode === 'dichhoc') modeName = 'BocQue_DichLy';
 
       const filename = `${modeName}_${dateStr}.png`;
 
@@ -1889,7 +1994,7 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '7.8';
+  const CURRENT_APP_VERSION = '7.9';
   function registerServiceWorker() {
     const isFlutterApp = (typeof window !== 'undefined' && (
       window.NativeBridge !== undefined ||
@@ -1926,7 +2031,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=7.8')
+        navigator.serviceWorker.register('sw.js?v=7.9')
           .then((reg) => {
             reg.update();
           })
