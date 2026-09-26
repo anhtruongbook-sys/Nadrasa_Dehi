@@ -595,7 +595,6 @@
               ${renderBarsSlim(goc.bits, goc.haos ? goc.haos.map(h => h.isDong) : [])}
             </div>
             <div class="hex-cung">Họ ${goc.cung}${goc.cungSpecial ? ` (${goc.cungSpecial})` : ''}</div>
-            <div class="hex-samtru">${goc.tuong ? goc.tuong.toUpperCase() : ''}</div>
           </div>
 
           <!-- 2. Quẻ Hỗ -->
@@ -606,7 +605,6 @@
               ${ho ? renderBarsSlim(ho.bits, []) : ''}
             </div>
             <div class="hex-cung">${ho ? `Họ ${ho.cung}${ho.cungSpecial ? ` (${ho.cungSpecial})` : ''}` : '-'}</div>
-            <div class="hex-samtru">${(ho && ho.tuong) ? ho.tuong.toUpperCase() : ''}</div>
           </div>
 
           <!-- 3. Quẻ Biến -->
@@ -617,7 +615,6 @@
               ${bien ? renderBarsSlim(bien.bits, []) : '<div style="font-size:0.7rem; color:#64748b; padding:18px 0;">Không động</div>'}
             </div>
             <div class="hex-cung">${bien ? `Họ ${bien.cung}${bien.cungSpecial ? ` (${bien.cungSpecial})` : ''}` : 'Bất biến'}</div>
-            <div class="hex-samtru">${(bien && bien.tuong) ? bien.tuong.toUpperCase() : ''}</div>
           </div>
         </div>
 
@@ -630,8 +627,8 @@
             <table class="dh-spec-table">
               <thead>
                 <tr class="th-group-row">
-                  <th colspan="6" class="th-group-left">${goc.tuong ? goc.tuong.toUpperCase() : goc.name.toUpperCase()}</th>
-                  <th colspan="5" class="th-group-right">${bien ? (bien.tuong ? bien.tuong.toUpperCase() : bien.name.toUpperCase()) : 'BẤT BIẾN'}</th>
+                  <th colspan="6" class="th-group-left">QUẺ ${goc.name.toUpperCase()}</th>
+                  <th colspan="5" class="th-group-right">${bien ? `QUẺ ${bien.name.toUpperCase()}` : 'BẤT BIẾN (THUẦN TĨNH)'}</th>
                 </tr>
                 <tr class="th-cols-row">
                   <!-- Quẻ Gốc (6 cột) -->
@@ -701,6 +698,10 @@
           <div class="dh-table-scroll">
             <table class="dh-spec-table">
               <thead>
+                <tr class="th-group-row">
+                  <th colspan="7" class="th-group-left">QUẺ ${goc.name.toUpperCase()}</th>
+                  <th colspan="6" class="th-group-right">${bien ? `QUẺ ${bien.name.toUpperCase()}` : 'BẤT BIẾN (THUẦN TĨNH)'}</th>
+                </tr>
                 <tr class="th-cols-row">
                   <!-- Quẻ Gốc (7 cột) -->
                   <th>Hào</th>
@@ -784,10 +785,10 @@
           </div>
         ` : ''}
 
-        <!-- E. LỜI KINH DỊCH CỐT TỦY -->
+        <!-- E. THOÁN TỪ KINH DỊCH CHUẨN XÁC -->
         <div class="dh-thoan-card">
-          <div class="thoan-title">Lời Kinh Dịch Cốt Tủy:</div>
-          <div class="thoan-text">"${goc.tho || 'Cương nhu ứng hội, đạo trời tuần hoàn, giữ lòng trung chính ắt được hanh thông.'}"</div>
+          <div class="thoan-title">Kinh Dịch Thoán Từ & Ý Nghĩa:</div>
+          <div class="thoan-text"><strong>${goc.name}:</strong> "${goc.tho || 'Cương nhu ứng hội, đạo trời tuần hoàn, giữ lòng trung chính ắt được hanh thông.'}"</div>
         </div>
       </div>
     `;
