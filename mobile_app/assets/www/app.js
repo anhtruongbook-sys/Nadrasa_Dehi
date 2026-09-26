@@ -1585,7 +1585,7 @@
       } else if (currentDeckMode === 'lakinh') {
         targetElement = document.getElementById('view-lakinh') || appContainer;
         bgColor = '#06070a';
-        captureScale = 2;
+        captureScale = 4; // Độ phân giải Siêu nét Ultra-HD gấp 4 lần tổng số điểm ảnh (pixels) so với chuẩn cũ
       } else if (currentDeckMode === 'phaphanh') {
         targetElement = document.getElementById('view-phaphanh') || appContainer;
         bgColor = isLight ? '#fdfbf7' : '#120104';
