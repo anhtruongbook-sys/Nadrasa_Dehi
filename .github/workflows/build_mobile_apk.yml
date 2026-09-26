@@ -63,15 +63,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.8.3
-          name: "Neta Light & Huyền Học v1.8.3 (Cập Nhật 3 Bài Học Mới & Đại Tu Modal Thêm Bài Học Mobile-First)"
+          tag_name: v1.9.0
+          name: "Neta Light & Huyền Học v1.9.0 (Hiệu Chuẩn La Kinh 384 Hào Tiên Thiên, Chụp Ảnh Ultra-HD 4x & Khắc Phục Lỗi Xoay Bài Tarot)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.8.3
-            - **Cập Nhật 3 Bài Học Mới Vào Pháp Hành Nadrasa Dehi (Nâng tổng số lên 44 bài học)**:
-              + `24 - [Thông Pháp] Bảng Đo Thông Pháp NETA`: Thước đo định lượng cấp độ thông pháp và chỉ số kết nối tâm thức.
-              + `25 - [Pháp Phục] Áo Kim Giáp Khi Hành Pháp`: Quy cách hộ thân và bảo vệ trường năng lượng khi hành pháp.
-              + `26 - [Pháp Khí] Ấn Ký - Hướng Dẫn Sử Dụng`: Hướng dẫn chi tiết cách thức kích hoạt và ứng dụng ấn ký hộ trì.
-              + Bổ sung chuyên đề mới **Thông Pháp** (`thong_phap`) vào bộ lọc nhanh.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.0
+            - **Khắc Phục Triệt Để Lỗi Ảnh Chụp Màn Hình Tarot Bị Xoay Nghiêng Chéo & Lật Chữ**:
+              + Thuật toán lộn ảnh 180° trên Canvas 2D chuyên biệt ở mức điểm ảnh cho bài đảo ngược, triệt tiêu 100% lỗi xoay xiên 110° của html2canvas.
+              + Bảo toàn nguyên vẹn cấu trúc xoay không gian 3D của các thẻ bài trên bàn trải bài; nhãn đỏ hiển thị chữ **NGƯỢC** thẳng đứng, xuôi mắt, rõ ràng.
+            - **Nâng Cấp Độ Phân Giải Chụp Ảnh La Kinh Vệ Tinh Lên Siêu Nét Ultra-HD Gấp 4 Lần (5.3 MP)**:
+              + Tăng hệ số scale lên 4x, giúp toàn bộ 36 tầng La Kinh và sơ đồ mái nhà vệ tinh rõ nét từng chi tiết nhỏ khi in ấn hoặc phóng to.
+            - **Hiển Thị Trực Quan Lục Thân & Hào Động Trên La Kinh**:
+              + Tích hợp thẻ Hero và dải phân tầng trực quan hiển thị Lục Thân (Phụ mẫu, Tử tôn, Huynh đệ, Thê tài, Quan quỷ) tương ứng với từng hào được kích hoạt.
+            - **Hiệu Chuẩn Chiều Đi 384 Hào Phân Kim Chuẩn Khớp 100% La Kinh Tiên Thiên**:
+              + Nửa vòng Đông (0° - 180°): Dương hào đi Thuận (Hào 1 đến Hào 6 theo chiều kim đồng hồ).
+              + Nửa vòng Tây (180° - 360°): Âm hào đi Nghịch (Hào 1 đến Hào 6 ngược chiều kim đồng hồ).
+            - **Tích Hợp Module Mới: Dịch Học & Bốc Quẻ Kinh Dịch**:
+              + Động cơ gieo quẻ 6 hào, tra cứu quẻ gốc và quẻ biến, phân tích thoán từ, hào từ và tượng quẻ.
+            - **Kế Thừa Đầy Đủ Các Phân Hệ & Tính Năng v1.8.3**:
             - **Đại Tu Chức Năng "+ Thêm Bài Học Mới" Chuẩn Mobile-First Trên Điện Thoại**:
               + **Hai Nút Thao Tác Chuyên Biệt Nổi Bật**: `📸 Chụp Ảnh Trực Tiếp` và `🖼️ Chọn Từ Thư Viện Ảnh` to rõ, một chạm mở ngay Camera hoặc Kho ảnh thiết bị.
               + **Cơ Chế Kép (Native Android Bridge & HTML5 Fallback)**: Tích hợp sâu vào Android Intents (`MediaStore.ACTION_IMAGE_CAPTURE` & `Intent.ACTION_GET_CONTENT`), đồng thời hỗ trợ mượt mà trên trình duyệt web.
