@@ -539,7 +539,11 @@
 
           if (qQue) qQue.textContent = hkdq.que_name || '';
           if (qKhivan) qKhivan.textContent = `Khí ${hkdq.quai_khi || hkdq.quai_so} • Vận ${hkdq.quai_van}`;
-          if (qHao && hkdq.hao_vi_phan) qHao.textContent = hkdq.hao_vi_phan.ten_hao || `Hào ${hkdq.hao_vi_phan.hao_index}`;
+          if (qHao && hkdq.hao_vi_phan) {
+            const h = hkdq.hao_vi_phan;
+            const ltColor = (h.luc_than === 'Thê Tài' || h.luc_than === 'Tử Tôn') ? '#4ade80' : (h.luc_than === 'Quan Quỷ' ? '#f87171' : (h.luc_than === 'Phụ Mẫu' ? '#c084fc' : '#fb923c'));
+            qHao.innerHTML = `${h.ten_hao} <span style="color:${ltColor}; font-weight:700;">(${h.luc_than || ''})</span>`;
+          }
           if (qTag && hkdq.van_9_role) {
             if (hkdq.canh_bao_khong_vong && hkdq.canh_bao_khong_vong.is_near_boundary) {
               qTag.className = 'hkdq-qp-tag warn';
@@ -1082,6 +1086,21 @@
               <span>•</span>
               <span>Dải độ: ${hkdq.deg_range_que}</span>
             </div>
+            ${hVp ? `
+              <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.8rem; color: #f8fafc;">
+                  ⚡ <strong>${hVp.ten_hao}:</strong> <span style="color: #67e8f9; font-weight: 600;">${hVp.can_chi || ''}</span>
+                </span>
+                <span class="hkdq-hao-badge ${
+                  (hVp.luc_than === 'Tử Tôn') ? 'luc-than-ton' :
+                  (hVp.luc_than === 'Thê Tài') ? 'luc-than-tai' :
+                  (hVp.luc_than === 'Quan Quỷ') ? 'luc-than-quy' :
+                  (hVp.luc_than === 'Huynh Đệ') ? 'luc-than-huynh' : 'luc-than-phu'
+                }" style="font-size: 0.72rem; padding: 2px 10px; font-weight: 700;">
+                  ${hVp.luc_than || 'Lục Thân'}
+                </span>
+              </div>
+            ` : ''}
           </div>
 
           <!-- Trạng Thái Vận 9 & Tuyến Không Vong -->
