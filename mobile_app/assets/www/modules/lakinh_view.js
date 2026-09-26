@@ -1243,30 +1243,43 @@
 
     let heading = null;
 
-    // A. iOS Safari: webkitCompassHeading (0-360 chuẩn, đã được CoreMotion bù nghiêng phần cứng)
+    // A. iOS Safari: webkitCompassHeading (0-360 chuẩn, đã được CoreMotion hiệu chuẩn trực tiếp theo la bàn iPhone)
     if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) {
       heading = e.webkitCompassHeading;
+      // Lưu ý: webkitCompassHeading trên iOS đã khớp 100% với ứng dụng La Bàn của iPhone (Apple Compass),
+      // không áp dụng bù từ thiên để tránh sai lệch số với la bàn hệ thống của máy.
     } 
-    // B. Android / Chromium: alpha, beta, gamma
+    // B. Android / Chromium: alpha, beta, gamma theo chuẩn W3C Device Orientation Specification
     else if (typeof e.alpha === 'number' && !isNaN(e.alpha)) {
       const alpha = e.alpha;
-      const beta = e.beta;
-      const gamma = e.gamma;
+      const beta = typeof e.beta === 'number' && !isNaN(e.beta) ? e.beta : 0;
+      const gamma = typeof e.gamma === 'number' && !isNaN(e.gamma) ? e.gamma : 0;
 
-      // Áp dụng thuật toán bù góc nghiêng 3D Euler (3D Tilt Compensation)
-      if (typeof beta === 'number' && typeof gamma === 'number') {
-        const degToRad = Math.PI / 180;
-        const b = beta * degToRad;
+      const degToRad = Math.PI / 180;
+      const cB = Math.cos(beta * degToRad);
 
-        // Khi điện thoại cầm nghiêng bình thường (beta < 75 độ):
-        let h = (360 - alpha) % 360;
-        // Bù góc xoay cổ tay roll (gamma) để triệt tiêu dao động khi nghiêng lắc tay
-        if (Math.abs(gamma) > 2) {
-          h = (h - gamma * Math.sin(b) + 360) % 360;
-        }
-        heading = h;
-      } else {
+      // Khi điện thoại ở tư thế cầm tay khảo sát thực địa (màn hình ngửa lên trời, |beta| < 75 độ):
+      // Vector đỉnh 12h (trục Y) chiếu xuống mặt phẳng ngang Trái Đất có phương vị chính xác = (360 - alpha) % 360
+      if (cB > 0.25) {
         heading = (360 - alpha) % 360;
+      } else if (cB < -0.25) {
+        // Điện thoại úp ngược xuống mặt đất
+        heading = (180 - alpha + 360) % 360;
+      } else {
+        // Điện thoại dựng gần thẳng đứng 90 độ (pitch ~ 90 độ)
+        const aRad = alpha * degToRad;
+        const bRad = beta * degToRad;
+        const gRad = gamma * degToRad;
+        const cA = Math.cos(aRad);
+        const sA = Math.sin(aRad);
+        const sB = Math.sin(bRad);
+        const cG = Math.cos(gRad);
+        const sG = Math.sin(gRad);
+        const rA = -cA * sG - sA * sB * cG;
+        const rB = -sA * sG + cA * sB * cG;
+        let h = Math.atan2(rA, rB) * (180 / Math.PI);
+        if (h < 0) h += 360;
+        heading = h;
       }
 
       // Bù hướng xoay màn hình (Screen orientation angle)
@@ -1275,14 +1288,12 @@
         : (typeof window.orientation === 'number' ? window.orientation : 0);
 
       heading = (heading + screenAngle + 360) % 360;
-    }
 
-    if (heading == null || isNaN(heading)) return;
-
-    // Tùy chọn bù từ thiên WMM
-    const chkAutoDec = document.getElementById('lakinh-chk-autodec');
-    if (chkAutoDec && chkAutoDec.checked && !isAbsolute) {
-      heading = (heading + state.declination + 360) % 360;
+      // Tùy chọn bù từ thiên WMM: chỉ bù khi nguồn cảm biến là Bắc Từ (relative) chứ không phải True North
+      const chkAutoDec = document.getElementById('lakinh-chk-autodec');
+      if (chkAutoDec && chkAutoDec.checked && !isAbsolute) {
+        heading = (heading + state.declination + 360) % 360;
+      }
     }
 
     // Tính độ lệch góc ngắn nhất [-180, 180]
