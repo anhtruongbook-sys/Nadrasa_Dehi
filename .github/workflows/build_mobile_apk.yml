@@ -63,21 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.5
-          name: "Neta Light & Huyền Học v1.9.5 (Nâng Cấp La Bàn Phần Cứng 3D Hardware Compass, Khắc Phục Triệt Để Độ Số La Kinh)"
+          tag_name: v1.9.6
+          name: "Neta Light & Huyền Học v1.9.6 (Nâng Cấp Toàn Diện Kỳ Môn Độn Giáp Phong Thủy Nhà 16 Hướng & Ma Trận Huyền Không Phi Tinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.5
-            - **Đại Tu Thuật Toán Cảm Biến La Kinh & Tích Hợp La Bàn Phần Cứng Cấp Cao (Native Hardware Compass)**:
-              + Tích hợp trực tiếp cảm biến phần cứng Android qua Android Sensor Framework (`Sensor.TYPE_ROTATION_VECTOR` và `Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR`) với bộ lọc Kalman phần cứng kết hợp từ kế, con quay hồi chuyển và gia tốc kế.
-              + Bù góc nghiêng 3D toàn diện (Full 3D Tilt Compensation): Độ số La Kinh giữ nguyên vẹn độ chuẩn xác tuyệt đối khi người dùng cầm nghiêng xem màn hình hoặc dựng đứng ngắm qua camera.
-              + Khắc phục triệt để lỗi "mỗi lúc một số" do Chromium WebView không đọc được la bàn tuyệt đối (chỉ đọc tương đối từ lúc mở trang).
-              + Bộ lọc làm mượt chống rung tay (EMA Low-Pass Filter) với vùng chết (deadband 0.1°) tạo cảm giác xoay đầm, êm ái, khớp 100% với phương vị thực địa.
-            - **Khắc phục Triệt để Lỗi Tràn Viền Thanh Thông Tin Đương Số Tử Vi**:
-              + Tự động co giãn chiều cao linh hoạt trên mọi kích thước màn hình điện thoại.
-            - **Đại Tu Nâng Cấp Toàn Diện Thuật Toán Tử Vi Nam Phái Chuẩn Thái Thứ Lang**:
-              + An trọn vẹn 100% hệ thống 26 Phụ tinh và Tạp tinh thứ cấp: Tam Thai, Bát Tọa, Ân Quang, Thiên Quý, Thai Phụ, Phong Cáo, Thiên Quan, Thiên Phúc, Thiên Trù, Lưu Hà, Quốc Ấn, Đường Phù, Cô Thần, Quả Tú, Kiếp Sát, Hoa Cái, Phá Toái, Đẩu Quân, Thiên Tài, Thiên Thọ, Thiên Thương, Thiên Sứ, Thiên Giải, Địa Giải, Thiên Không, Văn Tinh.
-              + Phân định đầy đủ cấp độ Miếu / Vượng / Đắc / Hãm cho cả Lục Sát Tinh và Phụ tinh trọng yếu: Kình Dương, Đà La, Không Kiếp, Hỏa Linh, Xương Khúc, Khốc Hư, Hình Diêu, Đại Tiểu Hao, Thiên Mã, Hóa Kỵ.
-              + Bảo tồn chuẩn xác 100% khẩu quyết kinh điển Nam Phái Thái Thứ Lang: Hỏa Linh nhóm Tỵ Dậu Sửu (Hỏa khởi Mão, Linh khởi Tuất); Tứ Hóa can Canh (*Nhật Vũ Âm Đồng* - Thiên Đồng hóa Kỵ); Tứ Hóa can Nhâm (*Lương Vi Phụ Vũ* - Tả Phụ hóa Khoa).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.6
+            - **Đại Tu Nâng Cấp Toàn Diện Thuật Toán Bàn Kỳ Môn Phong Thủy Nhà (16 Hướng Nhà Chuẩn Mực)**:
+              + Thay thế phân định 8 hướng thô sơ bằng danh mục chuẩn xác 16 Hướng Nhà (8 cặp phân định rõ Hướng 1 [Địa Nguyên Long] vs Hướng 2/3 [Thiên & Nhân Nguyên Long]) theo sách *Kỳ Môn Độn Giáp Bát Vi Thần Phong Thủy* (Thầy Bạch Vân Sơn) và ứng dụng Kỳ Môn Pro.
+              + Tích hợp đầy đủ Ma trận Huyền Không Phi Tinh chính tông: hiển thị trực quan Sơn Tinh (Tọa Tinh), Hướng Tinh, Vận Tinh tại từng cung trong đồ hình 9 Cung Lạc Thư.
+              + Đánh dấu và làm nổi bật trực quan các cung trọng yếu: Hướng Nhà (`H.Nhà`), Vị Cửa (`Vị Cửa`), Cung Trực Sử (`Trực Sử`), xác định chính xác 4 Đại Cách Cục Huyền Không (Vượng Sơn Vượng Hướng, Song Tinh Đáo Hướng, Song Tinh Đáo Tọa, Thượng Sơn Hạ Thủy).
+              + Bổ sung thông tin chi tiết độ số 24 Sơn Vị Cửa (độ số góc phương vị, cung Lạc Thư, Can Phù Thủ khởi điểm).
+              + Modal tra cứu chi tiết từng cung hiển thị đầy đủ cả 2 tầng khí: Tầng Kỳ Môn Độn Giáp (Bát Thần, Cửu Tinh, Bát Môn, Can Thiên/Địa) và Tầng Huyền Không Phi Tinh (Sơn/Hướng/Vận).
+            - **Kế thừa các nâng cấp đột phá từ v1.9.5**:
+              + Tích hợp cảm biến La Bàn Phần Cứng 3D Native Hardware Compass với bù góc nghiêng toàn diện (3D Tilt Compensation) và bộ lọc làm mượt chống rung tay.
+              + Chuẩn hóa 100% thuật toán Tử Vi Nam Phái Thái Thứ Lang với đầy đủ hệ thống 26 Phụ tinh thứ cấp và an sao Miếu/Vượng/Đắc/Hãm.
+              + Đóng gói độc lập Offline 100%, bảo đảm vận hành mượt mà ngay cả khi ngắt kết nối mạng.
             - **Tích Hợp Hệ Thống 9 Sao Lưu Niên Theo Năm Xem (`viewYear`)**:
               + Tự động an Lưu Thái Tuế, Lưu Kình, Lưu Đà, Lưu Tang Môn, Lưu Bạch Hổ, Lưu Khốc, Lưu Hư, Lưu Lộc Tồn, Lưu Thiên Mã.
             - **Tối Ưu Hiển Thị Lá Số 4x4 Grid & Chi Tiết Cung Modal**:

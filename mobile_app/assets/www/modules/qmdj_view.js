@@ -15,12 +15,71 @@
   let currentPatterns = [];
   let isQmdjLunarMode = false;
 
-  // State for Phong Thủy mode
+  // State for Phong Thủy mode (16 Hướng Nhà & 24 Sơn Vị Cửa)
   let ptState = {
-    van: 9,           // Vận 9 (2024 - 2043) default, or 8, 7
-    huongPalace: 6,   // Càn 6 (Tây Bắc) default
-    sonCua: 'Thìn'    // 24 Sơn vị cửa (Thìn default)
+    van: 9,            // Vận 9 (2024 - 2043)
+    huongKey: 'TB1',   // 16 Hướng Nhà chuẩn (TB1: Tuất, TB2_3: Càn-Hợi, ...)
+    huongPalace: 6,    // Càn 6 (Tây Bắc)
+    sonCua: 'Thìn'     // 24 Sơn vị cửa (Thìn default)
   };
+
+  // 16 Hướng Nhà Chuẩn Mực Kỳ Môn Phong Thủy (8 cặp: Hướng 1 [Địa Nguyên Long] vs Hướng 2/3 [Thiên & Nhân Nguyên Long])
+  const HUONG_16_LIST = [
+    { key: 'TB1',   name: 'Tây Bắc 1 (Tuất: 292.5° - 307.5°)',      palace: 6, deg: 300, son: 'Tuất', cungName: 'Càn (Tây Bắc)' },
+    { key: 'TB2_3', name: 'Tây Bắc 2/3 (Càn - Hợi: 307.5° - 337.5°)', palace: 6, deg: 315, son: 'Càn, Hợi', cungName: 'Càn (Tây Bắc)' },
+    { key: 'B1',    name: 'Bắc 1 (Nhâm: 337.5° - 352.5°)',            palace: 1, deg: 345, son: 'Nhâm', cungName: 'Khảm (Bắc)' },
+    { key: 'B2_3',  name: 'Bắc 2/3 (Tý - Quý: 352.5° - 22.5°)',      palace: 1, deg: 0,   son: 'Tý, Quý', cungName: 'Khảm (Bắc)' },
+    { key: 'DB1',   name: 'Đông Bắc 1 (Sửu: 22.5° - 37.5°)',          palace: 8, deg: 30,  son: 'Sửu', cungName: 'Cấn (Đông Bắc)' },
+    { key: 'DB2_3', name: 'Đông Bắc 2/3 (Cấn - Dần: 37.5° - 67.5°)',   palace: 8, deg: 45,  son: 'Cấn, Dần', cungName: 'Cấn (Đông Bắc)' },
+    { key: 'D1',    name: 'Đông 1 (Giáp: 67.5° - 82.5°)',             palace: 3, deg: 75,  son: 'Giáp', cungName: 'Chấn (Đông)' },
+    { key: 'D2_3',  name: 'Đông 2/3 (Mão - Ất: 82.5° - 112.5°)',      palace: 3, deg: 90,  son: 'Mão, Ất', cungName: 'Chấn (Đông)' },
+    { key: 'DN1',   name: 'Đông Nam 1 (Thìn: 112.5° - 127.5°)',       palace: 4, deg: 120, son: 'Thìn', cungName: 'Tốn (Đông Nam)' },
+    { key: 'DN2_3', name: 'Đông Nam 2/3 (Tốn - Tị: 127.5° - 157.5°)',   palace: 4, deg: 135, son: 'Tốn, Tị', cungName: 'Tốn (Đông Nam)' },
+    { key: 'N1',    name: 'Nam 1 (Bính: 157.5° - 172.5°)',            palace: 9, deg: 165, son: 'Bính', cungName: 'Ly (Nam)' },
+    { key: 'N2_3',  name: 'Nam 2/3 (Ngọ - Đinh: 172.5° - 202.5°)',    palace: 9, deg: 180, son: 'Ngọ, Đinh', cungName: 'Ly (Nam)' },
+    { key: 'TN1',   name: 'Tây Nam 1 (Mùi: 202.5° - 217.5°)',         palace: 2, deg: 210, son: 'Mùi', cungName: 'Khôn (Tây Nam)' },
+    { key: 'TN2_3', name: 'Tây Nam 2/3 (Khôn - Thân: 217.5° - 247.5°)', palace: 2, deg: 225, son: 'Khôn, Thân', cungName: 'Khôn (Tây Nam)' },
+    { key: 'T1',    name: 'Tây 1 (Canh: 247.5° - 262.5°)',            palace: 7, deg: 255, son: 'Canh', cungName: 'Đoài (Tây)' },
+    { key: 'T2_3',  name: 'Tây 2/3 (Dậu - Tân: 262.5° - 292.5°)',    palace: 7, deg: 270, son: 'Dậu, Tân', cungName: 'Đoài (Tây)' }
+  ];
+
+  const SON_TO_PALACE = {
+    'Nhâm': 1, 'Tý': 1, 'Quý': 1,
+    'Sửu': 8, 'Cấn': 8, 'Dần': 8,
+    'Giáp': 3, 'Mão': 3, 'Ất': 3,
+    'Thìn': 4, 'Tốn': 4, 'Tị': 4,
+    'Bính': 9, 'Ngọ': 9, 'Đinh': 9,
+    'Mùi': 2, 'Khôn': 2, 'Thân': 2,
+    'Canh': 7, 'Dậu': 7, 'Tân': 7,
+    'Tuất': 6, 'Càn': 6, 'Hợi': 6
+  };
+
+  const SON_24_DOOR_INFO = [
+    { son: 'Nhâm', deg: '337.5° - 352.5°', cung: 'Bắc (Khảm 1)', code: 'B1' },
+    { son: 'Tý',   deg: '352.5° - 7.5°',   cung: 'Bắc (Khảm 1)', code: 'B2' },
+    { son: 'Quý',  deg: '7.5° - 22.5°',    cung: 'Bắc (Khảm 1)', code: 'B3' },
+    { son: 'Sửu',  deg: '22.5° - 37.5°',   cung: 'Đông Bắc (Cấn 8)', code: 'ĐB1' },
+    { son: 'Cấn',  deg: '37.5° - 52.5°',   cung: 'Đông Bắc (Cấn 8)', code: 'ĐB2' },
+    { son: 'Dần',  deg: '52.5° - 67.5°',   cung: 'Đông Bắc (Cấn 8)', code: 'ĐB3' },
+    { son: 'Giáp', deg: '67.5° - 82.5°',   cung: 'Đông (Chấn 3)', code: 'Đ1' },
+    { son: 'Mão',  deg: '82.5° - 97.5°',   cung: 'Đông (Chấn 3)', code: 'Đ2' },
+    { son: 'Ất',   deg: '97.5° - 112.5°',  cung: 'Đông (Chấn 3)', code: 'Đ3' },
+    { son: 'Thìn', deg: '112.5° - 127.5°', cung: 'Đông Nam (Tốn 4)', code: 'ĐN1' },
+    { son: 'Tốn',  deg: '127.5° - 142.5°', cung: 'Đông Nam (Tốn 4)', code: 'ĐN2' },
+    { son: 'Tị',   deg: '142.5° - 157.5°', cung: 'Đông Nam (Tốn 4)', code: 'ĐN3' },
+    { son: 'Bính', deg: '157.5° - 172.5°', cung: 'Nam (Ly 9)', code: 'N1' },
+    { son: 'Ngọ',  deg: '172.5° - 187.5°', cung: 'Nam (Ly 9)', code: 'N2' },
+    { son: 'Đinh', deg: '187.5° - 202.5°', cung: 'Nam (Ly 9)', code: 'N3' },
+    { son: 'Mùi',  deg: '202.5° - 217.5°', cung: 'Tây Nam (Khôn 2)', code: 'TN1' },
+    { son: 'Khôn', deg: '217.5° - 232.5°', cung: 'Tây Nam (Khôn 2)', code: 'TN2' },
+    { son: 'Thân', deg: '232.5° - 247.5°', cung: 'Tây Nam (Khôn 2)', code: 'TN3' },
+    { son: 'Canh', deg: '247.5° - 262.5°', cung: 'Tây (Đoài 7)', code: 'T1' },
+    { son: 'Dậu',  deg: '262.5° - 277.5°', cung: 'Tây (Đoài 7)', code: 'T2' },
+    { son: 'Tân',  deg: '277.5° - 292.5°', cung: 'Tây (Đoài 7)', code: 'T3' },
+    { son: 'Tuất', deg: '292.5° - 307.5°', cung: 'Tây Bắc (Càn 6)', code: 'TB1' },
+    { son: 'Càn',  deg: '307.5° - 322.5°', cung: 'Tây Bắc (Càn 6)', code: 'TB2' },
+    { son: 'Hợi',  deg: '322.5° - 337.5°', cung: 'Tây Bắc (Càn 6)', code: 'TB3' }
+  ];
 
   const VI_DICT = {
     "天蓬星": "Thiên Bồng", "天任星": "Thiên Nhậm", "天冲星": "Thiên Xung",
@@ -177,8 +236,14 @@
 
   /**
    * Tính Bàn Kỳ Môn Phong Thủy Nhà Cố Định (KMDJ_BVS.pdf)
+   * Kết hợp toàn diện Bát Vi Thần & Huyền Không Phi Tinh Chuẩn 16 Hướng Nhà
    */
-  function computeFengShuiQMDJ(van, huongPalace, sonCua) {
+  function computeFengShuiQMDJ(van, huongKey, sonCua) {
+    const huongObj = HUONG_16_LIST.find(h => h.key === huongKey) || HUONG_16_LIST[0];
+    const huongPalace = huongObj.palace;
+    const huongDeg = huongObj.deg;
+    const cuaPalace = SON_TO_PALACE[sonCua] || 4;
+
     // 1. Địa bàn A2: Mậu tại cung van, đi thuận số Lạc Thư
     const a2 = {};
     for (let i = 0; i < STEM_SEQ.length; i++) {
@@ -244,9 +309,23 @@
 
     const a5Ring = clockwiseFromHuong.map(p => a5ByPalace[p]);
 
+    // 9. Huyền Không Phi Tinh: Gọi NetaLaKinhEngine.generateHuyenKhongMatrix
+    let hkMatrix = null;
+    const lkEngine = (typeof window !== 'undefined' && window.NetaLaKinhEngine) || global.NetaLaKinhEngine;
+    if (lkEngine && typeof lkEngine.generateHuyenKhongMatrix === 'function') {
+      hkMatrix = lkEngine.generateHuyenKhongMatrix(huongDeg, van);
+    }
+    const hkByPalace = {};
+    if (hkMatrix && Array.isArray(hkMatrix.geoGrid)) {
+      hkMatrix.geoGrid.forEach(item => {
+        hkByPalace[item.quai] = item;
+      });
+    }
+
     // Tạo cấu trúc 8 cung + 1 trung cung chuẩn cho hiển thị bàn 9 cung
     const palacesData = {};
     clockwiseFromHuong.forEach((p, idx) => {
+      const hkInfo = hkByPalace[p] || {};
       palacesData[p] = {
         index: p - 1, // 0..8
         palaceNumber: p,
@@ -256,11 +335,18 @@
         hcs: [a1Ring[idx]],
         ecs: [a2Ring[idx]],
         de: false,
-        hs: false
+        hs: false,
+        mountainStar: hkInfo.mountainStar !== undefined ? hkInfo.mountainStar : '',
+        facingStar: hkInfo.facingStar !== undefined ? hkInfo.facingStar : '',
+        vanStar: hkInfo.vanStar !== undefined ? hkInfo.vanStar : van,
+        isFacing: (p === huongPalace),
+        isDoor: (p === cuaPalace),
+        isTrucSu: (p === trucSuPalace)
       };
     });
 
     // Trung cung 5
+    const hkInfo5 = hkByPalace[5] || {};
     palacesData[5] = {
       index: 4,
       palaceNumber: 5,
@@ -270,7 +356,13 @@
       hcs: [p5Stem],
       ecs: [p5Stem],
       de: false,
-      hs: false
+      hs: false,
+      mountainStar: hkInfo5.mountainStar !== undefined ? hkInfo5.mountainStar : (hkMatrix ? hkMatrix.mountainCenterStar : ''),
+      facingStar: hkInfo5.facingStar !== undefined ? hkInfo5.facingStar : (hkMatrix ? hkMatrix.facingCenterStar : ''),
+      vanStar: hkInfo5.vanStar !== undefined ? hkInfo5.vanStar : van,
+      isFacing: false,
+      isDoor: false,
+      isTrucSu: false
     };
 
     // Ma trận hiển thị 3x3 Lạc Thư:
@@ -301,14 +393,19 @@
     return {
       isFengShui: true,
       van,
+      huongKey,
       huongPalace,
-      huongName: `${PALACE_NAMES[huongPalace - 1]} (${PALACE_DIRECTIONS[huongPalace]})`,
+      huongName: huongObj.name,
+      huongShortName: huongObj.name.includes(':') ? `${huongObj.name.split(':')[0]})` : huongObj.name,
+      huongDeg,
       sonCua,
+      cuaPalace,
       phuThu,
       trucSuPalace,
       trucSuPalaceName: `${PALACE_NAMES[trucSuPalace - 1]} (${PALACE_DIRECTIONS[trucSuPalace]})`,
       rootDoor,
       rootStar,
+      hkMatrix,
       box,
       palacesData
     };
@@ -316,7 +413,7 @@
 
   function computeQmdjChart(date = currentQmdjDate) {
     if (currentQmdjMode === 'phongthuy') {
-      const ptChart = computeFengShuiQMDJ(ptState.van, ptState.huongPalace, ptState.sonCua);
+      const ptChart = computeFengShuiQMDJ(ptState.van, ptState.huongKey || 'TB1', ptState.sonCua);
       currentChart = ptChart;
       currentPatterns = [];
       return { chart: ptChart, patterns: [] };
@@ -557,42 +654,35 @@
    * Render Chế Độ Phong Thủy Nhà Cố Định
    */
   function renderPhongThuyMode(container, modeTabsHtml, chart) {
-    const SƠN_LIST = Object.keys(DOOR_24_SON);
-
     container.innerHTML = `
       <div class="qmdj-view-container">
         ${modeTabsHtml}
 
         <!-- Phong Thuy Control Card -->
         <div class="unified-ctrl-card pt-ctrl-card">
-          <!-- Row 1: Vận Nhà & Hướng Nhà -->
+          <!-- Row 1: Vận Nhà & Hướng Nhà (16 Hướng Chuẩn) -->
           <div class="ucc-row pt-row-params">
             <div class="pt-field-group">
               <label class="pt-field-lbl" for="pt-select-van">🏛️ VẬN:</label>
               <select id="pt-select-van" class="pt-select">
-                <option value="9" ${ptState.van === 9 ? 'selected' : ''}>Vận 9 (2024) ★</option>
-                <option value="8" ${ptState.van === 8 ? 'selected' : ''}>Vận 8 (2004)</option>
-                <option value="7" ${ptState.van === 7 ? 'selected' : ''}>Vận 7 (1984)</option>
-                <option value="6" ${ptState.van === 6 ? 'selected' : ''}>Vận 6 (1964)</option>
-                <option value="5" ${ptState.van === 5 ? 'selected' : ''}>Vận 5 (1944)</option>
-                <option value="4" ${ptState.van === 4 ? 'selected' : ''}>Vận 4 (1924)</option>
-                <option value="3" ${ptState.van === 3 ? 'selected' : ''}>Vận 3 (1904)</option>
-                <option value="2" ${ptState.van === 2 ? 'selected' : ''}>Vận 2 (1884)</option>
-                <option value="1" ${ptState.van === 1 ? 'selected' : ''}>Vận 1 (1864)</option>
+                <option value="9" ${ptState.van === 9 ? 'selected' : ''}>Vận 9 (2024 - 2043) ★</option>
+                <option value="8" ${ptState.van === 8 ? 'selected' : ''}>Vận 8 (2004 - 2023)</option>
+                <option value="7" ${ptState.van === 7 ? 'selected' : ''}>Vận 7 (1984 - 2003)</option>
+                <option value="6" ${ptState.van === 6 ? 'selected' : ''}>Vận 6 (1964 - 1983)</option>
+                <option value="5" ${ptState.van === 5 ? 'selected' : ''}>Vận 5 (1944 - 1963)</option>
+                <option value="4" ${ptState.van === 4 ? 'selected' : ''}>Vận 4 (1924 - 1943)</option>
+                <option value="3" ${ptState.van === 3 ? 'selected' : ''}>Vận 3 (1904 - 1923)</option>
+                <option value="2" ${ptState.van === 2 ? 'selected' : ''}>Vận 2 (1884 - 1903)</option>
+                <option value="1" ${ptState.van === 1 ? 'selected' : ''}>Vận 1 (1864 - 1883)</option>
               </select>
             </div>
 
             <div class="pt-field-group">
-              <label class="pt-field-lbl" for="pt-select-huong">🧭 HƯỚNG:</label>
+              <label class="pt-field-lbl" for="pt-select-huong">🧭 HƯỚNG NHÀ (16 HƯỚNG):</label>
               <select id="pt-select-huong" class="pt-select">
-                <option value="6" ${ptState.huongPalace === 6 ? 'selected' : ''}>Càn (Tây Bắc)</option>
-                <option value="1" ${ptState.huongPalace === 1 ? 'selected' : ''}>Khảm (Bắc)</option>
-                <option value="8" ${ptState.huongPalace === 8 ? 'selected' : ''}>Cấn (Đông Bắc)</option>
-                <option value="3" ${ptState.huongPalace === 3 ? 'selected' : ''}>Chấn (Đông)</option>
-                <option value="4" ${ptState.huongPalace === 4 ? 'selected' : ''}>Tốn (Đông Nam)</option>
-                <option value="9" ${ptState.huongPalace === 9 ? 'selected' : ''}>Ly (Nam)</option>
-                <option value="2" ${ptState.huongPalace === 2 ? 'selected' : ''}>Khôn (Tây Nam)</option>
-                <option value="7" ${ptState.huongPalace === 7 ? 'selected' : ''}>Đoài (Tây)</option>
+                ${HUONG_16_LIST.map(h => `
+                  <option value="${h.key}" ${ptState.huongKey === h.key ? 'selected' : ''}>${h.name}</option>
+                `).join('')}
               </select>
             </div>
           </div>
@@ -600,10 +690,10 @@
           <!-- Row 2: Vị Cửa 24 Sơn & Lập Bàn -->
           <div class="ucc-row pt-row-cua">
             <div class="pt-field-group" style="flex: 1.4;">
-              <label class="pt-field-lbl" for="pt-select-cua">🚪 VỊ CỬA:</label>
+              <label class="pt-field-lbl" for="pt-select-cua">🚪 VỊ CỬA (24 SƠN):</label>
               <select id="pt-select-cua" class="pt-select">
-                ${SƠN_LIST.map(son => `
-                  <option value="${son}" ${ptState.sonCua === son ? 'selected' : ''}>Sơn ${son} (Phù: ${DOOR_24_SON[son]})</option>
+                ${SON_24_DOOR_INFO.map(item => `
+                  <option value="${item.son}" ${ptState.sonCua === item.son ? 'selected' : ''}>Sơn ${item.son} (${item.deg}) - ${item.code}</option>
                 `).join('')}
               </select>
             </div>
@@ -625,11 +715,12 @@
         </div>
 
         <!-- Parameters Summary Header -->
-        <div class="qmdj-pillars-strip pt-summary-strip">
+        <div class="pt-summary-strip">
           <div class="q-pillar"><span class="q-lbl">VẬN:</span><strong class="q-val">Vận ${chart.van}</strong></div>
-          <div class="q-pillar"><span class="q-lbl">HƯỚNG:</span><strong class="q-val">${PALACE_DIRECTIONS[chart.huongPalace]}</strong></div>
-          <div class="q-pillar"><span class="q-lbl">CỬA:</span><strong class="q-val">Sơn ${chart.sonCua}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">HƯỚNG:</span><strong class="q-val">${chart.huongShortName || chart.huongName}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">CỬA:</span><strong class="q-val">Sơn ${chart.sonCua} (Cung ${chart.cuaPalace})</strong></div>
           <div class="q-pillar highlight-hour"><span class="q-lbl">TRỰC PHÙ:</span><strong class="q-val">${chart.rootStar}</strong></div>
+          ${chart.hkMatrix ? `<div class="q-pillar"><span class="q-lbl">CÁCH CỤC:</span><strong class="q-val" style="color: #f59e0b;">${chart.hkMatrix.patternName}</strong></div>` : ''}
         </div>
 
         <!-- 9-Palace Matrix -->
@@ -742,12 +833,15 @@
 
   function renderPalacesHTML(chart, patterns, pillars, timeStr) {
     const box = chart.box;
+    const isPt = !!chart.isFengShui;
     let html = '';
 
     box.forEach((row) => {
       row.forEach((palace) => {
         const isCenter = palace.index === 4;
         const pIndex = palace.index; // 0-8
+        const pNum = pIndex + 1; // 1-9
+        const pData = (chart.palacesData && chart.palacesData[pNum]) ? chart.palacesData[pNum] : {};
         const door = translate(palace.getDoor(true));
         const stars = Array.isArray(palace.getStar(true)) ? palace.getStar(true).map(translate) : [translate(palace.getStar(true))];
         const divinity = translate(palace.getDivinity(true));
@@ -759,64 +853,125 @@
         const palPatterns = patterns.filter(p => parseInt(p.palaceIndex) === pIndex);
 
         if (isCenter) {
-          html += `
-            <div class="qmdj-palace-cell center-palace" data-palace-index="${pIndex}">
-              <div class="center-content">
-                <div class="center-symbol">☯</div>
-                <div class="center-title">TRUNG CUNG (5)</div>
-                <div class="center-time">${timeStr}</div>
-                <div class="center-ecs-stems">${chart.isFengShui ? 'Ký Cung 2 (Khôn)' : 'Thiên Cầm: ' + hcs.join(' ')}</div>
+          if (isPt) {
+            html += `
+              <div class="qmdj-palace-cell center-palace pt-palace-cell" data-palace-index="${pIndex}">
+                <div class="center-content pt-center-content">
+                  <div class="center-symbol">☯</div>
+                  <div class="center-title">TRUNG CUNG (5)</div>
+                  <div class="pt-flying-matrix pt-center-flying">
+                    <span class="pt-star-mountain" title="Sơn Tinh (Tọa Tinh)">${pData.mountainStar !== undefined ? pData.mountainStar : ''}</span>
+                    <span class="pt-star-van" title="Vận Tinh">${pData.vanStar !== undefined ? pData.vanStar : chart.van}</span>
+                    <span class="pt-star-facing" title="Hướng Tinh">${pData.facingStar !== undefined ? pData.facingStar : ''}</span>
+                  </div>
+                  <div class="center-ecs-stems">Ký Cung 2 (Khôn): ${hcs.join(' ')}</div>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          } else {
+            html += `
+              <div class="qmdj-palace-cell center-palace" data-palace-index="${pIndex}">
+                <div class="center-content">
+                  <div class="center-symbol">☯</div>
+                  <div class="center-title">TRUNG CUNG (5)</div>
+                  <div class="center-time">${timeStr}</div>
+                  <div class="center-ecs-stems">Thiên Cầm: ${hcs.join(' ')}</div>
+                </div>
+              </div>
+            `;
+          }
         } else {
           const palaceName = PALACE_NAMES[pIndex] || `Cung ${pIndex + 1}`;
-          html += `
-            <div class="qmdj-palace-cell" data-palace-index="${pIndex}">
-              <!-- Top Row: Thần & Số Cung -->
-              <div class="p-top">
-                <span class="p-divinity ${getCatClass(divinity)}">${divinity}</span>
-                <div class="p-top-right">
-                  ${isVoid ? '<span class="p-void-mark" title="Tuần Không">〇</span>' : ''}
-                  <span class="p-num">${pIndex + 1}</span>
-                </div>
-              </div>
 
-              <!-- Mid Row: Cửa & Sao (trái), Can Thiên Bàn (phải) -->
-              <div class="p-mid">
-                <div class="p-door-star">
-                  <div class="p-door ${getCatClass(door)}">${door}</div>
-                  <div class="p-stars">
-                    ${stars.map(s => `<span class="${getCatClass(s)}">${s}</span>`).join(' ')}
+          if (isPt) {
+            const isFacing = pData.isFacing;
+            const isDoor = pData.isDoor;
+            const isTrucSu = pData.isTrucSu;
+
+            html += `
+              <div class="qmdj-palace-cell pt-palace-cell ${isFacing ? 'pt-palace-facing' : ''} ${isDoor ? 'pt-palace-door' : ''}" data-palace-index="${pIndex}">
+                <!-- Top Row: Thần, Sao & Số Cung -->
+                <div class="p-top pt-cell-top">
+                  <span class="p-divinity ${getCatClass(divinity)}">${divinity}</span>
+                  <span class="pt-cell-star ${getCatClass(stars[0])}">${stars[0]}</span>
+                  <div class="p-top-right">
+                    <span class="p-num">${pIndex + 1}</span>
                   </div>
                 </div>
-                <div class="p-stems-right">
-                  ${hcs.map(stem => {
-                    const isDouble = String(stem).length > 2 || String(stem).includes('/');
-                    return `<span class="p-hcs ${isDouble ? 'p-hcs-double' : ''} ${getCatClass(stem)}">${stem}</span>`;
-                  }).join('')}
+
+                <!-- Mid Row: Huyền Không Phi Tinh Matrix & Badges -->
+                <div class="pt-flying-matrix">
+                  <div class="pt-star-mountain" title="Sơn Tinh (Tọa Tinh)">${pData.mountainStar !== undefined ? pData.mountainStar : ''}</div>
+                  <div class="pt-star-center-col">
+                    ${isFacing ? '<span class="pt-badge pt-badge-facing">H.Nhà</span>' : ''}
+                    ${isDoor ? '<span class="pt-badge pt-badge-door">Vị Cửa</span>' : ''}
+                    <span class="pt-star-van" title="Vận Tinh">${pData.vanStar !== undefined ? pData.vanStar : ''}</span>
+                  </div>
+                  <div class="pt-star-facing" title="Hướng Tinh">${pData.facingStar !== undefined ? pData.facingStar : ''}</div>
+                </div>
+
+                <!-- Bottom Row: Cửa, Trực Sử, Tên Cung & Can Thiên/Địa -->
+                <div class="p-bot pt-cell-bot">
+                  <div class="p-bot-left">
+                    <span class="p-door ${getCatClass(door)}">${door}</span>
+                    ${isTrucSu ? '<span class="pt-badge pt-badge-trucsu">Trực Sử</span>' : ''}
+                  </div>
+                  <div class="pt-cell-stems">
+                    <span class="p-hcs ${getCatClass(hcs[0])}">${hcs[0]}</span>
+                    <span class="p-stems-slash">/</span>
+                    <span class="p-ecs-stem ${getCatClass(ecs[0])}">${ecs[0]}</span>
+                  </div>
                 </div>
               </div>
+            `;
+          } else {
+            html += `
+              <div class="qmdj-palace-cell" data-palace-index="${pIndex}">
+                <!-- Top Row: Thần & Số Cung -->
+                <div class="p-top">
+                  <span class="p-divinity ${getCatClass(divinity)}">${divinity}</span>
+                  <div class="p-top-right">
+                    ${isVoid ? '<span class="p-void-mark" title="Tuần Không">〇</span>' : ''}
+                    <span class="p-num">${pIndex + 1}</span>
+                  </div>
+                </div>
 
-              <!-- Bottom Row: Tên Cung & Can Địa Bàn -->
-              <div class="p-bot">
-                <div class="p-bot-left">
-                  <span class="p-cung-name">${palaceName}</span>
-                  ${isHorse ? '<span class="p-horse" title="Mã Tinh">🐎</span>' : ''}
+                <!-- Mid Row: Cửa & Sao (trái), Can Thiên Bàn (phải) -->
+                <div class="p-mid">
+                  <div class="p-door-star">
+                    <div class="p-door ${getCatClass(door)}">${door}</div>
+                    <div class="p-stars">
+                      ${stars.map(s => `<span class="${getCatClass(s)}">${s}</span>`).join(' ')}
+                    </div>
+                  </div>
+                  <div class="p-stems-right">
+                    ${hcs.map(stem => {
+                      const isDouble = String(stem).length > 2 || String(stem).includes('/');
+                      return `<span class="p-hcs ${isDouble ? 'p-hcs-double' : ''} ${getCatClass(stem)}">${stem}</span>`;
+                    }).join('')}
+                  </div>
                 </div>
-                <div class="p-ecs">
-                  ${ecs.map(stem => {
-                    const isDouble = String(stem).length > 2 || String(stem).includes('/');
-                    return `<span class="p-ecs-stem ${isDouble ? 'p-ecs-stem-double' : ''} ${getCatClass(stem)}">${stem}</span>`;
-                  }).join(' ')}
+
+                <!-- Bottom Row: Tên Cung & Can Địa Bàn -->
+                <div class="p-bot">
+                  <div class="p-bot-left">
+                    <span class="p-cung-name">${palaceName}</span>
+                    ${isHorse ? '<span class="p-horse" title="Mã Tinh">🐎</span>' : ''}
+                  </div>
+                  <div class="p-ecs">
+                    ${ecs.map(stem => {
+                      const isDouble = String(stem).length > 2 || String(stem).includes('/');
+                      return `<span class="p-ecs-stem ${isDouble ? 'p-ecs-stem-double' : ''} ${getCatClass(stem)}">${stem}</span>`;
+                    }).join(' ')}
+                  </div>
                 </div>
+
+                ${palPatterns.length > 0 ? `
+                  <div class="p-indicator-dot ${palPatterns.some(p => p.type === 'cat') ? 'dot-cat' : 'dot-hung'}"></div>
+                ` : ''}
               </div>
-
-              ${palPatterns.length > 0 ? `
-                <div class="p-indicator-dot ${palPatterns.some(p => p.type === 'cat') ? 'dot-cat' : 'dot-hung'}"></div>
-              ` : ''}
-            </div>
-          `;
+            `;
+          }
         }
       });
     });
@@ -1067,7 +1222,11 @@
     if (btnSubmit) {
       btnSubmit.onclick = () => {
         if (selVan) ptState.van = parseInt(selVan.value) || 9;
-        if (selHuong) ptState.huongPalace = parseInt(selHuong.value) || 6;
+        if (selHuong) {
+          ptState.huongKey = selHuong.value || 'TB1';
+          const hObj = HUONG_16_LIST.find(h => h.key === ptState.huongKey);
+          if (hObj) ptState.huongPalace = hObj.palace;
+        }
         if (selCua) ptState.sonCua = selCua.value || 'Thìn';
         renderQmdj();
       };
@@ -1097,7 +1256,9 @@
     if (chart.isFengShui) {
       // Feng Shui detail
       const pNum = pIndex + 1;
+      const pData = (chart.palacesData && chart.palacesData[pNum]) ? chart.palacesData[pNum] : {};
       const isHuong = pNum === chart.huongPalace;
+      const isCua = pNum === chart.cuaPalace;
       const isTrucSu = pNum === chart.trucSuPalace;
 
       bodyEl.innerHTML = `
@@ -1109,9 +1270,10 @@
           </div>
 
           <div class="pm-stems-box">
+            <div><small>Huyền Không Phi Tinh:</small> <strong>Sơn Tinh: ${pData.mountainStar !== undefined ? pData.mountainStar : '-'}</strong> • <strong>Hướng Tinh: ${pData.facingStar !== undefined ? pData.facingStar : '-'}</strong> • <strong>Vận Tinh: ${pData.vanStar !== undefined ? pData.vanStar : chart.van}</strong></div>
             <div><small>Thiên Can Thiên Bàn (A1):</small> <strong>${hcs.join(' ')}</strong></div>
             <div><small>Thiên Can Địa Bàn (A2):</small> <strong>${ecs.join(' ')}</strong></div>
-            <div><small>Vị trí trong nhà:</small> <strong>${PALACE_DIRECTIONS[pNum]}</strong> ${isHuong ? '<span class="text-cat">(HƯỚNG NHÀ ★)</span>' : ''} ${isTrucSu ? '<span class="text-cat">(CUNG TRỰC SỬ 🔑)</span>' : ''}</div>
+            <div><small>Vị trí trong nhà:</small> <strong>${PALACE_DIRECTIONS[pNum]}</strong> ${isHuong ? '<span class="text-cat">(HƯỚNG NHÀ ★)</span>' : ''} ${isCua ? '<span class="text-cat">(VỊ CỬA 🚪)</span>' : ''} ${isTrucSu ? '<span class="text-cat">(CUNG TRỰC SỬ 🔑)</span>' : ''}</div>
           </div>
 
           <div class="pm-patterns-section">
