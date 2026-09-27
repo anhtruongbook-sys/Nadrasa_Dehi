@@ -63,26 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.9
-          name: "Neta Light & Huyền Học v2.0.9 (Chuẩn Hóa Đầy Đủ 100% Thông Tin Quẻ, Khí Vận, Lục Thân, Linh/Chính Thần Cho Mini Card Tia Ngắm)"
+          tag_name: v2.1.0
+          name: "Neta Light & Huyền Học v2.1.0 (Nút Tia Ngắm Thu Gọn Tròn Đặt Dưới & Chống Bấm Nhầm Bảng Điều Khiển Khi Vuốt)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.9
-            - **Đầy Đủ 100% Thông Tin Quẻ Đến Hào Cho Mini Card Tia Ngắm (Full HKDQ Parity)**:
-              + Mini Card của tia ngắm giờ đây hiển thị đối xứng và đầy đủ tương đương 100% với dòng thông tin Hướng Nhà.
-              + **Hàng 1**: Độ số & Sơn của tia ngắm `🎯 344.2° • Sơn Nhâm (Khảm)` kèm nút `[▾ Chi tiết]` và nút tắt nhanh `[✕]`.
-              + **Hàng 2**: Đại Quái và Phân Kim 384 Hào:
-                * Tên Quẻ chữ to rõ in đậm màu vàng kim: `🔱 Thủy Địa Tỷ` (hoặc `Sơn Thiên Đại Súc`, `Bát Thuần Càn`...).
-                * Khí & Vận: `Khí 7 • Vận 7` (hoặc `Khí 6 • Vận 4`...).
-                * Hào Vi Phân & Lục Thân: `Hào 5 (Thê Tài)` (hoặc `Tử Tôn`, `Quan Quỷ`, `Phụ Mẫu`, `Huynh Đệ` tô màu phong thủy chuyên biệt).
-                * Badge Vận 9 chuẩn mực: `⛰️ Chính Thần V9` / `🌊 Linh Thần V9` / `✨ Đương Vận 9` / `⚠️ Ranh X.XX°`.
-            - **Thiết Kế 2 Hàng Tinh Gọn Chống Tràn Màn Hình Tuyệt Đối (Anti-Overflow Layout)**:
-              + Bố cục Mini Card 2 hàng dạng kính mờ (glassmorphism) thanh lịch, chiều rộng tối ưu tự co giãn có lề 8px hai bên, vừa vặn hoàn hảo trên màn hình di động hẹp (360px) mà không bị tràn hay cắt chữ.
-              + Chạm vào bất kỳ vị trí nào trên Mini Card (hoặc nút `▾ Chi tiết`) sẽ mở rộng bảng HUD chi tiết; chạm `✕` để tắt tia ngắm tức thì.
-            - **Kế Thừa Đầy Đủ Tính Năng v2.0.8**:
-              + Nút nổi **`🎯 Tia Ngắm (Bật)`** ở góc dưới phải màn hình bật/tắt nhanh 1 chạm.
-              + Tâm La Kinh 100% thông thoáng, không còn pill che khuất tâm bản vẽ mặt bằng.
-              + Tích hợp nút **🔱 Xem Đủ 6 Hào**: Mở trực tiếp Modal 384 Hào vi phân định hướng theo đúng độ số tia ngắm.
-            - **Nền Trong Suốt Khi Chỉnh Vị Trí Điểm Ngắm (Ghost Mode Transparency)**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.1.0
+            - **Thu Gọn Tròn & Sắp Xếp Nút Bật/Tắt Tia Ngắm Xuống Dưới (Compact Bottom FAB)**:
+              + Loại bỏ dải nhãn chữ cồng kềnh chiếm không gian; thu gọn nút Tia Ngắm thành **nút tròn mini 38x38px** với biểu tượng **🎯**.
+              + Sắp xếp xuống sát đáy màn hình (`bottom: 64px; right: 56px`), đặt song hành ngay cạnh nút GPS (`📍` ở `right: 12px`), giải phóng 100% tầm nhìn thoáng đãng cho La Kinh và bản vẽ mặt bằng.
+              + Hiệu ứng phản hồi trực quan: Khi bật tia, nút phát sáng neon cyan viền ngọc nổi bật; khi tắt, trở về dạng kính mờ dịu mắt.
+            - **Khắc Phục Triệt Để Lỗi Bấm Nhầm Bảng Điều Khiển Khi Thao Tác Vuốt (Swipe-Safe Protection)**:
+              + **Chống kích hoạt nhầm khi vuốt lướt màn hình**: Bổ sung thuật toán nhận diện cử chỉ vuốt (Swipe-Safe Tap Detector). Bỏ qua hoàn toàn các thao tác vuốt lướt ngón tay qua thanh công cụ đáy (`⚙️ Công Cụ`, `🧭 La Bàn`, `📍 Vị Trí`...), chỉ kích hoạt khi người dùng chạm dứt khoát tại chỗ (`movement <= 7px`).
+              + **Chống bấm nhầm nút khi cuộn vuốt trong Bảng Điều Khiển**: Thêm lớp bảo vệ bắt sự kiện (Capture Phase Blocker) và thuộc tính `touch-action: pan-y`. Khi người dùng cuộn vuốt lên/xuống để xem thiết lập (Mẫu đĩa, Độ mờ, Kích thước, Mặt bằng), các nút bên dưới ngón tay được khóa an toàn, không còn hiện tượng nhảy đĩa hay đổi độ mờ ngoài ý muốn.
+              + **Cử chỉ vuốt xuống để thu gọn nhanh (Swipe Down to Dismiss)**: Vuốt nhẹ xuống trên thanh gạt hoặc tiêu đề bảng điều khiển để đóng nhanh bảng điều khiển, trả lại toàn màn hình quan sát.
+            - **Kế Thừa Đầy Đủ Tính Năng v2.0.9**:
+              + Mini Card tia ngắm 2 hàng hiển thị đầy đủ 100% Quẻ, Khí Vận, Hào + Lục Thân, Linh/Chính Thần đối xứng hoàn hảo với Hướng Nhà.
               + Khi người dùng kéo rê chấm mục tiêu hoặc di chuyển thanh trượt độ số, toàn bộ khung bảng thông tin HUD tự động chuyển sang trạng thái bán trong suốt (opacity: 0.18, xuyên thấu không che chắn).
               + Giúp người dùng nhìn thấy trọn vẹn 100% bản vẽ mặt bằng nhà, cửa, tường, bếp phía dưới để căn chỉnh tim điểm cực kỳ chuẩn xác. Khi thả tay, bảng lập tức hiện rõ trở lại.
             - **Thu Gọn Ô Thông Tin Khi Bấm [✕] (Giữ Nguyên Tia Ngắm)**:

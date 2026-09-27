@@ -99,10 +99,9 @@
           <span style="font-size: 1.15rem; line-height: 1;">📍</span>
         </button>
 
-        <!-- Nút Nổi Bật/Tắt Tia Ngắm Trực Tiếp Trên Màn Hình (Sighting Ray FAB) -->
+        <!-- Nút Nổi Bật/Tắt Tia Ngắm Trực Tiếp Trên Màn Hình (Sighting Ray FAB - Siêu Gọn Tròn 38px, Đặt Dưới) -->
         <button id="lakinh-btn-ray-float" title="Bật/Tắt Tia Ngắm Phong Thủy" aria-label="Tia ngắm">
-          <span class="ray-float-icon">🎯</span>
-          <span class="ray-float-text" id="ray-float-text">Tia Ngắm</span>
+          <span style="font-size: 1.15rem; line-height: 1;">🎯</span>
         </button>
 
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
@@ -1155,7 +1154,6 @@
     const btnRay = document.getElementById('sheet-btn-ray');
     const btnQuickRay = document.getElementById('lakinh-btn-ray-quick');
     const btnFloatRay = document.getElementById('lakinh-btn-ray-float');
-    const rayFloatText = document.getElementById('ray-float-text');
 
     if (!state.isRayActive) {
       if (rayContainer) rayContainer.style.display = 'none';
@@ -1167,8 +1165,10 @@
         btnRay.innerHTML = '🎯 Bật Tia Ngắm';
       }
       if (btnQuickRay) btnQuickRay.classList.remove('active');
-      if (btnFloatRay) btnFloatRay.classList.remove('active');
-      if (rayFloatText) rayFloatText.textContent = 'Tia Ngắm';
+      if (btnFloatRay) {
+        btnFloatRay.classList.remove('active');
+        btnFloatRay.title = 'Bật Tia Ngắm Phong Thủy';
+      }
       if (surveyRayLayerGroup) surveyRayLayerGroup.clearLayers();
       return;
     }
@@ -1180,8 +1180,10 @@
       btnRay.innerHTML = '🎯 Đang Bật Tia Ngắm (Tắt)';
     }
     if (btnQuickRay) btnQuickRay.classList.add('active');
-    if (btnFloatRay) btnFloatRay.classList.add('active');
-    if (rayFloatText) rayFloatText.textContent = 'Tia Ngắm (Bật)';
+    if (btnFloatRay) {
+      btnFloatRay.classList.add('active');
+      btnFloatRay.title = 'Đang Bật Tia Ngắm (Chạm để tắt)';
+    }
 
     const w = container.clientWidth || window.innerWidth;
     const h = container.clientHeight || window.innerHeight;
@@ -2155,17 +2157,29 @@
   // Quản lý Bottom Sheet
   function openBottomSheet() {
     const sheet = document.getElementById('lakinh-bottom-sheet');
+    const dockTools = document.getElementById('lakinh-dock-tools');
     if (sheet) {
       sheet.classList.add('open');
       state.isSheetOpen = true;
+      if (dockTools) dockTools.classList.add('active');
     }
   }
 
   function closeBottomSheet() {
     const sheet = document.getElementById('lakinh-bottom-sheet');
+    const dockTools = document.getElementById('lakinh-dock-tools');
     if (sheet) {
       sheet.classList.remove('open');
       state.isSheetOpen = false;
+      if (dockTools) dockTools.classList.remove('active');
+    }
+  }
+
+  function toggleBottomSheet() {
+    if (state.isSheetOpen) {
+      closeBottomSheet();
+    } else {
+      openBottomSheet();
     }
   }
 
@@ -3301,25 +3315,60 @@
       });
     }
 
-    // 2. Nút Bay Về Vị Trí Hiện Tại (Floating FAB & Bottom Dock)
+    // Hàm chống bấm nhầm khi vuốt màn hình (Swipe-Safe Tap Detector):
+    // Chỉ kích hoạt khi chạm dứt khoát tại chỗ (movement <= 7px), bỏ qua hoàn toàn khi đang vuốt lướt bản đồ hoặc xoay đĩa
+    const attachSwipeSafeClick = (element, handler) => {
+      if (!element) return;
+      let startX = 0;
+      let startY = 0;
+      let isSwipe = false;
+      let startTime = 0;
+
+      element.addEventListener('pointerdown', (e) => {
+        startX = e.clientX;
+        startY = e.clientY;
+        isSwipe = false;
+        startTime = Date.now();
+      }, { passive: true });
+
+      element.addEventListener('pointermove', (e) => {
+        const dx = Math.abs(e.clientX - startX);
+        const dy = Math.abs(e.clientY - startY);
+        if (dx > 7 || dy > 7) {
+          isSwipe = true;
+        }
+      }, { passive: true });
+
+      element.addEventListener('click', (e) => {
+        if (isSwipe || (Date.now() - startTime > 450)) {
+          e.preventDefault();
+          e.stopPropagation();
+          isSwipe = false;
+          return false;
+        }
+        handler(e);
+      });
+    };
+
+    // 2. Nút Bay Về Vị Trí Hiện Tại (Floating FAB & Bottom Dock) - Chống chạm nhầm khi vuốt
     const btnMyLocation = document.getElementById('lakinh-btn-my-location');
     if (btnMyLocation) {
-      btnMyLocation.addEventListener('click', () => getCurrentGPS(false));
+      attachSwipeSafeClick(btnMyLocation, () => getCurrentGPS(false));
     }
 
     const dockSensor = document.getElementById('lakinh-dock-sensor');
-    if (dockSensor) dockSensor.addEventListener('click', toggleCompassSensor);
+    if (dockSensor) attachSwipeSafeClick(dockSensor, toggleCompassSensor);
 
     const dockGps = document.getElementById('lakinh-dock-gps');
     if (dockGps) {
-      dockGps.addEventListener('click', () => getCurrentGPS(false));
+      attachSwipeSafeClick(dockGps, () => getCurrentGPS(false));
     }
 
     const dockDem = document.getElementById('lakinh-dock-dem');
-    if (dockDem) dockDem.addEventListener('click', scanElevationAndTiers);
+    if (dockDem) attachSwipeSafeClick(dockDem, scanElevationAndTiers);
 
     const dockHkdq = document.getElementById('lakinh-dock-hkdq');
-    if (dockHkdq) dockHkdq.addEventListener('click', openHKDQModal);
+    if (dockHkdq) attachSwipeSafeClick(dockHkdq, openHKDQModal);
 
     const quickHkdq = document.getElementById('lakinh-hkdq-quick-strip');
     if (quickHkdq) {
@@ -3340,9 +3389,71 @@
     });
 
     const dockTools = document.getElementById('lakinh-dock-tools');
-    if (dockTools) dockTools.addEventListener('click', openBottomSheet);
+    if (dockTools) attachSwipeSafeClick(dockTools, toggleBottomSheet);
 
-    // 3. Bottom Sheet controls
+    // 3. Quản lý Bảng Điều Khiển La Kinh: Chống bấm nhầm triệt để khi thao tác vuốt lên trên / xuống dưới
+    const sheet = document.getElementById('lakinh-bottom-sheet');
+    if (sheet) {
+      let sheetTouchStartY = 0;
+      let sheetTouchStartX = 0;
+      let isSheetScrolling = false;
+      let lastSheetScrollTime = 0;
+
+      sheet.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          sheetTouchStartY = e.touches[0].clientY;
+          sheetTouchStartX = e.touches[0].clientX;
+          isSheetScrolling = false;
+        }
+      }, { passive: true });
+
+      sheet.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+          const dy = Math.abs(e.touches[0].clientY - sheetTouchStartY);
+          const dx = Math.abs(e.touches[0].clientX - sheetTouchStartX);
+          if (dy > 6 || dx > 6) {
+            isSheetScrolling = true;
+            lastSheetScrollTime = Date.now();
+          }
+        }
+      }, { passive: true });
+
+      sheet.addEventListener('scroll', () => {
+        isSheetScrolling = true;
+        lastSheetScrollTime = Date.now();
+      }, { passive: true });
+
+      // Lớp chắn Capture chặn hoàn toàn việc click nhầm vào các nút khi người dùng đang vuốt cuộn bảng điều khiển
+      sheet.addEventListener('click', (e) => {
+        if (isSheetScrolling || (Date.now() - lastSheetScrollTime < 240)) {
+          e.stopPropagation();
+          e.preventDefault();
+          isSheetScrolling = false;
+          return false;
+        }
+      }, true); // useCapture: true
+
+      // Vuốt xuống trên thanh gạt hoặc tiêu đề bảng điều khiển để thu gọn nhanh
+      const sheetHandle = document.getElementById('sheet-handle');
+      const sheetHeader = sheet.querySelector('.sheet-header-row');
+      [sheetHandle, sheetHeader].forEach(el => {
+        if (!el) return;
+        let startY = 0;
+        el.addEventListener('touchstart', (e) => {
+          if (e.touches && e.touches[0]) startY = e.touches[0].clientY;
+        }, { passive: true });
+        el.addEventListener('touchend', (e) => {
+          if (e.changedTouches && e.changedTouches[0]) {
+            const dy = e.changedTouches[0].clientY - startY;
+            if (dy > 28) {
+              closeBottomSheet();
+              showLaKinhToast('Đã thu gọn bảng điều khiển');
+            }
+          }
+        }, { passive: true });
+      });
+    }
+
     const sheetCloseBtn = document.getElementById('sheet-close-btn');
     if (sheetCloseBtn) sheetCloseBtn.addEventListener('click', closeBottomSheet);
 
@@ -3774,12 +3885,7 @@
 
     const btnFloatRay = document.getElementById('lakinh-btn-ray-float');
     if (btnFloatRay) {
-      btnFloatRay.addEventListener('click', toggleSightingRay);
-      btnFloatRay.addEventListener('touchend', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        toggleSightingRay();
-      });
+      attachSwipeSafeClick(btnFloatRay, toggleSightingRay);
     }
 
     if (btnRayHudClose) {
