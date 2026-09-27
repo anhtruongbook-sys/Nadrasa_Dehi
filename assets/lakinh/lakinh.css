@@ -283,21 +283,23 @@ body.light-theme .lakinh-float-btn {
 #lakinh-top-panel {
   position: absolute;
   top: 8px;
-  left: 8px;
-  right: 8px;
+  left: 6px;
+  right: 6px;
   z-index: 25;
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(15, 23, 42, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(245, 176, 65, 0.4);
   border-radius: 14px;
-  padding: 4px 10px;
+  padding: 4px 6px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 10px rgba(245, 176, 65, 0.12);
   user-select: none;
   transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 body.light-theme #lakinh-top-panel {
@@ -312,13 +314,26 @@ body.light-theme #lakinh-top-panel {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: 6px;
+  gap: 3px;
+  box-sizing: border-box;
+}
+
+#lakinh-top-panel .lakinh-float-btn.icon-only {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
 }
 
 .lakinh-top-right-group {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 /* Cụm Tọa Hướng ở giữa */
@@ -326,12 +341,14 @@ body.light-theme #lakinh-top-panel {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   cursor: pointer;
-  padding: 2px 8px;
+  padding: 2px 4px;
   border-radius: 8px;
   transition: background 0.15s ease;
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .lakinh-deg-center:active {
@@ -339,12 +356,13 @@ body.light-theme #lakinh-top-panel {
 }
 
 .hud-pill-deg {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: #38bdf8;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   letter-spacing: -0.2px;
+  white-space: nowrap;
 }
 
 body.light-theme .hud-pill-deg {
@@ -353,14 +371,16 @@ body.light-theme .hud-pill-deg {
 
 .hud-capsule-sep {
   color: rgba(148, 163, 184, 0.45);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
 }
 
 .hud-pill-son {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--gold-primary, #f5b041);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.light-theme .hud-pill-son {
@@ -368,9 +388,9 @@ body.light-theme .hud-pill-son {
 }
 
 .hud-pill-arrow {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: #94a3b8;
-  margin-left: 2px;
+  margin-left: 1px;
 }
 
 /* Hàng 2: Huyền Không Đại Quái To Rõ, Đầy Đủ 100% Thông Tin */
@@ -379,12 +399,14 @@ body.light-theme .hud-pill-son {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 3px 0 1px 0;
+  padding: 2px 0 1px 0;
   border-top: 1px solid rgba(245, 176, 65, 0.18);
   cursor: pointer;
   border-radius: 6px;
   transition: background 0.15s ease;
-  gap: 4px;
+  gap: 3px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 body.light-theme .lakinh-hkdq-full-row {
@@ -398,18 +420,20 @@ body.light-theme .lakinh-hkdq-full-row {
 .hkdq-row-left {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   flex-shrink: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .hkdq-qp-icon {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #f5b041;
   line-height: 1;
 }
 
 .hkdq-qp-que {
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: #fef08a;
   white-space: nowrap;
@@ -423,8 +447,8 @@ body.light-theme .hkdq-qp-que {
 .hkdq-row-right {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.68rem;
+  gap: 3px;
+  font-size: 0.65rem;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -440,7 +464,7 @@ body.light-theme .hkdq-qp-khivan {
 
 .hkdq-qp-sep {
   color: rgba(148, 163, 184, 0.4);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
 }
 
 .hkdq-qp-hao {
@@ -453,11 +477,11 @@ body.light-theme .hkdq-qp-hao {
 }
 
 .hkdq-qp-tag {
-  padding: 1px 5px;
-  border-radius: 10px;
-  font-size: 0.58rem;
+  padding: 1px 4px;
+  border-radius: 8px;
+  font-size: 0.55rem;
   font-weight: 700;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   line-height: 1.2;
   white-space: nowrap;
 }
@@ -2119,21 +2143,69 @@ body.light-theme .hud-card-divider {
 /* Floating Ray HUD Card trên màn hình */
 #lakinh-ray-floating-hud {
   position: absolute;
-  top: 96px;
-  left: 12px;
-  right: 12px;
+  top: 92px;
+  left: 8px;
+  right: 8px;
   max-width: 380px;
   margin: 0 auto;
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(15, 23, 42, 0.94);
   border: 1px solid rgba(6, 182, 212, 0.5);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(6, 182, 212, 0.25);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 12px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   z-index: 25;
   color: #f8fafc;
   animation: slideDownFade 0.2s ease-out;
+  transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+/* Khi chỉnh vị trí điểm tia ngắm: nền chuyển sang trong suốt */
+#lakinh-ray-floating-hud.ray-hud-transparent {
+  background: rgba(15, 23, 42, 0.08) !important;
+  border-color: rgba(6, 182, 212, 0.15) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 0.18 !important;
+  pointer-events: none !important;
+}
+
+/* Mini Capsule Thu Gọn Của Ray HUD */
+#lakinh-ray-mini-pill {
+  position: absolute;
+  top: 92px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(6, 182, 212, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(6, 182, 212, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 4px 12px;
+  z-index: 25;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  animation: slideDownFade 0.15s ease-out;
+  white-space: nowrap;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+#lakinh-ray-mini-pill.ray-hud-transparent {
+  opacity: 0.18 !important;
+  pointer-events: none !important;
+}
+
+#lakinh-ray-mini-pill:active {
+  background: rgba(6, 182, 212, 0.25);
 }
 
 .ray-hud-header {
@@ -2142,7 +2214,7 @@ body.light-theme .hud-card-divider {
   align-items: center;
   border-bottom: 1px solid rgba(6, 182, 212, 0.25);
   padding-bottom: 4px;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .ray-hud-title {

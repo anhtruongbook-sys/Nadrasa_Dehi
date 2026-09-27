@@ -31,6 +31,7 @@
     isLocked: false,
     // Tia ngắm phong thủy (lập cực qua 1 điểm bất kỳ)
     isRayActive: false,
+    isRayHudCollapsed: false, // Thu gọn floating HUD thành mini capsule khi bấm [✕]
     rayAngle: 0.0, // Góc độ số của tia ngắm (0.0° - 359.9°)
     rayDistance: 160, // Khoảng cách từ tâm đến điểm mục tiêu ghim trên bản vẽ (px)
     isDraggingRayTarget: false,
@@ -147,31 +148,76 @@
           </div>
         </div>
 
-        <!-- Floating Ray HUD Card trên màn hình -->
+        <!-- Floating Ray HUD Card trên màn hình (Đầy đủ thông tin Quẻ & Hào theo tia) -->
         <div id="lakinh-ray-floating-hud" class="lakinh-glass-panel" style="display: none;">
           <div class="ray-hud-header">
             <span class="ray-hud-title">🎯 TIA NGẮM PHÂN KIM</span>
             <span class="ray-hud-deg" id="ray-hud-deg">0.0°</span>
-            <button type="button" id="btn-ray-hud-close" class="ray-hud-close-btn" title="Đóng tia ngắm">✕</button>
+            <button type="button" id="btn-ray-hud-close" class="ray-hud-close-btn" title="Thu gọn ô thông tin (vẫn giữ tia ngắm)">✕</button>
           </div>
           <div class="ray-hud-body">
+            <!-- 1. Sơn Hướng -->
             <div class="ray-hud-item">
               <span class="lbl">Sơn Hướng:</span>
               <strong id="ray-hud-son" style="color: #38bdf8;">Sơn Tý (Khảm • Thủy)</strong>
             </div>
+
+            <!-- 2. Quẻ Đại Quái (64 Quẻ) -->
             <div class="ray-hud-item">
               <span class="lbl">Đại Quái:</span>
-              <span><strong id="ray-hud-que" style="color: #facc15;">---</strong> <span id="ray-hud-khivan" style="color: #94a3b8; font-size: 0.72rem;"></span></span>
+              <span style="text-align: right;">
+                <strong id="ray-hud-que" style="color: #facc15;">Phong Địa Quan</strong>
+                <span id="ray-hud-khivan" style="color: #cbd5e1; font-size: 0.72rem; margin-left: 4px;">(Khí 2 • Vận 2)</span>
+              </span>
             </div>
-            <div class="ray-hud-item">
+            <div class="ray-hud-subitem" id="ray-hud-que-extra" style="color: #94a3b8; font-size: 0.68rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span id="ray-hud-que-range">Dải 337.5° – 343.1°</span>
+              <span id="ray-hud-que-ha-thuong" style="color: #cbd5e1;">Thượng Tốn Hạ Khôn</span>
+            </div>
+
+            <!-- 3. Hào Vi Phân (384 Hào) -->
+            <div class="ray-hud-item" style="border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 3px; margin-top: 2px;">
               <span class="lbl">Hào Vị:</span>
-              <span><span id="ray-hud-hao" style="color: #4ade80;">---</span> <span id="ray-hud-badge-van9" class="ray-hud-badge">---</span></span>
+              <span style="text-align: right;">
+                <strong id="ray-hud-hao" style="color: #4ade80;">Hào 1 (Ất Mùi • Tử Tôn)</strong>
+                <span id="ray-hud-badge-van9" class="ray-hud-badge">---</span>
+              </span>
             </div>
-            <div class="ray-hud-item" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 3px; margin-top: 3px;">
+            <div class="ray-hud-subitem" id="ray-hud-hao-extra" style="color: #94a3b8; font-size: 0.68rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span id="ray-hud-hao-range">Dải: 341.25° – 342.19°</span>
+              <span id="ray-hud-hao-amduong" style="color: #38bdf8;">Thuận (1 → 6)</span>
+            </div>
+
+            <!-- 4. Lời khuyên Phong Thủy & Lục Thân Vận 9 -->
+            <div id="ray-hud-advice-box" style="background: rgba(2, 132, 199, 0.12); border-left: 2px solid #38bdf8; padding: 4px 6px; border-radius: 4px; font-size: 0.68rem; color: #e2e8f0; line-height: 1.35; margin-top: 3px;">
+              <div id="ray-hud-advice-van9" style="color: #facc15; font-weight: 600;">Linh Thần Vận 9</div>
+              <div id="ray-hud-advice-text" style="color: #cbd5e1; margin-top: 1px;">Cần ĐỘNG KHÍ, mở Cửa, Cổng, nạp Thủy chiêu tài.</div>
+            </div>
+
+            <!-- 5. So Hướng Nhà & Nút Xem 384 Hào -->
+            <div class="ray-hud-item" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 4px; margin-top: 4px;">
               <span class="lbl">So Hướng Nhà:</span>
               <span id="ray-hud-diff" style="color: #f43f5e; font-weight: 700;">Trùng Chính Hướng</span>
             </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; padding-top: 3px; border-top: 1px solid rgba(255,255,255,0.08);">
+              <span id="ray-hud-ung-ky" style="color: #94a3b8; font-size: 0.63rem;"></span>
+              <button type="button" id="btn-ray-hud-open-hkdq" style="background: rgba(245, 176, 65, 0.15); border: 1px solid rgba(245, 176, 65, 0.45); color: #facc15; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; cursor: pointer;">
+                🔱 Xem Đủ 6 Hào
+              </button>
+            </div>
           </div>
+        </div>
+
+        <!-- Mini Capsule Thu Gọn Của Ray HUD Khi Bấm [✕] -->
+        <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-capsule" style="display: none;" title="Chạm để mở lại bảng thông tin chi tiết">
+          <span style="color: #facc15;">🎯 <span id="ray-mini-deg">0.0°</span></span>
+          <span class="hud-capsule-sep">•</span>
+          <span id="ray-mini-son" style="color: #38bdf8;">Sơn Tý</span>
+          <span class="hud-capsule-sep">•</span>
+          <span id="ray-mini-que" style="color: #4ade80;">Thuần Khôn</span>
+          <span id="ray-mini-badge" class="ray-hud-badge" style="display: none;">---</span>
+          <span style="color: #94a3b8; font-size: 0.65rem; margin-left: 2px;">▾ Mở</span>
         </div>
 
         <!-- Banner Hướng Dẫn Kéo Dịch Tâm Mặt Bằng -->
@@ -1170,6 +1216,13 @@
     let haoLucThan = '';
     let van9RoleText = '';
     let van9BadgeClass = '';
+    let queRange = '';
+    let haThuong = '';
+    let haoRange = '';
+    let haoAmDuong = '';
+    let van9Advice = '';
+    let lucThanAdvice = '';
+    let ungKyText = '';
 
     if (global.NetaLaKinhEngine) {
       const son = global.NetaLaKinhEngine.getSonInfo(deg);
@@ -1184,10 +1237,21 @@
           queName = hkdq.que_name || '';
           quaiKhi = hkdq.quai_khi || hkdq.quai_so || '';
           quaiVan = hkdq.quai_van || '';
+          queRange = hkdq.deg_range_que ? `Dải: ${hkdq.deg_range_que}` : '';
+          haThuong = hkdq.ha_thuong_quai ? `Quẻ: ${hkdq.ha_thuong_quai}` : '';
+
           if (hkdq.hao_vi_phan) {
             haoTen = hkdq.hao_vi_phan.ten_hao || '';
             haoCanChi = hkdq.hao_vi_phan.can_chi || '';
             haoLucThan = hkdq.hao_vi_phan.luc_than || '';
+            haoRange = hkdq.hao_vi_phan.deg_range ? `Dải: ${hkdq.hao_vi_phan.deg_range}` : '';
+            haoAmDuong = hkdq.chieu_hao ? `Chiều: ${hkdq.chieu_hao}` : '';
+            lucThanAdvice = hkdq.hao_vi_phan.advice || '';
+            if (hkdq.hao_vi_phan.nam_phat || hkdq.hao_vi_phan.nguoi_phat) {
+              const np = hkdq.hao_vi_phan.nam_phat ? `Năm: ${hkdq.hao_vi_phan.nam_phat}` : '';
+              const ngp = hkdq.hao_vi_phan.nguoi_phat ? `Ứng: ${hkdq.hao_vi_phan.nguoi_phat}` : '';
+              ungKyText = [np, ngp].filter(Boolean).join(' • ');
+            }
           }
           if (hkdq.van_9_role) {
             if (hkdq.van_9_role.is_duong_van_9) {
@@ -1200,6 +1264,7 @@
               van9RoleText = '⛰️ Chính Thần V9';
               van9BadgeClass = 'chinh';
             }
+            van9Advice = hkdq.van_9_role.advice || '';
           }
           if (hkdq.canh_bao_khong_vong && hkdq.canh_bao_khong_vong.is_near_boundary) {
             van9RoleText = `⚠️ Ranh ${hkdq.canh_bao_khong_vong.distance}°`;
@@ -1233,30 +1298,72 @@
       `;
     }
 
-    // Cập nhật Floating HUD trên màn hình
-    if (rayHud && !state.isSheetOpen) {
-      rayHud.style.display = 'block';
-      const hudDeg = document.getElementById('ray-hud-deg');
-      const hudSon = document.getElementById('ray-hud-son');
-      const hudQue = document.getElementById('ray-hud-que');
-      const hudKhivan = document.getElementById('ray-hud-khivan');
-      const hudHao = document.getElementById('ray-hud-hao');
-      const hudVan9 = document.getElementById('ray-hud-badge-van9');
-      const hudDiff = document.getElementById('ray-hud-diff');
+    // Cập nhật Floating HUD & Mini Capsule trên màn hình
+    const miniPill = document.getElementById('lakinh-ray-mini-pill');
+    if (!state.isSheetOpen) {
+      if (state.isRayHudCollapsed) {
+        if (rayHud) rayHud.style.display = 'none';
+        if (miniPill) {
+          miniPill.style.display = 'flex';
+          const miniDeg = document.getElementById('ray-mini-deg');
+          const miniSon = document.getElementById('ray-mini-son');
+          const miniQue = document.getElementById('ray-mini-que');
+          const miniBadge = document.getElementById('ray-mini-badge');
+          if (miniDeg) miniDeg.textContent = `${deg.toFixed(1)}°`;
+          if (miniSon) miniSon.textContent = `Sơn ${sonName}`;
+          if (miniQue) miniQue.textContent = queName ? `${queName} (${haoTen || ''})` : '';
+          if (miniBadge) {
+            miniBadge.textContent = van9RoleText;
+            miniBadge.className = `ray-hud-badge ${van9BadgeClass}`;
+            miniBadge.style.display = van9RoleText ? 'inline-block' : 'none';
+          }
+        }
+      } else {
+        if (miniPill) miniPill.style.display = 'none';
+        if (rayHud) {
+          rayHud.style.display = 'block';
+          const hudDeg = document.getElementById('ray-hud-deg');
+          const hudSon = document.getElementById('ray-hud-son');
+          const hudQue = document.getElementById('ray-hud-que');
+          const hudKhivan = document.getElementById('ray-hud-khivan');
+          const hudQueRange = document.getElementById('ray-hud-que-range');
+          const hudQueHaThuong = document.getElementById('ray-hud-que-ha-thuong');
+          const hudHao = document.getElementById('ray-hud-hao');
+          const hudHaoRange = document.getElementById('ray-hud-hao-range');
+          const hudHaoAmDuong = document.getElementById('ray-hud-hao-amduong');
+          const hudVan9 = document.getElementById('ray-hud-badge-van9');
+          const hudAdviceVan9 = document.getElementById('ray-hud-advice-van9');
+          const hudAdviceText = document.getElementById('ray-hud-advice-text');
+          const hudUngKy = document.getElementById('ray-hud-ung-ky');
+          const hudDiff = document.getElementById('ray-hud-diff');
 
-      if (hudDeg) hudDeg.textContent = `${deg.toFixed(1)}°`;
-      if (hudSon) hudSon.textContent = `Sơn ${sonName} (${sonCung} • ${sonHanh})`;
-      if (hudQue) hudQue.textContent = queName ? `Quẻ ${queName}` : '';
-      if (hudKhivan) hudKhivan.textContent = quaiKhi ? `(Khí ${quaiKhi} • Vận ${quaiVan})` : '';
-      if (hudHao) hudHao.textContent = haoTen ? `${haoTen} (${haoCanChi} • ${haoLucThan})` : '';
-      if (hudVan9) {
-        hudVan9.textContent = van9RoleText;
-        hudVan9.className = `ray-hud-badge ${van9BadgeClass}`;
-        hudVan9.style.display = van9RoleText ? 'inline-block' : 'none';
+          if (hudDeg) hudDeg.textContent = `${deg.toFixed(1)}°`;
+          if (hudSon) hudSon.textContent = `Sơn ${sonName} (${sonCung} • ${sonHanh})`;
+          if (hudQue) hudQue.textContent = queName ? `Quẻ ${queName}` : '';
+          if (hudKhivan) hudKhivan.textContent = quaiKhi ? `(Khí ${quaiKhi} • Vận ${quaiVan})` : '';
+          if (hudQueRange) hudQueRange.textContent = queRange;
+          if (hudQueHaThuong) hudQueHaThuong.textContent = haThuong;
+          if (hudHao) hudHao.textContent = haoTen ? `${haoTen} (${haoCanChi} • ${haoLucThan})` : '';
+          if (hudHaoRange) hudHaoRange.textContent = haoRange;
+          if (hudHaoAmDuong) hudHaoAmDuong.textContent = haoAmDuong;
+          if (hudVan9) {
+            hudVan9.textContent = van9RoleText;
+            hudVan9.className = `ray-hud-badge ${van9BadgeClass}`;
+            hudVan9.style.display = van9RoleText ? 'inline-block' : 'none';
+          }
+          if (hudAdviceVan9) {
+            hudAdviceVan9.textContent = `${van9RoleText || 'Huyền Không Đại Quái'}:`;
+          }
+          if (hudAdviceText) {
+            hudAdviceText.textContent = lucThanAdvice || van9Advice || 'Phương vị nạp khí phong thủy';
+          }
+          if (hudUngKy) hudUngKy.textContent = ungKyText;
+          if (hudDiff) hudDiff.textContent = diffText;
+        }
       }
-      if (hudDiff) hudDiff.textContent = diffText;
-    } else if (rayHud) {
-      rayHud.style.display = 'none';
+    } else {
+      if (rayHud) rayHud.style.display = 'none';
+      if (miniPill) miniPill.style.display = 'none';
     }
 
     // Cập nhật thanh trượt và nhãn trong Sheet
@@ -1768,12 +1875,14 @@
   }
 
   // Mở Modal Huyền Không Đại Quái (64 Quẻ & 384 Hào Vi Phân)
-  function openHKDQModal() {
+  function openHKDQModal(targetDeg) {
     const modalBox = document.getElementById('lakinh-modal-container');
     if (!modalBox || !global.NetaLaKinhEngine || !global.NetaLaKinhEngine.getHKDQInfo) return;
 
     closeBottomSheet();
-    const hkdq = global.NetaLaKinhEngine.getHKDQInfo(state.rotation);
+    const isRayMode = (typeof targetDeg === 'number');
+    const queryDeg = isRayMode ? targetDeg : state.rotation;
+    const hkdq = global.NetaLaKinhEngine.getHKDQInfo(queryDeg);
     if (!hkdq) {
       showLaKinhToast('⚠️ Chưa nạp được CSDL Huyền Không Đại Quái');
       return;
@@ -1859,7 +1968,7 @@
       <div class="lakinh-modal-overlay" id="modal-hkdq-overlay">
         <div class="lakinh-glass-panel lakinh-modal-dialog hkdq-modal-dialog">
           <div class="lakinh-modal-header">
-            <div class="lakinh-modal-title">🔱 HUYỀN KHÔNG ĐẠI QUÁI</div>
+            <div class="lakinh-modal-title">🔱 HUYỀN KHÔNG ĐẠI QUÁI ${isRayMode ? `(TIA NGẮM ${queryDeg.toFixed(1)}°)` : ''}</div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-hkdq-overlay').remove()">✕</button>
           </div>
 
@@ -1953,9 +2062,15 @@
         e.stopPropagation();
         const tDeg = parseFloat(btn.getAttribute('data-target-deg'));
         if (!isNaN(tDeg)) {
-          updateRotationDisplay(tDeg);
-          showLaKinhToast(`🎯 Đã vi chỉnh La Kinh về ${tDeg}°`);
-          openHKDQModal();
+          if (isRayMode) {
+            setRayAngle(tDeg);
+            showLaKinhToast(`🎯 Đã định vị tia ngắm vào tâm Hào: ${tDeg.toFixed(2)}°`);
+            openHKDQModal(tDeg);
+          } else {
+            updateRotationDisplay(tDeg);
+            showLaKinhToast(`🎯 Đã vi chỉnh La Kinh về ${tDeg}°`);
+            openHKDQModal();
+          }
         }
       };
     });
@@ -1964,9 +2079,15 @@
       item.onclick = () => {
         const tDeg = parseFloat(item.getAttribute('data-hao-deg'));
         if (!isNaN(tDeg)) {
-          updateRotationDisplay(tDeg);
-          showLaKinhToast(`🎯 Đã vi chỉnh La Kinh về ${tDeg}°`);
-          openHKDQModal();
+          if (isRayMode) {
+            setRayAngle(tDeg);
+            showLaKinhToast(`🎯 Đã định vị tia ngắm vào tâm Hào: ${tDeg.toFixed(2)}°`);
+            openHKDQModal(tDeg);
+          } else {
+            updateRotationDisplay(tDeg);
+            showLaKinhToast(`🎯 Đã vi chỉnh La Kinh về ${tDeg}°`);
+            openHKDQModal();
+          }
         }
       };
     });
@@ -3557,20 +3678,51 @@
         : 'Đã tắt tia ngắm');
     };
 
+    const setRayHudTransparency = (transparent) => {
+      const hud = document.getElementById('lakinh-ray-floating-hud');
+      const mini = document.getElementById('lakinh-ray-mini-pill');
+      if (hud) hud.classList.toggle('ray-hud-transparent', transparent);
+      if (mini) mini.classList.toggle('ray-hud-transparent', transparent);
+    };
+
     if (btnRay) btnRay.addEventListener('click', toggleSightingRay);
     if (btnQuickRay) btnQuickRay.addEventListener('click', toggleSightingRay);
     if (btnRayHudClose) {
       btnRayHudClose.addEventListener('click', (e) => {
         e.stopPropagation();
-        state.isRayActive = false;
+        state.isRayHudCollapsed = true;
         updateSightingRay();
+      });
+    }
+
+    const miniPill = document.getElementById('lakinh-ray-mini-pill');
+    if (miniPill) {
+      miniPill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.isRayHudCollapsed = false;
+        updateSightingRay();
+      });
+    }
+
+    const btnRayOpenHkdq = document.getElementById('btn-ray-hud-open-hkdq');
+    if (btnRayOpenHkdq) {
+      btnRayOpenHkdq.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openHKDQModal(state.rayAngle);
       });
     }
 
     const sRayDeg = document.getElementById('sheet-slider-ray-deg');
     if (sRayDeg) {
       sRayDeg.addEventListener('input', (e) => {
+        setRayHudTransparency(true);
         setRayAngle(parseFloat(e.target.value));
+      });
+      sRayDeg.addEventListener('change', () => {
+        setRayHudTransparency(false);
+      });
+      sRayDeg.addEventListener('pointerup', () => {
+        setRayHudTransparency(false);
       });
     }
 
@@ -3638,6 +3790,7 @@
         e.stopPropagation();
         e.preventDefault();
         isTargetDragging = true;
+        setRayHudTransparency(true);
         try { targetHandle.setPointerCapture(e.pointerId); } catch (_) {}
       });
 
@@ -3651,6 +3804,7 @@
       const endTargetDrag = (e) => {
         if (isTargetDragging) {
           isTargetDragging = false;
+          setRayHudTransparency(false);
           try { targetHandle.releasePointerCapture(e.pointerId); } catch (_) {}
         }
       };
@@ -3661,7 +3815,7 @@
     // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
     if (lkContainer) {
       lkContainer.addEventListener('click', (e) => {
-        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
           return;
         }
         if (state.isRayActive && !state.isPlanPanActive) {

@@ -63,14 +63,29 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.4
-          name: "Neta Light & Huyền Học v2.0.4 (Tải Ảnh Mặt Bằng Native Android & Tia Ngắm Phân Kim)"
+          tag_name: v2.0.5
+          name: "Neta Light & Huyền Học v2.0.5 (Tia Ngắm Đầy Đủ Quẻ Hào, Chống Tràn Nút & Thu Gọn HUD)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.4
-            - **Khắc Phục Hoàn Toàn Tải Ảnh Mặt Bằng Trên Điện Thoại Android**:
-              + Tích hợp trực tiếp Native Photo Picker qua cầu nối `NativeBridge` giữa Flutter WebView và Kotlin Activity.
-              + Tự động nén và tối ưu hóa ảnh chụp camera độ phân giải cao (10MP - 50MP) về kích thước chuẩn sắc nét 1600px, triệt tiêu 100% hiện tượng nghẽn bộ đệm Binder IPC (`TransactionTooLargeException`) gây tình trạng chọn ảnh xong vẫn báo *"Chưa nạp ảnh"*.
-              + Hỗ trợ cả hai luồng: Chọn ảnh từ Thư viện (Gallery / Photos / Files) và Tải tệp HTML5 với Canvas downsampling mượt mà.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.5
+            - **Khắc Phục 100% Tràn Nút Bấm Trên Thanh Công Cụ La Kinh (Top Panel)**:
+              + Tinh chỉnh lại kích thước các nút công cụ biểu tượng (30px), khoảng cách đệm an toàn và thiết lập flexbox co giãn thông minh `box-sizing: border-box; overflow: hidden;`.
+              + Loại bỏ hoàn toàn tình trạng nút hồ sơ dự án `📁` bị đẩy lấn tràn ra ngoài viền bo góc trên các màn hình điện thoại hẹp (320px - 360px).
+              + Dải hiển thị Huyền Không Đại Quái hàng thứ 2 được tối ưu hóa hiển thị gọn gàng, chống cắt chữ ở viền mép phải.
+            - **Hiển Thị Toàn Diện Thông Tin Quẻ Đến Hào Của Điểm Theo Tia Ngắm (Full HKDQ Ray HUD)**:
+              + Hiển thị đầy đủ 100% thông tin phong thủy: Sơn Hướng, Cung, Hành, Âm Dương.
+              + Đại Quái 64 Quẻ: Tên Quẻ, Quái Khí, Quái Vận, Thượng/Hạ Quái, Dải độ số chính xác của quẻ.
+              + Phân Kim 384 Hào Vi Phân (0.9375°): Tên hào, Can Chi nạp âm, Lục Thân, Dải độ số hào, Chiều hào (Thuận/Nghịch).
+              + Đánh giá Vận 9: Badge Chính Thần / Linh Thần / Đương Vận 9 kèm lời khuyên hành động (Động khí nạp Thủy hay Tĩnh khí an vị).
+              + Ứng nghiệm nhân sự: Năm phát tài, người phát theo Lục Thân của hào.
+              + Tích hợp nút **🔱 Xem Đủ 6 Hào**: Mở trực tiếp Modal 384 Hào vi phân định hướng theo đúng độ số tia ngắm.
+            - **Nền Trong Suốt Khi Chỉnh Vị Trí Điểm Ngắm (Ghost Mode Transparency)**:
+              + Khi người dùng kéo rê chấm mục tiêu hoặc di chuyển thanh trượt độ số, toàn bộ khung bảng thông tin HUD tự động chuyển sang trạng thái bán trong suốt (opacity: 0.18, xuyên thấu không che chắn).
+              + Giúp người dùng nhìn thấy trọn vẹn 100% bản vẽ mặt bằng nhà, cửa, tường, bếp phía dưới để căn chỉnh tim điểm cực kỳ chuẩn xác. Khi thả tay, bảng lập tức hiện rõ trở lại.
+            - **Thu Gọn Ô Thông Tin Khi Bấm [✕] (Giữ Nguyên Tia Ngắm)**:
+              + Khi bấm vào nút [✕] trên bảng thông tin chi tiết, tia ngắm laser neon và chấm mục tiêu vẫn hoạt động bình thường, không bị tắt.
+              + Bảng chi tiết được thu gọn thành một viên nang nhỏ gọn tinh tế (Mini Capsule) hiển thị độ số và hào vị; chạm vào viên nang này sẽ mở bung lại bảng chi tiết.
+            - **Kế Thừa Toàn Bộ Các Tính Năng Từ v2.0.4**:
+              + Tải ảnh mặt bằng gốc Native Android qua NativeBridge, nén ảnh 1600px chống nghẽn bộ đệm Binder.
             - **Nhập Ảnh Bản Vẽ Mặt Bằng Ngôi Nhà Dưới La Kinh (Floor Plan Underlay)**:
               + Tải ảnh bản vẽ kiến trúc (JPG, PNG, WEBP) đặt trực tiếp dưới đĩa La Kinh 36 tầng.
               + Tâm ảnh trùng chính xác 100% tuyệt đối với tâm La Kinh và chữ thập đỏ lập cực.
