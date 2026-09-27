@@ -214,18 +214,35 @@
           </div>
         </div>
 
-        <!-- Mini Capsule Thu Gọn Của Ray HUD - Có Nút Chi Tiết & Nút Tắt Tia Ngắm -->
-        <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-capsule" style="display: none;">
-          <div class="ray-mini-info-wrap" id="btn-ray-mini-expand" title="Chạm để mở bảng thông tin chi tiết">
-            <span style="color: #facc15;">🎯 <span id="ray-mini-deg">0.0°</span></span>
-            <span class="hud-capsule-sep">•</span>
-            <span id="ray-mini-son" style="color: #38bdf8;">Sơn Tý</span>
-            <span class="hud-capsule-sep">•</span>
-            <span id="ray-mini-que" style="color: #4ade80;">Thuần Khôn</span>
-            <span id="ray-mini-badge" class="ray-hud-badge" style="display: none;">---</span>
-            <span class="ray-mini-expand-text">▾</span>
+        <!-- Mini Card Thu Gọn Của Ray HUD - Đầy Đủ 100% Thông Tin Quẻ, Khí Vận, Lục Thân, Linh/Chính Thần (Chuẩn Mực Đối Xứng Hướng Nhà) -->
+        <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-card" style="display: none;">
+          <!-- Hàng 1: Độ Số & Sơn Của Tia Ngắm + Các Nút Điều Khiển -->
+          <div class="ray-mini-header-row">
+            <div class="ray-mini-deg-box" id="btn-ray-mini-expand-header" title="Chạm để xem bảng thông số chi tiết">
+              <span class="ray-mini-icon">🎯</span>
+              <span class="ray-mini-deg" id="ray-mini-deg">0.0°</span>
+              <span class="hud-capsule-sep">•</span>
+              <span class="ray-mini-son" id="ray-mini-son">Sơn Tý (Khảm)</span>
+            </div>
+            <div class="ray-mini-actions">
+              <button type="button" id="btn-ray-mini-expand" class="ray-mini-btn-expand" title="Xem chi tiết">▾ Chi tiết</button>
+              <button type="button" id="btn-ray-mini-close" class="ray-mini-close-btn" title="Tắt tia ngắm">✕</button>
+            </div>
           </div>
-          <button type="button" id="btn-ray-mini-close" class="ray-mini-close-btn" title="Tắt tia ngắm">✕</button>
+
+          <!-- Hàng 2: Huyền Không Đại Quái Của Tia Ngắm (Tên Quẻ, Khí Vận, Hào + Lục Thân, Linh/Chính Thần) -->
+          <div class="ray-mini-hkdq-row" id="ray-mini-hkdq-strip" title="Chạm để xem bảng phân kim 64 Quẻ 384 Hào chi tiết">
+            <div class="hkdq-row-left">
+              <span class="hkdq-qp-icon">🔱</span>
+              <span class="hkdq-qp-que" id="ray-mini-que">Bát Thuần Khôn</span>
+            </div>
+            <div class="hkdq-row-right">
+              <span class="hkdq-qp-khivan" id="ray-mini-khivan">Khí 1 • Vận 1</span>
+              <span class="hkdq-qp-sep">•</span>
+              <span class="hkdq-qp-hao" id="ray-mini-hao">Hào 6</span>
+              <span class="hkdq-qp-tag chinh" id="ray-mini-badge">⛰️ Chính Thần V9</span>
+            </div>
+          </div>
         </div>
 
         <!-- Banner Hướng Dẫn Kéo Dịch Tâm Mặt Bằng -->
@@ -1239,6 +1256,7 @@
     let van9Advice = '';
     let lucThanAdvice = '';
     let ungKyText = '';
+    let hkdq = null;
 
     if (global.NetaLaKinhEngine) {
       const son = global.NetaLaKinhEngine.getSonInfo(deg);
@@ -1248,7 +1266,7 @@
         sonHanh = son.hanh;
       }
       if (global.NetaLaKinhEngine.getHKDQInfo) {
-        const hkdq = global.NetaLaKinhEngine.getHKDQInfo(deg);
+        hkdq = global.NetaLaKinhEngine.getHKDQInfo(deg);
         if (hkdq) {
           queName = hkdq.que_name || '';
           quaiKhi = hkdq.quai_khi || hkdq.quai_so || '';
@@ -1323,27 +1341,40 @@
           const miniDeg = document.getElementById('ray-mini-deg');
           const miniSon = document.getElementById('ray-mini-son');
           const miniQue = document.getElementById('ray-mini-que');
+          const miniKhivan = document.getElementById('ray-mini-khivan');
+          const miniHao = document.getElementById('ray-mini-hao');
           const miniBadge = document.getElementById('ray-mini-badge');
+
           if (miniDeg) miniDeg.textContent = `${deg.toFixed(1)}°`;
-          if (miniSon) miniSon.textContent = `Sơn ${sonName}`;
-          if (miniQue) {
-            // Giữ cho capsule siêu gọn, không bị dàn ngang tràn màn hình:
-            miniQue.textContent = haoTen || queName || '';
-          }
-          if (miniBadge) {
-            let compactBadge = '';
-            if (van9BadgeClass === 'warn') {
-              compactBadge = '⚠️ Ranh';
-            } else if (van9RoleText.includes('Đương')) {
-              compactBadge = '✨ V9';
-            } else if (van9RoleText.includes('Linh')) {
-              compactBadge = '🌊 Linh';
-            } else if (van9RoleText.includes('Chính')) {
-              compactBadge = '⛰️ Chính';
+          if (miniSon) miniSon.textContent = `Sơn ${sonName} (${sonCung})`;
+          if (miniQue) miniQue.textContent = queName || '---';
+          if (miniKhivan) miniKhivan.textContent = quaiKhi ? `Khí ${quaiKhi} • Vận ${quaiVan}` : '---';
+          if (miniHao) {
+            if (hkdq && hkdq.hao_vi_phan) {
+              const h = hkdq.hao_vi_phan;
+              const ltColor = (h.luc_than === 'Thê Tài' || h.luc_than === 'Tử Tôn') ? '#4ade80' : (h.luc_than === 'Quan Quỷ' ? '#f87171' : (h.luc_than === 'Phụ Mẫu' ? '#c084fc' : '#fb923c'));
+              miniHao.innerHTML = `${h.ten_hao} <span style="color:${ltColor}; font-weight:700;">(${h.luc_than || ''})</span>`;
+            } else {
+              miniHao.textContent = haoTen || '---';
             }
-            miniBadge.textContent = compactBadge;
-            miniBadge.className = `ray-hud-badge ${van9BadgeClass}`;
-            miniBadge.style.display = compactBadge ? 'inline-block' : 'none';
+          }
+          if (miniBadge && hkdq && hkdq.van_9_role) {
+            if (hkdq.canh_bao_khong_vong && hkdq.canh_bao_khong_vong.is_near_boundary) {
+              miniBadge.className = 'hkdq-qp-tag warn';
+              miniBadge.textContent = `⚠️ Ranh ${hkdq.canh_bao_khong_vong.distance}°`;
+            } else if (hkdq.van_9_role.is_duong_van_9) {
+              miniBadge.className = 'hkdq-qp-tag duong';
+              miniBadge.textContent = '✨ Đương Vận 9';
+            } else if (hkdq.van_9_role.is_linh_than) {
+              miniBadge.className = 'hkdq-qp-tag linh';
+              miniBadge.textContent = '🌊 Linh Thần V9';
+            } else {
+              miniBadge.className = 'hkdq-qp-tag chinh';
+              miniBadge.textContent = '⛰️ Chính Thần V9';
+            }
+            miniBadge.style.display = 'inline-block';
+          } else if (miniBadge) {
+            miniBadge.style.display = 'none';
           }
         }
       } else {
@@ -3762,11 +3793,16 @@
       btnRayHudCollapse.addEventListener('touchend', collapseRayHud);
     }
 
-    const btnRayMiniExpand = document.getElementById('btn-ray-mini-expand');
-    if (btnRayMiniExpand) {
-      btnRayMiniExpand.addEventListener('click', expandRayHud);
-      btnRayMiniExpand.addEventListener('touchend', expandRayHud);
-    }
+    const bindRayMiniExpand = (id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('click', expandRayHud);
+        el.addEventListener('touchend', expandRayHud);
+      }
+    };
+    bindRayMiniExpand('btn-ray-mini-expand');
+    bindRayMiniExpand('btn-ray-mini-expand-header');
+    bindRayMiniExpand('ray-mini-hkdq-strip');
 
     const btnRayMiniClose = document.getElementById('btn-ray-mini-close');
     if (btnRayMiniClose) {

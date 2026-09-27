@@ -63,26 +63,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.8
-          name: "Neta Light & Huyền Học v2.0.8 (Bổ Sung Nút Nổi Tia Ngắm Trực Diện & Xóa Triệt Để Pill Trùng Lặp)"
+          tag_name: v2.0.9
+          name: "Neta Light & Huyền Học v2.0.9 (Chuẩn Hóa Đầy Đủ 100% Thông Tin Quẻ, Khí Vận, Lục Thân, Linh/Chính Thần Cho Mini Card Tia Ngắm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.8
-            - **Bổ Sung Nút Nổi '🎯 Tia Ngắm' Trực Tiếp Trên Màn Hình (Prominent Sighting Ray FAB)**:
-              + Bổ sung nút viên nang nổi sang trọng **`🎯 Tia Ngắm`** cố định ở góc dưới bên phải màn hình (phía trên nút định vị GPS), giúp người dùng nhìn thấy ngay tức khắc và bật/tắt tia ngắm chỉ với 1 chạm.
-              + Trạng thái động trực quan: Khi bật tia, nút nổi tự động phát sáng neon cyan kèm nhãn **`🎯 Tia Ngắm (Bật)`**; khi tắt, nút trở về trạng thái viền xanh dịu mắt.
-              + Phân định biểu tượng công cụ tuyệt đối: Nút nổi GPS chuyển sang biểu tượng ghim định vị **📍** và thanh dock dưới đáy chuyển thành **📍 Vị Trí**, dành riêng biểu tượng hồng tâm **🎯** duy nhất cho Tia Ngắm.
-            - **Xóa Bỏ Hoàn Toàn Pill Trùng Lặp Ở Tâm La Kinh**:
-              + Gỡ bỏ khung nhãn chữ nổi (`#lakinh-ray-target-label`) vốn nằm đè lên tâm đĩa La Kinh.
-              + Tâm đĩa La Kinh và bản vẽ nhà giờ đây hiển thị rõ ràng 100%, điểm ghim ngắm chỉ còn lại hồng tâm xanh ngọc tinh tế và chính xác.
-            - **Hệ Thống Nút Điều Khiển Độc Lập**:
-              + Nút tròn đỏ **✕** ngay trên thanh Mini Pill cho phép tắt tia ngắm tức thì.
-              + Nút **[– Thu gọn]** và nút **[✕ Tắt tia]** trên bảng chi tiết HUD phân định rõ chức năng thu nhỏ hay tắt hoàn toàn.
-            - **Hiển Thị Toàn Diện Thông Tin Quẻ Đến Hào Của Điểm Theo Tia Ngắm (Full HKDQ Ray HUD)**:
-              + Hiển thị đầy đủ 100% thông tin phong thủy: Sơn Hướng, Cung, Hành, Âm Dương.
-              + Đại Quái 64 Quẻ: Tên Quẻ, Quái Khí, Quái Vận, Thượng/Hạ Quái, Dải độ số chính xác của quẻ.
-              + Phân Kim 384 Hào Vi Phân (0.9375°): Tên hào, Can Chi nạp âm, Lục Thân, Dải độ số hào, Chiều hào (Thuận/Nghịch).
-              + Đánh giá Vận 9: Badge Chính Thần / Linh Thần / Đương Vận 9 kèm lời khuyên hành động (Động khí nạp Thủy hay Tĩnh khí an vị).
-              + Ứng nghiệm nhân sự: Năm phát tài, người phát theo Lục Thân của hào.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.9
+            - **Đầy Đủ 100% Thông Tin Quẻ Đến Hào Cho Mini Card Tia Ngắm (Full HKDQ Parity)**:
+              + Mini Card của tia ngắm giờ đây hiển thị đối xứng và đầy đủ tương đương 100% với dòng thông tin Hướng Nhà.
+              + **Hàng 1**: Độ số & Sơn của tia ngắm `🎯 344.2° • Sơn Nhâm (Khảm)` kèm nút `[▾ Chi tiết]` và nút tắt nhanh `[✕]`.
+              + **Hàng 2**: Đại Quái và Phân Kim 384 Hào:
+                * Tên Quẻ chữ to rõ in đậm màu vàng kim: `🔱 Thủy Địa Tỷ` (hoặc `Sơn Thiên Đại Súc`, `Bát Thuần Càn`...).
+                * Khí & Vận: `Khí 7 • Vận 7` (hoặc `Khí 6 • Vận 4`...).
+                * Hào Vi Phân & Lục Thân: `Hào 5 (Thê Tài)` (hoặc `Tử Tôn`, `Quan Quỷ`, `Phụ Mẫu`, `Huynh Đệ` tô màu phong thủy chuyên biệt).
+                * Badge Vận 9 chuẩn mực: `⛰️ Chính Thần V9` / `🌊 Linh Thần V9` / `✨ Đương Vận 9` / `⚠️ Ranh X.XX°`.
+            - **Thiết Kế 2 Hàng Tinh Gọn Chống Tràn Màn Hình Tuyệt Đối (Anti-Overflow Layout)**:
+              + Bố cục Mini Card 2 hàng dạng kính mờ (glassmorphism) thanh lịch, chiều rộng tối ưu tự co giãn có lề 8px hai bên, vừa vặn hoàn hảo trên màn hình di động hẹp (360px) mà không bị tràn hay cắt chữ.
+              + Chạm vào bất kỳ vị trí nào trên Mini Card (hoặc nút `▾ Chi tiết`) sẽ mở rộng bảng HUD chi tiết; chạm `✕` để tắt tia ngắm tức thì.
+            - **Kế Thừa Đầy Đủ Tính Năng v2.0.8**:
+              + Nút nổi **`🎯 Tia Ngắm (Bật)`** ở góc dưới phải màn hình bật/tắt nhanh 1 chạm.
+              + Tâm La Kinh 100% thông thoáng, không còn pill che khuất tâm bản vẽ mặt bằng.
               + Tích hợp nút **🔱 Xem Đủ 6 Hào**: Mở trực tiếp Modal 384 Hào vi phân định hướng theo đúng độ số tia ngắm.
             - **Nền Trong Suốt Khi Chỉnh Vị Trí Điểm Ngắm (Ghost Mode Transparency)**:
               + Khi người dùng kéo rê chấm mục tiêu hoặc di chuyển thanh trượt độ số, toàn bộ khung bảng thông tin HUD tự động chuyển sang trạng thái bán trong suốt (opacity: 0.18, xuyên thấu không che chắn).
