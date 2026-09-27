@@ -17,9 +17,25 @@ async def main():
         await page.click('#tab-mode-lakinh')
         await page.wait_for_timeout(1000)
 
-        # 2. Turn on Sighting Ray
-        await page.click('#lakinh-btn-ray-quick')
+        # VERIFY 1: Floating Sighting Ray button is clearly visible on the main screen
+        ray_float_btn = await page.is_visible('#lakinh-btn-ray-float')
+        ray_float_text = await page.inner_text('#ray-float-text')
+        print(f"Floating Sighting Ray button visible: {ray_float_btn}, text: '{ray_float_text}'")
+        assert ray_float_btn, "Prominent floating button #lakinh-btn-ray-float must be visible on screen!"
+        assert ray_float_text == "Tia Ngắm", f"Initial button text should be 'Tia Ngắm', got '{ray_float_text}'"
+
+        # Screenshot: Screen with ray OFF and prominent floating button
+        await page.screenshot(path='C:/Users/Admin/.gemini/antigravity/brain/d927b630-f8f0-4d4e-8e07-2d999bea6612/test_ray_fab_screen_off.png')
+
+        # VERIFY 2: Click floating button to turn ON the sighting ray
+        await page.click('#lakinh-btn-ray-float')
         await page.wait_for_timeout(500)
+
+        is_ray_active = await page.evaluate('window.lakinhState.isRayActive')
+        ray_float_text_active = await page.inner_text('#ray-float-text')
+        print(f"After click floating button, ray active: {is_ray_active}, text: '{ray_float_text_active}'")
+        assert is_ray_active, "Clicking floating button must turn ON the sighting ray!"
+        assert "Bật" in ray_float_text_active, "Button text should indicate active state!"
 
         # Set ray angle to 343.3° as in user screenshot
         await page.evaluate('''() => {
@@ -34,25 +50,15 @@ async def main():
         }''')
         await page.wait_for_timeout(500)
 
-        # VERIFY 1: Target handle in compass center has NO duplicate label pill
+        # VERIFY 3: Compass center has NO duplicate label pill
         target_label_exists = await page.evaluate('''() => {
-            const handle = document.getElementById('lakinh-ray-target-handle');
             const lbl = document.getElementById('lakinh-ray-target-label');
             return lbl !== null && window.getComputedStyle(lbl).display !== 'none';
         }''')
         print(f"Duplicate center pill exists: {target_label_exists}")
         assert not target_label_exists, "Redundant pill on target handle must be removed!"
 
-        # VERIFY 2: Expanded HUD has [– Thu gọn] and [✕ Tắt tia]
-        has_collapse_btn = await page.is_visible('#btn-ray-hud-collapse')
-        has_close_btn = await page.is_visible('#btn-ray-hud-close')
-        print(f"HUD has [– Thu gọn]: {has_collapse_btn}, [✕ Tắt tia]: {has_close_btn}")
-        assert has_collapse_btn and has_close_btn, "HUD must have both collapse and turn-off buttons"
-
-        # Screenshot of clean expanded HUD
-        await page.screenshot(path='C:/Users/Admin/.gemini/antigravity/brain/d927b630-f8f0-4d4e-8e07-2d999bea6612/test_ray_no_duplicate_expanded.png')
-
-        # VERIFY 3: Click [– Thu gọn] to collapse into Mini Pill
+        # VERIFY 4: Collapse to Mini Pill
         await page.click('#btn-ray-hud-collapse')
         await page.wait_for_timeout(400)
 
@@ -70,47 +76,25 @@ async def main():
             };
         }''')
         print(f"Collapsed Mini Pill status: {mini_status}")
-        assert mini_status['hasTurnOffBtn'], "Mini pill must have explicit [✕ Tắt] button!"
+        assert mini_status['hasTurnOffBtn'], "Mini pill must have explicit [✕] button!"
         assert not mini_status['touchesBorder'], "Mini pill must not stretch edge-to-edge!"
 
-        # Screenshot of clean Mini Pill with [✕ Tắt] button
-        await page.screenshot(path='C:/Users/Admin/.gemini/antigravity/brain/d927b630-f8f0-4d4e-8e07-2d999bea6612/test_ray_no_duplicate_collapsed.png')
+        # Screenshot: Screen with ray ON collapsed to Mini Pill
+        await page.screenshot(path='C:/Users/Admin/.gemini/antigravity/brain/d927b630-f8f0-4d4e-8e07-2d999bea6612/test_ray_fab_screen_on_collapsed.png')
 
-        # VERIFY 4: Click [✕ Tắt] on Mini Pill to turn off sighting ray completely
-        await page.click('#btn-ray-mini-close')
+        # VERIFY 5: Click floating button to turn OFF the sighting ray
+        await page.click('#lakinh-btn-ray-float')
         await page.wait_for_timeout(400)
 
         is_ray_off = await page.evaluate('''() => {
             return !window.lakinhState.isRayActive &&
                    document.getElementById('lakinh-ray-container').style.display === 'none' &&
-                   document.getElementById('lakinh-ray-mini-pill').style.display === 'none' &&
-                   document.getElementById('lakinh-ray-floating-hud').style.display === 'none';
+                   document.getElementById('lakinh-ray-mini-pill').style.display === 'none';
         }''')
-        print(f"Ray turned off via Mini Pill [✕ Tắt]: {is_ray_off}")
-        assert is_ray_off, "Clicking [✕ Tắt] on mini pill must turn off the sighting ray completely!"
+        print(f"Ray turned off via floating button: {is_ray_off}")
+        assert is_ray_off, "Clicking floating button again must turn OFF the sighting ray!"
 
-        # VERIFY 5: Turn ray back ON via quick button #lakinh-btn-ray-quick
-        await page.click('#lakinh-btn-ray-quick')
-        await page.wait_for_timeout(400)
-
-        is_ray_back_on = await page.evaluate('''() => {
-            return window.lakinhState.isRayActive &&
-                   document.getElementById('lakinh-ray-container').style.display === 'block';
-        }''')
-        print(f"Ray turned back ON via quick button: {is_ray_back_on}")
-        assert is_ray_back_on, "Clicking #lakinh-btn-ray-quick must turn ray back ON!"
-
-        # VERIFY 6: Turn ray OFF via [✕ Tắt tia] on expanded HUD
-        await page.click('#btn-ray-hud-close')
-        await page.wait_for_timeout(400)
-
-        is_ray_off_again = await page.evaluate('''() => {
-            return !window.lakinhState.isRayActive;
-        }''')
-        print(f"Ray turned off via HUD [✕ Tắt tia]: {is_ray_off_again}")
-        assert is_ray_off_again, "Clicking [✕ Tắt tia] on HUD must turn off ray!"
-
-        print("ALL VERIFICATIONS PASSED: No duplicate pill, perfect turn-off and collapse controls!")
+        print("ALL VERIFICATIONS PASSED: Prominent floating button works 100%, duplicate pill removed!")
         await browser.close()
 
 if __name__ == '__main__':

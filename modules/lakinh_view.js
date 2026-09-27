@@ -99,6 +99,12 @@
           <span style="font-size: 1.15rem; line-height: 1;">📍</span>
         </button>
 
+        <!-- Nút Nổi Bật/Tắt Tia Ngắm Trực Tiếp Trên Màn Hình (Sighting Ray FAB) -->
+        <button id="lakinh-btn-ray-float" title="Bật/Tắt Tia Ngắm Phong Thủy" aria-label="Tia ngắm">
+          <span class="ray-float-icon">🎯</span>
+          <span class="ray-float-text" id="ray-float-text">Tia Ngắm</span>
+        </button>
+
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
         <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
           <div id="lakinh-backdrop-circle" style="opacity: ${state.bgOpacity};"></div>
@@ -321,7 +327,7 @@
             🧭 La Bàn
           </button>
           <button class="lakinh-dock-btn primary" id="lakinh-dock-gps" title="Bay về vị trí GPS thực tế hiện tại">
-            🎯 Vị Trí
+            📍 Vị Trí
           </button>
           <button class="lakinh-dock-btn gold" id="lakinh-dock-hkdq" title="Phân Kim Huyền Không Đại Quái 64 Quẻ 384 Hào">
             🔱 Đại Quái
@@ -1131,6 +1137,8 @@
     const rayWrap = document.getElementById('lakinh-ray-controls-wrap');
     const btnRay = document.getElementById('sheet-btn-ray');
     const btnQuickRay = document.getElementById('lakinh-btn-ray-quick');
+    const btnFloatRay = document.getElementById('lakinh-btn-ray-float');
+    const rayFloatText = document.getElementById('ray-float-text');
 
     if (!state.isRayActive) {
       if (rayContainer) rayContainer.style.display = 'none';
@@ -1142,6 +1150,8 @@
         btnRay.innerHTML = '🎯 Bật Tia Ngắm';
       }
       if (btnQuickRay) btnQuickRay.classList.remove('active');
+      if (btnFloatRay) btnFloatRay.classList.remove('active');
+      if (rayFloatText) rayFloatText.textContent = 'Tia Ngắm';
       if (surveyRayLayerGroup) surveyRayLayerGroup.clearLayers();
       return;
     }
@@ -1153,6 +1163,8 @@
       btnRay.innerHTML = '🎯 Đang Bật Tia Ngắm (Tắt)';
     }
     if (btnQuickRay) btnQuickRay.classList.add('active');
+    if (btnFloatRay) btnFloatRay.classList.add('active');
+    if (rayFloatText) rayFloatText.textContent = 'Tia Ngắm (Bật)';
 
     const w = container.clientWidth || window.innerWidth;
     const h = container.clientHeight || window.innerHeight;
@@ -3729,6 +3741,16 @@
     if (btnRay) btnRay.addEventListener('click', toggleSightingRay);
     if (btnQuickRay) btnQuickRay.addEventListener('click', toggleSightingRay);
 
+    const btnFloatRay = document.getElementById('lakinh-btn-ray-float');
+    if (btnFloatRay) {
+      btnFloatRay.addEventListener('click', toggleSightingRay);
+      btnFloatRay.addEventListener('touchend', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        toggleSightingRay();
+      });
+    }
+
     if (btnRayHudClose) {
       btnRayHudClose.addEventListener('click', turnOffRay);
       btnRayHudClose.addEventListener('touchend', turnOffRay);
@@ -3863,7 +3885,7 @@
     // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
     if (lkContainer) {
       lkContainer.addEventListener('click', (e) => {
-        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-ray-float, #lakinh-btn-my-location, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
           return;
         }
         if (state.isRayActive && !state.isPlanPanActive) {

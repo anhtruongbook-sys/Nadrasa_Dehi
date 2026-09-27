@@ -63,19 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.7
-          name: "Neta Light & Huyền Học v2.0.7 (Loại Bỏ Pill Trùng Lặp & Bổ Sung Nút Bật/Tắt Tia Ngắm Trực Tiếp)"
+          tag_name: v2.0.8
+          name: "Neta Light & Huyền Học v2.0.8 (Bổ Sung Nút Nổi Tia Ngắm Trực Diện & Xóa Triệt Để Pill Trùng Lặp)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.7
-            - **Loại Bỏ Hoàn Toàn Pill Trùng Lặp Ở Tâm La Kinh**:
-              + Bỏ khung nhãn chữ nổi (`#lakinh-ray-target-label`) phía trên điểm ghim mục tiêu di động, giải phóng 100% tầm nhìn tại tâm La Kinh và bản vẽ nhà.
-              + Điểm ghim mục tiêu trở thành hồng tâm reticle tinh gọn màu xanh ngọc (cyan) với vòng tròn xung nhịp thanh thoát, chính xác tuyệt đối.
-              + Chỉ giữ lại duy nhất 1 thanh thông tin nổi phía trên (`#lakinh-ray-mini-pill`) hoặc bảng chi tiết mở rộng (`#lakinh-ray-floating-hud`).
-            - **Bổ Sung Nút Bật/Tắt Tia Ngắm Trực Tiếp & Phân Định Rõ Ràng**:
-              + **Trên Mini Pill**: Tích hợp nút tròn màu đỏ **✕** độc lập ở mép phải pill, cho phép tắt hẳn tia ngắm chỉ với 1 chạm. Chạm vào phần thông tin sẽ mở bung bảng chi tiết.
-              + **Trên Bảng Chi Tiết HUD**: Bổ sung rõ ràng 2 nút điều khiển độc lập: nút **[– Thu gọn]** (thu nhỏ về Mini Pill nhưng vẫn giữ tia ngắm) và nút **[✕ Tắt tia]** (tắt hoàn toàn tia ngắm).
-              + **Phân định biểu tượng công cụ**: Nút nổi GPS (My Location) chuyển sang biểu tượng ghim định vị **📍** để tránh nhầm lẫn với biểu tượng **🎯 Tia ngắm** trên thanh công cụ.
-            - **Kiểm Thử Toàn Diện Tự Động**: Toàn bộ thao tác bật/tắt tia, thu gọn, mở chi tiết và căn lề biên đã được kiểm chứng tự động bằng Playwright trên độ phân giải mobile.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.8
+            - **Bổ Sung Nút Nổi '🎯 Tia Ngắm' Trực Tiếp Trên Màn Hình (Prominent Sighting Ray FAB)**:
+              + Bổ sung nút viên nang nổi sang trọng **`🎯 Tia Ngắm`** cố định ở góc dưới bên phải màn hình (phía trên nút định vị GPS), giúp người dùng nhìn thấy ngay tức khắc và bật/tắt tia ngắm chỉ với 1 chạm.
+              + Trạng thái động trực quan: Khi bật tia, nút nổi tự động phát sáng neon cyan kèm nhãn **`🎯 Tia Ngắm (Bật)`**; khi tắt, nút trở về trạng thái viền xanh dịu mắt.
+              + Phân định biểu tượng công cụ tuyệt đối: Nút nổi GPS chuyển sang biểu tượng ghim định vị **📍** và thanh dock dưới đáy chuyển thành **📍 Vị Trí**, dành riêng biểu tượng hồng tâm **🎯** duy nhất cho Tia Ngắm.
+            - **Xóa Bỏ Hoàn Toàn Pill Trùng Lặp Ở Tâm La Kinh**:
+              + Gỡ bỏ khung nhãn chữ nổi (`#lakinh-ray-target-label`) vốn nằm đè lên tâm đĩa La Kinh.
+              + Tâm đĩa La Kinh và bản vẽ nhà giờ đây hiển thị rõ ràng 100%, điểm ghim ngắm chỉ còn lại hồng tâm xanh ngọc tinh tế và chính xác.
+            - **Hệ Thống Nút Điều Khiển Độc Lập**:
+              + Nút tròn đỏ **✕** ngay trên thanh Mini Pill cho phép tắt tia ngắm tức thì.
+              + Nút **[– Thu gọn]** và nút **[✕ Tắt tia]** trên bảng chi tiết HUD phân định rõ chức năng thu nhỏ hay tắt hoàn toàn.
             - **Hiển Thị Toàn Diện Thông Tin Quẻ Đến Hào Của Điểm Theo Tia Ngắm (Full HKDQ Ray HUD)**:
               + Hiển thị đầy đủ 100% thông tin phong thủy: Sơn Hướng, Cung, Hành, Âm Dương.
               + Đại Quái 64 Quẻ: Tên Quẻ, Quái Khí, Quái Vận, Thượng/Hạ Quái, Dải độ số chính xác của quẻ.
