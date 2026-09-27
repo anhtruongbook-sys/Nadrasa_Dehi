@@ -63,10 +63,26 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.2.2
-          name: "Neta Light & Huyền Học v2.2.2 (Đại Sự Trọng Điểm, Đồng Bộ Tọa Sơn La Kinh & Tương Phản Ánh Sáng)"
+          tag_name: v2.2.3
+          name: "Neta Light & Huyền Học v2.2.3 (Huyền Không Đại Quái 64 Quẻ & Kỳ Môn Tam Nguyên Trương Chí Xuân)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.2
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.3
+            - **Tích Hợp Toàn Diện 2 Trường Phái Trạch Nhật Tối Thượng**:
+              + **Huyền Không Đại Quái (64 Quẻ, 384 Hào Vi Phân & Tương Phối Tọa Sơn)**:
+                * Tự động tính Quái Khí (1-9) và Quái Vận (1-9) cho Ngày và Giờ Hoàng Đạo.
+                * Chấm điểm và phân tích các cách cục cát tường: *Nhất Khí Thuần Thanh Quái Khí* (+6đ), *Hợp Thập Quái Khí* (+4đ), *Sinh Thành Hà Đồ* (1-6, 2-7, 3-8, 4-9) (+3đ), *Đồng Quái Vận* (+3đ), *Quái Vận Hợp Thập* (+3đ).
+                * Phối hợp Tọa Sơn La Kinh: Tự động đánh giá Sinh Nhập (+3đ), Tỷ Hòa (+2đ), Khắc Xuất (+1đ) và **VETO LOẠI BỎ NGAY LẬP TỨC** nếu phạm *Khắc Nhập Tọa Sơn* (Đại kỵ).
+              + **Kỳ Môn Tam Nguyên (5 Quy Tắc Vàng Trương Chí Xuân & Khắc Ứng Cửu Tinh)**:
+                * Bóc tách Bàn Kỳ Môn Thời Gia trực tiếp: Xác định Cục số, Bát Môn, Cửu Tinh, Bát Thần, Can Thiên/Địa bàn.
+                * Kiểm tra Phục Ngâm / Phản Ngâm: Cảnh báo Phục Ngâm (-10đ) và cấm kỵ khởi công/động thổ/an táng; tự động loại bỏ Phản Ngâm.
+                * [Quy Tắc 2]: Kiểm tra sinh khắc Can Giờ vs Can Ngày (+5đ / -15đ), loại bỏ ngày nếu Can Ngày lâm Tuần Không.
+                * [Quy Tắc 3]: Kiểm soát Tam Hung Thần (Bạch Hổ, Đằng Xà, Huyền Vũ). Cấm kỵ Bạch Hổ cưỡi Can Ngày. **ĐẶC BIỆT: Tự động phát hiện và VETO loại bỏ nếu Tọa Sơn lâm Tuần Không hoặc Bạch Hổ/Đằng Xà ĐÁO TỌA SƠN** (Nguyên nhân thảm họa huyết quang trong Ca mộ họ Lê của Trương Chí Xuân).
+                * [Quy Tắc 4]: Trục Sinh Môn cho Dương Trạch, Khai Trương, Động Thổ, Cất Nóc, Nhập Trạch: Cấm kỵ Sinh Môn lâm Không Vong; thưởng điểm khi Sinh Môn vượng tướng hòa hợp (+8đ) và Trực Phù tương sinh (+5đ).
+                * [Quy Tắc 5]: Dự trắc Khí tượng Cửu Tinh tránh mưa dông bão lũ.
+            - **Giao Diện Trạch Cát Đa Phái Đồng Bộ Tức Thời**:
+              + Bổ sung 2 checkbox nổi bật: `[x] ☯ Huyền Không Đại Quái (64 Quẻ)` và `[x] 🔮 Kỳ Môn Tam Nguyên (Trương Chí Xuân)`.
+              + Tự động tính toán lại và cập nhật danh sách ngày Cát Lành ngay khi chuyển đổi trường phái.
+              + Hiển thị Card chi tiết độc lập cho Đại Quái (`.tc-xkdg-box`) và Kỳ Môn (`.tc-qimen-box`) với độ tương phản tuyệt đối trên cả nền Tối lẫn nền Sáng.
             - **Đại Sự Trọng Điểm 1 Chạm (Quick Task Shortcuts)**:
               + Bổ sung thanh chọn nhanh các đại sự hệ trọng nhất: `[🏗️ Động Thổ]`, `[🏠 Cất Nóc]`, `[🏡 Nhập Trạch]`, `[🏪 Khai Trương]`, `[💍 Cưới Hỏi]`, `[🚗 Xuất Hành]`, `[⚰️ An Táng]`, `[📜 83 Việc Khác...]`.
               + Tự động hiển thị **Thuyết Minh Nguyên Tắc Trạch Nhật** chuyên sâu cho từng đại sự:

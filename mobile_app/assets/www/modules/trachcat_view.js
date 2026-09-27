@@ -24,7 +24,9 @@
       enable_trinh: true,
       enable_dong_cong: true,
       enable_folk_filter: true,
-      enable_16_criteria: true
+      enable_16_criteria: true,
+      enable_xkdg: false,
+      enable_qimen: false
     },
     results: null
   };
@@ -195,6 +197,8 @@
         enable_dong_cong: state.schools.enable_dong_cong,
         enable_folk_filter: state.schools.enable_folk_filter,
         enable_16_criteria: state.schools.enable_16_criteria,
+        enable_xkdg: state.schools.enable_xkdg,
+        enable_qimen: state.schools.enable_qimen,
         mountain_sitting_deg: state.mountainSittingDeg
       }
     });
@@ -350,6 +354,12 @@
             <label class="tc-toggle-label">
               <input type="checkbox" id="tc-chk-tc16" ${state.schools.enable_16_criteria ? 'checked' : ''}> 16 Tiêu Chí Cát Thần
             </label>
+            <label class="tc-toggle-label highlight-xkdg" title="Huyền Không Đại Quái 64 Quẻ: Quái Khí, Quái Vận, Hợp Thập, Hà Đồ & Tọa Sơn">
+              <input type="checkbox" id="tc-chk-xkdg" ${state.schools.enable_xkdg ? 'checked' : ''}> ☯ Huyền Không Đại Quái (64 Quẻ)
+            </label>
+            <label class="tc-toggle-label highlight-qimen" title="Kỳ Môn Tam Nguyên: 5 Quy Tắc Vàng Trương Chí Xuân & Khắc Ứng Cửu Tinh">
+              <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Tam Nguyên (Trương Chí Xuân)
+            </label>
           </div>
 
           <!-- Nút tra cứu -->
@@ -476,6 +486,59 @@
               </div>
               <div class="tc-house-sitting-desc">
                 ${d.house_sitting.notes.length > 0 ? d.house_sitting.notes.join('<br>') : '✓ Tọa sơn bình hòa, không phạm Trực Xung hay Tam Sát.'}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Huyền Không Đại Quái Box (nếu bật) -->
+          ${d.xkdg ? `
+            <div class="tc-xkdg-box">
+              <div class="tc-xkdg-header">
+                <span class="tc-xkdg-title">☯ HUYỀN KHÔNG ĐẠI QUÁI: ${d.xkdg.rating} (${d.xkdg.score > 0 ? '+' : ''}${d.xkdg.score}đ)</span>
+                <span class="tc-badge ${d.xkdg.is_disqualified ? 'tc-badge-warn' : 'tc-badge-good'}">
+                  ${d.xkdg.is_disqualified ? 'Phạm Khắc Nhập' : 'Cát Khí'}
+                </span>
+              </div>
+              <div class="tc-xkdg-body">
+                <div class="tc-xkdg-meta">
+                  <span>Quẻ Ngày: <strong>${d.xkdg.day_gua.name}</strong> [Khí ${d.xkdg.day_gua.qi} • Vận ${d.xkdg.day_gua.yun}]</span>
+                  ${d.xkdg.hour_gua ? `<span>Quẻ Giờ: <strong>${d.xkdg.hour_gua.name}</strong> [Khí ${d.xkdg.hour_gua.qi} • Vận ${d.xkdg.hour_gua.yun}]</span>` : ''}
+                  ${d.xkdg.mountain_gua ? `<span>Tọa Sơn: <strong>${d.xkdg.mountain_gua.name}</strong> [Khí ${d.xkdg.mountain_gua.qi} • Vận ${d.xkdg.mountain_gua.yun}]</span>` : ''}
+                </div>
+                ${d.xkdg.details && d.xkdg.details.length > 0 ? `
+                  <div class="tc-xkdg-details">
+                    ${d.xkdg.details.map(dt => `<div>• ${dt}</div>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Kỳ Môn Tam Nguyên Trương Chí Xuân Box (nếu bật) -->
+          ${d.qimen ? `
+            <div class="tc-qimen-box">
+              <div class="tc-qimen-header">
+                <span class="tc-qimen-title">🔮 KỲ MÔN TAM NGUYÊN (TRƯƠNG CHÍ XUÂN): ${d.qimen.rating} (${d.qimen.score > 0 ? '+' : ''}${d.qimen.score}đ)</span>
+                <span class="tc-badge ${d.qimen.is_disqualified ? 'tc-badge-warn' : 'tc-badge-good'}">
+                  ${d.qimen.is_disqualified ? 'Đại Hung Bị Loại' : 'Đắc Cách'}
+                </span>
+              </div>
+              <div class="tc-qimen-body">
+                <div class="tc-qimen-meta">
+                  <span>Bàn: <strong>${d.qimen.cuc_name || 'Thời Gia Kỳ Môn'}</strong></span>
+                  ${d.qimen.sinh_mon_palace ? `<span>Sinh Môn: <strong>Cung ${d.qimen.sinh_mon_palace}</strong></span>` : ''}
+                  ${d.qimen.mountain_palace ? `<span>Tọa Sơn: <strong>Cung ${d.qimen.mountain_palace} (${d.qimen.mountain_god || ''})</strong></span>` : ''}
+                </div>
+                ${d.qimen.details && d.qimen.details.length > 0 ? `
+                  <div class="tc-qimen-details">
+                    ${d.qimen.details.map(dt => `<div>• ${dt}</div>`).join('')}
+                  </div>
+                ` : ''}
+                ${d.qimen.weather_warnings && d.qimen.weather_warnings.length > 0 ? `
+                  <div class="tc-qimen-weather">
+                    ⚠️ <em>Khí tượng: ${d.qimen.weather_warnings.join('; ')}</em>
+                  </div>
+                ` : ''}
               </div>
             </div>
           ` : ''}
@@ -688,15 +751,23 @@
       };
     });
 
-    // Checkboxes
-    const chkTrinh = document.getElementById('tc-chk-trinh');
-    if (chkTrinh) chkTrinh.onchange = (e) => { state.schools.enable_trinh = e.target.checked; };
-    const chkDc = document.getElementById('tc-chk-dongcong');
-    if (chkDc) chkDc.onchange = (e) => { state.schools.enable_dong_cong = e.target.checked; };
-    const chkFolk = document.getElementById('tc-chk-folk');
-    if (chkFolk) chkFolk.onchange = (e) => { state.schools.enable_folk_filter = e.target.checked; };
-    const chkTc16 = document.getElementById('tc-chk-tc16');
-    if (chkTc16) chkTc16.onchange = (e) => { state.schools.enable_16_criteria = e.target.checked; };
+    // Checkboxes Trường Phái
+    const bindToggle = (id, key) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.onchange = (e) => {
+          state.schools[key] = e.target.checked;
+          runEvaluation();
+          render();
+        };
+      }
+    };
+    bindToggle('tc-chk-trinh', 'enable_trinh');
+    bindToggle('tc-chk-dongcong', 'enable_dong_cong');
+    bindToggle('tc-chk-folk', 'enable_folk_filter');
+    bindToggle('tc-chk-tc16', 'enable_16_criteria');
+    bindToggle('tc-chk-xkdg', 'enable_xkdg');
+    bindToggle('tc-chk-qimen', 'enable_qimen');
 
     // Search button
     const btnRun = document.getElementById('tc-btn-run');

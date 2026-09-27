@@ -1188,3 +1188,185 @@ body.theme-light .tc-btn-qmdj:hover {
   color: #581c87 !important;
 }
 
+/* ==========================================================================
+   HUYỀN KHÔNG ĐẠI QUÁI & KỲ MÔN TAM NGUYÊN BOXES (DARK THEME)
+   ========================================================================== */
+.tc-toggle-label.highlight-xkdg {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.08);
+  color: #fcd34d;
+}
+
+.tc-toggle-label.highlight-qimen {
+  border-color: rgba(168, 85, 247, 0.4);
+  background: rgba(168, 85, 247, 0.08);
+  color: #d8b4fe;
+}
+
+.tc-xkdg-box {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-left: 3.5px solid #f59e0b;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.tc-xkdg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tc-xkdg-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fcd34d;
+}
+
+.tc-xkdg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tc-xkdg-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 0.76rem;
+  color: #e2e8f0;
+}
+
+.tc-xkdg-details {
+  font-size: 0.74rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tc-qimen-box {
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.28);
+  border-left: 3.5px solid #a855f7;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.tc-qimen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tc-qimen-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #d8b4fe;
+}
+
+.tc-qimen-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tc-qimen-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 0.76rem;
+  color: #e2e8f0;
+}
+
+.tc-qimen-details {
+  font-size: 0.74rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tc-qimen-weather {
+  font-size: 0.73rem;
+  color: #fca5a5;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   HUYỀN KHÔNG ĐẠI QUÁI & KỲ MÔN TAM NGUYÊN (LIGHT THEME)
+   ========================================================================== */
+body.theme-light .tc-toggle-label.highlight-xkdg {
+  background: #fefce8 !important;
+  border: 1.5px solid #ca8a04 !important;
+  color: #854d0e !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .tc-toggle-label.highlight-qimen {
+  background: #faf5ff !important;
+  border: 1.5px solid #9333ea !important;
+  color: #6b21a8 !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .tc-xkdg-box {
+  background: #fefce8 !important;
+  border: 1.5px solid #eab308 !important;
+  border-left: 4px solid #b45309 !important;
+  box-shadow: 0 1px 3px rgba(180, 83, 9, 0.08) !important;
+}
+
+body.theme-light .tc-xkdg-title {
+  color: #78350f !important;
+  font-weight: 800 !important;
+}
+
+body.theme-light .tc-xkdg-meta {
+  color: #1e293b !important;
+}
+
+body.theme-light .tc-xkdg-details {
+  color: #334155 !important;
+}
+
+body.theme-light .tc-qimen-box {
+  background: #faf5ff !important;
+  border: 1.5px solid #a855f7 !important;
+  border-left: 4px solid #7e22ce !important;
+  box-shadow: 0 1px 3px rgba(126, 34, 206, 0.08) !important;
+}
+
+body.theme-light .tc-qimen-title {
+  color: #581c87 !important;
+  font-weight: 800 !important;
+}
+
+body.theme-light .tc-qimen-meta {
+  color: #1e293b !important;
+}
+
+body.theme-light .tc-qimen-details {
+  color: #334155 !important;
+}
+
+body.theme-light .tc-qimen-weather {
+  color: #b91c1c !important;
+  font-weight: 600 !important;
+}
+
+

@@ -37,7 +37,7 @@ def get_current_repo():
 
 TOKEN = load_token()
 REPO = get_current_repo()
-TAG = 'v2.2.2'
+TAG = 'v2.2.3'
 
 def get_latest_commit():
     try:

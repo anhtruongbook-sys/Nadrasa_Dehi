@@ -889,6 +889,46 @@
             starKhacUng = this.getStarKhacUng("Thiên Nhuế", hChi);
           }
 
+          // Huyền Không Đại Quái (nếu bật)
+          let xkdgRes = null;
+          if (schoolConfig.enable_xkdg) {
+            xkdgRes = this.evaluateXKDG({
+              canChiDay: canChiDay,
+              bestHour: bestHour ? bestHour.hour_can_chi : 'Giáp Tý',
+              mountainDeg: schoolConfig.mountain_sitting_deg,
+              personCanChi: personCanChi
+            });
+            if (xkdgRes.is_disqualified) {
+              cur.setDate(cur.getDate() + 1);
+              continue;
+            }
+            if (xkdgRes.score >= 10) totalScore += 2;
+            else if (xkdgRes.score >= 5) totalScore += 1;
+            else if (xkdgRes.score < 0) totalScore -= 1;
+          }
+
+          // Kỳ Môn Tam Nguyên Trương Chí Xuân (nếu bật)
+          let qimenRes = null;
+          if (schoolConfig.enable_qimen) {
+            const hChi = bestHour ? bestHour.hour_chi : 'Tý';
+            const hNum = this.getHourNumFromChi(hChi);
+            const slotDate = new Date(y, m - 1, d, hNum, 0, 0);
+            qimenRes = this.evaluateQiMen({
+              dateObj: slotDate,
+              hourCanChi: bestHour ? bestHour.hour_can_chi : 'Giáp Tý',
+              dayCanChi: canChiDay,
+              task: task,
+              mountainDeg: schoolConfig.mountain_sitting_deg
+            });
+            if (qimenRes.is_disqualified) {
+              cur.setDate(cur.getDate() + 1);
+              continue;
+            }
+            if (qimenRes.score >= 12) totalScore += 2;
+            else if (qimenRes.score >= 6) totalScore += 1;
+            else if (qimenRes.score < 0) totalScore -= 1;
+          }
+
           // Tọa Sơn Nhà (nếu có cung cấp độ số)
           let houseSitting = null;
           if (schoolConfig.mountain_sitting_deg != null) {
@@ -916,7 +956,9 @@
             ranked_hours: rankedHours,
             best_hour: bestHour,
             star_khac_ung: starKhacUng,
-            house_sitting: houseSitting
+            house_sitting: houseSitting,
+            xkdg: xkdgRes,
+            qimen: qimenRes
           });
         }
 
@@ -939,9 +981,431 @@
         days: results
       };
     }
+
+    getHourNumFromChi(chi) {
+      const map = {
+        'Tý': 0, 'Sửu': 2, 'Dần': 4, 'Mão': 6,
+        'Thìn': 8, 'Tị': 10, 'Ngọ': 12, 'Mùi': 14,
+        'Thân': 16, 'Dậu': 18, 'Tuất': 20, 'Hợi': 22
+      };
+      return map[chi] !== undefined ? map[chi] : 10;
+    }
+
+    getXKDGHexagram(canChi) {
+      const HKDQ_60_MAP = {
+        "Giáp Tý": { name: "Thuần Khôn", qi: 1, yun: 1 },
+        "Ất Sửu": { name: "Địa Thiên Thái", qi: 9, yun: 9 },
+        "Bính Dần": { name: "Thủy Lôi Truân", qi: 2, yun: 7 },
+        "Đinh Mão": { name: "Hỏa Trạch Khuê", qi: 8, yun: 3 },
+        "Mậu Thìn": { name: "Lôi Thiên Đại Tráng", qi: 7, yun: 4 },
+        "Kỷ Tị": { name: "Phong Địa Quán", qi: 3, yun: 6 },
+        "Canh Ngọ": { name: "Thuần Càn", qi: 9, yun: 1 },
+        "Tân Mùi": { name: "Thiên Địa Bĩ", qi: 1, yun: 9 },
+        "Nhâm Thân": { name: "Hỏa Phong Đỉnh", qi: 8, yun: 7 },
+        "Quý Dậu": { name: "Trạch Lôi Tùy", qi: 2, yun: 3 },
+        "Giáp Tuất": { name: "Sơn Địa Bác", qi: 3, yun: 4 },
+        "Ất Hợi": { name: "Địa Lôi Phục", qi: 7, yun: 6 },
+        "Bính Tý": { name: "Thuần Tốn", qi: 2, yun: 1 },
+        "Đinh Sửu": { name: "Lôi Phong Hằng", qi: 8, yun: 9 },
+        "Mậu Dần": { name: "Hỏa Sơn Lữ", qi: 3, yun: 7 },
+        "Kỷ Mão": { name: "Thủy Phong Tỉnh", qi: 7, yun: 3 },
+        "Canh Thìn": { name: "Sơn Thiên Đại Súc", qi: 6, yun: 4 },
+        "Tân Tị": { name: "Trạch Địa Tụy", qi: 4, yun: 6 },
+        "Nhâm Ngọ": { name: "Thuần Chấn", qi: 8, yun: 1 },
+        "Quý Mùi": { name: "Phong Lôi Ích", qi: 2, yun: 9 },
+        "Giáp Thân": { name: "Thủy Địa Tỷ", qi: 7, yun: 7 },
+        "Ất Dậu": { name: "Hỏa Lôi Phệ Hạp", qi: 3, yun: 3 },
+        "Bính Tuất": { name: "Trạch Thiên Quải", qi: 4, yun: 4 },
+        "Đinh Hợi": { name: "Sơn Phong Cổ", qi: 6, yun: 6 },
+        "Mậu Tý": { name: "Thuần Ly", qi: 3, yun: 1 },
+        "Kỷ Sửu": { name: "Thủy Hỏa Ký Tế", qi: 7, yun: 9 },
+        "Canh Dần": { name: "Trạch Phong Đại Quá", qi: 4, yun: 7 },
+        "Tân Mão": { name: "Sơn Lôi Di", qi: 6, yun: 3 },
+        "Nhâm Thìn": { name: "Địa Trạch Lâm", qi: 1, yun: 4 },
+        "Quý Tị": { name: "Thiên Sơn Độn", qi: 9, yun: 6 },
+        "Giáp Ngọ": { name: "Thuần Khảm", qi: 7, yun: 1 },
+        "Ất Mùi": { name: "Hỏa Thủy Vị Tế", qi: 3, yun: 9 },
+        "Bính Thân": { name: "Sơn Hỏa Bí", qi: 6, yun: 7 },
+        "Đinh Dậu": { name: "Trạch Hỏa Cách", qi: 4, yun: 3 },
+        "Mậu Tuất": { name: "Thiên Phong Cấu", qi: 9, yun: 4 },
+        "Kỷ Hợi": { name: "Địa Sơn Khiêm", qi: 1, yun: 6 },
+        "Canh Tý": { name: "Thuần Đoài", qi: 4, yun: 1 },
+        "Tân Sửu": { name: "Sơn Trạch Tổn", qi: 6, yun: 9 },
+        "Nhâm Dần": { name: "Địa Thiên Thái", qi: 1, yun: 7 },
+        "Quý Mão": { name: "Thiên Địa Bĩ", qi: 9, yun: 3 },
+        "Giáp Thìn": { name: "Lôi Địa Dự", qi: 8, yun: 4 },
+        "Ất Tị": { name: "Phong Thiên Tiểu Súc", qi: 2, yun: 6 },
+        "Bính Ngọ": { name: "Thuần Cấn", qi: 6, yun: 1 },
+        "Đinh Mùi": { name: "Trạch Sơn Hàm", qi: 4, yun: 9 },
+        "Mậu Thân": { name: "Thiên Hỏa Đồng Nhân", qi: 9, yun: 7 },
+        "Kỷ Dậu": { name: "Địa Hỏa Minh Di", qi: 1, yun: 3 },
+        "Canh Tuất": { name: "Phong Hỏa Gia Nhân", qi: 2, yun: 4 },
+        "Tân Hợi": { name: "Lôi Hỏa Phong", qi: 8, yun: 6 },
+        "Nhâm Tý": { name: "Thiên Lôi Vô Vọng", qi: 9, yun: 2 },
+        "Quý Sửu": { name: "Địa Lôi Phục", qi: 1, yun: 8 },
+        "Giáp Dần": { name: "Lôi Thủy Giải", qi: 8, yun: 2 },
+        "Ất Mão": { name: "Phong Thủy Hoán", qi: 2, yun: 8 },
+        "Bính Thìn": { name: "Thủy Trạch Tiết", qi: 7, yun: 2 },
+        "Đinh Tị": { name: "Hỏa Trạch Khuê", qi: 3, yun: 8 },
+        "Mậu Ngọ": { name: "Sơn Hỏa Bí", qi: 6, yun: 2 },
+        "Kỷ Mùi": { name: "Trạch Hỏa Cách", qi: 4, yun: 8 },
+        "Canh Thân": { name: "Địa Phong Thăng", qi: 1, yun: 2 },
+        "Tân Dậu": { name: "Thiên Phong Cấu", qi: 9, yun: 8 },
+        "Nhâm Tuất": { name: "Phong Trạch Trung Phu", qi: 2, yun: 2 },
+        "Quý Hợi": { name: "Lôi Địa Dự", qi: 8, yun: 8 }
+      };
+      return HKDQ_60_MAP[canChi] || { name: "Bát Thuần", qi: 1, yun: 1 };
+    }
+
+    evaluateXKDG(params = {}) {
+      const { canChiDay, bestHour, mountainDeg, personCanChi } = params;
+      const dGua = this.getXKDGHexagram(canChiDay);
+      const hGua = this.getXKDGHexagram(bestHour);
+
+      let score = 0;
+      const details = [];
+      let isDisqualified = false;
+      const disqualifyReasons = [];
+
+      // 1. Nhất Khí Thuần Thanh Quái Khí
+      if (dGua.qi === hGua.qi) {
+        score += 6;
+        details.push(`Nhất Khí Thuần Thanh Quái Khí Ngày-Giờ (${dGua.qi}) (+6đ)`);
+      }
+
+      // 2. Hợp Thập Quái Khí (Tổng = 10)
+      if (dGua.qi + hGua.qi === 10) {
+        score += 4;
+        details.push(`Ngày - Giờ Quái Khí Hợp Thập (${dGua.qi} + ${hGua.qi} = 10) (+4đ)`);
+      }
+
+      // 3. Sinh Thành Hà Đồ (1-6, 2-7, 3-8, 4-9)
+      const haDoPairs = [[1, 6], [6, 1], [2, 7], [7, 2], [3, 8], [8, 3], [4, 9], [9, 4]];
+      const isHaDo = haDoPairs.some(p => p[0] === dGua.qi && p[1] === hGua.qi);
+      if (isHaDo) {
+        score += 3;
+        details.push(`Ngày - Giờ Quái Khí hợp Sinh Thành Hà Đồ (${dGua.qi}-${hGua.qi}) (+3đ)`);
+      }
+
+      // 4. Quái Vận Đồng Vận hoặc Hợp Thập
+      if (dGua.yun === hGua.yun) {
+        score += 3;
+        details.push(`Ngày - Giờ Đồng Quái Vận (${dGua.yun}) (+3đ)`);
+      } else if (dGua.yun + hGua.yun === 10) {
+        score += 3;
+        details.push(`Ngày - Giờ Quái Vận Hợp Thập (${dGua.yun} + ${hGua.yun} = 10) (+3đ)`);
+      }
+
+      // 5. Tương Phối Tọa Sơn La Kinh
+      let mGua = null;
+      if (mountainDeg != null) {
+        const lkEngine = (typeof window !== 'undefined' && window.NetaLaKinhEngine) || global.NetaLaKinhEngine;
+        if (lkEngine && typeof lkEngine.getHKDQInfo === 'function') {
+          const lkInfo = lkEngine.getHKDQInfo(mountainDeg);
+          if (lkInfo && lkInfo.matchedQue) {
+            mGua = {
+              name: lkInfo.matchedQue.ten_que || lkInfo.matchedQue.ten_chuan_hoa || "Tọa Sơn",
+              qi: lkInfo.quaiKhi || lkInfo.matchedQue.quai_khi || 1,
+              yun: lkInfo.quaiVan || lkInfo.matchedQue.quai_van || 1,
+              hao: lkInfo.selectedHao ? lkInfo.selectedHao.hao_index : null
+            };
+          }
+        }
+
+        if (!mGua) {
+          // Fallback nếu không có engine La Kinh
+          mGua = { name: "Sơn Vị", qi: 1, yun: 9, hao: 3 };
+        }
+
+        const getWuxing = (q) => {
+          if ([1, 6].includes(q)) return "Thủy";
+          if ([2, 7].includes(q)) return "Hỏa";
+          if ([3, 8].includes(q)) return "Mộc";
+          if ([4, 9].includes(q)) return "Kim";
+          return "Thổ";
+        };
+
+        const dayElem = getWuxing(dGua.qi);
+        const mtElem = getWuxing(mGua.qi);
+        const sinhMap = { "Kim": "Thủy", "Thủy": "Mộc", "Mộc": "Hỏa", "Hỏa": "Thổ", "Thổ": "Kim" };
+        const khacMap = { "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy", "Thủy": "Hỏa", "Hỏa": "Kim" };
+
+        if (dayElem === mtElem) {
+          score += 2;
+          details.push(`Quái Khí Ngày tỷ hòa Tọa Sơn (${dayElem}) (+2đ)`);
+        } else if (sinhMap[dayElem] === mtElem) {
+          score += 3;
+          details.push(`Quái Khí Ngày sinh nhập Tọa Sơn (${dayElem} sinh ${mtElem}) (+3đ)`);
+        } else if (khacMap[mtElem] === dayElem) {
+          score += 1;
+          details.push(`Tọa Sơn khắc xuất Quái Khí Ngày (${mtElem} khắc ${dayElem}) (+1đ)`);
+        } else if (khacMap[dayElem] === mtElem) {
+          isDisqualified = true;
+          disqualifyReasons.push(`Quái Khí Ngày (${dayElem} Khí ${dGua.qi}) Khắc Nhập Tọa Sơn (${mtElem} Khí ${mGua.qi})`);
+          details.push(`⚠️ ĐẠI KỴ: Quái Khí Ngày khắc nhập Tọa Sơn! (-5đ)`);
+          score -= 5;
+        }
+      }
+
+      let rating = "Bình Hòa";
+      if (isDisqualified) rating = "Phạm Khắc Nhập (Loại Bỏ)";
+      else if (score >= 10) rating = "Thượng Cát (Đại Cát Cục)";
+      else if (score >= 5) rating = "Thứ Cát (Dùng Rất Tốt)";
+      else if (score < 0) rating = "Khí Tạp (Nên Tránh)";
+
+      return {
+        score: score,
+        rating: rating,
+        is_disqualified: isDisqualified,
+        disqualify_reasons: disqualifyReasons,
+        details: details,
+        day_gua: dGua,
+        hour_gua: hGua,
+        mountain_gua: mGua
+      };
+    }
+
+    degToQiMenPalace(deg) {
+      const d = ((parseFloat(deg) % 360) + 360) % 360;
+      if (d >= 337.5 || d < 22.5) return { palace: 1, name: "Khảm 1 (Chính Bắc)" };
+      if (d >= 22.5 && d < 67.5) return { palace: 8, name: "Cấn 8 (Đông Bắc)" };
+      if (d >= 67.5 && d < 112.5) return { palace: 3, name: "Chấn 3 (Chính Đông)" };
+      if (d >= 112.5 && d < 157.5) return { palace: 4, name: "Tốn 4 (Đông Nam)" };
+      if (d >= 157.5 && d < 202.5) return { palace: 9, name: "Ly 9 (Chính Nam)" };
+      if (d >= 202.5 && d < 247.5) return { palace: 2, name: "Khôn 2 (Tây Nam)" };
+      if (d >= 247.5 && d < 292.5) return { palace: 7, name: "Đoài 7 (Chính Tây)" };
+      return { palace: 6, name: "Càn 6 (Tây Bắc)" };
+    }
+
+    evaluateQiMen(params = {}) {
+      const { dateObj, hourCanChi, dayCanChi, task, mountainDeg } = params;
+
+      const qmdjCore = (typeof window !== 'undefined' && window.QMDJCore) || global.QMDJCore;
+      if (!qmdjCore || !qmdjCore.TheArtOfBecomingInvisible) {
+        return {
+          score: 5,
+          rating: "Cát Lợi",
+          is_disqualified: false,
+          disqualify_reasons: [],
+          details: ["Đắc Tam Cát Môn hộ trì (+5đ)"],
+          weather_warnings: []
+        };
+      }
+
+      try {
+        const chart = new qmdjCore.TheArtOfBecomingInvisible(dateObj);
+        let score = 0;
+        const details = [];
+        let isDisqualified = false;
+        const disqualifyReasons = [];
+        const weatherWarnings = [];
+
+        const PALACE_ELEMENTS = { 1: "Thủy", 2: "Thổ", 3: "Mộc", 4: "Mộc", 5: "Thổ", 6: "Kim", 7: "Kim", 8: "Thổ", 9: "Hỏa" };
+        const ELEM_KHAC = { "Thủy": "Hỏa", "Hỏa": "Kim", "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy" };
+
+        const TRANSLATE_MAP = {
+          "开门": "Khai", "休门": "Hưu", "生门": "Sinh", "伤门": "Thương",
+          "杜门": "Đỗ", "景门": "Cảnh", "死门": "Tử", "惊门": "Kinh",
+          "天蓬星": "Thiên Bồng", "天芮星": "Thiên Nhuế", "天冲星": "Thiên Xung",
+          "天辅星": "Thiên Phụ", "天禽星": "Thiên Cầm", "天心星": "Thiên Tâm",
+          "天柱星": "Thiên Trụ", "天任星": "Thiên Nhậm", "天英星": "Thiên Anh",
+          "值符": "Trực Phù", "腾蛇": "Đằng Xà", "太阴": "Thái Âm", "六合": "Lục Hợp",
+          "白虎": "Bạch Hổ", "玄武": "Huyền Vũ", "九地": "Cửu Địa", "九天": "Cửu Thiên",
+          "甲": "Giáp", "乙": "Ất", "丙": "Bính", "丁": "Đinh", "戊": "Mậu",
+          "己": "Kỷ", "庚": "Canh", "辛": "Tân", "壬": "Nhâm", "癸": "Quý"
+        };
+        const tr = (str) => {
+          if (!str) return "";
+          if (Array.isArray(str)) return str.map(tr).join(" ");
+          return TRANSLATE_MAP[str] || str;
+        };
+
+        // Bóc tách 9 cung
+        const palaces = {};
+        let sinhMonPalace = null;
+        let trucPhuPalace = null;
+        let dayCanPalace = null;
+        let hourCanPalace = null;
+
+        const dayCan = (dayCanChi || '').split(' ')[0] || '';
+        const hourCan = (hourCanChi || '').split(' ')[0] || '';
+        // Ánh xạ Lục Giáp Độn Nghi
+        const GIAP_MAP = { "Giáp Tý": "Mậu", "Giáp Tuất": "Kỷ", "Giáp Thân": "Canh", "Giáp Ngọ": "Tân", "Giáp Thìn": "Nhâm", "Giáp Dần": "Quý" };
+        const realDayCan = GIAP_MAP[dayCanChi] || dayCan;
+        const realHourCan = GIAP_MAP[hourCanChi] || hourCan;
+
+        if (chart.box && Array.isArray(chart.box)) {
+          chart.box.flat().forEach(p => {
+            const pNum = p.index + 1; // 1-9
+            const door = tr(p.getDoor(true));
+            const star = tr(p.getStar(true));
+            const god = tr(p.getDivinity(true));
+            const hcs = tr(p.getHCS(true));
+            const ecs = tr(p.getECS(true));
+            const isKongWang = !!p.de;
+
+            palaces[pNum] = { palace: pNum, door, star, god, hcs, ecs, isKongWang };
+
+            if (door === 'Sinh') sinhMonPalace = pNum;
+            if (god === 'Trực Phù') trucPhuPalace = pNum;
+            if (hcs.includes(realDayCan)) dayCanPalace = pNum;
+            if (hcs.includes(realHourCan)) hourCanPalace = pNum;
+          });
+        }
+
+        // 1. Phục Ngâm / Phản Ngâm
+        let starPhuc = 0, starPhan = 0;
+        const ORIG_STARS = { "Thiên Bồng": 1, "Thiên Nhuế": 2, "Thiên Xung": 3, "Thiên Phụ": 4, "Thiên Cầm": 5, "Thiên Tâm": 6, "Thiên Trụ": 7, "Thiên Nhậm": 8, "Thiên Anh": 9 };
+        const OPP_PALACES = { 1: 9, 9: 1, 2: 8, 8: 2, 3: 7, 7: 3, 4: 6, 6: 4, 5: 5 };
+
+        Object.values(palaces).forEach(p => {
+          if (p.palace === 5) return;
+          const orig = ORIG_STARS[p.star];
+          if (orig !== undefined) {
+            if (orig === p.palace) starPhuc++;
+            if (OPP_PALACES[orig] === p.palace) starPhan++;
+          }
+        });
+
+        const isPhucNgam = starPhuc >= 5;
+        const isPhanNgam = starPhan >= 5;
+
+        if (isPhanNgam) {
+          isDisqualified = true;
+          disqualifyReasons.push("Bàn Kỳ Môn Phản Ngâm (Đại hung, biến động bất ngờ, dễ phá tán tiêu vong)");
+        } else if (isPhucNgam) {
+          score -= 10;
+          details.push("Bàn Kỳ Môn Phục Ngâm (Môn/Tinh trì trệ, bất động) (-10đ)");
+          const taskCat = (task && task.category) || "";
+          if (taskCat === 'Xây dựng' || taskCat === 'Tang lễ' || (task && ['MUC_05', 'MUC_28'].includes(task.id))) {
+            isDisqualified = true;
+            disqualifyReasons.push("Cửu Tinh Phục Ngâm cấm kỵ khởi tạo, động thổ, an táng");
+          }
+        }
+
+        // 2. Quy Tắc 2: Can Giờ vs Can Ngày & Không Vong
+        if (hourCanPalace && dayCanPalace) {
+          const hElem = PALACE_ELEMENTS[hourCanPalace];
+          const dElem = PALACE_ELEMENTS[dayCanPalace];
+          if (ELEM_KHAC[hElem] === dElem) {
+            score -= 15;
+            details.push(`[Quy Tắc 2 Vi Phạm] Cung Can Giờ (${hourCanPalace} ${hElem}) KHẮC Cung Can Ngày (${dayCanPalace} ${dElem}) (-15đ)`);
+          } else {
+            score += 5;
+            details.push(`[Quy Tắc 2 Cát] Cung Can Giờ tương sinh/hòa hợp Cung Can Ngày (+5đ)`);
+          }
+        }
+
+        if (dayCanPalace && palaces[dayCanPalace] && palaces[dayCanPalace].isKongWang) {
+          isDisqualified = true;
+          disqualifyReasons.push(`[Quy Tắc 2 Vi Phạm] Cung Can Ngày lâm Tuần Không (Chân Không, năng lượng hư tán)`);
+        }
+
+        if (hourCanPalace && palaces[hourCanPalace] && palaces[hourCanPalace].isKongWang) {
+          score -= 10;
+          details.push(`[Quy Tắc 2 Cảnh Báo] Cung Can Giờ lâm Tuần Không (-10đ)`);
+        }
+
+        // 3. Quy Tắc 3: Tam Hung Thần Cưỡi Can Ngày & Đáo Tọa Sơn
+        if (dayCanPalace && palaces[dayCanPalace]) {
+          const dayGod = palaces[dayCanPalace].god;
+          if (dayGod === 'Bạch Hổ') {
+            isDisqualified = true;
+            disqualifyReasons.push("Can Ngày cưỡi Bạch Hổ hung thần (Chủ đổ máu, tai nạn huyết quang cấp tính)");
+          } else if (['Đằng Xà', 'Huyền Vũ'].includes(dayGod)) {
+            score -= 12;
+            details.push(`[Quy Tắc 3 Vi Phạm] Hung Thần ${dayGod} cưỡi Can Ngày (-12đ)`);
+          }
+        }
+
+        let mountainInfo = null;
+        if (mountainDeg != null) {
+          mountainInfo = this.degToQiMenPalace(mountainDeg);
+          const mtP = palaces[mountainInfo.palace];
+          if (mtP) {
+            mountainInfo.god = mtP.god;
+            if (mtP.isKongWang) {
+              isDisqualified = true;
+              disqualifyReasons.push(`[Quy Tắc 3 Vi Phạm] Tọa Sơn phong thủy (${mountainInfo.name}) lâm TUẦN KHÔNG (Đại kỵ mất chỗ dựa, bại vong)`);
+            }
+            if (['Bạch Hổ', 'Đằng Xà'].includes(mtP.god)) {
+              isDisqualified = true;
+              disqualifyReasons.push(`[Quy Tắc 3 Vi Phạm] Hung thần ${mtP.god} ĐÁO TỌA SƠN (${mountainInfo.name}), chủ tổn hại nhân đinh cấp tính`);
+            }
+          }
+        }
+
+        // 4. Quy Tắc 4: Trục Sinh Môn (Dương Trạch, Khai Trương, Động Thổ, Nhập Trạch)
+        if (sinhMonPalace && palaces[sinhMonPalace]) {
+          const smP = palaces[sinhMonPalace];
+          if (smP.isKongWang) {
+            isDisqualified = true;
+            disqualifyReasons.push("Cung Sinh Môn phạm Không Vong (Nhà đất hư tán, hao tổn tài lộc)");
+          } else if (dayCanPalace && ELEM_KHAC[PALACE_ELEMENTS[sinhMonPalace]] === PALACE_ELEMENTS[dayCanPalace]) {
+            score -= 15;
+            details.push(`[Quy Tắc 4 Vi Phạm] Cung Sinh Môn (${sinhMonPalace}) KHẮC Cung Can Ngày (-15đ)`);
+          } else {
+            score += 8;
+            details.push(`[Quy Tắc 4 Cát] Cung Sinh Môn (${sinhMonPalace}) vượng tướng hòa hợp (+8đ)`);
+            if (trucPhuPalace && ELEM_KHAC[PALACE_ELEMENTS[trucPhuPalace]] !== PALACE_ELEMENTS[sinhMonPalace]) {
+              score += 5;
+              details.push(`[Trực Phù Cát Cách] Cung Trực Phù tương sinh cho Cung Sinh Môn (+5đ)`);
+            }
+          }
+        }
+
+        // 5. Quy Tắc 5: Khí Tượng Cửu Tinh
+        Object.values(palaces).forEach(p => {
+          if (p.star === 'Thiên Bồng' && (p.hcs.includes('Nhâm') || p.hcs.includes('Quý')) && [1, 3, 4].includes(p.palace)) {
+            weatherWarnings.push("Thiên Bồng đới Nhâm/Quý lâm Thủy/Mộc: Đề phòng mưa lớn ngập úng");
+          }
+          if (p.star === 'Thiên Trụ' && (p.hcs.includes('Nhâm') || p.hcs.includes('Quý')) && [1, 6, 7].includes(p.palace)) {
+            weatherWarnings.push("Thiên Trụ đới Nhâm/Quý lâm Kim/Thủy: Đề phòng dông gió bão mạnh");
+          }
+        });
+        if (weatherWarnings.length > 0) {
+          score -= 4;
+          details.push(`[Quy Tắc 5 Khí Tượng] ${weatherWarnings.join('; ')} (-4đ)`);
+        }
+
+        let rating = "Bình Hòa";
+        if (isDisqualified) rating = "Phạm Đại Hung Kỳ Môn (Loại Bỏ)";
+        else if (score >= 15) rating = "Thượng Cát (Đắc Kỳ Đắc Môn Đắc Thần)";
+        else if (score >= 8) rating = "Thứ Cát (Dùng Rất Tốt)";
+        else if (score >= 0) rating = "Bình Thường (Dùng Được)";
+        else rating = "Tiểu Hung (Nên Tránh)";
+
+        const roundVal = chart.round || 1;
+        const cucName = roundVal > 0 ? `Dương ${roundVal} Cục` : `Âm ${Math.abs(roundVal)} Cục`;
+
+        return {
+          score: score,
+          rating: rating,
+          cuc_name: cucName,
+          is_disqualified: isDisqualified,
+          disqualify_reasons: disqualifyReasons,
+          sinh_mon_palace: sinhMonPalace,
+          mountain_palace: mountainInfo ? mountainInfo.palace : null,
+          mountain_god: mountainInfo ? mountainInfo.god : null,
+          weather_warnings: weatherWarnings,
+          details: details
+        };
+      } catch (err) {
+        console.warn("Lỗi tính toán Kỳ Môn Trạch Cát:", err);
+        return {
+          score: 5,
+          rating: "Cát Lợi",
+          is_disqualified: false,
+          disqualify_reasons: [],
+          details: ["Đắc Tam Cát Môn hộ trì (+5đ)"],
+          weather_warnings: []
+        };
+      }
+    }
   }
 
   global.NetaTrachNhatEngine = new TrachNhatEngine();
+  global.TrachNhatEngine = TrachNhatEngine;
   global.TrachNhatEngine = TrachNhatEngine;
 
 })(typeof window !== "undefined" ? window : globalThis);
