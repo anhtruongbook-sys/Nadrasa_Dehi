@@ -1969,6 +1969,12 @@
       md.push('---');
       md.push('## V. TỔNG KẾT VÀ LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)');
       md.push(`> **THÔNG ĐIỆP CHỐT:** ${report.finalAdvice}\n`);
+
+      if (report.deepSynthesis) {
+        md.push('---');
+        md.push('## VI. LUẬN GIẢI CHIỀU SÂU & HƯỚNG DẪN CỤ THỂ');
+        md.push(`${report.deepSynthesis}\n`);
+      }
       return md.join('\n');
     }
   };

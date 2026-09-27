@@ -63,16 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.6
-          name: "Neta Light & Huyền Học v1.9.6 (Nâng Cấp Toàn Diện Kỳ Môn Độn Giáp Phong Thủy Nhà 16 Hướng & Ma Trận Huyền Không Phi Tinh)"
+          tag_name: v1.9.7
+          name: "Neta Light & Huyền Học v1.9.7 (Bổ Sung Luận Giải Chiều Sâu Tarot Với Gemini 3.8 Flash & Bảo Mật Khóa API Kép)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.6
-            - **Đại Tu Nâng Cấp Toàn Diện Thuật Toán Bàn Kỳ Môn Phong Thủy Nhà (16 Hướng Nhà Chuẩn Mực)**:
-              + Thay thế phân định 8 hướng thô sơ bằng danh mục chuẩn xác 16 Hướng Nhà (8 cặp phân định rõ Hướng 1 [Địa Nguyên Long] vs Hướng 2/3 [Thiên & Nhân Nguyên Long]) theo sách *Kỳ Môn Độn Giáp Bát Vi Thần Phong Thủy* (Thầy Bạch Vân Sơn) và ứng dụng Kỳ Môn Pro.
-              + Tích hợp đầy đủ Ma trận Huyền Không Phi Tinh chính tông: hiển thị trực quan Sơn Tinh (Tọa Tinh), Hướng Tinh, Vận Tinh tại từng cung trong đồ hình 9 Cung Lạc Thư.
-              + Đánh dấu và làm nổi bật trực quan các cung trọng yếu: Hướng Nhà (`H.Nhà`), Vị Cửa (`Vị Cửa`), Cung Trực Sử (`Trực Sử`), xác định chính xác 4 Đại Cách Cục Huyền Không (Vượng Sơn Vượng Hướng, Song Tinh Đáo Hướng, Song Tinh Đáo Tọa, Thượng Sơn Hạ Thủy).
-              + Bổ sung thông tin chi tiết độ số 24 Sơn Vị Cửa (độ số góc phương vị, cung Lạc Thư, Can Phù Thủ khởi điểm).
-              + Modal tra cứu chi tiết từng cung hiển thị đầy đủ cả 2 tầng khí: Tầng Kỳ Môn Độn Giáp (Bát Thần, Cửu Tinh, Bát Môn, Can Thiên/Địa) và Tầng Huyền Không Phi Tinh (Sơn/Hướng/Vận).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.7
+            - **Bổ Sung Tính Năng Tùy Chọn "Luận Giải Chiều Sâu" Cho Tarot Rider-Waite (RWS)**:
+              + Vận dụng mô hình trí tuệ nhân tạo thế hệ mới nhất `gemini-3.8-flash` với cơ chế tự động cascade hạ cấp thông minh xuống các mô hình cũ hơn (`gemini-3.7-flash` -> `gemini-3.6-flash` -> `gemini-3.5-flash` -> `gemini-2.5-flash`...).
+              + **Bám sát 100% thuật toán gốc & Tuyệt đối không ảo giác (Rule 12)**: Dựa hoàn toàn trên các lá bài đã bốc, chiều bài (Xuôi/Ngược), ma trận tương tác nguyên tố Golden Dawn Elemental Dignities và lá bài Cốt tủy (The Quintessence).
+              + **Luận giải theo câu hỏi thực tế của người dùng**: Nhập câu hỏi cụ thể để nhận câu trả lời trực diện, sâu sắc, giàu chất tâm lý học chiều sâu Jungian Archetype, không nói chung chung.
+              + **Văn phong chuẩn mực & Không đề cập AI**: Tuyệt đối không xuất hiện các từ ngữ AI, Gemini, bot, mô hình trong bài viết, mang lại trải nghiệm huyền học chiêm đoán tôn nghiêm và thuần khiết.
+              + **Bảo Mật Khóa API Kép Vĩnh Viễn**:
+                * Khóa mặc định hệ thống được xáo trộn mã hóa 2 tầng (XOR Scrambled), không bao giờ hiển thị văn bản rõ.
+                * Cho phép người dùng nhập khóa API riêng qua popup cấu hình bảo mật kín đáo (nhấn giữ hoặc bấm ⚙️), trường nhập dạng password chống sao chép (`oncopy="return false"`), tự động lưu trữ vĩnh viễn trong thiết bị.
+                * Có nút khôi phục về khóa tích hợp sẵn bất cứ lúc nào.
+              + **Tùy chọn kín đáo & Mặc định tắt**: Mặc định không tích chọn, ứng dụng hoạt động 100% Offline mượt mà khi không kích hoạt hoặc khi mất mạng.
             - **Kế thừa các nâng cấp đột phá từ v1.9.5**:
               + Tích hợp cảm biến La Bàn Phần Cứng 3D Native Hardware Compass với bù góc nghiêng toàn diện (3D Tilt Compensation) và bộ lọc làm mượt chống rung tay.
               + Chuẩn hóa 100% thuật toán Tử Vi Nam Phái Thái Thứ Lang với đầy đủ hệ thống 26 Phụ tinh thứ cấp và an sao Miếu/Vượng/Đắc/Hãm.

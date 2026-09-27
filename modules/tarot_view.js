@@ -186,6 +186,47 @@
       .replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>');
   }
 
+  function formatMarkdownDeep(str) {
+    if (!str) return '';
+    const lines = str.split('\n');
+    let html = '';
+    let inList = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i].trim();
+      if (!line) {
+        if (inList) { html += '</ul>'; inList = false; }
+        continue;
+      }
+      if (line.startsWith('### ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h4 class="tarot-deep-subheading">${formatMarkdownInline(line.substring(4))}</h4>`;
+      } else if (line.startsWith('## ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h3 class="tarot-deep-heading">${formatMarkdownInline(line.substring(3))}</h3>`;
+      } else if (line.startsWith('# ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h3 class="tarot-deep-heading">${formatMarkdownInline(line.substring(2))}</h3>`;
+      } else if (line.startsWith('- ') || line.startsWith('* ')) {
+        if (!inList) {
+          html += '<ul class="tarot-deep-list">';
+          inList = true;
+        }
+        html += `<li>${formatMarkdownInline(line.substring(2))}</li>`;
+      } else if (/^\d+\.\s/.test(line)) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const num = line.match(/^\d+/)[0];
+        const text = line.replace(/^\d+\.\s+/, '');
+        html += `<div class="tarot-deep-step"><span class="step-num">${num}.</span> <span>${formatMarkdownInline(text)}</span></div>`;
+      } else {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<p class="tarot-deep-para">${formatMarkdownInline(line)}</p>`;
+      }
+    }
+    if (inList) html += '</ul>';
+    return html;
+  }
+
   function escapeHTML(str) {
     if (typeof str !== 'string') return str == null ? '' : String(str);
     return str
@@ -522,6 +563,11 @@
                 <input type="checkbox" id="tarot-toggle-haptic" ${hapticEnabled ? 'checked' : ''}>
                 <span class="tarot-switch-text">📳 Rung (Haptic)</span>
               </label>
+              <label class="tarot-switch-label tarot-deep-switch-wrap" id="tarot-deep-label" title="Kích hoạt luận giải chiều sâu (Nhấn ⚙️ để cài đặt khóa bảo mật)">
+                <input type="checkbox" id="tarot-toggle-deep-synth" ${global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled() ? 'checked' : ''}>
+                <span class="tarot-switch-text">Luận giải Chiều sâu</span>
+                <span class="tarot-key-config-icon" id="btn-tarot-open-key-config" title="Cài đặt khóa bảo mật">⚙️</span>
+              </label>
             </div>
           </div>
 
@@ -754,6 +800,34 @@
             <blockquote>${formatMarkdownInline(report.synthesizedStory)}</blockquote>
           </div>
         </div>
+
+        <!-- PHẦN ĐẶC BIỆT: LUẬN GIẢI CHIỀU SÂU & HƯỚNG DẪN CỤ THỂ -->
+        ${(global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled()) ? `
+          <div class="tarot-section-box tarot-deep-box ${report.isDeepLoading ? 'is-loading' : ''}" id="tarot-deep-section-box">
+            <div class="tarot-section-header">
+              <span class="tarot-sec-icon">✨</span>
+              <span class="tarot-sec-title">LUẬN GIẢI CHIỀU SÂU &amp; HƯỚNG DẪN CỤ THỂ</span>
+            </div>
+            <div class="tarot-deep-body" id="tarot-deep-body-content">
+              ${report.deepSynthesis ? `
+                <div class="tarot-deep-rendered">
+                  ${formatMarkdownDeep(report.deepSynthesis)}
+                </div>
+              ` : (report.isDeepLoading ? `
+                <div class="tarot-deep-loading-state">
+                  <div class="tarot-deep-spinner"></div>
+                  <div class="tarot-deep-loading-msg">Đang kết nối chiều sâu trực giác và tổng hợp các mối tương quan...</div>
+                </div>
+              ` : `
+                <div class="tarot-deep-trigger-row">
+                  <button id="btn-trigger-deep-synthesis" class="tarot-btn-deep-trigger">
+                    ✨ Bấm Để Phân Tích Luận Giải Chiều Sâu Ngay
+                  </button>
+                </div>
+              `)}
+            </div>
+          </div>
+        ` : ''}
 
         <!-- PHẦN III: MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL CONSTELLATIONS) -->
         ${report.archetypalPatterns && report.archetypalPatterns.length > 0 ? `
@@ -1184,6 +1258,189 @@
     `;
   }
 
+  // --- DEEP SYNTHESIS & KEY CONFIGURATION (EXTENDED) ---
+  async function fetchDeepInterpretation(report) {
+    if (!report || report.isDeepLoading || !global.NetaGeminiService) return;
+    if (!global.NetaGeminiService.isDeepSynthesisEnabled()) return;
+
+    report.isDeepLoading = true;
+
+    const deepBox = document.getElementById('tarot-deep-section-box');
+    if (deepBox) {
+      deepBox.classList.add('is-loading');
+      const bodyEl = document.getElementById('tarot-deep-body-content');
+      if (bodyEl) {
+        bodyEl.innerHTML = `
+          <div class="tarot-deep-loading-state">
+            <div class="tarot-deep-spinner"></div>
+            <div class="tarot-deep-loading-msg">Đang kết nối chiều sâu trực giác và tổng hợp các mối tương quan...</div>
+          </div>
+        `;
+      }
+    } else {
+      renderTarot();
+    }
+
+    try {
+      const qInput = document.getElementById('tarot-question-input');
+      const question = qInput ? qInput.value.trim() : (report.question || '');
+      const synthesisText = await global.NetaGeminiService.interpretTarotReading(report, question);
+      
+      report.isDeepLoading = false;
+      if (synthesisText) {
+        report.deepSynthesis = synthesisText;
+      }
+    } catch (err) {
+      console.warn('Deep interpretation notice:', err);
+      report.isDeepLoading = false;
+    }
+
+    const deepBoxAfter = document.getElementById('tarot-deep-section-box');
+    if (deepBoxAfter) {
+      deepBoxAfter.classList.remove('is-loading');
+      const bodyEl = document.getElementById('tarot-deep-body-content');
+      if (bodyEl && report.deepSynthesis) {
+        bodyEl.innerHTML = `
+          <div class="tarot-deep-rendered">
+            ${formatMarkdownDeep(report.deepSynthesis)}
+          </div>
+        `;
+      } else if (bodyEl) {
+        bodyEl.innerHTML = `
+          <div class="tarot-deep-offline-note" title="Chạm để thử kết nối lại">
+            Đã hoàn tất luận giải với hệ phân tích cổ điển. (Chạm vào đây để thử lại)
+          </div>
+        `;
+        const retryNote = bodyEl.querySelector('.tarot-deep-offline-note');
+        if (retryNote) {
+          retryNote.style.cursor = 'pointer';
+          retryNote.addEventListener('click', () => fetchDeepInterpretation(report));
+        }
+      }
+    } else {
+      renderTarot();
+    }
+  }
+
+  function openTarotKeyConfigModal() {
+    let modal = document.getElementById('tarot-key-config-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'tarot-key-config-modal';
+      modal.className = 'modal-overlay tarot-key-modal';
+      document.body.appendChild(modal);
+    }
+
+    const hasCustomKey = global.NetaGeminiService && global.NetaGeminiService.isCustomKeySet();
+
+    modal.innerHTML = `
+      <div class="modal-dialog tarot-key-modal-dialog">
+        <div class="tarot-key-modal-header">
+          <div class="tarot-key-modal-title">
+            <span class="key-icon">🔐</span> Cài Đặt Khóa Phân Tích Chiều Sâu
+          </div>
+          <button class="modal-close" id="tarot-key-modal-close">&times;</button>
+        </div>
+        <div class="tarot-key-modal-body">
+          <p class="tarot-key-desc">
+            Ứng dụng sử dụng cơ chế bảo mật đa tầng. Khóa được mã hóa tự động trong máy của bạn và không bao giờ hiển thị dạng văn bản rõ.
+          </p>
+
+          <div class="tarot-key-status-badge ${hasCustomKey ? 'status-custom' : 'status-builtin'}">
+            ${hasCustomKey ? '🔑 Đang sử dụng: Khóa riêng do bạn cài đặt' : '🛡️ Đang sử dụng: Khóa bảo mật tích hợp sẵn của hệ thống'}
+          </div>
+
+          <div class="tarot-key-input-wrap">
+            <label class="tarot-key-input-label" for="tarot-custom-key-input">Nhập hoặc thay đổi Khóa API:</label>
+            <div class="tarot-key-input-row">
+              <input type="password" id="tarot-custom-key-input" class="tarot-key-input"
+                placeholder="${hasCustomKey ? '••••••••••••••••••••••••••••••••••••••••••' : 'Dán khóa bảo mật vào đây...'}"
+                autocomplete="off" spellcheck="false"
+                oncopy="return false;" oncut="return false;" />
+            </div>
+            <div class="tarot-key-hint">
+              * Khóa được mã hóa và lưu vĩnh viễn trên thiết bị của bạn.
+            </div>
+          </div>
+
+          <div id="tarot-key-feedback" class="tarot-key-feedback"></div>
+
+          <div class="tarot-key-actions">
+            <button id="btn-tarot-save-key" class="tarot-btn-primary">
+              💾 Lưu Khóa Này
+            </button>
+            <button id="btn-tarot-reset-key" class="tarot-btn-ghost" ${hasCustomKey ? '' : 'style="display:none;"'}>
+              🔄 Khôi Phục Khóa Mặc Định
+            </button>
+            <button id="btn-tarot-close-key-modal" class="tarot-btn-secondary">
+              Đóng
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.classList.add('active');
+
+    const closeModal = () => {
+      modal.remove();
+    };
+
+    const closeBtn = modal.querySelector('#tarot-key-modal-close');
+    const closeBtn2 = modal.querySelector('#btn-tarot-close-key-modal');
+    const saveBtn = modal.querySelector('#btn-tarot-save-key');
+    const resetBtn = modal.querySelector('#btn-tarot-reset-key');
+    const keyInput = modal.querySelector('#tarot-custom-key-input');
+    const feedback = modal.querySelector('#tarot-key-feedback');
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (closeBtn2) closeBtn2.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        const val = keyInput ? keyInput.value.trim() : '';
+        if (!val) {
+          if (feedback) {
+            feedback.className = 'tarot-key-feedback error';
+            feedback.textContent = 'Vui lòng nhập chuỗi khóa trước khi bấm lưu.';
+          }
+          return;
+        }
+        if (global.NetaGeminiService) {
+          global.NetaGeminiService.setCustomKey(val);
+          triggerHaptic(20);
+          if (feedback) {
+            feedback.className = 'tarot-key-feedback success';
+            feedback.textContent = '✅ Đã lưu và mã hóa khóa bảo mật thành công!';
+          }
+          if (keyInput) keyInput.value = '';
+          setTimeout(() => {
+            openTarotKeyConfigModal();
+          }, 800);
+        }
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (global.NetaGeminiService) {
+          global.NetaGeminiService.clearCustomKey();
+          triggerHaptic(20);
+          if (feedback) {
+            feedback.className = 'tarot-key-feedback success';
+            feedback.textContent = '✅ Đã khôi phục về khóa tích hợp sẵn của hệ thống!';
+          }
+          setTimeout(() => {
+            openTarotKeyConfigModal();
+          }, 800);
+        }
+      });
+    }
+  }
+
   function bindTarotEvents(container) {
     // 1. Sub-Tabs
     container.querySelectorAll('.tarot-tab-btn').forEach(btn => {
@@ -1225,6 +1482,59 @@
     if (reversedCheck) {
       reversedCheck.addEventListener('change', (e) => {
         allowReversed = e.target.checked;
+      });
+    }
+
+    const toggleHaptic = container.querySelector('#tarot-toggle-haptic');
+    if (toggleHaptic) {
+      toggleHaptic.addEventListener('change', (e) => {
+        hapticEnabled = e.target.checked;
+        localStorage.setItem('neta_tarot_haptic', hapticEnabled ? 'true' : 'false');
+      });
+    }
+
+    const toggleDeepSynth = container.querySelector('#tarot-toggle-deep-synth');
+    if (toggleDeepSynth && global.NetaGeminiService) {
+      toggleDeepSynth.addEventListener('change', (e) => {
+        global.NetaGeminiService.setDeepSynthesisEnabled(e.target.checked);
+        triggerHaptic(15);
+        if (e.target.checked && currentReadingReport && areAllCardsFlipped()) {
+          fetchDeepInterpretation(currentReadingReport);
+        } else {
+          renderTarot();
+        }
+      });
+    }
+
+    const btnOpenKeyConfig = container.querySelector('#btn-tarot-open-key-config');
+    if (btnOpenKeyConfig) {
+      btnOpenKeyConfig.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openTarotKeyConfigModal();
+      });
+    }
+
+    const deepLabel = container.querySelector('#tarot-deep-label');
+    if (deepLabel) {
+      let pressTimer = null;
+      deepLabel.addEventListener('touchstart', () => {
+        pressTimer = setTimeout(() => {
+          openTarotKeyConfigModal();
+        }, 700);
+      }, { passive: true });
+      deepLabel.addEventListener('touchend', () => {
+        if (pressTimer) clearTimeout(pressTimer);
+      });
+      deepLabel.addEventListener('touchcancel', () => {
+        if (pressTimer) clearTimeout(pressTimer);
+      });
+    }
+
+    const btnTriggerDeep = container.querySelector('#btn-trigger-deep-synthesis');
+    if (btnTriggerDeep && currentReadingReport) {
+      btnTriggerDeep.addEventListener('click', () => {
+        fetchDeepInterpretation(currentReadingReport);
       });
     }
 
@@ -1380,6 +1690,9 @@
           triggerHaptic(15);
           renderTarot();
           if (areAllCardsFlipped()) {
+            if (global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled() && currentReadingReport && !currentReadingReport.deepSynthesis) {
+              fetchDeepInterpretation(currentReadingReport);
+            }
             setTimeout(() => {
               const rep = document.getElementById('tarot-report-section');
               if (rep) rep.scrollIntoView({ behavior: 'smooth' });
@@ -1397,6 +1710,9 @@
         playCardFlipSound();
         triggerHaptic(20);
         renderTarot();
+        if (global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled() && currentReadingReport && !currentReadingReport.deepSynthesis) {
+          fetchDeepInterpretation(currentReadingReport);
+        }
         setTimeout(() => {
           const rep = document.getElementById('tarot-report-section');
           if (rep) rep.scrollIntoView({ behavior: 'smooth' });
