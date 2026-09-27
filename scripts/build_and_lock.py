@@ -37,7 +37,7 @@ def get_current_repo():
 
 TOKEN = load_token()
 REPO = get_current_repo()
-TAG = 'v2.2.3'
+TAG = 'v2.2.4'
 
 def get_latest_commit():
     try:
@@ -90,25 +90,28 @@ def download_apk():
         'User-Agent': 'Mozilla/5.0',
         'Authorization': f'Bearer {TOKEN}'
     })
+    downloaded = 0
     try:
         with urllib.request.urlopen(req) as resp:
             rel_data = json.loads(resp.read().decode('utf-8'))
             for asset in rel_data.get('assets', []):
-                if asset.get('name') == 'NetaLight.apk':
+                asset_name = asset.get('name')
+                if asset_name.endswith('.apk'):
                     asset_id = asset.get('id')
                     asset_api_url = f'https://api.github.com/repos/{REPO}/releases/assets/{asset_id}'
-                    print(f'Downloading NetaLight.apk (id {asset_id})...')
+                    print(f'Downloading {asset_name} (id {asset_id}, {asset.get("size")/1024/1024:.1f} MB)...')
                     dl_req = urllib.request.Request(asset_api_url, headers={
                         'User-Agent': 'Mozilla/5.0',
                         'Authorization': f'Bearer {TOKEN}',
                         'Accept': 'application/octet-stream'
                     })
                     with urllib.request.urlopen(dl_req) as dl_resp:
-                        with open('NetaLight.apk', 'wb') as f:
+                        with open(asset_name, 'wb') as f:
                             f.write(dl_resp.read())
-                    sz = os.path.getsize('NetaLight.apk') / (1024 * 1024)
-                    print(f'SUCCESS: Downloaded NetaLight.apk ({sz:.2f} MB)')
-                    return True
+                    sz = os.path.getsize(asset_name) / (1024 * 1024)
+                    print(f'SUCCESS: Downloaded {asset_name} ({sz:.2f} MB)')
+                    downloaded += 1
+            return downloaded > 0
     except Exception as e:
         print(f"Error fetching release: {e}")
     return False
