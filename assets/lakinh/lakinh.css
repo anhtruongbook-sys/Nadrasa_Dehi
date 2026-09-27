@@ -946,9 +946,11 @@ body.light-theme .lakinh-dock-btn.gold {
   border-top: 1px solid rgba(245, 176, 65, 0.4);
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.7);
-  padding: 16px 18px 24px;
-  max-height: 75vh;
-  overflow-y: auto;
+  padding: 14px 16px 20px;
+  max-height: 60vh !important;
+  height: 60vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
   transform: translateY(105%);
   transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
