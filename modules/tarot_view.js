@@ -535,7 +535,10 @@
         <div class="tarot-control-card">
           <div class="tarot-control-row">
             <div class="tarot-control-group">
-              <label for="tarot-spread-select">Kiểu trải bài:</label>
+              <div class="tarot-label-row">
+                <label for="tarot-spread-select" id="tarot-spread-label" class="tarot-interactive-label" title="Chạm giữ để mở thiết lập chuyên sâu">Kiểu trải bài:</label>
+                <span class="tarot-secret-glyph" id="tarot-secret-trigger" title="Chiêm nghiệm">✦</span>
+              </div>
               <select id="tarot-spread-select" class="tarot-select">
                 <option value="past_present_future" ${currentSpreadType === 'past_present_future' ? 'selected' : ''}>3 lá: Quá khứ - Hiện tại - Tương lai</option>
                 <option value="problem_solution" ${currentSpreadType === 'problem_solution' ? 'selected' : ''}>3 lá: Vấn đề & Giải pháp</option>
@@ -562,11 +565,6 @@
               <label class="tarot-switch-label" title="Chế độ rung phản hồi (mặc định tắt)">
                 <input type="checkbox" id="tarot-toggle-haptic" ${hapticEnabled ? 'checked' : ''}>
                 <span class="tarot-switch-text">📳 Rung (Haptic)</span>
-              </label>
-              <label class="tarot-switch-label tarot-deep-switch-wrap" id="tarot-deep-label" title="Kích hoạt luận giải chiều sâu (Nhấn ⚙️ để cài đặt khóa bảo mật)">
-                <input type="checkbox" id="tarot-toggle-deep-synth" ${global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled() ? 'checked' : ''}>
-                <span class="tarot-switch-text">Luận giải Chiều sâu</span>
-                <span class="tarot-key-config-icon" id="btn-tarot-open-key-config" title="Cài đặt khóa bảo mật">⚙️</span>
               </label>
             </div>
           </div>
@@ -1337,41 +1335,54 @@
     }
 
     const hasKey = global.NetaGeminiService && global.NetaGeminiService.hasActiveKey();
+    const isDeepEnabled = global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled();
 
     modal.innerHTML = `
       <div class="modal-dialog tarot-key-modal-dialog">
         <div class="tarot-key-modal-header">
           <div class="tarot-key-modal-title">
-            <span class="key-icon">🔐</span> Cài Đặt Khóa Phân Tích Chiều Sâu
+            <span class="key-icon">✦</span> Thiết Lập Chiều Sâu Trực Giác
           </div>
           <button class="modal-close" id="tarot-key-modal-close">&times;</button>
         </div>
         <div class="tarot-key-modal-body">
-          <p class="tarot-key-desc">
-            Ứng dụng vận dụng mô hình Gemini để nâng tầm văn phong và chiều sâu luận giải. Khóa được mã hóa tự động và lưu trữ an toàn ngay trên thiết bị của bạn.
-          </p>
+          <!-- Toggle kích hoạt Luận giải Chiều sâu -->
+          <div class="tarot-modal-toggle-row">
+            <div class="tarot-toggle-info">
+              <div class="tarot-toggle-title">Luận giải Chiều sâu</div>
+              <div class="tarot-toggle-sub">Phân tích tương quan &amp; định hướng giải pháp theo câu hỏi</div>
+            </div>
+            <label class="tarot-switch-container">
+              <input type="checkbox" id="modal-deep-synth-toggle" ${isDeepEnabled ? 'checked' : ''}>
+              <span class="tarot-switch-knob"></span>
+            </label>
+          </div>
 
-          <div class="tarot-key-status-badge ${hasKey ? 'status-custom' : 'status-missing'}">
-            ${hasKey ? '🔑 Đang sử dụng: Khóa riêng do bạn cài đặt (Đã mã hóa an toàn trên máy)' : '⚠️ Chưa có Khóa API: Hãy nhập khóa cá nhân để kích hoạt'}
+          <div class="tarot-key-status-badge ${hasKey ? 'status-custom' : 'status-missing'}" id="modal-key-status-badge">
+            ${hasKey ? '🔑 Trạng thái: Đã cài đặt Khóa API cá nhân (Đã mã hóa và lưu an toàn trên máy)' : '⚠️ Chưa cài đặt Khóa: Hãy dán khóa cá nhân để kích hoạt'}
           </div>
 
           <div class="tarot-key-guide-box">
             <div class="tarot-guide-title">📌 Cách nhận Khóa API Google AI Studio miễn phí:</div>
             <div class="tarot-guide-step">1. Đăng nhập Google và truy cập: <code>https://aistudio.google.com/app/apikey</code></div>
-            <div class="tarot-guide-step">2. Bấm <strong>Create API key</strong>, sao chép chuỗi khóa và dán vào ô bên dưới.</div>
+            <div class="tarot-guide-step">2. Bấm <strong>Create API key</strong>, sao chép khóa rồi chạm nút <strong>📋 Dán</strong> bên dưới.</div>
             <button type="button" class="tarot-btn-subtle btn-copy-link" id="btn-copy-aistudio-link">📋 Sao chép link lấy Key</button>
           </div>
 
+          <!-- Ô nhập Key thiết kế tiện dụng cho Mobile & WebView -->
           <div class="tarot-key-input-wrap">
             <label class="tarot-key-input-label" for="tarot-custom-key-input">Khóa API cá nhân của bạn:</label>
-            <div class="tarot-key-input-row">
+            <div class="tarot-key-input-row-modern">
               <input type="password" id="tarot-custom-key-input" class="tarot-key-input"
-                placeholder="${hasKey ? '••••••••••••••••••••••••••••••••••••••••••' : 'Dán khóa bảo mật vào đây...'}"
-                autocomplete="off" spellcheck="false"
-                oncopy="return false;" oncut="return false;" />
+                placeholder="${hasKey ? '••••••••••••••••••••••••••••••••••••••••••' : 'Chạm nút Dán bên cạnh hoặc nhập khóa...'}"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" id="btn-tarot-toggle-eye" class="tarot-key-action-btn" title="Hiện / Ẩn khóa">👁️</button>
+              <button type="button" id="btn-tarot-paste-key" class="tarot-key-action-btn paste-btn" title="Dán trực tiếp từ bộ nhớ tạm">
+                📋 Dán
+              </button>
             </div>
             <div class="tarot-key-hint">
-              * Khóa được mã hóa và lưu vĩnh viễn trên thiết bị này. Không gửi về bất kỳ máy chủ nào khác.
+              * Khóa được mã hóa tự động và lưu trữ trên bộ nhớ máy của bạn, không gửi đi đâu khác.
             </div>
           </div>
 
@@ -1379,10 +1390,10 @@
 
           <div class="tarot-key-actions">
             <button id="btn-tarot-save-key" class="tarot-btn-primary">
-              💾 Lưu Khóa &amp; Kích Hoạt
+              💾 Lưu Thiết Lập &amp; Áp Dụng
             </button>
             ${hasKey ? `
-              <button id="btn-tarot-delete-key" class="tarot-btn-ghost">
+              <button id="btn-tarot-delete-key" class="tarot-btn-ghost danger">
                 🗑️ Xóa Khóa Khỏi Máy
               </button>
             ` : ''}
@@ -1407,6 +1418,9 @@
     const keyInput = modal.querySelector('#tarot-custom-key-input');
     const feedback = modal.querySelector('#tarot-key-feedback');
     const copyLinkBtn = modal.querySelector('#btn-copy-aistudio-link');
+    const pasteBtn = modal.querySelector('#btn-tarot-paste-key');
+    const eyeBtn = modal.querySelector('#btn-tarot-toggle-eye');
+    const deepToggle = modal.querySelector('#modal-deep-synth-toggle');
 
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (closeBtn2) closeBtn2.addEventListener('click', closeModal);
@@ -1414,44 +1428,105 @@
       if (e.target === modal) closeModal();
     });
 
+    if (eyeBtn && keyInput) {
+      eyeBtn.addEventListener('click', () => {
+        if (keyInput.type === 'password') {
+          keyInput.type = 'text';
+          eyeBtn.textContent = '🙈';
+        } else {
+          keyInput.type = 'password';
+          eyeBtn.textContent = '👁️';
+        }
+      });
+    }
+
+    if (pasteBtn && keyInput) {
+      pasteBtn.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+            const clipText = await navigator.clipboard.readText();
+            if (clipText && clipText.trim()) {
+              keyInput.value = clipText.trim();
+              keyInput.type = 'text';
+              if (eyeBtn) eyeBtn.textContent = '🙈';
+              if (feedback) {
+                feedback.className = 'tarot-key-feedback success';
+                feedback.textContent = '✅ Đã dán khóa thành công từ Clipboard!';
+              }
+              triggerHaptic(15);
+              return;
+            }
+          }
+        } catch (clipErr) {
+          console.warn('Clipboard readText failed, fallback to focus:', clipErr);
+        }
+        // Fallback: Focus and select input for native long-press paste
+        keyInput.focus();
+        keyInput.select();
+        if (feedback) {
+          feedback.className = 'tarot-key-feedback';
+          feedback.textContent = '👉 Ô nhập đã sẵn sàng: Hãy chạm giữ và chọn "Dán"';
+        }
+      });
+    }
+
     if (copyLinkBtn) {
       copyLinkBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText('https://aistudio.google.com/app/apikey').then(() => {
-          copyLinkBtn.textContent = '✅ Đã sao chép link!';
-          setTimeout(() => { copyLinkBtn.textContent = '📋 Sao chép link lấy Key'; }, 2000);
-        }).catch(() => {
-          copyLinkBtn.textContent = 'https://aistudio.google.com/app/apikey';
-        });
+        const link = 'https://aistudio.google.com/app/apikey';
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          navigator.clipboard.writeText(link).then(() => {
+            copyLinkBtn.textContent = '✅ Đã sao chép link!';
+            setTimeout(() => { copyLinkBtn.textContent = '📋 Sao chép link lấy Key'; }, 2000);
+          }).catch(() => {
+            copyLinkBtn.textContent = link;
+          });
+        } else {
+          copyLinkBtn.textContent = link;
+        }
       });
     }
 
     if (saveBtn) {
       saveBtn.addEventListener('click', () => {
         const val = keyInput ? keyInput.value.trim() : '';
-        if (!val) {
+        const shouldEnableDeep = deepToggle ? deepToggle.checked : false;
+
+        if (val) {
+          if (global.NetaGeminiService) {
+            global.NetaGeminiService.setCustomKey(val);
+          }
+        }
+
+        const currentlyHasKey = global.NetaGeminiService && global.NetaGeminiService.hasActiveKey();
+
+        if (shouldEnableDeep && !currentlyHasKey) {
           if (feedback) {
             feedback.className = 'tarot-key-feedback error';
-            feedback.textContent = 'Vui lòng nhập chuỗi khóa trước khi bấm lưu.';
+            feedback.textContent = '⚠️ Hãy nhập hoặc dán Khóa API trước khi bật Luận giải Chiều sâu.';
           }
+          if (deepToggle) deepToggle.checked = false;
           return;
         }
+
         if (global.NetaGeminiService) {
-          global.NetaGeminiService.setCustomKey(val);
-          global.NetaGeminiService.setDeepSynthesisEnabled(true);
-          triggerHaptic(20);
-          if (feedback) {
-            feedback.className = 'tarot-key-feedback success';
-            feedback.textContent = '✅ Đã lưu và kích hoạt Luận giải Chiều sâu thành công!';
-          }
-          if (keyInput) keyInput.value = '';
-          setTimeout(() => {
-            modal.remove();
-            renderTarot();
-            if (currentReadingReport && areAllCardsFlipped()) {
-              fetchDeepInterpretation(currentReadingReport);
-            }
-          }, 700);
+          global.NetaGeminiService.setDeepSynthesisEnabled(shouldEnableDeep);
         }
+
+        triggerHaptic(20);
+        if (feedback) {
+          feedback.className = 'tarot-key-feedback success';
+          feedback.textContent = shouldEnableDeep
+            ? '✅ Đã lưu cấu hình và kích hoạt Luận giải Chiều sâu!'
+            : '✅ Đã lưu cấu hình thành công!';
+        }
+
+        setTimeout(() => {
+          modal.remove();
+          renderTarot();
+          if (shouldEnableDeep && currentReadingReport && areAllCardsFlipped() && !currentReadingReport.deepSynthesis) {
+            fetchDeepInterpretation(currentReadingReport);
+          }
+        }, 600);
       });
     }
 
@@ -1462,7 +1537,17 @@
           triggerHaptic(20);
           if (feedback) {
             feedback.className = 'tarot-key-feedback success';
-            feedback.textContent = '✅ Đã xóa khóa thành công!';
+            feedback.textContent = '✅ Đã xóa khóa khỏi máy và tắt tính năng!';
+          }
+          if (deepToggle) deepToggle.checked = false;
+          const statusBadge = modal.querySelector('#modal-key-status-badge');
+          if (statusBadge) {
+            statusBadge.className = 'tarot-key-status-badge status-missing';
+            statusBadge.textContent = '⚠️ Chưa cài đặt Khóa: Hãy dán khóa cá nhân để kích hoạt';
+          }
+          if (keyInput) {
+            keyInput.value = '';
+            keyInput.placeholder = 'Chạm nút Dán bên cạnh hoặc nhập khóa...';
           }
           setTimeout(() => {
             modal.remove();
@@ -1525,48 +1610,53 @@
       });
     }
 
-    const toggleDeepSynth = container.querySelector('#tarot-toggle-deep-synth');
-    if (toggleDeepSynth && global.NetaGeminiService) {
-      toggleDeepSynth.addEventListener('change', (e) => {
-        if (e.target.checked && !global.NetaGeminiService.hasActiveKey()) {
-          e.target.checked = false;
-          global.NetaGeminiService.setDeepSynthesisEnabled(false);
-          openTarotKeyConfigModal();
-          showTarotToast('🔑 Vui lòng cài đặt Khóa API cá nhân để sử dụng tính năng này.');
-          return;
-        }
-        global.NetaGeminiService.setDeepSynthesisEnabled(e.target.checked);
-        triggerHaptic(15);
-        if (e.target.checked && currentReadingReport && areAllCardsFlipped()) {
-          fetchDeepInterpretation(currentReadingReport);
-        } else {
-          renderTarot();
-        }
-      });
-    }
-
-    const btnOpenKeyConfig = container.querySelector('#btn-tarot-open-key-config');
-    if (btnOpenKeyConfig) {
-      btnOpenKeyConfig.addEventListener('click', (e) => {
+    // Secret trigger 1: mystic star glyph '✦' click
+    const secretTrigger = container.querySelector('#tarot-secret-trigger');
+    if (secretTrigger) {
+      secretTrigger.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        triggerHaptic(15);
         openTarotKeyConfigModal();
       });
     }
 
-    const deepLabel = container.querySelector('#tarot-deep-label');
-    if (deepLabel) {
-      let pressTimer = null;
-      deepLabel.addEventListener('touchstart', () => {
-        pressTimer = setTimeout(() => {
+    // Secret trigger 2: long-press on 'Kiểu trải bài:' label (700ms) or desktop double click
+    const spreadLabel = container.querySelector('#tarot-spread-label');
+    if (spreadLabel) {
+      let labelPressTimer = null;
+      spreadLabel.addEventListener('touchstart', () => {
+        labelPressTimer = setTimeout(() => {
+          triggerHaptic(20);
           openTarotKeyConfigModal();
         }, 700);
       }, { passive: true });
-      deepLabel.addEventListener('touchend', () => {
-        if (pressTimer) clearTimeout(pressTimer);
+      spreadLabel.addEventListener('touchend', () => {
+        if (labelPressTimer) clearTimeout(labelPressTimer);
       });
-      deepLabel.addEventListener('touchcancel', () => {
-        if (pressTimer) clearTimeout(pressTimer);
+      spreadLabel.addEventListener('touchcancel', () => {
+        if (labelPressTimer) clearTimeout(labelPressTimer);
+      });
+      spreadLabel.addEventListener('dblclick', () => {
+        openTarotKeyConfigModal();
+      });
+    }
+
+    // Secret trigger 3: long-press on '🔮 Trải Bài' tab button (900ms)
+    const tabSpreadBtn = container.querySelector('.tarot-tab-btn[data-tab="spread"]');
+    if (tabSpreadBtn) {
+      let tabPressTimer = null;
+      tabSpreadBtn.addEventListener('touchstart', () => {
+        tabPressTimer = setTimeout(() => {
+          triggerHaptic(20);
+          openTarotKeyConfigModal();
+        }, 900);
+      }, { passive: true });
+      tabSpreadBtn.addEventListener('touchend', () => {
+        if (tabPressTimer) clearTimeout(tabPressTimer);
+      });
+      tabSpreadBtn.addEventListener('touchcancel', () => {
+        if (tabPressTimer) clearTimeout(tabPressTimer);
       });
     }
 

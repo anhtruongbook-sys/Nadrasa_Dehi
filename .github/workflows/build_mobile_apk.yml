@@ -63,21 +63,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.8
-          name: "Neta Light & Huyền Học v1.9.8 (Chuẩn Hóa Cơ Chế Tự Nhập Khóa Cá Nhân Bảo Mật 100% Cho Luận Giải Chiều Sâu Tarot)"
+          tag_name: v1.9.9
+          name: "Neta Light & Huyền Học v1.9.9 (Ẩn Tinh Tế Luận Giải Chiều Sâu & Nút Dán Khóa 1-Chạm Siêu Tiện Lợi)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.8
-            - **Chuẩn Hóa Cơ Chế Bảo Mật Tuyệt Đối (Zero-Secret In Code / Bring Your Own Key)**:
-              + Rút toàn bộ khóa mặc định ra khỏi mã nguồn, bảo đảm mã nguồn ứng dụng sạch 100%, an toàn tuyệt đối khi phân phối APK hoặc dịch ngược code.
-              + Người dùng tự nhập Khóa API cá nhân (lấy miễn phí từ Google AI Studio), khóa được mã hóa an toàn và lưu cục bộ vĩnh viễn trên thiết bị.
-              + Tự động nhắc nhở và cung cấp nút sao chép link nhận Key miễn phí khi người dùng muốn bật tính năng.
-              + Hỗ trợ nút xóa khóa một chạm khỏi thiết bị bất kỳ lúc nào.
-            - **Bổ Sung Tính Năng Tùy Chọn "Luận Giải Chiều Sâu" Cho Tarot Rider-Waite (RWS)**:
-              + Vận dụng mô hình trí tuệ nhân tạo thế hệ mới nhất `gemini-3.8-flash` với cơ chế tự động cascade hạ cấp thông minh xuống các mô hình cũ hơn (`gemini-3.7-flash` -> `gemini-3.6-flash` -> `gemini-3.5-flash` -> `gemini-2.5-flash`...).
-              + **Bám sát 100% thuật toán gốc & Tuyệt đối không ảo giác (Rule 12)**: Dựa hoàn toàn trên các lá bài đã bốc, chiều bài (Xuôi/Ngược), ma trận tương tác nguyên tố Golden Dawn Elemental Dignities và lá bài Cốt tủy (The Quintessence).
-              + **Luận giải theo câu hỏi thực tế của người dùng**: Nhập câu hỏi cụ thể để nhận câu trả lời trực diện, sâu sắc, giàu chất tâm lý học chiều sâu Jungian Archetype.
-              + **Văn phong chuẩn mực & Không đề cập AI**: Tuyệt đối không xuất hiện các từ ngữ AI, Gemini, bot, mô hình trong bài viết.
-              + **Tùy chọn kín đáo & Mặc định tắt**: Mặc định không tích chọn, ứng dụng hoạt động 100% Offline mượt mà khi không kích hoạt hoặc khi mất mạng.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.9
+            - **Ẩn Tinh Tế Tính Năng Luận Giải Chiều Sâu Khỏi Giao Diện Chính**:
+              + Giao diện trải bài chính hoàn toàn chỉ hiển thị 2 tùy chọn cổ điển: *Cho phép lá ngược* và *Rung (Haptic)*.
+              + Không còn bất kỳ checkbox hay icon bánh răng lộ liễu nào trên màn hình chính.
+              + Kích hoạt cấu hình chuyên sâu hoàn toàn kín đáo thông qua biểu tượng huyền học tinh tế `✦` hoặc chạm giữ nhãn *Kiểu trải bài:*.
+            - **Thiết Kế Lại Trải Nghiệm Dán Khóa API 1-Chạm Cho Thiết Bị Di Động**:
+              + Tích hợp nút **📋 Dán** thông minh: tự động đọc và điền khóa từ Bộ nhớ tạm (Clipboard) chỉ với 1 lần chạm, giải quyết dứt điểm khó khăn khi paste trên màn hình cảm ứng điện thoại.
+              + Bổ sung nút **👁️** ẩn/hiện khóa giúp người dùng dễ dàng kiểm tra chuỗi khóa đã dán.
+              + Gỡ bỏ hoàn toàn mọi thuộc tính chặn bôi đen (`user-select: none`), cho phép thao tác chạm giữ và paste native mượt mà 100% trên Android WebView.
+            - **Duy Trì Cơ Chế Bảo Mật & Độc Lập Toàn Diện**:
+              + Chuẩn BYOK (Bring Your Own Key): không có bất kỳ key mặc định nào trong code, an toàn tuyệt đối khi phân phối APK.
+              + Tự động mã hóa XOR-salted và lưu trữ vĩnh viễn trên máy của người dùng, không bao giờ phải nhập lại sau khi tắt/mở app.
+              + Tự động cascade từ mô hình `gemini-3.8-flash` xuống các bản cũ hơn khi cần thiết.
+              + Văn phong chiêm nghiệm Rider-Waite thuần túy, tuyệt đối không nhắc đến AI hay tên mô hình.
+              + Vận hành Offline 100% hoàn hảo khi tính năng tắt hoặc khi ngắt kết nối mạng.
             - **Kế thừa các nâng cấp đột phá từ v1.9.5**:
               + Tích hợp cảm biến La Bàn Phần Cứng 3D Native Hardware Compass với bù góc nghiêng toàn diện (3D Tilt Compensation) và bộ lọc làm mượt chống rung tay.
               + Chuẩn hóa 100% thuật toán Tử Vi Nam Phái Thái Thứ Lang với đầy đủ hệ thống 26 Phụ tinh thứ cấp và an sao Miếu/Vượng/Đắc/Hãm.

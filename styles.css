@@ -11371,27 +11371,35 @@ html, body {
 /* ==========================================================================
    TAROT DEEP SYNTHESIS & SECURE KEY CONFIGURATION STYLES
    ========================================================================== */
-.tarot-deep-switch-wrap {
-  display: inline-flex !important;
+.tarot-label-row {
+  display: flex !important;
+  justify-content: space-between !important;
   align-items: center !important;
-  gap: 6px !important;
-  position: relative !important;
+  margin-bottom: 4px !important;
 }
 
-.tarot-key-config-icon {
-  font-size: 0.88rem;
-  opacity: 0.7;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  user-select: none;
+.tarot-interactive-label {
+  cursor: default !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
-.tarot-key-config-icon:hover {
-  opacity: 1;
-  transform: scale(1.15);
-  background: rgba(245, 176, 65, 0.15);
+.tarot-secret-glyph {
+  font-size: 0.85rem !important;
+  color: rgba(245, 176, 65, 0.45) !important;
+  cursor: pointer !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+.tarot-secret-glyph:hover,
+.tarot-secret-glyph:active {
+  color: #f5b041 !important;
+  text-shadow: 0 0 8px rgba(245, 176, 65, 0.6) !important;
+  transform: scale(1.15) !important;
 }
 
 .tarot-deep-box {
@@ -11593,15 +11601,97 @@ body.theme-light .tarot-key-modal-title {
   color: #b45309;
 }
 
-.tarot-key-desc {
-  font-size: 0.85rem;
-  color: #94a3b8;
-  line-height: 1.5;
-  margin-bottom: 12px;
+.tarot-modal-toggle-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(139, 92, 246, 0.25) !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+  margin-bottom: 14px !important;
+  gap: 12px !important;
 }
 
-body.theme-light .tarot-key-desc {
-  color: #475569;
+body.theme-light .tarot-modal-toggle-row {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.tarot-toggle-info {
+  flex: 1 !important;
+}
+
+.tarot-toggle-title {
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  color: #f8fafc !important;
+  margin-bottom: 2px !important;
+}
+
+body.theme-light .tarot-toggle-title {
+  color: #0f172a !important;
+}
+
+.tarot-toggle-sub {
+  font-size: 0.76rem !important;
+  color: #94a3b8 !important;
+  line-height: 1.4 !important;
+}
+
+body.theme-light .tarot-toggle-sub {
+  color: #64748b !important;
+}
+
+/* Switch Knob */
+.tarot-switch-container {
+  position: relative !important;
+  display: inline-block !important;
+  width: 48px !important;
+  height: 26px !important;
+  flex-shrink: 0 !important;
+  cursor: pointer !important;
+}
+
+.tarot-switch-container input {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  z-index: 2 !important;
+}
+
+.tarot-switch-knob {
+  position: absolute !important;
+  cursor: pointer !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #334155 !important;
+  transition: 0.3s !important;
+  border-radius: 26px !important;
+}
+
+.tarot-switch-knob:before {
+  position: absolute !important;
+  content: "" !important;
+  height: 20px !important;
+  width: 20px !important;
+  left: 3px !important;
+  bottom: 3px !important;
+  background-color: white !important;
+  transition: 0.3s !important;
+  border-radius: 50% !important;
+}
+
+.tarot-switch-container input:checked + .tarot-switch-knob {
+  background-color: #8b5cf6 !important;
+}
+
+.tarot-switch-container input:checked + .tarot-switch-knob:before {
+  transform: translateX(22px) !important;
 }
 
 .tarot-key-status-badge {
@@ -11611,12 +11701,6 @@ body.theme-light .tarot-key-desc {
   font-weight: 600;
   margin-bottom: 14px;
   user-select: none;
-}
-
-.tarot-key-status-badge.status-builtin {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .tarot-key-status-badge.status-custom {
@@ -11711,8 +11795,15 @@ body.theme-light .tarot-key-input-label {
   color: #334155;
 }
 
+.tarot-key-input-row-modern {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  position: relative !important;
+}
+
 .tarot-key-input {
-  width: 100% !important;
+  flex: 1 !important;
   box-sizing: border-box !important;
   padding: 10px 12px !important;
   background: #0f101a !important;
@@ -11720,15 +11811,63 @@ body.theme-light .tarot-key-input-label {
   border-radius: 8px !important;
   color: #ffffff !important;
   font-family: monospace !important;
-  letter-spacing: 2px !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
+  font-size: 0.9rem !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
 }
 
 body.theme-light .tarot-key-input {
   background: #f8fafc !important;
   border-color: #cbd5e1 !important;
   color: #0f172a !important;
+}
+
+.tarot-key-input:focus {
+  outline: none !important;
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25) !important;
+}
+
+.tarot-key-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 12px !important;
+  border-radius: 8px !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  background: rgba(139, 92, 246, 0.15) !important;
+  color: #e0e7ff !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+.tarot-key-action-btn.paste-btn {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+}
+
+.tarot-key-action-btn.paste-btn:active {
+  transform: scale(0.96) !important;
+}
+
+body.theme-light .tarot-key-action-btn {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+body.theme-light .tarot-key-action-btn.paste-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+  color: #ffffff !important;
 }
 
 .tarot-key-hint {
