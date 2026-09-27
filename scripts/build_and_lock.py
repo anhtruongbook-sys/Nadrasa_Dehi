@@ -3,6 +3,7 @@ import time
 import sys
 import urllib.request
 import json
+import subprocess
 
 if sys.stdout.encoding != 'utf-8':
     try:
@@ -20,8 +21,22 @@ def load_token():
             pass
     return t
 
+def get_current_repo():
+    try:
+        proc = subprocess.run(["git", "remote", "get-url", "origin"], capture_output=True, text=True, check=True)
+        url = proc.stdout.strip()
+        # Parse owner/repo from https://github.com/owner/repo.git or git@github.com:owner/repo.git
+        if 'github.com' in url:
+            clean = url.split('github.com')[-1].lstrip('/:')
+            if clean.endswith('.git'):
+                clean = clean[:-4]
+            return clean
+    except Exception:
+        pass
+    return 'anhtruongbook-sys/Nadrasa_Dehi'
+
 TOKEN = load_token()
-REPO = 'anhtruongbook-sys/Nadrasa_Dehi'
+REPO = get_current_repo()
 TAG = 'v2.0.1'
 COMMIT = ''
 
@@ -90,40 +105,42 @@ def download_apk():
         print(f"Error fetching release: {e}")
     return False
 
-try:
-    print("Temporarily setting repo to PUBLIC to build APK via GitHub Actions...")
-    set_private(False)
-    time.sleep(3)
+if __name__ == '__main__':
+    try:
+        print(f"Target repository detected: {REPO}")
+        print("Temporarily setting repo to PUBLIC to build APK via GitHub Actions...")
+        set_private(False)
+        time.sleep(3)
 
-    print("Checking runs for commit", COMMIT)
-    has_rerun = False
-    for i in range(70):
-        runs = check_runs()
-        target_run = None
-        for r in runs:
-            if r.get('head_sha', '').startswith(COMMIT):
-                target_run = r
-                break
-        if target_run:
-            status = target_run.get('status')
-            conclusion = target_run.get('conclusion')
-            run_id = target_run.get('id')
-            print(f'[{i}] Run {run_id}: Status={status}, Conclusion={conclusion}')
-            
-            if status == 'completed':
-                if conclusion == 'failure' and not has_rerun:
-                    print("Previous run failed (likely due to spending limit when private). Rerunning now...")
-                    rerun_workflow(run_id)
-                    has_rerun = True
-                    time.sleep(10)
-                    continue
-                elif conclusion == 'success':
-                    print("Build succeeded! Downloading release APK...")
-                    download_apk()
+        print("Checking runs for commit", COMMIT)
+        has_rerun = False
+        for i in range(70):
+            runs = check_runs()
+            target_run = None
+            for r in runs:
+                if r.get('head_sha', '').startswith(COMMIT):
+                    target_run = r
                     break
-        else:
-            print(f'[{i}] Waiting for run to appear for {COMMIT}...')
-        time.sleep(15)
-finally:
-    print('Restoring private repository status...')
-    set_private(True)
+            if target_run:
+                status = target_run.get('status')
+                conclusion = target_run.get('conclusion')
+                run_id = target_run.get('id')
+                print(f'[{i}] Run {run_id}: Status={status}, Conclusion={conclusion}')
+                
+                if status == 'completed':
+                    if conclusion == 'failure' and not has_rerun:
+                        print("Previous run failed (likely due to spending limit when private). Rerunning now...")
+                        rerun_workflow(run_id)
+                        has_rerun = True
+                        time.sleep(10)
+                        continue
+                    elif conclusion == 'success':
+                        print("Build succeeded! Downloading release APK...")
+                        download_apk()
+                        break
+            else:
+                print(f'[{i}] Waiting for run to appear for {COMMIT}...')
+            time.sleep(15)
+    finally:
+        print('Restoring private repository status...')
+        set_private(True)
