@@ -152,8 +152,7 @@
             <div class="tc-field">
               <label class="tc-label">Năm sinh gia chủ (Dương lịch)</label>
               <div class="tc-input-row">
-                <input type="number" id="tc-input-year" class="tc-input" min="1920" max="2050" value="${state.personYear}">
-                <button type="button" class="tc-badge tc-badge-info" style="cursor: pointer;" id="tc-btn-quick-year">Canh Ngọ (1990)</button>
+                <input type="number" id="tc-input-year" class="tc-input" min="1920" max="2050" value="${state.personYear}" placeholder="Nhập năm sinh (VD: 1979)...">
               </div>
               <div class="tc-person-badges">
                 <span class="tc-badge tc-badge-info">Tuổi: ${state.personCanChi} (${yearSuit ? yearSuit.age_lunar : ''} tuổi mụ)</span>
@@ -432,26 +431,23 @@
     // Year input
     const inputYear = document.getElementById('tc-input-year');
     if (inputYear) {
-      inputYear.onchange = (e) => {
-        const val = parseInt(e.target.value, 10);
-        if (!isNaN(val) && val >= 1920 && val <= 2050) {
+      const applyYear = (valStr) => {
+        const val = parseInt(valStr, 10);
+        if (!isNaN(val) && val >= 1920 && val <= 2050 && val !== state.personYear) {
           state.personYear = val;
           try { localStorage.setItem('neta_user_birth_year', String(val)); } catch (_) {}
           runEvaluation();
           render();
         }
       };
-    }
-
-    // Quick Year Button
-    const btnQuickYear = document.getElementById('tc-btn-quick-year');
-    if (btnQuickYear) {
-      btnQuickYear.onclick = () => {
-        state.personYear = 1990;
-        try { localStorage.setItem('neta_user_birth_year', '1990'); } catch (_) {}
-        runEvaluation();
-        render();
-      };
+      inputYear.addEventListener('input', (e) => {
+        if (e.target.value.length === 4) {
+          applyYear(e.target.value);
+        }
+      });
+      inputYear.addEventListener('change', (e) => {
+        applyYear(e.target.value);
+      });
     }
 
     // Mountain degree input
@@ -507,6 +503,12 @@
       btnRun.onclick = () => {
         runEvaluation();
         render();
+        setTimeout(() => {
+          const banner = document.querySelector('.tc-summary-banner');
+          if (banner) {
+            banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 50);
         if (global.showToast) global.showToast('✨ Đã cập nhật bảng ngày Đại Cát!');
       };
     }

@@ -335,7 +335,8 @@ body {
   overflow: hidden !important;
 }
 
-#view-dichhoc {
+#view-dichhoc,
+#view-trachcat {
   flex: 1 1 0% !important;
   min-height: 0 !important;
   width: 100% !important;

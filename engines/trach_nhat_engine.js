@@ -458,7 +458,7 @@
         if (grp.Truc_Tinh.includes(dayCanChi)) fList.push("Trực Tinh (Đại Cát hóa giải bách sát)");
         if (grp.Nhon_Chuyen.includes(dayCanChi)) fList.push("Nhân Chuyên (Đại Cát vạn sự hòa)");
         if (fList.length > 0) {
-          tamDaiCatTinh = { names: fList.join(', '), can_mitigate_bad: true };
+          tamDaiCatTinh = { name: fList.join(', '), names: fList.join(', '), can_mitigate_bad: true };
         }
       }
 

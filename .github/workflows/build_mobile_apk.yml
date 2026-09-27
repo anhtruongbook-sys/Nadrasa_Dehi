@@ -63,12 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.2.0
-          name: "Neta Light & Huyền Học v2.2.0 (Tích Hợp Module Trạch Cát - Xem Ngày Cát Lành & Kỳ Môn Trạch Nhật)"
+          tag_name: v2.2.1
+          name: "Neta Light & Huyền Học v2.2.1 (Tối Ưu Tia Ngắm Đơn La Kinh & Hoàn Thiện Trạch Cát Toàn Diện)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.0
-            - **Tích Hợp Module Trạch Cát (Xem Ngày Đại Cát Toàn Diện)**:
-              + **Bách Trạch Thông Thư - Trạng Trình Nguyễn Bỉnh Khiêm**: 83 Mục việc chuyên biệt phân loại theo 19 nhóm ngành (Xây dựng, Nhà ở, Hôn nhân, Giao thương, Đi lại, Học vấn, Y tế...). Chấm điểm 5 bậc cát hung theo ngày Can Chi gốc, tương hợp Thiên Can, Địa Chi và Nạp Âm Ngũ Hành của gia chủ.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.1
+            - **Khắc Phục Hoàn Toàn Vấn Đề Tia Ngắm Đôi Trên La Kinh**:
+              + Loại bỏ tia ngắm thừa Leaflet map polyline bị xung đột hướng với vòng xoay đĩa la kinh; giữ lại duy nhất 01 tia ngắm laser neon chuẩn xác, đồng bộ góc xoay la kinh và điểm chạm ghim kéo rê trên mặt bằng.
+            - **Nâng Cấp Toàn Diện Module Trạch Cát (Xem Ngày Cát Lành & Kỳ Môn Trạch Nhật)**:
+              + **Hỗ Trợ Giao Diện Sáng (Light Theme)**: Bổ sung 100% bảng màu sáng trang nhã, tương phản cao, dịu mắt khi chuyển đổi giao diện sáng/tối.
+              + **Sửa Lỗi Cuộn Màn Hình Mobile**: Cho phép vuốt cuộn mượt mà không giới hạn trên màn hình điện thoại nhỏ và WebView Flutter (`overflow-y: auto !important`).
+              + **Chống Tràn Khung Giao Diện (Zero Overflow)**: Tự động co giãn theo chiều dọc cho các thanh chọn mục việc và ngày tháng, hiển thị sắc nét trên mọi kích thước màn hình từ 360px đến tablet.
+              + **Bỏ Nút Cứng Năm Sinh Cũ**: Nhập trực tiếp năm sinh (ví dụ: 1979 Kỷ Mùi) tự động tính tuổi mụ, Tam Tai, Kim Lâu, Hoang Ốc tức thời.
+              + **Sửa Lỗi Nhãn Đại Cát Tinh**: Hiển thị chuẩn xác tên các đại cát tinh (Sát Cống, Trực Tinh, Nhân Chuyên).
+            - **Kế Thừa Đầy Đủ Thuật Toán & CSDL Trạch Cát Chuyên Sâu**:
+              + **Bách Trạch Thông Thư - Trạng Trình Nguyễn Bỉnh Khiêm**: 83 Mục việc chuyên biệt phân loại theo 19 nhóm ngành. Chấm điểm 5 bậc cát hung theo ngày Can Chi gốc, tương hợp Thiên Can, Địa Chi và Nạp Âm Ngũ Hành của gia chủ.
               + **Đổng Công Tuyển Trạch Yếu Dụng**: Toàn văn 12 Tháng / 423 Ngày luận giải cát hung nguyên bản (Đại Kiết, Kiết, Thứ Kiết, Bình, Thứ Hung, Đại Hung).
               + **16 Tiêu Chí Cát Thần & Lọc Hung Sát**: Tam Đại Cát Tinh (Sát Cống, Trực Tinh, Nhân Chuyên giải trừ bách hung), Lục Nhâm (6 cung), Khổng Minh (8 ngày), Bành Tổ Bách Kỵ, Hỷ Thần / Tài Thần, loại trừ ngày Sát Chủ, Thọ Tử, Tam Nương, Nguyệt Kỵ.
               + **Kiểm Soát Hạn Năm Gia Chủ**: Tự động tính tuổi mụ, rà soát Tam Tai, Kim Lâu (Thân, Thê, Tử, Lục Súc) và Hoang Ốc (6 cung Nhất Cát, Nhì Nghi, Tam Địa Sát, Tứ Tấn Tài, Ngũ Thọ Tử, Lục Hoang Ốc).

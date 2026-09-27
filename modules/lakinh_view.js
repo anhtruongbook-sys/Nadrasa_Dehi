@@ -1452,20 +1452,9 @@
     if (sheetHao) sheetHao.textContent = haoTen ? `${haoTen} (${haoCanChi} • ${haoLucThan}) ${van9RoleText}` : '---';
     if (sheetDiff) sheetDiff.textContent = diffText;
 
-    // Đồng bộ lên Leaflet map
-    if (mapInstance && surveyRayLayerGroup) {
+    // Dọn dẹp layer phụ trên Leaflet map (tránh tạo thêm tia ngắm thứ 2 trùng lặp)
+    if (surveyRayLayerGroup) {
       surveyRayLayerGroup.clearLayers();
-      const center = mapInstance.getCenter();
-      if (global.NetaLaKinhEngine) {
-        const target = global.NetaLaKinhEngine.getDestinationPoint(center.lat, center.lng, 2500, deg);
-        const polyline = L.polyline([[center.lat, center.lng], [target.lat, target.lng]], {
-          color: '#06b6d4',
-          weight: 2.5,
-          dashArray: '6, 6',
-          opacity: 0.95
-        });
-        polyline.addTo(surveyRayLayerGroup);
-      }
     }
   }
 
