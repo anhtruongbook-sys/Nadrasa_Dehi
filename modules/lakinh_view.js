@@ -1311,11 +1311,24 @@
           const miniBadge = document.getElementById('ray-mini-badge');
           if (miniDeg) miniDeg.textContent = `${deg.toFixed(1)}°`;
           if (miniSon) miniSon.textContent = `Sơn ${sonName}`;
-          if (miniQue) miniQue.textContent = queName ? `${queName} (${haoTen || ''})` : '';
+          if (miniQue) {
+            // Giữ cho capsule siêu gọn, không bị dàn ngang tràn màn hình:
+            miniQue.textContent = haoTen || queName || '';
+          }
           if (miniBadge) {
-            miniBadge.textContent = van9RoleText;
+            let compactBadge = '';
+            if (van9BadgeClass === 'warn') {
+              compactBadge = '⚠️ Ranh';
+            } else if (van9RoleText.includes('Đương')) {
+              compactBadge = '✨ V9';
+            } else if (van9RoleText.includes('Linh')) {
+              compactBadge = '🌊 Linh';
+            } else if (van9RoleText.includes('Chính')) {
+              compactBadge = '⛰️ Chính';
+            }
+            miniBadge.textContent = compactBadge;
             miniBadge.className = `ray-hud-badge ${van9BadgeClass}`;
-            miniBadge.style.display = van9RoleText ? 'inline-block' : 'none';
+            miniBadge.style.display = compactBadge ? 'inline-block' : 'none';
           }
         }
       } else {
@@ -3688,20 +3701,26 @@
     if (btnRay) btnRay.addEventListener('click', toggleSightingRay);
     if (btnQuickRay) btnQuickRay.addEventListener('click', toggleSightingRay);
     if (btnRayHudClose) {
-      btnRayHudClose.addEventListener('click', (e) => {
+      const handleCloseRayHud = (e) => {
         e.stopPropagation();
+        e.preventDefault();
         state.isRayHudCollapsed = true;
         updateSightingRay();
-      });
+      };
+      btnRayHudClose.addEventListener('click', handleCloseRayHud);
+      btnRayHudClose.addEventListener('touchend', handleCloseRayHud);
     }
 
     const miniPill = document.getElementById('lakinh-ray-mini-pill');
     if (miniPill) {
-      miniPill.addEventListener('click', (e) => {
+      const handleOpenRayHud = (e) => {
         e.stopPropagation();
+        e.preventDefault();
         state.isRayHudCollapsed = false;
         updateSightingRay();
-      });
+      };
+      miniPill.addEventListener('click', handleOpenRayHud);
+      miniPill.addEventListener('touchend', handleOpenRayHud);
     }
 
     const btnRayOpenHkdq = document.getElementById('btn-ray-hud-open-hkdq');

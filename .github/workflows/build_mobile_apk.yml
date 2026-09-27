@@ -63,14 +63,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.5
-          name: "Neta Light & Huyền Học v2.0.5 (Tia Ngắm Đầy Đủ Quẻ Hào, Chống Tràn Nút & Thu Gọn HUD)"
+          tag_name: v2.0.6
+          name: "Neta Light & Huyền Học v2.0.6 (Khắc Phục Tràn Ngang Ô Thông Tin Chi Tiết Tia Ngắm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.5
-            - **Khắc Phục 100% Tràn Nút Bấm Trên Thanh Công Cụ La Kinh (Top Panel)**:
-              + Tinh chỉnh lại kích thước các nút công cụ biểu tượng (30px), khoảng cách đệm an toàn và thiết lập flexbox co giãn thông minh `box-sizing: border-box; overflow: hidden;`.
-              + Loại bỏ hoàn toàn tình trạng nút hồ sơ dự án `📁` bị đẩy lấn tràn ra ngoài viền bo góc trên các màn hình điện thoại hẹp (320px - 360px).
-              + Dải hiển thị Huyền Không Đại Quái hàng thứ 2 được tối ưu hóa hiển thị gọn gàng, chống cắt chữ ở viền mép phải.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.6
+            - **Khắc Phục 100% Tràn Ngang Ô Thông Tin Chi Tiết Tia Ngắm (Sighting Ray HUD Overflow Fix)**:
+              + Tinh chỉnh dải thu gọn Mini Pill (`#lakinh-ray-mini-pill`) thành viên nang nổi cân đối hoàn hảo `max-width: min(calc(100vw - 28px), 340px);` căn giữa chuẩn xác, không còn bị dàn trải ngang từ mép trái sang mép phải làm cắt chữ hay tràn màn hình điện thoại (320px - 360px).
+              + Tối ưu hóa độ dài thông tin hiển thị trong Mini Pill: `🎯 Độ số • Sơn Hướng • Hào vị` kèm nhãn cảnh báo rút gọn (`⚠️ Ranh`, `✨ V9`, `🌊 Linh`, `⛰️ Chính`), đảm bảo luôn có khoảng đệm an toàn > 30px ở cả hai bên viền màn hình.
+              + Bảng chi tiết mở rộng (`#lakinh-ray-floating-hud`) được cố định chiều rộng an toàn `width: calc(100% - 24px); max-width: 360px; left: 12px; right: 12px; margin: 0 auto;`, cấu trúc từng dòng thông tin có khả năng ngắt dòng tự động (auto wrap) chống tràn ngang.
+              + Bổ sung xử lý sự kiện cảm ứng kép (`click` + `touchend` with `preventDefault`) giúp chuyển đổi mượt mà giữa trạng thái thu gọn và xem chi tiết đầy đủ 64 quẻ, 384 hào vi phân.
             - **Hiển Thị Toàn Diện Thông Tin Quẻ Đến Hào Của Điểm Theo Tia Ngắm (Full HKDQ Ray HUD)**:
               + Hiển thị đầy đủ 100% thông tin phong thủy: Sơn Hướng, Cung, Hành, Âm Dương.
               + Đại Quái 64 Quẻ: Tên Quẻ, Quái Khí, Quái Vận, Thượng/Hạ Quái, Dải độ số chính xác của quẻ.
