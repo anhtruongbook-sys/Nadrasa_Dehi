@@ -63,10 +63,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.3
-          name: "Neta Light & Huyền Học v2.0.3 (Nhập Mặt Bằng Dưới La Kinh & Tia Ngắm Phân Kim Qua Điểm)"
+          tag_name: v2.0.4
+          name: "Neta Light & Huyền Học v2.0.4 (Tải Ảnh Mặt Bằng Native Android & Tia Ngắm Phân Kim)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.3
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.4
+            - **Khắc Phục Hoàn Toàn Tải Ảnh Mặt Bằng Trên Điện Thoại Android**:
+              + Tích hợp trực tiếp Native Photo Picker qua cầu nối `NativeBridge` giữa Flutter WebView và Kotlin Activity.
+              + Tự động nén và tối ưu hóa ảnh chụp camera độ phân giải cao (10MP - 50MP) về kích thước chuẩn sắc nét 1600px, triệt tiêu 100% hiện tượng nghẽn bộ đệm Binder IPC (`TransactionTooLargeException`) gây tình trạng chọn ảnh xong vẫn báo *"Chưa nạp ảnh"*.
+              + Hỗ trợ cả hai luồng: Chọn ảnh từ Thư viện (Gallery / Photos / Files) và Tải tệp HTML5 với Canvas downsampling mượt mà.
             - **Nhập Ảnh Bản Vẽ Mặt Bằng Ngôi Nhà Dưới La Kinh (Floor Plan Underlay)**:
               + Tải ảnh bản vẽ kiến trúc (JPG, PNG, WEBP) đặt trực tiếp dưới đĩa La Kinh 36 tầng.
               + Tâm ảnh trùng chính xác 100% tuyệt đối với tâm La Kinh và chữ thập đỏ lập cực.

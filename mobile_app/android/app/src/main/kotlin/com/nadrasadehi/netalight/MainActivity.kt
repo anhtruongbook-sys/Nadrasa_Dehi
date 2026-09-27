@@ -2,6 +2,7 @@ package com.nadrasadehi.netalight
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Base64
 import org.json.JSONArray
 import java.io.ByteArrayOutputStream
@@ -324,14 +325,56 @@ class MainActivity: FlutterActivity() {
 
     private fun uriToBase64(uri: Uri): String? {
         return try {
-            val inputStream = contentResolver.openInputStream(uri)
-            val bytes = inputStream?.readBytes()
-            inputStream?.close()
-            if (bytes != null) {
-                val mime = contentResolver.getType(uri) ?: "image/jpeg"
-                "data:$mime;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP)
-            } else null
+            var inputStream = contentResolver.openInputStream(uri) ?: return null
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            BitmapFactory.decodeStream(inputStream, null, options)
+            inputStream.close()
+
+            val origW = options.outWidth
+            val origH = options.outHeight
+            if (origW <= 0 || origH <= 0) return null
+
+            val maxDim = 1600
+            var sampleSize = 1
+            while (origW / (sampleSize * 2) >= maxDim || origH / (sampleSize * 2) >= maxDim) {
+                sampleSize *= 2
+            }
+
+            inputStream = contentResolver.openInputStream(uri) ?: return null
+            val decodeOptions = BitmapFactory.Options().apply {
+                inSampleSize = sampleSize
+                inPreferredConfig = Bitmap.Config.ARGB_8888
+            }
+            val bitmap = BitmapFactory.decodeStream(inputStream, null, decodeOptions)
+            inputStream.close()
+
+            if (bitmap != null) {
+                val currentMax = Math.max(bitmap.width, bitmap.height)
+                val finalBitmap = if (currentMax > maxDim) {
+                    val scale = maxDim.toFloat() / currentMax
+                    val targetW = Math.max(1, (bitmap.width * scale).toInt())
+                    val targetH = Math.max(1, (bitmap.height * scale).toInt())
+                    val scaled = Bitmap.createScaledBitmap(bitmap, targetW, targetH, true)
+                    if (scaled != bitmap) {
+                        bitmap.recycle()
+                    }
+                    scaled
+                } else {
+                    bitmap
+                }
+
+                val stream = ByteArrayOutputStream()
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream)
+                finalBitmap.recycle()
+                val bytes = stream.toByteArray()
+                "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP)
+            } else {
+                null
+            }
         } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }

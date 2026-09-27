@@ -864,41 +864,100 @@
     if (valOffset) valOffset.textContent = `X: ${state.planOffsetX}px, Y: ${state.planOffsetY}px`;
   }
 
+  function setFloorPlanFromDataUrl(dataUrl) {
+    if (!dataUrl) return;
+    state.planImageSrc = dataUrl;
+    const img = document.getElementById('lakinh-floorplan-img');
+    const statusVal = document.getElementById('sheet-val-plan-status');
+    const controlsWrap = document.getElementById('lakinh-plan-controls-wrap');
+    const btnRemove = document.getElementById('btn-plan-remove');
+
+    if (statusVal) statusVal.textContent = 'Đang nạp ảnh...';
+
+    const onImageLoaded = () => {
+      // Tự động căn chỉnh kích thước ban đầu vừa vặn màn hình
+      const vw = window.innerWidth || 360;
+      const nw = img.naturalWidth || 800;
+      const targetW = Math.min(vw * 0.92, 500);
+      state.planScale = Math.max(0.2, Math.min(Math.round((targetW / nw) * 100) / 100, 2.5));
+      state.planOffsetX = 0;
+      state.planOffsetY = 0;
+      state.planRotation = 0.0;
+      state.planOpacity = 0.85;
+
+      // Cập nhật DOM của Bottom Sheet nếu đang mở
+      if (statusVal) statusVal.textContent = 'Đã nạp bản vẽ';
+      if (controlsWrap) controlsWrap.style.display = 'block';
+      if (btnRemove) btnRemove.style.display = 'block';
+
+      // Tự động chuyển La Kinh sang Mica Trong Suốt và nền trong để thấy rõ mặt bằng bên dưới
+      if (state.bgOpacity > 0.2) {
+        setBgOpacity(0.15);
+      }
+      if (state.activePlate !== 'thuoc_trans') {
+        switchPlate('thuoc_trans');
+      }
+
+      updateFloorPlanTransform();
+      saveFloorPlanState();
+      showLaKinhToast('✅ Đã nạp mặt bằng. Tâm ảnh trùng khớp 100% tâm La Kinh.');
+    };
+
+    if (img) {
+      img.onload = onImageLoaded;
+      img.src = state.planImageSrc;
+      img.style.display = 'block';
+    }
+  }
+
   function loadFloorPlanFile(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      state.planImageSrc = e.target.result;
-      const img = document.getElementById('lakinh-floorplan-img');
-      if (img) {
-        img.onload = () => {
-          // Tự động căn chỉnh kích thước ban đầu vừa vặn màn hình
-          const vw = window.innerWidth || 360;
-          const nw = img.naturalWidth || 800;
-          const targetW = Math.min(vw * 0.92, 500);
-          state.planScale = Math.max(0.2, Math.min(Math.round((targetW / nw) * 100) / 100, 2.5));
-          state.planOffsetX = 0;
-          state.planOffsetY = 0;
-          state.planRotation = 0.0;
-          state.planOpacity = 0.85;
-
-          // Tự động chuyển La Kinh sang Mica Trong Suốt và nền trong để thấy rõ mặt bằng bên dưới
-          if (state.bgOpacity > 0.2) {
-            setBgOpacity(0.15);
-          }
-          if (state.activePlate !== 'thuoc_trans') {
-            switchPlate('thuoc_trans');
-          }
-
-          updateFloorPlanTransform();
-          saveFloorPlanState();
-          showLaKinhToast('✅ Đã nạp mặt bằng. Tâm ảnh trùng khớp 100% tâm La Kinh.');
-        };
-        img.src = state.planImageSrc;
-      }
+      const rawSrc = e.target.result;
+      const tempImg = new Image();
+      tempImg.onload = () => {
+        const maxDim = 1600;
+        let w = tempImg.naturalWidth;
+        let h = tempImg.naturalHeight;
+        if (w > maxDim || h > maxDim) {
+          const ratio = Math.min(maxDim / w, maxDim / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(tempImg, 0, 0, w, h);
+          const compressedSrc = canvas.toDataURL('image/jpeg', 0.85);
+          setFloorPlanFromDataUrl(compressedSrc);
+        } else {
+          setFloorPlanFromDataUrl(rawSrc);
+        }
+      };
+      tempImg.src = rawSrc;
     };
     reader.readAsDataURL(file);
   }
+
+  // Lắng nghe dữ liệu ảnh mặt bằng từ Flutter Native Android Kotlin
+  window._onNativeFloorPlanReceived = function(images) {
+    let targetSrc = null;
+    if (typeof images === 'string') {
+      try {
+        const parsed = JSON.parse(images);
+        if (Array.isArray(parsed) && parsed.length > 0) targetSrc = parsed[0];
+        else targetSrc = images;
+      } catch (_) {
+        targetSrc = images;
+      }
+    } else if (Array.isArray(images) && images.length > 0) {
+      targetSrc = images[0];
+    }
+    if (targetSrc) {
+      setFloorPlanFromDataUrl(targetSrc);
+    }
+  };
 
   function removeFloorPlan() {
     state.planImageSrc = null;
@@ -917,6 +976,14 @@
       img.src = '';
       img.style.display = 'none';
     }
+
+    const statusVal = document.getElementById('sheet-val-plan-status');
+    const controlsWrap = document.getElementById('lakinh-plan-controls-wrap');
+    const btnRemove = document.getElementById('btn-plan-remove');
+    if (statusVal) statusVal.textContent = 'Chưa nạp ảnh';
+    if (controlsWrap) controlsWrap.style.display = 'none';
+    if (btnRemove) btnRemove.style.display = 'none';
+
     updateFloorPlanTransform();
     try {
       localStorage.removeItem('lakinh_floorplan_state');
@@ -3280,14 +3347,22 @@
     const btnPlanQuick = document.getElementById('lakinh-btn-plan-quick');
     const btnPlanPanDone = document.getElementById('btn-plan-pan-done');
 
-    if (btnPlanUpload && inputPlanFile) {
-      btnPlanUpload.addEventListener('click', () => inputPlanFile.click());
+    const triggerFloorPlanPicker = () => {
+      if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+        window.NativeBridge.postMessage(JSON.stringify({ action: 'pickFloorPlan' }));
+      } else if (inputPlanFile) {
+        inputPlanFile.click();
+      }
+    };
+
+    if (btnPlanUpload) {
+      btnPlanUpload.addEventListener('click', triggerFloorPlanPicker);
     }
 
     if (btnPlanQuick) {
       btnPlanQuick.addEventListener('click', () => {
-        if (!state.planImageSrc && inputPlanFile) {
-          inputPlanFile.click();
+        if (!state.planImageSrc) {
+          triggerFloorPlanPicker();
         } else {
           openBottomSheet();
           const el = document.getElementById('lakinh-plan-controls-wrap');
@@ -3679,6 +3754,7 @@
     setRayAngle: setRayAngle,
     updateSightingRay: updateSightingRay,
     loadFloorPlanFile: loadFloorPlanFile,
+    setFloorPlanFromDataUrl: setFloorPlanFromDataUrl,
     removeFloorPlan: removeFloorPlan,
     togglePlanPanMode: togglePlanPanMode,
     updateFloorPlanTransform: updateFloorPlanTransform
