@@ -489,10 +489,45 @@
            d1.getDate() === d2.getDate();
   }
 
+  function setDate(date, mode) {
+    let parsedDate = null;
+    if (date instanceof Date && !isNaN(date.getTime())) {
+      parsedDate = new Date(date);
+    } else if (typeof date === 'string') {
+      if (date.includes('/')) {
+        const parts = date.split('/');
+        if (parts.length >= 3) {
+          const d = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10) - 1;
+          const y = parseInt(parts[2], 10);
+          parsedDate = new Date(y, m, d, 12, 0, 0);
+        }
+      } else if (date.includes('-')) {
+        const parts = date.split('-');
+        if (parts.length >= 3) {
+          const y = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10) - 1;
+          const d = parseInt(parts[2], 10);
+          parsedDate = new Date(y, m, d, 12, 0, 0);
+        }
+      }
+    }
+    if (parsedDate && !isNaN(parsedDate.getTime())) {
+      currentSelectedDate = parsedDate;
+    }
+    if (mode === 'day' || mode === 'month') {
+      currentCalendarMode = mode;
+    } else if (!mode) {
+      currentCalendarMode = 'day';
+    }
+    renderCalendar();
+  }
+
   // Export to global
   global.NetaCalendarView = {
     init: initCalendarView,
     render: renderCalendar,
+    setDate: setDate,
     getSelectedDate: () => currentSelectedDate
   };
 

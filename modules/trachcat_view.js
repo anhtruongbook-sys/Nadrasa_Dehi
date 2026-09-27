@@ -792,9 +792,26 @@
         const dateStr = btn.getAttribute('data-date'); // "DD/MM/YYYY"
 
         if (action === 'cal') {
-          // Mở Lịch Âm Dương
+          // Mở Lịch Âm Dương đúng ngày này
+          const parts = dateStr.split('/');
+          const d = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10) - 1;
+          const y = parseInt(parts[2], 10);
+          const targetDate = new Date(y, m, d, 12, 0, 0);
+
+          if (global.NetaCalendarView && typeof global.NetaCalendarView.setDate === 'function') {
+            global.NetaCalendarView.setDate(targetDate, 'day');
+          }
           if (typeof global.switchAppMode === 'function') {
             global.switchAppMode('calendar');
+          }
+          setTimeout(() => {
+            if (global.NetaCalendarView && typeof global.NetaCalendarView.setDate === 'function') {
+              global.NetaCalendarView.setDate(targetDate, 'day');
+            }
+          }, 50);
+          if (global.showToast) {
+            global.showToast(`📅 Đã mở Lịch ngày ${dateStr}!`);
           }
         } else if (action === 'qmdj') {
           // Mở Kỳ Môn Độn Giáp tại ngày giờ này

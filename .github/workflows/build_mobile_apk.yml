@@ -76,10 +76,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.2.4
-          name: "Neta Light & Huyền Học v2.2.4 (Chứng chỉ Ký Số Chuẩn v1/v2, Bản Tối Ưu ARM64 40MB & Sửa Lỗi Cài Đặt)"
+          tag_name: v2.2.5
+          name: "Neta Light & Huyền Học v2.2.5 (Liên Kết Trạch Cát Sang Lịch Ngày Chuẩn Xác & Đồng Bộ Đa Chiều)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.4
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.5
+            - **Sửa Lỗi Chuyển Lịch Ngày ("Xem Lịch Ngày Này")**:
+              + Bấm `[📅 Xem Lịch Ngày Này]` trong Trạch Cát giờ đây nhảy **chính xác 100%** đến ngày được chọn trên Lịch Âm Dương.
+              + Tự động mở thẳng giao diện **Lịch Ngày (Daily Bloc Card)** hiển thị chi tiết: Thứ, Ngày Dương, Ngày Âm, Can Chi (Năm, Tháng, Ngày), Trực, Nhị Thập Bát Tú, Giờ Hoàng Đạo, Tiết Khí và giờ chuyển tiết chính xác.
+              + Đồng bộ trạng thái: Khi bấm `< Lịch Tháng` từ ngày bloc vừa mở, bảng lịch tháng tự động hiển thị đúng tháng và đánh dấu viền vàng nổi bật ô ngày đã chọn.
             - **Khắc Phục Hoàn Toàn Lỗi Cài Đặt ("There was a problem parsing the package")**:
               + **Tích Hợp Chứng Chỉ Ký Số Vĩnh Viễn (`netalight-release.keystore`)**: Chuẩn PKCS12 hiệu lực đến năm 2054, đảm bảo chữ ký đồng nhất tuyệt đối giữa mọi lần nâng cấp app, không bao giờ bị xung đột chữ ký với bản cũ.
               + **Kích Hoạt Đồng Thời Ký Số Kép v1 (JAR Scheme) & v2 (Full APK Scheme)**: Khắc phục lỗi trình cài đặt gói mặc định trên Android không đọc được file APK tải từ Google Chrome Downloads.
