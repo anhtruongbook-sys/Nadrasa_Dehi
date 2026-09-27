@@ -32,7 +32,7 @@
     // Tia ngắm phong thủy (lập cực qua 1 điểm bất kỳ)
     isRayActive: false,
     isRayHudCollapsed: false, // Thu gọn floating HUD thành mini capsule khi bấm [✕]
-    rayAngle: 0.0, // Góc độ số của tia ngắm (0.0° - 359.9°)
+    rayAngle: null, // Góc độ số của tia ngắm trên đĩa La Kinh (null = tự động trùng hướng nhà khi bật)
     rayDistance: 160, // Khoảng cách từ tâm đến điểm mục tiêu ghim trên bản vẽ (px)
     isDraggingRayTarget: false,
     // Bản vẽ mặt bằng kiến trúc (nằm dưới la kinh, tâm ảnh trùng tâm la kinh)
@@ -514,7 +514,7 @@
           <div class="sheet-control-group">
             <div class="sheet-control-label">
               <span>🎯 Tia Ngắm Phân Kim (Qua 1 Điểm)</span>
-              <span class="val" id="sheet-val-ray-deg">${state.rayAngle.toFixed(1)}°</span>
+              <span class="val" id="sheet-val-ray-deg">${((state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.rotation).toFixed(1)}°</span>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
@@ -534,9 +534,9 @@
               <!-- Thanh trượt độ số tia ngắm -->
               <div class="sheet-control-sublabel">
                 <span>Độ số tia ngắm</span>
-                <span class="val" id="sheet-val-ray-deg-sub">${state.rayAngle.toFixed(1)}°</span>
+                <span class="val" id="sheet-val-ray-deg-sub">${((state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.rotation).toFixed(1)}°</span>
               </div>
-              <input type="range" class="lakinh-slider" id="sheet-slider-ray-deg" min="0" max="359.9" value="${state.rayAngle.toFixed(1)}" step="0.1">
+              <input type="range" class="lakinh-slider" id="sheet-slider-ray-deg" min="0" max="359.9" value="${((state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.rotation).toFixed(1)}" step="0.1">
 
               <div class="lakinh-btn-row" style="margin-top: 6px;">
                 <button class="lakinh-step-btn" id="btn-ray-m5">-5°</button>
@@ -1132,9 +1132,11 @@
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 15) return;
 
-    // Góc 0° tại 12h (thẳng đứng lên), tăng theo chiều kim đồng hồ
-    const deg = ((Math.atan2(dx, -dy) * 180 / Math.PI) % 360 + 360) % 360;
-    state.rayAngle = Math.round(deg * 10) / 10;
+    // Góc trên màn hình: 0° tại 12h (thẳng đứng lên), tăng theo chiều kim đồng hồ
+    const screenAngle = ((Math.atan2(dx, -dy) * 180 / Math.PI) % 360 + 360) % 360;
+    // Độ số La Kinh tương ứng trên mặt đĩa đã xoay theo hướng nhà (state.rotation):
+    const laKinhDeg = ((state.rotation + screenAngle) % 360 + 360) % 360;
+    state.rayAngle = Math.round(laKinhDeg * 10) / 10;
     state.rayDistance = Math.max(30, Math.min(Math.round(dist), Math.max(rect.width, rect.height) * 0.9));
     updateSightingRay();
   }
@@ -1163,6 +1165,10 @@
       return;
     }
 
+    if (state.rayAngle === null || state.rayAngle === undefined) {
+      state.rayAngle = state.rotation;
+    }
+
     if (rayContainer) rayContainer.style.display = 'block';
     if (rayWrap) rayWrap.style.display = 'block';
     if (btnRay) {
@@ -1177,7 +1183,9 @@
     const cy = h / 2;
 
     const deg = ((state.rayAngle % 360) + 360) % 360;
-    const rad = deg * Math.PI / 180;
+    // Góc vẽ trên màn hình từ tâm (ngược lại từ La Kinh về tọa độ màn hình):
+    const screenAngle = ((deg - state.rotation) % 360 + 360) % 360;
+    const rad = screenAngle * Math.PI / 180;
 
     const r = Math.max(30, state.rayDistance || 160);
     const tx = cx + r * Math.sin(rad);
@@ -3785,6 +3793,9 @@
       state.isRayActive = !state.isRayActive;
       if (state.isRayActive) {
         state.isRayHudCollapsed = false;
+        if (state.rayAngle === null || state.rayAngle === undefined) {
+          state.rayAngle = state.rotation;
+        }
       }
       updateSightingRay();
       showLaKinhToast(state.isRayActive
@@ -3856,7 +3867,8 @@
     if (btnRayOpenHkdq) {
       btnRayOpenHkdq.addEventListener('click', (e) => {
         e.stopPropagation();
-        openHKDQModal(state.rayAngle);
+        const current = (state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.rotation;
+        openHKDQModal(current);
       });
     }
 
@@ -3878,7 +3890,8 @@
       const b = document.getElementById(id);
       if (b) {
         b.addEventListener('click', () => {
-          setRayAngle(state.rayAngle + delta);
+          const current = (state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.rotation;
+          setRayAngle(current + delta);
         });
       }
     };

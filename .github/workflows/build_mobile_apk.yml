@@ -63,16 +63,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.1.2
-          name: "Neta Light & Huyền Học v2.1.2 (Bỏ Nút Tia Ngắm Dưới Phải & Thu Gọn Sát Ô Thông Tin Hướng)"
+          tag_name: v2.1.3
+          name: "Neta Light & Huyền Học v2.1.3 (Đồng Bộ 100% Độ Số & Huyền Không Tia Ngắm Với Đĩa La Kinh Xoay)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.1.2
-            - **Loại Bỏ Nút Bật/Tắt Tia Ngắm Dư Thừa Ở Góc Dưới Phải**:
-              + Bỏ hoàn toàn nút tròn nổi `🎯` ở góc dưới phải sát cạnh nút GPS; trả lại 100% không gian góc đáy thông thoáng, tránh chạm nhầm.
-              + Thao tác bật/tắt tia ngắm được thực hiện trực tiếp qua nút `🎯` chuyên dụng trên thanh công cụ đỉnh (cạnh thước đo `📐` và vệ tinh `🛰️`), nút trong Bảng điều khiển hoặc nút [✕] trên thẻ thông tin.
-            - **Thu Gọn Ô Thông Tin Tia Ngắm Lên Sát Ô Hướng Nhà (Khe hở 3px)**:
-              + Đưa thẻ thông tin tia ngắm (cả dạng thẻ rút gọn 2 hàng lẫn thẻ chi tiết mở rộng) áp sát ngay dưới đáy cụm HUD Hướng Nhà với khoảng cách siêu gọn chỉ 3px (thay vì 16-20px như trước).
-              + Căn chỉnh đồng bộ bề rộng (400px), lề trái/phải (6px) khớp 100% với cụm HUD Hướng Nhà, tạo thành một khối thông tin phong thủy đối xứng, liền mạch và thẩm mỹ đỉnh cao.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.1.3
+            - **Chuẩn Hóa Tuyệt Đối Độ Số Tia Ngắm Theo Đĩa La Kinh Đã Xoay**:
+              + Khắc phục triệt để hiện tượng tia ngắm lấy nhầm độ số góc màn hình thẳng đứng (12h = 0° Sơn Tý) thay vì độ số trên mặt đĩa La Kinh phong thủy.
+              + Khi xoay đĩa La Kinh theo Hướng Nhà (ví dụ Hướng $144.6^\circ$ Sơn Tỵ), tia ngắm chiếu vào cổng/cửa tại hướng 12h sẽ đọc chính xác độ số La Kinh tương ứng ($144.6^\circ$ Sơn Tỵ • Quẻ Sơn Thiên Đại Súc), khớp 100% từng vạch khắc, phân kim và 64 Quẻ trên đĩa La Kinh.
+              + Khi kéo rê điểm ghim mục tiêu hoặc chạm bất kỳ điểm nào trên mặt bằng, hệ thống tự động quy đổi chính xác từ tọa độ màn hình sang độ số La Kinh thực tế: $\text{laKinhDeg} = ((\text{state.rotation} + \alpha_{\text{screen}}) \pmod{360} + 360) \pmod{360}$.
+            - **Đồng Bộ Dữ Liệu Phong Thủy & Huyền Không Đại Quái Toàn Diện**:
+              + Thẻ mini capsule và thẻ chi tiết mở rộng hiển thị đúng 100% Sơn Cung, Quẻ 64, Khí Vận, 384 Hào Vi Phân và Linh/Chính Thần Vận 9 của phương vị tia ngắm trên đĩa La Kinh.
+              + So sánh độ lệch Hướng Nhà (`diff`) chính xác tuyệt đối theo góc lệch thực tế của tia ngắm so với trục chính hướng nhà.
+            - **Kế Thừa Toàn Bộ Tính Năng Bản v2.1.2**:
+              + Thẻ thông tin tia ngắm nằm sát đỉnh (khe hở 3px) ngay dưới cụm HUD Hướng Nhà.
+              + Bật/tắt thuận tiện qua nút `🎯` chuyên dụng trên thanh công cụ đỉnh.
+              + Tự động trong suốt khi rê kéo điểm mục tiêu trên mặt bằng nhà.
             - **Kế Thừa Toàn Bộ Tính Năng Nổi Bật v2.1.1**:
               + Điểm ghim mục tiêu trên mặt bằng (`Target Handle Point`) với vòng xung radar ngọc cyan và vùng chạm 44px dễ dàng nhấn giữ kéo rê.
               + Đầy đủ 100% dữ liệu Huyền Không Đại Quái: Quẻ 64, Khí Vận, 384 Hào Vi Phân, Lục Thân, Linh/Chính Thần Vận 9.
