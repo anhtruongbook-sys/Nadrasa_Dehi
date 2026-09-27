@@ -63,19 +63,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.1.0
-          name: "Neta Light & Huyền Học v2.1.0 (Nút Tia Ngắm Thu Gọn Tròn Đặt Dưới & Chống Bấm Nhầm Bảng Điều Khiển Khi Vuốt)"
+          tag_name: v2.1.1
+          name: "Neta Light & Huyền Học v2.1.1 (Khắc Phục Nút Công Cụ, Hiển Thị Điểm Kéo Ghim & Thông Tin Quẻ Tia Ngắm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.1.0
-            - **Thu Gọn Tròn & Sắp Xếp Nút Bật/Tắt Tia Ngắm Xuống Dưới (Compact Bottom FAB)**:
-              + Loại bỏ dải nhãn chữ cồng kềnh chiếm không gian; thu gọn nút Tia Ngắm thành **nút tròn mini 38x38px** với biểu tượng **🎯**.
-              + Sắp xếp xuống sát đáy màn hình (`bottom: 64px; right: 56px`), đặt song hành ngay cạnh nút GPS (`📍` ở `right: 12px`), giải phóng 100% tầm nhìn thoáng đãng cho La Kinh và bản vẽ mặt bằng.
-              + Hiệu ứng phản hồi trực quan: Khi bật tia, nút phát sáng neon cyan viền ngọc nổi bật; khi tắt, trở về dạng kính mờ dịu mắt.
-            - **Khắc Phục Triệt Để Lỗi Bấm Nhầm Bảng Điều Khiển Khi Thao Tác Vuốt (Swipe-Safe Protection)**:
-              + **Chống kích hoạt nhầm khi vuốt lướt màn hình**: Bổ sung thuật toán nhận diện cử chỉ vuốt (Swipe-Safe Tap Detector). Bỏ qua hoàn toàn các thao tác vuốt lướt ngón tay qua thanh công cụ đáy (`⚙️ Công Cụ`, `🧭 La Bàn`, `📍 Vị Trí`...), chỉ kích hoạt khi người dùng chạm dứt khoát tại chỗ (`movement <= 7px`).
-              + **Chống bấm nhầm nút khi cuộn vuốt trong Bảng Điều Khiển**: Thêm lớp bảo vệ bắt sự kiện (Capture Phase Blocker) và thuộc tính `touch-action: pan-y`. Khi người dùng cuộn vuốt lên/xuống để xem thiết lập (Mẫu đĩa, Độ mờ, Kích thước, Mặt bằng), các nút bên dưới ngón tay được khóa an toàn, không còn hiện tượng nhảy đĩa hay đổi độ mờ ngoài ý muốn.
-              + **Cử chỉ vuốt xuống để thu gọn nhanh (Swipe Down to Dismiss)**: Vuốt nhẹ xuống trên thanh gạt hoặc tiêu đề bảng điều khiển để đóng nhanh bảng điều khiển, trả lại toàn màn hình quan sát.
-            - **Kế Thừa Đầy Đủ Tính Năng v2.0.9**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.1.1
+            - **Khắc Phục Triệt Để Lỗi Nút Bật Công Cụ (`⚙️ Công Cụ`)**:
+              + Sửa lỗi cú pháp CSS (thiếu dấu ngoặc đóng ở class dock button theme sáng) từng làm gián đoạn cấu trúc hiển thị của bảng điều khiển.
+              + Loại bỏ độ trễ và cơ chế chặn click dư thừa; nút `⚙️ Công Cụ` và toàn bộ thanh công cụ đáy phản hồi nhạy bén tức thì khi chạm.
+            - **Hiển Thị & Thao Tác Kéo Ghim Điểm Mục Tiêu Tia Ngắm (`🎯 Target Handle Point`)**:
+              + Khôi phục và nâng cấp điểm ghim ngắm mục tiêu trên màn hình với vòng radar phát xung ngọc cyan và tâm tròn trắng nổi bật.
+              + Cung cấp vùng chạm 44px rộng rãi, hỗ trợ nhấn giữ và kéo rê mượt mà theo thời gian thực tới bất kỳ vị trí nào trên bản vẽ mặt bằng nhà.
+            - **Hiển Thị Đầy Đủ 100% Thông Tin Quẻ & Hào Của Tia Ngắm**:
+              + Bảng hiển thị thông tin tia ngắm (cả dạng thẻ chi tiết mở rộng lẫn thẻ rút gọn 2 hàng) hoạt động chuẩn xác, hiển thị đầy đủ tên Quẻ Đại Quái, Khí Vận, Hào Vi Phân, Lục Thân (Thê Tài, Quan Quỷ...), Linh/Chính Thần Vận 9 và lời khuyên phong thủy.
+            - **Kế Thừa Đầy Đủ Tính Năng v2.1.0 & v2.0.9**:
+              + Nút tròn bật/tắt tia ngắm mini 38px đặt sát cạnh nút GPS ở góc dưới phải màn hình.
+              + Bảng thông tin tự động chuyển trạng thái trong suốt xuyên thấu khi đang kéo rê điểm ngắm để không che khuất chi tiết kiến trúc mặt bằng.
               + Mini Card tia ngắm 2 hàng hiển thị đầy đủ 100% Quẻ, Khí Vận, Hào + Lục Thân, Linh/Chính Thần đối xứng hoàn hảo với Hướng Nhà.
               + Khi người dùng kéo rê chấm mục tiêu hoặc di chuyển thanh trượt độ số, toàn bộ khung bảng thông tin HUD tự động chuyển sang trạng thái bán trong suốt (opacity: 0.18, xuyên thấu không che chắn).
               + Giúp người dùng nhìn thấy trọn vẹn 100% bản vẽ mặt bằng nhà, cửa, tường, bếp phía dưới để căn chỉnh tim điểm cực kỳ chuẩn xác. Khi thả tay, bảng lập tức hiện rõ trở lại.

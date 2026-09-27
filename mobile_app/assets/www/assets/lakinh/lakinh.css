@@ -1017,6 +1017,8 @@ body.light-theme .lakinh-dock-btn.gold {
   border-color: #d97706;
   color: #92400e;
   box-shadow: 0 4px 14px rgba(217, 119, 6, 0.2);
+}
+
 .lakinh-dock-btn.active {
   background: linear-gradient(135deg, rgba(6, 182, 212, 0.4) 0%, rgba(2, 132, 199, 0.6) 100%) !important;
   border-color: #38bdf8 !important;
@@ -2154,7 +2156,7 @@ body.light-theme .hud-card-divider {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 15;
+  z-index: 20;
   overflow: hidden;
 }
 
@@ -2170,17 +2172,17 @@ body.light-theme .hud-card-divider {
 /* Điểm mục tiêu ghim trên bản vẽ (Draggable Target Handle) */
 #lakinh-ray-target-handle {
   position: absolute;
-  width: 38px;
-  height: 38px;
-  margin-left: -19px;
-  margin-top: -19px;
-  pointer-events: auto;
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  margin-top: -22px;
+  pointer-events: auto !important;
   cursor: grab;
   touch-action: none;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  z-index: 18;
+  z-index: 28 !important;
 }
 
 #lakinh-ray-target-handle:active {
@@ -2189,11 +2191,11 @@ body.light-theme .hud-card-divider {
 
 .ray-target-pulse {
   position: absolute;
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgba(6, 182, 212, 0.25);
-  border: 1.5px solid #06b6d4;
+  background: rgba(6, 182, 212, 0.3);
+  border: 2px solid #06b6d4;
   animation: rayTargetPulse 1.8s infinite ease-out;
 }
 
@@ -2204,12 +2206,12 @@ body.light-theme .hud-card-divider {
 
 .ray-target-dot {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #06b6d4;
-  box-shadow: 0 0 10px #06b6d4, 0 0 18px #ffffff;
-  border: 2px solid #ffffff;
+  box-shadow: 0 0 12px #06b6d4, 0 0 20px #ffffff;
+  border: 2.5px solid #ffffff;
 }
 
 /* Nhãn hiển thị độ số và sơn hướng bay theo điểm mục tiêu - Ẩn hoàn toàn để tránh trùng lặp 2 pill và không che khuất tâm La Kinh */

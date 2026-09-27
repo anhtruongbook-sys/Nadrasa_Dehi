@@ -2162,6 +2162,7 @@
       sheet.classList.add('open');
       state.isSheetOpen = true;
       if (dockTools) dockTools.classList.add('active');
+      if (state.isRayActive) updateSightingRay();
     }
   }
 
@@ -2172,6 +2173,7 @@
       sheet.classList.remove('open');
       state.isSheetOpen = false;
       if (dockTools) dockTools.classList.remove('active');
+      if (state.isRayActive) updateSightingRay();
     }
   }
 
@@ -3315,60 +3317,46 @@
       });
     }
 
-    // Hàm chống bấm nhầm khi vuốt màn hình (Swipe-Safe Tap Detector):
-    // Chỉ kích hoạt khi chạm dứt khoát tại chỗ (movement <= 7px), bỏ qua hoàn toàn khi đang vuốt lướt bản đồ hoặc xoay đĩa
-    const attachSwipeSafeClick = (element, handler) => {
-      if (!element) return;
-      let startX = 0;
-      let startY = 0;
-      let isSwipe = false;
-      let startTime = 0;
-
-      element.addEventListener('pointerdown', (e) => {
-        startX = e.clientX;
-        startY = e.clientY;
-        isSwipe = false;
-        startTime = Date.now();
-      }, { passive: true });
-
-      element.addEventListener('pointermove', (e) => {
-        const dx = Math.abs(e.clientX - startX);
-        const dy = Math.abs(e.clientY - startY);
-        if (dx > 7 || dy > 7) {
-          isSwipe = true;
-        }
-      }, { passive: true });
-
-      element.addEventListener('click', (e) => {
-        if (isSwipe || (Date.now() - startTime > 450)) {
-          e.preventDefault();
-          e.stopPropagation();
-          isSwipe = false;
-          return false;
-        }
-        handler(e);
-      });
-    };
-
-    // 2. Nút Bay Về Vị Trí Hiện Tại (Floating FAB & Bottom Dock) - Chống chạm nhầm khi vuốt
+    // 2. Nút Bay Về Vị Trí Hiện Tại (Floating FAB & Bottom Dock) - Phản hồi ngay lập tức
     const btnMyLocation = document.getElementById('lakinh-btn-my-location');
     if (btnMyLocation) {
-      attachSwipeSafeClick(btnMyLocation, () => getCurrentGPS(false));
+      btnMyLocation.addEventListener('click', (e) => {
+        e.stopPropagation();
+        getCurrentGPS(false);
+      });
     }
 
     const dockSensor = document.getElementById('lakinh-dock-sensor');
-    if (dockSensor) attachSwipeSafeClick(dockSensor, toggleCompassSensor);
+    if (dockSensor) {
+      dockSensor.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleCompassSensor();
+      });
+    }
 
     const dockGps = document.getElementById('lakinh-dock-gps');
     if (dockGps) {
-      attachSwipeSafeClick(dockGps, () => getCurrentGPS(false));
+      dockGps.addEventListener('click', (e) => {
+        e.stopPropagation();
+        getCurrentGPS(false);
+      });
     }
 
     const dockDem = document.getElementById('lakinh-dock-dem');
-    if (dockDem) attachSwipeSafeClick(dockDem, scanElevationAndTiers);
+    if (dockDem) {
+      dockDem.addEventListener('click', (e) => {
+        e.stopPropagation();
+        scanElevationAndTiers();
+      });
+    }
 
     const dockHkdq = document.getElementById('lakinh-dock-hkdq');
-    if (dockHkdq) attachSwipeSafeClick(dockHkdq, openHKDQModal);
+    if (dockHkdq) {
+      dockHkdq.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openHKDQModal();
+      });
+    }
 
     const quickHkdq = document.getElementById('lakinh-hkdq-quick-strip');
     if (quickHkdq) {
@@ -3389,49 +3377,16 @@
     });
 
     const dockTools = document.getElementById('lakinh-dock-tools');
-    if (dockTools) attachSwipeSafeClick(dockTools, toggleBottomSheet);
+    if (dockTools) {
+      dockTools.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleBottomSheet();
+      });
+    }
 
-    // 3. Quản lý Bảng Điều Khiển La Kinh: Chống bấm nhầm triệt để khi thao tác vuốt lên trên / xuống dưới
+    // 3. Quản lý Bảng Điều Khiển La Kinh: Hỗ trợ vuốt xuống để thu gọn nhanh
     const sheet = document.getElementById('lakinh-bottom-sheet');
     if (sheet) {
-      let sheetTouchStartY = 0;
-      let sheetTouchStartX = 0;
-      let isSheetScrolling = false;
-      let lastSheetScrollTime = 0;
-
-      sheet.addEventListener('touchstart', (e) => {
-        if (e.touches && e.touches[0]) {
-          sheetTouchStartY = e.touches[0].clientY;
-          sheetTouchStartX = e.touches[0].clientX;
-          isSheetScrolling = false;
-        }
-      }, { passive: true });
-
-      sheet.addEventListener('touchmove', (e) => {
-        if (e.touches && e.touches[0]) {
-          const dy = Math.abs(e.touches[0].clientY - sheetTouchStartY);
-          const dx = Math.abs(e.touches[0].clientX - sheetTouchStartX);
-          if (dy > 6 || dx > 6) {
-            isSheetScrolling = true;
-            lastSheetScrollTime = Date.now();
-          }
-        }
-      }, { passive: true });
-
-      sheet.addEventListener('scroll', () => {
-        isSheetScrolling = true;
-        lastSheetScrollTime = Date.now();
-      }, { passive: true });
-
-      // Lớp chắn Capture chặn hoàn toàn việc click nhầm vào các nút khi người dùng đang vuốt cuộn bảng điều khiển
-      sheet.addEventListener('click', (e) => {
-        if (isSheetScrolling || (Date.now() - lastSheetScrollTime < 240)) {
-          e.stopPropagation();
-          e.preventDefault();
-          isSheetScrolling = false;
-          return false;
-        }
-      }, true); // useCapture: true
 
       // Vuốt xuống trên thanh gạt hoặc tiêu đề bảng điều khiển để thu gọn nhanh
       const sheetHandle = document.getElementById('sheet-handle');
@@ -3885,7 +3840,10 @@
 
     const btnFloatRay = document.getElementById('lakinh-btn-ray-float');
     if (btnFloatRay) {
-      attachSwipeSafeClick(btnFloatRay, toggleSightingRay);
+      btnFloatRay.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSightingRay();
+      });
     }
 
     if (btnRayHudClose) {
@@ -4006,12 +3964,12 @@
         try { targetHandle.setPointerCapture(e.pointerId); } catch (_) {}
       });
 
-      targetHandle.addEventListener('pointermove', (e) => {
+      const onTargetMove = (e) => {
         if (!isTargetDragging) return;
         e.stopPropagation();
         e.preventDefault();
         onAimRayAtPoint(e.clientX, e.clientY);
-      });
+      };
 
       const endTargetDrag = (e) => {
         if (isTargetDragging) {
@@ -4020,8 +3978,29 @@
           try { targetHandle.releasePointerCapture(e.pointerId); } catch (_) {}
         }
       };
-      targetHandle.addEventListener('pointerup', endTargetDrag);
-      targetHandle.addEventListener('pointercancel', endTargetDrag);
+
+      window.addEventListener('pointermove', onTargetMove, { passive: false });
+      window.addEventListener('pointerup', endTargetDrag);
+      window.addEventListener('pointercancel', endTargetDrag);
+
+      // Touch events fallback cho thiết bị di động
+      targetHandle.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          e.stopPropagation();
+          isTargetDragging = true;
+          setRayHudTransparency(true);
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isTargetDragging) return;
+        if (e.touches && e.touches[0]) {
+          onAimRayAtPoint(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchend', endTargetDrag);
+      window.addEventListener('touchcancel', endTargetDrag);
     }
 
     // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
