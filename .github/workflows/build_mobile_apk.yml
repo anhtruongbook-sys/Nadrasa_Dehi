@@ -63,15 +63,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.2
-          name: "Neta Light & Huyền Học v2.0.2 (Tối Ưu Bảng Điều Khiển La Kinh 60% Màn Hình)"
+          tag_name: v2.0.3
+          name: "Neta Light & Huyền Học v2.0.3 (Nhập Mặt Bằng Dưới La Kinh & Tia Ngắm Phân Kim Qua Điểm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.2
-            - **Tối Ưu Bảng Điều Khiển La Kinh Vệ Tinh (Chiếm Đúng 60% Màn Hình)**:
-              + Giới hạn chiều cao Bảng điều khiển công cụ (`#lakinh-bottom-sheet`) đúng 60vh (`max-height: 60vh; height: 60vh; overflow-y: auto`).
-              + Giữ nguyên 40% phần trên màn hình để người dùng luôn quan sát trực quan đĩa La Kinh 36 tầng, ảnh vệ tinh, vạch tâm chữ thập và góc phương vị thời gian thực khi đang căn chỉnh thông số.
-              + Cuộn nội dung mượt mà bên trong bảng điều khiển với thanh kéo trực quan, tích hợp nút "✕ Đóng / Xem Toàn Màn Hình".
-            - **Kế Thừa Toàn Bộ Các Nâng Cấp Từ v2.0.1**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.3
+            - **Nhập Ảnh Bản Vẽ Mặt Bằng Ngôi Nhà Dưới La Kinh (Floor Plan Underlay)**:
+              + Tải ảnh bản vẽ kiến trúc (JPG, PNG, WEBP) đặt trực tiếp dưới đĩa La Kinh 36 tầng.
+              + Tâm ảnh trùng chính xác 100% tuyệt đối với tâm La Kinh và chữ thập đỏ lập cực.
+              + Tự động kích hoạt chế độ Mica Trong Suốt và nền lót kính mờ xuyên thấu để nhìn rõ từng phòng, tường, cửa, bếp, ban thờ bên dưới các tầng la kinh.
+              + Bộ điều khiển mặt bằng toàn diện: Thu phóng (Scale 20% - 400%), Xoay góc bản vẽ (0° - 360°), Chỉnh độ mờ (10% - 100%), Kéo rê dịch tâm căn tim nhà và nút [Về Chính Tâm].
+            - **Tia Ngắm Phong Thủy Từ Tâm Qua 1 Điểm Bất Kỳ (Interactive Sighting Ray)**:
+              + Vẽ tia ngắm Laser Neon phát sáng từ tâm La Kinh phóng qua điểm mục tiêu bất kỳ trên mặt bằng.
+              + Chạm vào bất kỳ điểm nào trên mặt bằng/bản đồ (Cửa chính, Bếp, Ban thờ...) hoặc kéo rê chấm mục tiêu để tia ngắm đi qua điểm đó.
+              + Thanh trượt điều chỉnh độ số mịn (0.0° - 359.9°, bước 0.1°), kèm nút vi chỉnh (-5°, -1°, -0.1°, +0.1°, +1°, +5°) và các nút gán hướng nhanh (Hướng nhà, Bắc 0°, Vuông góc, Tọa sơn).
+              + Thẻ HUD thời gian thực tra cứu đầy đủ 24 Sơn, Huyền Không Đại Quái 64 Quẻ, Khí - Vận, Phân Kim 384 Hào, Vận 9 và Góc lệch so với hướng nhà.
+            - **Kế Thừa Toàn Bộ Các Nâng Cấp Từ v2.0.2**:
+              + Bảng điều khiển công cụ La Kinh chiếm đúng 60% màn hình, giữ 40% quan sát La Kinh và mặt bằng.
               + Tương thích toàn diện định dạng khóa Auth Key mới (`AQ...`) và khóa truyền thống (`AIzaSy...`).
               + Giao diện nhập API Key chống tràn viền trên màn hình hẹp.
               + Cơ chế chẩn đoán lỗi luận giải chi tiết và bộ phân giải Markdown trực quan.

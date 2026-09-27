@@ -29,7 +29,19 @@
     rotation: 0.0,
     isSensorActive: false,
     isLocked: false,
+    // Tia ngắm phong thủy (lập cực qua 1 điểm bất kỳ)
     isRayActive: false,
+    rayAngle: 0.0, // Góc độ số của tia ngắm (0.0° - 359.9°)
+    rayDistance: 160, // Khoảng cách từ tâm đến điểm mục tiêu ghim trên bản vẽ (px)
+    isDraggingRayTarget: false,
+    // Bản vẽ mặt bằng kiến trúc (nằm dưới la kinh, tâm ảnh trùng tâm la kinh)
+    planImageSrc: null,
+    planScale: 1.0,
+    planRotation: 0.0,
+    planOpacity: 0.85,
+    planOffsetX: 0,
+    planOffsetY: 0,
+    isPlanPanActive: false,
     isTracingPlot: false,
     isSheetOpen: false,
     isHudDetailOpen: false,
@@ -71,6 +83,14 @@
       if (!container.querySelector('#lakinh-map')) {
         container.innerHTML = `
         <div id="lakinh-map"></div>
+
+        <!-- Lớp Bản Vẽ Mặt Bằng Kiến Trúc (Nằm dưới La Kinh, Tâm Trùng Tâm La Kinh 100%) -->
+        <div id="lakinh-floorplan-container">
+          <div id="lakinh-floorplan-wrapper">
+            <img id="lakinh-floorplan-img" alt="Mặt bằng kiến trúc" style="display: none;" />
+          </div>
+        </div>
+
         <div id="lakinh-crosshair"></div>
 
         <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Siêu Gọn) -->
@@ -96,6 +116,70 @@
           </div>
         </div>
 
+        <!-- Lớp Vector Tia Ngắm Phong Thủy Siêu Nét (Laser Sighting Ray & Draggable Target) -->
+        <div id="lakinh-ray-container" style="${state.isRayActive ? '' : 'display: none;'}">
+          <svg id="lakinh-ray-svg">
+            <defs>
+              <filter id="ray-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <marker id="ray-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#06b6d4" />
+              </marker>
+            </defs>
+            <circle id="ray-distance-circle" cx="0" cy="0" r="0" fill="none" stroke="rgba(6, 182, 212, 0.28)" stroke-dasharray="4, 4" />
+            <line id="ray-line-full" x1="0" y1="0" x2="0" y2="0" stroke="rgba(6, 182, 212, 0.65)" stroke-width="2" stroke-dasharray="6, 4" />
+            <line id="ray-line-target" x1="0" y1="0" x2="0" y2="0" stroke="#06b6d4" stroke-width="3" filter="url(#ray-glow)" marker-end="url(#ray-arrow)" />
+          </svg>
+
+          <!-- Điểm Mục Tiêu Ghim Bất Kỳ (Draggable Target Handle) -->
+          <div id="lakinh-ray-target-handle" title="Kéo rê điểm này đến vị trí cần đo trên mặt bằng">
+            <div class="ray-target-pulse"></div>
+            <div class="ray-target-dot"></div>
+            <div class="ray-target-label" id="lakinh-ray-target-label">
+              <span class="rtl-deg">0.0°</span>
+              <span class="rtl-son">Sơn Tý</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Ray HUD Card trên màn hình -->
+        <div id="lakinh-ray-floating-hud" class="lakinh-glass-panel" style="display: none;">
+          <div class="ray-hud-header">
+            <span class="ray-hud-title">🎯 TIA NGẮM PHÂN KIM</span>
+            <span class="ray-hud-deg" id="ray-hud-deg">0.0°</span>
+            <button type="button" id="btn-ray-hud-close" class="ray-hud-close-btn" title="Đóng tia ngắm">✕</button>
+          </div>
+          <div class="ray-hud-body">
+            <div class="ray-hud-item">
+              <span class="lbl">Sơn Hướng:</span>
+              <strong id="ray-hud-son" style="color: #38bdf8;">Sơn Tý (Khảm • Thủy)</strong>
+            </div>
+            <div class="ray-hud-item">
+              <span class="lbl">Đại Quái:</span>
+              <span><strong id="ray-hud-que" style="color: #facc15;">---</strong> <span id="ray-hud-khivan" style="color: #94a3b8; font-size: 0.72rem;"></span></span>
+            </div>
+            <div class="ray-hud-item">
+              <span class="lbl">Hào Vị:</span>
+              <span><span id="ray-hud-hao" style="color: #4ade80;">---</span> <span id="ray-hud-badge-van9" class="ray-hud-badge">---</span></span>
+            </div>
+            <div class="ray-hud-item" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 3px; margin-top: 3px;">
+              <span class="lbl">So Hướng Nhà:</span>
+              <span id="ray-hud-diff" style="color: #f43f5e; font-weight: 700;">Trùng Chính Hướng</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner Hướng Dẫn Kéo Dịch Tâm Mặt Bằng -->
+        <div id="lakinh-plan-pan-banner" class="lakinh-floating-helper-banner" style="display: none;">
+          <span>✋ Đang kéo dịch tâm mặt bằng. Hãy đưa tim nhà về chữ thập đỏ La Kinh.</span>
+          <button type="button" id="btn-plan-pan-done">✓ Xong</button>
+        </div>
+
         <!-- 1. Cụm HUD Tọa Hướng & Huyền Không Đại Quái Tích Hợp Trên Cùng (Master Top Panel) -->
         <div id="lakinh-top-panel" class="lakinh-glass-panel">
           <!-- Hàng 1: Công Cụ Điều Khiển & Độ Số Tọa Hướng -->
@@ -110,6 +194,12 @@
               <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
             </div>
             <div class="lakinh-top-right-group">
+              <button class="lakinh-float-btn icon-only" id="lakinh-btn-plan-quick" title="Bản vẽ mặt bằng kiến trúc">
+                📐
+              </button>
+              <button class="lakinh-float-btn icon-only" id="lakinh-btn-ray-quick" title="Bật/tắt tia ngắm phân kim">
+                🎯
+              </button>
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-layer" title="Chuyển lớp bản đồ (Google / Esri / Phố)">
                 🛰️
               </button>
@@ -257,10 +347,92 @@
             </div>
           </div>
 
+          <!-- Nhóm MẶT BẰNG BẢN VẼ KIẾN TRÚC (DƯỚI LA KINH) -->
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>📐 Mặt Bằng Bản Vẽ (Dưới La Kinh)</span>
+              <span class="val" id="sheet-val-plan-status">${state.planImageSrc ? 'Đã nạp bản vẽ' : 'Chưa nạp ảnh'}</span>
+            </div>
+            
+            <input type="file" id="lakinh-input-plan-file" accept="image/*" style="display: none;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <button type="button" class="lakinh-action-btn primary" id="btn-plan-upload">
+                📥 Tải Ảnh Mặt Bằng
+              </button>
+              <button type="button" class="lakinh-action-btn secondary" id="btn-plan-remove" style="${state.planImageSrc ? '' : 'display: none;'}">
+                🗑️ Gỡ Mặt Bằng
+              </button>
+            </div>
+
+            <div id="lakinh-plan-controls-wrap" style="${state.planImageSrc ? '' : 'display: none;'}">
+              <!-- Kích thước / Tỉ lệ bản vẽ -->
+              <div style="margin-top: 8px;">
+                <div class="sheet-control-sublabel">
+                  <span>Tỉ lệ thu phóng (Scale)</span>
+                  <span class="val" id="sheet-val-plan-scale">${Math.round(state.planScale * 100)}%</span>
+                </div>
+                <input type="range" class="lakinh-slider" id="sheet-slider-plan-scale" min="20" max="400" value="${Math.round(state.planScale * 100)}" step="5">
+                <div class="lakinh-btn-row" style="margin-top: 4px;">
+                  <button class="lakinh-step-btn" id="btn-scale-50">50%</button>
+                  <button class="lakinh-step-btn" id="btn-scale-100">100%</button>
+                  <button class="lakinh-step-btn" id="btn-scale-150">150%</button>
+                  <button class="lakinh-step-btn" id="btn-scale-200">200%</button>
+                </div>
+              </div>
+
+              <!-- Xoay góc bản vẽ -->
+              <div style="margin-top: 10px;">
+                <div class="sheet-control-sublabel">
+                  <span>Xoay góc bản vẽ</span>
+                  <span class="val" id="sheet-val-plan-rot">${state.planRotation.toFixed(1)}°</span>
+                </div>
+                <input type="range" class="lakinh-slider" id="sheet-slider-plan-rot" min="0" max="360" value="${state.planRotation.toFixed(1)}" step="0.5">
+                <div class="lakinh-btn-row" style="margin-top: 4px;">
+                  <button class="lakinh-step-btn" id="btn-plan-rot-match" style="color: #38bdf8; font-weight: 600;">🧭 Theo Hướng Nhà</button>
+                  <button class="lakinh-step-btn" id="btn-plan-rot-zero">0° Bắc</button>
+                  <button class="lakinh-step-btn" id="btn-plan-rot-m1">-1°</button>
+                  <button class="lakinh-step-btn" id="btn-plan-rot-p1">+1°</button>
+                </div>
+              </div>
+
+              <!-- Độ mờ bản vẽ -->
+              <div style="margin-top: 10px;">
+                <div class="sheet-control-sublabel">
+                  <span>Độ mờ bản vẽ</span>
+                  <span class="val" id="sheet-val-plan-opacity">${Math.round(state.planOpacity * 100)}%</span>
+                </div>
+                <input type="range" class="lakinh-slider" id="sheet-slider-plan-opacity" min="10" max="100" value="${Math.round(state.planOpacity * 100)}" step="5">
+              </div>
+
+              <!-- Căn chỉnh tâm nhà (Dịch tâm) -->
+              <div style="margin-top: 10px;">
+                <div class="sheet-control-sublabel">
+                  <span>Căn chỉnh tim nhà (Dịch tâm)</span>
+                  <span class="val" id="sheet-val-plan-offset">X: ${state.planOffsetX}px, Y: ${state.planOffsetY}px</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+                  <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-plan-pan">
+                    ✋ Kéo Dịch Tâm
+                  </button>
+                  <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-plan-reset-center" title="Trở về chính tâm (0, 0)">
+                    🎯 Về Chính Tâm
+                  </button>
+                </div>
+                <div class="lakinh-btn-row" style="margin-top: 6px; justify-content: center; gap: 6px;">
+                  <button class="lakinh-step-btn" id="btn-plan-shift-left">← Trái</button>
+                  <button class="lakinh-step-btn" id="btn-plan-shift-up">↑ Lên</button>
+                  <button class="lakinh-step-btn" id="btn-plan-shift-down">↓ Xuống</button>
+                  <button class="lakinh-step-btn" id="btn-plan-shift-right">→ Phải</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Xoay góc hướng nhà & Vi chỉnh -->
           <div class="sheet-control-group">
             <div class="sheet-control-label">
-              <span>Góc hướng nhà</span>
+              <span>Góc hướng nhà (Hướng đo 12h)</span>
               <span class="val" id="sheet-val-rotation">0.0°</span>
             </div>
             <input type="range" class="lakinh-slider" id="sheet-slider-rotation" min="0" max="360" value="0" step="0.5">
@@ -273,16 +445,73 @@
             </div>
           </div>
 
-          <!-- Tùy chọn la bàn & Cảm biến -->
+          <!-- Tùy chọn la bàn & Cảm biến & TIA NGẮM PHÂN KIM (ĐI QUA 1 ĐIỂM BẤT KỲ) -->
           <div class="sheet-control-group">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="sheet-control-label">
+              <span>🎯 Tia Ngắm Phân Kim (Qua 1 Điểm)</span>
+              <span class="val" id="sheet-val-ray-deg">${state.rayAngle.toFixed(1)}°</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
               <button id="sheet-btn-lock" class="lakinh-action-btn secondary">
-                🔓 Khóa Góc Hiện Tại
+                🔓 Khóa Hướng Nhà
               </button>
-              <button id="sheet-btn-ray" class="lakinh-action-btn secondary">
-                🎯 Bật Tia Ngắm Viễn Thám
+              <button id="sheet-btn-ray" class="lakinh-action-btn ${state.isRayActive ? 'success' : 'secondary'}">
+                ${state.isRayActive ? '🎯 Đang Bật Tia Ngắm' : '🎯 Bật Tia Ngắm'}
               </button>
             </div>
+
+            <div id="lakinh-ray-controls-wrap" style="${state.isRayActive ? '' : 'display: none;'}">
+              <div style="font-size: 0.68rem; color: #38bdf8; margin-bottom: 6px; line-height: 1.35;">
+                💡 <em>Chạm vào bất kỳ điểm nào trên mặt bằng (Cửa, Bếp, Ban thờ...) hoặc kéo chấm tròn mục tiêu để tia ngắm đi qua điểm đó.</em>
+              </div>
+
+              <!-- Thanh trượt độ số tia ngắm -->
+              <div class="sheet-control-sublabel">
+                <span>Độ số tia ngắm</span>
+                <span class="val" id="sheet-val-ray-deg-sub">${state.rayAngle.toFixed(1)}°</span>
+              </div>
+              <input type="range" class="lakinh-slider" id="sheet-slider-ray-deg" min="0" max="359.9" value="${state.rayAngle.toFixed(1)}" step="0.1">
+
+              <div class="lakinh-btn-row" style="margin-top: 6px;">
+                <button class="lakinh-step-btn" id="btn-ray-m5">-5°</button>
+                <button class="lakinh-step-btn" id="btn-ray-m1">-1°</button>
+                <button class="lakinh-step-btn" id="btn-ray-m01">-0.1°</button>
+                <button class="lakinh-step-btn" id="btn-ray-p01">+0.1°</button>
+                <button class="lakinh-step-btn" id="btn-ray-p1">+1°</button>
+                <button class="lakinh-step-btn" id="btn-ray-p5">+5°</button>
+              </div>
+
+              <!-- Nút gán hướng nhanh -->
+              <div class="lakinh-btn-row" style="margin-top: 6px;">
+                <button class="lakinh-step-btn" id="btn-ray-snap-house" style="color: #38bdf8; font-weight: 600;">🎯 Hướng Nhà</button>
+                <button class="lakinh-step-btn" id="btn-ray-snap-north">🧭 Bắc (0°)</button>
+                <button class="lakinh-step-btn" id="btn-ray-snap-perp-left">📐 Vuông Tả</button>
+                <button class="lakinh-step-btn" id="btn-ray-snap-perp-right">📐 Vuông Hữu</button>
+                <button class="lakinh-step-btn" id="btn-ray-snap-toa">🔄 Tọa (180°)</button>
+              </div>
+
+              <!-- Bảng thông số phong thủy chi tiết của tia ngắm -->
+              <div class="lakinh-ray-summary-card" style="margin-top: 8px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 8px; padding: 10px 12px; font-size: 0.78rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="color: #94a3b8;">24 Sơn:</span>
+                  <strong id="sheet-ray-son" style="color: #38bdf8;">Sơn Tý (Khảm)</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="color: #94a3b8;">Đại Quái 64 Quẻ:</span>
+                  <strong id="sheet-ray-que" style="color: #fbbf24;">Đang tính...</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="color: #94a3b8;">Hào Phân Kim 384:</span>
+                  <span id="sheet-ray-hao" style="color: #4ade80;">Đang tính...</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 4px; margin-top: 4px;">
+                  <span style="color: #94a3b8;">So Hướng Nhà:</span>
+                  <strong id="sheet-ray-diff" style="color: #f43f5e;">Trùng Chính Hướng</strong>
+                </div>
+              </div>
+            </div>
+
             <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #94a3b8; margin-top: 8px;">
               <input type="checkbox" id="lakinh-chk-autodec" style="accent-color: #38bdf8;">
               <span>Tự động bù từ thiên WMM cho cảm biến thực địa</span>
@@ -580,23 +809,428 @@
     }
   }
 
-  // Tia ngắm viễn thám
+  // ================= 3.1. QUẢN LÝ MẶT BẰNG BẢN VẼ KIẾN TRÚC DƯỚI LA KINH =================
+  function updateFloorPlanTransform() {
+    const wrapper = document.getElementById('lakinh-floorplan-wrapper');
+    const img = document.getElementById('lakinh-floorplan-img');
+    if (!wrapper || !img) return;
+
+    if (!state.planImageSrc) {
+      img.style.display = 'none';
+      const planWrap = document.getElementById('lakinh-plan-controls-wrap');
+      if (planWrap) planWrap.style.display = 'none';
+      const statusVal = document.getElementById('sheet-val-plan-status');
+      if (statusVal) statusVal.textContent = 'Chưa nạp ảnh';
+      const btnRemove = document.getElementById('btn-plan-remove');
+      if (btnRemove) btnRemove.style.display = 'none';
+      return;
+    }
+
+    img.src = state.planImageSrc;
+    img.style.display = 'block';
+    wrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${state.planRotation}deg) scale(${state.planScale})`;
+    wrapper.style.opacity = state.planOpacity;
+
+    // Cập nhật giá trị hiển thị trên bảng điều khiển
+    const planWrap = document.getElementById('lakinh-plan-controls-wrap');
+    if (planWrap) planWrap.style.display = 'block';
+    const statusVal = document.getElementById('sheet-val-plan-status');
+    if (statusVal) statusVal.textContent = 'Đã nạp bản vẽ';
+    const btnRemove = document.getElementById('btn-plan-remove');
+    if (btnRemove) btnRemove.style.display = 'block';
+
+    const valScale = document.getElementById('sheet-val-plan-scale');
+    if (valScale) valScale.textContent = `${Math.round(state.planScale * 100)}%`;
+    const sliderScale = document.getElementById('sheet-slider-plan-scale');
+    if (sliderScale && document.activeElement !== sliderScale) {
+      sliderScale.value = Math.round(state.planScale * 100);
+    }
+
+    const valRot = document.getElementById('sheet-val-plan-rot');
+    if (valRot) valRot.textContent = `${state.planRotation.toFixed(1)}°`;
+    const sliderRot = document.getElementById('sheet-slider-plan-rot');
+    if (sliderRot && document.activeElement !== sliderRot) {
+      sliderRot.value = state.planRotation.toFixed(1);
+    }
+
+    const valOp = document.getElementById('sheet-val-plan-opacity');
+    if (valOp) valOp.textContent = `${Math.round(state.planOpacity * 100)}%`;
+    const sliderOp = document.getElementById('sheet-slider-plan-opacity');
+    if (sliderOp && document.activeElement !== sliderOp) {
+      sliderOp.value = Math.round(state.planOpacity * 100);
+    }
+
+    const valOffset = document.getElementById('sheet-val-plan-offset');
+    if (valOffset) valOffset.textContent = `X: ${state.planOffsetX}px, Y: ${state.planOffsetY}px`;
+  }
+
+  function loadFloorPlanFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      state.planImageSrc = e.target.result;
+      const img = document.getElementById('lakinh-floorplan-img');
+      if (img) {
+        img.onload = () => {
+          // Tự động căn chỉnh kích thước ban đầu vừa vặn màn hình
+          const vw = window.innerWidth || 360;
+          const nw = img.naturalWidth || 800;
+          const targetW = Math.min(vw * 0.92, 500);
+          state.planScale = Math.max(0.2, Math.min(Math.round((targetW / nw) * 100) / 100, 2.5));
+          state.planOffsetX = 0;
+          state.planOffsetY = 0;
+          state.planRotation = 0.0;
+          state.planOpacity = 0.85;
+
+          // Tự động chuyển La Kinh sang Mica Trong Suốt và nền trong để thấy rõ mặt bằng bên dưới
+          if (state.bgOpacity > 0.2) {
+            setBgOpacity(0.15);
+          }
+          if (state.activePlate !== 'thuoc_trans') {
+            switchPlate('thuoc_trans');
+          }
+
+          updateFloorPlanTransform();
+          saveFloorPlanState();
+          showLaKinhToast('✅ Đã nạp mặt bằng. Tâm ảnh trùng khớp 100% tâm La Kinh.');
+        };
+        img.src = state.planImageSrc;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeFloorPlan() {
+    state.planImageSrc = null;
+    state.planOffsetX = 0;
+    state.planOffsetY = 0;
+    state.planRotation = 0.0;
+    state.planScale = 1.0;
+    state.isPlanPanActive = false;
+    const banner = document.getElementById('lakinh-plan-pan-banner');
+    if (banner) banner.style.display = 'none';
+    const btnPan = document.getElementById('sheet-btn-plan-pan');
+    if (btnPan) btnPan.classList.remove('active');
+
+    const img = document.getElementById('lakinh-floorplan-img');
+    if (img) {
+      img.src = '';
+      img.style.display = 'none';
+    }
+    updateFloorPlanTransform();
+    try {
+      localStorage.removeItem('lakinh_floorplan_state');
+    } catch (_) {}
+    showLaKinhToast('🗑️ Đã gỡ ảnh mặt bằng');
+  }
+
+  function togglePlanPanMode(force) {
+    if (force !== undefined) {
+      state.isPlanPanActive = force;
+    } else {
+      state.isPlanPanActive = !state.isPlanPanActive;
+    }
+    const btn = document.getElementById('sheet-btn-plan-pan');
+    const banner = document.getElementById('lakinh-plan-pan-banner');
+    if (btn) {
+      btn.classList.toggle('active', state.isPlanPanActive);
+      btn.innerHTML = state.isPlanPanActive ? '✋ Đang Kéo Tâm (Xong)' : '✋ Kéo Dịch Tâm';
+    }
+    if (banner) {
+      banner.style.display = state.isPlanPanActive ? 'flex' : 'none';
+    }
+    showLaKinhToast(state.isPlanPanActive
+      ? '✋ Hãy kéo trên màn hình để đưa tim nhà trùng chữ thập đỏ La Kinh'
+      : '✅ Đã cố định vị trí mặt bằng');
+  }
+
+  function saveFloorPlanState() {
+    try {
+      const data = {
+        scale: state.planScale,
+        rotation: state.planRotation,
+        opacity: state.planOpacity,
+        offsetX: state.planOffsetX,
+        offsetY: state.planOffsetY
+      };
+      if (state.planImageSrc && state.planImageSrc.length < 2.5 * 1024 * 1024) {
+        data.imageSrc = state.planImageSrc;
+      }
+      localStorage.setItem('lakinh_floorplan_state', JSON.stringify(data));
+    } catch (_) {}
+  }
+
+  function restoreFloorPlanState() {
+    try {
+      const raw = localStorage.getItem('lakinh_floorplan_state');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data.scale) state.planScale = data.scale;
+      if (data.rotation !== undefined) state.planRotation = data.rotation;
+      if (data.opacity) state.planOpacity = data.opacity;
+      if (data.offsetX !== undefined) state.planOffsetX = data.offsetX;
+      if (data.offsetY !== undefined) state.planOffsetY = data.offsetY;
+      if (data.imageSrc) {
+        state.planImageSrc = data.imageSrc;
+        const img = document.getElementById('lakinh-floorplan-img');
+        if (img) {
+          img.src = state.planImageSrc;
+          img.style.display = 'block';
+        }
+      }
+      updateFloorPlanTransform();
+    } catch (_) {}
+  }
+
+  // ================= 3.2. QUẢN LÝ TIA NGẮM PHONG THỦY (LẬP CỰC QUA 1 ĐIỂM) =================
+  function setRayAngle(deg) {
+    state.rayAngle = ((parseFloat(deg) % 360) + 360) % 360;
+    state.rayAngle = Math.round(state.rayAngle * 10) / 10;
+    updateSightingRay();
+  }
+
+  function onAimRayAtPoint(clientX, clientY) {
+    const container = document.getElementById('view-lakinh');
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = clientX - cx;
+    const dy = clientY - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 15) return;
+
+    // Góc 0° tại 12h (thẳng đứng lên), tăng theo chiều kim đồng hồ
+    const deg = ((Math.atan2(dx, -dy) * 180 / Math.PI) % 360 + 360) % 360;
+    state.rayAngle = Math.round(deg * 10) / 10;
+    state.rayDistance = Math.max(30, Math.min(Math.round(dist), Math.max(rect.width, rect.height) * 0.9));
+    updateSightingRay();
+  }
+
+  function updateSightingRay() {
+    const container = document.getElementById('view-lakinh');
+    if (!container) return;
+    const rayContainer = document.getElementById('lakinh-ray-container');
+    const rayHud = document.getElementById('lakinh-ray-floating-hud');
+    const rayWrap = document.getElementById('lakinh-ray-controls-wrap');
+    const btnRay = document.getElementById('sheet-btn-ray');
+    const btnQuickRay = document.getElementById('lakinh-btn-ray-quick');
+
+    if (!state.isRayActive) {
+      if (rayContainer) rayContainer.style.display = 'none';
+      if (rayHud) rayHud.style.display = 'none';
+      if (rayWrap) rayWrap.style.display = 'none';
+      if (btnRay) {
+        btnRay.classList.remove('success');
+        btnRay.innerHTML = '🎯 Bật Tia Ngắm';
+      }
+      if (btnQuickRay) btnQuickRay.classList.remove('active');
+      if (surveyRayLayerGroup) surveyRayLayerGroup.clearLayers();
+      return;
+    }
+
+    if (rayContainer) rayContainer.style.display = 'block';
+    if (rayWrap) rayWrap.style.display = 'block';
+    if (btnRay) {
+      btnRay.classList.add('success');
+      btnRay.innerHTML = '🎯 Đang Bật Tia Ngắm (Tắt)';
+    }
+    if (btnQuickRay) btnQuickRay.classList.add('active');
+
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    const cx = w / 2;
+    const cy = h / 2;
+
+    const deg = ((state.rayAngle % 360) + 360) % 360;
+    const rad = deg * Math.PI / 180;
+
+    const r = Math.max(30, state.rayDistance || 160);
+    const tx = cx + r * Math.sin(rad);
+    const ty = cy - r * Math.cos(rad);
+
+    const fullR = Math.max(w, h) * 2;
+    const fx = cx + fullR * Math.sin(rad);
+    const fy = cy - fullR * Math.cos(rad);
+
+    // Cập nhật SVG
+    const svg = document.getElementById('lakinh-ray-svg');
+    if (svg) {
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      svg.setAttribute('width', w);
+      svg.setAttribute('height', h);
+
+      const lineFull = document.getElementById('ray-line-full');
+      if (lineFull) {
+        lineFull.setAttribute('x1', cx);
+        lineFull.setAttribute('y1', cy);
+        lineFull.setAttribute('x2', fx);
+        lineFull.setAttribute('y2', fy);
+      }
+
+      const lineTarget = document.getElementById('ray-line-target');
+      if (lineTarget) {
+        lineTarget.setAttribute('x1', cx);
+        lineTarget.setAttribute('y1', cy);
+        lineTarget.setAttribute('x2', tx);
+        lineTarget.setAttribute('y2', ty);
+      }
+
+      const distCircle = document.getElementById('ray-distance-circle');
+      if (distCircle) {
+        distCircle.setAttribute('cx', cx);
+        distCircle.setAttribute('cy', cy);
+        distCircle.setAttribute('r', r);
+      }
+    }
+
+    // Cập nhật vị trí điểm mục tiêu
+    const targetHandle = document.getElementById('lakinh-ray-target-handle');
+    if (targetHandle) {
+      targetHandle.style.left = `${tx}px`;
+      targetHandle.style.top = `${ty}px`;
+    }
+
+    // Tra cứu phong thủy chuyên sâu
+    let sonName = 'Tý';
+    let sonCung = 'Khảm';
+    let sonHanh = 'Thủy';
+    let queName = '';
+    let quaiKhi = '';
+    let quaiVan = '';
+    let haoTen = '';
+    let haoCanChi = '';
+    let haoLucThan = '';
+    let van9RoleText = '';
+    let van9BadgeClass = '';
+
+    if (global.NetaLaKinhEngine) {
+      const son = global.NetaLaKinhEngine.getSonInfo(deg);
+      if (son) {
+        sonName = son.name;
+        sonCung = son.cung;
+        sonHanh = son.hanh;
+      }
+      if (global.NetaLaKinhEngine.getHKDQInfo) {
+        const hkdq = global.NetaLaKinhEngine.getHKDQInfo(deg);
+        if (hkdq) {
+          queName = hkdq.que_name || '';
+          quaiKhi = hkdq.quai_khi || hkdq.quai_so || '';
+          quaiVan = hkdq.quai_van || '';
+          if (hkdq.hao_vi_phan) {
+            haoTen = hkdq.hao_vi_phan.ten_hao || '';
+            haoCanChi = hkdq.hao_vi_phan.can_chi || '';
+            haoLucThan = hkdq.hao_vi_phan.luc_than || '';
+          }
+          if (hkdq.van_9_role) {
+            if (hkdq.van_9_role.is_duong_van_9) {
+              van9RoleText = '✨ Đương Vận 9';
+              van9BadgeClass = 'duong';
+            } else if (hkdq.van_9_role.is_linh_than) {
+              van9RoleText = '🌊 Linh Thần V9';
+              van9BadgeClass = 'linh';
+            } else {
+              van9RoleText = '⛰️ Chính Thần V9';
+              van9BadgeClass = 'chinh';
+            }
+          }
+          if (hkdq.canh_bao_khong_vong && hkdq.canh_bao_khong_vong.is_near_boundary) {
+            van9RoleText = `⚠️ Ranh ${hkdq.canh_bao_khong_vong.distance}°`;
+            van9BadgeClass = 'warn';
+          }
+        }
+      }
+    }
+
+    // Góc lệch so với hướng nhà
+    let diff = ((deg - state.rotation + 180) % 360 + 360) % 360 - 180;
+    diff = Math.round(diff * 10) / 10;
+    let diffText = '';
+    if (Math.abs(diff) < 0.2) {
+      diffText = '🎯 Trùng Chính Hướng Nhà';
+    } else if (Math.abs(Math.abs(diff) - 180) < 0.2) {
+      diffText = '🔄 Trùng Chính Tọa Nhà';
+    } else if (diff > 0) {
+      diffText = `Lệch +${diff.toFixed(1)}° (Hữu / Bạch Hổ)`;
+    } else {
+      diffText = `Lệch ${diff.toFixed(1)}° (Tả / Thanh Long)`;
+    }
+
+    // Cập nhật nhãn ngay trên điểm mục tiêu
+    const targetLabel = document.getElementById('lakinh-ray-target-label');
+    if (targetLabel) {
+      targetLabel.innerHTML = `
+        <span class="rtl-deg">${deg.toFixed(1)}°</span>
+        <span class="rtl-son">Sơn ${sonName}</span>
+        ${queName ? `<span class="rtl-que" style="color:#fbbf24; margin-left:3px;">${queName}</span>` : ''}
+      `;
+    }
+
+    // Cập nhật Floating HUD trên màn hình
+    if (rayHud && !state.isSheetOpen) {
+      rayHud.style.display = 'block';
+      const hudDeg = document.getElementById('ray-hud-deg');
+      const hudSon = document.getElementById('ray-hud-son');
+      const hudQue = document.getElementById('ray-hud-que');
+      const hudKhivan = document.getElementById('ray-hud-khivan');
+      const hudHao = document.getElementById('ray-hud-hao');
+      const hudVan9 = document.getElementById('ray-hud-badge-van9');
+      const hudDiff = document.getElementById('ray-hud-diff');
+
+      if (hudDeg) hudDeg.textContent = `${deg.toFixed(1)}°`;
+      if (hudSon) hudSon.textContent = `Sơn ${sonName} (${sonCung} • ${sonHanh})`;
+      if (hudQue) hudQue.textContent = queName ? `Quẻ ${queName}` : '';
+      if (hudKhivan) hudKhivan.textContent = quaiKhi ? `(Khí ${quaiKhi} • Vận ${quaiVan})` : '';
+      if (hudHao) hudHao.textContent = haoTen ? `${haoTen} (${haoCanChi} • ${haoLucThan})` : '';
+      if (hudVan9) {
+        hudVan9.textContent = van9RoleText;
+        hudVan9.className = `ray-hud-badge ${van9BadgeClass}`;
+        hudVan9.style.display = van9RoleText ? 'inline-block' : 'none';
+      }
+      if (hudDiff) hudDiff.textContent = diffText;
+    } else if (rayHud) {
+      rayHud.style.display = 'none';
+    }
+
+    // Cập nhật thanh trượt và nhãn trong Sheet
+    const sliderDeg = document.getElementById('sheet-slider-ray-deg');
+    const valDeg = document.getElementById('sheet-val-ray-deg');
+    const valDegSub = document.getElementById('sheet-val-ray-deg-sub');
+    if (sliderDeg && document.activeElement !== sliderDeg) {
+      sliderDeg.value = deg.toFixed(1);
+    }
+    if (valDeg) valDeg.textContent = `${deg.toFixed(1)}°`;
+    if (valDegSub) valDegSub.textContent = `${deg.toFixed(1)}°`;
+
+    // Cập nhật Card thông số trong Sheet
+    const sheetSon = document.getElementById('sheet-ray-son');
+    const sheetQue = document.getElementById('sheet-ray-que');
+    const sheetHao = document.getElementById('sheet-ray-hao');
+    const sheetDiff = document.getElementById('sheet-ray-diff');
+    if (sheetSon) sheetSon.textContent = `Sơn ${sonName} (${sonCung} • Hành ${sonHanh})`;
+    if (sheetQue) sheetQue.textContent = queName ? `Quẻ ${queName} (Khí ${quaiKhi} • Vận ${quaiVan})` : '---';
+    if (sheetHao) sheetHao.textContent = haoTen ? `${haoTen} (${haoCanChi} • ${haoLucThan}) ${van9RoleText}` : '---';
+    if (sheetDiff) sheetDiff.textContent = diffText;
+
+    // Đồng bộ lên Leaflet map
+    if (mapInstance && surveyRayLayerGroup) {
+      surveyRayLayerGroup.clearLayers();
+      const center = mapInstance.getCenter();
+      if (global.NetaLaKinhEngine) {
+        const target = global.NetaLaKinhEngine.getDestinationPoint(center.lat, center.lng, 2500, deg);
+        const polyline = L.polyline([[center.lat, center.lng], [target.lat, target.lng]], {
+          color: '#06b6d4',
+          weight: 2.5,
+          dashArray: '6, 6',
+          opacity: 0.95
+        });
+        polyline.addTo(surveyRayLayerGroup);
+      }
+    }
+  }
+
   function renderSurveyRay() {
-    if (!mapInstance || !surveyRayLayerGroup) return;
-    surveyRayLayerGroup.clearLayers();
-    if (!state.isRayActive) return;
-
-    const center = mapInstance.getCenter();
-    if (!global.NetaLaKinhEngine) return;
-
-    const target = global.NetaLaKinhEngine.getDestinationPoint(center.lat, center.lng, 2500, state.rotation);
-    const polyline = L.polyline([[center.lat, center.lng], [target.lat, target.lng]], {
-      color: '#ef4444',
-      weight: 2.5,
-      dashArray: '6, 6',
-      opacity: 0.95
-    });
-    polyline.addTo(surveyRayLayerGroup);
+    updateSightingRay();
   }
 
   // ================= 4. ĐỊNH VỊ GPS VỆ TINH 2 TẦNG (HIGH ACCURACY + FALLBACK) =================
@@ -2639,14 +3273,332 @@
     const btnLock = document.getElementById('sheet-btn-lock');
     if (btnLock) btnLock.addEventListener('click', toggleLockHeading);
 
-    const btnRay = document.getElementById('sheet-btn-ray');
-    if (btnRay) {
-      btnRay.addEventListener('click', () => {
-        state.isRayActive = !state.isRayActive;
-        btnRay.classList.toggle('success', state.isRayActive);
-        btnRay.innerHTML = state.isRayActive ? '🎯 Đang Bật Tia Ngắm' : '🎯 Bật Tia Ngắm Viễn Thám';
-        renderSurveyRay();
+    // ================= 3.1. SỰ KIỆN MẶT BẰNG BẢN VẼ KIẾN TRÚC =================
+    const inputPlanFile = document.getElementById('lakinh-input-plan-file');
+    const btnPlanUpload = document.getElementById('btn-plan-upload');
+    const btnPlanRemove = document.getElementById('btn-plan-remove');
+    const btnPlanQuick = document.getElementById('lakinh-btn-plan-quick');
+    const btnPlanPanDone = document.getElementById('btn-plan-pan-done');
+
+    if (btnPlanUpload && inputPlanFile) {
+      btnPlanUpload.addEventListener('click', () => inputPlanFile.click());
+    }
+
+    if (btnPlanQuick) {
+      btnPlanQuick.addEventListener('click', () => {
+        if (!state.planImageSrc && inputPlanFile) {
+          inputPlanFile.click();
+        } else {
+          openBottomSheet();
+          const el = document.getElementById('lakinh-plan-controls-wrap');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
       });
+    }
+
+    if (inputPlanFile) {
+      inputPlanFile.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          loadFloorPlanFile(file);
+          inputPlanFile.value = '';
+        }
+      });
+    }
+
+    if (btnPlanRemove) {
+      btnPlanRemove.addEventListener('click', removeFloorPlan);
+    }
+
+    if (btnPlanPanDone) {
+      btnPlanPanDone.addEventListener('click', () => togglePlanPanMode(false));
+    }
+
+    const sPlanScale = document.getElementById('sheet-slider-plan-scale');
+    if (sPlanScale) {
+      sPlanScale.addEventListener('input', (e) => {
+        state.planScale = Math.max(0.2, Math.min(5.0, parseFloat(e.target.value) / 100.0));
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+      });
+    }
+
+    [
+      { id: 'btn-scale-50', scale: 0.5 },
+      { id: 'btn-scale-100', scale: 1.0 },
+      { id: 'btn-scale-150', scale: 1.5 },
+      { id: 'btn-scale-200', scale: 2.0 }
+    ].forEach(item => {
+      const btn = document.getElementById(item.id);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          state.planScale = item.scale;
+          updateFloorPlanTransform();
+          saveFloorPlanState();
+          ['btn-scale-50', 'btn-scale-100', 'btn-scale-150', 'btn-scale-200'].forEach(id => {
+            const b = document.getElementById(id);
+            if (b) b.classList.toggle('active', id === item.id);
+          });
+        });
+      }
+    });
+
+    const sPlanRot = document.getElementById('sheet-slider-plan-rot');
+    if (sPlanRot) {
+      sPlanRot.addEventListener('input', (e) => {
+        state.planRotation = parseFloat(e.target.value);
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+      });
+    }
+
+    const btnPlanRotMatch = document.getElementById('btn-plan-rot-match');
+    if (btnPlanRotMatch) {
+      btnPlanRotMatch.addEventListener('click', () => {
+        state.planRotation = state.rotation;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast(`🧭 Đã xoay bản vẽ khớp hướng nhà (${state.rotation.toFixed(1)}°)`);
+      });
+    }
+
+    const btnPlanRotZero = document.getElementById('btn-plan-rot-zero');
+    if (btnPlanRotZero) {
+      btnPlanRotZero.addEventListener('click', () => {
+        state.planRotation = 0.0;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast('🧭 Đã quay bản vẽ về Chuẩn Bắc (0°)');
+      });
+    }
+
+    const bindPlanRotStep = (id, delta) => {
+      const b = document.getElementById(id);
+      if (b) {
+        b.addEventListener('click', () => {
+          state.planRotation = ((state.planRotation + delta) % 360 + 360) % 360;
+          state.planRotation = Math.round(state.planRotation * 10) / 10;
+          updateFloorPlanTransform();
+          saveFloorPlanState();
+        });
+      }
+    };
+    bindPlanRotStep('btn-plan-rot-m1', -1);
+    bindPlanRotStep('btn-plan-rot-p1', 1);
+
+    const sPlanOpacity = document.getElementById('sheet-slider-plan-opacity');
+    if (sPlanOpacity) {
+      sPlanOpacity.addEventListener('input', (e) => {
+        state.planOpacity = Math.max(0.1, Math.min(1.0, parseFloat(e.target.value) / 100.0));
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+      });
+    }
+
+    const btnPlanPan = document.getElementById('sheet-btn-plan-pan');
+    if (btnPlanPan) {
+      btnPlanPan.addEventListener('click', () => togglePlanPanMode());
+    }
+
+    const btnPlanResetCenter = document.getElementById('sheet-btn-plan-reset-center');
+    if (btnPlanResetCenter) {
+      btnPlanResetCenter.addEventListener('click', () => {
+        state.planOffsetX = 0;
+        state.planOffsetY = 0;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast('🎯 Đã đưa mặt bằng về chính tâm La Kinh (0, 0)');
+      });
+    }
+
+    const bindPlanShift = (id, dx, dy) => {
+      const b = document.getElementById(id);
+      if (b) {
+        b.addEventListener('click', () => {
+          state.planOffsetX += dx;
+          state.planOffsetY += dy;
+          updateFloorPlanTransform();
+          saveFloorPlanState();
+        });
+      }
+    };
+    bindPlanShift('btn-plan-shift-left', -5, 0);
+    bindPlanShift('btn-plan-shift-right', 5, 0);
+    bindPlanShift('btn-plan-shift-up', 0, -5);
+    bindPlanShift('btn-plan-shift-down', 0, 5);
+
+    // Kéo rê màn hình khi ở chế độ Kéo Dịch Tâm Mặt Bằng
+    const lkContainer = document.getElementById('view-lakinh');
+    let isPlanDragging = false;
+    let planDragStartX = 0;
+    let planDragStartY = 0;
+    let planDragInitOx = 0;
+    let planDragInitOy = 0;
+
+    if (lkContainer) {
+      lkContainer.addEventListener('pointerdown', (e) => {
+        if (!state.isPlanPanActive) return;
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-plan-pan-banner, button')) return;
+        isPlanDragging = true;
+        planDragStartX = e.clientX;
+        planDragStartY = e.clientY;
+        planDragInitOx = state.planOffsetX;
+        planDragInitOy = state.planOffsetY;
+        try { lkContainer.setPointerCapture(e.pointerId); } catch (_) {}
+        e.stopPropagation();
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isPlanDragging || !state.isPlanPanActive) return;
+        const dx = e.clientX - planDragStartX;
+        const dy = e.clientY - planDragStartY;
+        state.planOffsetX = Math.round(planDragInitOx + dx);
+        state.planOffsetY = Math.round(planDragInitOy + dy);
+        updateFloorPlanTransform();
+        e.stopPropagation();
+      });
+
+      const endPlanDrag = (e) => {
+        if (isPlanDragging) {
+          isPlanDragging = false;
+          try { lkContainer.releasePointerCapture(e.pointerId); } catch (_) {}
+          saveFloorPlanState();
+        }
+      };
+      window.addEventListener('pointerup', endPlanDrag);
+      window.addEventListener('pointercancel', endPlanDrag);
+    }
+
+    // ================= 3.2. SỰ KIỆN TIA NGẮM PHONG THỦY =================
+    const btnRay = document.getElementById('sheet-btn-ray');
+    const btnQuickRay = document.getElementById('lakinh-btn-ray-quick');
+    const btnRayHudClose = document.getElementById('btn-ray-hud-close');
+
+    const toggleSightingRay = () => {
+      state.isRayActive = !state.isRayActive;
+      updateSightingRay();
+      showLaKinhToast(state.isRayActive
+        ? '🎯 Đã bật Tia Ngắm. Chạm điểm bất kỳ trên mặt bằng hoặc kéo thanh trượt để ngắm.'
+        : 'Đã tắt tia ngắm');
+    };
+
+    if (btnRay) btnRay.addEventListener('click', toggleSightingRay);
+    if (btnQuickRay) btnQuickRay.addEventListener('click', toggleSightingRay);
+    if (btnRayHudClose) {
+      btnRayHudClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.isRayActive = false;
+        updateSightingRay();
+      });
+    }
+
+    const sRayDeg = document.getElementById('sheet-slider-ray-deg');
+    if (sRayDeg) {
+      sRayDeg.addEventListener('input', (e) => {
+        setRayAngle(parseFloat(e.target.value));
+      });
+    }
+
+    const bindRayStep = (id, delta) => {
+      const b = document.getElementById(id);
+      if (b) {
+        b.addEventListener('click', () => {
+          setRayAngle(state.rayAngle + delta);
+        });
+      }
+    };
+    bindRayStep('btn-ray-m5', -5);
+    bindRayStep('btn-ray-m1', -1);
+    bindRayStep('btn-ray-m01', -0.1);
+    bindRayStep('btn-ray-p01', 0.1);
+    bindRayStep('btn-ray-p1', 1);
+    bindRayStep('btn-ray-p5', 5);
+
+    // Gán góc nhanh cho tia ngắm
+    const btnRaySnapHouse = document.getElementById('btn-ray-snap-house');
+    if (btnRaySnapHouse) {
+      btnRaySnapHouse.addEventListener('click', () => {
+        setRayAngle(state.rotation);
+        showLaKinhToast(`🎯 Tia ngắm khớp Chính Hướng Nhà (${state.rotation.toFixed(1)}°)`);
+      });
+    }
+
+    const btnRaySnapNorth = document.getElementById('btn-ray-snap-north');
+    if (btnRaySnapNorth) {
+      btnRaySnapNorth.addEventListener('click', () => {
+        setRayAngle(0.0);
+        showLaKinhToast('🧭 Tia ngắm hướng Chuẩn Bắc (0.0°)');
+      });
+    }
+
+    const btnRaySnapPerpLeft = document.getElementById('btn-ray-snap-perp-left');
+    if (btnRaySnapPerpLeft) {
+      btnRaySnapPerpLeft.addEventListener('click', () => {
+        setRayAngle((state.rotation - 90 + 360) % 360);
+        showLaKinhToast('📐 Tia ngắm vuông góc Tả (Bên Trái 90°)');
+      });
+    }
+
+    const btnRaySnapPerpRight = document.getElementById('btn-ray-snap-perp-right');
+    if (btnRaySnapPerpRight) {
+      btnRaySnapPerpRight.addEventListener('click', () => {
+        setRayAngle((state.rotation + 90) % 360);
+        showLaKinhToast('📐 Tia ngắm vuông góc Hữu (Bên Phải 90°)');
+      });
+    }
+
+    const btnRaySnapToa = document.getElementById('btn-ray-snap-toa');
+    if (btnRaySnapToa) {
+      btnRaySnapToa.addEventListener('click', () => {
+        setRayAngle((state.rotation + 180) % 360);
+        showLaKinhToast(`🔄 Tia ngắm đối diện Chính Tọa (${((state.rotation + 180) % 360).toFixed(1)}°)`);
+      });
+    }
+
+    // Kéo rê điểm mục tiêu trên màn hình (Target Handle Drag)
+    const targetHandle = document.getElementById('lakinh-ray-target-handle');
+    if (targetHandle) {
+      let isTargetDragging = false;
+      targetHandle.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        isTargetDragging = true;
+        try { targetHandle.setPointerCapture(e.pointerId); } catch (_) {}
+      });
+
+      targetHandle.addEventListener('pointermove', (e) => {
+        if (!isTargetDragging) return;
+        e.stopPropagation();
+        e.preventDefault();
+        onAimRayAtPoint(e.clientX, e.clientY);
+      });
+
+      const endTargetDrag = (e) => {
+        if (isTargetDragging) {
+          isTargetDragging = false;
+          try { targetHandle.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+      };
+      targetHandle.addEventListener('pointerup', endTargetDrag);
+      targetHandle.addEventListener('pointercancel', endTargetDrag);
+    }
+
+    // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
+    if (lkContainer) {
+      lkContainer.addEventListener('click', (e) => {
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
+          return;
+        }
+        if (state.isRayActive && !state.isPlanPanActive) {
+          onAimRayAtPoint(e.clientX, e.clientY);
+        }
+      });
+    }
+
+    // Khôi phục trạng thái bản vẽ và tia ngắm đã lưu
+    restoreFloorPlanState();
+    if (state.isRayActive) {
+      updateSightingRay();
     }
 
     const chkAutoDec = document.getElementById('lakinh-chk-autodec');
@@ -2723,7 +3675,13 @@
     closeBottomSheet: closeBottomSheet,
     openHuyenKhongModal: openHuyenKhongModal,
     openHKDQModal: openHKDQModal,
-    updateRotation: updateRotationDisplay
+    updateRotation: updateRotationDisplay,
+    setRayAngle: setRayAngle,
+    updateSightingRay: updateSightingRay,
+    loadFloorPlanFile: loadFloorPlanFile,
+    removeFloorPlan: removeFloorPlan,
+    togglePlanPanMode: togglePlanPanMode,
+    updateFloorPlanTransform: updateFloorPlanTransform
   };
 
   global.NetaLaKinhView = NetaLaKinhView;
