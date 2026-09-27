@@ -63,27 +63,27 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v1.9.9
-          name: "Neta Light & Huyền Học v1.9.9 (Ẩn Tinh Tế Luận Giải Chiều Sâu & Nút Dán Khóa 1-Chạm Siêu Tiện Lợi)"
+          tag_name: v2.0.0
+          name: "Neta Light & Huyền Học v2.0.0 (Khắc Phục Tràn Viền Modal, Chuẩn Hóa Markdown & Trợ Lý Luận Giải Chiều Sâu)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v1.9.9
-            - **Ẩn Tinh Tế Tính Năng Luận Giải Chiều Sâu Khỏi Giao Diện Chính**:
-              + Giao diện trải bài chính hoàn toàn chỉ hiển thị 2 tùy chọn cổ điển: *Cho phép lá ngược* và *Rung (Haptic)*.
-              + Không còn bất kỳ checkbox hay icon bánh răng lộ liễu nào trên màn hình chính.
-              + Kích hoạt cấu hình chuyên sâu hoàn toàn kín đáo thông qua biểu tượng huyền học tinh tế `✦` hoặc chạm giữ nhãn *Kiểu trải bài:*.
-            - **Thiết Kế Lại Trải Nghiệm Dán Khóa API 1-Chạm Cho Thiết Bị Di Động**:
-              + Tích hợp nút **📋 Dán** thông minh: tự động đọc và điền khóa từ Bộ nhớ tạm (Clipboard) chỉ với 1 lần chạm, giải quyết dứt điểm khó khăn khi paste trên màn hình cảm ứng điện thoại.
-              + Bổ sung nút **👁️** ẩn/hiện khóa giúp người dùng dễ dàng kiểm tra chuỗi khóa đã dán.
-              + Gỡ bỏ hoàn toàn mọi thuộc tính chặn bôi đen (`user-select: none`), cho phép thao tác chạm giữ và paste native mượt mà 100% trên Android WebView.
-            - **Duy Trì Cơ Chế Bảo Mật & Độc Lập Toàn Diện**:
-              + Chuẩn BYOK (Bring Your Own Key): không có bất kỳ key mặc định nào trong code, an toàn tuyệt đối khi phân phối APK.
-              + Tự động mã hóa XOR-salted và lưu trữ vĩnh viễn trên máy của người dùng, không bao giờ phải nhập lại sau khi tắt/mở app.
-              + Tự động cascade từ mô hình `gemini-3.8-flash` xuống các bản cũ hơn khi cần thiết.
-              + Văn phong chiêm nghiệm Rider-Waite thuần túy, tuyệt đối không nhắc đến AI hay tên mô hình.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.0
+            - **Khắc Phục Triệt Để Tràn Viền Hộp Thoại Thiết Lập Khóa (Hình 1)**:
+              + Áp dụng `min-width: 0 !important; width: 0 !important; flex: 1 1 0 !important;` cho ô nhập khóa, giải quyết dứt điểm lỗi flexbox bung rộng đẩy nút **📋 Dán** tràn khỏi màn hình trên các thiết bị Android chiều ngang hẹp (320px - 360px).
+              + Bố cục lại thanh tiêu đề Modal: nút đóng `×` dạng tròn độc lập (28x28px) ở góc phải trên cùng, bảo đảm khoảng cách đệm an toàn và không bao giờ chồng lấn lên dòng tiêu đề *"✦ Thiết Lập Chiều Sâu Trực Giác"*.
+              + Giới hạn chiều cao hộp thoại tối đa 88vh với cuộn dọc mượt mà (`-webkit-overflow-scrolling: touch`), giúp toàn bộ nội dung hướng dẫn và nút bấm luôn hiển thị trọn vẹn.
+            - **Cơ Chế Báo Lỗi Minh Bạch & Chẩn Đoán Luận Giải Chiều Sâu (Hình 2)**:
+              + Phân loại chi tiết nguyên nhân khi cuộc gọi API không thành công: Khóa không hợp lệ (401/403), Vượt hạn mức gọi (429/Quota), Mất kết nối Internet hoặc lỗi máy chủ.
+              + Tích hợp trực tiếp hai nút hành động nhanh: **🔄 Thử Lại Ngay** và **🔑 Kiểm Tra Khóa API** ngay bên trong khung thông báo, giúp người dùng dễ dàng thao tác mà không bị rơi vào trạng thái bối rối.
+              + Loại bỏ các mã định danh mô hình thử nghiệm không tồn tại gây chuỗi lỗi 404 kéo dài; cascade ưu tiên các mô hình Gemini đang hoạt động ổn định (`gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-2.0-flash-lite`, `gemini-1.5-flash`) kèm timeout 6s chống treo giao diện.
+            - **Bộ Phân Giải Markdown Hermetic Chuẩn Hóa Toàn Diện (Hình 3)**:
+              + Nâng cấp toàn diện hàm phân giải Markdown: hỗ trợ đầy đủ các cấp tiêu đề từ `#` đến `######`, thẻ sơ đồ nhánh ```` ``` ```` chuyển thành Card sơ đồ trực quan, đường kẻ phân cách `---`, danh sách có thứ tự và không thứ tự.
+              + Triệt tiêu 100% hiện tượng rò rỉ ký tự cú pháp lạ như `###`, `####` hay hàng dấu backtick ```` ``` ```` trên giao diện đọc bài.
+              + Bổ sung chỉ dẫn định dạng nghiêm ngặt trong hệ thống prompt yêu cầu phản hồi theo văn phong chiêm nghiệm Rider-Waite thuần túy, không dùng code block hay tiêu đề quá sâu.
+            - **Kế Thừa Toàn Bộ Các Nâng Cấp Từ v1.9.9**:
+              + Tự động mã hóa XOR-salted và lưu trữ vĩnh viễn khóa trên máy của người dùng, không bao giờ phải nhập lại sau khi tắt/mở app.
+              + Kích hoạt cấu hình chuyên sâu kín đáo thông qua biểu tượng huyền học tinh tế `✦` hoặc chạm giữ nhãn *Kiểu trải bài:*.
               + Vận hành Offline 100% hoàn hảo khi tính năng tắt hoặc khi ngắt kết nối mạng.
-            - **Kế thừa các nâng cấp đột phá từ v1.9.5**:
-              + Tích hợp cảm biến La Bàn Phần Cứng 3D Native Hardware Compass với bù góc nghiêng toàn diện (3D Tilt Compensation) và bộ lọc làm mượt chống rung tay.
-              + Chuẩn hóa 100% thuật toán Tử Vi Nam Phái Thái Thứ Lang với đầy đủ hệ thống 26 Phụ tinh thứ cấp và an sao Miếu/Vượng/Đắc/Hãm.
+              + La Bàn 3D Native Hardware Compass, Tử Vi 26 Phụ tinh Thái Thứ Lang, 16 Tinh Bàn Huyền Không Chuẩn Thẩm Thị Học, 3 Chế độ Kỳ Môn Độn Giáp toàn diện.
               + Đóng gói độc lập Offline 100%, bảo đảm vận hành mượt mà ngay cả khi ngắt kết nối mạng.
             - **Tích Hợp Hệ Thống 9 Sao Lưu Niên Theo Năm Xem (`viewYear`)**:
               + Tự động an Lưu Thái Tuế, Lưu Kình, Lưu Đà, Lưu Tang Môn, Lưu Bạch Hổ, Lưu Khốc, Lưu Hư, Lưu Lộc Tồn, Lưu Thiên Mã.

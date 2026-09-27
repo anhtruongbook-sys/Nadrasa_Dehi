@@ -29,7 +29,11 @@ build-output/
 mobile_app/.dart_tool/
 scratch/
 scripts/test_results/
+scripts/github_token.txt
+*.token
+.env
 scripts/*.png
 temp_chunks/
 Luu/
+artifacts/
 

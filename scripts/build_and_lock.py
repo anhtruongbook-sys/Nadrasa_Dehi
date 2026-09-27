@@ -10,10 +10,10 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-TOKEN = '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'
+TOKEN = os.environ.get('GITHUB_TOKEN', '')
 REPO = 'anhtruongbook-sys/Nadrasa_Dehi'
-TAG = 'v1.9.9'
-COMMIT = '2313692'
+TAG = 'v2.0.0'
+COMMIT = ''
 
 def check_runs():
     req = urllib.request.Request(f'https://api.github.com/repos/{REPO}/actions/runs', headers={

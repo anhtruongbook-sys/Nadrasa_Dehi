@@ -183,7 +183,8 @@
     if (!str) return '';
     return str
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>');
+      .replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>')
+      .replace(/`([^`\n]+?)`/g, '<code class="tarot-deep-inline-code">$1</code>');
   }
 
   function formatMarkdownDeep(str) {
@@ -191,39 +192,116 @@
     const lines = str.split('\n');
     let html = '';
     let inList = false;
+    let inCodeBlock = false;
+    let codeBlockContent = [];
 
     for (let i = 0; i < lines.length; i++) {
-      let line = lines[i].trim();
+      let rawLine = lines[i];
+      let line = rawLine.trim();
+
+      // Handle code block fences ``` (Cleanly parse so raw backticks NEVER show)
+      if (line.startsWith('```')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inCodeBlock) {
+          const diagramText = codeBlockContent.join('\n').trim();
+          if (diagramText) {
+            html += `<div class="tarot-deep-diagram-card"><pre>${escapeHTML(diagramText)}</pre></div>`;
+          }
+          codeBlockContent = [];
+          inCodeBlock = false;
+        } else {
+          inCodeBlock = true;
+          codeBlockContent = [];
+        }
+        continue;
+      }
+
+      if (inCodeBlock) {
+        codeBlockContent.push(rawLine);
+        continue;
+      }
+
       if (!line) {
         if (inList) { html += '</ul>'; inList = false; }
         continue;
       }
+
+      // Horizontal dividers
+      if (line === '---' || line === '***' || line === '___') {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += '<hr class="tarot-deep-divider">';
+        continue;
+      }
+
+      // Blockquotes
+      if (line.startsWith('>')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const quoteText = line.replace(/^>\s*/, '');
+        html += `<blockquote class="tarot-deep-quote">${formatMarkdownInline(quoteText)}</blockquote>`;
+        continue;
+      }
+
+      // Minor Headings: ####, #####, ###### (Fix for raw #### appearing in UI)
+      if (/^#{4,6}\s+/.test(line)) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const text = line.replace(/^#{4,6}\s+/, '');
+        html += `<h5 class="tarot-deep-minor-heading">${formatMarkdownInline(text)}</h5>`;
+        continue;
+      }
+
+      // Sub-headings: ###
       if (line.startsWith('### ')) {
         if (inList) { html += '</ul>'; inList = false; }
         html += `<h4 class="tarot-deep-subheading">${formatMarkdownInline(line.substring(4))}</h4>`;
-      } else if (line.startsWith('## ')) {
+        continue;
+      }
+
+      // Main Headings: ## or #
+      if (line.startsWith('## ')) {
         if (inList) { html += '</ul>'; inList = false; }
         html += `<h3 class="tarot-deep-heading">${formatMarkdownInline(line.substring(3))}</h3>`;
-      } else if (line.startsWith('# ')) {
+        continue;
+      }
+      if (line.startsWith('# ')) {
         if (inList) { html += '</ul>'; inList = false; }
         html += `<h3 class="tarot-deep-heading">${formatMarkdownInline(line.substring(2))}</h3>`;
-      } else if (line.startsWith('- ') || line.startsWith('* ')) {
+        continue;
+      }
+
+      // Unordered lists (- or * or •)
+      if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
         if (!inList) {
           html += '<ul class="tarot-deep-list">';
           inList = true;
         }
-        html += `<li>${formatMarkdownInline(line.substring(2))}</li>`;
-      } else if (/^\d+\.\s/.test(line)) {
-        if (inList) { html += '</ul>'; inList = false; }
-        const num = line.match(/^\d+/)[0];
-        const text = line.replace(/^\d+\.\s+/, '');
-        html += `<div class="tarot-deep-step"><span class="step-num">${num}.</span> <span>${formatMarkdownInline(text)}</span></div>`;
-      } else {
-        if (inList) { html += '</ul>'; inList = false; }
-        html += `<p class="tarot-deep-para">${formatMarkdownInline(line)}</p>`;
+        const itemText = line.replace(/^[-*•]\s+/, '');
+        html += `<li>${formatMarkdownInline(itemText)}</li>`;
+        continue;
       }
+
+      // Numbered sections: e.g. "1. Thông điệp...", "2. Phân tích dòng chảy..."
+      const numMatch = line.match(/^(\d+)\.\s+(.+)$/);
+      if (numMatch) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const num = numMatch[1];
+        const text = numMatch[2];
+        if (text.length < 90 && !text.endsWith('.')) {
+          html += `<h3 class="tarot-deep-heading"><span class="step-num">${num}.</span> ${formatMarkdownInline(text)}</h3>`;
+        } else {
+          html += `<div class="tarot-deep-step"><span class="step-num">${num}.</span> <span>${formatMarkdownInline(text)}</span></div>`;
+        }
+        continue;
+      }
+
+      // Standard paragraph
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<p class="tarot-deep-para">${formatMarkdownInline(line)}</p>`;
     }
+
     if (inList) html += '</ul>';
+    if (inCodeBlock && codeBlockContent.length > 0) {
+      html += `<div class="tarot-deep-diagram-card"><pre>${escapeHTML(codeBlockContent.join('\n').trim())}</pre></div>`;
+    }
     return html;
   }
 
@@ -1287,15 +1365,21 @@
     try {
       const qInput = document.getElementById('tarot-question-input');
       const question = qInput ? qInput.value.trim() : (report.question || '');
-      const synthesisText = await global.NetaGeminiService.interpretTarotReading(report, question);
+      const res = await global.NetaGeminiService.interpretTarotReading(report, question);
       
       report.isDeepLoading = false;
-      if (synthesisText) {
-        report.deepSynthesis = synthesisText;
+      if (res && res.text) {
+        report.deepSynthesis = res.text;
+        report.deepError = null;
+      } else {
+        report.deepSynthesis = null;
+        report.deepError = res ? res.error : 'Không thể kết nối máy chủ Google.';
       }
     } catch (err) {
       console.warn('Deep interpretation notice:', err);
       report.isDeepLoading = false;
+      report.deepSynthesis = null;
+      report.deepError = 'Không thể kết nối dịch vụ trực tuyến. Vui lòng kiểm tra mạng.';
     }
 
     const deepBoxAfter = document.getElementById('tarot-deep-section-box');
@@ -1310,15 +1394,19 @@
         `;
       } else if (bodyEl) {
         bodyEl.innerHTML = `
-          <div class="tarot-deep-offline-note" title="Chạm để thử kết nối lại">
-            Đã hoàn tất luận giải với hệ phân tích cổ điển. (Chạm vào đây để thử lại)
+          <div class="tarot-deep-error-box">
+            <div class="error-icon">⚠️</div>
+            <div class="error-msg">${escapeHTML(report.deepError || 'Không thể tải nội dung luận giải.')}</div>
+            <div class="error-actions">
+              <button class="tarot-btn-subtle" id="btn-deep-retry">🔄 Thử Lại Ngay</button>
+              <button class="tarot-btn-subtle" id="btn-deep-open-key">🔑 Kiểm Tra Khóa API</button>
+            </div>
           </div>
         `;
-        const retryNote = bodyEl.querySelector('.tarot-deep-offline-note');
-        if (retryNote) {
-          retryNote.style.cursor = 'pointer';
-          retryNote.addEventListener('click', () => fetchDeepInterpretation(report));
-        }
+        const btnRetry = bodyEl.querySelector('#btn-deep-retry');
+        if (btnRetry) btnRetry.onclick = () => fetchDeepInterpretation(report);
+        const btnOpenKey = bodyEl.querySelector('#btn-deep-open-key');
+        if (btnOpenKey) btnOpenKey.onclick = () => openTarotKeyConfigModal();
       }
     } else {
       renderTarot();
@@ -1374,7 +1462,7 @@
             <label class="tarot-key-input-label" for="tarot-custom-key-input">Khóa API cá nhân của bạn:</label>
             <div class="tarot-key-input-row-modern">
               <input type="password" id="tarot-custom-key-input" class="tarot-key-input"
-                placeholder="${hasKey ? '••••••••••••••••••••••••••••••••••••••••••' : 'Chạm nút Dán bên cạnh hoặc nhập khóa...'}"
+                placeholder="${hasKey ? '••••••••••••••••••••' : 'Dán hoặc nhập khóa...'}"
                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
               <button type="button" id="btn-tarot-toggle-eye" class="tarot-key-action-btn" title="Hiện / Ẩn khóa">👁️</button>
               <button type="button" id="btn-tarot-paste-key" class="tarot-key-action-btn paste-btn" title="Dán trực tiếp từ bộ nhớ tạm">
@@ -2655,6 +2743,8 @@
     init: initTarotView,
     render: renderTarot,
     openCardDetail: openTarotCardDetailModal,
+    openKeyConfigModal: openTarotKeyConfigModal,
+    formatMarkdownDeep: formatMarkdownDeep,
     exportPdf: exportTarotPdfDirect
   };
 
