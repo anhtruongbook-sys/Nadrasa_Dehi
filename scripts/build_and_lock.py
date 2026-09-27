@@ -10,9 +10,19 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-TOKEN = os.environ.get('GITHUB_TOKEN', '')
+def load_token():
+    t = os.environ.get('GITHUB_TOKEN', '')
+    if not t and os.path.exists('scripts/github_token.txt'):
+        try:
+            with open('scripts/github_token.txt', 'r', encoding='utf-8') as f:
+                t = f.read().strip()
+        except Exception:
+            pass
+    return t
+
+TOKEN = load_token()
 REPO = 'anhtruongbook-sys/Nadrasa_Dehi'
-TAG = 'v2.0.0'
+TAG = 'v2.0.1'
 COMMIT = ''
 
 def check_runs():
