@@ -1,0 +1,1708 @@
+{
+  "thien_can": [
+    {
+      "name": "Giáp",
+      "polarity": "Dương",
+      "hanh": "Mộc",
+      "hop": "Kỷ",
+      "pha": "Canh"
+    },
+    {
+      "name": "Ất",
+      "polarity": "Âm",
+      "hanh": "Mộc",
+      "hop": "Canh",
+      "pha": "Tân"
+    },
+    {
+      "name": "Bính",
+      "polarity": "Dương",
+      "hanh": "Hỏa",
+      "hop": "Tân",
+      "pha": "Nhâm"
+    },
+    {
+      "name": "Đinh",
+      "polarity": "Âm",
+      "hanh": "Hỏa",
+      "hop": "Nhâm",
+      "pha": "Quý"
+    },
+    {
+      "name": "Mậu",
+      "polarity": "Dương",
+      "hanh": "Thổ",
+      "hop": "Quý",
+      "pha": "Giáp"
+    },
+    {
+      "name": "Kỷ",
+      "polarity": "Âm",
+      "hanh": "Thổ",
+      "hop": "Giáp",
+      "pha": "Ất"
+    },
+    {
+      "name": "Canh",
+      "polarity": "Dương",
+      "hanh": "Kim",
+      "hop": "Ất",
+      "pha": "Bính"
+    },
+    {
+      "name": "Tân",
+      "polarity": "Âm",
+      "hanh": "Kim",
+      "hop": "Bính",
+      "pha": "Đinh"
+    },
+    {
+      "name": "Nhâm",
+      "polarity": "Dương",
+      "hanh": "Thủy",
+      "hop": "Đinh",
+      "pha": "Mậu"
+    },
+    {
+      "name": "Quý",
+      "polarity": "Âm",
+      "hanh": "Thủy",
+      "hop": "Mậu",
+      "pha": "Kỷ"
+    }
+  ],
+  "dia_chi": [
+    {
+      "name": "Tý",
+      "polarity": "Dương",
+      "hanh": "Thủy",
+      "nhi_hop": "Sửu",
+      "tam_hop": [
+        "Thân",
+        "Thìn"
+      ],
+      "luc_xung": "Ngọ",
+      "tuong_hai": "Mùi",
+      "tuong_hinh": [
+        "Mão"
+      ],
+      "tuong_pha": "Dậu"
+    },
+    {
+      "name": "Sửu",
+      "polarity": "Âm",
+      "hanh": "Thổ",
+      "nhi_hop": "Tý",
+      "tam_hop": [
+        "Tị",
+        "Dậu"
+      ],
+      "luc_xung": "Mùi",
+      "tuong_hai": "Ngọ",
+      "tuong_hinh": [
+        "Mùi",
+        "Tuất"
+      ],
+      "tuong_pha": "Thìn"
+    },
+    {
+      "name": "Dần",
+      "polarity": "Dương",
+      "hanh": "Mộc",
+      "nhi_hop": "Hợi",
+      "tam_hop": [
+        "Ngọ",
+        "Tuất"
+      ],
+      "luc_xung": "Thân",
+      "tuong_hai": "Tị",
+      "tuong_hinh": [
+        "Tị",
+        "Thân"
+      ],
+      "tuong_pha": "Hợi"
+    },
+    {
+      "name": "Mão",
+      "polarity": "Âm",
+      "hanh": "Mộc",
+      "nhi_hop": "Tuất",
+      "tam_hop": [
+        "Hợi",
+        "Mùi"
+      ],
+      "luc_xung": "Dậu",
+      "tuong_hai": "Thìn",
+      "tuong_hinh": [
+        "Tý"
+      ],
+      "tuong_pha": "Ngọ"
+    },
+    {
+      "name": "Thìn",
+      "polarity": "Dương",
+      "hanh": "Thổ",
+      "nhi_hop": "Dậu",
+      "tam_hop": [
+        "Thân",
+        "Tý"
+      ],
+      "luc_xung": "Tuất",
+      "tuong_hai": "Mão",
+      "tuong_hinh": [
+        "Thìn"
+      ],
+      "tuong_pha": "Sửu"
+    },
+    {
+      "name": "Tị",
+      "polarity": "Âm",
+      "hanh": "Hỏa",
+      "nhi_hop": "Thân",
+      "tam_hop": [
+        "Dậu",
+        "Sửu"
+      ],
+      "luc_xung": "Hợi",
+      "tuong_hai": "Dần",
+      "tuong_hinh": [
+        "Dần",
+        "Thân"
+      ],
+      "tuong_pha": "Thân"
+    },
+    {
+      "name": "Ngọ",
+      "polarity": "Dương",
+      "hanh": "Hỏa",
+      "nhi_hop": "Mùi",
+      "tam_hop": [
+        "Dần",
+        "Tuất"
+      ],
+      "luc_xung": "Tý",
+      "tuong_hai": "Sửu",
+      "tuong_hinh": [
+        "Ngọ"
+      ],
+      "tuong_pha": "Mão"
+    },
+    {
+      "name": "Mùi",
+      "polarity": "Âm",
+      "hanh": "Thổ",
+      "nhi_hop": "Ngọ",
+      "tam_hop": [
+        "Hợi",
+        "Mão"
+      ],
+      "luc_xung": "Sửu",
+      "tuong_hai": "Tý",
+      "tuong_hinh": [
+        "Sửu",
+        "Tuất"
+      ],
+      "tuong_pha": "Tuất"
+    },
+    {
+      "name": "Thân",
+      "polarity": "Dương",
+      "hanh": "Kim",
+      "nhi_hop": "Tị",
+      "tam_hop": [
+        "Tý",
+        "Thìn"
+      ],
+      "luc_xung": "Dần",
+      "tuong_hai": "Hợi",
+      "tuong_hinh": [
+        "Dần",
+        "Tị"
+      ],
+      "tuong_pha": "Tị"
+    },
+    {
+      "name": "Dậu",
+      "polarity": "Âm",
+      "hanh": "Kim",
+      "nhi_hop": "Thìn",
+      "tam_hop": [
+        "Tị",
+        "Sửu"
+      ],
+      "luc_xung": "Mão",
+      "tuong_hai": "Tuất",
+      "tuong_hinh": [
+        "Dậu"
+      ],
+      "tuong_pha": "Tý"
+    },
+    {
+      "name": "Tuất",
+      "polarity": "Dương",
+      "hanh": "Thổ",
+      "nhi_hop": "Mão",
+      "tam_hop": [
+        "Dần",
+        "Ngọ"
+      ],
+      "luc_xung": "Thìn",
+      "tuong_hai": "Dậu",
+      "tuong_hinh": [
+        "Sửu",
+        "Mùi"
+      ],
+      "tuong_pha": "Mùi"
+    },
+    {
+      "name": "Hợi",
+      "polarity": "Âm",
+      "hanh": "Thủy",
+      "nhi_hop": "Dần",
+      "tam_hop": [
+        "Mão",
+        "Mùi"
+      ],
+      "luc_xung": "Tị",
+      "tuong_hai": "Thân",
+      "tuong_hinh": [
+        "Hợi"
+      ],
+      "tuong_pha": "Dần"
+    }
+  ],
+  "can_chi_interaction": {
+    "Can_sinh_Chi": {
+      "name": "Bảo Nhật",
+      "nature": "Đại Kiết",
+      "description": "Can sinh Chi (như Giáp Ngọ, Ất Tị...)"
+    },
+    "Chi_sinh_Can": {
+      "name": "Thoa Nhật",
+      "nature": "Tiểu Kiết",
+      "description": "Chi sinh Can (như Nhâm Dần, Giáp Tý...)"
+    },
+    "Can_Chi_dong_hanh": {
+      "name": "Bát Chuyên",
+      "nature": "Bình Hòa",
+      "description": "Can Chi cùng hành (như Giáp Dần, Ất Mão...)"
+    },
+    "Can_khac_Chi": {
+      "name": "Chế Nhật",
+      "nature": "Tiểu Hung",
+      "description": "Can khắc Chi (như Giáp Tuất, Bính Thân...)"
+    },
+    "Chi_khac_Can": {
+      "name": "Phạt Nhật",
+      "nature": "Đại Hung",
+      "description": "Chi khắc Can (như Canh Ngọ, Giáp Thân...)"
+    }
+  },
+  "hoa_giap_60": [
+    {
+      "order": 1,
+      "can_chi": "Giáp Tý",
+      "can": "Giáp",
+      "chi": "Tý",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Hải Trung Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 2,
+      "can_chi": "Ất Sửu",
+      "can": "Ất",
+      "chi": "Sửu",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Hải Trung Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 3,
+      "can_chi": "Bính Dần",
+      "can": "Bính",
+      "chi": "Dần",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Lư Trung Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 4,
+      "can_chi": "Đinh Mão",
+      "can": "Đinh",
+      "chi": "Mão",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Lư Trung Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 5,
+      "can_chi": "Mậu Thìn",
+      "can": "Mậu",
+      "chi": "Thìn",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Đại Lâm Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 6,
+      "can_chi": "Kỷ Tị",
+      "can": "Kỷ",
+      "chi": "Tị",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Đại Lâm Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 7,
+      "can_chi": "Canh Ngọ",
+      "can": "Canh",
+      "chi": "Ngọ",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Lộ Bàng Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 8,
+      "can_chi": "Tân Mùi",
+      "can": "Tân",
+      "chi": "Mùi",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Lộ Bàng Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 9,
+      "can_chi": "Nhâm Thân",
+      "can": "Nhâm",
+      "chi": "Thân",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Kiếm Phong Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 10,
+      "can_chi": "Quý Dậu",
+      "can": "Quý",
+      "chi": "Dậu",
+      "tuan_giap": "Giáp Tý",
+      "khong_vong": [
+        "Tuất",
+        "Hợi"
+      ],
+      "nap_am_name": "Kiếm Phong Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 11,
+      "can_chi": "Giáp Tuất",
+      "can": "Giáp",
+      "chi": "Tuất",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Sơn Đầu Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 12,
+      "can_chi": "Ất Hợi",
+      "can": "Ất",
+      "chi": "Hợi",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Sơn Đầu Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 13,
+      "can_chi": "Bính Tý",
+      "can": "Bính",
+      "chi": "Tý",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Giản Hạ Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 14,
+      "can_chi": "Đinh Sửu",
+      "can": "Đinh",
+      "chi": "Sửu",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Giản Hạ Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 15,
+      "can_chi": "Mậu Dần",
+      "can": "Mậu",
+      "chi": "Dần",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Thành Đầu Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 16,
+      "can_chi": "Kỷ Mão",
+      "can": "Kỷ",
+      "chi": "Mão",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Thành Đầu Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 17,
+      "can_chi": "Canh Thìn",
+      "can": "Canh",
+      "chi": "Thìn",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Bạch Lạp Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 18,
+      "can_chi": "Tân Tị",
+      "can": "Tân",
+      "chi": "Tị",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Bạch Lạp Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 19,
+      "can_chi": "Nhâm Ngọ",
+      "can": "Nhâm",
+      "chi": "Ngọ",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Dương Liễu Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 20,
+      "can_chi": "Quý Mùi",
+      "can": "Quý",
+      "chi": "Mùi",
+      "tuan_giap": "Giáp Tuất",
+      "khong_vong": [
+        "Thân",
+        "Dậu"
+      ],
+      "nap_am_name": "Dương Liễu Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 21,
+      "can_chi": "Giáp Thân",
+      "can": "Giáp",
+      "chi": "Thân",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Tuyền Trung Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 22,
+      "can_chi": "Ất Dậu",
+      "can": "Ất",
+      "chi": "Dậu",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Tuyền Trung Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 23,
+      "can_chi": "Bính Tuất",
+      "can": "Bính",
+      "chi": "Tuất",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Ốc Thượng Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 24,
+      "can_chi": "Đinh Hợi",
+      "can": "Đinh",
+      "chi": "Hợi",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Ốc Thượng Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 25,
+      "can_chi": "Mậu Tý",
+      "can": "Mậu",
+      "chi": "Tý",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Tích Lịch Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 26,
+      "can_chi": "Kỷ Sửu",
+      "can": "Kỷ",
+      "chi": "Sửu",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Tích Lịch Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 27,
+      "can_chi": "Canh Dần",
+      "can": "Canh",
+      "chi": "Dần",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Tùng Bách Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 28,
+      "can_chi": "Tân Mão",
+      "can": "Tân",
+      "chi": "Mão",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Tùng Bách Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 29,
+      "can_chi": "Nhâm Thìn",
+      "can": "Nhâm",
+      "chi": "Thìn",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Trường Lưu Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 30,
+      "can_chi": "Quý Tị",
+      "can": "Quý",
+      "chi": "Tị",
+      "tuan_giap": "Giáp Thân",
+      "khong_vong": [
+        "Ngọ",
+        "Mùi"
+      ],
+      "nap_am_name": "Trường Lưu Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 31,
+      "can_chi": "Giáp Ngọ",
+      "can": "Giáp",
+      "chi": "Ngọ",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Sa Trung Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 32,
+      "can_chi": "Ất Mùi",
+      "can": "Ất",
+      "chi": "Mùi",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Sa Trung Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 33,
+      "can_chi": "Bính Thân",
+      "can": "Bính",
+      "chi": "Thân",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Sơn Hạ Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 34,
+      "can_chi": "Đinh Dậu",
+      "can": "Đinh",
+      "chi": "Dậu",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Sơn Hạ Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 35,
+      "can_chi": "Mậu Tuất",
+      "can": "Mậu",
+      "chi": "Tuất",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Bình Địa Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 36,
+      "can_chi": "Kỷ Hợi",
+      "can": "Kỷ",
+      "chi": "Hợi",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Bình Địa Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 37,
+      "can_chi": "Canh Tý",
+      "can": "Canh",
+      "chi": "Tý",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Bích Thượng Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 38,
+      "can_chi": "Tân Sửu",
+      "can": "Tân",
+      "chi": "Sửu",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Bích Thượng Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 39,
+      "can_chi": "Nhâm Dần",
+      "can": "Nhâm",
+      "chi": "Dần",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Kim Bạch Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 40,
+      "can_chi": "Quý Mão",
+      "can": "Quý",
+      "chi": "Mão",
+      "tuan_giap": "Giáp Ngọ",
+      "khong_vong": [
+        "Thìn",
+        "Tị"
+      ],
+      "nap_am_name": "Kim Bạch Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 41,
+      "can_chi": "Giáp Thìn",
+      "can": "Giáp",
+      "chi": "Thìn",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Phúc Đăng Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 42,
+      "can_chi": "Ất Tị",
+      "can": "Ất",
+      "chi": "Tị",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Phúc Đăng Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 43,
+      "can_chi": "Bính Ngọ",
+      "can": "Bính",
+      "chi": "Ngọ",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Thiên Hà Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 44,
+      "can_chi": "Đinh Mùi",
+      "can": "Đinh",
+      "chi": "Mùi",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Thiên Hà Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 45,
+      "can_chi": "Mậu Thân",
+      "can": "Mậu",
+      "chi": "Thân",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Đại Trạch Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 46,
+      "can_chi": "Kỷ Dậu",
+      "can": "Kỷ",
+      "chi": "Dậu",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Đại Trạch Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 47,
+      "can_chi": "Canh Tuất",
+      "can": "Canh",
+      "chi": "Tuất",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Thoa Xuyến Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 48,
+      "can_chi": "Tân Hợi",
+      "can": "Tân",
+      "chi": "Hợi",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Thoa Xuyến Kim",
+      "nap_am_hanh": "Kim"
+    },
+    {
+      "order": 49,
+      "can_chi": "Nhâm Tý",
+      "can": "Nhâm",
+      "chi": "Tý",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Tang Đố Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 50,
+      "can_chi": "Quý Sửu",
+      "can": "Quý",
+      "chi": "Sửu",
+      "tuan_giap": "Giáp Thìn",
+      "khong_vong": [
+        "Dần",
+        "Mão"
+      ],
+      "nap_am_name": "Tang Đố Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 51,
+      "can_chi": "Giáp Dần",
+      "can": "Giáp",
+      "chi": "Dần",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Đại Khê Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 52,
+      "can_chi": "Ất Mão",
+      "can": "Ất",
+      "chi": "Mão",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Đại Khê Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 53,
+      "can_chi": "Bính Thìn",
+      "can": "Bính",
+      "chi": "Thìn",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Sa Trung Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 54,
+      "can_chi": "Đinh Tị",
+      "can": "Đinh",
+      "chi": "Tị",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Sa Trung Thổ",
+      "nap_am_hanh": "Thổ"
+    },
+    {
+      "order": 55,
+      "can_chi": "Mậu Ngọ",
+      "can": "Mậu",
+      "chi": "Ngọ",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Thiên Thượng Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 56,
+      "can_chi": "Kỷ Mùi",
+      "can": "Kỷ",
+      "chi": "Mùi",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Thiên Thượng Hỏa",
+      "nap_am_hanh": "Hỏa"
+    },
+    {
+      "order": 57,
+      "can_chi": "Canh Thân",
+      "can": "Canh",
+      "chi": "Thân",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Thạch Lựu Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 58,
+      "can_chi": "Tân Dậu",
+      "can": "Tân",
+      "chi": "Dậu",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Thạch Lựu Mộc",
+      "nap_am_hanh": "Mộc"
+    },
+    {
+      "order": 59,
+      "can_chi": "Nhâm Tuất",
+      "can": "Nhâm",
+      "chi": "Tuất",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Đại Hải Thủy",
+      "nap_am_hanh": "Thủy"
+    },
+    {
+      "order": 60,
+      "can_chi": "Quý Hợi",
+      "can": "Quý",
+      "chi": "Hợi",
+      "tuan_giap": "Giáp Dần",
+      "khong_vong": [
+        "Tý",
+        "Sửu"
+      ],
+      "nap_am_name": "Đại Hải Thủy",
+      "nap_am_hanh": "Thủy"
+    }
+  ],
+  "thap_nhi_truc": [
+    {
+      "order": 1,
+      "name": "Kiến",
+      "hanh": "Thổ",
+      "nature": "Hắc (bất định)",
+      "meaning": "Bắt đầu khởi sự, xuất hành, nhận chức. Kỵ động thổ, an táng."
+    },
+    {
+      "order": 2,
+      "name": "Trừ",
+      "hanh": "Thủy",
+      "nature": "Hoàng Đạo (Kiết)",
+      "meaning": "Trừ bỏ cái cũ, xả tang, trị bệnh, tắm gội, phá dỡ."
+    },
+    {
+      "order": 3,
+      "name": "Mãn",
+      "hanh": "Kim",
+      "nature": "Hắc (bất định)",
+      "meaning": "Đầy đủ, sung túc; tốt cho khai trương, nhập kho, kết hôn. Kỵ kiện tụng."
+    },
+    {
+      "order": 4,
+      "name": "Bình",
+      "hanh": "Thủy",
+      "nature": "Hắc (bất định)",
+      "meaning": "Bình hòa, san bằng; tốt cho ban nền, sửa đường, giá thú."
+    },
+    {
+      "order": 5,
+      "name": "Định",
+      "hanh": "Mộc",
+      "nature": "Hoàng Đạo (Kiết)",
+      "meaning": "Ấn định, yên ổn; tốt cho giao dịch, ký kết, đính hôn, xây bếp."
+    },
+    {
+      "order": 6,
+      "name": "Chấp",
+      "hanh": "Hỏa",
+      "nature": "Hoàng Đạo (Kiết)",
+      "meaning": "Nắm giữ, thi hành; tốt cho đặt táng, xây đắp, cầu phúc, trồng trọt."
+    },
+    {
+      "order": 7,
+      "name": "Phá",
+      "hanh": "Hỏa",
+      "nature": "Hung Sát",
+      "meaning": "Phá vỡ, tiêu tan; chỉ tốt cho phá dỡ, chữa bệnh. Đại kỵ khởi công, giá thú."
+    },
+    {
+      "order": 8,
+      "name": "Nguy",
+      "hanh": "Hỏa",
+      "nature": "Kiết (nhưng nên cẩn trọng)",
+      "meaning": "Nguy nan tiềm ẩn; tốt cho việc tế tự, cúng bái. Tránh leo cao, đi thuyền."
+    },
+    {
+      "order": 9,
+      "name": "Thành",
+      "hanh": "Kim",
+      "nature": "Hoàng Đạo (Đại Kiết)",
+      "meaning": "Thành công trọn vẹn; tốt cho mọi việc: cưới gả, khai trương, nhập trạch, động thổ."
+    },
+    {
+      "order": 10,
+      "name": "Thâu",
+      "hanh": "Kim",
+      "nature": "Hắc (bất định)",
+      "meaning": "Thu gom, cất giữ; tốt cho gặt lúa, thu nợ, mua sắm. Kỵ xuất tiền, tang lễ."
+    },
+    {
+      "order": 11,
+      "name": "Khai",
+      "hanh": "Kim",
+      "nature": "Hoàng Đạo (Đại Kiết)",
+      "meaning": "Mở mang, thông suốt; đại kiết cho khai trương, động thổ, cưới hỏi, nhập học."
+    },
+    {
+      "order": 12,
+      "name": "Bế",
+      "hanh": "Thổ",
+      "nature": "Hung (bế tắc)",
+      "meaning": "Đóng bít; hợp lợp nhà, đắp đập, xây tường vách. Kỵ khai trương, chữa bệnh, xuất hành."
+    }
+  ],
+  "nhi_thap_bat_tu": [
+    {
+      "order": 1,
+      "name": "Giác",
+      "hanh": "Mộc",
+      "animal": "Giao (Thuồng luồng)",
+      "direction": "Đông",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": true,
+      "summary": "Chủ vinh hiển, thi cử, giá thú; nhưng trúng ngày Kim Thần Thất Sát cần kiêng kỵ."
+    },
+    {
+      "order": 2,
+      "name": "Cang",
+      "hanh": "Kim",
+      "animal": "Long (Rồng)",
+      "direction": "Đông",
+      "nature": "Hung",
+      "is_kim_than_that_sat": true,
+      "summary": "Chủ tai ương, hình ngục, gia đạo bất hòa; kỵ cưới hỏi, tạo tác."
+    },
+    {
+      "order": 3,
+      "name": "Đê",
+      "hanh": "Thổ",
+      "animal": "Lạc (Chồn)",
+      "direction": "Đông",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Chủ tranh chấp, kiện tụng; kỵ khởi công xây dựng."
+    },
+    {
+      "order": 4,
+      "name": "Phòng",
+      "hanh": "Nhật",
+      "animal": "Thỏ",
+      "direction": "Đông",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Đại cát tinh; tốt cho cưới hỏi, tạo tác, thăng quan, mưu sự."
+    },
+    {
+      "order": 5,
+      "name": "Tâm",
+      "hanh": "Nguyệt",
+      "animal": "Hồ (Cáo)",
+      "direction": "Đông",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Hung tinh; kỵ tạo tác, hôn nhân, xuất hành."
+    },
+    {
+      "order": 6,
+      "name": "Vĩ",
+      "hanh": "Hỏa",
+      "animal": "Hổ (Cọp)",
+      "direction": "Đông",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; tốt cho cưới gả, dựng cột, bồi đắp kinh doanh."
+    },
+    {
+      "order": 7,
+      "name": "Cơ",
+      "hanh": "Thủy",
+      "animal": "Báo",
+      "direction": "Đông",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; tốt cho nhập trạch, khai trương, xuất hành."
+    },
+    {
+      "order": 8,
+      "name": "Đẩu",
+      "hanh": "Mộc",
+      "animal": "Giải (Cua)",
+      "direction": "Bắc",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; phát tài lộc, xây dựng nhà cửa thuận lợi."
+    },
+    {
+      "order": 9,
+      "name": "Ngưu",
+      "hanh": "Kim",
+      "animal": "Ngưu (Trâu)",
+      "direction": "Bắc",
+      "nature": "Hung",
+      "is_kim_than_that_sat": true,
+      "summary": "Hung tinh cực mạnh; kỵ giá thú, tạo tác, chôn cất."
+    },
+    {
+      "order": 10,
+      "name": "Nữ",
+      "hanh": "Thổ",
+      "animal": "Bức (Dơi)",
+      "direction": "Bắc",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Hung tinh; kỵ cưới gả, tạo tác, kiện tụng."
+    },
+    {
+      "order": 11,
+      "name": "Hư",
+      "hanh": "Nhật",
+      "animal": "Thử (Chuột)",
+      "direction": "Bắc",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Hung tinh; hư hao mất mát, kỵ khởi công."
+    },
+    {
+      "order": 12,
+      "name": "Nguy",
+      "hanh": "Nguyệt",
+      "animal": "Yến (Én)",
+      "direction": "Bắc",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Chủ nguy hiểm, té ngã; kỵ đi thuyền, khai trương."
+    },
+    {
+      "order": 13,
+      "name": "Thất",
+      "hanh": "Hỏa",
+      "animal": "Trư (Heo)",
+      "direction": "Bắc",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Đại kiết; hưng gia vượng tộc, tốt cho hôn nhân, tạo tác."
+    },
+    {
+      "order": 14,
+      "name": "Bích",
+      "hanh": "Thủy",
+      "animal": "Du (Rái cá)",
+      "direction": "Bắc",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; tốt cho chôn cất, xây dựng, giá thú."
+    },
+    {
+      "order": 15,
+      "name": "Khuê",
+      "hanh": "Mộc",
+      "animal": "Lang (Chó sói)",
+      "direction": "Tây",
+      "nature": "Hung",
+      "is_kim_than_that_sat": true,
+      "summary": "Hung tinh; kỵ khai trương, xuất hành, giá thú."
+    },
+    {
+      "order": 16,
+      "name": "Lâu",
+      "hanh": "Kim",
+      "animal": "Cẩu (Chó)",
+      "direction": "Tây",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": true,
+      "summary": "Bản chất tốt nhưng trúng Kim Thần Thất Sát phải cẩn trọng."
+    },
+    {
+      "order": 17,
+      "name": "Vị",
+      "hanh": "Thổ",
+      "animal": "Trĩ (Chim trĩ)",
+      "direction": "Tây",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; tài lộc dồi dào, tốt cho khánh thành, khai trương."
+    },
+    {
+      "order": 18,
+      "name": "Mão",
+      "hanh": "Nhật",
+      "animal": "Kê (Gà)",
+      "direction": "Tây",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Hung tinh; kỵ tạo tác, hôn nhân."
+    },
+    {
+      "order": 19,
+      "name": "Tất",
+      "hanh": "Nguyệt",
+      "animal": "Ô (Quạ)",
+      "direction": "Tây",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Đại kiết; trăm sự thuận hòa, bình an."
+    },
+    {
+      "order": 20,
+      "name": "Chủy",
+      "hanh": "Hỏa",
+      "animal": "Hầu (Khỉ)",
+      "direction": "Tây",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Đại hung; tuyệt đối kỵ cưới gả, tạo tác."
+    },
+    {
+      "order": 21,
+      "name": "Sâm",
+      "hanh": "Thủy",
+      "animal": "Viên (Vượn)",
+      "direction": "Tây",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; tốt cho buôn bán, kinh doanh, xuất hành."
+    },
+    {
+      "order": 22,
+      "name": "Tỉnh",
+      "hanh": "Mộc",
+      "animal": "Hãn (Chó rừng)",
+      "direction": "Nam",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; tốt cho đào giếng, tu bổ, cầu tài."
+    },
+    {
+      "order": 23,
+      "name": "Quỷ",
+      "hanh": "Kim",
+      "animal": "Dương (Dê)",
+      "direction": "Nam",
+      "nature": "Hung",
+      "is_kim_than_that_sat": true,
+      "summary": "Đại hung sát; kỵ khởi tạo, cưới gả, an táng."
+    },
+    {
+      "order": 24,
+      "name": "Liễu",
+      "hanh": "Thổ",
+      "animal": "Chương (Hoẵng)",
+      "direction": "Nam",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Hung tinh; hao tài tốn của, kỵ khai trương."
+    },
+    {
+      "order": 25,
+      "name": "Tinh",
+      "hanh": "Nhật",
+      "animal": "Mã (Ngựa)",
+      "direction": "Nam",
+      "nature": "Hung",
+      "is_kim_than_that_sat": true,
+      "summary": "Hung tinh; kỵ cưới hỏi, cất nóc, tạo tác."
+    },
+    {
+      "order": 26,
+      "name": "Trương",
+      "hanh": "Nguyệt",
+      "animal": "Lộc (Hươu)",
+      "direction": "Nam",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Cát tinh; tốt cho hôn nhân, khởi tạo, nhập học."
+    },
+    {
+      "order": 27,
+      "name": "Dực",
+      "hanh": "Hỏa",
+      "animal": "Xà (Rắn)",
+      "direction": "Nam",
+      "nature": "Hung",
+      "is_kim_than_that_sat": false,
+      "summary": "Hung tinh; chủ khẩu thiệt, tranh chấp."
+    },
+    {
+      "order": 28,
+      "name": "Chẩn",
+      "hanh": "Thủy",
+      "animal": "Dẫn (Trùng)",
+      "direction": "Nam",
+      "nature": "Kiết",
+      "is_kim_than_that_sat": false,
+      "summary": "Đại kiết; gia đạo hưng thịnh, tốt cho mọi sự khởi đầu."
+    }
+  ],
+  "hoang_dao_12_than": [
+    {
+      "order": 1,
+      "name": "Thanh Long",
+      "is_hoang_dao": true,
+      "nature": "Kiết",
+      "meaning": "Đứng đầu các giờ Hoàng Đạo, tốt cho mọi việc."
+    },
+    {
+      "order": 2,
+      "name": "Minh Đường",
+      "is_hoang_dao": true,
+      "nature": "Kiết",
+      "meaning": "Có lợi cho gặp quý nhân, thăng quan tiến chức."
+    },
+    {
+      "order": 3,
+      "name": "Thiên Hình",
+      "is_hoang_dao": false,
+      "nature": "Hung",
+      "meaning": "Hắc đạo; kỵ kiện tụng, tranh chấp, khởi sự."
+    },
+    {
+      "order": 4,
+      "name": "Chu Tước",
+      "is_hoang_dao": false,
+      "nature": "Hung",
+      "meaning": "Hắc đạo; chủ khẩu thiệt, thị phi, tranh cãi."
+    },
+    {
+      "order": 5,
+      "name": "Kim Quỹ",
+      "is_hoang_dao": true,
+      "nature": "Kiết",
+      "meaning": "Trùng ngày sao Thiên Tài, tốt cho cầu tài lộc, của cải."
+    },
+    {
+      "order": 6,
+      "name": "Kim Đường",
+      "is_hoang_dao": true,
+      "nature": "Kiết",
+      "meaning": "Bảo Quang Hoàng Đạo, trùng sao Địa Tài, tốt cho kinh doanh."
+    },
+    {
+      "order": 7,
+      "name": "Bạch Hổ",
+      "is_hoang_dao": false,
+      "nature": "Hung",
+      "meaning": "Hắc đạo; kỵ tang sự, phẫu thuật, khởi công."
+    },
+    {
+      "order": 8,
+      "name": "Ngọc Đường",
+      "is_hoang_dao": true,
+      "nature": "Kiết",
+      "meaning": "Trùng sao Thiên Thành, tốt cho thi cử, học vấn, giá thú."
+    },
+    {
+      "order": 9,
+      "name": "Thiên Lao",
+      "is_hoang_dao": false,
+      "nature": "Hung",
+      "meaning": "Hắc đạo; giam cầm, bất lợi xuất hành, ký kết."
+    },
+    {
+      "order": 10,
+      "name": "Huyền Vũ",
+      "is_hoang_dao": false,
+      "nature": "Hung",
+      "meaning": "Hắc đạo; chủ tiểu nhân ám hại, mất trộm."
+    },
+    {
+      "order": 11,
+      "name": "Tư Mệnh",
+      "is_hoang_dao": true,
+      "nature": "Kiết",
+      "meaning": "Trùng sao Thiên Quang, sinh khí thịnh vượng."
+    },
+    {
+      "order": 12,
+      "name": "Câu Trận",
+      "is_hoang_dao": false,
+      "nature": "Hung",
+      "meaning": "Hắc đạo; cản trở, trì trệ, kỵ việc lớn."
+    }
+  ],
+  "hoang_dao_start_chi": {
+    "Tý": "Thân",
+    "Ngọ": "Thân",
+    "Sửu": "Tuất",
+    "Mùi": "Tuất",
+    "Dần": "Tý",
+    "Thân": "Tý",
+    "Mão": "Dần",
+    "Dậu": "Dần",
+    "Thìn": "Thìn",
+    "Tuất": "Thìn",
+    "Tị": "Ngọ",
+    "Hợi": "Ngọ"
+  },
+  "sat_chu": {
+    "duong_sat_chu_by_month": {
+      "1": "Tị",
+      "2": "Tý",
+      "3": "Mùi",
+      "4": "Mão",
+      "5": "Thân",
+      "6": "Tuất",
+      "7": "Sửu",
+      "8": "Hợi",
+      "9": "Ngọ",
+      "10": "Dậu",
+      "11": "Dần",
+      "12": "Thìn"
+    },
+    "sat_chu_by_season": {
+      "Xuân": "Ngọ",
+      "Hạ": "Tý",
+      "Thu": "Dậu",
+      "Đông": "Mão"
+    }
+  },
+  "tho_tu": {
+    "tho_tu_by_month": {
+      "1": "Bính Tuất",
+      "2": "Nhâm Thìn",
+      "3": "Tân Hợi",
+      "4": "Đinh Tị",
+      "5": "Mậu Tý",
+      "6": "Bính Ngọ",
+      "7": "Ất Sửu",
+      "8": "Quý Mùi",
+      "9": "Giáp Dần",
+      "10": "Mậu Thân",
+      "11": "Tân Mão",
+      "12": "Tân Dậu"
+    },
+    "tho_tu_chi_by_month": {
+      "1": "Tuất",
+      "2": "Thìn",
+      "3": "Hợi",
+      "4": "Tị",
+      "5": "Tý",
+      "6": "Ngọ",
+      "7": "Sửu",
+      "8": "Mùi",
+      "9": "Dần",
+      "10": "Thân",
+      "11": "Mão",
+      "12": "Dậu"
+    }
+  },
+  "tam_dai_cat_tinh": {
+    "Tu_Manh": {
+      "months": [
+        1,
+        4,
+        7,
+        10
+      ],
+      "Sat_Cong": [
+        "Giáp Ngọ",
+        "Ất Dậu",
+        "Bính Tý",
+        "Đinh Mão",
+        "Tân Dậu",
+        "Nhâm Tý",
+        "Quý Mão"
+      ],
+      "Truc_Tinh": [
+        "Giáp Thìn",
+        "Ất Mùi",
+        "Bính Tuất",
+        "Đinh Sửu",
+        "Mậu Thìn",
+        "Nhâm Tuất",
+        "Quý Sửu"
+      ],
+      "Nhon_Chuyen": [
+        "Bính Thìn",
+        "Đinh Mùi",
+        "Mậu Tuất",
+        "Kỷ Sửu",
+        "Canh Thìn",
+        "Tân Mùi"
+      ]
+    },
+    "Tu_Trong": {
+      "months": [
+        2,
+        5,
+        8,
+        11
+      ],
+      "Sat_Cong": [
+        "Giáp Thân",
+        "Ất Hợi",
+        "Bính Dần",
+        "Canh Thân",
+        "Tân Hợi",
+        "Nhâm Dần",
+        "Quý Tị"
+      ],
+      "Truc_Tinh": [
+        "Giáp Ngọ",
+        "Ất Dậu",
+        "Bính Tý",
+        "Đinh Mão",
+        "Tân Dậu",
+        "Nhâm Tý",
+        "Quý Mão"
+      ],
+      "Nhon_Chuyen": [
+        "Ất Mão",
+        "Bính Ngọ",
+        "Đinh Dậu",
+        "Mậu Tý",
+        "Kỷ Mão",
+        "Canh Ngọ"
+      ]
+    },
+    "Tu_Quy": {
+      "months": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "Sat_Cong": [
+        "Giáp Tuất",
+        "Kỷ Sửu",
+        "Kỷ Mùi",
+        "Canh Tuất",
+        "Tân Sửu",
+        "Nhâm Thìn",
+        "Quý Mùi"
+      ],
+      "Truc_Tinh": [
+        "Giáp Thân",
+        "Ất Hợi",
+        "Bính Dần",
+        "Canh Thân",
+        "Tân Mão",
+        "Nhâm Dần",
+        "Quý Tị"
+      ],
+      "Nhon_Chuyen": [
+        "Giáp Dần",
+        "Ất Tị",
+        "Bính Thân",
+        "Mậu Dần",
+        "Kỷ Tị",
+        "Kỷ Hợi",
+        "Quý Hợi"
+      ]
+    }
+  }
+}

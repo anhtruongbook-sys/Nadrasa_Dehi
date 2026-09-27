@@ -201,9 +201,14 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; padding-top: 3px; border-top: 1px solid rgba(255,255,255,0.08);">
               <span id="ray-hud-ung-ky" style="color: #94a3b8; font-size: 0.63rem;"></span>
-              <button type="button" id="btn-ray-hud-open-hkdq" style="background: rgba(245, 176, 65, 0.15); border: 1px solid rgba(245, 176, 65, 0.45); color: #facc15; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; cursor: pointer;">
-                🔱 Xem Đủ 6 Hào
-              </button>
+              <div style="display: flex; gap: 4px;">
+                <button type="button" id="btn-ray-hud-trachcat" style="background: rgba(245, 176, 65, 0.2); border: 1px solid rgba(245, 176, 65, 0.5); color: #facc15; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; cursor: pointer;" title="Xem ngày tốt cho hướng tia ngắm">
+                  🧭 Trạch Cát
+                </button>
+                <button type="button" id="btn-ray-hud-open-hkdq" style="background: rgba(245, 176, 65, 0.15); border: 1px solid rgba(245, 176, 65, 0.45); color: #facc15; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; cursor: pointer;">
+                  🔱 Xem Đủ 6 Hào
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -324,6 +329,12 @@
             <span class="hud-card-badge" id="hud-detail-hkdq-van9" style="background: rgba(2,132,199,0.18); color: #38bdf8; border-color: rgba(56,189,248,0.4);">🌊 Linh Thần Vận 9</span>
             <span class="hud-card-badge" id="hud-detail-hkdq-tkv" style="background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.3);">🛡️ Tuyến An Toàn</span>
             <span style="font-size: 0.68rem; color: #f5b041; margin-left: auto; font-weight: 700;">[Xem 384 Hào ↗]</span>
+          </div>
+          <div class="hud-card-divider"></div>
+          <div class="hud-card-row" style="margin-top: 4px;">
+            <button type="button" id="btn-hud-trachcat" style="width: 100%; background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.25) 100%); border: 1px solid rgba(245,158,11,0.5); color: #facc15; font-size: 0.75rem; font-weight: 700; padding: 6px 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              🧭 Trạch Nhật (Xem Ngày Tốt Cho Tọa Sơn Này)
+            </button>
           </div>
           <div class="hud-card-divider"></div>
           <div class="hud-card-row" style="margin-top: 4px;">
@@ -3869,6 +3880,29 @@
         e.stopPropagation();
         const current = (state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.rotation;
         openHKDQModal(current);
+      });
+    }
+
+    const btnRayTrachCat = document.getElementById('btn-ray-hud-trachcat');
+    if (btnRayTrachCat) {
+      btnRayTrachCat.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const current = (state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.rotation;
+        const sittingDeg = ((current + 180) % 360 + 360) % 360;
+        if (typeof global.openTrachCatForSitting === 'function') {
+          global.openTrachCatForSitting(sittingDeg, current);
+        }
+      });
+    }
+
+    const btnHudTrachCat = document.getElementById('btn-hud-trachcat');
+    if (btnHudTrachCat) {
+      btnHudTrachCat.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sittingDeg = ((state.rotation + 180) % 360 + 360) % 360;
+        if (typeof global.openTrachCatForSitting === 'function') {
+          global.openTrachCatForSitting(sittingDeg, state.rotation);
+        }
       });
     }
 

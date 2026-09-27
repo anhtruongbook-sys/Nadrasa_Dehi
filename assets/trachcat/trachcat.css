@@ -1,0 +1,582 @@
+/* ==========================================================================
+   NETA LIGHT - TRẠCH CÁT (XEM NGÀY TỐT XẤU) CSS STYLESHEET
+   Phối hợp 83 Việc Trạng Trình, Đổng Công, 16 Tiêu Chí & Kỳ Môn Trạch Nhật
+   ========================================================================== */
+
+#view-trachcat {
+  width: 100%;
+  min-height: calc(100vh - 50px);
+  padding: 10px 14px 80px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  background: radial-gradient(circle at 50% 10%, rgba(30, 20, 45, 0.6) 0%, rgba(10, 6, 16, 0.95) 100%);
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.tc-container {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Glassmorphism Panels */
+.tc-panel {
+  background: rgba(22, 17, 34, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 215, 0, 0.18);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-sizing: border-box;
+}
+
+.tc-panel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #facc15;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+/* Category Chips */
+.tc-cat-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  scrollbar-width: thin;
+}
+
+.tc-cat-chip {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tc-cat-chip:hover {
+  background: rgba(245, 176, 65, 0.15);
+  color: #facc15;
+}
+
+.tc-cat-chip.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #0f172a;
+  border-color: #fbbf24;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+}
+
+/* Task Selector Box */
+.tc-task-selector-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tc-search-input {
+  flex: 1;
+  background: rgba(15, 10, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  color: #f8fafc;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.tc-search-input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+}
+
+.tc-select {
+  flex: 1.5;
+  background: rgba(15, 10, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  color: #f8fafc;
+  outline: none;
+}
+
+/* Person & Year Grid */
+.tc-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .tc-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tc-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.tc-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.tc-input {
+  width: 100%;
+  background: rgba(15, 10, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  color: #f8fafc;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Person Badges */
+.tc-person-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.tc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.tc-badge-good {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.tc-badge-bad {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.tc-badge-warn {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.tc-badge-info {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+/* Month Selector Pills */
+.tc-months-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+}
+
+@media (max-width: 600px) {
+  .tc-months-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.tc-month-pill {
+  padding: 6px 4px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tc-month-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.tc-month-pill.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #60a5fa;
+  font-weight: 700;
+}
+
+/* Filter Toggles */
+.tc-toggles-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.tc-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tc-toggle-label input {
+  cursor: pointer;
+  accent-color: #f59e0b;
+}
+
+/* Action Button */
+.tc-btn-search {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 50%, #78350f 100%);
+  border: 1px solid #facc15;
+  border-radius: 10px;
+  color: #fef08a;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.4);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tc-btn-search:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.tc-btn-search:active {
+  transform: translateY(0);
+}
+
+/* Results Section */
+.tc-summary-banner {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.12) 0%, rgba(56, 189, 248, 0.12) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tc-summary-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fef08a;
+}
+
+.tc-summary-stats {
+  display: flex;
+  gap: 8px;
+  font-size: 0.75rem;
+}
+
+/* Day Cards */
+.tc-day-card {
+  background: rgba(20, 16, 30, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.tc-day-card:hover {
+  border-color: rgba(245, 176, 65, 0.4);
+}
+
+.tc-day-card.top-rank {
+  border: 1.5px solid #f59e0b;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2);
+}
+
+/* Card Header */
+.tc-card-header {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tc-card-date-col {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.tc-card-solar {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.tc-card-lunar {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+.tc-card-canchi {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.tc-card-badges-col {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.tc-score-pill {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+}
+
+.tc-score-pill.medium {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.tc-score-pill.low {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+/* Card Body */
+.tc-card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tc-details-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.tc-meta-tag {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+}
+
+/* Dong Cong Quote Box */
+.tc-dongcong-box {
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 3px solid #f59e0b;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+.tc-dongcong-header {
+  font-weight: 700;
+  color: #facc15;
+  margin-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Hours Grid */
+.tc-hours-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.tc-hours-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tc-hours-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+
+@media (max-width: 600px) {
+  .tc-hours-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tc-hour-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 5px;
+  text-align: center;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.tc-hour-card.rank-top {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.tc-hour-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.tc-hour-time {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+.tc-hour-rank {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #facc15;
+  margin-top: 2px;
+}
+
+/* Star Khac Ung Box */
+.tc-khacung-box {
+  background: rgba(147, 51, 234, 0.08);
+  border: 1px dashed rgba(168, 85, 247, 0.35);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.tc-khacung-title {
+  font-weight: 700;
+  color: #d8b4fe;
+  margin-bottom: 2px;
+}
+
+/* Card Actions */
+.tc-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tc-btn-action {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tc-btn-qmdj {
+  background: rgba(168, 85, 247, 0.2);
+  color: #e9d5ff;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.tc-btn-qmdj:hover {
+  background: rgba(168, 85, 247, 0.35);
+  color: #ffffff;
+}
+
+.tc-btn-cal {
+  background: rgba(59, 130, 246, 0.2);
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.tc-btn-cal:hover {
+  background: rgba(59, 130, 246, 0.35);
+  color: #ffffff;
+}
+
+/* Empty State */
+.tc-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #94a3b8;
+}
+
+.tc-empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}

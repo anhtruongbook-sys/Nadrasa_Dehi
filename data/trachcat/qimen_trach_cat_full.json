@@ -1,0 +1,1436 @@
+{
+  "metadata": {
+    "book_title": "Kỳ Môn Dữ Trạch Cát (Kỳ Môn và Trạch Cát)",
+    "author": "Trương Chí Xuân",
+    "translator": "Vũ Phác",
+    "page_count": 89,
+    "version": "1.0.0"
+  },
+  "core_principles": [
+    {
+      "principle_id": "PRINCIPLE_01",
+      "name": "Thuận ứng Thiên thời",
+      "summary": "Thời gian là quỹ tích của sự vận hành không gian vũ trụ, Trái Đất và con người luôn chịu ảnh hưởng của các thiên thể. Trạch cát trước hết phải thích ứng với tự nhiên và khí tượng.",
+      "detailed_doctrinal_rules": [
+        "Tránh các hiện tượng thời tiết cực đoan: mưa to gió lớn do bão hoặc áp thấp nhiệt đới, tuyết dày sương dày, bão cát.",
+        "Ưu tiên chọn tiết trời quang đãng, khô ráo, nắng ấm để tiện cho người tham gia xuất hành, khởi công, hội họp.",
+        "Thiên thời là điều kiện tiên quyết mang tính khách quan, con người không thể cưỡng cầu."
+      ],
+      "criticisms_of_folk_myths": []
+    },
+    {
+      "principle_id": "PRINCIPLE_02",
+      "name": "Coi trọng Địa lợi",
+      "summary": "Thời gian và Không gian có tính thống nhất hữu cơ (Thời - Không hợp nhất). Việc chọn thời gian phải gắn liền với điều kiện địa chất, địa lý và phương vị.",
+      "detailed_doctrinal_rules": [
+        "Tránh các thời điểm dễ phát sinh tai họa địa chất: động đất, sóng thần, sạt lở núi, đất đá trôi.",
+        "Phương vị Thái Tuế: Thái Tuế là thiên can địa chi của năm trực lệnh, quản trị phương vị tương ứng của Hậu Thiên Bát Quái.",
+        "Tuyệt đối không được động thổ trên đầu Thái Tuế: Khi khởi công đặt móng hoặc đào huyệt tạo mộ, xẻng đào đầu tiên không được bổ vào phương vị Thái Tuế của năm.",
+        "Thái Tuế chỉ được tọa, không được xung: Không chọn ngày tương xung với địa chi Thái Tuế (năm Giáp Thân kỵ ngày Dần). Tuy nhiên có thể chọn ngày Thái Tuế đương trực (ngày Thân) là đại cát đại lợi.",
+        "Ngày tạo táng kỵ phạm lưu niên Thái Tuế."
+      ],
+      "criticisms_of_folk_myths": [
+        {
+          "myth_name": "Ngày Nguyệt Kỵ (Mùng 5, 14, 23)",
+          "folk_belief": "Dân gian truyền tụng 'Mùng 5, 14, 23, Thái Thượng lão quân bất luyện đan', coi là ngày đại hung kỵ trăm việc.",
+          "scientific_debunking": "Sách 'Tinh Bái Loại Sao' chỉ rõ: Đây thực chất là chu kỳ số Cửu Cung Lạc Thư. Ngày mùng 1 khởi cung 1 (Khảm), mùng 2 cung 2... đến ngày mùng 5 nhập Trung Cung 5. Trung Cung là cực vị chí tôn của hoàng đế phong kiến, thần dân phải kiêng phạm nên gọi là Nguyệt Kỵ. Tương tự, ngày 14 và ngày 23 cũng tuần hoàn nhập Trung Cung. Trong xã hội hiện đại, quan niệm này hoàn toàn vô căn cứ và không phải là hung sát."
+        },
+        {
+          "myth_name": "Dương Công Kỵ Nhật (13 ngày một năm)",
+          "folk_belief": "Tương truyền do Dương Quân Tùng đặt ra, mỗi tháng có 1 ngày (tháng 7 có 2 ngày) bách sự cấm kỵ.",
+          "scientific_debunking": "Sách 'Hiệp Kỷ Biện Phương Thư' phần Biện Ngoa và sách 'Lãng Tích Tục Đàm' đã chứng minh: Đây thực chất là ngày trực của sao Thất Hỏa Trư trong Nhị Thập Bát Tú. Sao Thất vốn là Cát Tú, không thể là hung nhật. Nhiều bậc hiền triết vĩ đại trong lịch sử như Khổng Tử, Đường Đại Tông, Tống Hiếu Tông, Mạnh Thường Quân, Tô Đông Pha đều sinh ra hoặc thành sự vào ngày này mà không gặp họa gì."
+        }
+      ]
+    },
+    {
+      "principle_id": "PRINCIPLE_03",
+      "name": "Chú trọng Nhân hòa",
+      "summary": "Nhân hòa là yếu tố tối thượng trong tam tài (Thiên - Địa - Nhân). Nhân khí vượng và sức mạnh của đức hạnh con người có khả năng chế ngự hung sát.",
+      "detailed_doctrinal_rules": [
+        "Tôn trọng phong tục tập quán, dân tình dân ý của từng vùng miền, quốc gia, tôn giáo.",
+        "Chọn thời gian phù hợp với sinh hoạt xã hội: Kết hôn, khai trương nên chọn dịp nghỉ lễ (Tết, lễ dài ngày) để nhân khí đông đúc tụ hội; an táng chọn theo tiết âm linh (Thanh Minh, rằm tháng 7, mùng 1 tháng 10).",
+        "Sức mạnh của 'Quý Nhân': Sự hiện diện của quý nhân hoặc người có đức cao vọng trọng có thể hóa giải bách sát (điển tích Viên Khách Sư cùng Lâu Sư Đức qua sông an toàn; vua Khang Hy quang lâm biến đám cưới phạm sát thành đại cát).",
+        "Bác bỏ thuyết 'Tạo Mệnh' cực đoan của Dương Quân Tùng: Không thể coi chọn ngày như sinh ra một số mệnh Bát Tự, trạch cát chỉ là 'áo gấm thêm hoa' bổ trợ nỗ lực chủ quan của con người."
+      ],
+      "criticisms_of_folk_myths": [
+        {
+          "myth_name": "Thuyết Tạo Mệnh Bát Tự cho Nhật Khóa",
+          "folk_belief": "Coi việc chọn 4 trụ Năm Tháng Ngày Giờ như sinh một người, bắt buộc phải phân tích vượng suy hỷ dụng thần bát tự của từng cá nhân.",
+          "scientific_debunking": "Phương pháp này rườm rà, rối loạn và thiếu tính thực tiễn. Ví dụ trong cơ quan có cả Bí thư lẫn Chủ tịch, trong hôn lễ có Bát tự của cả chàng rể lẫn cô dâu với hỷ dụng thần đối lập nhau thì không thể lấy ai làm chuẩn. Chỉ cần lấy Niên Mệnh của người đứng đầu pháp nhân hoặc chủ sự gia đình làm chuẩn."
+        }
+      ]
+    },
+    {
+      "principle_id": "PRINCIPLE_04",
+      "name": "Ngũ hành Khế hợp",
+      "summary": "Căn cứ triết học gốc rễ của trạch cát là thuyết Âm Dương Ngũ Hành sinh khắc chế hóa. Lấy Niên Mệnh của chủ sự làm gốc phối hợp với ngũ hành của ngày giờ.",
+      "detailed_doctrinal_rules": [
+        "Bài học Hán Vũ Đế kén ngày cưới cho công chúa: Trưng cầu 7 môn phái nhưng cuối cùng phê chuẩn 'Lấy ý kiến của phái Ngũ Hành làm chính'.",
+        "Phối hợp Kiến Trừ 12 Thần Trực: 6 Trực Hoàng Đạo (Trừ, Nguy, Định, Chấp, Thành, Khai); 6 Trực Hắc Đạo (Kiến, Mãn, Bình, Thâu, Bế, Phá). Cát hung có tính tương đối theo từng mục việc.",
+        "Quy tắc Niên Mệnh: Niên mệnh không nên tương xung tương hình với Thái Tuế và Nguyệt Kiến.",
+        "Nên chọn ngày mà niên mệnh của chủ sự được đương lệnh vượng tướng hoặc đắc Tam Hợp, Lục Hợp.",
+        "Riêng việc xuất hành, khai nghiệp, di chuyển: Có thể dùng ngày tương xung với niên mệnh vì xung chủ về hành động và dịch chuyển."
+      ],
+      "criticisms_of_folk_myths": []
+    }
+  ],
+  "specific_rules": [
+    {
+      "rule_id": "RULE_QIMEN_01",
+      "rule_number": 1,
+      "title": "Phân biệt Thiên Bàn vs Địa Bàn Bát Thần theo Âm Dương Độn trong Trạch Cát Địa Lý",
+      "domain_scope": "all",
+      "condition_description": "Trạch cát sự việc thường nhật dùng Thiên Bàn Bát Thần (Tiểu Trực Phù theo Đại Trực Phù Cửu Tinh). Riêng trạch cát phong thủy địa lý khởi tạo Dương Trạch và hạ táng Âm Trạch: Dương Độn vẫn dùng Thiên Bàn Bát Thần; Âm Độn bắt buộc đổi sang dùng Địa Bàn Bát Thần (Tiểu Trực Phù vận hành theo Địa Bàn Lục Giáp Trực Phù, 10 giờ di chuyển một cung theo Kỳ Môn Địa Thư).",
+      "penalty_or_bonus": "-10 điểm nếu an sai hệ Bát Thần trong Âm Độn địa lý",
+      "is_fatal_rejection": false,
+      "implementation_logic": "if is_geographic_fengshui and is_yin_ju: use_earth_plate_eight_deities()"
+    },
+    {
+      "rule_id": "RULE_QIMEN_02",
+      "rule_number": 2,
+      "title": "Quan Hệ Sinh Khắc Cung Can Giờ - Can Ngày - Can Năm & Lọc Tuyệt Đối Chân Không Vong",
+      "domain_scope": "all",
+      "condition_description": "Cung Can Giờ rơi vào không được tương khắc Cung Can Ngày rơi vào. Cung Can Ngày rơi vào không được tương khắc Cung Can Năm rơi vào. Cung Can Ngày và Can Giờ tuyệt đối không được rơi vào Không Vong (đặc biệt là Chân Không).",
+      "penalty_or_bonus": "-15 điểm nếu Cung Can Giờ khắc Cung Can Ngày; Loại bỏ trực tiếp (Reject) nếu Can Ngày/Giờ lâm Chân Không",
+      "is_fatal_rejection": true,
+      "implementation_logic": "if is_chan_khong(day_stem_palace) or is_chan_khong(hour_stem_palace): reject_day()"
+    },
+    {
+      "rule_id": "RULE_QIMEN_03",
+      "rule_number": 3,
+      "title": "Kiểm Soát Tam Đại Hung Thần (Bạch Hổ, Đằng Xà, Huyền Vũ) Cưỡi Can Ngày & Đáo Tọa Sơn",
+      "domain_scope": "all",
+      "condition_description": "Ba hung thần Bạch Hổ (chủ đổ máu, tai nạn, tử thương), Đằng Xà (chủ quái dị, lừa gạt, kinh hoàng), Huyền Vũ (chủ trộm cắp, khẩu thiệt, tiểu nhân) không được lâm lên Cung của Can Ngày. Trong trạch cát phong thủy địa lý, phương vị Tọa Sơn của ngôi nhà/ngôi mộ tuyệt đối không được Không Vong và ba hung thần này không được đáo Tọa Sơn.",
+      "penalty_or_bonus": "-12 điểm nếu Tam Hung Thần cưỡi Can Ngày; Loại bỏ trực tiếp nếu Tọa Sơn lâm Bạch Hổ/Đằng Xà hoặc Tọa Sơn Không Vong",
+      "is_fatal_rejection": true,
+      "implementation_logic": "if mountain_sitting_palace in [bach_ho, dang_xa] or is_empty(mountain_sitting_palace): reject_day()"
+    },
+    {
+      "rule_id": "RULE_QIMEN_04",
+      "rule_number": 4,
+      "title": "Kiểm Soát Cung Tử Môn (Âm Trạch) & Cung Sinh Môn (Dương Trạch)",
+      "domain_scope": "all",
+      "condition_description": "Đối với tạo táng Âm trạch: Cung Tử Môn là mộ địa, Thiên Địa tinh bàn tại cung Tử Môn không được tương khắc (người sống không khắc người chết, người chết không khắc người sống). Đối với Dương trạch: Cung Sinh Môn là ngôi nhà, Cung Sinh Môn không được xung khắc Cung Can Ngày. Cung Sinh Môn và Tử Môn tuyệt đối không được Không Vong.",
+      "penalty_or_bonus": "-15 điểm nếu Sinh Môn khắc Can Ngày; Loại bỏ trực tiếp nếu Cung Sinh Môn/Tử Môn lâm Không Vong",
+      "is_fatal_rejection": true,
+      "implementation_logic": "if task_type == 'duong_trach' and palace_clash(sinh_mon_palace, day_stem_palace): reject_day()"
+    },
+    {
+      "rule_id": "RULE_QIMEN_05",
+      "rule_number": 5,
+      "title": "Dự Trắc Khí Tượng Tránh Mưa Dông Bão Lũ Bằng Tượng Cửu Tinh",
+      "domain_scope": "khi_tuong",
+      "condition_description": "Khảo sát khí tượng thiên thời của ngày giờ dụng sự để tránh thời tiết cực đoan: Sao Thiên Bồng (Thủy) đới Nhâm/Quý rơi vào Cung 1, 3, 4; Sao Thiên Trụ (Kim) đới Nhâm/Quý rơi vào Cung 1, 6, 7; Sao Thiên Phụ, Thiên Xung (Mộc) đới Giáp/Ất rơi vào Cung 3, 4, 9 chủ sấm sét, mưa to gió lớn.",
+      "penalty_or_bonus": "-8 điểm nếu cách cục chủ mưa bão cực đoan trong sự kiện ngoài trời",
+      "is_fatal_rejection": false,
+      "implementation_logic": "if is_outdoor_event and is_heavy_rain_pattern(chart): flag_weather_warning()"
+    }
+  ],
+  "case_studies": [
+    {
+      "case_id": "CASE_01",
+      "case_index": 1,
+      "title": "Nhật khóa xây mới mộ tổ họ Lê ở Quảng Đông (Tần lão tiên sinh quán Thịnh Đức Đường)",
+      "page_range": "Trang 22 - 27",
+      "event_type": "am_trach_sua_mo",
+      "client_info": {
+        "person_role": "Người con trai thứ ba (chủ tế, tổng giám đốc công ty xây dựng)",
+        "birth_year": 1936,
+        "can_chi": "Bính Tý",
+        "nien_menh": "Giản Hạ Thủy",
+        "other_members": [
+          "Phụ thân quá cố sinh 1908 Mậu Thân",
+          "Mẫu thân sinh Tân Hợi 90 tuổi",
+          "Trưởng nam Nhâm Thân 69 tuổi",
+          "Thứ nam Giáp Tuất 67 tuổi",
+          "Con thứ tư Nhâm Ngọ 59 tuổi",
+          "Con thứ sáu Đinh Hợi 54 tuổi",
+          "Con thứ bảy Canh Dần 51 tuổi"
+        ]
+      },
+      "target_orientation": {
+        "mountain_sitting": "Cấn sơn kiêm Dần",
+        "facing_direction": "Khôn hướng kiêm Thân",
+        "fen_jin": "Tân Sửu",
+        "water_exit": "Thiên bàn sao Sâm thủy 6 độ"
+      },
+      "datetime_info": {
+        "solar_datetime": "16/09/2000 17:30",
+        "lunar_datetime": "19/08/2000 giờ Kỷ Dậu",
+        "four_pillars": {
+          "year": "Canh Thìn",
+          "month": "Ất Dậu",
+          "day": "Đinh Sửu",
+          "hour": "Kỷ Dậu"
+        },
+        "solar_term": "Bạch Lộ (Hạ nguyên Bạch Lộ)"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": true,
+        "folk_methods_used": [
+          "Tam Hợp",
+          "Đại Lục Nhâm",
+          "Tẩu Mã Lục Nhâm",
+          "Phi Cung Kỳ Môn"
+        ],
+        "details": "Tần lão tiên sinh khẳng định ngày này là Cát Thái Âm, giờ Mẫu Thương, Phúc Tinh, Đại Tiến, Công Tào trực thần, phi bàn trung cung phát hiệu thi lệnh, kết luận là khóa nguyên thủ đặc cát."
+      },
+      "qimen_chart": {
+        "ju_number": 6,
+        "is_yin": true,
+        "yuan": "Ha",
+        "xun_head": "Giáp Thìn",
+        "empty_branches": [
+          "Dần",
+          "Mão"
+        ],
+        "horse_star_branch": "Hợi",
+        "zhifu_star": "Thiên Nhuế",
+        "zhishi_door": "Tử Môn",
+        "nine_palaces": [
+          {
+            "palace_number": 1,
+            "palace_name": "Kham",
+            "star": "Thien Bong",
+            "door": "Kinh Mon",
+            "deity": "Huyen Vu",
+            "heaven_stem": "Quy",
+            "earth_stem": "Quy",
+            "is_empty": false
+          },
+          {
+            "palace_number": 2,
+            "palace_name": "Khon",
+            "star": "Thien Nhue",
+            "door": "Do Mon",
+            "deity": "Truc Phu",
+            "heaven_stem": "Nham",
+            "earth_stem": "Nham",
+            "is_empty": false
+          },
+          {
+            "palace_number": 3,
+            "palace_name": "Chan",
+            "star": "Thien Xung",
+            "door": "Huu Mon",
+            "deity": "Luc Hop",
+            "heaven_stem": "Tan",
+            "earth_stem": "Tan",
+            "is_empty": true
+          },
+          {
+            "palace_number": 4,
+            "palace_name": "Ton",
+            "star": "Thien Phu",
+            "door": "Sinh Mon",
+            "deity": "Thai Am",
+            "heaven_stem": "Canh",
+            "earth_stem": "Canh",
+            "is_empty": false
+          },
+          {
+            "palace_number": 6,
+            "palace_name": "Can",
+            "star": "Thien Tam",
+            "door": "Tu Mon",
+            "deity": "Cuu Dia",
+            "heaven_stem": "Mau",
+            "earth_stem": "Mau",
+            "is_empty": false
+          },
+          {
+            "palace_number": 7,
+            "palace_name": "Doai",
+            "star": "Thien Tru",
+            "door": "Canh Mon",
+            "deity": "Cuu Thien",
+            "heaven_stem": "At",
+            "earth_stem": "At",
+            "is_empty": false
+          },
+          {
+            "palace_number": 8,
+            "palace_name": "Can",
+            "star": "Thien Nham",
+            "door": "Khai Mon",
+            "deity": "Bach Ho",
+            "heaven_stem": "Binh",
+            "earth_stem": "Binh",
+            "is_empty": true
+          },
+          {
+            "palace_number": 9,
+            "palace_name": "Ly",
+            "star": "Thien Anh",
+            "door": "Thuong Mon",
+            "deity": "Dang Xa",
+            "heaven_stem": "Dinh",
+            "earth_stem": "Dinh",
+            "is_empty": false
+          }
+        ]
+      },
+      "actual_outcome": {
+        "summary": "Đại họa xuất huyết cấp tính cho người chủ tế ngay sau khi động thổ",
+        "specific_incidents": "Khởi công 17h30 ngày 19/8 âm lịch. Đến 18h ngày 23/8 âm lịch (chưa đầy 4 ngày), người chủ tế Bính Tý ngã bệnh trên giường, đại tiện ra máu dữ dội, sốc mất máu cấp cứu tại bệnh viện mới giữ được tính mạng."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Đại cục Cửu Tinh Phục Ngâm: Tinh phục ngâm chủ tổn tài hại người, cấm kỵ động thổ.",
+          "Can ngày Đinh rơi vào Cung Ly 9 cưỡi Đằng Xà quái dị.",
+          "Can giờ Kỷ rơi vào Cung Khôn 2 phạm Kỷ + Kỷ (Địa hộ phùng quỷ) và Lục Nghi Kích Hình.",
+          "Mộ địa Cấn sơn kiêm Dần (Cung Cấn 8) lâm TUẦN KHÔNG (Dần Mão Không Vong) và cưỡi HUNG THẦN BẠCH HỔ đáo sơn.",
+          "Chủ tế tuổi Bính Tý: Can Bính rơi vào Cung 8 Không Vong Bạch Hổ, Chi Tý (Cung 1) gặp Kinh Môn và Huyền Vũ hung hiểm."
+        ],
+        "crucial_qimen_clues": "Tọa sơn Cấn 8 lâm Bạch Hổ và Không Vong; Cửu Tinh Phục Ngâm động thổ tất đổ máu thương vong.",
+        "final_verdict": "Đại Hung Khóa - Điển hình của việc dùng sai trạch cát dẫn tới tai nạn huyết quang cấp tính."
+      }
+    },
+    {
+      "case_id": "CASE_02",
+      "case_index": 2,
+      "title": "Nhật khóa hạ táng phụ thân vị tổng giám đốc khách sạn (Năm 1997)",
+      "page_range": "Trang 27 - 31",
+      "event_type": "am_trach_ha_tang",
+      "client_info": {
+        "person_role": "Tổng giám đốc khách sạn nổi tiếng",
+        "birth_year": 1957,
+        "can_chi": "Đinh Dậu",
+        "nien_menh": "Sơn Hạ Hỏa",
+        "other_members": [
+          "Mẫu thân Tân Mùi (1931)"
+        ]
+      },
+      "target_orientation": {
+        "mountain_sitting": "Ất sơn Tân hướng",
+        "facing_direction": "Tân hướng",
+        "fen_jin": "Chính châm",
+        "water_exit": "Bát quốc sa thủy đo trắc cẩn thận"
+      },
+      "datetime_info": {
+        "solar_datetime": "08/04/1997 10:00",
+        "lunar_datetime": "01/03/1997 giờ Tỵ",
+        "four_pillars": {
+          "year": "Đinh Sửu",
+          "month": "Giáp Thìn",
+          "day": "Ất Hợi",
+          "hour": "Tân Tỵ"
+        },
+        "solar_term": "Thanh Minh"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": true,
+        "folk_methods_used": [
+          "Phong thủy Loan đầu Thẩm thị",
+          "Phép Tinh Trung Cách"
+        ],
+        "details": "Vị trí địa lý huyệt mộ rất đẹp, phong thủy gia tiếng tăm ca ngợi là đắc kim long kịp thời đương lệnh."
+      },
+      "qimen_chart": {
+        "ju_number": 1,
+        "is_yin": false,
+        "yuan": "Thuong",
+        "xun_head": "Giáp Tuất",
+        "empty_branches": [
+          "Thân",
+          "Dậu"
+        ],
+        "horse_star_branch": "Hợi",
+        "zhifu_star": "Thiên Bồng",
+        "zhishi_door": "Hưu Môn",
+        "nine_palaces": []
+      },
+      "actual_outcome": {
+        "summary": "Mẫu thân gãy tay, tổng giám đốc qua đời sau 100 ngày hạ táng",
+        "specific_incidents": "Sau khi hạ táng hơn 20 ngày, mẫu thân niên mệnh Tân Mùi ngã gãy tay trái. Sau 100 ngày, vị tổng giám đốc Đinh Dậu đột ngột qua đời."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Tọa sơn Ất thuộc Cung Chấn 3 bị hung sát xung phạt.",
+          "Chi Dậu của niên mệnh Đinh Dậu lâm Không Vong (tuần Giáp Tuất Thân Dậu không).",
+          "Nhật khóa phạm Cửu Tinh khắc bản mệnh người chủ."
+        ],
+        "crucial_qimen_clues": "Bàn Kỳ Môn thể hiện rõ trục Tử Môn tương khắc niên mệnh gia chủ, họa vong thân trong 100 ngày.",
+        "final_verdict": "Đại Hung Khóa - Địa lý loan đầu dù đẹp nhưng phạm nhật khóa hung vẫn sát hại nhân đinh."
+      }
+    },
+    {
+      "case_id": "CASE_03",
+      "case_index": 3,
+      "title": "Nhật khóa chuyển nhà giờ Mậu Dần ngày Ất Dậu (Quán Kế Thừa đường)",
+      "page_range": "Trang 31 - 36",
+      "event_type": "duong_trach_chuyen_nha",
+      "client_info": {
+        "person_role": "Gia chủ nhập trạch",
+        "birth_year": 1962,
+        "can_chi": "Nhâm Dần",
+        "nien_menh": "Kim Bạch Kim",
+        "other_members": []
+      },
+      "target_orientation": {
+        "mountain_sitting": "Tọa Bắc hướng Nam (Nhâm Tý Quý)",
+        "facing_direction": "Hướng Nam (Bính Ngọ Đinh)",
+        "fen_jin": "Chính Bắc",
+        "water_exit": "Chính Nam"
+      },
+      "datetime_info": {
+        "solar_datetime": "18/03/2002 04:00",
+        "lunar_datetime": "05/02/2002 giờ Mậu Dần",
+        "four_pillars": {
+          "year": "Nhâm Ngọ",
+          "month": "Quý Mão",
+          "day": "Ất Dậu",
+          "hour": "Mậu Dần"
+        },
+        "solar_term": "Kinh Trập"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": false,
+        "folk_methods_used": [
+          "Lịch dân gian",
+          "Kiến Trừ",
+          "Thần Sát"
+        ],
+        "details": "Dân gian coi là đại hung vì phạm phải ngày Nguyệt Kỵ (mùng 5), phạm Tam Sát, ngày Nguyệt Phá (Mão Dậu xung), trực Phá hắc đạo, lại phạm Ôn Nhân."
+      },
+      "qimen_chart": {
+        "ju_number": 7,
+        "is_yin": false,
+        "yuan": "Trung",
+        "xun_head": "Giáp Tuất",
+        "empty_branches": [
+          "Thân",
+          "Dậu"
+        ],
+        "horse_star_branch": "Thân",
+        "zhifu_star": "Thiên Nhậm",
+        "zhishi_door": "Sinh Môn",
+        "nine_palaces": [
+          {
+            "palace_number": 1,
+            "palace_name": "Kham",
+            "star": "Thien Phu",
+            "door": "Khai Mon",
+            "deity": "Thai Am",
+            "heaven_stem": "Dinh",
+            "earth_stem": "Tan",
+            "is_empty": false
+          },
+          {
+            "palace_number": 2,
+            "palace_name": "Khon",
+            "star": "Thien Bong",
+            "door": "Canh Mon",
+            "deity": "Cuu Thien",
+            "heaven_stem": "Tan",
+            "earth_stem": "Nham",
+            "is_empty": false
+          },
+          {
+            "palace_number": 3,
+            "palace_name": "Chan",
+            "star": "Thien Nhue",
+            "door": "Sinh Mon",
+            "deity": "Bach Ho",
+            "heaven_stem": "Binh",
+            "earth_stem": "Quy",
+            "is_empty": false
+          },
+          {
+            "palace_number": 4,
+            "palace_name": "Ton",
+            "star": "Thien Tru",
+            "door": "Thuong Mon",
+            "deity": "Huyen Vu",
+            "heaven_stem": "Mau",
+            "earth_stem": "Dinh",
+            "is_empty": false
+          },
+          {
+            "palace_number": 6,
+            "palace_name": "Can",
+            "star": "Thien Xung",
+            "door": "Kinh Mon",
+            "deity": "Dang Xa",
+            "heaven_stem": "Quy",
+            "earth_stem": "At",
+            "is_empty": false
+          },
+          {
+            "palace_number": 7,
+            "palace_name": "Doai",
+            "star": "Thien Nham",
+            "door": "Tu Mon",
+            "deity": "Truc Phu",
+            "heaven_stem": "Ky",
+            "earth_stem": "Mau",
+            "is_empty": false
+          },
+          {
+            "palace_number": 8,
+            "palace_name": "Can",
+            "star": "Thien Tam",
+            "door": "Do Mon",
+            "deity": "Cuu Dia",
+            "heaven_stem": "At",
+            "earth_stem": "Canh",
+            "is_empty": false
+          },
+          {
+            "palace_number": 9,
+            "palace_name": "Ly",
+            "star": "Thien Anh",
+            "door": "Huu Mon",
+            "deity": "Luc Hop",
+            "heaven_stem": "Canh",
+            "earth_stem": "At",
+            "is_empty": false
+          }
+        ]
+      },
+      "actual_outcome": {
+        "summary": "Gia chủ bình an vô sự, kinh doanh phát đạt thịnh vượng",
+        "specific_incidents": "Dọn vào nhà mới làm ăn rất thuận lợi, nhận được nhiều tài lộc ngoài dự kiến, hoàn toàn trái ngược với lời cảnh báo hù dọa của dân gian."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Cửa Sinh Môn làm Trực Sử đáo Cung Chấn 3 (Mộc) sinh vượng cho trạch vận.",
+          "Tọa sơn Bắc (Cung Khảm 1) tương sinh cho Cung Chấn 3 của Sinh Môn.",
+          "Can ngày Ất lâm Cung Cấn 8 đới Cát Thần Cửu Địa và Ất + Canh hợp cách.",
+          "Nguyệt Kỵ và Tam Sát theo dân gian chỉ là hình thức, Kỳ Môn đắc Sinh Môn Trực Sử hóa giải toàn bộ hung sát."
+        ],
+        "crucial_qimen_clues": "Sinh Môn Cung 3 đắc lực; Tọa sơn Khảm 1 sinh Sinh Môn; chứng minh Kỳ Môn vượt trội hơn định kiến dân gian.",
+        "final_verdict": "Đại Cát Khóa - Minh chứng điển hình cho việc giải ảo thành công ngày Nguyệt Kỵ."
+      }
+    },
+    {
+      "case_id": "CASE_04",
+      "case_index": 4,
+      "title": "Nhật khóa lễ mừng 20 năm thành lập Đại học dân lập Giang Tây (Năm 2003)",
+      "page_range": "Trang 36 - 40",
+      "event_type": "le_ky_niem",
+      "client_info": {
+        "person_role": "Ban giám hiệu Đại học Dân lập Giang Tây",
+        "birth_year": 1950,
+        "can_chi": "Canh Dần",
+        "nien_menh": "Tùng Bách Mộc",
+        "other_members": [
+          "Mời đại sư phong thủy Hong Kong thù lao 15 vạn tệ"
+        ]
+      },
+      "target_orientation": {
+        "mountain_sitting": "Khán đài hội trường chính",
+        "facing_direction": "Quảng trường trung tâm",
+        "fen_jin": "Chính hướng",
+        "water_exit": "Không áp dụng"
+      },
+      "datetime_info": {
+        "solar_datetime": "18/10/2003 09:00",
+        "lunar_datetime": "23/09/2003 giờ Tỵ",
+        "four_pillars": {
+          "year": "Quý Mùi",
+          "month": "Nhâm Tuất",
+          "day": "Giáp Thân",
+          "hour": "Kỷ Tỵ"
+        },
+        "solar_term": "Hàn Lộ"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": true,
+        "folk_methods_used": [
+          "Huyền Không Phi Tinh",
+          "Bát Trạch Hong Kong"
+        ],
+        "details": "Đại sư Hong Kong khẳng định giờ hoàng đạo đại cát, nghênh đón vạn người quy tụ."
+      },
+      "qimen_chart": {
+        "ju_number": 9,
+        "is_yin": true,
+        "yuan": "Ha",
+        "xun_head": "Giáp Tý",
+        "empty_branches": [
+          "Tuất",
+          "Hợi"
+        ],
+        "horse_star_branch": "Hợi",
+        "zhifu_star": "Thiên Anh",
+        "zhishi_door": "Cảnh Môn",
+        "nine_palaces": []
+      },
+      "actual_outcome": {
+        "summary": "Bắn pháo hoa bốc cháy dữ dội gây náo loạn hội trường vạn người",
+        "specific_incidents": "Vừa khai mạc bắn pháo hoa chào mừng thì tia lửa bén vào rèm sân khấu và nhà bạt gây cháy lớn, hàng vạn khách mời hoảng loạn tháo chạy, lễ kỷ niệm thất bại thảm hại."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Bàn Kỳ Môn lâm Cảnh Môn (Hỏa) gặp Thiên Anh Tinh và Đằng Xà cưỡng chế.",
+          "Cung Can Giờ hình khắc Can Ngày, Hỏa vượng thái quá không có Thủy cứu giải.",
+          "Học trò của Trương Chí Xuân đã cảnh báo trước nhưng lãnh đạo nhà trường mê tín đại sư Hong Kong nên bỏ ngoài tai."
+        ],
+        "crucial_qimen_clues": "Cảnh Môn + Thiên Anh + Đằng Xà = Hỏa tai bộc phát tức thời khi bắn pháo.",
+        "final_verdict": "Đại Hung Khóa - Điển hình của việc chọn nhầm giờ Hỏa bốc cháy."
+      }
+    },
+    {
+      "case_id": "CASE_05",
+      "case_index": 5,
+      "title": "Nhật khóa khai trương Trung tâm văn hóa Thái Hòa (Bà Lý Nguyệt Trân)",
+      "page_range": "Trang 40 - 45",
+      "event_type": "khai_truong",
+      "client_info": {
+        "person_role": "Chủ tịch Tập đoàn Thái Hòa (Bà Lý Nguyệt Trân)",
+        "birth_year": 1952,
+        "can_chi": "Nhâm Thìn",
+        "nien_menh": "Trường Lưu Thủy",
+        "other_members": []
+      },
+      "target_orientation": {
+        "mountain_sitting": "Tọa Tây hướng Đông",
+        "facing_direction": "Chính Đông",
+        "fen_jin": "Chính châm",
+        "water_exit": "Cửa chính hướng Đông"
+      },
+      "datetime_info": {
+        "solar_datetime": "02/11/2002 10:00",
+        "lunar_datetime": "28/09/2002 giờ Kỷ Tỵ",
+        "four_pillars": {
+          "year": "Nhâm Ngọ",
+          "month": "Canh Tuất",
+          "day": "Giáp Tuất",
+          "hour": "Kỷ Tỵ"
+        },
+        "solar_term": "Sương Giáng (Hạ nguyên Sương Giáng)"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": true,
+        "folk_methods_used": [
+          "Kiến Trừ",
+          "Hoàng Đạo"
+        ],
+        "details": "Ngày Giáp Tuất trực Bình, giờ Kỷ Tỵ hoàng đạo."
+      },
+      "qimen_chart": {
+        "ju_number": 6,
+        "is_yin": true,
+        "yuan": "Ha",
+        "xun_head": "Giáp Tuất",
+        "empty_branches": [
+          "Thân",
+          "Dậu"
+        ],
+        "horse_star_branch": "Hợi",
+        "zhifu_star": "Thiên Nhuế",
+        "zhishi_door": "Tử Môn",
+        "nine_palaces": []
+      },
+      "actual_outcome": {
+        "summary": "Khai trương đại thắng, thu hút khách hàng và doanh thu vượt bậc",
+        "specific_incidents": "Đúng 10h sáng cắt băng khai trương, thời tiết quang đãng đẹp trời, trung tâm hoạt động kinh doanh phát đạt bền vững."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Niên mệnh Nhâm Thìn tương xung với chi ngày Tuất: Trương Chí Xuân chỉ rõ khai nghiệp rất cần xung để kích hoạt động khí.",
+          "Can ngày Giáp Tuất (Kỷ) và Can giờ Kỷ đều rơi vào Cung Tốn 4 là đất Đế Vượng, lại lâm cát môn Sinh Môn.",
+          "Mặc dù gặp Huyền Vũ nhưng tháng Tuất Thổ vượng Thủy tử, Huyền Vũ không thể tác oai.",
+          "Giáp Tý (Mậu) cưỡi Trực Phù tại Cung Khảm 1 tương sinh cho Cung Tốn 4 của Sinh Môn $\rightarrow$ Lợi nhuận vô cùng dồi dào."
+        ],
+        "crucial_qimen_clues": "Can Ngày + Giờ lâm Cung 4 Đế Vượng; Sinh Môn đắc địa; Trực Phù Cung 1 sinh Cung 4 Sinh Môn.",
+        "final_verdict": "Đại Cát Khóa - Mẫu mực của thuật trạch nhật khai trương đắc tài đắc lộc."
+      }
+    },
+    {
+      "case_id": "CASE_06",
+      "case_index": 6,
+      "title": "Hai nhật khóa hôn lễ ở Quảng Châu và Thạch Gia Trang (Năm 2004)",
+      "page_range": "Trang 45 - 48",
+      "event_type": "hon_le",
+      "client_info": {
+        "person_role": "Đôi tân lang tân nương du học thạc sĩ tại Đức",
+        "birth_year": 1979,
+        "can_chi": "Kỷ Mùi",
+        "nien_menh": "Thiên Thượng Hỏa",
+        "other_members": [
+          "Cô dâu cũng sinh 1979 Kỷ Mùi"
+        ]
+      },
+      "target_orientation": {
+        "mountain_sitting": "Khách sạn tiệc cưới Thạch Gia Trang",
+        "facing_direction": "Nam hướng",
+        "fen_jin": "Chính Nam",
+        "water_exit": "Không áp dụng"
+      },
+      "datetime_info": {
+        "solar_datetime": "06/03/2004 11:30",
+        "lunar_datetime": "16/02/2004 giờ Bính Ngọ",
+        "four_pillars": {
+          "year": "Giáp Thân",
+          "month": "Đinh Mão",
+          "day": "Giáp Thân",
+          "hour": "Canh Ngọ"
+        },
+        "solar_term": "Kinh Trập"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": true,
+        "folk_methods_used": [
+          "Xem ngày cưới hỏi truyền thống"
+        ],
+        "details": "Ngày hoàng đạo, hợp tuổi thanh niên trí thức."
+      },
+      "qimen_chart": {
+        "ju_number": 1,
+        "is_yin": false,
+        "yuan": "Thuong",
+        "xun_head": "Giáp Tý",
+        "empty_branches": [
+          "Tuất",
+          "Hợi"
+        ],
+        "horse_star_branch": "Dần",
+        "zhifu_star": "Thiên Bồng",
+        "zhishi_door": "Hưu Môn",
+        "nine_palaces": []
+      },
+      "actual_outcome": {
+        "summary": "Hôn lễ tổ chức hoàn hảo, gia đình hòa thuận hạnh phúc",
+        "specific_incidents": "Tiệc cưới buổi trưa tại Thạch Gia Trang diễn ra suôn sẻ, hai vợ chồng tốt nghiệp thạc sĩ về nước sự nghiệp phát triển thuận lợi."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Tôn trọng tập quán: Thạch Gia Trang cưới buổi trưa, Quảng Châu cưới buổi tối.",
+          "Cung phối ngẫu Ất (vợ) và Canh (chồng) trong bàn Kỳ Môn tương sinh tương hợp.",
+          "Lục Hợp cát thần bảo hộ hôn nhân không bị hình xung."
+        ],
+        "crucial_qimen_clues": "Ất Canh tương sinh; Cát thần Lục Hợp tọa trấn; không lâm Không Vong.",
+        "final_verdict": "Đại Cát Khóa - Chuẩn mực trạch cát giá thú kết hợp phong tục vùng miền."
+      }
+    },
+    {
+      "case_id": "CASE_07",
+      "case_index": 7,
+      "title": "Nhật khóa lễ thông xe đường Ngoại Hoàn Thạch Gia Trang",
+      "page_range": "Trang 48 - 51",
+      "event_type": "thong_xe",
+      "client_info": {
+        "person_role": "Cục Giao thông thành phố Thạch Gia Trang",
+        "birth_year": 1947,
+        "can_chi": "Đinh Hợi",
+        "nien_menh": "Ốc Thượng Thổ",
+        "other_members": [
+          "Kỷ niệm 60 năm giải phóng Thạch Gia Trang"
+        ]
+      },
+      "target_orientation": {
+        "mountain_sitting": "Trục đường cao tốc vành đai",
+        "facing_direction": "Toàn tuyến giao thông",
+        "fen_jin": "Không áp dụng",
+        "water_exit": "Không áp dụng"
+      },
+      "datetime_info": {
+        "solar_datetime": "12/11/2007 09:30",
+        "lunar_datetime": "03/10/2007 giờ Đinh Tỵ",
+        "four_pillars": {
+          "year": "Đinh Hợi",
+          "month": "Tân Hợi",
+          "day": "Canh Thìn",
+          "hour": "Đinh Tỵ"
+        },
+        "solar_term": "Lập Đông"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": true,
+        "folk_methods_used": [
+          "Chọn ngày thông xe nhà nước"
+        ],
+        "details": "Khớp với ngày kỷ niệm 60 năm giải phóng thành phố."
+      },
+      "qimen_chart": {
+        "ju_number": 6,
+        "is_yin": true,
+        "yuan": "Ha",
+        "xun_head": "Giáp Dần",
+        "empty_branches": [
+          "Tý",
+          "Sửu"
+        ],
+        "horse_star_branch": "Hợi",
+        "zhifu_star": "Thiên Cầm",
+        "zhishi_door": "Tử Môn",
+        "nine_palaces": []
+      },
+      "actual_outcome": {
+        "summary": "Lễ cắt băng khánh thành thông xe diễn ra long trọng, thời tiết hanh thông",
+        "specific_incidents": "Sáng sớm có sương mù nhẹ nhưng đến giờ Đinh Tỵ trời hửng nắng ấm áp, lãnh đạo tỉnh và thành phố cắt băng thông xe an toàn tuyệt đối."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Dự trắc thời tiết chính xác: Trương Chí Xuân đoán trước sáng sớm sương mù nhưng đến giờ Đinh Tỵ sẽ tan mây hửng nắng ấm.",
+          "Cung Can Giờ Đinh Tỵ đắc Tam Kỳ Đinh kỳ, Khai Môn xuất hiện hỗ trợ giao thông thông suốt."
+        ],
+        "crucial_qimen_clues": "Đinh kỳ đắc Khai Môn; thời tiết chuyển biến đúng như dự trắc Kỳ Môn.",
+        "final_verdict": "Đại Cát Khóa - Mẫu mực trạch cát công trình giao thông hạ tầng."
+      }
+    },
+    {
+      "case_id": "CASE_08",
+      "case_index": 8,
+      "title": "Nhật khóa lễ khởi công hạng mục quảng trường Trung Ngân (Tháng 7/2009)",
+      "page_range": "Trang 51 - 57",
+      "event_type": "khoi_cong",
+      "client_info": {
+        "person_role": "Người phụ trách dự án Trung Ngân (Trịnh Hướng Đông)",
+        "birth_year": 1963,
+        "can_chi": "Quý Mão",
+        "nien_menh": "Kim Bạch Kim",
+        "other_members": []
+      },
+      "target_orientation": {
+        "mountain_sitting": "Tọa Đông hướng Tây",
+        "facing_direction": "Chính Tây",
+        "fen_jin": "Chính châm",
+        "water_exit": "Quảng trường trung tâm"
+      },
+      "datetime_info": {
+        "solar_datetime": "18/07/2009 08:18",
+        "lunar_datetime": "26/05/2009 giờ Mậu Thìn",
+        "four_pillars": {
+          "year": "Kỷ Sửu",
+          "month": "Tân Mùi",
+          "day": "Ất Dậu",
+          "hour": "Mậu Thìn"
+        },
+        "solar_term": "Tiểu Thử"
+      },
+      "folk_evaluation": {
+        "is_considered_good_by_folk": true,
+        "folk_methods_used": [
+          "Chọn ngày động thổ hiện đại"
+        ],
+        "details": "Chọn số đuôi 8h18 phút sáng lấy lộc phát."
+      },
+      "qimen_chart": {
+        "ju_number": 8,
+        "is_yin": true,
+        "yuan": "Ha",
+        "xun_head": "Giáp Tý",
+        "empty_branches": [
+          "Tuất",
+          "Hợi"
+        ],
+        "horse_star_branch": "Dần",
+        "zhifu_star": "Thiên Nhậm",
+        "zhishi_door": "Sinh Môn",
+        "nine_palaces": []
+      },
+      "actual_outcome": {
+        "summary": "Lễ khởi công diễn ra trang trọng, dự án triển khai suôn sẻ đúng tiến độ",
+        "specific_incidents": "Các dàn máy ép cọc và đặt đá móng diễn ra an toàn, lãnh đạo các ngân hàng tham gia đông đủ bảo trợ tài chính thành công."
+      },
+      "expert_analysis": {
+        "flaws_or_merits_identified": [
+          "Sinh Môn lâm Cung Khôn 2 được Thái Tuế Sửu sinh trợ.",
+          "Can ngày Ất đới Nhật Kỳ gặp Cát Tinh Thiên Tâm bảo hộ tài chính.",
+          "Tránh được ngày mưa dông mùa hè nhờ dự trắc khí tượng Kỳ Môn chuẩn xác."
+        ],
+        "crucial_qimen_clues": "Sinh Môn vượng tướng; đắc Nhật Kỳ Ất; nhân khí tài chính quy tụ.",
+        "final_verdict": "Đại Cát Khóa - Mẫu mực trạch nhật động thổ bất động sản quy mô lớn."
+      }
+    }
+  ],
+  "nine_stars_hourly_omens": [
+    {
+      "star_name": "Thiên Bồng",
+      "element": "Thủy",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có gà gáy, chó sủa, chim bay về tổ trú ngụ nháo nhác hết cả rừng, hoặc có chim từ phương Bắc bay đến giành chỗ.",
+          "subsequent_outcome": "Sau tác dụng có người sứt môi đến, 60 ngày sau ứng gà đẻ trứng đôi, chủ khẩu thiệt quan tụng thoái tài, là hung."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ cây đổ đè thương người, sét điện đánh đột ngột cùng với mưa gió là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ trong 7 ngày gà đẻ trứng ngỗng, chó lên nhà đất nằm; trong 100 ngày làm tổn hại người nhỏ tuổi trong nhà; 3 năm sau người già tóc bạc làm ăn trúng mánh, tăng điền sản, mười năm đại vượng, sau chủ thoái tài."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ thanh y đồng tử mang hoa tới, phương Bắc hòa thượng quấn áo đến, lại chủ nữ nhân đến là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có trộm cướp gia tài, 60 ngày sau rắn vào nhà cắn người, trâu ngựa tử thương nhân khẩu, ba năm tăng tiến điền trạch."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ mây vàng nổi tứ phương, người phụ nữ cầm đồ sắt thép đến, có con rắn lớn qua đường là ứng.",
+          "subsequent_outcome": "Sau tác dụng nửa tháng được người có âm giai là Chủy tặng tài vật đến; trong 60 ngày nữ nhân bị trộm hại phá tài, trong 100 ngày đắc hoạnh tài đại phát."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ phương Đông Bắc cây đổ đè người, tiếng trống nổi bốn phương, nữ nhân mặc áo đỏ đến là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ đào đất được đồ cổ hoặc tiền đồng, sau ứng khẩu thiệt, phá tài nhỏ."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có người cưỡi bò đến, hoặc bò kéo xe qua đường, tiếng quạ kêu trên cây là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ trong 100 ngày phát tài, thêm nhân đinh, quan lộc hanh thông."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có người cầm kiếm hoặc đồ kim loại đi qua, đàn bà cãi nhau nơi ngõ hẻm là ứng.",
+          "subsequent_outcome": "Sau tác dụng 60 ngày chủ hao tán tiền bạc, có việc kiện tụng nhỏ."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có đàn cừu dê đi qua, hoặc người mặc áo trắng cưỡi ngựa trắng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ đắc tài lộc phương xa gửi về, gia đạo an khang."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có người phương Tây mang tin tức đến, tiếng chuông đồng hồ vang lên là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có khách quý đến nhà, mưu cầu công việc thuận lợi."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có tiếng chim hót ríu rít, người mang rượu thịt hoa quả đi qua là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ trong 30 ngày có tin vui hôn hỷ, cầu tài đắc ý."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có người già chống gậy áo nâu đi qua, chó sủa ran đầu ngõ là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ phòng ngừa trộm cắp nhỏ, không nên cho vay mượn."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có người đánh cá mang cá qua đường, trẻ nhỏ chạy nhảy reo hò là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tăng thêm phúc lộc, người đi xa bình an trở về."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Nhuế",
+      "element": "Thổ",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có tiếng than khóc nơi xa, hoặc phụ nữ mang thai đi qua ngõ là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ trong nhà có người ốm vặt, nên cầu cúng giải hạn, sau 60 ngày bình an."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có trâu bò ăn cỏ ven đường, hòa thượng hoặc đạo sĩ qua lại là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ được người lớn tuổi giúp đỡ, đất đai tăng giá."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có người gánh củi, tiếng hổ gầm hoặc mèo kêu thất thanh là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ việc kinh doanh nông sản, điền sản phát tài."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có phụ nữ áo xanh dắt trẻ nhỏ đi qua, tiếng chim gõ kiến trên cây là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ trong 100 ngày thêm đinh, gia đạo hưng vượng."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có người khiêng đất cát, gió cuốn bụi mù mịt là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có tranh chấp ranh giới đất đai nhưng sau hòa giải êm đẹp."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có khói bếp bốc cao, người mặc áo vàng mang quà biếu là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ phát tài điền sản, thi cử đỗ đạt."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có người cưỡi ngựa đỏ, tiếng chiêng trống nổi lên từ xa là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có tin vui thăng chức, cầu quan toại ý."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có đàn dê trắng ăn cỏ, bà lão mang đồ gốm sứ qua đường là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ gia đạo hòa hợp, vợ chồng tương kính như tân."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có tiếng sắt thép chạm nhau, người cầm gương lược đi qua là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có bạn bè phương xa đến thăm, cùng hợp tác làm ăn."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có chim bồ câu trắng đậu trên mái nhà, người gánh hoa quả là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ phát tài lộc nhỏ, tinh thần sảng khoái."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có người quét rác, tiếng chó sủa ran trong đêm là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ việc cũ được giải quyết dứt điểm, rũ bỏ phiền muộn."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có mưa phùn lất phất, người đội nón lá qua cầu là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tài vận hanh thông, nước chảy thuyền trôi êm đềm."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Xung",
+      "element": "Mộc",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có tiếng sấm động phương xa hoặc tiếng đồ vật rơi vỡ đột ngột là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có tin giật gân, mưu sự mau chóng có kết quả."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có thợ mộc cưa gỗ, người vác rìu đi qua là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ việc xây dựng, sửa sang nhà cửa đại lợi."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có tiếng cọp gầm rừng sâu, gió thổi lay động cành cây là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ danh tiếng vang xa, đánh tan mọi trở lực."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có người bắn cung nỏ, chim rừng vỗ cánh bay loạt soạt là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thi cử đứng đầu bảng, quan chức thăng tiến."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có rồng mây ẩn hiện, sấm sét nổi bốn bề là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ đắc đại quý nhân trợ lực, chuyển bại thành thắng."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có người cưỡi ngựa phi nhanh, cờ quạt bay phần phật là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ việc đi xa ký kết hợp đồng đại thắng lợi."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có ánh lửa bừng sáng, tiếng pháo nổ giòn giã là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có tiệc mừng công, khách khứa tấp nập."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có người thổi sáo qua đồi, đàn cừu chạy theo bầy là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ gia đình yên ổn, tài lộc đều đặn."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có người mài dao kiếm, tiếng kim loại ngân vang là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ kiện tụng thắng lợi, thu hồi nợ nần cũ."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có tiếng gà gáy trưa, đàn chim sẻ ríu rít trước sân là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ nhận được quà cáp, lời khen ngợi từ cấp trên."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có thợ săn dắt chó săn đi qua, tiếng tù và thúc giục là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ bắt được kẻ trộm hoặc phát hiện cơ hội làm ăn mới."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có sóng nước vỗ bờ, thuyền bè tấp nập cập bến là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ buôn bán đường thủy đắc lợi, tiền bạc đầy kho."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Phụ",
+      "element": "Mộc",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có thư sinh mang sách vở đi đêm, ánh đèn dầu leo lét là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ văn chương cái thế, con cháu học hành đỗ đạt cao."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có người già chỉ đường, lời nói nho nhã lễ phép là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tìm được thầy giỏi bạn tốt, công danh rực rỡ."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có hoa nở ban mai, tiếng ngâm thơ từ xa vọng lại là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ văn nghệ nghệ thuật đại phát, tiếng thơm muôn đời."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có người mang giấy mực bút nghiên đi qua là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thi đỗ thủ khoa, ký kết văn tự khế ước thuận lợi."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có mây ngũ sắc xuất hiện, cầu vồng bắc qua trời là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ gia đình có người vinh quy bái tổ, rạng rỡ tổ tông."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có sứ giả mang chiếu thư, ngựa trạm đổi phiên là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ nhận chức tước bổng lộc triều đình, uy quyền hiển hách."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có lễ hội văn hóa, đàn ca sáo nhị vang lừng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ vạn sự như ý, gia đạo đại cát đại khánh."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có học trò chào thầy, tặng quà tri ân là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ phúc đức sâu dày, hậu vận an nhàn phú quý."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có quan thái thú vi hành, tiền hô hậu ủng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ được nâng đỡ vào vị trí trọng yếu, quyền thế vững bền."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có tiệc trà đàm đạo văn chương, hoa cúc nở rộ là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ kết giao được tầng lớp trí thức thượng lưu."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có đọc sách dưới trăng, tiếng ve sầu ngưng bặt là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tâm trí sáng suốt, phát minh sáng tạo kỳ tài."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có thuyền chở sách vở cập bến, học trò reo hò là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ mở trường lớp đông đúc học trò, phúc trạch vô biên."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Cầm",
+      "element": "Thổ",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có quý nhân mặc áo tím đi kiệu hoa, đèn lồng sáng rực là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ gặp hoàng đế hoặc lãnh đạo tối cao nâng đỡ, phát đại tài."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có trâu vàng nghé ngọc hiện hình, người hiền dâng ngọc là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ đất đai trù phú, đào được vàng bạc đồ báu."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có gió xuân phơi phới, chim phượng hoàng đậu cành ngô đồng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ sinh quý tử, con cháu làm rạng danh dòng tộc."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có mặt trời mọc rực rỡ, chim sẻ hót chào ngày mới là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ mở rộng kinh doanh toàn quốc, tài nguyên cuồn cuộn."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có rồng vàng uốn khúc, mưa móc tưới khắp nhân gian là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ bách bệnh tiêu tan, trường thọ an khang."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có phụ nữ bế con trai khôi ngô đến tặng hoa là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thêm nhân đinh quý hiển, vợ hiền dâu thảo."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có ngai vàng chiếu sáng, chuông đồng đền đài ngân vang là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ địa vị thăng tiến cực phẩm, danh chấn thiên hạ."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có mùa màng bội thu, người dân gánh lúa vàng hát ca là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ kinh tế gia đình vượng thịnh suốt ba mươi năm."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có xe ngọc chở báu vật từ phương Tây tới là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thu được lợi nhuận khổng lồ từ giao thương quốc tế."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có phượng hót cung đình, rượu quý hương thơm ngào ngạt là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ vạn sự hưng vượng, không có bất kỳ tai ách nào."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có kho báu mở cửa, người coi kho mang chìa khóa vàng tới là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thâu tóm được tài sản lớn, nhà cửa khang trang."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có biển lặng sóng êm, ngọc trai phát sáng ven bờ là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tích lũy phúc đức ba đời, con cháu đời đời vinh hiển."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Tâm",
+      "element": "Kim",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có danh y cầm hòm thuốc đi qua, tiếng chuông đồng hồ điểm canh là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ bệnh nặng thuyên giảm kỳ diệu, gia đình bình an."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có người mang vàng bạc vòng ngọc qua đường là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ phát tài phát lộc nhanh chóng, buôn bán sinh lời gấp bội."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có người mài gươm báu dưới trăng sáng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ trừ sạch tiểu nhân quấy phá, củng cố quyền lực tối cao."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có người cưỡi ngựa trắng phi nước đại mang tin khải hoàn là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thắng kiện, thăng quan tiến chức vượt bậc."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có mây lành che bóng, người mặc áo giáp bạc đi tuần là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ công việc an toàn tuyệt đối, quý nhân che chở."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có thợ kim hoàn nấu vàng bạc đúc chuông là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tài sản gia tăng mạnh mẽ, cơ sở kinh doanh mở rộng."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có xe ngựa sang trọng dừng trước cửa nhà là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có đối tác lớn đầu tư vốn, hợp tác thành công rực rỡ."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có thương nhân phương xa mang gấm vóc tới biếu là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ cuộc sống phong lưu phú túc, danh lợi song toàn."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có quan xử án công minh, dân chúng hoan hô vỗ tay là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ được giải oan khuất, uy tín tăng cao trong xã hội."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có tiếng đàn tỳ bà gảy khúc nhạc thanh tao là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tình duyên êm đẹp, tâm hồn thanh thản."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có người thắp đèn canh gác thành lũy kiên cố là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ bảo vệ được thành quả sự nghiệp, không lo hao hụt."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có nước trong veo chảy qua máng bạc là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ nguồn tiền dồi dào, tài bạch lưu thông hanh thông."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Trụ",
+      "element": "Kim",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có tiếng còi báo động, người cầm đao kiếm chạy qua là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có tranh cãi kiện tụng, nên giữ bình tĩnh nhẫn nhịn."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có chuông đồng bị nứt, người mặc áo rách qua đường là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ hao tài nhỏ, cần kiểm tra khóa cửa và an ninh."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có cành cây gãy đổ, tiếng chim kêu thảng thốt là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có trở ngại lúc đầu nhưng kiên trì sẽ vượt qua."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có người cầm kéo cắt vải, phụ nữ tranh cãi là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ đề phòng khẩu thiệt thị phi nơi công sở."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có đá lăn bờ suối, sấm sét đùng đùng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thay đổi nơi làm việc hoặc chuyển đổi công tác."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có thợ rèn gõ búa, tia lửa bắn tung tóe là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ trải qua thử thách cam go để thành công lớn."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có người cầm kích sắt, ngựa hí vang trời là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ chiến thắng đối thủ cạnh tranh trên thương trường."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có người vác thang gỗ, thợ hồ trát tường là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ củng cố phòng ốc nhà cửa kiên cố hơn."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có người đập đá lát đường, xe ngựa qua cầu là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ mở đường thông lối, công việc có hướng đi mới."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có tiếng chuông chùa điểm canh, người tụng kinh sám hối là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tiêu trừ nghiệp chướng, tâm tính an định."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có tường đá sụt lở nhỏ, chó cắn kẻ lạ là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ phát hiện mưu mô xấu của kẻ dưới quyền."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có nước xối mạnh qua cống rãnh là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thanh lọc toàn bộ vướng mắc cũ để bắt đầu chu kỳ mới."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Nhậm",
+      "element": "Thổ",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có người gánh đá leo núi, tiếng bước chân nặng nề là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ cần cù bù thông minh, tích lũy tài sản vững như núi."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có trâu cày ruộng sâu, người nông phu áo tơi nón lá là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ gặt hái thành quả lớn từ sự kiên nhẫn bền bỉ."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có núi non trùng điệp hiện rõ trong sương sớm là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ sự nghiệp có nền tảng vững chắc, không ai lay chuyển nổi."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có cây cổ thụ đâm chồi nảy lộc trên vách đá là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ vượt khó vươn lên, danh tài hiển đạt."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có người xây đắp đê điều, khiêng đất đắp lũy là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ giữ gìn cơ nghiệp bền vững qua nhiều thế hệ."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có mặt trời lên đỉnh núi, người dâng ngọc quý là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ công danh rực rỡ, địa vị vững chãi như bàn thạch."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có người đứng trên đỉnh cao ngắm cảnh, cờ cắm trên đồi là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ đứng đầu một ngành nghề hoặc thủ lĩnh địa phương."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có đàn bò nhai cỏ dưới chân núi là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ điền trang đại vượng, lương thực đầy bồ."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có người đãi vàng bên suối, tìm được đá quý là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ bất ngờ có thu hoạch tài chính lớn."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có chim phượng hoàng hoàng hôn bay về núi là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ gia đình sum họp êm ấm, phú quý song toàn."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có người đốt đuốc trên sườn núi, lửa sáng bập bùng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có người chỉ lối dẫn đường trong lúc bế tắc."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có suối nước mát chảy róc rách từ khe núi là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ hậu vận hưởng phúc vô tận, con cháu ngoan hiền."
+        }
+      ]
+    },
+    {
+      "star_name": "Thiên Anh",
+      "element": "Hỏa",
+      "hourly_omens": [
+        {
+          "hour_chi": "Tý",
+          "immediate_omen": "Chủ có ngọn lửa bùng sáng trong đêm, người mang đuốc qua cầu là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có tin vui thăng tiến bất ngờ, danh tiếng lan truyền."
+        },
+        {
+          "hour_chi": "Sửu",
+          "immediate_omen": "Chủ có khói bếp bay nghi ngút, người nấu rượu thơm lừng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có tiệc tùng hội ngộ bạn bè thân thiết."
+        },
+        {
+          "hour_chi": "Dần",
+          "immediate_omen": "Chủ có ánh rạng đông hồng rực rỡ, chim hót vang lừng đón nắng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ khởi sự đại cát đại lợi, vạn sự hanh thông."
+        },
+        {
+          "hour_chi": "Mão",
+          "immediate_omen": "Chủ có người mặc áo đỏ mang hoa tươi tới chúc tụng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ hôn nhân hỷ sự, thi cử đỗ bảng vàng."
+        },
+        {
+          "hour_chi": "Thìn",
+          "immediate_omen": "Chủ có mây đỏ che phủ phương Đông, tiếng trống vang rền là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ uy quyền hiển hách, nắm quyền chỉ huy."
+        },
+        {
+          "hour_chi": "Tị",
+          "immediate_omen": "Chủ có lò luyện vàng sáng rực, người đúc đồng gõ búa là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ công việc kinh doanh phát tài phát lộc."
+        },
+        {
+          "hour_chi": "Ngọ",
+          "immediate_omen": "Chủ có ánh nắng chói chang, người bắn pháo hoa nổ giòn giã là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ danh tiếng vang danh khắp chốn, đại phát vinh quang."
+        },
+        {
+          "hour_chi": "Mùi",
+          "immediate_omen": "Chủ có người nướng bánh thơm nức, khói lam chiều bảng lảng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ cuộc sống ấm no hạnh phúc, gia đạo bình yên."
+        },
+        {
+          "hour_chi": "Thân",
+          "immediate_omen": "Chủ có ánh hoàng hôn rực rỡ soi bóng xe ngựa là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ thành quả lao động được đền đáp xứng đáng."
+        },
+        {
+          "hour_chi": "Dậu",
+          "immediate_omen": "Chủ có đèn lồng đỏ thắp sáng ngõ hẻm, tiệc rượu tưng bừng là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ gặp duyên lành kết đôi, vợ chồng hạnh phúc."
+        },
+        {
+          "hour_chi": "Tuất",
+          "immediate_omen": "Chủ có người sưởi ấm bên bếp lửa hồng, kể chuyện vui cười là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ tinh thần ấm áp, không còn âu lo phiền muộn."
+        },
+        {
+          "hour_chi": "Hợi",
+          "immediate_omen": "Chủ có sao băng lóe sáng trên bầu trời đêm sâu thẳm là ứng.",
+          "subsequent_outcome": "Sau tác dụng chủ có linh cảm nhạy bén, cầu được ước thấy."
+        }
+      ]
+    }
+  ]
+}

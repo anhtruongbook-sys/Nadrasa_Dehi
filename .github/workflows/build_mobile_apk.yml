@@ -63,17 +63,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.1.3
-          name: "Neta Light & Huyền Học v2.1.3 (Đồng Bộ 100% Độ Số & Huyền Không Tia Ngắm Với Đĩa La Kinh Xoay)"
+          tag_name: v2.2.0
+          name: "Neta Light & Huyền Học v2.2.0 (Tích Hợp Module Trạch Cát - Xem Ngày Cát Lành & Kỳ Môn Trạch Nhật)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.1.3
-            - **Chuẩn Hóa Tuyệt Đối Độ Số Tia Ngắm Theo Đĩa La Kinh Đã Xoay**:
-              + Khắc phục triệt để hiện tượng tia ngắm lấy nhầm độ số góc màn hình thẳng đứng (12h = 0° Sơn Tý) thay vì độ số trên mặt đĩa La Kinh phong thủy.
-              + Khi xoay đĩa La Kinh theo Hướng Nhà (ví dụ Hướng $144.6^\circ$ Sơn Tỵ), tia ngắm chiếu vào cổng/cửa tại hướng 12h sẽ đọc chính xác độ số La Kinh tương ứng ($144.6^\circ$ Sơn Tỵ • Quẻ Sơn Thiên Đại Súc), khớp 100% từng vạch khắc, phân kim và 64 Quẻ trên đĩa La Kinh.
-              + Khi kéo rê điểm ghim mục tiêu hoặc chạm bất kỳ điểm nào trên mặt bằng, hệ thống tự động quy đổi chính xác từ tọa độ màn hình sang độ số La Kinh thực tế: $\text{laKinhDeg} = ((\text{state.rotation} + \alpha_{\text{screen}}) \pmod{360} + 360) \pmod{360}$.
-            - **Đồng Bộ Dữ Liệu Phong Thủy & Huyền Không Đại Quái Toàn Diện**:
-              + Thẻ mini capsule và thẻ chi tiết mở rộng hiển thị đúng 100% Sơn Cung, Quẻ 64, Khí Vận, 384 Hào Vi Phân và Linh/Chính Thần Vận 9 của phương vị tia ngắm trên đĩa La Kinh.
-              + So sánh độ lệch Hướng Nhà (`diff`) chính xác tuyệt đối theo góc lệch thực tế của tia ngắm so với trục chính hướng nhà.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.0
+            - **Tích Hợp Module Trạch Cát (Xem Ngày Đại Cát Toàn Diện)**:
+              + **Bách Trạch Thông Thư - Trạng Trình Nguyễn Bỉnh Khiêm**: 83 Mục việc chuyên biệt phân loại theo 19 nhóm ngành (Xây dựng, Nhà ở, Hôn nhân, Giao thương, Đi lại, Học vấn, Y tế...). Chấm điểm 5 bậc cát hung theo ngày Can Chi gốc, tương hợp Thiên Can, Địa Chi và Nạp Âm Ngũ Hành của gia chủ.
+              + **Đổng Công Tuyển Trạch Yếu Dụng**: Toàn văn 12 Tháng / 423 Ngày luận giải cát hung nguyên bản (Đại Kiết, Kiết, Thứ Kiết, Bình, Thứ Hung, Đại Hung).
+              + **16 Tiêu Chí Cát Thần & Lọc Hung Sát**: Tam Đại Cát Tinh (Sát Cống, Trực Tinh, Nhân Chuyên giải trừ bách hung), Lục Nhâm (6 cung), Khổng Minh (8 ngày), Bành Tổ Bách Kỵ, Hỷ Thần / Tài Thần, loại trừ ngày Sát Chủ, Thọ Tử, Tam Nương, Nguyệt Kỵ.
+              + **Kiểm Soát Hạn Năm Gia Chủ**: Tự động tính tuổi mụ, rà soát Tam Tai, Kim Lâu (Thân, Thê, Tử, Lục Súc) và Hoang Ốc (6 cung Nhất Cát, Nhì Nghi, Tam Địa Sát, Tứ Tấn Tài, Ngũ Thọ Tử, Lục Hoang Ốc).
+              + **Kỳ Môn Dữ Trạch Cát & Cửu Tinh Khắc Ứng**: Xếp hạng 9 bậc 6 giờ Hoàng Đạo theo Bản Mệnh, giải mã điềm báo Khắc Ứng Cửu Tinh và nút 1 chạm mở trực tiếp bàn Kỳ Môn Độn Giáp tại thời điểm đã chọn.
+              + **Liên Kết Sâu La Kinh Vệ Tinh (36 Tầng)**: Phối hợp độ số Tọa Sơn Nhà (0° - 359°), tự động kiểm tra Trực Xung Tọa Sơn và Tam Sát theo phương vị. 1 chạm từ HUD La Kinh chuyển sang Trạch Cát.
+              + **Liên Kết Lịch Vạn Niên & Bát Tự**: Nút chuyển đổi mượt mà giữa Lịch Ngày Bloc và Trạch Cát.
+            - **Hoạt Động 100% Offline Độc Lập**:
+              + Tích hợp toàn bộ dữ liệu CSDL vào `engines/trachcat_data.js`, bảo đảm chạy trơn tru tuyệt đối khi ngắt mạng (Airplane mode).
             - **Kế Thừa Toàn Bộ Tính Năng Bản v2.1.2**:
               + Thẻ thông tin tia ngắm nằm sát đỉnh (khe hở 3px) ngay dưới cụm HUD Hướng Nhà.
               + Bật/tắt thuận tiện qua nút `🎯` chuyên dụng trên thanh công cụ đỉnh.

@@ -1,0 +1,3071 @@
+[
+  {
+    "month": 1,
+    "name": "Tháng Giêng",
+    "solar_term": "Lập Xuân – Vũ Thuỷ",
+    "page_start": 72,
+    "page_end": 77,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Phạm Vãng Vong chẳng lợi cho việc Khởi Tạo, Kết Hôn, Nạp Lễ",
+        "anh_huong": "Chủ gia trưởng bệnh, rước lấy hoạ cửa quan, trong 60 ngày, 120 ngày, tổn hại trẻ con. Trên 1 năm thấy trùng tang, trăm việc chẳng nên làm.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Kị Khởi Tạo, Hôn Nhân",
+        "anh_huong": "Phạm vào 60 ngày, tổn gia trưởng, rước lấy hoạ nhà quan. 3 đến 5 năm thấy điều hung dần đến. Anh em bất nghĩa, nghề nghiệp phân tán, thường gặp những người ác, sinh ly tử biệt",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Kị Khởi Tạo, Hôn Nhân",
+        "anh_huong": "Phạm vào 60 ngày, tổn gia trưởng, rước lấy hoạ nhà quan. 3 đến 5 năm thấy điều hung dần đến. Anh em bất nghĩa, nghề nghiệp phân tán, thường gặp những người ác, sinh ly tử biệt",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Giáp Thìn tuy có khí lực, Nhưng…sát nhập trung cung. Trăm việc đều kị",
+        "anh_huong": "Chủ khởi đầu đã chết người, thối tài, đại hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Mậu Thìn sát nhập trung cung, Trăm việc đều kị",
+        "anh_huong": "Chủ khởi đầu đã chết người, thối tài, đại hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có sao Chu Tước, Câu Giảo. Không thể dùng được.",
+        "anh_huong": "Nếu phạm vào rước hoạ kiện cáo, tổn gia trưởng. Con gái, vợ trong 3 đến 5 năm bất lợi liên tiếp. Phá tài thối của. Ruộng, tằm, chẳng thu hoạch, sản ách, tự bị kẻ khác lấn hiếp.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Gồm sao Huỳnh Sa, Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Kim Ngân, Khố Lầu, Điền Đàng, Nguyệt Tài, Khố Trữ, các sao lành cùng chiếu vào. Rất hợp: Khởi Tạo, An Táng, Di Dời, Khai Trương, Xuất Hành, Hôn Nhân",
+        "anh_huong": "Trong 60 ngày, 120 ngày có của hoạch tài, về ruộng vườn sản nghiệp hoặc nhân có người giúp đỡ, mà nên nhà cửa. Làm lớn phát lớn, làm nhỏ phát nhỏ, chủ ruộng tầm trúng mùa, vàng bạc đầy kho.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Gồm sao Thiên Tặc, lại",
+        "anh_huong": "Phạm vào 60 ngày, 120 ngày",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Gồm sao Chu Tước, Câu Giảo – Trăm Sự Kị",
+        "anh_huong": "Phạm vào hoạ quan tư, khẩu thiệt, thối sinh tài 3 đến 5 năm (sinh: là của cải, gia súc), khiến quả phụ làm việc xấu xa.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Là ngày dụng sự chẳng có lợi",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Dậu)",
+        "day_can_chi": "Đinh Dậu",
+        "nghi_ki": "Có sao Thiên Đức, Phúc Tinh che chiếu. Hợp: An Táng, Cầu Phúc, Hoàn Nguyện, Xuất Hành, Khai Trương, Tham Quan. Kị: Khởi Tạo, Hôn Nhân, Giá Thú cùng mọi việc. Đây là ngày tỳ hoà.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Dậu)",
+        "day_can_chi": "Kỷ Dậu",
+        "nghi_ki": "Là ngày dụng sự chẳng có lợi",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Dậu)",
+        "day_can_chi": "Tân Dậu",
+        "nghi_ki": "Chính Tứ Phế, chẳng hợp dùng vào việc gì",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Nguy (Dậu)",
+        "day_can_chi": "Quý Dậu",
+        "nghi_ki": "Là ngày dụng sự chẳng có lợi",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Có sao: Thiên Hỷ, Địa Võng. Kị: Hôn Nhân, Nhập Trạch, Sửa Chữa, mọi việc chẳng nên làm",
+        "anh_huong": "Nếu phạm, gia trưởng bệnh, nhân khẩu chẳng ở chung, lại còn lãnh thối của cải.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Sát nhập trung cung",
+        "anh_huong": "Nếu phạm vào chủ lúc đầu sát nhân, anh em đều bất nghĩa, tử biệt, sinh ly",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Có sao Câu Giảo, chẳng hợp mọi việc",
+        "anh_huong": "Chủ phương nam Bạch Y Nếu phạm vào: Hình hại nam nữ, nhiều tai ương rất hung. Tổ gia trưởng, hại con cháu, 60 ngày 120 ngày",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Là ngày Địa Chi cùng Nguyệt Kiên là âm dương hoà hợp",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Hợi)",
+        "day_can_chi": "Quý Hợi",
+        "nghi_ki": "Có sao Câu Giảo, chẳng hợp mọi việc",
+        "anh_huong": "Chủ phương nam Bạch Y Nếu phạm vào: Hình hại nam nữ, nhiều tai ương rất hung. Tổ gia trưởng, hại con cháu, 60 ngày 120 ngày",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Thuộc hành Kim. Nhưng … loài Kim tự chết. Là ngày ngũ hành âm kị",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Là ngày chỉ hợp với người mạng Thuỷ, mạng Thổ, đúng là Đại Kiết. Gồm sao: Huỳnh La, Tử Đàng, Thiên Hoàng, Kim Ngân, Bửu Tàng, Tài Khổ Trừ Liên Châu, chúng Kiết tinh cùng chiếu. Hợp: Khởi Tạo, Hôn Nhân, Nhập Trạch, Khai Trương mọi việc.",
+        "anh_huong": "Nếu dùng trong 60 ngày, 120 ngày đắc đại tài, có quý nhân giúp đỡ, được chức lộc, mưu sự Đại Kiết. Vượng lục súc, nhiều tiền của, rất hợp An Táng.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Tý)",
+        "day_can_chi": "Nhâm Tý",
+        "nghi_ki": "“Mộc Đả Bảo Bình” cùng ở phương Bắc. Gọi là Mộc Dục Chi Địa. Kị : Khởi Tạo, Hôn Nhân, Nhập Trạch, Khai Trương mọi việc.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Không thể dùng được. Rất xấu với: Hôn Nhân, Khởi Tạo",
+        "anh_huong": "Ngừa cọp, rắn làm hại, phòng lừa ngựa đá, nhằm gây thành ác tật",
+        "kiet_hung": "Đại Hung"
+      }
+    ]
+  },
+  {
+    "month": 2,
+    "name": "Tháng Hai",
+    "solar_term": "Kinh Trập – Xuân Phân",
+    "page_start": 78,
+    "page_end": 83,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Là ngày Thiên Địa Chuyển Sát. Chẳng hợp dùng làm việc lớn.",
+        "anh_huong": "Nếu phạm là tổn gia trưởng, cùng con cháu ngành út, hay bệnh dịch, nghèo khổ, gặp chuyện buồn khổ luôn luôn. Trong 3 đến 5 năm. Nếu chậm 9 năm cũng kiện tụng bại vong",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Sát Tập Nhập trung cung",
+        "anh_huong": "Nếu phạm vào: trong 3 năm Chủ nhà mất, vật cũ tác quái. Lại còn có nạn lửa bỏng, trộm cướp hoành hành.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Không thể dùng được. Rất kị: Dời Chỗ, Nhập Trạch, Hôn Nhân, Khai Trương, hết thảy mọi việc",
+        "anh_huong": "Phạm vào 60 ngày hoặc trong 120 ngày, chủ kiện cáo tổn tài, bại ruộng, tằm, mất sản nghiệp.",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Trừ (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Sát Tập Nhập trung cung",
+        "anh_huong": "Nếu phạm vào: trong 3 năm Chủ nhà mất, vật cũ tác quái. Lại còn có nạn lửa bỏng, trộm cướp hoành hành.",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Trừ (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Không thể dùng được. Rất kị: Dời Chỗ, Nhập Trạch, Hôn Nhân, Khai Trương, hết thảy mọi việc",
+        "anh_huong": "Phạm vào 60 ngày hoặc trong 120 ngày, chủ kiện cáo tổn tài, bại ruộng, tằm, mất sản nghiệp.",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Mãn (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Là ngày có Vãng Vong, Thiên Không. Đại Kị Động Thổ. Hợp tu tạo (sửa chữa) trăm việc đều lành. Nếu tại 2 cung Càn, Tốn",
+        "anh_huong": "Nếu tu tạo sửa chữa, trong giáp năm nha sinh quý tử, ruộng tằm hưng vượng, vĩnh đại kiết xương",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Không thể dùng được. Chỉ Hợp xây Sinh Phần",
+        "anh_huong": "Nếu dụng Hôn Nhân và việc khác, trong 60, 120 ngày rước lấy hoạ kiện cáo, hao tổn nhân khẩu, thối tài. Trong 3, 6, 9 năm suy sụp.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Bạch Hổ nhập trung cung",
+        "anh_huong": "Nếu phạm vào ngày này tổn nhân khẩu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Chẳng lợi cho hôn nhân, khởi tạo. Thuộc về âm cung chủ sự. chẳng hợp mọi việc.",
+        "anh_huong": "Rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Mùi)",
+        "day_can_chi": "Quý Mùi",
+        "nghi_ki": "Quý Thuỷ nhập Thái Châu, trường sinh hưng vượng. Có Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Bàng kiết tinh chiếu che",
+        "anh_huong": "Nếu dụng ngày này sẽ lợi người, thêm con cháu, tăng ruộng đất, rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Có Thiên Đức, Nguyệt Đức, Huỳnh La, Tử Đàng, Kim Ngân, Khố Lầu, Bửu Tàng là kiết tinh che chiếu. Hợp Tu Tạo, Động Thổ,",
+        "anh_huong": "Trong 3, 6, 9 năm đại vượng, sinh quý tử, thêm nhân khẩu, tạo được điền sản. Rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Chính Tứ Phế",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Có Thiên Đức, Nguyệt Đức, Huỳnh La, Tử Đàng, Kim Ngân, Khố Lầu, Bửu Tàng là kiết tinh che chiếu. Hợp Tu Tạo, Động Thổ, Mai Táng, Hôn Nhân, Khai Trương, Nhập Trạch, Xuất Hành, cùng mọi việc",
+        "anh_huong": "Trong 3, 6, 9 năm đại vượng, sinh quý tử, thêm nhân khẩu, tạo được điền sản. Rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Phá (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Có sao Tiểu Hồng Sa, Thiên Tặc. Kị: Hôn Nhân, Tu Tạo cùng mọi việc",
+        "anh_huong": "Phạm chỉ 60, 120 ngày chiêu quan tư, khẩu thiệt, hao tổn cháu gái, cùng bệnh tật",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Chỉ hợp xây sinh phần Kị: Tu Tạo, Họp Bạn, Hôn Nhân",
+        "anh_huong": "Nếu phạm ngày này bất lợi cho trai trưởng, trước hao tài, ruộng đất, sau hoả hoạn trộm cắp.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Nguy (Tuất)",
+        "day_can_chi": "Mậu Tuất",
+        "nghi_ki": "Chỉ hợp xây sinh phần Kị: Tu Tạo, Họp Bạn, Hôn Nhân",
+        "anh_huong": "Nếu phạm ngày này bất lợi cho trai trưởng, trước hao tài, ruộng đất, sau hoả hoạn trộm cắp.",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Nguy (Tuất)",
+        "day_can_chi": "Nhâm Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Thành (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Gồm sao Thiên Hỷ, Thiên Hoàng, Địa Hoàng, Huỳnh La, Tử Đàng, Ngọc Đường, nhiều sao kiết tinh che chiếu. Hợp: Hôn Nhân, Khai Trương, Nhập Trạch, Xuất Hành, Khởi Tạo, An Táng, Dựng Cột, Định Tảng, Gác Đòn Đông",
+        "anh_huong": "Nếu dụng ngày này từ 60, 120 ngày tấn hoạch tài, quý nhân giúp đỡ, mưu việc rất tốt.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Nếu phạm chỉ trong 3 năm tất thối tài, không một việc lợi, chủ thị phi, kiện tụng, tài sản hư hao.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Nếu phạm ngày này: Ruộng tằm chẳng thâu, vợ sản ách. Tai hoạ, phòng nước, lửa.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Nếu phạm ngày này: Chủ quan phi, tổn nhân khẩu, tiểu nhân ám hại",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Khai (Sửu)",
+        "day_can_chi": "Kỷ Sửu",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Nếu phạm ngày này: Ruộng tằm chẳng thâu, vợ sản ách. Tai hoạ, phòng nước, lửa.",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Khai (Sửu)",
+        "day_can_chi": "Quý Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Nếu phạm ngày này: Chủ quan phi, tổn nhân khẩu, tiểu nhân ám hại",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Bế (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có sao Huỳnh La, Hoạt",
+        "anh_huong": "Ngày này là Ngũ Hành Vô Khí.",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Dần)",
+        "day_can_chi": "Bính Dần",
+        "nghi_ki": "Diệu, Chỉ hợp Khép Hòm Làm Sinh Phần. Kị : Tu Tạo Động Thổ, Cùng Hôn Nhân, Nhập Trạch, Khai Trương mọi việc",
+        "anh_huong": "Việc bình thường dụng được. Tuy không hại lớn. Nhưng… chẳng dùng là hay hơn.",
+        "kiet_hung": "Bình"
+      }
+    ]
+  },
+  {
+    "month": 3,
+    "name": "Tháng Ba",
+    "solar_term": "Thanh Minh – Cốc Vũ",
+    "page_start": 84,
+    "page_end": 90,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Địa Võng, Câu Giảo. Sát Tập Nhập trung cung",
+        "anh_huong": "Nếu phạm ngày này: Nội trong 3 năm sẽ bị nhà hư, người mất",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Kiên (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Có sao Địa Võng, Câu Giảo. Kị: Tu Tạo, An Táng, Hôn Nhân, Khai Trương mọi việc.",
+        "anh_huong": "Nếu phạm ngày này: Chủ việc tai hoạ nước sôi lửa bỏng, kinh thương (bị tổn thương làm cho sợ sệt), dẫu có sinh được con cái đều là xấu xa, hèn dở, không lợi ích gì.",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Kiên (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Địa Võng, Câu Giảo. Sát Tập Nhập trung cung",
+        "anh_huong": "Nếu phạm ngày này: Nội trong 3 năm sẽ bị nhà hư, người mất",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Kiên (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Có sao Địa Võng, Câu Giảo. Kị: Tu Tạo, An Táng, Hôn Nhân, Khai Trương mọi việc.",
+        "anh_huong": "Nếu phạm ngày này: Chủ việc tai hoạ nước sôi lửa bỏng, kinh thương (bị tổn thương làm cho sợ sệt), dẫu có sinh được con cái đều là xấu xa, hèn dở, không lợi ích gì.",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Trừ (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có Thập Ác Hung",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Tị)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Nên: Tu Tạo, Về Nhà Mới, Dời Chỗ Ở, Động Thổ, Hôn Nhân, mọi việc rất tốt.",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Tị)",
+        "day_can_chi": "Kỷ Tị",
+        "nghi_ki": "Nên Tạo Tác, Nhập Trạch… các công việc cũng tốt. Nhưng… chôn cất thì phạm trùng tang không lợi",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Tị)",
+        "day_can_chi": "Tân Tị",
+        "nghi_ki": "Tuy có Hoả Tinh, nhưng lại bị sao Sương Quỷ, Bại Vong, còn là ngày Thập Ác Đại Bại không nên dùng.",
+        "anh_huong": "Xâu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Tị)",
+        "day_can_chi": "Quý Tị",
+        "nghi_ki": "Là ngày Thiên Thượng",
+        "anh_huong": "Rất Xâu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Bị Cửu Thổ Quỷ",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Ngọ)",
+        "day_can_chi": "Mậu Ngọ",
+        "nghi_ki": "Bị Sương Quỷ (quỷ dữ), bại vong. Lại gặp Trùng tang, Đại Kị an táng",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Ngọ)",
+        "day_can_chi": "Canh Ngọ",
+        "nghi_ki": "Bị Thập Ác Đại Bại không thể dùng được",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Ngọ)",
+        "day_can_chi": "Nhâm Ngọ",
+        "nghi_ki": "Được Thiên Nguyệt nhị đức, dùng được hơi tốt",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Rất hung hiểm, bởi gặp Thiên Cang lại phạm Hung Giảo, Châu Tước. Ngày Mùi này cùng ngày Mùi tháng giêng và tháng năm tương tự. Không nên làm việc gì, dù cho việc nhỏ cũng không lợi.",
+        "anh_huong": "Rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Nên Phát cỏ, Vở Đất, Dựng Cột, Gác Đòn Dông, An Táng rất tốt",
+        "anh_huong": "Nội trong 3 năm, thêm con cháu, tấn tài lộc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Thân)",
+        "day_can_chi": "Mậu Thân",
+        "nghi_ki": "Bị Thiên Cang, Không Vong, Sương Quỷ",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Bị Chính Tứ Phế rất hung. Lại ngày Thân thuộc Vãng Vong, vì vậy Xuất Hành, Xuất Quân, Phó Nhậm chẳng dùng ngày này.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Có Thiên, Nguyệt Nhị Đức, Huỳnh La, Tử Đàng, Kim Ngân, Khố Lầu, cùng chiếu, là ngày Thập toàn đại kiết, đại lợi",
+        "anh_huong": "Rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Nên Tu Tạo, Nhập Trạch, Hôn Nhân, Khai Trương, Xuất Hành các việc.",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Dậu)",
+        "day_can_chi": "Đinh Dậu",
+        "nghi_ki": "Nên An Táng",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Dậu)",
+        "day_can_chi": "Kỷ Dậu",
+        "nghi_ki": "Bị Cửu Thổ Quỷ",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Dậu)",
+        "day_can_chi": "Tân Dậu",
+        "nghi_ki": "Bị Chính Tứ Phế",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Dậu)",
+        "day_can_chi": "Quý Dậu",
+        "nghi_ki": "Nên An Táng",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Phá (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Gặp Nguyệt Kiên xung phá, mọi việc đều không nên dùng",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Hợi)",
+        "day_can_chi": "Đinh Hợi",
+        "nghi_ki": "Gặp Hắc Sát",
+        "anh_huong": "Rất Xâu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Hợi)",
+        "day_can_chi": "Kỷ Hợi",
+        "nghi_ki": "Bị Hoả Tinh, có Văn Xương tinh chiếu đi học được cực tốt, việc khác tốt vừa.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Là ngày Kim của phụ nhân, là Kỳ Âm phủ quyết khiển, âm khí toàn thịnh, chẳng hợp với dương gian",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Hợi)",
+        "day_can_chi": "Quý Hợi",
+        "nghi_ki": "Là ngày cuối cũng của Lục Giáp, Ngũ Hành Vô Khí, chủ việc tuyệt người, lại là ngày Thọ Tử, mọi việc chẳng nên dùng.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Là ngày “Mộc Đả Bảo Bình” nơi “Bắc Phương Mộc Dục” bị “Ngũ Hành Vô Khí” phúc lực giảm cạn, chỉ có làm những việc vụn vặt thì được. Kị: Khai Trương, Xuất Hành, Nhập Trạch, Sửa Chữa, Hôn Nhân",
+        "anh_huong": "Ngày này nếu dùng sẽ gặp hung bại, tai ương, hoạ hại. ngày này gọi là “Nghĩa Băng Tiêu”.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Bị tiểu nhân hãm hại",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung. Kị: Hôn Nhân, Tu Tạo, Nhập Trạch…",
+        "anh_huong": "Nếu dùng phạm ngày này chủ việc hao tài, bệnh tật, tranh tụng, thị phi, rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Sửu)",
+        "day_can_chi": "Kỷ Sửu",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Bị tiểu nhân hãm hại",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Sửu)",
+        "day_can_chi": "Quý Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung. Kị: Hôn Nhân, Tu Tạo, Nhập Trạch…",
+        "anh_huong": "Nếu dùng phạm ngày này chủ việc hao tài, bệnh tật, tranh tụng, thị phi, rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Được thứ kiết. Nhưng… có Lục Bất Thành và Bất Hợp, dùng thì hoàn toàn bất lợi, nên thận trọng.",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Dần)",
+        "day_can_chi": "Mậu Dần",
+        "nghi_ki": "Có sao Thiên Xá dùng được tốt",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Dần)",
+        "day_can_chi": "Canh Dần",
+        "nghi_ki": "Được thứ kiết. Nhưng… có Lục Bất Thành và Bất Hợp, dùng thì hoàn toàn bất lợi, nên thận trọng.",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Dần)",
+        "day_can_chi": "Nhâm Dần",
+        "nghi_ki": "Có sao Thiên, Nguyệt Nhị Đức,",
+        "anh_huong": "Dùng cho Âm phần này lợi cho con cháu, thêm ruộng đất, sinh",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Nếu dùng phạm ngày này: sẽ bị tổn thương, bệnh hoạn, sa sút, rất xấu",
+        "kiet_hung": "Đại Hung"
+      }
+    ]
+  },
+  {
+    "month": 4,
+    "name": "Tháng Tư",
+    "solar_term": "Lập Hạ – Tiểu Mãn",
+    "page_start": 91,
+    "page_end": 97,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có sao Tiểu Hồng Sa. Kị: Xuất Hành, Giá Thú, An Táng, Tạo Tác, Nhập Trạch, Khai Trương mọi việc…",
+        "anh_huong": "Nếu dùng ngày này: Sẽ bị lãnh thối, tật bệnh, ruộng tằm chẳng thu hoạch được, chết ở xứ người không về được, tài sản phá tan. Đây là ngày Thọ Tử vậy.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Có Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng các kiết tinh đồng chiếu. Nên Tu Tạo, Khai Trương, Hôn Nhân, Nhập Trạch các việc…",
+        "anh_huong": "Nếu dùng ngày này, trong 60, 120 ngày tăng điền địa, thêm nhân khẩu, sinh con quý, đại vượng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Ngọ)",
+        "day_can_chi": "Canh Ngọ",
+        "nghi_ki": "Có sao Nguyệt Đức",
+        "anh_huong": "Nếu dùng ngày này, trong 60, 120 ngày tăng điền địa, thêm nhân khẩu, sinh con quý, đại vượng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Ngọ)",
+        "day_can_chi": "Nhâm Ngọ",
+        "nghi_ki": "Có Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng các kiết tinh đồng chiếu. Nên Tu Tạo, Khai Trương, Hôn Nhân, Nhập Trạch các việc…",
+        "anh_huong": "Nếu dùng ngày này, trong 60, 120 ngày tăng điền địa, thêm nhân khẩu, sinh con quý, đại vượng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Là ngày Bạch Hổ nhập trung cung. Dùng ngày này không phải là không lợi, nhưng phải tra cứu coi ngày, tháng và",
+        "anh_huong": "Lại quan hệ là Nguyệt yểm, Thiên Tặc phạm nhằm là bị chủ hung, sa sút",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Mùi)",
+        "day_can_chi": "Kỷ Mùi",
+        "nghi_ki": "Có sao Hoả Tinh. Nên: Dựng Cột, Gác Đòn Dông, Chôn Cất",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Mùi)",
+        "day_can_chi": "Quý Mùi",
+        "nghi_ki": "Là ngày Bạch Hổ nhập trung cung. Dùng ngày này không phải là không lợi, nhưng phải tra cứu coi ngày, tháng và năm đó, coi có kiết tinh cùng với mạng cung hợp nhau mới dùng được",
+        "anh_huong": "Lại quan hệ là Nguyệt yểm, Thiên Tặc phạm nhằm là bị chủ hung, sa sút",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Bị Chu Tước, Câu Giảo. Sát Tập nhập trung cung",
+        "anh_huong": "Dùng phạm ngày này: Đại hoạ liên miên, do tiểu nhân gây ra, phá tài, sinh con xấu xa quái dị, còn bị tai ách về nước và lửa",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thân)",
+        "day_can_chi": "Bính Thân",
+        "nghi_ki": "Bị Chu Tước, Câu Giảo không lợi về Khởi Tạo, Xuất Hành, An Táng, Hôn Nhân, Nhập Trạch",
+        "anh_huong": "Dùng phạm ngày này: Rước hoạ quant ư, khẩu thiệt. Đàn bà, con nít sinh ra tai nạn",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Bình (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Bị Chu Tước, Câu Giảo. Sát Tập nhập trung cung",
+        "anh_huong": "Dùng phạm ngày này: Đại hoạ liên miên, do tiểu nhân gây ra, phá tài, sinh con xấu xa quái dị, còn bị tai ách về nước và lửa",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Bình (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Bị Chu Tước, Câu Giảo không lợi về Khởi Tạo, Xuất Hành, An Táng,",
+        "anh_huong": "Dùng phạm ngày này: Rước hoạ quant ư, khẩu thiệt. Đàn bà, con nít sinh ra tai nạn",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Định (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Tuy có Cửu Thổ Quỷ, chẳng hợp Động Thổ, An Táng. Có thể làm những chuyện nhỏ. Vì ngày Dậu ở tháng Tư được thứ kiết, song về Hôn Nhân, Nhập Trạch, Tu Tạo nhất thiết không nên dùng, vì chủ hung",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Làm việc nho nhỏ được thứ kiết. trong 24 hướng các sát tinh đều chầu trời, nên làm trộm thì được, (không cúng vái). Còn Hôn Nhân, Nhập Trạch, An Táng, Khai Trương thì chẳng nên làm.",
+        "anh_huong": "Nếu phạm ngày này tổn trạch trưởng, hao tán tiền của rất xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Bị Vãng Vong, Chu Tước, Câu Giảo, hay gặp",
+        "anh_huong": "Nếu phạm ngày này: Hao tốn tiền của, bị bệnh tật.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Là kim tự chiết (Giáp Tý thuộc hành Kim), không còn khí lực ngũ hành",
+        "anh_huong": "Dùng phạm ngày này: Lập tức thấy sự vắng vẻ, tổn hại",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Rất tốt cho Khởi Tạo, Hôn Nhân, Hưng Công, Động Thổ, Xuất Hành, Khai Trương, Dời Chỗ Ở",
+        "anh_huong": "Nếu dụng ngày này: sẽ được tấn nhân khẩu, thêm con cháu, vượng ruộng đất, tăng tài sản, làm lớn phát lớn, làm nhỏ phát nhỏ",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Tý)",
+        "day_can_chi": "Nhâm Tý",
+        "nghi_ki": "Thuộc “Mộc Đã Bảo Bình”, là chỗ Mộc Dục ở phương Bắc, phúc lực rất kém, lại là Chính Tứ Phế, Rất xấu",
+        "anh_huong": "Dùng phạm ngày này: Lập tức thấy sự vắng vẻ, tổn hại, tổn nhân khẩu, chủ việc lãnh thối đại hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Được Thiên Hỷ, Thiên Thành, nhưng phạm Chu Tước, Câu Giảo.",
+        "anh_huong": "Nếu dùng phạm ngày này: Sẽ bị quan tư, khẩu thiệt, tiểu nhân vu khống",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung.",
+        "anh_huong": "Phạm ngày này: Không Vong, Phá Tài, nếu dùng liền bị tiểu nhân hãm hại",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Sửu)",
+        "day_can_chi": "Kỷ Sửu",
+        "nghi_ki": "Được Thiên Hỷ, Thiên Thành, nhưng phạm Chu Tước, Câu Giảo.",
+        "anh_huong": "Nếu dùng phạm ngày này: Sẽ bị quan tư, khẩu thiệt, tiểu nhân vu khống",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Sửu)",
+        "day_can_chi": "Quý Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung.",
+        "anh_huong": "Phạm ngày này: Không Vong, Phá Tài, nếu dùng liền bị tiểu nhân hãm hại",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Mão)",
+        "day_can_chi": "Kỷ Mão",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng đồng chiếu. Nên Xuất Hành, Hôn Nhân, Mai Táng, Tạo Tác, Khai Trương, Nhập Trạch mọi việc được đại kiết",
+        "anh_huong": "Nếu dùng ngày này: Mưu sự hanh thông, quý nhân giúp đỡ, được thêm tài lộc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Sát Tập Nhập trung cung. Kị: Tu Tạo, An Táng, Hôn Nhân, Nhập Trạch,",
+        "anh_huong": "Nếu phạm ngày này: Tổn nhân khẩu, lục súc chẳng vượng, tài sản hao mất",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Có Hoả Tinh, nhưng… chỉ làm được việc vặt. Kị: dùng làm việc lớn như Hôn Nhân, Khởi Tạo, Dời Chỗ Ở, Khai Trương…",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Sát Tập Nhập trung cung. Kị: Tu Tạo, An Táng, Hôn Nhân, Nhập Trạch, Khai Trương …",
+        "anh_huong": "Nếu phạm ngày này: Tổn nhân khẩu, lục súc chẳng vượng, tài sản hao mất",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Có Hoả Tinh, nhưng… chỉ làm được việc vặt. Kị: dùng làm việc lớn như Hôn Nhân, Khởi Tạo, Dời Chỗ Ở, Khai Trương…",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      }
+    ]
+  },
+  {
+    "month": 5,
+    "name": "Tháng Năm",
+    "solar_term": "Mang Chủng – Hạ Chí",
+    "page_start": 98,
+    "page_end": 103,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Tuy là Chuyển Sát nhưng được Thiên Xá. Tất cả mọi việc đều xấu. Nên chỉ Mai Táng là được Thứ Kiết",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Không thể dùng được. Kị: Hôn Nhân, Khai Trương, Tu Tạo, Nhập Trạch các việc…",
+        "anh_huong": "Nếu phạm ngày này sẽ bị tổn nhân khẩu, thoái tài, bệnh tật",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Nên An Táng, Khởi Tạo, Hôn Nhân, Nhập Trạch, Khai Trương, Xuất Hành được Thứ Kiết Nhưng … chẳng nên Động Thổ",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Chỉ nên An Táng. Chẳng nên Tu Tạo, Nhập Trạch, các việc khác…",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Bị Tiểu Hồng Sa, lại có Chu Tước, Câu Giảo đến Chu Tinh",
+        "anh_huong": "Chiêu quan tư, tổn trưởng ấu, kẻ ở trong nhà thì linh tinh, trăm việc chẳng nên làm, rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Kim Ngân, Bảo Tàng, Điền Đường, Khố Châu, Tụ Lộc, Giá Mã, Hàm Thánh, Du Ngoan cùng chiếu, được Đại Kiết. Nên: Khởi Tạo, Hưng Công, Động Thổ, Nhập Trạch, Khai Trương, Hôn Nhân, Mai Táng…",
+        "anh_huong": "Nếu dụng ngày này: Mọi việc được gia quan, tấn chức, sinh quý tử, thêm hoạnh tài",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung Mặc dù có nhiều kiết tinh hoá giải, nhưng khó được lợi ích",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Định (Tuất)",
+        "day_can_chi": "Mậu Tuất",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Kim Ngân, Bảo Tàng, Điền Đường, Khố Châu, Tụ Lộc, Giá Mã, Hàm Thánh, Du Ngoan cùng chiếu, được Đại Kiết.",
+        "anh_huong": "Nếu dụng ngày này: Mọi việc được gia quan, tấn chức, sinh quý tử, thêm hoạnh tài",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Tuất)",
+        "day_can_chi": "Nhâm Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung Mặc dù có nhiều kiết tinh hoá giải, nhưng khó được lợi ích",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Sửa chữa nhỏ được Thứ Kiết",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Là ngày Âm phủ quyết khiển",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Bị Thiên Tặc, không nên tổ chức Hôn Nhân, Tu Tạo, An Táng, Nhập Trạch các việc",
+        "anh_huong": "Nếu phạm vào: Hoạ quan tư, hao tổn lục súc, điền sản chẳng thâu, rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Nếu phạm vào: Tổn lục súc, chiêu quan tư, điền sản chẳng thâu, tài vật thất thoát, bị cọp rắn gây thương tích, nhiều sự hung hiểm",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Kim Ngân, Khố Lâu, Ngọc Đương, Bảo Tàng cùng chiếu. Nên: Hưng Công, Động Thổ, Dựng Cột, Gác Đòn Dông, Nhập Trạch, Khai Trương, …",
+        "anh_huong": "Nếu dụng ngày này: Trong vòng 60 ngày đến 120 ngày sẽ được ích tài, điều vui mừng sẽ đến. Gia môn từ đấy giàu có, thịnh vượng, đường đời càng thấy an khang, đại kiết vậy.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Dần)",
+        "day_can_chi": "Nhâm Dần",
+        "nghi_ki": "Tháng này, tuy có kiết tinh chiếu nhưng bên trong hơi có sát tinh tương khắc, nên chỉ được Thứ Kiết",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Bị Vãng Vong, Chu Tước, Câu Giảo",
+        "anh_huong": "Nếu dùng phạm ngày này : sẽ bị tiểu nhân hình hại, hoạ hoạn triền miên, quant ư, khẩu thiệt, tổn lục súc, trăm việc chẳng nên làm, rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Sát Tập Nhập trung cung.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Có sao Nguyệt Đức",
+        "anh_huong": "Nếu dùng ngày này: Điền sản, lục súc hưng vượng, sinh quý tử, trăm việc đều được rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Sát Tập Nhập trung cung.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng cùng chiếu.",
+        "anh_huong": "Nếu dùng ngày này: Điền sản, lục súc hưng vượng, sinh quý tử, trăm việc đều được tốt.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có sao Huỳnh La, Tử Đàng chiếu. Nên: Hưng Công, Tạo Tác, Động Thổ, Sửa Tạo Ao Hồ, Kho Lẫm, Chuồng Trâu Dê, Nhập Trạch, Hôn Nhân, Khai Trương, Xuất Hành, đạt ích lợi",
+        "anh_huong": "Nếu dụng ngày này: Gia môn, con cháu hiếu thảo, điền sản được bội thu, nhân khẩu an khang, rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Tị)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Tị)",
+        "day_can_chi": "Tân Tị",
+        "nghi_ki": "Có sao Huỳnh La, Tử Đàng chiếu. Nên: Hưng Công, Tạo Tác, Động Thổ, Sửa Tạo Ao Hồ, Kho Lẫm, Chuồng Trâu Dê, Nhập Trạch, Hôn Nhân, Khai Trương, Xuất Hành, đạt ích lợi",
+        "anh_huong": "Nếu dụng ngày này: Gia môn, con cháu hiếu thảo, điền sản được bội thu, nhân khẩu an khang, rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Tị)",
+        "day_can_chi": "Quý Tị",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      }
+    ]
+  },
+  {
+    "month": 6,
+    "name": "Tháng Sáu",
+    "solar_term": "Tiểu Thử – Đại Thử",
+    "page_start": 104,
+    "page_end": 110,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Sát tập nhập trung cung. Bất lợi về Tu Tạo, Hôn Nhân, Nhập Trạch, Thượng Quan… các việc khác.",
+        "anh_huong": "Nếu phạm vào sẽ bị nhiễm ôn dịch, mất nhân khẩu, mất mát tiền của.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Có sao Thiên Đức, Nguyệt Đức, Huỳnh La, Tử Đàng cùng chiếu. Lợi về Dựng Cột, Khởi Tạo, An Táng, Động Thổ, Khai Sơn, Phát Cỏ, Xuất Hành, Khai Trương, các việc khác…",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Thân)",
+        "day_can_chi": "Bính Thân",
+        "nghi_ki": "Là ngày Ngũ Hành Vô Khí, không thể dùng",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Thân)",
+        "day_can_chi": "Mậu Thân",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Nên Đốn Cây, Gác Ách Trâu Bò, Kê Chân Cột, Khởi Tạo.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Dậu)",
+        "day_can_chi": "Đinh Dậu",
+        "nghi_ki": "Gặp trực Mãn cũng bất lợi dùng không toàn mũ, nên cẩn thận",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Dậu)",
+        "day_can_chi": "Kỷ Dậu",
+        "nghi_ki": "Bị Cửu Thổ Quỷ",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Dậu)",
+        "day_can_chi": "Tân Dậu",
+        "nghi_ki": "Nên Đốn Cây, Gác Ách Trâu Bò, Kê Chân Cột,",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Dậu)",
+        "day_can_chi": "Quý Dậu",
+        "nghi_ki": "Là ngày tiểu tang (chôn tạm) nhưng lại lâm phạm vào Hắc Sát, chủ có thể dùng được lúc gấp rút",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Là ngày Huyền Nữ Thân Tu, tám phương đều thanh bạch, chư thần 24 nhật hướng đều chầu trời, là ngày có khí, dùng được.",
+        "anh_huong": "Rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Bị Chu Tước, Câu Giảo, lại phạm đến Châu Tinh, chẳng lợi về việc nhập trạch, hôn nhân mọi việc",
+        "anh_huong": "Nếu dùng phạm sẽ bị quan phi đại hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Có sao Văn Xương tại Ngọ. Văn Xương cũng chính là vị của Thái Dương, nên có sao Thái Dương trị nhật, vì vậy được Đại Kiết. Nên: Xuất Hành, Nhập Trạch, Hôn Nhân, Nhập Học, Tu Tạo, Động Thổ, Tham Quan",
+        "anh_huong": "Sẽ gặp quý nhân, đón tài lộc, sinh quý tử, làm lớn phát lớn, làm nhỏ phát nhỏ",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Hợi)",
+        "day_can_chi": "Đinh Hợi",
+        "nghi_ki": "Có Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng cùng chiếu",
+        "anh_huong": "Rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Hợi)",
+        "day_can_chi": "Kỷ Hợi",
+        "nghi_ki": "Có sao Hoả Tinh",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Thuộc Kim, nhưng Kim của phụ nữ (âm nhân), âm khí toàn thịnh",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Định (Hợi)",
+        "day_can_chi": "Quý Hợi",
+        "nghi_ki": "Là ngày cuối cùng của Lục Giáp ngũ hành vô khí",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Tuy là đầu của Lục Giáp, ở tháng Giêng và tháng Sáu gặp Thiên Đức và Nguyệt Đức sao tốt nhưng đều không dùng được, vì Kim tự chết, Ngũ Hành Vô Khí",
+        "anh_huong": "Người bình thường không thể nào đương nổi với cái khí của vị tướng quân bát sát, ở phương Bắc này được",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Lợi về khởi tạo, Hưng Công, Động Thổ, Làm Kho Lẫm, Nhập Trạch, Dời Chỗ Ở, Khai Trương, Xuất Hành.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Tý)",
+        "day_can_chi": "Mậu Tý",
+        "nghi_ki": "Dụng việc nhỏ được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Tý)",
+        "day_can_chi": "Canh Tý",
+        "nghi_ki": "Lợi về khởi tạo, Hưng Công, Động Thổ, Làm Kho Lẫm, Nhập Trạch, Dời Chỗ Ở, Khai Trương, Xuất Hành.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Tý)",
+        "day_can_chi": "Nhâm Tý",
+        "nghi_ki": "Bị “Mộc Đã Bảo Bình”. Là nơi Bắc phương mộc dục, lại là Chính Tứ Phế",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Bị Tiểu Hồng Sa, ngày này không có kiết tinh, không được kinh doanh, làm các công việc. Trường hợp vạn bất đắc dĩ phải lựa giữ cẩn thận, cấp dụng làm những việc nho nhỏ mà thôi",
+        "anh_huong": "Nếu Khởi Tạo, Hôn Nhân, Khai Trương, Xuất Hành… sẽ bị tổng thương lục súc, chiêu việc quan tư",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Nếu dùng vào ngày này: Sẽ phạm chết người, vì ngày hung không thể nói hết",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Sửu)",
+        "day_can_chi": "Kỷ Sửu",
+        "nghi_ki": "Bị Tiểu Hồng Sa, ngày này",
+        "anh_huong": "Nếu Khởi Tạo, Hôn Nhân, Khai",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Sửu)",
+        "day_can_chi": "Tân Sửu",
+        "nghi_ki": "không có kiết tinh, không được kinh doanh, làm các công việc. Trường hợp vạn bất đắc dĩ phải lựa giữ cẩn thận, cấp dụng làm những việc nho nhỏ mà thôi",
+        "anh_huong": "Trương, Xuất Hành… sẽ bị tổng thương lục súc, chiêu việc quan tư",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Nguy (Sửu)",
+        "day_can_chi": "Quý Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Nếu dùng vào ngày này: Sẽ phạm chết người, vì ngày hung không thể nói hết",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có Thiên Đức, Nguyệt Đức, Huỳnh La, Tử Đàng, Kim Ngân, Khố Lâu, Lộc Bảo, Lâu Cái, Đế Thủ cùng chiếu. Nhưng… vì mùa Hạ là ngày quỷ thần không vong",
+        "anh_huong": "Không có lợi cho việc đi xa, Khởi Tạo, Nhập Trạch, Hôn Nhân… Còn như Khai Sơn, Mai Táng, Doanh Mưu các việc khác nội trong 60 đến 120 ngày sẽ sinh con quý, gia nghiệp hưng vượng, quý nhân giúp đỡ, tân sản nghiệp",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Dần)",
+        "day_can_chi": "Bính Dần",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Có các kiết tinh : Huỳnh La, Tử Đàng, Loan Dư, Bảo Cái, Lộc Âm, Tông Ngọc, Kim Bảo, Thiên Đế, Tụ Bảo cùng chiếu Nên : Tạo Tác, Nhập Trạch, Khai Trương, Xuất Hành, Hôn Nhân các việc…",
+        "anh_huong": "Nếu làm ngày này ích tử tôn, vượng điền sản, tấn hoạch tài, tăng phòng ốc, sinh quý tử",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Mão)",
+        "day_can_chi": "Đinh Mão",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Thành (Mão)",
+        "day_can_chi": "Tân Mão",
+        "nghi_ki": "Có các kiết tinh : Huỳnh La, Tử Đàng, Loan Dư, Bảo Cái, Lộc Âm, Tông Ngọc, Kim Bảo, Thiên Đế, Tụ Bảo cùng chiếu Nên : Tạo Tác, Nhập Trạch, Khai Trương, Xuất Hành, Hôn Nhân các việc…",
+        "anh_huong": "Nếu làm ngày này ích tử tôn, vượng điền sản, tấn hoạch tài, tăng phòng ốc, sinh quý tử",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Mão)",
+        "day_can_chi": "Quý Mão",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Thâu (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Ngày này thứ kiết, lợi cho việc sửa chữa nhanh gọn",
+        "anh_huong": "Ích điền sản, vượng lục súc, cũng nên An Táng và làm việc kinh doanh",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Trăm việc không làm",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Bị Đằng Xà, Chu Tước không nên dùng",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Thìn)",
+        "day_can_chi": "Nhâm Thìn",
+        "nghi_ki": "Ngày này thứ kiết, lợi cho việc sửa chữa nhanh gọn",
+        "anh_huong": "Ích điền sản, vượng lục súc, cũng nên An Táng và làm việc kinh doanh",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có sao Huỳnh La, Tử Đàng chiếu. Nên: Hưng Công, Tạo Tác, Động Thổ, Sửa Tạo Ao Hồ, Kho Lẫm, Chuồng Trâu Dê, Nhập Trạch, Hôn Nhân, Khai Trương, Xuất Hành, đạt ích lợi",
+        "anh_huong": "Nếu dụng ngày này: Gia môn, con cháu hiếu thảo, điền sản được bội thu, nhân khẩu an khang, rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Tị)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Phạm Nguyệt Yểm rất hung, đều bất lợi",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Tị)",
+        "day_can_chi": "Quý Tị",
+        "nghi_ki": "Có sao Thiên Thành, Thiên Tặc, Phúc Sinh. Chỉ nên Hưng Công, Động Thổ, Nhập Trạch, Khai Trương.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Là ngày Thiên Xá không thuộc ngày Chuyển Sát, lại gặp Nguyệt Đức. Nhưng vì phạm Thọ Tử, khí chẳng toàn vẹn.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      }
+    ]
+  },
+  {
+    "month": 7,
+    "name": "Tháng Bảy",
+    "solar_term": "Lập Thu – Xử Thử",
+    "page_start": 111,
+    "page_end": 117,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Là ngày Tỳ Hoà, chỉ nên mai tang, nhưng… bị Nguyệt Kiến Thượng Hung, không dùng được",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Tuy không có hung tinh; được Thứ Kiết nhưng … lại phạm Vãng Vong chỉ nên: Phá Núi, Phát Cỏ, An Táng, Hưng Công, Dựng Cột, Gác Đòn Dông, Sửa Chữa, Tạo Tác, Xuất Hành, Khai Trương, Nhập Trạch, Dời Chỗ Ở.",
+        "anh_huong": "Hơi Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Dậu)",
+        "day_can_chi": "Đinh Dậu",
+        "nghi_ki": "Có sao Vãng Vong. Là ngày Hung Bại",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Dậu)",
+        "day_can_chi": "Kỷ Dậu",
+        "nghi_ki": "Có sao Vãng Vong, Cửu Thổ Quỷ",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Dậu)",
+        "day_can_chi": "Tân Dậu",
+        "nghi_ki": "Có sao Vãng Vong, Chính Tứ Phế, Thiên Địa Chuyển Sát",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Dậu)",
+        "day_can_chi": "Quý Dậu",
+        "nghi_ki": "Thuộc Kim Phục Kiếm, là khí của Hắc Sát tướng quân ở phương Bắc tổn thương, hung ác",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Trăm việc kị",
+        "anh_huong": "Rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Bị Chu Tước, Câu Giảo, Bạch Hổ nhập trung cung",
+        "anh_huong": "Bị quan tư, thị phi, cửa nhà suy bại, hao tổn nhân khẩu, tật bệnh triền miên, mạnh rồi lại đau không rời giường chiếu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Bị Đằng Xà phiền nhiễu, tổn nhân khẩu, hoạ quant ư, khẩu thiệt, hoạ đến bất ngờ",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Là ngày Kim tự chết, bấy giờ Kim về mùa thu, phương sát khí mạnh, không nên dùng.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Nước gặp giờ trong và sạch, lại gặp chỗ vượng. lại có các kiết tinh: Huỳnh La, Tử Đàng đồng chiếu. Nên Sửa Chữa, Tạo Tác, An Táng, Hôn Nhân, Khai Trương, Xuất Hành, Nhập Trạch, Hưng Công, Động Thổ",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Tý)",
+        "day_can_chi": "Mậu Tý",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Tý)",
+        "day_can_chi": "Nhâm Tý",
+        "nghi_ki": "Bị “Mộc Đã Bảo Bình”,",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Gồm các sao Chu Tước, Câu Giảo, Đằng Xà, Bạch Hổ. Không nên dùng làm việc gì",
+        "anh_huong": "Chủ hao tài, thương tổn nhân khẩu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có Chính Tứ Phế",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Dần)",
+        "day_can_chi": "Bính Dần",
+        "nghi_ki": "Các việc chẳng nên dùng",
+        "anh_huong": "Chủ về quan tư, thối tài, nhân khẩu nhiều chuyện",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Phá (Dần)",
+        "day_can_chi": "Nhâm Dần",
+        "nghi_ki": "Có Sao Nguyệt Đức. Lợi về An Táng",
+        "anh_huong": "Xấu mọi việc. Chỉ tốt An Táng",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Nguy (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Có sao Chính Tứ Phế",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Mão)",
+        "day_can_chi": "Đinh Mão",
+        "nghi_ki": "Có các kiết tinh : Thiên",
+        "anh_huong": "Nếu làm ngày này chủ gia",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Mão)",
+        "day_can_chi": "Kỷ Mão",
+        "nghi_ki": "Trăm sự nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Nguy (Mão)",
+        "day_can_chi": "Quý Mão",
+        "nghi_ki": "Có các kiết tinh : Thiên Đức, Huỳnh La, Tử Đàng, Kim Ngân, Khố Lâu, Ngọc Đường cùng chiếu. Nên : Hôn Nhân, Giá Thú, Hưng Công, Động Thổ, Dựng Cột, Gác Đòn Dông, Khai Trương, Xuất Hành, Nhập Trạch, Thượng Quan, Làm Kho Lẫm, Chuồng Trâu, Dê",
+        "anh_huong": "Nếu làm ngày này chủ gia nghiệp xương thạnh, nhân khẩu hưng vượng, sinh quý tử, tấn hoạch tài, giàu có, hoà thuận",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Bạch Hổ nhập trung cung",
+        "anh_huong": "Trong 3, 6 hoặc 9 năm bị nhà cửa vắng lạnh, gặp hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Mai Táng Thứ Kiết. Nhưng lại không nên làm việc lớn gì khác",
+        "anh_huong": "Trăm việc Kị Mai Tháng Thứ Kiết",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Bạch Hổ nhập trung cung",
+        "anh_huong": "Trong 3, 6 hoặc 9 năm bị nhà cửa vắng lạnh, gặp hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Mai Táng Thứ Kiết. Nhưng lại không nên làm việc lớn gì khác",
+        "anh_huong": "Trăm việc Kị Mai Tháng Thứ Kiết",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có Tiểu Hồng Sa, Chu Tước, Câu Giảo, Đằng Xà, mọi việc không lợi",
+        "anh_huong": "Nếu dụng ngày này: sẽ chiêu quan tư, tổn nhân khẩu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Ngọ)",
+        "day_can_chi": "Canh Ngọ",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Ngọ)",
+        "day_can_chi": "Nhâm Ngọ",
+        "nghi_ki": "Có sao Huỳnh La, Nguyệt Đức. Nên: Nhóm Bạn, Giá Thú, Tu Tạo, An Táng, Khai Trương, Xuất Hành, Nhập Trạch, Động Thổ, các việc khác",
+        "anh_huong": "Trong 60 đến 120 ngày có của, được phúc, quý nhân giúp đỡ, điền sản hưng vượng, quyến thuộc an khang.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Sát tập nhập trung cung.",
+        "anh_huong": "Nếu ở giữa sân nhà mà có vật đập kêu leng keng, hay các loại ồn ào khác thì làm kinh động sát thần thì bị hình thương đối với gia trưởng: tổn thương đầu, mắt, tay, chân, đại hung. Ngày này chủ về huyết, nước sôi, lửa cháy, đem đến việc tai",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Có thể làm được chuyện nhỏ",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      }
+    ]
+  },
+  {
+    "month": 8,
+    "name": "Tháng Tám",
+    "solar_term": "Bạch Lộ – Thu Phân",
+    "page_start": 118,
+    "page_end": 125,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Có sao Tiểu Hồng Sa, Thiên Thành chính là lúc Ngũ Hành Tự Bại, trăm sự đều hung, lại còn kiêm phạm cả Thiên Địa Chuyển Sát lại càng hung nhiều",
+        "anh_huong": "Nếu lỡ dùng ngày này sẽ gặp quan tư, sản ách, tai ương nước lửa lạ lung, con cháu đào tang mỗi người một ngã, nha lụn bại không ngừng.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Nên Hưng Công, Động Thổ, Nhập Trạch, Khai Trương, Hôn Nhân… các việc, dùng ngày này được Thứ Kiết",
+        "anh_huong": "Hơi Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Sát nhập trung cung, các việc chẳng nên dùng",
+        "anh_huong": "Chủ việc thất tài, lãnh thối, đại hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Tuất)",
+        "day_can_chi": "Mậu Tuất",
+        "nghi_ki": "Nên Hưng Công, Động Thổ, Nhập Trạch, Khai Trương, Hôn Nhân… các việc, dùng ngày này được Thứ Kiết",
+        "anh_huong": "Hơi Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Tuất)",
+        "day_can_chi": "Nhâm Tuất",
+        "nghi_ki": "Sát nhập trung cung, các việc chẳng nên dùng",
+        "anh_huong": "Chủ việc thất tài, lãnh thối, đại hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Có sao Thiên Phú, Văn Xương",
+        "anh_huong": "Quý Hiển – Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Hợi)",
+        "day_can_chi": "Đinh Hợi",
+        "nghi_ki": "Có Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng,",
+        "anh_huong": "Làm việc lớn thì phát lớn, làm việc nhỏ thì phát nhỏ.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Là ngày Âm Phủ quyết khiển, chẳng là ngày dùng ở Dương Gian",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Có Hoả Tinh, nhưng là khí Hắc sát ở Bắc phương. Không dùng được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Chính là lúc nước được trong sạch. Lại có Hoả Tinh, Thiên Đức, Nguyệt Đức chiếu. Lợi cho việc Khởi Tạo, Hôn Nhân, Nhập Trạch, Xuất Hành, Động Thổ, dùng ngày này vẫn tốt",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Tý)",
+        "day_can_chi": "Nhâm Tý",
+        "nghi_ki": "Là ngày cây cỏ bị úa héo, Ngũ Hành Vô Khí, không dùng được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Tra sách ngày Sửu trực Định ở Đổng Công: Tân Sửu, Quý Sửu hai ngày này Thứ Kiết. Ất Sửu, Đinh Sửu cũng Thứ Kiết. Duy chỉ có Kỷ Sảu bất lợi mà thôi. Mã Chư Gia Lịch Pháp nói rằng: Đinh Sửu, Quý Sửu phạm Chu Tước, Câu Giảo lại còn bị cái hung Bạch Hổ sát nhập trung cung. Còn Tân Sửu lại gặp Ngũ Mộ, Can Chi Vô Khí, trăm việc đều kị, mơ hồ khó biện nó thành tốt được, mặc dầu trong “Hợp Kỷ Biện Phương Thư” có nói rằng: Đinh Sửu, Kỷ Sửu nên Kết Hôn, Giá Thú, nhưng Đinh, Kỷ, Tân, Quý Sửu trong tháng này đều có Hung Sá. Hơn nữa ngày Kỷ Sửu còn có cái hung của Thập Ác và cái hiểm của Sương Quỷ, Bại Vong làm sao dùng được.",
+        "anh_huong": "Vì vậy mấy ngày này đều chẳng nên dùng mới là hay hơn. Những bậc cao minh đều cho như vậy cả",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có Chính Tứ Phế. Không thể dụng sự",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Dần)",
+        "day_can_chi": "Bính Dần",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Dần)",
+        "day_can_chi": "Canh Dần",
+        "nghi_ki": "Có sao Huỳnh Sa, Thiên Đức, Nguyệt Đức, lại có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng,",
+        "anh_huong": "Nếu làm ngày này được vượng điền sản, tấn hoạch tài, tăng lục súc, thêm nhân khẩu, hưng tử tôn.",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Dần)",
+        "day_can_chi": "Nhâm Dần",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Phá (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Chính Tứ Phế",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Mão)",
+        "day_can_chi": "Đinh Mão",
+        "nghi_ki": "Có sao Chu Tước, Câu Giảo, còn phạm cái hung của Nguyệt Yểm",
+        "anh_huong": "Hay rước hoạ quant ư, khẩu thiệt",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Mão)",
+        "day_can_chi": "Kỷ Mão",
+        "nghi_ki": "Trăm sự nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Phá (Mão)",
+        "day_can_chi": "Tân Mão",
+        "nghi_ki": "Có sao Chu Tước, Câu Giảo, còn phạm cái hung của Nguyệt Yểm",
+        "anh_huong": "Hay rước hoạ quant ư, khẩu thiệt",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Mão)",
+        "day_can_chi": "Quý Mão",
+        "nghi_ki": "Trăm sự nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Nguy (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Nên; Vỡ Đất, Hưng Công, Khai Trương, Xuất Hành, Nhập Trạch, Hôn Nhân, Trăm việc đều dùng được",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Là ngày thảo mộc úa héo",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Thiên Địa tương nghi (ngờ vực), không tốt",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Thìn)",
+        "day_can_chi": "Nhâm Thìn",
+        "nghi_ki": "Là ngày nước được trong",
+        "anh_huong": "Rất tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có các kiết tinh: Thiên Hỷ, Tử Đàng, Đới Lộc, Dịch Mã, Tập Tụ, Khúc Đường cùng chiếu Hợp: Hôn Nhân, Nhập Trạch, Hưng Công, Động Thổ, Khai Trương, Xuất Hành, Khởi Tạo, Làm Kho Lẫm, Chuồng Trâu, Dê…",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Tị)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Trăm Việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Tị)",
+        "day_can_chi": "Kỷ Tị",
+        "nghi_ki": "Có các kiết tinh: Thiên Hỷ, Tử Đàng, Đới Lộc, Dịch Mã, Tập Tụ, Khúc Đường cùng chiếu Hợp: Hôn Nhân, Nhập Trạch, Hưng Công, Động Thổ, Khai Trương, Xuất Hành, Khởi Tạo, Làm Kho Lẫm, Chuồng Trâu, Dê…",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Tị)",
+        "day_can_chi": "Tân Tị",
+        "nghi_ki": "Có sao Thiên Hỷ. Trăm việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Được Phúc Sinh, nhưng tiếc là bị Kiến, Phá lai xung",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Ngọ)",
+        "day_can_chi": "Mậu Ngọ",
+        "nghi_ki": "Có Hoả Tinh nhưng không có lợi",
+        "anh_huong": "Nếu phạm những ngày này tổn tử tôn, chiêu quan tư, sa sút",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Ngọ)",
+        "day_can_chi": "Nhâm Ngọ",
+        "nghi_ki": "Hoả Tinh, làm được các việc nhỏ",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Trăm việc chẳng lợi. Bên trong phạm vào vùng khí bại, tử tuyệt",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Là ngày tốt vừa, chỉ nên Phát Cỏ, Khai Sơn (Làm Rừng), Đốn Cây, An Táng…",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Thân)",
+        "day_can_chi": "Bính Thân",
+        "nghi_ki": "Có sao Thiên Đức, Nguyệt Đức. Nên Hưng Công, Dựng Cột, Gác Đòn Dông, Hôn Nhân, Nhập Trạch, An Táng, Khai Trương, Làm Kho Đụn, Chuồng Trâu, Dê, Heo",
+        "anh_huong": "Lợi cho con cháu, vượng điền sản, tấn hoạch tài, cửa nhà phát đạt, thượng kiết",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Thân)",
+        "day_can_chi": "Mậu Thân",
+        "nghi_ki": "Có sao Thiên Xá",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Có sao Thiên Đức, Nguyệt Đức. Nên Hưng Công, Dựng Cột, Gác Đòn Dông, Hôn Nhân, Nhập Trạch, An Táng, Khai Trương,",
+        "anh_huong": "Lợi cho con cháu, vượng điền sản, tấn hoạch tài, cửa nhà phát đạt, thượng kiết",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      }
+    ]
+  },
+  {
+    "month": 9,
+    "name": "Tháng Chín",
+    "solar_term": "Hàn Lộ – Sương Giáng",
+    "page_start": 126,
+    "page_end": 132,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Chẳng có lợi",
+        "anh_huong": "Tổn tài, nghèo khổ",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Kiên (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Có sao Thiên Đức, Nguyệt Đức",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Kiên (Tuất)",
+        "day_can_chi": "Mậu Tuất",
+        "nghi_ki": "Chẳng có lợi",
+        "anh_huong": "Tổn tài, nghèo khổ",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Nên Khởi Tạo, Khai Trương, Giá Thú, Nhập Trạch, Xuất Hành, Động Thổ, các việc khác…",
+        "anh_huong": "Nếu làm ngày này: con cháu được hưng vượng, giàu có vĩnh viễn",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Hợi)",
+        "day_can_chi": "Kỷ Hợi",
+        "nghi_ki": "Là ngày Hoả Tinh, chỉ có Khởi Tạo và Giá Thú",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Là ngày khí thuần âm, chẳng là ngày dùng ở Dương Gian",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Có Huỳnh La, Tử Đàng chiếu, dùng được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Là ngày được giờ nước khiết tịnh, lại có thêm các kiết tinh Thiên Đức, Nguyệt Đức, Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Tằng Tiêu, Liên Châu, Lộc Mã cùng chiếu. Hợp Giá Thú, Khai",
+        "anh_huong": "Ích gia môn, lợi tử tôn, vượng điền sản, tấn lục súc, tăng hoạch tài, trong vòng 60 đến 120 ngày, liền được ứng nghiệm",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Tý)",
+        "day_can_chi": "Mậu Tý",
+        "nghi_ki": "Trăm việc không nên",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Tý)",
+        "day_can_chi": "Nhâm Tý",
+        "nghi_ki": "Là ngày “Mộc Đả Bảo Bình”, cây cỏ úa héo, không tốt.",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Có sao Tiểu Hồng Sa, Phúc Sinh, nhưng tiếc là bị Nguyệt Kiến xung phá, Chu Tước, Câu Giảo",
+        "anh_huong": "Chủ việc quan tư, quẫn bách, các việc chẳng lợi, nếu làm những việc nhỏ nhỏ, bên trong có Phúc Sinh cũng chỉ tạm được. Nhưng trọn vẹn thì không có lợi. Nếu dùng việc lớn, lập tức gặp việc hung ngay",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Sát tập nhập trung cung",
+        "anh_huong": "Đại Hung",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Bình (Sửu)",
+        "day_can_chi": "Kỷ Sửu",
+        "nghi_ki": "Có sao Tiểu Hồng Sa, Phúc Sinh, nhưng tiếc là bị Nguyệt Kiến xung phá, Chu Tước, Câu Giảo",
+        "anh_huong": "Chủ việc quan tư, quẫn bách, các việc chẳng lợi, nếu làm những việc nhỏ nhỏ, bên trong có Phúc Sinh cũng chỉ tạm được. Nhưng trọn vẹn thì không có lợi. Nếu dùng việc lớn, lập tức gặp việc hung ngay",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Sửu)",
+        "day_can_chi": "Quý Sửu",
+        "nghi_ki": "Sát tập nhập trung cung",
+        "anh_huong": "Đại Hung",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Định (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có Chính Tứ Phế. Không thể dụng sự",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Dần)",
+        "day_can_chi": "Bính Dần",
+        "nghi_ki": "Tuy phạm Nguyệt Yểm Đại Hoạ mà trong có kiết tinh Thiên Đức, Nguyệt Đức đồng chiếu nên được tốt.",
+        "anh_huong": "Chủ về tài sản, sinh quý tử, hưng gia đạo, vượng lục súc, đại kiết",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Dần)",
+        "day_can_chi": "Nhâm Dần",
+        "nghi_ki": "Phạm Nguyệt Yểm, Thọ Tử, không giải được",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Chính Tứ Phế",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Mão)",
+        "day_can_chi": "Đinh Mão",
+        "nghi_ki": "Có thể làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Chấp (Mão)",
+        "day_can_chi": "Kỷ Mão",
+        "nghi_ki": "Là ngày có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng đồng chiếu. Nên: Giá Thú, Khai Trương, Xuất Hành, Nhập Trạch, Động Thổ, Sửa Chữa, Khởi Tạo Kho Lẫm",
+        "anh_huong": "Tấn tài sản, tăng nhân khẩu, hưng gia đạo, vượng lục súc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Mão)",
+        "day_can_chi": "Quý Mão",
+        "nghi_ki": "Có thể làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Phá (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Bị vãng vong, có Thiên Nguyệt Nhị Đức, Tu Tạo được Tiểu Kiết Kị: Giá Thú, Khai Trương, Nhập Trạch, Dời Chỗ Ở",
+        "anh_huong": "Chủ tổn lục súc, hao tiền của, chiêu khẩu thiệt",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Bị vãng vong, có Thiên Nguyệt Nhị Đức, Tu Tạo được Tiểu Kiết Kị: Giá Thú, Khai Trương, Nhập Trạch, Dời Chỗ Ở",
+        "anh_huong": "Chủ tổn lục súc, hao tiền của, chiêu khẩu thiệt",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Nên: Phát Cỏ, Hưng Công, Tạo Tác, Giá Thú, Khai Trương, Nạp Thái, Di Cư, Xuất Hành, Nhập Trạch",
+        "anh_huong": "Ích tôn tử, gia đạo hưng vượng, phát tài",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Tị)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Chỉ nên làm việc nhỏ thì được. Nhưng… chẳng lợi về Hôn Nhân, Dời Chỗ Ở, Khai Trương, Xuất Hành",
+        "anh_huong": "Nệu phạm bị hung bại",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Có thể dùng được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Ngọ)",
+        "day_can_chi": "Mậu Ngọ",
+        "nghi_ki": "Có thể dùng được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Bị Chu Tước, Câu Giảo, Bạch Hổ nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Mùi)",
+        "day_can_chi": "Kỷ Mùi",
+        "nghi_ki": "Là ngày chỉ tốt An Táng",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Được lúc nước sạch và trong, lại có các kiết tinh: Huỳnh La, Tử Đàng, Tụ Lộc, Đới Mã đồng chiếu. Nên: An Táng, Xây Sinh Phần Nhưng.. vì ngày Tây Trầm, Ngũ Hành Vô Khí, hơn nữa đương lúc cuối thu chẳng nên khởi tạo, Hôn Nhân, Nhập Trạch, Khai Trương",
+        "anh_huong": "Chỉ có An Táng được kiết, lợi cho con cháu, gia môn phát đạt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Thân)",
+        "day_can_chi": "Bính Thân",
+        "nghi_ki": "Có thể dùng được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Bạch Hỗ nhập trung cung",
+        "anh_huong": "Có chết người, rất hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Có thể dùng được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Lúc này là mùa Thu và Đông giao giới cùng nhau, là điều sát thượng. Chỉ được An Táng",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Dậu)",
+        "day_can_chi": "Đinh Dậu",
+        "nghi_ki": "Lúc này là mùa Thu và Đông giao giới cùng nhau, là điều sát thượng, rất hiểm vì là ngày Ngũ",
+        "anh_huong": "Gia đình sa sút, hung",
+        "kiet_hung": "Đại Hung"
+      }
+    ]
+  },
+  {
+    "month": 10,
+    "name": "Tháng Mười",
+    "solar_term": "Lập Đông – Tiểu Tuyết",
+    "page_start": 133,
+    "page_end": 139,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Bất lợi về Khởi Tạo, Khai Trương, Giá Thú, Nhập Trạch, Xuất Hành, An Táng. Bởi vì Kiến Hợi tháng Mười không hợp",
+        "anh_huong": "Rước hoạ quan tư, tổn gia trưởng",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Tuy có Ngũ Hành Vượng Tướng, nhưng Thu, Đông giao giới vừa bắt đầu, nên có cái hung Chuyển Sát. Nhưng riêng Giáp Tý này có Thiên Xá thì không sợ Chuyển Sát",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Tuy có Ngũ Hàng Vượng Tướng, nhưng Thu, Đông giao giới vừa mới bắt đầu, nên có cái hung Chuyển Sát. Ngạn ngữ có câu “Chuyển Sát nhi thương vị khả khinh” (chuyển sát rồi đến thương tổn, không thể xem nhẹ được)",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Phàm Kim nhập cung Sửu nên chẳng dùng. Vì là ngày Ngũ Hành Vô Khí, lại phạm cái hung của Nguyệt Yểm và Thiên Tặc",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Sát nhập trung cung, chẳng lợi về Giá Thú,",
+        "anh_huong": "Tổn người và lục súc",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Sửu)",
+        "day_can_chi": "Kỷ Sửu",
+        "nghi_ki": "Phàm Kim nhập cung Sửu nên chẳng dùng. Vì là ngày Ngũ Hành Vô Khí, lại phạm cái hung của Nguyệt Yểm và Thiên Tặc",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Sửu)",
+        "day_can_chi": "Quý Sửu",
+        "nghi_ki": "Sát nhập trung cung, chẳng lợi về Giá Thú, Khởi Tạo, hay ca hát ồn ào… vì Can Đinh kinh động đến Thần sát, tổn người và lục súc. Phàm Kim nhập cung Sửu nên chẳng dùng. Vì là ngày Ngũ Hành Vô Khí, lại phạm cái hung của Nguyệt Yểm và Thiên Tặc",
+        "anh_huong": "Tổn người và lục súc",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Trăm việc nên làm",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Dần)",
+        "day_can_chi": "Bính Dần",
+        "nghi_ki": "Có sao Thiên Phú, Thiên Xá, Châu Tinh: xấu",
+        "anh_huong": "Phạm vào việc đến quan phủ, rồi sau tan",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Dần)",
+        "day_can_chi": "Canh Dần",
+        "nghi_ki": "Tu bổ làm những việc nho nhỏ thì được, việc lớn không nên",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Có sao Thiên Đức. Nên Động Thổ, Hưng Công, Dựng Cột, Gác Đòn Dông, Giá Thú, Nhập Trạch, Xuất Hành, Khai Trương mọi việc…",
+        "anh_huong": "Rất tốt, được các kiết tinh chiếu lâm",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Mão)",
+        "day_can_chi": "Đinh Mão",
+        "nghi_ki": "Có thể làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Định (Mão)",
+        "day_can_chi": "Kỷ Mão",
+        "nghi_ki": "Nên Động Thổ, Hưng Công, Dựng Cột, Gác Đòn Dông, Giá Thú, Nhập Trạch, Xuất Hành, Khai Trương mọi việc…",
+        "anh_huong": "Rất tốt, được các kiết tinh chiếu lâm",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Định (Mão)",
+        "day_can_chi": "Quý Mão",
+        "nghi_ki": "Có thể làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Chấp (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Có sao Thiên Đức, Nguyệt Đức nên chỉ có làm trộm việc nhỏ. Nếu Khởi Tạo, Hưng Công, Giá Thú, Nhập Trạch thì không lợi. Tháng Mười ngày Thìn này tuy chẳng phải là ngày hại, nhưng có hung",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Thìn)",
+        "day_can_chi": "Bính Thìn",
+        "nghi_ki": "Có thể Khai Sơn, Phát Cỏ, An Táng hơi tốt.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có sao Thiên Đức, làm ăn",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Phá (Tị)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Chính Tứ Phế",
+        "anh_huong": "Bị lôi đình, làm tán bại, bỗng dưng bị mất của",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Tị)",
+        "day_can_chi": "Kỷ Tị",
+        "nghi_ki": "Có Tiểu Hồng Sa, lại phạm Chu Tước, Câu Giảo, các việc chẳng nên làm",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Có sao Nguyệt Đức, Huỳnh La, Tử Đàng, Kim Ngân, Khố Lâu, các kiết tinh cùng chiếu Hợp: Giá Thú, Khai Trương, Khởi Tạo, Động Thổ, Xuất Hành, Nhập Trạch, An Táng rất tốt",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Ngọ)",
+        "day_can_chi": "Mậu Ngọ",
+        "nghi_ki": "Có thể dùng được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Sát Tập nhập trung cung. Kị: Xuất Hành, An Táng, Giá Thú, Nhập Trạch, Khai Trương, Tu Tạo",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Thành (Mùi)",
+        "day_can_chi": "Quý Mùi",
+        "nghi_ki": "Có Hoả Tinh, Thuỷ Nhập Thái Châu là ngôi sao Quý Nhân, lại gặp các",
+        "anh_huong": "Sẽ gặp quý nhân, gia trạch hằng an ninh, mãn 100 ngày, được quý nhân giúp đỡ, tấn",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Là nước gặp lúc trong, vì Thuỷ, Thổ khởi trường sinh ở Thân. Lợi cho An Táng, Giá Thú, Xuất Hành, Nhập Trạch, Động Thổ, Khai Trương, Khởi Tạo, Làm Ăn",
+        "anh_huong": "Dụng ngày này trong thời gian giáp 1 năm hoặc 100 ngày quý nhân tự đến đề bạt (nâng đỡ), cần việc gì được toại ý",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Thân)",
+        "day_can_chi": "Bính Thân",
+        "nghi_ki": "Phạm Đáo Châu Tinh",
+        "anh_huong": "Chiêu quan tư, tổn nhân khẩu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Là ngày Thụ Tử, Ngũ Hành Vô Khí, lại bị Sát Tập nhập trung cung, rất xấu",
+        "anh_huong": "Nếu phạm ngày này thì chủ việc giết người, cực xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Phạm Đáo Châu Tinh",
+        "anh_huong": "Chiêu quan tư, tổn nhân khẩu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Có sao Thiên Đức, hợp với Mai Táng, Hôn Nhân, Nhập Trạch, Khởi Tạo, Khai Trương, rất tốt",
+        "anh_huong": "Chủ việc tăng ruộng vườn, thọ chức lộc, rạng rỡ cửa nhà. Nô tỳ, nghĩa bộc tự tìm đến làm việc, mọi việc đều thuận lợi như ý muốn",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Dậu)",
+        "day_can_chi": "Đinh Dậu",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Dậu)",
+        "day_can_chi": "Kỷ Dậu",
+        "nghi_ki": "Bị Cửu Thổ Quỷ, việc lớn chớ dùng",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Dậu)",
+        "day_can_chi": "Tân Dậu",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Có sao Nguyệt Đức Hợp Giá Thú, Khai Trương, Xuất Hành, Nhập Trạch. Nhưng… không lợi về Động Thổ, Khởi Tạo, Mai Táng, Di Cư.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Trăm việc kị làm",
+        "anh_huong": "Rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Tuất)",
+        "day_can_chi": "Canh Tuất",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      }
+    ]
+  },
+  {
+    "month": 11,
+    "name": "Tháng Mười Một",
+    "solar_term": "Đại Tuyết – Đông Chí",
+    "page_start": 140,
+    "page_end": 148,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Là ngày Thiên Xá, Tấn thần, nhưng đáng tiếc là bị Nguyệt kiến xung phá",
+        "anh_huong": "Nếu dùng ngày này: chủ việc quan tư phá bại",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Kiên (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "tuy gặp lúc thuỷ vượng, nhưng vì Tấn Thần làm cho Địa Chuyển cùng với Nguyệt Kiến tương xung, bấy giờ nước dứt nghẽn, khe ứ đọng, sức cũng rất giảm, rốt lại trong kiết có điềm hung",
+        "anh_huong": "Chủ về lợi trước sau hại, là lúc băng tan ngói vỡ vậy",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Kiên (Tý)",
+        "day_can_chi": "Mậu Tý",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Là quê hương của Kim mộ, nhiều kiết tinh cùng chiếu. Nên: Hôn Nhân, Khởi Tạo, Xuất Hành, Khai Trương, Động Thổ, Đốn Cây, Phá Núi",
+        "anh_huong": "Chủ việc quý nhân tiếp dẫn, mưu vọng toại ý",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Dần)",
+        "day_can_chi": "Mậu Dần",
+        "nghi_ki": "Ấy là Thổ Ôn không nên Động Thổ.",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Dần)",
+        "day_can_chi": "Canh Dần",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Dần)",
+        "day_can_chi": "Nhâm Dần",
+        "nghi_ki": "Ấy là Thổ Ôn không nên Động Thổ. Nhưng có các kiết tinh như: Phúc Tinh, Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng đồng chiếu. Hợp: Hôn Nhân, Nhập Trạch, Khởi Tạo, An Táng, Xuất Hành, Khai Trương, trăm việc đều thuận lợi",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Mão)",
+        "day_can_chi": "Đinh Mão",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Nếu phạm vào: cha con, anh em bất nghĩa, tranh đấu, tự tử, ác nhân cướp hại, phá bại, đại hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Mão)",
+        "day_can_chi": "Tân Mão",
+        "nghi_ki": "Có sao Hoả Tinh. Nhưng… phạm Chu Tước, Câu Giảo.",
+        "anh_huong": "Nếu dùng thì chiêu quan tư, tổn tài vật, khởi tranh đấu, tổn thương tình nghĩa, nhiều ác tật, hung",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Mão)",
+        "day_can_chi": "Quý Mão",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Nếu phạm vào: cha con, anh em bất nghĩa, tranh đấu, tự tử, ác nhân cướp hại, phá bại, đại",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Nếu phạm sẽ có giết người, quý nhân chẳng đến, quý nhân chẳng đến, kinh doanh chẳng lợi, hung!",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Định (Thìn)",
+        "day_can_chi": "Nhâm Thìn",
+        "nghi_ki": "Tuy phạm Quan Phù, nhưng trong có Thiên Đức, Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng che chiếu. Chỉ nên An Táng. An Môn, Giá Thú, Nhập Trạch, các việc khác dùng phải thận trọng, vì ngày này là ngày Tử Khí phạm Quan Phù. Kiếp Sát, Phi Cung và Quan Phù động đến phương này nên chẳng lợi.",
+        "anh_huong": "Chỉ nên An Táng Mọi việc khác xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Tị)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng che chiếu. Nên An Táng, An Môn, Hưng Công, Động Thổ, Giá Thú, Nhập Trạch, Xuất Hành, Khai Trương mọi việc",
+        "anh_huong": "Thêm nhân khẩu, vượng gia đạo, sinh quý tử, tăng điền địa",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Tị)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Chính Tứ Phế",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Tị)",
+        "day_can_chi": "Kỷ Tị",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng che chiếu.",
+        "anh_huong": "Thêm nhân khẩu, vượng gia đạo, sinh quý tử, tăng điền địa",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Tị)",
+        "day_can_chi": "Tân Tị",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Tị)",
+        "day_can_chi": "Quý Tị",
+        "nghi_ki": "Có các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng che chiếu. Nên An Táng, An Môn, Hưng Công, Động Thổ, Giá Thú, Nhập Trạch, Xuất Hành, Khai Trương mọi việc",
+        "anh_huong": "Thêm nhân khẩu, vượng gia đạo, sinh quý tử, tăng điền địa",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Phá (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Bị Nguyệt Kiến xung phá, Xấu",
+        "anh_huong": "Bị hoạ ôn dịch, hại lục súc",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Ngọ)",
+        "day_can_chi": "Mậu Ngọ",
+        "nghi_ki": "Bị Nguyệt Kiến xung phá, Xấu",
+        "anh_huong": "Bị hoạ ôn dịch, hại lục súc",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Ngọ)",
+        "day_can_chi": "Nhâm Ngọ",
+        "nghi_ki": "Hoả Tinh, Nguyệt Đức. Nhưng… nên thận trọng chỉ có thể cấp dụng việc nho nhỏ",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Sát nhập trung cung.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Nguy (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Là ngày nước biển gặp lúc trong sạch, dùng đó trăm việc toàn kiết",
+        "anh_huong": "Thêm nhân khẩu, tăng điền sản, được của hoạch tài",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Mùi)",
+        "day_can_chi": "Kỷ Mùi",
+        "nghi_ki": "Mai tang tốt",
+        "anh_huong": "Nếu Mai Táng ngày này: con cháu sẽ được thêm nhân khẩu, tăng điền sản, được của hoạch tài",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Nguy (Mùi)",
+        "day_can_chi": "Tân Mùi",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Là lúc Ngũ Hành Hữu Khí, lại gặp các kiết tinh: Huỳnh La, Tử Đàng, Kim Ngân, Bảo Tàng, Khố Lâu cùng chiếu",
+        "anh_huong": "Tất cả mọi việc trăm phúc cùng đến mọi sự đều xuôi chiều vừa ý, sinh quý tử, vượng tài lộc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Bính Thân",
+        "nghi_ki": "Không thể dùng được",
+        "anh_huong": "Nếu dùng làm công việc sẽ phạm đến quỷ khóc, thần gào, cũng phải nên cẩn thận cho lắm",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Mậu Thân",
+        "nghi_ki": "Là lúc Ngũ Hành Hữu Khí, lại gặp các kiết tinh: Huỳnh La, Tử Đàng, Kim Ngân, Bảo Tàng, Khố Lâu cùng chiếu",
+        "anh_huong": "Tất cả mọi việc trăm phúc cùng đến mọi sự đều xuôi chiều vừa ý, sinh quý tử, vượng tài lộc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Chỉ nên An Táng, và tu tạo những nho nhỏ ngoài nhà thì được. Đây là ngày Ngũ Hành Vô Khí, sát thần tụ nhập trung cung, người lành không thể giáng phúc. (Tôi từ nhỏ được biết chỗ này nên lựa giờ chọn ngày lúc nào cũng chú ý. Lúc trung niên và tuổi già, thấy có người chọn ngày này, tôi hết",
+        "anh_huong": "Nếu khởi tạo đại sự và Hôn Nhân, Nhập Trạch, Khai Trương, lập tức gặp hung hoạ, chủ tổn gia trưởng, tổn thương nữ nhân, con nít",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Có Sao Thiên Đức, Nguyệt Đức, là lúc Ngũ Hành Hữu Khí, lại gặp các kiết tinh: Huỳnh La, Tử Đàng, Kim Ngân, Bảo Tàng, Khố Lâu cùng chiếu",
+        "anh_huong": "Tất cả mọi việc trăm phúc cùng đến mọi sự đều xuôi chiều vừa ý, sinh quý tử, vượng tài lộc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Có Tiểu Hồng Sa, Đáo Châu Tinh, công việc có thể đến quan rồi sau thì tan. Chỉ có Mai Táng được Thứ Kiết. Kị: Khởi Tạo, Khai Trương, Xuất Hành, Nhập Trạch, Giá Thú, mọi việc khác…",
+        "anh_huong": "Chỉ có Mai Táng được Thứ Kiết Các việc khác nếu phạm sẽ bị quan phi, lãnh thối, tổn thương tiền của, hung.",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Tám phương đều sắc trắng, chư thần 24 hướng đều chầu trời, là ngày Huyền Nữ Thâu Tu còn gọi là ngày Tu Du có thể làm",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Tuất)",
+        "day_can_chi": "Canh Tuất",
+        "nghi_ki": "Có sao Vãng Vong. Tiêu táng cũng chỉ trong lúc gập nên thận trọng",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Tuất)",
+        "day_can_chi": "Nhâm Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Có sao Văn Xương quý hiển và các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Liên Châu, Thiên Đăng, Tụ Lộc, Đới Mã, Kim Ngân, Khố Lâu, Bảo Tàng cùng chiếu. Nên: Khởi Tạo, Kinh Doanh, làm trăm việc đều kiết. 8 phương 24 hướng đều lợi",
+        "anh_huong": "Dùng ngày này gia đạo đầy đủ, sinh con quý, tấn tài lộc, vượng lục súc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Hợi)",
+        "day_can_chi": "Đinh Hợi",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Hợi)",
+        "day_can_chi": "Kỷ Hợi",
+        "nghi_ki": "Có sao Văn Xương quý hiển và các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Liên Châu, Thiên Đăng, Tụ Lộc, Đới Mã, Kim Ngân, Khố Lâu, Bảo Tàng cùng chiếu. Nên: Khởi Tạo, Kinh",
+        "anh_huong": "Dùng ngày này gia đạo đầy đủ, sinh con quý, tấn tài lộc, vượng lục súc",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Bế (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Là ngày Âm Phủ Quyết Khiển, là Kim của Âm. Một năm, bốn mùa chỉ có ngày Tân Hợi thuộc tháng 2 là tốt, còn lại là xấu",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Hợi)",
+        "day_can_chi": "Quý Hợi",
+        "nghi_ki": "Là ngày Lục Giáp cùng nhật (cuối cùng của Hoa Giáp)",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      }
+    ]
+  },
+  {
+    "month": 12,
+    "name": "Tháng Mười Hai",
+    "solar_term": "Tiểu Hàn – Đại Hàn",
+    "page_start": 149,
+    "page_end": 158,
+    "daily_evaluations": [
+      {
+        "truc_context": "Trực Kiên (Sửu)",
+        "day_can_chi": "Ất Sửu",
+        "nghi_ki": "Nên Khai Sơn, Phát Cỏ, Hưng Công, Động Thổ, Giá Thú, Khai Trương, Xuất Hành, Nhập Trạch, tốt",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Kiên (Sửu)",
+        "day_can_chi": "Đinh Sửu",
+        "nghi_ki": "Sát Tập nhập trung cung Chẳng nên đánh trống nổi nhạc ồn ào, cùng với việc hôn nhân",
+        "anh_huong": "Hình khắc mẹ lớn trong nhà",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Kiên (Sửu)",
+        "day_can_chi": "Kỷ Sửu",
+        "nghi_ki": "Nên Khai Sơn, Phát Cỏ, Hưng Công, Động Thổ, Giá Thú, Khai Trương, Xuất Hành, Nhập Trạch, tốt",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Kiên (Sửu)",
+        "day_can_chi": "Tân Sửu",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Kiên (Sửu)",
+        "day_can_chi": "Quý Sửu",
+        "nghi_ki": "Tuy vượng, nhưng Lục Sát nhập trung cung",
+        "anh_huong": "Phạm ngày này tổn nhân khẩu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Trừ (Dần)",
+        "day_can_chi": "Giáp Dần",
+        "nghi_ki": "Có sao Hoả Tinh và các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Bảo Bối, Khố Châu, Phúc Lộc, Văn Xương, Lộc Mã, Quan Cái sao tốt đồng chiếu. Hợp: Khởi Tạo, Hôn Nhân, An Táng, Nhập Trạch, Khai Trương, Xuất Hành… trăm việc thuận lợi",
+        "anh_huong": "Dùng ngày đó, cửa nhà phát đạt. Động Thổ càng được tấn tài sản, danh nêu Hổ bảng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Dần)",
+        "day_can_chi": "Mậu Dần",
+        "nghi_ki": "Có sao Hoả Tinh nhưng là Thứ Kiết, dùng tạm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Dần)",
+        "day_can_chi": "Canh Dần",
+        "nghi_ki": "Có sao Hoả Tinh, Thiên Đức, Nguyệt Đức. Hợp: Khởi Tạo, Hôn Nhân, An Táng, Nhập Trạch, Khai Trương, Xuất Hành… trăm việc thuận lợi",
+        "anh_huong": "Dùng ngày đó, cửa nhà phát đạt. Động Thổ càng được tấn tài sản, danh nêu Hổ bảng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Trừ (Dần)",
+        "day_can_chi": "Nhâm Dần",
+        "nghi_ki": "Có sao Hoả Tinh và các kiết tinh: Huỳnh La, Tử Đàng, Thiên Hoàng, Địa Hoàng, Bảo Bối, Khố Châu, Phúc Lộc, Văn Xương, Lộc Mã, Quan Cái sao tốt đồng chiếu. Hợp: Khởi Tạo, Hôn Nhân, An Táng, Nhập Trạch, Khai Trương, Xuất Hành… trăm việc thuận lợi",
+        "anh_huong": "Dùng ngày đó, cửa nhà phát đạt. Động Thổ càng được tấn tài sản, danh nêu Hổ bảng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Mão)",
+        "day_can_chi": "Ất Mão",
+        "nghi_ki": "Thiên Phú, Thổ Ôn chẳng nên Động Thổ, dùng bị Thiên Ôn một năm. Như dùng ngày Mão về Cầu Hôn, Vấn Danh gọi là tiểu kiết, nhưng bị Lục Bất Hợp và Lục Bất Thành",
+        "anh_huong": "Động Thổ bị Thiên Ôn 1 năm. Hôn Nhân bị Lục Bất Hợp, Lục Bất Thành",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Mãn (Mão)",
+        "day_can_chi": "Tân Mão",
+        "nghi_ki": "Có thể Tạo Tác, Hưng Công",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Mãn (Mão)",
+        "day_can_chi": "Quý Mão",
+        "nghi_ki": "Thiên Phú, Thổ Ôn chẳng nên Động Thổ, dùng bị Thiên Ôn một năm.",
+        "anh_huong": "Động Thổ bị Thiên Ôn 1 năm. Hôn Nhân bị Lục Bất Hợp, Lục Bất Thành",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Giáp Thìn",
+        "nghi_ki": "Có Đáo Châu Tinh, điểm việc đến quan nha rồi sau tan",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Mậu Thìn",
+        "nghi_ki": "Là lúc thảo mộc úa héo, Ngũ Hành Vô Khí, chính là Thôi Tinh, lại thêm sát nhập trung cung, mọi việc đều bất lợi",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Canh Thìn",
+        "nghi_ki": "Có sao Thiên Đức, Nguyệt Đức chỉ nên làm việc nhỏ",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Nhâm Thìn",
+        "nghi_ki": "Nên: Mai Táng, Cầu Hôn, Hưng Công, Động Thổ, Xuất Hành, Nhập Trạch…",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Ất Tị",
+        "nghi_ki": "Thiên Thành (Quan Phù Tinh), chẳng phải chỉ nói là ngày Tử Khí, như sửa chữa phương nào, gặp Phi Cung, Châu Huyện, Quan Phù sẽ thấy kết quả liền, Nếu như phương đó hợp với Kiết Thần tụ tập thì có thể cứu được sự hung, thì dùng tạm được. Bằng không nên tránh",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Đinh Tị",
+        "nghi_ki": "Chính Tứ Phế",
+        "anh_huong": "Trong một năm bốn mùa hễ dùng ngày Tị là chủ về khẩu thiệt, dẫu có Hỷ Thần hoá giải cũng khó tránh khỏi được.",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Kỷ Tị",
+        "nghi_ki": "Thiên Thành (Quan Phù Tinh), chẳng phải chỉ nói là ngày Tử Khí, như sửa chữa phương nào, gặp Phi Cung, Châu Huyện, Quan Phù sẽ thấy kết quả liền, Nếu như phương đó hợp với Kiết Thần tụ tập thì có thể cứu được sự hung, thì dùng tạm được. Bằng không nên tránh",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bình (Thìn)",
+        "day_can_chi": "Quý Tị",
+        "nghi_ki": "Tuy là gặp lúc Kim sinh Thuỷ, được tịnh kiết, may ra chỉ có thể Khai Sơn, Phát Cỏ là Thứ Kiết. Còn Hôn Nhân, Khai Trương, Xuất Hành, Nhập Trạch, Dựng Cột, Gác Đòn Dông, thì lịa là ngày “Thiên Thượng Đại Không Vong” nạp âm đã tuyệt, chẳng nên dùng.",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Chấp (Ngọ)",
+        "day_can_chi": "Giáp Ngọ",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Ngọ)",
+        "day_can_chi": "Mậu Ngọ",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Ngọ)",
+        "day_can_chi": "Canh Ngọ",
+        "nghi_ki": "Có sao Thiên Đức, Nguyệt Đức. Như năm Canh Ngọ mà làm ở Canh sơn, Giáp hướng, là có thể thu về",
+        "anh_huong": "Ích con cháu, vượng cửa nhà, tăng điền sản, thay đổi lộc vị",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Chấp (Ngọ)",
+        "day_can_chi": "Nhâm Ngọ",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Phá (Mùi)",
+        "day_can_chi": "Ất Mùi",
+        "nghi_ki": "Dụng sự chẳng có lợi",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Mùi)",
+        "day_can_chi": "Đinh Mùi",
+        "nghi_ki": "Là nước ở trong ngao, Đinh Mùi thuộc hành Thuỷ, Thuỷ là nước, mà nước ở đây lại là nước ở trong mau con Ngao lớn (một loại sò ở biển).",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Mùi)",
+        "day_can_chi": "Kỷ Mùi",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất Xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Phá (Mùi)",
+        "day_can_chi": "Quý Mùi",
+        "nghi_ki": "Là nước vào Châu Thái, bên trong có sao Văn Xương, quý hiển. Nên: Động Thổ, Hưng Công, Xuất Hành, Nhập Trạch, Cầu Hôn, Khai",
+        "anh_huong": "Rất Tốt",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Giáp Thân",
+        "nghi_ki": "Có thể Khởi Tạo, An Táng",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Bính Thân",
+        "nghi_ki": "Chỉ nên Mai Táng",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Mậu Thân",
+        "nghi_ki": "Không thể làm được",
+        "anh_huong": "Xấu",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Canh Thân",
+        "nghi_ki": "Ngày này sát nhập trung cung bất lợi cho gia trưởng, nhân quyền. Làm những chuyện nhỏ được. Nếu nhà lớn nhiều người làm, mai Khởi Tạo, Hôn Nhân, Khai TRương, Nhập Trạch, mọi việc khác… là không nên",
+        "anh_huong": "Tuy có Thiên, Nguyệt Đức cũng không có tác dụng hoá giải nổi, sẽ làm thương tổn tay chân của thợ, phá thất, tổn hoại đồ sành, đồ sứ. Làm lớn thì thấy ứng mau, làm nhỏ thì ứng chậm. Nếu làm chuồng trâu, heo, dê thì từ 60 ngày đến 120 ngày, liền bị hổ, lang làm thương hại, còn sinh ra bệnh ôn dịch, thời khí.",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Thành (Thân)",
+        "day_can_chi": "Nhâm Thân",
+        "nghi_ki": "Chỉ nên Mai Táng",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Dậu)",
+        "day_can_chi": "Ất Dậu",
+        "nghi_ki": "Là lúc Kim Vượng, lại là giờ nước trong sạch. Có các kiết tinh: Huỳnh La, Tử Đàng, Kim Ngân, Khố Lâu, Tu Mộc, Đới Mã cùng chiếu. Lợi cho việc Cầu Hôn, Khởi Tạo, Khai Trương, Nhập Trạch, An Táng, là ngày toàn kiết.",
+        "anh_huong": "Chủ sinh con quý, hưng vượng, trăm việc vừa lòng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thành (Dậu)",
+        "day_can_chi": "Đinh Dậu",
+        "nghi_ki": "Là lúc Kim Vượng. Nhưng chỉ có Mai Táng Đại Kiết, các việc khác Thứ Kiết",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Thành (Dậu)",
+        "day_can_chi": "Quý Dậu",
+        "nghi_ki": "Là lúc Kim Vượng. Lợi cho việc Cầu Hôn, Khởi Tạo, Khai Trương, Nhập Trạch, An Táng, là ngày toàn kiết.",
+        "anh_huong": "Chủ sinh con quý, hưng vượng, trăm việc vừa lòng",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Tuất)",
+        "day_can_chi": "Giáp Tuất",
+        "nghi_ki": "Tám phương đều trống trải, 24 hướng chư thần đều chầu trời, là ngày Cửu Thiên Huyền Nữ Châu Tu, dùng được.",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Tuất)",
+        "day_can_chi": "Bính Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Thâu (Tuất)",
+        "day_can_chi": "Canh Tuất",
+        "nghi_ki": "Có Thiên, Nguyệt Nhị Đức, tám vị Kim Tinh, có quyền nam tử, rước hoạ khẩu thiệt rồi sau Đại Kiết",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Thâu (Tuất)",
+        "day_can_chi": "Nhâm Tuất",
+        "nghi_ki": "Sát Tập nhập trung cung",
+        "anh_huong": "Rất xấu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Khai (Hợi)",
+        "day_can_chi": "Ất Hợi",
+        "nghi_ki": "Ất Hợi có Văn Xương",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Hợi)",
+        "day_can_chi": "Đinh Hợi",
+        "nghi_ki": "Có thể làm được",
+        "anh_huong": "Tốt",
+        "kiet_hung": "Thứ Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Hợi)",
+        "day_can_chi": "Kỷ Hợi",
+        "nghi_ki": "Có sao Hoả Tinh và có Văn Xương là Quý hiển tinh. Nên: Dựng Cột, Gác Đòn Dông, Hôn Nhân, Khai Trương, Nhập Trạch, Xuất Hành, Kinh Doanh các việc được toàn kiết. Nên dùng giờ Mậu Thìn trong ngày đó. Nếu gặp",
+        "anh_huong": "Tuy phạm Thiên Tặc, nhưng có Thiên Vẩu hộ thì không phải lo ngại, nên được Đại Kiết. (Nhờ có Hoả Tinh thì dùng làm mọi việc được thuận lợi, còn được vừa lòng vừa ý là khác).",
+        "kiet_hung": "Đại Kiết"
+      },
+      {
+        "truc_context": "Trực Khai (Hợi)",
+        "day_can_chi": "Tân Hợi",
+        "nghi_ki": "Âm khí quá nhiều, chẳng phải là ngày ở Dương gian dùng",
+        "anh_huong": "Rất Xấu Đại Hung",
+        "kiet_hung": "Bình"
+      },
+      {
+        "truc_context": "Trực Bế (Tý)",
+        "day_can_chi": "Giáp Tý",
+        "nghi_ki": "Là ngày Thiên Xá, (tấn thần, phong thần). Nạp âm hung sát chính là Thần Tạo đạo ở phương Bắc, khí thuần âm hắc sát. Nếu dùng làm các việc như gặp phải mệnh lệnh nghiêm túc của quan Tư Pháp",
+        "anh_huong": "Ngày này chẳng phải bậc đại quý thì chẳng dám đương đầu, người thường dùng phải cẩn thận. Nên sửa chữa việc nhỏ tốt, nếu dùng làm việc lớn là hung hoạ vây quanh, việc bất thường",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Tý)",
+        "day_can_chi": "Bính Tý",
+        "nghi_ki": "Trời chuyển đất xoay, chẳng nên Hưng Công, Động Thổ",
+        "anh_huong": "Phạm vào là Đại Hung",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Tý)",
+        "day_can_chi": "Mậu Tý",
+        "nghi_ki": "Là ngày Thiên Xá, (tấn thần, phong thần). Nạp âm hung sát chính là Thần Tạo đạo ở phương Bắc, khí thuần âm hắc sát. Nếu dùng làm các việc như gặp phải mệnh lệnh nghiêm túc của quan Tư Pháp",
+        "anh_huong": "Ngày này chẳng phải bậc đại quý thì chẳng dám đương đầu, người thường dùng phải cẩn thận. Nên sửa chữa việc nhỏ tốt, nếu dùng làm việc lớn là hung hoạ vây quanh, việc bất thường",
+        "kiet_hung": "Thứ Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Tý)",
+        "day_can_chi": "Canh Tý",
+        "nghi_ki": "Tuy có Thiên, Nguyệt Nhị Đức, nhưng gặp lúc Thiên Địa chuyển sát",
+        "anh_huong": "Rất Xâu",
+        "kiet_hung": "Đại Hung"
+      },
+      {
+        "truc_context": "Trực Bế (Tý)",
+        "day_can_chi": "Nhâm Tý",
+        "nghi_ki": "Trời chuyển đất xoay,",
+        "anh_huong": "Phạm vào là Đại Hung",
+        "kiet_hung": "Thứ Hung"
+      }
+    ]
+  }
+]

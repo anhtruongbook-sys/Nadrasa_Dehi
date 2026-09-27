@@ -260,6 +260,9 @@
           <button class="cal-action-btn btn-launch-tuvi" data-action="tuvi">
             🌌 Lập Tử Vi
           </button>
+          <button class="cal-action-btn btn-launch-trachcat" data-action="trachcat" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); color: #facc15;">
+            🧭 Trạch Cát
+          </button>
           <button class="cal-action-btn btn-launch-cards" data-action="neta">
             🪷 Bốc Bài
           </button>
@@ -467,6 +470,11 @@
           global.NetaQMDJView.setDate(currentSelectedDate);
         } else if (targetMode === 'tuvi' && global.NetaTuViView && typeof global.NetaTuViView.setDate === 'function') {
           global.NetaTuViView.setDate(currentSelectedDate);
+        } else if (targetMode === 'trachcat') {
+          if (typeof global.openTrachCatForDate === 'function') {
+            global.openTrachCatForDate(currentSelectedDate);
+            return;
+          }
         }
         if (typeof global.switchAppMode === 'function') {
           global.switchAppMode(targetMode);

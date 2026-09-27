@@ -37,8 +37,16 @@ def get_current_repo():
 
 TOKEN = load_token()
 REPO = get_current_repo()
-TAG = 'v2.0.1'
-COMMIT = ''
+TAG = 'v2.2.0'
+
+def get_latest_commit():
+    try:
+        proc = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True)
+        return proc.stdout.strip()[:7]
+    except Exception:
+        return ''
+
+COMMIT = get_latest_commit()
 
 def check_runs():
     req = urllib.request.Request(f'https://api.github.com/repos/{REPO}/actions/runs', headers={

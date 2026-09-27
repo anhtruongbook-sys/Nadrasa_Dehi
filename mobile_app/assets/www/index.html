@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="assets/leaflet/leaflet.css">
   <link rel="stylesheet" href="assets/lakinh/lakinh.css?v=8.8">
   <link rel="stylesheet" href="assets/dichhoc/dichhoc.css?v=1.1">
+  <link rel="stylesheet" href="assets/trachcat/trachcat.css?v=2.2">
   <link rel="stylesheet" href="styles.css?v=8.3">
   <link rel="stylesheet" href="phap_hanh.css?v=1.0">
 </head>
@@ -83,11 +84,16 @@
         </div>
 
         <div class="dropdown-divider"></div>
-        <div class="dropdown-section-title">LỊCH VẠN NIÊN</div>
+        <div class="dropdown-section-title">LỊCH &amp; TRẠCH CÁT</div>
         <div class="deck-dropdown-item" id="tab-mode-calendar" data-mode="calendar">
           <span class="dropdown-icon">📅</span>
           <span class="dropdown-name">Lịch Âm Dương</span>
           <span class="dropdown-check" id="check-mode-calendar" style="opacity: 0;">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-trachcat" data-mode="trachcat">
+          <span class="dropdown-icon">🧭</span>
+          <span class="dropdown-name">Trạch Cát (Xem Ngày)</span>
+          <span class="dropdown-check" id="check-mode-trachcat" style="opacity: 0;">✓</span>
         </div>
 
         <div class="dropdown-divider"></div>
@@ -299,6 +305,11 @@
     <div id="view-dichhoc" class="app-module-view" style="display: none;">
       <!-- Dynamically rendered by modules/dichhoc_view.js -->
     </div>
+
+    <!-- View Module: Trạch Cát (Xem Ngày Đại Cát Toàn Diện) -->
+    <div id="view-trachcat" class="app-module-view" style="display: none;">
+      <!-- Dynamically rendered by modules/trachcat_view.js -->
+    </div>
   </div>
 
   <!-- Spiritual Reading Modal (Luận giải Tâm Linh Tụ & Bộ) -->
@@ -473,6 +484,9 @@
   <script src="modules/lakinh_view.js?v=8.8"></script>
   <script src="engines/dichhoc_engine.js?v=1.0"></script>
   <script src="modules/dichhoc_view.js?v=1.0"></script>
+  <script src="engines/trachcat_data.js?v=2.2"></script>
+  <script src="engines/trach_nhat_engine.js?v=2.2"></script>
+  <script src="modules/trachcat_view.js?v=2.2"></script>
   <script src="app.js?v=8.2"></script>
 </body>
 </html>
