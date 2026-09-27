@@ -11620,9 +11620,79 @@ body.theme-light .tarot-key-desc {
 }
 
 .tarot-key-status-badge.status-custom {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.tarot-key-status-badge.status-missing {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.tarot-key-guide-box {
+  background: rgba(245, 176, 65, 0.08);
+  border: 1px dashed rgba(245, 176, 65, 0.35);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+body.theme-light .tarot-key-guide-box {
+  background: rgba(245, 176, 65, 0.12);
+  border-color: rgba(217, 119, 6, 0.4);
+}
+
+.tarot-guide-title {
+  font-weight: 700;
+  color: #f5b041;
+  margin-bottom: 4px;
+}
+
+body.theme-light .tarot-guide-title {
+  color: #b45309;
+}
+
+.tarot-guide-step {
+  color: #cbd5e1;
+  margin-bottom: 4px;
+}
+
+body.theme-light .tarot-guide-step {
+  color: #334155;
+}
+
+.tarot-guide-step code {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: #fde047;
+  word-break: break-all;
+}
+
+body.theme-light .tarot-guide-step code {
+  background: rgba(0, 0, 0, 0.06);
+  color: #854d0e;
+}
+
+.btn-copy-link {
+  margin-top: 6px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5b041;
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-copy-link:hover {
+  background: rgba(245, 176, 65, 0.2);
 }
 
 .tarot-key-input-wrap {

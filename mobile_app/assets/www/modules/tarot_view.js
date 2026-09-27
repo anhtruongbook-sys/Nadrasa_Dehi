@@ -1259,9 +1259,14 @@
   }
 
   // --- DEEP SYNTHESIS & KEY CONFIGURATION (EXTENDED) ---
+  // --- DEEP SYNTHESIS & KEY CONFIGURATION (EXTENDED) ---
   async function fetchDeepInterpretation(report) {
     if (!report || report.isDeepLoading || !global.NetaGeminiService) return;
     if (!global.NetaGeminiService.isDeepSynthesisEnabled()) return;
+    if (!global.NetaGeminiService.hasActiveKey()) {
+      openTarotKeyConfigModal();
+      return;
+    }
 
     report.isDeepLoading = true;
 
@@ -1331,7 +1336,7 @@
       document.body.appendChild(modal);
     }
 
-    const hasCustomKey = global.NetaGeminiService && global.NetaGeminiService.isCustomKeySet();
+    const hasKey = global.NetaGeminiService && global.NetaGeminiService.hasActiveKey();
 
     modal.innerHTML = `
       <div class="modal-dialog tarot-key-modal-dialog">
@@ -1343,23 +1348,30 @@
         </div>
         <div class="tarot-key-modal-body">
           <p class="tarot-key-desc">
-            Ứng dụng sử dụng cơ chế bảo mật đa tầng. Khóa được mã hóa tự động trong máy của bạn và không bao giờ hiển thị dạng văn bản rõ.
+            Ứng dụng vận dụng mô hình Gemini để nâng tầm văn phong và chiều sâu luận giải. Khóa được mã hóa tự động và lưu trữ an toàn ngay trên thiết bị của bạn.
           </p>
 
-          <div class="tarot-key-status-badge ${hasCustomKey ? 'status-custom' : 'status-builtin'}">
-            ${hasCustomKey ? '🔑 Đang sử dụng: Khóa riêng do bạn cài đặt' : '🛡️ Đang sử dụng: Khóa bảo mật tích hợp sẵn của hệ thống'}
+          <div class="tarot-key-status-badge ${hasKey ? 'status-custom' : 'status-missing'}">
+            ${hasKey ? '🔑 Đang sử dụng: Khóa riêng do bạn cài đặt (Đã mã hóa an toàn trên máy)' : '⚠️ Chưa có Khóa API: Hãy nhập khóa cá nhân để kích hoạt'}
+          </div>
+
+          <div class="tarot-key-guide-box">
+            <div class="tarot-guide-title">📌 Cách nhận Khóa API Google AI Studio miễn phí:</div>
+            <div class="tarot-guide-step">1. Đăng nhập Google và truy cập: <code>https://aistudio.google.com/app/apikey</code></div>
+            <div class="tarot-guide-step">2. Bấm <strong>Create API key</strong>, sao chép chuỗi khóa và dán vào ô bên dưới.</div>
+            <button type="button" class="tarot-btn-subtle btn-copy-link" id="btn-copy-aistudio-link">📋 Sao chép link lấy Key</button>
           </div>
 
           <div class="tarot-key-input-wrap">
-            <label class="tarot-key-input-label" for="tarot-custom-key-input">Nhập hoặc thay đổi Khóa API:</label>
+            <label class="tarot-key-input-label" for="tarot-custom-key-input">Khóa API cá nhân của bạn:</label>
             <div class="tarot-key-input-row">
               <input type="password" id="tarot-custom-key-input" class="tarot-key-input"
-                placeholder="${hasCustomKey ? '••••••••••••••••••••••••••••••••••••••••••' : 'Dán khóa bảo mật vào đây...'}"
+                placeholder="${hasKey ? '••••••••••••••••••••••••••••••••••••••••••' : 'Dán khóa bảo mật vào đây...'}"
                 autocomplete="off" spellcheck="false"
                 oncopy="return false;" oncut="return false;" />
             </div>
             <div class="tarot-key-hint">
-              * Khóa được mã hóa và lưu vĩnh viễn trên thiết bị của bạn.
+              * Khóa được mã hóa và lưu vĩnh viễn trên thiết bị này. Không gửi về bất kỳ máy chủ nào khác.
             </div>
           </div>
 
@@ -1367,11 +1379,13 @@
 
           <div class="tarot-key-actions">
             <button id="btn-tarot-save-key" class="tarot-btn-primary">
-              💾 Lưu Khóa Này
+              💾 Lưu Khóa &amp; Kích Hoạt
             </button>
-            <button id="btn-tarot-reset-key" class="tarot-btn-ghost" ${hasCustomKey ? '' : 'style="display:none;"'}>
-              🔄 Khôi Phục Khóa Mặc Định
-            </button>
+            ${hasKey ? `
+              <button id="btn-tarot-delete-key" class="tarot-btn-ghost">
+                🗑️ Xóa Khóa Khỏi Máy
+              </button>
+            ` : ''}
             <button id="btn-tarot-close-key-modal" class="tarot-btn-secondary">
               Đóng
             </button>
@@ -1389,15 +1403,27 @@
     const closeBtn = modal.querySelector('#tarot-key-modal-close');
     const closeBtn2 = modal.querySelector('#btn-tarot-close-key-modal');
     const saveBtn = modal.querySelector('#btn-tarot-save-key');
-    const resetBtn = modal.querySelector('#btn-tarot-reset-key');
+    const deleteBtn = modal.querySelector('#btn-tarot-delete-key');
     const keyInput = modal.querySelector('#tarot-custom-key-input');
     const feedback = modal.querySelector('#tarot-key-feedback');
+    const copyLinkBtn = modal.querySelector('#btn-copy-aistudio-link');
 
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (closeBtn2) closeBtn2.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
     });
+
+    if (copyLinkBtn) {
+      copyLinkBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText('https://aistudio.google.com/app/apikey').then(() => {
+          copyLinkBtn.textContent = '✅ Đã sao chép link!';
+          setTimeout(() => { copyLinkBtn.textContent = '📋 Sao chép link lấy Key'; }, 2000);
+        }).catch(() => {
+          copyLinkBtn.textContent = 'https://aistudio.google.com/app/apikey';
+        });
+      });
+    }
 
     if (saveBtn) {
       saveBtn.addEventListener('click', () => {
@@ -1411,31 +1437,37 @@
         }
         if (global.NetaGeminiService) {
           global.NetaGeminiService.setCustomKey(val);
+          global.NetaGeminiService.setDeepSynthesisEnabled(true);
           triggerHaptic(20);
           if (feedback) {
             feedback.className = 'tarot-key-feedback success';
-            feedback.textContent = '✅ Đã lưu và mã hóa khóa bảo mật thành công!';
+            feedback.textContent = '✅ Đã lưu và kích hoạt Luận giải Chiều sâu thành công!';
           }
           if (keyInput) keyInput.value = '';
           setTimeout(() => {
-            openTarotKeyConfigModal();
-          }, 800);
+            modal.remove();
+            renderTarot();
+            if (currentReadingReport && areAllCardsFlipped()) {
+              fetchDeepInterpretation(currentReadingReport);
+            }
+          }, 700);
         }
       });
     }
 
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', () => {
         if (global.NetaGeminiService) {
           global.NetaGeminiService.clearCustomKey();
           triggerHaptic(20);
           if (feedback) {
             feedback.className = 'tarot-key-feedback success';
-            feedback.textContent = '✅ Đã khôi phục về khóa tích hợp sẵn của hệ thống!';
+            feedback.textContent = '✅ Đã xóa khóa thành công!';
           }
           setTimeout(() => {
-            openTarotKeyConfigModal();
-          }, 800);
+            modal.remove();
+            renderTarot();
+          }, 700);
         }
       });
     }
@@ -1496,6 +1528,13 @@
     const toggleDeepSynth = container.querySelector('#tarot-toggle-deep-synth');
     if (toggleDeepSynth && global.NetaGeminiService) {
       toggleDeepSynth.addEventListener('change', (e) => {
+        if (e.target.checked && !global.NetaGeminiService.hasActiveKey()) {
+          e.target.checked = false;
+          global.NetaGeminiService.setDeepSynthesisEnabled(false);
+          openTarotKeyConfigModal();
+          showTarotToast('🔑 Vui lòng cài đặt Khóa API cá nhân để sử dụng tính năng này.');
+          return;
+        }
         global.NetaGeminiService.setDeepSynthesisEnabled(e.target.checked);
         triggerHaptic(15);
         if (e.target.checked && currentReadingReport && areAllCardsFlipped()) {

@@ -12,15 +12,8 @@
 (function (global) {
   'use strict';
 
-  // XOR Salt dùng để xáo trộn mã hóa
+  // XOR Salt dùng để xáo trộn mã hóa lưu cục bộ
   const XOR_SALT = 0x5A;
-
-  // Khóa mặc định đã mã hóa (Scrambled array)
-  const SCRAMBLED_BUILTIN = [
-    27, 11, 116, 27, 56, 98, 8, 20, 108, 16, 53, 15, 47, 41, 55, 16, 54, 111, 
-    20, 41, 11, 27, 14, 99, 54, 49, 48, 44, 17, 54, 2, 28, 11, 17, 40, 43, 
-    12, 19, 53, 62, 46, 50, 34, 43, 105, 45, 14, 52, 99, 111, 99, 5, 61
-  ];
 
   const STORAGE_KEY_TOKEN = '__neta_synth_enc_token';
   const STORAGE_KEY_ENABLED = '__neta_deep_synth_enabled';
@@ -57,8 +50,8 @@
   }
 
   /**
-   * Lấy API Key đang hiệu lực:
-   * Ưu tiên Khóa tùy biến trong localStorage -> Nếu không có thì dùng Khóa tích hợp sẵn
+   * Lấy API Key đang hiệu lực do người dùng nhập và lưu trữ cục bộ trên thiết bị
+   * Không chứa bất kỳ khóa mặc định nào trong mã nguồn
    */
   function getActiveKey() {
     try {
@@ -69,7 +62,14 @@
         if (dec && dec.length > 20) return dec;
       }
     } catch (e) {}
-    return unscramble(SCRAMBLED_BUILTIN);
+    return '';
+  }
+
+  /**
+   * Kiểm tra người dùng đã cài đặt API Key hay chưa
+   */
+  function hasActiveKey() {
+    return !!getActiveKey();
   }
 
   /**
@@ -90,24 +90,20 @@
   }
 
   /**
-   * Xóa khóa tùy biến để quay về dùng khóa mặc định tích hợp sẵn
+   * Xóa khóa tùy biến khỏi thiết bị
    */
   function clearCustomKey() {
     try {
       localStorage.removeItem(STORAGE_KEY_TOKEN);
+      setDeepSynthesisEnabled(false);
     } catch (e) {}
   }
 
   /**
-   * Kiểm tra người dùng có đang dùng khóa tùy biến hay khóa mặc định
+   * Kiểm tra người dùng có đang dùng khóa tùy biến hay không
    */
   function isCustomKeySet() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY_TOKEN);
-      return !!stored;
-    } catch (e) {
-      return false;
-    }
+    return hasActiveKey();
   }
 
   /**
@@ -255,6 +251,7 @@ HÃY BIÊN SOẠN BẢN LUẬN GIẢI CHI TIẾT THEO CẤU TRÚC:
   // Export module ra global
   global.NetaGeminiService = {
     getActiveKey,
+    hasActiveKey,
     setCustomKey,
     clearCustomKey,
     isCustomKeySet,
