@@ -121,60 +121,88 @@
   }
 
   /**
-   * Tự động gọi API Google với cơ chế Cascade hạ cấp mô hình ngầm & bắt lỗi chi tiết
+   * Tự động gọi API Google với cơ chế đa chiến lược (x-goog-api-key, URL param, Bearer)
+   * Tương thích 100% với cả Auth Key mới (AQ...) và Standard API Key (AIza...)
    */
   async function callGeminiCascade(promptText, apiKey) {
     let lastErrorReason = null;
     let hadAuthError = false;
 
+    // Các chiến lược xác thực:
+    // 1. x-goog-api-key header (Chuẩn chính thức cho Auth Key AQ... và Google AI Studio)
+    // 2. Dual: x-goog-api-key header + URL ?key= param
+    // 3. Authorization Bearer header
+    const strategies = [
+      {
+        name: 'header_x_goog',
+        getUrl: (m, k) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,
+        getHeaders: (k) => ({ 'Content-Type': 'application/json', 'x-goog-api-key': k })
+      },
+      {
+        name: 'url_and_header',
+        getUrl: (m, k) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(k)}`,
+        getHeaders: (k) => ({ 'Content-Type': 'application/json', 'x-goog-api-key': k })
+      },
+      {
+        name: 'bearer_token',
+        getUrl: (m, k) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,
+        getHeaders: (k) => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` })
+      }
+    ];
+
+    const payload = {
+      contents: [{ parts: [{ text: promptText }] }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 2500
+      }
+    };
+
     for (const model of CANDIDATE_MODELS) {
-      try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const payload = {
-          contents: [{ parts: [{ text: promptText }] }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 2500
-          }
-        };
+      for (const strat of strategies) {
+        try {
+          const url = strat.getUrl(model, apiKey);
+          const headers = strat.getHeaders(apiKey);
 
-        // Timeout 6s per candidate to keep UI fast and responsive
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6000);
+          // Timeout 6s per candidate to keep UI fast and responsive
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-        const resp = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(payload),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
 
-        if (resp.ok) {
-          const data = await resp.json();
-          const cand = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (cand && cand.trim().length > 50) {
-            return { text: cand.trim(), error: null };
-          }
-        } else {
-          const status = resp.status;
-          if (status === 401 || status === 403) {
-            hadAuthError = true;
-            lastErrorReason = 'Khóa API không hợp lệ hoặc đã bị vô hiệu hóa (Mã lỗi 401). Vui lòng kiểm tra lại khóa tại Google AI Studio.';
-            break; // Stop cascade immediately on invalid key
-          } else if (status === 429) {
-            lastErrorReason = 'Hệ thống Google đang quá tải hạn mức miễn phí (Mã lỗi 429). Vui lòng thử lại sau vài giây.';
+          if (resp.ok) {
+            const data = await resp.json();
+            const cand = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (cand && cand.trim().length > 50) {
+              return { text: cand.trim(), error: null };
+            }
           } else {
-            lastErrorReason = `Mô hình ${model} trả về lỗi ${status}. Đang chuyển tiếp mô hình...`;
+            const status = resp.status;
+            if (status === 401 || status === 403) {
+              hadAuthError = true;
+              lastErrorReason = 'Khóa API không hợp lệ hoặc đã bị vô hiệu hóa (Mã lỗi 401). Vui lòng kiểm tra lại khóa tại Google AI Studio.';
+              // Don't break immediately, try next strategy (e.g. Bearer or URL param)
+            } else if (status === 429) {
+              lastErrorReason = 'Hệ thống Google đang quá tải hạn mức miễn phí (Mã lỗi 429). Vui lòng thử lại sau vài giây.';
+              break; // Try next model on quota
+            } else {
+              lastErrorReason = `Mô hình ${model} trả về lỗi ${status}. Đang chuyển tiếp mô hình...`;
+            }
           }
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            console.warn(`Model ${model} (${strat.name}) timeout sau 6s, chuyển tiếp...`);
+          } else {
+            console.warn(`Lỗi kết nối với ${model} (${strat.name}):`, err);
+          }
+          lastErrorReason = 'Không thể kết nối đến máy chủ Google. Vui lòng kiểm tra mạng Internet.';
         }
-      } catch (err) {
-        if (err.name === 'AbortError') {
-          console.warn(`Model ${model} timeout sau 6s, chuyển tiếp sang mô hình tiếp theo...`);
-        } else {
-          console.warn(`Lỗi kết nối với ${model}:`, err);
-        }
-        lastErrorReason = 'Không thể kết nối đến máy chủ Google. Vui lòng kiểm tra mạng Internet.';
       }
     }
 

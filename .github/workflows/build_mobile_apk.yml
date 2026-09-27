@@ -63,10 +63,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.0.0
-          name: "Neta Light & Huyền Học v2.0.0 (Khắc Phục Tràn Viền Modal, Chuẩn Hóa Markdown & Trợ Lý Luận Giải Chiều Sâu)"
+          tag_name: v2.0.1
+          name: "Neta Light & Huyền Học v2.0.1 (Tương Thích Toàn Diện Chuẩn Khóa Auth Key Mới AQ... Google AI Studio)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.0
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.0.1
+            - **Hỗ Trợ Toàn Diện Định Dạng Khóa Auth Key Mới (`AQ...`)**:
+              + Tích hợp cơ chế xác thực đa chiến lược (`x-goog-api-key` header chuẩn Google AI Studio, URL parameter fallback, và Bearer authorization).
+              + Tự động thích ứng với cả hai thế hệ khóa: Khóa ủy quyền dịch vụ mới (`AQ.Ab8...`) và Khóa truyền thống (`AIzaSy...`).
+              + Triệt tiêu hoàn toàn lỗi `401 ACCESS_TOKEN_TYPE_UNSUPPORTED` khi gọi API từ thiết bị di động.
+            - **Kế Thừa Toàn Bộ Các Nâng Cấp Từ v2.0.0**:
             - **Khắc Phục Triệt Để Tràn Viền Hộp Thoại Thiết Lập Khóa (Hình 1)**:
               + Áp dụng `min-width: 0 !important; width: 0 !important; flex: 1 1 0 !important;` cho ô nhập khóa, giải quyết dứt điểm lỗi flexbox bung rộng đẩy nút **📋 Dán** tràn khỏi màn hình trên các thiết bị Android chiều ngang hẹp (320px - 360px).
               + Bố cục lại thanh tiêu đề Modal: nút đóng `×` dạng tròn độc lập (28x28px) ở góc phải trên cùng, bảo đảm khoảng cách đệm an toàn và không bao giờ chồng lấn lên dòng tiêu đề *"✦ Thiết Lập Chiều Sâu Trực Giác"*.
