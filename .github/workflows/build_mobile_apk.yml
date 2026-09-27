@@ -63,14 +63,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.2.1
-          name: "Neta Light & Huyền Học v2.2.1 (Tối Ưu Tia Ngắm Đơn La Kinh & Hoàn Thiện Trạch Cát Toàn Diện)"
+          tag_name: v2.2.2
+          name: "Neta Light & Huyền Học v2.2.2 (Đại Sự Trọng Điểm, Đồng Bộ Tọa Sơn La Kinh & Tương Phản Ánh Sáng)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.1
-            - **Khắc Phục Hoàn Toàn Vấn Đề Tia Ngắm Đôi Trên La Kinh**:
-              + Loại bỏ tia ngắm thừa Leaflet map polyline bị xung đột hướng với vòng xoay đĩa la kinh; giữ lại duy nhất 01 tia ngắm laser neon chuẩn xác, đồng bộ góc xoay la kinh và điểm chạm ghim kéo rê trên mặt bằng.
-            - **Nâng Cấp Toàn Diện Module Trạch Cát (Xem Ngày Cát Lành & Kỳ Môn Trạch Nhật)**:
-              + **Hỗ Trợ Giao Diện Sáng (Light Theme)**: Bổ sung 100% bảng màu sáng trang nhã, tương phản cao, dịu mắt khi chuyển đổi giao diện sáng/tối.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.2
+            - **Đại Sự Trọng Điểm 1 Chạm (Quick Task Shortcuts)**:
+              + Bổ sung thanh chọn nhanh các đại sự hệ trọng nhất: `[🏗️ Động Thổ]`, `[🏠 Cất Nóc]`, `[🏡 Nhập Trạch]`, `[🏪 Khai Trương]`, `[💍 Cưới Hỏi]`, `[🚗 Xuất Hành]`, `[⚰️ An Táng]`, `[📜 83 Việc Khác...]`.
+              + Tự động hiển thị **Thuyết Minh Nguyên Tắc Trạch Nhật** chuyên sâu cho từng đại sự:
+                * **Động thổ**: 15 ngày cát lành căn bản, tự động lọc trừ 3 ngày đại kỵ động thổ Trạng Trình (`Quý Mùi`, `Ất Mùi`, `Mậu Ngọ`), kiểm tra Thái Tuế phương và Tam Tai / Kim Lâu / Hoang Ốc (lời khuyên mượn tuổi).
+                * **Cất nóc**: Kỵ ngày Ngọ theo Bành Tổ Bách Kỵ (*"Ngọ bất thiêm cái, ốc chủ cánh trương"*), kỵ sao hung Tinh, Quỷ, Liễu.
+                * **Nhập trạch**: 21 ngày cát lành, kỵ trực Phá, Bế, Nguy, Cung Sinh Môn Kỳ Môn không phạm Không Vong.
+            - **Liên Kết Đồng Bộ 2 Chiều Với La Kinh Vệ Tinh (Tọa Sơn Phong Thủy)**:
+              + Nút bấm `[🧭 Lấy Tọa Từ La Kinh]`: 1 chạm đọc ngay góc Tọa Sơn từ la kinh đang đo trên bản đồ vệ tinh.
+              + Menu chọn nhanh `24 Sơn Vị`: Chọn trực tiếp các sơn (Tý 0°, Quý 15°, Cấn 45°, Khôn 225°...).
+              + Tự động kiểm tra đối soát Trực Xung Tọa Sơn và Tam Sát phương vị theo ngày tháng.
+              + Từ HUD La Kinh: Bấm nút Trạch Nhật chuyển thẳng sang Trạch Cát với Tọa Sơn và mục việc Động Thổ đã được nạp sẵn.
+            - **Chuẩn Hóa Độ Tương Phản Màu Sắc Giao Diện Sáng (Light Theme)**:
+              + Sửa toàn bộ chữ bị lẫn nền: Các nút bấm `[📅 Xem Lịch Ngày Này]` và `[🔮 Lập Kỳ Môn]` hiển thị màu mực xanh dương đậm và tím đậm tương phản cao.
+              + Giờ Hoàng Đạo, Bậc xếp hạng (màu hổ phách đậm), Lục Nhâm, Khổng Minh, Hỷ Thần / Tài Thần, Bành Tổ Bách Kỵ sắc nét, rõ ràng, hoàn toàn không bị chìm trên nền giấy sáng.
               + **Sửa Lỗi Cuộn Màn Hình Mobile**: Cho phép vuốt cuộn mượt mà không giới hạn trên màn hình điện thoại nhỏ và WebView Flutter (`overflow-y: auto !important`).
               + **Chống Tràn Khung Giao Diện (Zero Overflow)**: Tự động co giãn theo chiều dọc cho các thanh chọn mục việc và ngày tháng, hiển thị sắc nét trên mọi kích thước màn hình từ 360px đến tablet.
               + **Bỏ Nút Cứng Năm Sinh Cũ**: Nhập trực tiếp năm sinh (ví dụ: 1979 Kỷ Mùi) tự động tính tuổi mụ, Tam Tai, Kim Lâu, Hoang Ốc tức thời.

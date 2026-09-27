@@ -823,6 +823,14 @@
           if (satChuDuong[lMonth] === dayChi) {
             isFolkHung = true; folkHungReasons.push("Phạm ngày Sát Chủ Dương");
           }
+
+          // Kiểm tra kỵ sát đặc thù theo Mục việc
+          if (task.id === 'MUC_05') {
+            // Động thổ: 3 ngày đại kỵ Quý Mùi, Ất Mùi, Mậu Ngọ
+            if (["Quý Mùi", "Ất Mùi", "Mậu Ngọ"].includes(canChiDay)) {
+              isFolkHung = true; folkHungReasons.push(`Đại kỵ động thổ theo Trạng Trình (${canChiDay})`);
+            }
+          }
         }
 
         // 2. Tra cứu Đổng Công
@@ -850,6 +858,20 @@
           // Điểm cộng Đổng Công
           if (dcRating === "Đại Kiết") totalScore += 1;
           else if (dcRating === "Thứ Hung") totalScore -= 1;
+
+          // Quy tắc răn kỵ bổ sung theo từng mục việc
+          if (task.id === 'MUC_04' && dayChi === 'Ngọ') {
+            totalScore -= 2;
+            trinhRes.details.push("Bành Tổ Bách Kỵ: Ngày Ngọ kỵ lợp nhà, cất nóc ('Ngọ bất thiêm cái, ốc chủ cánh trương') (-2 bậc)");
+          }
+          if (task.id === 'MUC_22' && dayChi === 'Hợi') {
+            totalScore -= 2;
+            trinhRes.details.push("Bành Tổ Bách Kỵ: Ngày Hợi kỵ cưới gả ('Hợi bất giá thú, tất chủ phân trương') (-2 bậc)");
+          }
+          if (task.id === 'MUC_37' && canChiDay.startsWith('Giáp')) {
+            totalScore -= 1;
+            trinhRes.details.push("Bành Tổ Bách Kỵ: Ngày Giáp kỵ mở kho, khai trương ('Giáp bất khai thương, chủ vật hao vong') (-1 bậc)");
+          }
 
           // 16 Tiêu Chí
           const tc16 = this.get16Criteria(canChiDay, lMonth, lDay, trucName, saoName);

@@ -29,6 +29,99 @@
     results: null
   };
 
+  const CORE_TASKS = [
+    { id: 'MUC_05', name: 'Động Thổ', icon: '🏗️', category: 'Xây dựng', desc: 'Động đất, ban nền, đặt móng' },
+    { id: 'MUC_04', name: 'Cất Nóc', icon: '🏠', category: 'Xây dựng', desc: 'Lợp nhà, che mái, làm nóc, đổ trần' },
+    { id: 'MUC_15', name: 'Nhập Trạch', icon: '🏡', category: 'Nhà ở', desc: 'Về nhà mới, chuyển chỗ ở, an cư' },
+    { id: 'MUC_37', name: 'Khai Trương', icon: '🏪', category: 'Giao thương', desc: 'Mở cửa hàng, khai trương, mở kho' },
+    { id: 'MUC_22', name: 'Cưới Hỏi', icon: '💍', category: 'Hôn nhân', desc: 'Cưới gả, kết hôn, nạp thái' },
+    { id: 'MUC_31', name: 'Xuất Hành', icon: '🚗', category: 'Đi lại', desc: 'Xuất hành, đi xa, đi buôn' },
+    { id: 'MUC_28', name: 'An Táng', icon: '⚰️', category: 'Tang lễ', desc: 'An táng, chôn cất, hạ táng' }
+  ];
+
+  const SON_24_LIST = [
+    { name: "Tý", deg: 0, dir: "Chính Bắc" },
+    { name: "Quý", deg: 15, dir: "Bắc" },
+    { name: "Sửu", deg: 30, dir: "Đông Bắc" },
+    { name: "Cấn", deg: 45, dir: "Đông Bắc" },
+    { name: "Dần", deg: 60, dir: "Đông Bắc" },
+    { name: "Giáp", deg: 75, dir: "Đông" },
+    { name: "Mão", deg: 90, dir: "Chính Đông" },
+    { name: "Ất", deg: 105, dir: "Đông" },
+    { name: "Thìn", deg: 120, dir: "Đông Nam" },
+    { name: "Tốn", deg: 135, dir: "Đông Nam" },
+    { name: "Tị", deg: 150, dir: "Đông Nam" },
+    { name: "Bính", deg: 165, dir: "Nam" },
+    { name: "Ngọ", deg: 180, dir: "Chính Nam" },
+    { name: "Đinh", deg: 195, dir: "Nam" },
+    { name: "Mùi", deg: 210, dir: "Tây Nam" },
+    { name: "Khôn", deg: 225, dir: "Tây Nam" },
+    { name: "Thân", deg: 240, dir: "Tây Nam" },
+    { name: "Canh", deg: 255, dir: "Tây" },
+    { name: "Dậu", deg: 270, dir: "Chính Tây" },
+    { name: "Tân", deg: 285, dir: "Tây" },
+    { name: "Tuất", deg: 300, dir: "Tây Bắc" },
+    { name: "Càn", deg: 315, dir: "Tây Bắc" },
+    { name: "Hợi", deg: 330, dir: "Tây Bắc" },
+    { name: "Nhâm", deg: 345, dir: "Bắc" }
+  ];
+
+  function getLaKinhSittingDeg() {
+    let heading = null;
+    if (global.lakinhState) {
+      heading = (global.lakinhState.rayAngle !== null && global.lakinhState.rayAngle !== undefined)
+        ? global.lakinhState.rayAngle
+        : (global.lakinhState.rotation || 0);
+    } else {
+      const saved = localStorage.getItem('neta_lakinh_sitting');
+      if (saved) return parseFloat(saved);
+    }
+    if (heading != null) {
+      return Math.round((((heading + 180) % 360 + 360) % 360) * 10) / 10;
+    }
+    return 0;
+  }
+
+  function renderTaskGuideHTML(taskId) {
+    if (taskId === 'MUC_05') {
+      return `
+        <div class="tc-task-guide-box">
+          <div class="tc-task-guide-title">🏗️ NGUYÊN TẮC TRẠCH NHẬT ĐỘNG THỔ (KHỞI CÔNG BAN NỀN, ĐẶT MÓNG)</div>
+          <ul class="tc-task-guide-list">
+            <li><strong>15 Ngày cát căn bản:</strong> Giáp Tý, Giáp Dần, Giáp Thìn, Giáp Thân, Bính Tý, Bính Thân, Mậu Dần, Mậu Thìn, Kỷ Sửu, Kỷ Mùi, Canh Dần, Canh Thân, Tân Hợi, Quý Sửu, Quý Mùi.</li>
+            <li><strong>⚠️ 3 Ngày đại kỵ động thổ:</strong> Quý Mùi, Ất Mùi, Mậu Ngọ (Hệ thống đã tự động lọc bỏ).</li>
+            <li><strong>Cấm kỵ phương vị:</strong> Tuyệt đối không động thổ trên phương vị Thái Tuế của năm và phương Tam Sát.</li>
+            <li><strong>Tọa Sơn nhà:</strong> Bắt buộc bấm <em>"🧭 Lấy Tọa Từ La Kinh"</em> bên dưới để tự động kiểm tra Trực Xung Tọa Sơn và Tam Sát.</li>
+            <li><strong>Hạn gia chủ:</strong> Nếu phạm Tam Tai, Kim Lâu, Hoang Ốc xấu thì nên làm thủ tục <em>mượn tuổi</em> người thân hợp tuổi khởi sự.</li>
+          </ul>
+        </div>
+      `;
+    } else if (taskId === 'MUC_04') {
+      return `
+        <div class="tc-task-guide-box">
+          <div class="tc-task-guide-title">🏠 NGUYÊN TẮC TRẠCH NHẬT CẤT NÓC (LÀM NÓC, GÁC ĐÒN DÔNG, ĐỔ MÁI, LỢP NHÀ)</div>
+          <ul class="tc-task-guide-list">
+            <li><strong>Bành Tổ Bách Kỵ:</strong> Ngày Ngọ kỵ lợp nhà, làm nóc (<em>"Ngọ bất thiêm cái, ốc chủ cánh trương"</em>).</li>
+            <li><strong>Trực & Sao cát:</strong> Ưu tiên Trực Định, Thành, Khai; kỵ các sao hung: Tinh, Quỷ, Liễu, Ngưu.</li>
+            <li><strong>Tọa Sơn:</strong> Ngày cất nóc tuyệt đối không được xung khắc với phương vị Tọa của ngôi nhà.</li>
+          </ul>
+        </div>
+      `;
+    } else if (taskId === 'MUC_15') {
+      return `
+        <div class="tc-task-guide-box">
+          <div class="tc-task-guide-title">🏡 NGUYÊN TẮC TRẠCH NHẬT NHẬP TRẠCH (VỀ NHÀ MỚI, CHUYỂN CHỖ Ở, AN CƯ)</div>
+          <ul class="tc-task-guide-list">
+            <li><strong>21 Ngày cát căn bản:</strong> Chọn các ngày có trực Thành, Khai; tránh trực Phá, Bế, Nguy.</li>
+            <li><strong>Trực xung Tọa Sơn & Tuổi:</strong> Tránh ngày xung với tuổi gia chủ và trực xung Tọa Sơn La Kinh.</li>
+            <li><strong>Kỳ Môn Độn Giáp:</strong> Cung Sinh Môn không được lâm Tuần Không, không khắc Can Ngày.</li>
+          </ul>
+        </div>
+      `;
+    }
+    return '';
+  }
+
   const CATEGORIES = [
     'Tất cả',
     'Nhà ở',
@@ -59,6 +152,10 @@
       const savedYear = localStorage.getItem('neta_user_birth_year');
       if (savedYear && /^\d{4}$/.test(savedYear)) {
         state.personYear = parseInt(savedYear, 10);
+      }
+      const savedSitting = localStorage.getItem('neta_lakinh_sitting');
+      if (savedSitting && !isNaN(parseFloat(savedSitting))) {
+        state.mountainSittingDeg = parseFloat(savedSitting);
       }
     } catch (_) {}
 
@@ -130,6 +227,28 @@
             <span>🧭 TRẠCH CÁT (XEM NGÀY ĐẠI CÁT)</span>
           </div>
 
+          <!-- Đại Sự Trọng Điểm (Quick Shortcuts) -->
+          <div class="tc-quick-tasks-section">
+            <div class="tc-quick-tasks-label">
+              <span>⚡ ĐẠI SỰ TRỌNG ĐIỂM (CHỌN NHANH)</span>
+            </div>
+            <div class="tc-quick-tasks-grid">
+              ${CORE_TASKS.map(ct => `
+                <div class="tc-quick-pill ${state.taskId === ct.id ? 'active' : ''}" data-task-id="${ct.id}" data-cat="${ct.category}" title="${ct.desc}">
+                  <span class="tc-quick-pill-icon">${ct.icon}</span>
+                  <span>${ct.name}</span>
+                </div>
+              `).join('')}
+              <div class="tc-quick-pill ${!CORE_TASKS.some(ct => ct.id === state.taskId) ? 'active' : ''}" data-action="all-tasks" title="Xem toàn bộ 83 mục việc Trạng Trình">
+                <span class="tc-quick-pill-icon">📜</span>
+                <span>83 Việc Khác...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thuyết minh nguyên tắc Trạch Nhật khi chọn việc xây dựng / nhà ở -->
+          ${renderTaskGuideHTML(state.taskId)}
+
           <!-- Phân loại mục việc -->
           <div class="tc-cat-chips">
             ${CATEGORIES.map(cat => `
@@ -139,7 +258,7 @@
 
           <!-- Thanh tìm kiếm & Dropdown 83 việc -->
           <div class="tc-task-selector-row">
-            <input type="text" id="tc-search-task" class="tc-search-input" placeholder="🔍 Tìm mục việc (VD: Động thổ, Cưới gả, Nhập trạch...)" value="${state.searchTerm}">
+            <input type="text" id="tc-search-task" class="tc-search-input" placeholder="🔍 Tìm mục việc (VD: Động thổ, Cất nóc, Nhập trạch, Cưới gả...)" value="${state.searchTerm}">
             <select id="tc-select-task" class="tc-select">
               ${filteredTasks.map(t => `
                 <option value="${t.id}" ${state.taskId === t.id ? 'selected' : ''}>[${t.number}] ${t.name} (${t.category})</option>
@@ -168,18 +287,42 @@
                   </span>
                 ` : ''}
               </div>
+              ${yearSuit && (!yearSuit.overall_good_for_building) ? `
+                <div style="font-size: 0.72rem; color: #f59e0b; margin-top: 4px; line-height: 1.35;">
+                  💡 <em>Lưu ý: Gia chủ có phạm hạn trong năm (Tam Tai/Kim Lâu/Hoang Ốc). Nếu làm nhà / động thổ nên mượn tuổi người thân hợp tuổi đứng tên khởi sự.</em>
+                </div>
+              ` : ''}
             </div>
 
-            <!-- Tọa Sơn Nhà (Tùy chọn) -->
+            <!-- Tọa Sơn Nhà & Liên kết La Kinh -->
             <div class="tc-field">
-              <label class="tc-label">Tọa Sơn Nhà (0° - 359° hoặc 24 Sơn vị - Tùy chọn)</label>
-              <div class="tc-input-row">
-                <input type="number" id="tc-input-deg" class="tc-input" min="0" max="359" placeholder="VD: 0° (Tọa Tý), 180° (Tọa Ngọ)..." value="${state.mountainSittingDeg != null ? state.mountainSittingDeg : ''}">
+              <label class="tc-label">Tọa Sơn Nhà / Công Trình (Phối Hợp La Kinh)</label>
+              <div class="tc-lakinh-bridge-row">
+                <button type="button" class="tc-btn-get-lakinh" id="tc-btn-get-lakinh" title="Đọc độ số Tọa Sơn từ đĩa La Kinh Vệ Tinh">
+                  🧭 Lấy Tọa Từ La Kinh
+                </button>
+                <select id="tc-select-24son" class="tc-select-24son" title="Chọn nhanh 24 Sơn Vị phong thủy">
+                  <option value="">-- Chọn 24 Sơn Vị --</option>
+                  ${SON_24_LIST.map(s => `
+                    <option value="${s.deg}" ${state.mountainSittingDeg != null && Math.abs(state.mountainSittingDeg - s.deg) < 7.5 ? 'selected' : ''}>
+                      Sơn ${s.name} (${s.deg}° - ${s.dir})
+                    </option>
+                  `).join('')}
+                </select>
+              </div>
+              <div class="tc-input-row" style="margin-top: 4px;">
+                <input type="number" id="tc-input-deg" class="tc-input" min="0" max="359.9" step="0.1" placeholder="Nhập độ số (0° - 359°)..." value="${state.mountainSittingDeg != null ? state.mountainSittingDeg : ''}">
                 <button type="button" class="tc-badge tc-badge-warn" id="tc-btn-clear-deg" style="cursor: pointer;" title="Bỏ chọn tọa sơn">✕ Xóa</button>
               </div>
-              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">
-                ${state.mountainSittingDeg != null ? `Đang phối hợp kiểm tra Trực Xung Tọa Sơn & Tam Sát tại ${state.mountainSittingDeg}°` : 'Để trống nếu xem việc cá nhân (Cưới hỏi, Khai trương, Đi xa...)'}
-              </div>
+              ${state.mountainSittingDeg != null ? `
+                <div class="tc-mountain-active-card">
+                  🏡 <strong>Tọa Sơn Đang Khóa: ${state.mountainSittingDeg}°</strong> • Tự động lọc bỏ các ngày Trực Xung Tọa Sơn & Tam Sát phương vị.
+                </div>
+              ` : `
+                <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">
+                  💡 <em>Bấm "Lấy Tọa Từ La Kinh" để nạp ngay hướng nhà đang đo trên bản đồ.</em>
+                </div>
+              `}
             </div>
           </div>
 
@@ -307,10 +450,10 @@
 
           <!-- Bành Tổ Bách Kỵ & Hướng xuất hành -->
           ${d.tc16 ? `
-            <div style="font-size: 0.73rem; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 10px;">
-              <span>🧭 Hỷ Thần: <strong style="color: #facc15;">${d.tc16.huong_xuat_hanh.hy_than}</strong></span>
-              <span>💰 Tài Thần: <strong style="color: #4ade80;">${d.tc16.huong_xuat_hanh.tai_than}</strong></span>
-              ${d.tc16.banh_to_ky ? `<span>📜 Bành Tổ: <em>${d.tc16.banh_to_ky}</em></span>` : ''}
+            <div class="tc-god-row">
+              <span>🧭 Hỷ Thần: <strong class="tc-god-hy">${d.tc16.huong_xuat_hanh.hy_than}</strong></span>
+              <span>💰 Tài Thần: <strong class="tc-god-tai">${d.tc16.huong_xuat_hanh.tai_than}</strong></span>
+              ${d.tc16.banh_to_ky ? `<span>📜 Bành Tổ: <em class="tc-banh-to">${d.tc16.banh_to_ky}</em></span>` : ''}
             </div>
           ` : ''}
 
@@ -327,11 +470,11 @@
 
           <!-- Tọa Sơn Nhà Compatibility (nếu có) -->
           ${d.house_sitting ? `
-            <div style="background: rgba(2, 132, 199, 0.1); border-left: 3px solid #38bdf8; border-radius: 4px; padding: 7px 10px; font-size: 0.74rem;">
-              <div style="font-weight: 700; color: #38bdf8; margin-bottom: 2px;">
+            <div class="tc-house-sitting-box">
+              <div class="tc-house-sitting-title">
                 🏡 PHỐI HỢP TỌA SƠN: Sơn ${d.house_sitting.son} (${d.house_sitting.direction} • ${d.house_sitting.deg}°)
               </div>
-              <div style="color: #cbd5e1;">
+              <div class="tc-house-sitting-desc">
                 ${d.house_sitting.notes.length > 0 ? d.house_sitting.notes.join('<br>') : '✓ Tọa sơn bình hòa, không phạm Trực Xung hay Tam Sát.'}
               </div>
             </div>
@@ -341,7 +484,7 @@
           <div class="tc-hours-section">
             <div class="tc-hours-title">
               <span>✨ 6 GIỜ HOÀNG ĐẠO (XẾP HẠNG THEO BẢN MỆNH)</span>
-              <span style="font-size: 0.68rem; color: #cbd5e1;">Ưu tiên Bậc 1 (Lộc Tinh) & Bậc 2 (Quý Nhân)</span>
+              <span class="tc-hours-subtitle">Ưu tiên Bậc 1 (Lộc Tinh) & Bậc 2 (Quý Nhân)</span>
             </div>
             <div class="tc-hours-grid">
               ${(d.ranked_hours || []).map(h => `
@@ -378,6 +521,64 @@
   }
 
   function bindEvents() {
+    // Quick task pills (Đại Sự Trọng Điểm)
+    document.querySelectorAll('.tc-quick-pill').forEach(el => {
+      el.onclick = () => {
+        const action = el.getAttribute('data-action');
+        if (action === 'all-tasks') {
+          const searchInput = document.getElementById('tc-search-task');
+          if (searchInput) {
+            searchInput.focus();
+            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
+        const taskId = el.getAttribute('data-task-id');
+        if (taskId) {
+          state.taskId = taskId;
+          const eng = getEngine();
+          if (eng && eng.tasks) {
+            const tFound = eng.tasks.find(x => x.id === taskId);
+            if (tFound && tFound.category) {
+              state.category = tFound.category;
+            }
+          }
+          state.searchTerm = '';
+          runEvaluation();
+          render();
+        }
+      };
+    });
+
+    // Lấy tọa từ La Kinh
+    const btnGetLaKinh = document.getElementById('tc-btn-get-lakinh');
+    if (btnGetLaKinh) {
+      btnGetLaKinh.onclick = () => {
+        const deg = getLaKinhSittingDeg();
+        state.mountainSittingDeg = deg;
+        try { localStorage.setItem('neta_lakinh_sitting', String(deg)); } catch (_) {}
+        runEvaluation();
+        render();
+        if (global.showToast) global.showToast(`🧭 Đã nạp Tọa Sơn ${deg}° từ La Kinh!`);
+      };
+    }
+
+    // Dropdown chọn nhanh 24 Sơn Vị
+    const sel24Son = document.getElementById('tc-select-24son');
+    if (sel24Son) {
+      sel24Son.onchange = (e) => {
+        const val = e.target.value;
+        if (val !== '') {
+          const deg = parseFloat(val);
+          state.mountainSittingDeg = deg;
+          try { localStorage.setItem('neta_lakinh_sitting', String(deg)); } catch (_) {}
+          runEvaluation();
+          render();
+          if (global.showToast) global.showToast(`🧭 Đã khóa Tọa Sơn ${deg}°!`);
+        }
+      };
+    }
+
     // Category chips
     document.querySelectorAll('.tc-cat-chip').forEach(el => {
       el.onclick = () => {
@@ -556,6 +757,7 @@
   function openTrachCatForSitting(sittingDeg, facingDeg) {
     if (sittingDeg != null) {
       state.mountainSittingDeg = parseFloat(sittingDeg);
+      try { localStorage.setItem('neta_lakinh_sitting', String(sittingDeg)); } catch (_) {}
     }
     state.taskId = 'MUC_05'; // Động thổ / Nhập trạch
     if (typeof global.switchAppMode === 'function') {
@@ -563,6 +765,10 @@
     }
     runEvaluation();
     render();
+    setTimeout(() => {
+      const el = document.getElementById('view-trachcat');
+      if (el) el.scrollTop = 0;
+    }, 50);
     if (global.showToast) {
       global.showToast(`🎯 Đã nạp Tọa Sơn ${state.mountainSittingDeg}° vào Trạch Cát!`);
     }
