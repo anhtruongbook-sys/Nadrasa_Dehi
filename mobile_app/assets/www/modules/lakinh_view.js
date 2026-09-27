@@ -96,7 +96,7 @@
 
         <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Siêu Gọn) -->
         <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn" aria-label="Về vị trí hiện tại">
-          <span style="font-size: 1.15rem; line-height: 1;">🎯</span>
+          <span style="font-size: 1.15rem; line-height: 1;">📍</span>
         </button>
 
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
@@ -141,10 +141,6 @@
           <div id="lakinh-ray-target-handle" title="Kéo rê điểm này đến vị trí cần đo trên mặt bằng">
             <div class="ray-target-pulse"></div>
             <div class="ray-target-dot"></div>
-            <div class="ray-target-label" id="lakinh-ray-target-label">
-              <span class="rtl-deg">0.0°</span>
-              <span class="rtl-son">Sơn Tý</span>
-            </div>
           </div>
         </div>
 
@@ -153,7 +149,10 @@
           <div class="ray-hud-header">
             <span class="ray-hud-title">🎯 TIA NGẮM PHÂN KIM</span>
             <span class="ray-hud-deg" id="ray-hud-deg">0.0°</span>
-            <button type="button" id="btn-ray-hud-close" class="ray-hud-close-btn" title="Thu gọn ô thông tin (vẫn giữ tia ngắm)">✕</button>
+            <div class="ray-hud-actions">
+              <button type="button" id="btn-ray-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn ô thông tin (vẫn giữ tia ngắm)">– Thu gọn</button>
+              <button type="button" id="btn-ray-hud-close" class="ray-hud-action-btn close" title="Tắt tia ngắm">✕ Tắt tia</button>
+            </div>
           </div>
           <div class="ray-hud-body">
             <!-- 1. Sơn Hướng -->
@@ -209,15 +208,18 @@
           </div>
         </div>
 
-        <!-- Mini Capsule Thu Gọn Của Ray HUD Khi Bấm [✕] -->
-        <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-capsule" style="display: none;" title="Chạm để mở lại bảng thông tin chi tiết">
-          <span style="color: #facc15;">🎯 <span id="ray-mini-deg">0.0°</span></span>
-          <span class="hud-capsule-sep">•</span>
-          <span id="ray-mini-son" style="color: #38bdf8;">Sơn Tý</span>
-          <span class="hud-capsule-sep">•</span>
-          <span id="ray-mini-que" style="color: #4ade80;">Thuần Khôn</span>
-          <span id="ray-mini-badge" class="ray-hud-badge" style="display: none;">---</span>
-          <span style="color: #94a3b8; font-size: 0.65rem; margin-left: 2px;">▾ Mở</span>
+        <!-- Mini Capsule Thu Gọn Của Ray HUD - Có Nút Chi Tiết & Nút Tắt Tia Ngắm -->
+        <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-capsule" style="display: none;">
+          <div class="ray-mini-info-wrap" id="btn-ray-mini-expand" title="Chạm để mở bảng thông tin chi tiết">
+            <span style="color: #facc15;">🎯 <span id="ray-mini-deg">0.0°</span></span>
+            <span class="hud-capsule-sep">•</span>
+            <span id="ray-mini-son" style="color: #38bdf8;">Sơn Tý</span>
+            <span class="hud-capsule-sep">•</span>
+            <span id="ray-mini-que" style="color: #4ade80;">Thuần Khôn</span>
+            <span id="ray-mini-badge" class="ray-hud-badge" style="display: none;">---</span>
+            <span class="ray-mini-expand-text">▾</span>
+          </div>
+          <button type="button" id="btn-ray-mini-close" class="ray-mini-close-btn" title="Tắt tia ngắm">✕</button>
         </div>
 
         <!-- Banner Hướng Dẫn Kéo Dịch Tâm Mặt Bằng -->
@@ -1125,6 +1127,7 @@
     if (!container) return;
     const rayContainer = document.getElementById('lakinh-ray-container');
     const rayHud = document.getElementById('lakinh-ray-floating-hud');
+    const miniPill = document.getElementById('lakinh-ray-mini-pill');
     const rayWrap = document.getElementById('lakinh-ray-controls-wrap');
     const btnRay = document.getElementById('sheet-btn-ray');
     const btnQuickRay = document.getElementById('lakinh-btn-ray-quick');
@@ -1132,6 +1135,7 @@
     if (!state.isRayActive) {
       if (rayContainer) rayContainer.style.display = 'none';
       if (rayHud) rayHud.style.display = 'none';
+      if (miniPill) miniPill.style.display = 'none';
       if (rayWrap) rayWrap.style.display = 'none';
       if (btnRay) {
         btnRay.classList.remove('success');
@@ -1299,7 +1303,6 @@
     }
 
     // Cập nhật Floating HUD & Mini Capsule trên màn hình
-    const miniPill = document.getElementById('lakinh-ray-mini-pill');
     if (!state.isSheetOpen) {
       if (state.isRayHudCollapsed) {
         if (rayHud) rayHud.style.display = 'none';
@@ -3685,6 +3688,9 @@
 
     const toggleSightingRay = () => {
       state.isRayActive = !state.isRayActive;
+      if (state.isRayActive) {
+        state.isRayHudCollapsed = false;
+      }
       updateSightingRay();
       showLaKinhToast(state.isRayActive
         ? '🎯 Đã bật Tia Ngắm. Chạm điểm bất kỳ trên mặt bằng hoặc kéo thanh trượt để ngắm.'
@@ -3698,29 +3704,52 @@
       if (mini) mini.classList.toggle('ray-hud-transparent', transparent);
     };
 
+    const turnOffRay = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      state.isRayActive = false;
+      updateSightingRay();
+      showLaKinhToast('Đã tắt tia ngắm');
+    };
+
+    const collapseRayHud = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      state.isRayHudCollapsed = true;
+      updateSightingRay();
+    };
+
+    const expandRayHud = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      state.isRayHudCollapsed = false;
+      updateSightingRay();
+    };
+
     if (btnRay) btnRay.addEventListener('click', toggleSightingRay);
     if (btnQuickRay) btnQuickRay.addEventListener('click', toggleSightingRay);
+
     if (btnRayHudClose) {
-      const handleCloseRayHud = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        state.isRayHudCollapsed = true;
-        updateSightingRay();
-      };
-      btnRayHudClose.addEventListener('click', handleCloseRayHud);
-      btnRayHudClose.addEventListener('touchend', handleCloseRayHud);
+      btnRayHudClose.addEventListener('click', turnOffRay);
+      btnRayHudClose.addEventListener('touchend', turnOffRay);
     }
 
-    const miniPill = document.getElementById('lakinh-ray-mini-pill');
-    if (miniPill) {
-      const handleOpenRayHud = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        state.isRayHudCollapsed = false;
-        updateSightingRay();
-      };
-      miniPill.addEventListener('click', handleOpenRayHud);
-      miniPill.addEventListener('touchend', handleOpenRayHud);
+    const btnRayHudCollapse = document.getElementById('btn-ray-hud-collapse');
+    if (btnRayHudCollapse) {
+      btnRayHudCollapse.addEventListener('click', collapseRayHud);
+      btnRayHudCollapse.addEventListener('touchend', collapseRayHud);
+    }
+
+    const btnRayMiniExpand = document.getElementById('btn-ray-mini-expand');
+    if (btnRayMiniExpand) {
+      btnRayMiniExpand.addEventListener('click', expandRayHud);
+      btnRayMiniExpand.addEventListener('touchend', expandRayHud);
+    }
+
+    const btnRayMiniClose = document.getElementById('btn-ray-mini-close');
+    if (btnRayMiniClose) {
+      btnRayMiniClose.addEventListener('click', turnOffRay);
+      btnRayMiniClose.addEventListener('touchend', turnOffRay);
     }
 
     const btnRayOpenHkdq = document.getElementById('btn-ray-hud-open-hkdq');
