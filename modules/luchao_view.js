@@ -342,60 +342,73 @@
       calculateHexagram();
     }
 
+    const engine = getEngine();
+    const allTopics = (engine && engine.THEMATIC_TOPICS) || {};
+    const currentTopic = allTopics[state.topicKey] || allTopics.tai_van;
+
     container.innerHTML = `
       <div class="luchao-app-wrapper">
         <!-- Control Header & Method Selection -->
         <div class="luchao-control-panel">
-          <div class="luchao-header-row">
-            <div class="luchao-title-group">
-              <span class="luchao-badge-main">BỐC PHỆ NẠP GIÁP</span>
-              <h2 class="luchao-main-heading">Kinh Dịch Lục Hào (Thầy Nguyễn Tuấn Cường V2)</h2>
-            </div>
-            <div class="luchao-method-tabs">
-              <button class="luchao-method-btn ${state.method === 'hour' ? 'active' : ''}" data-method="hour">
-                ⏰ Giờ Động Tâm
-              </button>
-              <button class="luchao-method-btn ${state.method === 'coin' ? 'active' : ''}" data-method="coin">
-                🪙 Gieo Tiền Xu
-              </button>
-              <button class="luchao-method-btn ${state.method === 'serial' ? 'active' : ''}" data-method="serial">
-                🔢 Số Seri Tiền / ĐT
-              </button>
+          <!-- Segmented 3-Tab Method Switcher -->
+          <div class="luchao-method-segmented">
+            <button class="luchao-seg-btn ${state.method === 'hour' ? 'active' : ''}" data-method="hour" type="button">
+              ⏰ Giờ Động Tâm
+            </button>
+            <button class="luchao-seg-btn ${state.method === 'coin' ? 'active' : ''}" data-method="coin" type="button">
+              🪙 Gieo Tiền Xu
+            </button>
+            <button class="luchao-seg-btn ${state.method === 'serial' ? 'active' : ''}" data-method="serial" type="button">
+              🔢 Số Seri
+            </button>
+          </div>
+
+          <!-- Chuyên đề dự đoán -->
+          <div class="luchao-field-group">
+            <label class="luchao-field-label">
+              <span>CHUYÊN ĐỀ DỰ ĐOÁN</span>
+            </label>
+            <select id="luchao-topic-select" class="luchao-select">
+              ${Object.entries(allTopics).map(([key, t]) => `
+                <option value="${key}" ${state.topicKey === key ? 'selected' : ''}>
+                  ${t.name}
+                </option>
+              `).join('')}
+            </select>
+            <div class="luchao-dung-than-chip">
+              <strong>🎯 Dụng Thần:</strong>
+              <span>${currentTopic ? currentTopic.dung_than : 'Hào Thế'} &bull; <em>${currentTopic ? currentTopic.desc : ''}</em></span>
             </div>
           </div>
 
-          <!-- Input Fields Row -->
-          <div class="luchao-inputs-row">
-            <div class="luchao-input-col" style="flex: 1.2;">
-              <label class="luchao-label">15 Chuyên Đề Dự Đoán</label>
-              <select id="luchao-topic-select" class="luchao-select">
-                ${Object.entries((getEngine() && getEngine().THEMATIC_TOPICS) || {}).map(([key, t]) => `
-                  <option value="${key}" ${state.topicKey === key ? 'selected' : ''}>
-                    ${t.name} (Dụng: ${t.dung_than})
-                  </option>
-                `).join('')}
-              </select>
-            </div>
+          <!-- Nội dung việc cần xem -->
+          <div class="luchao-field-group">
+            <label class="luchao-field-label">
+              <span>SỰ VIỆC CẦN CHIÊM ĐOÁN (VẤN ĐỀ ĐỘNG TÂM)</span>
+            </label>
+            <input type="text" id="luchao-question-input" class="luchao-input" 
+              placeholder="Nhập việc cần xem (ví dụ: Cầu tài tháng này có đắc lợi không?)" 
+              value="${escapeHtml(state.question || '')}">
+          </div>
 
-            <div class="luchao-input-col" style="flex: 2;">
-              <label class="luchao-label">Sự Việc Cần Chiêm Đoán (Vấn Đề Động Tâm)</label>
-              <input type="text" id="luchao-question-input" class="luchao-input" 
-                placeholder="VD: Cầu tài tháng này có đắc lợi không? Hợp tác mở cửa hàng có thuận?" 
-                value="${escapeHtml(state.question || '')}">
-            </div>
-
-            <div class="luchao-input-col" style="flex: 1.1;">
-              <label class="luchao-label">Thời Gian Chiêm Đoán</label>
+          <!-- Thời gian chiêm đoán -->
+          <div class="luchao-field-group">
+            <label class="luchao-field-label">
+              <span>THỜI GIAN CHIÊM ĐOÁN</span>
+            </label>
+            <div class="luchao-datetime-row">
               <input type="datetime-local" id="luchao-datetime-input" class="luchao-input" 
                 value="${formatDateTimeInput(state.selectedDate)}">
-            </div>
-
-            <div class="luchao-btn-action-col">
-              <button id="luchao-btn-cast" class="luchao-btn-cast-action">
-                ⚡ Lập Bàn Quẻ
+              <button id="luchao-btn-now" class="luchao-btn-now" type="button" title="Đặt lại thời gian hiện tại">
+                ⏱️ Bây Giờ
               </button>
             </div>
           </div>
+
+          <!-- Nút CTA Lập Bàn Quẻ -->
+          <button id="luchao-btn-cast" class="luchao-btn-cast-primary" type="button">
+            ⚡ Lập Bàn Quẻ Lục Hào
+          </button>
 
           <!-- Dynamic Method Area (Coins or Serial) -->
           ${state.method === 'coin' ? renderCoinThrowArea() : ''}
@@ -546,50 +559,53 @@
 
     return `
       <div class="luchao-result-section">
-        <!-- Thông Tin Nhật Nguyệt Thần Sát Bar -->
-        <div class="luchao-datetime-summary-bar">
-          <div class="luchao-summary-item">
-            <span class="luchao-item-title">TIẾT KHÍ &amp; THÁNG:</span>
-            <span class="luchao-item-val highlight">${dateInfo.tiet_khi} (${dateInfo.month_branch} Nguyệt Kiến)</span>
-          </div>
-          <div class="luchao-summary-item">
-            <span class="luchao-item-title">NHẬT THẦN:</span>
-            <span class="luchao-item-val highlight">${dateInfo.day_can} ${dateInfo.day_branch}</span>
-          </div>
-          <div class="luchao-summary-item">
-            <span class="luchao-item-title">TUẦN KHÔNG:</span>
-            <span class="luchao-item-val alert">${dateInfo.tuan_khong.join(', ')}</span>
-          </div>
-          <div class="luchao-summary-item">
-            <span class="luchao-item-title">THẦN SÁT NGÀY:</span>
-            <span class="luchao-item-val">
-              Lộc: <strong>${dateInfo.than_sat.loc}</strong> | 
-              Mã: <strong>${dateInfo.than_sat.dich_ma}</strong> | 
-              Quý: <strong>${dateInfo.than_sat.quy_nhan.join('/')}</strong> | 
-              Đào Hoa: <strong>${dateInfo.than_sat.dao_hoa}</strong>
-            </span>
+        <!-- Bát Tự & Tiết Khí Dashboard (Thông Tin Nhật Nguyệt Thần Sát) -->
+        <div class="luchao-battu-dashboard">
+          <div class="luchao-battu-grid">
+            <div class="luchao-battu-card">
+              <span class="luchao-battu-label">Nguyệt Kiến (Tiết Khí)</span>
+              <span class="luchao-battu-val highlight">${dateInfo.month_branch} • ${dateInfo.tiet_khi}</span>
+            </div>
+            <div class="luchao-battu-card">
+              <span class="luchao-battu-label">Nhật Thần</span>
+              <span class="luchao-battu-val highlight">${dateInfo.day_can} ${dateInfo.day_branch}</span>
+            </div>
+            <div class="luchao-battu-card">
+              <span class="luchao-battu-label">Tuần Không (Không Vong)</span>
+              <span class="luchao-battu-val alert">${dateInfo.tuan_khong.join(', ')}</span>
+            </div>
+            <div class="luchao-battu-card">
+              <span class="luchao-battu-label">Động Hào Biến</span>
+              <span class="luchao-battu-val">${res.has_dong ? `${res.dong_indices.length} Hào (Hào ${res.dong_indices.join(', ')})` : 'Quẻ Tĩnh'}</span>
+            </div>
+            <div class="luchao-thansat-chips">
+              <span class="luchao-ts-chip">Lộc: <strong>${dateInfo.than_sat.loc}</strong></span>
+              <span class="luchao-ts-chip">Mã: <strong>${dateInfo.than_sat.dich_ma}</strong></span>
+              <span class="luchao-ts-chip">Quý Nhân: <strong>${dateInfo.than_sat.quy_nhan.join(', ')}</strong></span>
+              <span class="luchao-ts-chip">Đào Hoa: <strong>${dateInfo.than_sat.dao_hoa}</strong></span>
+            </div>
           </div>
         </div>
 
-        <!-- Result Navigation Tabs -->
-        <div class="luchao-result-subtabs">
-          <button class="luchao-subtab-btn ${state.activeTab === 'bang_que' ? 'active' : ''}" data-subtab="bang_que">
-            📊 Bàn Quẻ Lục Hào
+        <!-- Subtabs Navigation Bar (Scroll Ngang Mượt Mà) -->
+        <div class="luchao-subtabs-scroll">
+          <button class="luchao-subtab-pill ${state.activeTab === 'bang_que' ? 'active' : ''}" data-subtab="bang_que" type="button">
+            📊 Bàn Quẻ
           </button>
-          <button class="luchao-subtab-btn ${state.activeTab === 'quy_trinh_8_buoc' ? 'active' : ''}" data-subtab="quy_trinh_8_buoc">
-            🎯 Quy Trình 8 Bước (${analysis.ket_luan_chung.ket_luan_ngan})
+          <button class="luchao-subtab-pill ${state.activeTab === 'quy_trinh_8_buoc' ? 'active' : ''}" data-subtab="quy_trinh_8_buoc" type="button">
+            🎯 8 Bước (${analysis.ket_luan_chung.ket_luan_ngan})
           </button>
-          <button class="luchao-subtab-btn ${state.activeTab === 'phong_thuy' ? 'active' : ''}" data-subtab="phong_thuy">
-            🏡 Khảo Sát Phong Thủy 6 Hào
+          <button class="luchao-subtab-pill ${state.activeTab === 'phong_thuy' ? 'active' : ''}" data-subtab="phong_thuy" type="button">
+            🏡 Phong Thủy 6 Hào
           </button>
-          <button class="luchao-subtab-btn ${state.activeTab === 'bao_cao' ? 'active' : ''}" data-subtab="bao_cao">
-            📜 Báo Cáo Luận Giải Toàn Văn
+          <button class="luchao-subtab-pill ${state.activeTab === 'bao_cao' ? 'active' : ''}" data-subtab="bao_cao" type="button">
+            📜 Báo Cáo Luận Giải
           </button>
-          <button class="luchao-subtab-btn ${state.activeTab === 'nhat_ky' ? 'active' : ''}" data-subtab="nhat_ky">
-            📖 Nhật Ký &amp; Hậu Kiểm (${getJournalList().length})
+          <button class="luchao-subtab-pill ${state.activeTab === 'nhat_ky' ? 'active' : ''}" data-subtab="nhat_ky" type="button">
+            📖 Sổ Tay (${getJournalList().length})
           </button>
-          <button class="luchao-subtab-btn ${state.activeTab === 'an_le_ntc' ? 'active' : ''}" data-subtab="an_le_ntc">
-            📚 Án Lệ Thầy Cường (290 Quẻ)
+          <button class="luchao-subtab-pill ${state.activeTab === 'an_le_ntc' ? 'active' : ''}" data-subtab="an_le_ntc" type="button">
+            📚 Án Lệ Thầy Cường (290)
           </button>
         </div>
 
@@ -622,144 +638,140 @@
     const canLuc = res.can_luc;
 
     return `
-      <div class="luchao-bangque-container">
-        <!-- Quẻ Overview Banner -->
-        <div class="luchao-que-banner">
-          <div class="luchao-que-col-info left">
-            <span class="luchao-que-type">QUẺ GỐC (BỔN QUÁI)</span>
-            <h3 class="luchao-que-name">${g.name}</h3>
-            <span class="luchao-que-cung">${g.cung} Cung • Thuộc ${g.cung_element}</span>
-            <div class="luchao-que-badges">
-              ${g.is_luc_hop ? '<span class="luchao-badge hop">Lục Hợp Quái</span>' : ''}
-              ${g.is_luc_xung ? '<span class="luchao-badge xung">Lục Xung Quái</span>' : ''}
-              ${g.is_du_hon ? '<span class="luchao-badge duhon">Du Hồn</span>' : ''}
-              ${g.is_quy_hon ? '<span class="luchao-badge quyhon">Quy Hồn</span>' : ''}
-              ${g.is_thuan ? '<span class="luchao-badge batthuan">Bát Thuần</span>' : ''}
+      <div class="luchao-bangque-section">
+        <!-- Quẻ Banner: Side-by-side Quẻ Chủ & Quẻ Biến -->
+        <div class="luchao-banner-pair">
+          <div class="luchao-que-box left">
+            <span class="luchao-que-type-badge">QUẺ CHỦ (GỐC)</span>
+            <h3 class="luchao-que-title">${g.name}</h3>
+            <span class="luchao-que-subtitle">${g.cung} Cung • Thuộc ${g.cung_element}</span>
+            <div class="luchao-que-tags">
+              ${g.is_luc_hop ? '<span class="luchao-tag hop">Lục Hợp</span>' : ''}
+              ${g.is_luc_xung ? '<span class="luchao-tag xung">Lục Xung</span>' : ''}
+              ${g.is_du_hon ? '<span class="luchao-tag duhon">Du Hồn</span>' : ''}
+              ${g.is_quy_hon ? '<span class="luchao-tag quyhon">Quy Hồn</span>' : ''}
+              ${g.is_thuan ? '<span class="luchao-tag batthuan">Bát Thuần</span>' : ''}
             </div>
           </div>
 
-          <div class="luchao-que-col-info middle">
-            <div class="luchao-action-divider">
-              <span class="luchao-dong-count">${res.has_dong ? `Có ${res.dong_indices.length} Hào Động (Hào ${res.dong_indices.join(', ')})` : 'Quẻ Tĩnh (Không có hào động)'}</span>
-              <span class="luchao-arrow-transform">➔</span>
-            </div>
+          <div class="luchao-banner-bridge">
+            <span class="luchao-dong-tag">${res.has_dong ? `Động ${res.dong_indices.length} Hào` : 'Quẻ Tĩnh'}</span>
+            <span class="luchao-bridge-arrow">➔</span>
           </div>
 
-          <div class="luchao-que-col-info right">
-            <span class="luchao-que-type">QUẺ BIẾN (BIẾN QUÁI)</span>
-            <h3 class="luchao-que-name">${b ? b.name : '— (Quẻ Tĩnh)'}</h3>
-            <span class="luchao-que-cung">${b ? `${b.cung} Cung • Thuộc ${b.cung_element}` : 'Không biến đổi'}</span>
-            <div class="luchao-que-badges">
-              ${b && b.is_luc_hop ? '<span class="luchao-badge hop">Lục Hợp Quái</span>' : ''}
-              ${b && b.is_luc_xung ? '<span class="luchao-badge xung">Lục Xung Quái</span>' : ''}
+          <div class="luchao-que-box right">
+            <span class="luchao-que-type-badge">QUẺ BIẾN</span>
+            <h3 class="luchao-que-title">${b ? b.name : '— (Tĩnh)'}</h3>
+            <span class="luchao-que-subtitle">${b ? `${b.cung} Cung • Thuộc ${b.cung_element}` : 'Không biến đổi'}</span>
+            <div class="luchao-que-tags">
+              ${b && b.is_luc_hop ? '<span class="luchao-tag hop">Lục Hợp</span>' : ''}
+              ${b && b.is_luc_xung ? '<span class="luchao-tag xung">Lục Xung</span>' : ''}
             </div>
           </div>
         </div>
 
-        <!-- Bảng 6 Hào Đối Chiếu Song Song -->
-        <div class="luchao-table-hint">👈 Vuốt ngang để xem đủ 6 hào quẻ gốc &amp; quẻ biến 👉</div>
-        <div class="luchao-table-wrapper">
-          <table class="luchao-table">
-            <thead>
-              <tr>
-                <th style="width: 10%;">Lục Thú</th>
-                <th style="width: 12%;">Phục Thần</th>
-                <th style="width: 38%;" colspan="3">Quẻ Gốc: ${g.name}</th>
-                <th style="width: 8%;">Thế / Ứng</th>
-                <th style="width: 32%;" colspan="2">Quẻ Biến: ${b ? b.name : 'Tĩnh'}</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${[6, 5, 4, 3, 2, 1].map((haoIdx) => {
-                const hg = g.haos[haoIdx - 1];
-                const hb = b ? b.haos[haoIdx - 1] : null;
-                const thu = res.luc_thu[haoIdx - 1];
-                const phuc = g.phuc_than ? g.phuc_than[haoIdx - 1] : null;
-                const isThe = g.the_hao === haoIdx;
-                const isUng = g.ung_hao === haoIdx;
-                const isDong = hg.is_dong;
-                const cl = canLuc ? canLuc[haoIdx - 1] : null;
+        <!-- Bảng 6 Hào Tối Ưu Mobile (100% Chiều Rộng, Không Scroll Ngang) -->
+        <div class="luchao-lines-container">
+          <div class="luchao-line-header-row">
+            <div>Thú</div>
+            <div style="text-align: left; padding-left: 4px;">Quẻ Gốc</div>
+            <div>Vạch Hào</div>
+            <div></div>
+            <div style="text-align: left; padding-left: 4px;">Quẻ Biến</div>
+          </div>
+          ${[6, 5, 4, 3, 2, 1].map((haoIdx) => {
+            const hg = g.haos[haoIdx - 1];
+            const hb = b ? b.haos[haoIdx - 1] : null;
+            const thu = res.luc_thu[haoIdx - 1];
+            const phuc = g.phuc_than ? g.phuc_than[haoIdx - 1] : null;
+            const isThe = g.the_hao === haoIdx;
+            const isUng = g.ung_hao === haoIdx;
+            const isDong = hg.is_dong;
+            const cl = canLuc ? canLuc[haoIdx - 1] : null;
 
-                return `
-                  <tr class="luchao-tr ${isDong ? 'row-dong' : ''} ${isThe ? 'row-the' : ''}">
-                    <!-- Lục Thú -->
-                    <td class="td-luc-thu">
-                      <span class="luchao-thu-badge">${thu}</span>
-                    </td>
+            return `
+              <div class="luchao-line-row ${isDong ? 'row-dong' : ''} ${isThe ? 'row-the' : ''}">
+                <!-- Lục Thú -->
+                <div class="luchao-cell-thu">
+                  <span class="luchao-thu-pill">${thu}</span>
+                </div>
 
-                    <!-- Phục Thần -->
-                    <td class="td-phuc-than">
-                      ${phuc && phuc.luc_than ? `
-                        <div class="phuc-than-pill">
-                          <span class="pt-than">${phuc.luc_than}</span>
-                          <span class="pt-chi">${phuc.branch} (${phuc.element})</span>
-                        </div>
-                      ` : '<span class="text-muted">—</span>'}
-                    </td>
+                <!-- Quẻ Gốc (Lục Thân, Can Chi, Phục Thần) -->
+                <div class="luchao-cell-goc">
+                  <div class="luchao-than-chi-row">
+                    <span class="luchao-than-name">${hg.luc_than}</span>
+                    <span class="luchao-branch-elem">${hg.branch} (${hg.element})</span>
+                    ${hg.is_tuan_khong ? '<span class="luchao-micro-tag tk" title="Tuần Không">Không</span>' : ''}
+                    ${cl && cl.is_am_dong ? '<span class="luchao-micro-tag ad" title="Ám Động">Ám</span>' : ''}
+                    ${cl && cl.is_nhat_pha ? '<span class="luchao-micro-tag np" title="Nhật Phá">Phá</span>' : ''}
+                  </div>
+                  ${phuc && phuc.luc_than ? `
+                    <div class="luchao-phuc-than-micro">
+                      <span>Phục: ${phuc.luc_than} ${phuc.branch} (${phuc.element})</span>
+                    </div>
+                  ` : ''}
+                </div>
 
-                    <!-- Hào Quẻ Gốc: Lục Thân + Chi Can + Vạch Hào -->
-                    <td class="td-luc-than-goc">
-                      <strong>${hg.luc_than}</strong>
-                    </td>
-                    <td class="td-branch-goc">
-                      <span>${hg.stem || ''}${hg.branch} (${hg.element})</span>
-                      ${hg.is_tuan_khong ? '<span class="badge-tk" title="Hào Lạc Tuần Không">Không</span>' : ''}
-                      ${cl && cl.is_am_dong ? '<span class="badge-ad" title="Ám Động">Ám</span>' : ''}
-                      ${cl && cl.is_nhat_pha ? '<span class="badge-np" title="Nhật Phá">Phá</span>' : ''}
-                    </td>
-                    <td class="td-vach-goc">
-                      <div class="vach-hao-wrapper">
-                        ${renderVachHao(hg.is_yang, isDong)}
+                <!-- Vạch Hào Quẻ Gốc & Ký Hiệu Thế/Ứng/Động -->
+                <div class="luchao-cell-vach">
+                  <div class="luchao-vach-symbol">
+                    ${hg.is_yang ? `
+                      <div class="vach-yang-bar"></div>
+                    ` : `
+                      <div class="vach-yin-bar">
+                        <span class="vach-yin-half"></span>
+                        <span class="vach-yin-half"></span>
                       </div>
-                    </td>
+                    `}
+                  </div>
+                  <div class="luchao-vach-meta">
+                    ${isThe ? '<span class="badge-the">THẾ</span>' : ''}
+                    ${isUng ? '<span class="badge-ung">ỨNG</span>' : ''}
+                    ${isDong ? `<span class="mark-dong">${hg.is_yang ? '◯' : '✕'}</span>` : ''}
+                  </div>
+                </div>
 
-                    <!-- Thế / Ứng -->
-                    <td class="td-the-ung">
-                      ${isThe ? '<span class="badge-the">THẾ</span>' : ''}
-                      ${isUng ? '<span class="badge-ung">ỨNG</span>' : ''}
-                    </td>
+                <!-- Mũi tên biến -->
+                <div class="luchao-cell-arrow ${isDong ? 'has-dong' : ''}">
+                  ${isDong ? '➔' : ''}
+                </div>
 
-                    <!-- Vạch Hào Quẻ Biến -->
-                    <td class="td-vach-bien">
-                      <div class="vach-hao-wrapper">
-                        ${hb ? renderVachHao(hb.is_yang, false) : '<span class="text-muted">—</span>'}
-                      </div>
-                    </td>
-
-                    <!-- Hào Quẻ Biến: Chi Can + Lục Thân -->
-                    <td class="td-branch-bien">
-                      ${hb ? `
-                        <div class="bien-info-group">
-                          <strong>${hb.luc_than}</strong>
-                          <span>${hb.stem || ''}${hb.branch} (${hb.element})</span>
-                          ${isDong ? `<span class="badge-sinh-khac ${getSinhKhacClass(hg.element, hb.element)}">${getSinhKhacText(hg.element, hb.element)}</span>` : ''}
-                        </div>
-                      ` : '<span class="text-muted">—</span>'}
-                    </td>
-                  </tr>
-                `;
-              }).join('')}
-            </tbody>
-          </table>
+                <!-- Quẻ Biến -->
+                <div class="luchao-cell-bien">
+                  ${hb ? `
+                    <div class="luchao-than-chi-row">
+                      <span class="luchao-than-name">${hb.luc_than}</span>
+                      <span class="luchao-branch-elem">${hb.branch} (${hb.element})</span>
+                    </div>
+                    ${isDong ? `
+                      <span class="luchao-sinh-khac-tag ${getSinhKhacClass(hg.element, hb.element)}">
+                        ${getSinhKhacText(hg.element, hb.element)}
+                      </span>
+                    ` : ''}
+                  ` : '<span class="luchao-bien-static">—</span>'}
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
 
-        <!-- Chú Thích & Điểm Cân Lực 6 Hào -->
-        <div class="luchao-canluc-box">
-          <h4 class="luchao-box-title">⚡ Điểm Cân Lực 6 Hào &amp; Trạng Thái Vượng Suy</h4>
-          <div class="luchao-canluc-grid">
-            ${canLuc.map((cl, i) => `
-              <div class="luchao-canluc-card ${cl.diem_tong_hop >= 2.5 ? 'vuong' : cl.diem_tong_hop <= -2.5 ? 'suy' : 'binh'}">
-                <div class="cl-top">
-                  <span class="cl-hao">Hào ${cl.hao_index} (${cl.luc_than})</span>
-                  <span class="cl-score">${cl.diem_tong_hop > 0 ? '+' : ''}${cl.diem_tong_hop.toFixed(1)}</span>
+        <!-- Cân Lực 6 Hào Dashboard -->
+        <div class="luchao-canluc-section">
+          <h4 class="luchao-section-title">⚡ Điểm Cân Lực 6 Hào &amp; Trạng Thái Vượng Suy</h4>
+          <div class="luchao-canluc-cards-grid">
+            ${canLuc.map((cl) => `
+              <div class="luchao-cl-card ${cl.diem_tong_hop >= 2.5 ? 'vuong' : cl.diem_tong_hop <= -2.5 ? 'suy' : 'binh'}">
+                <div class="cl-card-header">
+                  <span class="cl-hao-name">Hào ${cl.hao_index} • ${cl.luc_than}</span>
+                  <span class="cl-score-pill ${cl.diem_tong_hop > 0 ? 'pos' : cl.diem_tong_hop < 0 ? 'neg' : 'neu'}">
+                    ${cl.diem_tong_hop > 0 ? '+' : ''}${cl.diem_tong_hop.toFixed(1)}
+                  </span>
                 </div>
-                <div class="cl-body">
-                  <span class="cl-branch">${cl.branch} (${cl.element})</span>
-                  <span class="cl-status">${cl.trang_thai_vuong_suy}</span>
+                <div class="cl-card-meta">
+                  <strong>${cl.branch} (${cl.element})</strong> &bull; ${cl.trang_thai_vuong_suy}
                 </div>
-                <div class="cl-details">
-                  <span>Nguyệt: ${cl.quan_he_nguyet}</span>
-                  <span>Nhật: ${cl.quan_he_nhat}</span>
+                <div class="cl-card-meta">
+                  Nguyệt: ${cl.quan_he_nguyet} &bull; Nhật: ${cl.quan_he_nhat}
                 </div>
               </div>
             `).join('')}
@@ -767,27 +779,6 @@
         </div>
       </div>
     `;
-  }
-
-  // Render thanh vạch hào (Dương liền, Âm đứt)
-  function renderVachHao(isYang, isDong) {
-    if (isYang) {
-      return `
-        <div class="vach-yang ${isDong ? 'dong' : ''}">
-          <span class="vach-solid"></span>
-          ${isDong ? '<span class="dong-mark">✕</span>' : ''}
-        </div>
-      `;
-    } else {
-      return `
-        <div class="vach-yin ${isDong ? 'dong' : ''}">
-          <span class="vach-half"></span>
-          <span class="vach-gap"></span>
-          <span class="vach-half"></span>
-          ${isDong ? '<span class="dong-mark">◯</span>' : ''}
-        </div>
-      `;
-    }
   }
 
   function getSinhKhacClass(eGoc, eBien) {
@@ -828,60 +819,56 @@
     };
 
     return `
-      <div class="luchao-8steps-container">
+      <div class="luchao-8steps-section">
         <!-- Banner Kết Luận Nhị Phân -->
-        <div class="luchao-verdict-banner ${ketLuan.thanh_bai ? 'thanh' : 'bai'}">
-          <div class="verdict-icon">${ketLuan.thanh_bai ? '✅' : '⚠️'}</div>
-          <div class="verdict-text-group">
-            <span class="verdict-sub">KẾT LUẬN QUY TRÌNH 8 BƯỚC NHỊ PHÂN (${analysis.topic_name})</span>
-            <h3 class="verdict-title">${ketLuan.ket_luan_ngan}</h3>
-            <p class="verdict-desc">${ketLuan.chi_tiet}</p>
+        <div class="luchao-verdict-card ${ketLuan.thanh_bai ? 'thanh' : 'bai'}">
+          <div class="verdict-icon-box">${ketLuan.thanh_bai ? '✅' : '⚠️'}</div>
+          <div class="verdict-content-box">
+            <span class="verdict-topic-badge">KẾT LUẬN QUY TRÌNH 8 BƯỚC NHỊ PHÂN (${analysis.topic_name})</span>
+            <h3 class="verdict-main-heading">${ketLuan.ket_luan_ngan}</h3>
+            <p class="verdict-explanation">${ketLuan.chi_tiet}</p>
           </div>
         </div>
 
         <!-- Ứng Kỳ Card -->
         ${ungKy ? `
-          <div class="luchao-ungky-card">
-            <div class="ungky-header">
-              <span class="ungky-badge">⏳ ỨNG KỲ DỰ ĐOÁN</span>
-              <strong class="ungky-time">${ungKy.thoi_gian_du_kien}</strong>
+          <div class="luchao-ungky-banner">
+            <div class="ungky-title-row">
+              <span class="ungky-badge-pill">⏳ ỨNG KỲ DỰ ĐOÁN</span>
+              <span class="ungky-time-highlight">${ungKy.thoi_gian_du_kien}</span>
             </div>
-            <div class="ungky-reason">
+            <div class="ungky-details">
               <strong>Cơ sở lý luận:</strong> ${ungKy.ly_do} (Phương pháp: <em>${ungKy.phuong_phap}</em>)
             </div>
-            <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
-              <button id="luchao-btn-find-auspicious" class="btn-goto-trachcat" style="padding: 6px 14px; font-size: 0.85rem;">
-                📅 Tra Cứu Ngày Đại Cát Theo Ứng Kỳ (60 Ngày Tới)
-              </button>
-            </div>
+            <button id="luchao-btn-find-auspicious" class="btn-trachcat-link" type="button">
+              📅 Tra Cứu Ngày Đại Cát Theo Ứng Kỳ (60 Ngày Tới)
+            </button>
             ${state.showAuspiciousBox ? renderAuspiciousDaysBox(state.auspiciousDaysList) : ''}
           </div>
         ` : ''}
 
-        <!-- Accordion 8 Bước -->
+        <!-- 8 Steps Cards List -->
         <div class="luchao-steps-list">
           ${Object.entries(steps).map(([stepKey, stepData], idx) => `
-            <div class="luchao-step-card ${stepData.status === 'fail' ? 'step-warning' : ''}">
-              <div class="step-card-header">
-                <span class="step-number">${idx + 1}</span>
-                <span class="step-title">${stepTitles[stepKey] || stepKey}</span>
-                <span class="step-status-tag ${stepData.status || 'ok'}">${stepData.status === 'fail' ? 'Bất Lợi' : 'Thuận Lợi'}</span>
+            <div class="luchao-step-card-item">
+              <div class="step-card-top">
+                <span class="step-idx-badge">${idx + 1}</span>
+                <span class="step-name-title">${stepTitles[stepKey] || stepKey}</span>
+                <span class="step-status-chip ${stepData.status || 'ok'}">${stepData.status === 'fail' ? 'Bất Lợi' : 'Thuận Lợi'}</span>
               </div>
-              <div class="step-card-body">
-                <div class="step-detail-row">
-                  <strong>Nội dung:</strong> <span>${stepData.detail || ''}</span>
+              <div class="step-body-text">
+                ${stepData.detail || ''}
+              </div>
+              ${stepData.score !== undefined ? `
+                <div style="font-size: 0.78rem; color: #f59e0b; margin-top: 4px;">
+                  <strong>Điểm cân lực:</strong> ${stepData.score > 0 ? '+' : ''}${stepData.score}
                 </div>
-                ${stepData.score !== undefined ? `
-                  <div class="step-detail-row">
-                    <strong>Điểm cân lực:</strong> <span class="score-badge">${stepData.score > 0 ? '+' : ''}${stepData.score}</span>
-                  </div>
-                ` : ''}
-                ${stepData.hoa_giai ? `
-                  <div class="step-detail-row hoa-giai">
-                    <strong>Phương án hành động:</strong> <span>${stepData.hoa_giai}</span>
-                  </div>
-                ` : ''}
-              </div>
+              ` : ''}
+              ${stepData.hoa_giai ? `
+                <div class="step-hoa-giai-box">
+                  <strong>Phương án hành động:</strong> ${stepData.hoa_giai}
+                </div>
+              ` : ''}
             </div>
           `).join('')}
         </div>
@@ -892,45 +879,43 @@
   // Render Subtab 3: Phong Thủy Gia Trạch 6 Bậc Hào
   function renderTabPhongThuy(res) {
     const fs = res.fengshui;
-    if (!fs || !fs.haos) return '<p class="p-4">Không có dữ liệu phong thủy.</p>';
+    if (!fs || !fs.haos) return '<p class="p-4" style="color: #94a3b8; text-align: center;">Không có dữ liệu phong thủy.</p>';
 
     return `
-      <div class="luchao-fengshui-container">
-        <div class="luchao-fengshui-intro">
-          <span class="fs-badge">KHẢO SÁT GIA TRẠCH</span>
-          <h3>Chẩn Đoán Khí Trường &amp; Hình Thế Trạch Bát Quái</h3>
-          <p>Phương pháp luận Thầy Nguyễn Tuấn Cường phân định 6 tầng cấu trúc ngôi nhà từ móng đất (Hào 1) đến nóc mái và trời cao (Hào 6), đối chiếu vượng suy của Lục Thân và Lục Thú.</p>
+      <div class="luchao-bangque-section">
+        <div class="luchao-section-title" style="margin-bottom: 6px;">
+          🏡 Chẩn Đoán Khí Trường &amp; Hình Thế Trạch Bát Quái
         </div>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 12px 0; line-height: 1.4;">
+          Phân định 6 tầng cấu trúc ngôi nhà từ móng nền (Hào 1) đến nóc mái và ban thờ tổ tiên (Hào 6) theo phương pháp luận Thầy Nguyễn Tuấn Cường.
+        </p>
 
         <div class="luchao-fengshui-grid">
           ${[6, 5, 4, 3, 2, 1].map((idx) => {
             const h = fs.haos[idx - 1];
             return `
-              <div class="luchao-fs-card ${h.is_khuyet_ham ? 'khuyet-ham' : 'an-dinh'}">
-                <div class="fs-card-header">
-                  <span class="fs-hao-badge">HÀO ${h.hao_index}</span>
-                  <span class="fs-position">${h.vi_tri_khong_gian}</span>
+              <div class="luchao-fs-card-item ${h.is_khuyet_ham ? 'khuyet-ham' : 'an-dinh'}">
+                <div class="fs-top-row">
+                  <span class="fs-hao-title">HÀO ${h.hao_index} • ${h.vi_tri_khong_gian}</span>
                   <span class="fs-status-pill ${h.is_khuyet_ham ? 'alert' : 'safe'}">
-                    ${h.is_khuyet_ham ? '⚠️ Có Khuyết Hãm' : '✅ Bình Hòa / An Định'}
+                    ${h.is_khuyet_ham ? '⚠️ Có Khuyết Hãm' : '✅ An Định / Bình Hòa'}
                   </span>
                 </div>
-                <div class="fs-card-body">
-                  <div class="fs-row">
-                    <strong>Vật thể tương ứng:</strong> <span>${h.vat_the_tuong_ung}</span>
-                  </div>
-                  <div class="fs-row">
-                    <strong>Lục Thú ngự:</strong> <span class="fs-thu-tag">${h.luc_thu}</span> 
-                    &bull; <strong>Lục Thân:</strong> <span>${h.luc_than} (${h.element})</span>
-                  </div>
-                  <div class="fs-row desc">
-                    <strong>Hiện trạng năng lượng:</strong> <span>${h.y_nghia_hien_trang}</span>
-                  </div>
-                  ${h.is_khuyet_ham ? `
-                    <div class="fs-row hoa-giai-box">
-                      <strong>Hóa giải ngũ hành:</strong> <span>${h.bien_phap_hoa_giai}</span>
-                    </div>
-                  ` : ''}
+                <div class="fs-desc-row">
+                  <strong>Vật thể tương ứng:</strong> ${h.vat_the_tuong_ung}
                 </div>
+                <div class="fs-desc-row">
+                  <strong>Lục Thú ngự:</strong> <span style="color: #f59e0b; font-weight: 700;">${h.luc_thu}</span> 
+                  &bull; <strong>Lục Thân:</strong> ${h.luc_than} (${h.element})
+                </div>
+                <div class="fs-desc-row">
+                  <strong>Hiện trạng năng lượng:</strong> ${h.y_nghia_hien_trang}
+                </div>
+                ${h.is_khuyet_ham ? `
+                  <div class="fs-hg-box">
+                    <strong>Hóa giải ngũ hành:</strong> ${h.bien_phap_hoa_giai}
+                  </div>
+                ` : ''}
               </div>
             `;
           }).join('')}
@@ -1374,7 +1359,7 @@
   // Bind toàn bộ sự kiện giao diện
   function bindEvents(container) {
     // 1. Chuyển đổi phương thức lập quẻ
-    container.querySelectorAll('.luchao-method-btn').forEach((btn) => {
+    container.querySelectorAll('.luchao-seg-btn, .luchao-method-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const m = btn.dataset.method;
         if (state.method !== m) {
@@ -1413,6 +1398,18 @@
         if (e.target.value) {
           state.selectedDate = new Date(e.target.value);
         }
+      });
+    }
+
+    // 4b. Nút Bây Giờ (Reset thời gian về hiện tại)
+    const btnNow = container.querySelector('#luchao-btn-now');
+    if (btnNow) {
+      btnNow.addEventListener('click', () => {
+        state.selectedDate = new Date();
+        const inp = container.querySelector('#luchao-datetime-input');
+        if (inp) inp.value = formatDateTimeInput(state.selectedDate);
+        calculateHexagram();
+        render();
       });
     }
 
@@ -1480,7 +1477,7 @@
     }
 
     // 9. Chuyển subtabs kết quả
-    container.querySelectorAll('.luchao-subtab-btn').forEach((btn) => {
+    container.querySelectorAll('.luchao-subtab-pill, .luchao-subtab-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         state.activeTab = btn.dataset.subtab;
         render();

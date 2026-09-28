@@ -76,11 +76,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.0
-          name: "Neta Light v2.5.0 (Kinh Dịch Lục Hào Nạp Giáp NTC, 290 Án Lệ Thực Tế & Phong Thủy Tam Hợp Phái)"
+          tag_name: v2.5.1
+          name: "Neta Light v2.5.1 (Giao Diện Lục Hào Luxury Dark Spiritual Mới, Zero-Scroll Mobile & 290 Án Lệ Thầy Cường)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.0
-            Bản cập nhật lớn tích hợp toàn diện Hệ thống Kinh Dịch Lục Hào Nạp Giáp (Thầy Nguyễn Tuấn Cường V2) cùng Phong Thủy Tam Hợp Phái & Quét Địa Hình Số DEM Google Earth:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.1
+            Bản phát hành nâng cấp toàn diện giao diện Lục Hào Luxury Dark Spiritual, tối ưu hóa 100% Mobile (Zero Horizontal Scrolling) cùng 290 Án Lệ Thầy Cường:
+            
+            - **Tái Thiết Kế Toàn Diện Giao Diện Lục Hào (Luxury Spiritual Dark Theme)**:
+              + Bảng 6 Hào tối ưu 100% chiều rộng điện thoại (390px viewport), loại bỏ triệt để thanh cuộn ngang gây vỡ khung hình.
+              + Phối màu sang trọng: Đỏ Hoàng Gia trầm `#120104`, Đen Thạch Anh `#1a040a`, Vàng Kim Ánh Hoàng Cát `#f5b041` / `#f7dc6f` đạt chuẩn WCAG AAA.
+              + Bộ chuyển đổi 3 phương thức dạng Segmented Pill (Giờ Động Tâm, Gieo Đồng Xu, Số Seri) trực quan.
+              + Thẻ Dụng Thần vi mô hiển thị ngay dưới Chuyên đề dự đoán với mục tiêu chiêm đoán rõ ràng.
+              + Bảng điều khiển Bát Tự & Tiết Khí 4 thẻ cân đối (Nguyệt Kiến, Nhật Thần, Tuần Không, Động Hào) kèm Thần Sát (Lộc, Mã, Quý Nhân, Đào Hoa).
+              + 6 Subtabs trượt ngang mượt mà: Bàn Quẻ, 8 Bước Nhị Phân, Phong Thủy 6 Hào, Báo Cáo Luận Giải, Sổ Tay Nhật Ký, và 290 Án Lệ Thầy Cường.
+            
+            - **Đóng gói Offline 100% Độc Lập**:
+              + Chạy mượt mà, trơn tru ngay cả khi ngắt toàn bộ kết nối mạng (Airplane mode).
 
             - **Hệ Thống Kinh Dịch Lục Hào Nạp Giáp Chuyên Sâu (100% Deterministic • Zero-AI • Offline)**:
               + Động cơ toán học 64 quẻ, 384 hào, Bát Cung, Thế/Ứng, Nạp Can Chi, An Lục Thân, Khởi Lục Thú theo Nhật Can.

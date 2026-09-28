@@ -1,1560 +1,1738 @@
-/* luchao.css - Giao diện Bàn Quẻ Kinh Dịch Lục Hào Neta Light */
+/* ============================================================
+   NETA LIGHT - KINH DỊCH LỤC HÀO NẠP GIÁP STYLESHEET
+   Pháp môn Nadrasa Dehi - Thiết Kế Sang Trọng & Tối Ưu Mobile
+   ============================================================ */
 
+/* --- Container Chung --- */
 .luchao-app-wrapper {
-  max-width: 1150px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
-  padding: 16px 14px 40px;
+  padding: 10px 10px 48px;
   box-sizing: border-box;
   overflow-x: hidden;
-  color: #f1f5f9;
+  color: #f8fafc;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
 }
 
-/* Header & Control Panel */
+/* --- Control Panel (Card Cấu Hình Lập Quẻ) --- */
 .luchao-control-panel {
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 20px;
+  background: linear-gradient(180deg, rgba(32, 5, 12, 0.92) 0%, rgba(20, 2, 7, 0.96) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.28);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(245, 176, 65, 0.15);
   box-sizing: border-box;
   width: 100%;
 }
 
-.luchao-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 14px;
+/* Segmented 3-Tab Method Switcher */
+.luchao-method-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: rgba(10, 1, 3, 0.7);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 4px;
+  margin-bottom: 14px;
+  box-sizing: border-box;
 }
 
-.luchao-title-group {
+.luchao-seg-btn {
+  background: transparent;
+  color: #cbd5e1;
+  border: none;
+  padding: 9px 4px;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.luchao-seg-btn:active {
+  transform: scale(0.97);
+}
+
+.luchao-seg-btn.active {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(217, 119, 6, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-weight: 800;
+}
+
+/* Fields & Layout */
+.luchao-field-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
+  margin-bottom: 12px;
 }
 
-.luchao-badge-main {
-  font-size: 0.72rem;
+.luchao-field-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
-  color: #facc15;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  padding: 2px 8px;
-  border-radius: 4px;
-  align-self: flex-start;
+  color: #f5b041;
   letter-spacing: 0.5px;
 }
 
-.luchao-main-heading {
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: #f8fafc;
-  margin: 0;
-  line-height: 1.3;
-}
-
-.luchao-method-tabs {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.luchao-method-btn {
-  background: rgba(30, 41, 59, 0.8);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.luchao-method-btn:hover {
-  background: rgba(51, 65, 85, 0.9);
-  color: #fff;
-}
-
-.luchao-method-btn.active {
-  background: #2563eb;
-  color: #fff;
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-}
-
-/* Input Fields Row */
-.luchao-inputs-row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: flex-end;
-}
-
-.luchao-input-col {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 160px;
-  box-sizing: border-box;
-}
-
-.luchao-label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #94a3b8;
-  letter-spacing: 0.4px;
+.luchao-select-wrapper {
+  position: relative;
+  width: 100%;
 }
 
 .luchao-select, .luchao-input {
   width: 100%;
-  padding: 10px 14px;
-  background: rgba(30, 41, 59, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #f8fafc;
-  font-size: 0.92rem;
+  padding: 10px 12px;
+  background: rgba(18, 2, 6, 0.85);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.9rem;
   outline: none;
   box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .luchao-select:focus, .luchao-input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
 }
 
-.luchao-btn-action-col {
+/* Dụng thần chip hiển thị trực quan dưới dropdown */
+.luchao-dung-than-chip {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 8px;
+  margin-top: 5px;
+  font-size: 0.78rem;
+  color: #fef08a;
+  line-height: 1.4;
 }
 
-.luchao-btn-cast-action {
-  background-color: #f59e0b;
-  background-image: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-  color: #000000;
-  border: 1px solid #f59e0b;
+.luchao-dung-than-chip strong {
+  color: #f59e0b;
   font-weight: 800;
-  font-size: 0.95rem;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
-  transition: all 0.15s ease;
   white-space: nowrap;
 }
 
-.luchao-btn-cast-action:hover {
-  background-color: #fbbf24;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
-}
-
-.luchao-btn-action {
-  background-color: #f59e0b;
-  background-image: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-  color: #000000;
-  border: 1px solid #f59e0b;
-  font-weight: 800;
-  border-radius: 8px;
-  padding: 10px 18px;
-  font-size: 0.92rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
+/* Row 2 Cột: Thời gian + Nút Lập Bàn */
+.luchao-datetime-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 8px;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
-}
-
-.luchao-btn-action:hover {
-  background-color: #fbbf24;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
-}
-
-/* Bàn Gieo Đồng Xu Trực Quan */
-.luchao-coin-board {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: rgba(30, 41, 59, 0.6);
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  margin-top: 12px;
-}
-
-.luchao-coin-row {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: rgba(15, 23, 42, 0.7);
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.luchao-coin-label {
+.luchao-btn-now {
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #f5b041;
   font-weight: 700;
-  color: #38bdf8;
-  font-size: 0.95rem;
-  min-width: 70px;
-}
-
-.luchao-coin-options {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.coin-choice-btn {
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(30, 41, 59, 0.8);
-  color: #cbd5e1;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
+  padding: 10px 12px;
+  border-radius: 10px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
 }
 
-.coin-choice-btn.selected {
-  background: #3b82f6;
+.luchao-btn-now:hover, .luchao-btn-now:active {
+  background: rgba(245, 176, 65, 0.3);
   color: #ffffff;
-  border-color: #60a5fa;
-  font-weight: 700;
 }
 
-.coin-choice-btn.dong-selected {
-  background: #ef4444;
+/* Nút CTA Lập Bàn Quẻ */
+.luchao-btn-cast-primary {
+  width: 100%;
+  margin-top: 14px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
   color: #ffffff;
-  border-color: #f87171;
-  font-weight: 700;
-}
-
-/* Metadata Bar của Quẻ */
-.luchao-meta-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  background: rgba(15, 23, 42, 0.9);
-  padding: 14px 18px;
+  border: 1px solid #fbbf24;
+  font-weight: 800;
+  font-size: 0.98rem;
+  padding: 12px 18px;
   border-radius: 12px;
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  margin-bottom: 20px;
-}
-
-.meta-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(30, 41, 59, 0.8);
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.meta-chip strong {
-  color: #fbbf24;
-}
-
-.badge-structure {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.badge-luc-hop { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
-.badge-luc-xung { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
-.badge-bat-thuan { background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid #8b5cf6; }
-.badge-phan-ngam { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
-.badge-phuc-ngam { background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid #64748b; }
-
-/* DateTime & Thần Sát Summary Bar */
-.luchao-datetime-summary-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 18px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  font-size: 0.85rem;
-  box-sizing: border-box;
-}
-
-.luchao-summary-item {
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.45);
+  transition: all 0.2s ease;
+  user-select: none;
+  letter-spacing: 0.3px;
 }
 
-.luchao-item-title {
-  color: #94a3b8;
-  font-weight: 700;
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+.luchao-btn-cast-primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
 }
 
-.luchao-item-val {
+/* --- Gieo Đồng Xu Stage --- */
+.luchao-coin-stage {
+  margin-top: 14px;
+  padding: 14px;
+  background: rgba(14, 1, 4, 0.7);
+  border: 1px dashed rgba(245, 176, 65, 0.3);
+  border-radius: 14px;
+}
+
+.luchao-coin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.luchao-coin-progress {
+  font-size: 0.85rem;
   color: #f1f5f9;
 }
 
-.luchao-item-val.highlight {
-  color: #38bdf8;
-  font-weight: 700;
-}
-
-.luchao-item-val.alert {
-  color: #f87171;
-  font-weight: 700;
-}
-
-/* Subtabs Navigation Bar */
-.luchao-result-subtabs {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.luchao-subtab-btn {
-  background: rgba(30, 41, 59, 0.8);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 0.86rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.luchao-subtab-btn:hover {
-  background: rgba(51, 65, 85, 0.9);
-  color: #fff;
-}
-
-.luchao-subtab-btn.active {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-}
-
-/* Quẻ Overview Banner (Quẻ Gốc & Biến) */
-.luchao-que-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
-  gap: 14px;
-  box-sizing: border-box;
-}
-
-.luchao-que-col-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.luchao-que-col-info.left { text-align: left; flex: 1; }
-.luchao-que-col-info.middle { text-align: center; flex: 0.8; }
-.luchao-que-col-info.right { text-align: right; flex: 1; }
-
-.luchao-que-type {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #94a3b8;
-  letter-spacing: 0.5px;
-}
-
-.luchao-que-name {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #fbbf24;
-  margin: 0;
-  line-height: 1.3;
-}
-
-.luchao-que-cung {
-  font-size: 0.82rem;
-  color: #cbd5e1;
-}
-
-.luchao-que-badges {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 4px;
-}
-.luchao-que-col-info.right .luchao-que-badges {
-  justify-content: flex-end;
-}
-
-.luchao-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-.luchao-badge.hop { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
-.luchao-badge.xung { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
-.luchao-badge.duhon { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
-.luchao-badge.quyhon { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
-.luchao-badge.batthuan { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
-
-.luchao-action-divider {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-.luchao-dong-count {
-  font-size: 0.8rem;
-  font-weight: 700;
+.luchao-coin-progress strong {
   color: #f59e0b;
 }
-.luchao-arrow-transform {
-  font-size: 1.5rem;
-  color: #38bdf8;
-  line-height: 1;
-}
 
-/* Bàn Quẻ Lục Hào - Table & Wrapper */
-.luchao-bangque-container {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
-.luchao-table-hint {
-  display: none;
-  font-size: 0.78rem;
-  color: #fbbf24;
-  text-align: center;
-  margin-bottom: 8px;
-  font-weight: 600;
-  padding: 4px 8px;
-  background: rgba(245, 158, 11, 0.1);
+.luchao-btn-small {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
   border-radius: 6px;
-  border: 1px dashed rgba(245, 158, 11, 0.3);
+  cursor: pointer;
 }
 
-@media (max-width: 768px) {
-  .luchao-table-hint {
-    display: block;
-  }
+.luchao-three-coins-box {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0;
 }
 
-.luchao-table-wrapper {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-sizing: border-box;
+.luchao-coin {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #b7950b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+  user-select: none;
 }
 
-.luchao-table {
-  width: 100%;
-  min-width: 660px;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-  color: #e2e8f0;
+.luchao-coin.heads {
+  background: radial-gradient(circle, #fde047 0%, #ca8a04 70%, #854d0e 100%);
+  color: #451a03;
+  border-color: #fef08a;
 }
 
-.luchao-table th {
-  background: rgba(30, 41, 59, 0.95);
-  color: #94a3b8;
-  padding: 10px 12px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+.luchao-coin.tails {
+  background: radial-gradient(circle, #94a3b8 0%, #475569 70%, #1e293b 100%);
+  color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.luchao-coin-inner {
+  font-size: 0.72rem;
+  font-weight: 900;
   text-align: center;
-  white-space: nowrap;
+  line-height: 1.1;
 }
 
-.luchao-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  vertical-align: middle;
-  text-align: center;
+.luchao-coin-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  margin-top: 2px;
 }
 
-.luchao-table tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+.luchao-three-coins-box.shaking .luchao-coin {
+  animation: coinShake 0.12s infinite alternate;
 }
 
-.luchao-tr.row-dong {
-  background: rgba(245, 158, 11, 0.08);
-}
-.luchao-tr.row-the {
-  border-left: 3px solid #ef4444;
+@keyframes coinShake {
+  0% { transform: translateY(-4px) rotate(-6deg); }
+  100% { transform: translateY(4px) rotate(6deg); }
 }
 
-.luchao-thu-badge {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #cbd5e1;
+.luchao-coin-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
 }
 
-.phuc-than-pill {
-  font-size: 0.78rem;
+.luchao-btn-throw {
+  width: 100%;
+  max-width: 280px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 1px solid #34d399;
+  font-weight: 800;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.luchao-coin-history-line {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.luchao-history-slot {
+  width: 32px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.luchao-history-slot.empty {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: #64748b;
+}
+
+.luchao-history-slot.filled {
+  background: rgba(245, 158, 11, 0.25);
+  border: 1px solid #f59e0b;
+  color: #fef08a;
+}
+
+/* Số Seri Stage */
+.luchao-serial-stage {
+  margin-top: 14px;
+  padding: 14px;
+  background: rgba(14, 1, 4, 0.7);
+  border: 1px dashed rgba(245, 176, 65, 0.3);
+  border-radius: 14px;
+}
+
+.luchao-serial-hint {
+  font-size: 0.75rem;
   color: #94a3b8;
+  margin-top: 4px;
+  display: block;
+}
+
+/* --- BÁT TỰ & TIẾT KHÍ DASHBOARD (Thông tin Nhật Nguyệt Thần Sát) --- */
+.luchao-battu-dashboard {
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.85) 0%, rgba(16, 2, 6, 0.92) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.luchao-battu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.luchao-battu-card {
+  background: rgba(12, 1, 4, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.badge-tk {
+.luchao-battu-label {
   font-size: 0.68rem;
-  font-weight: 700;
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
-  border: 1px solid #ef4444;
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-left: 4px;
-}
-
-.badge-ad {
-  font-size: 0.68rem;
-  font-weight: 700;
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-  border: 1px solid #3b82f6;
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-left: 4px;
-}
-
-.badge-np {
-  font-size: 0.68rem;
-  font-weight: 700;
-  background: rgba(245, 158, 11, 0.2);
-  color: #facc15;
-  border: 1px solid #f59e0b;
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-left: 4px;
-}
-
-.bien-info-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.badge-sinh-khac {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.badge-sinh-khac.sinh { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
-.badge-sinh-khac.khac { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .luchao-inputs-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .luchao-input-col {
-    width: 100%;
-  }
-  .luchao-btn-action-col {
-    width: 100%;
-  }
-  .luchao-btn-cast-action {
-    width: 100%;
-    justify-content: center;
-  }
-  .luchao-que-banner {
-    flex-direction: column;
-    text-align: center;
-  }
-  .luchao-que-col-info.left,
-  .luchao-que-col-info.middle,
-  .luchao-que-col-info.right {
-    text-align: center;
-    width: 100%;
-  }
-  .luchao-que-col-info.right .luchao-que-badges,
-  .luchao-que-badges {
-    justify-content: center;
-  }
-}
-
-/* Vạch Quẻ Dịch (Hào Dương & Hào Âm) */
-.hex-line-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 90px;
-}
-
-.hex-bar-container {
-  width: 55px;
-  height: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.hex-yang {
-  width: 100%;
-  height: 8px;
-  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-  border-radius: 2px;
-  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
-}
-
-.hex-yin-segment {
-  width: 44%;
-  height: 8px;
-  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
-  border-radius: 2px;
-  box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
-}
-
-.hex-yin-space {
-  width: 12%;
-}
-
-.dong-indicator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  background: #f59e0b;
-  color: #0f172a;
-  border-radius: 50%;
-  font-size: 0.75rem;
   font-weight: 800;
-  animation: pulse-glow 1.5s infinite;
+  text-transform: uppercase;
+  color: #f5b041;
+  letter-spacing: 0.4px;
 }
 
-@keyframes pulse-glow {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
-  70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
-}
-
-.badge-the-ung {
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  display: inline-block;
-  text-align: center;
-}
-
-.badge-the {
-  background: #ef4444;
-  color: #fff;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
-}
-
-.badge-ung {
-  background: #0284c7;
-  color: #fff;
-}
-
-/* Thang điểm Cân Lực */
-.power-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.power-cuc-vuong { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
-.power-vuong { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid #10b981; }
-.power-binh-hoa { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid #64748b; }
-.power-suy-yeu { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid #f97316; }
-.power-tuyet-suy { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
-
-/* Tabs Chuyển Đổi Nội Dung Báo Cáo */
-.luchao-view-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 10px;
-}
-
-.view-tab-btn {
-  padding: 8px 18px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: rgba(30, 41, 59, 0.6);
-  color: #94a3b8;
+.luchao-battu-val {
   font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.view-tab-btn:hover {
-  color: #f8fafc;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.view-tab-btn.active {
-  background: #3b82f6;
+  font-weight: 700;
   color: #ffffff;
-  border-color: #60a5fa;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-/* Chi tiết 8 bước */
-.step-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px 20px;
+.luchao-battu-val.highlight {
+  color: #fcd34d;
+}
+
+.luchao-battu-val.alert {
+  color: #f87171;
+}
+
+.luchao-thansat-chips {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.luchao-ts-chip {
+  font-size: 0.72rem;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(245, 176, 65, 0.12);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  color: #fef08a;
+  white-space: nowrap;
+}
+
+.luchao-ts-chip strong {
+  color: #ffffff;
+}
+
+/* --- SUBTABS NAVIGATION (6 Subtabs) --- */
+.luchao-subtabs-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 2px 2px 8px;
   margin-bottom: 14px;
 }
 
-.step-card-header {
+.luchao-subtabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.luchao-subtab-pill {
+  background: rgba(24, 3, 8, 0.85);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.luchao-subtab-pill:hover {
+  color: #ffffff;
+  border-color: rgba(245, 176, 65, 0.4);
+}
+
+.luchao-subtab-pill.active {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: #ffffff;
+  border-color: #f59e0b;
+  box-shadow: 0 3px 10px rgba(217, 119, 6, 0.4);
+  font-weight: 800;
+}
+
+/* --- SUBTAB 1: BÀN QUẺ LỤC HÀO --- */
+.luchao-bangque-section {
+  width: 100%;
+}
+
+/* Banner Quẻ Gốc & Biến Side-by-Side */
+.luchao-banner-pair {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(35, 4, 12, 0.9) 0%, rgba(18, 2, 7, 0.95) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 14px;
+  padding: 12px 10px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  gap: 8px;
+}
+
+.luchao-que-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.luchao-que-box.left {
+  text-align: left;
+}
+
+.luchao-que-box.right {
+  text-align: right;
+}
+
+.luchao-que-type-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #f5b041;
+  letter-spacing: 0.5px;
+}
+
+.luchao-que-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #fef08a;
+  margin: 1px 0;
+  line-height: 1.2;
+}
+
+.luchao-que-subtitle {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+
+.luchao-que-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.luchao-que-box.right .luchao-que-tags {
+  justify-content: flex-end;
+}
+
+.luchao-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.luchao-tag.hop { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+.luchao-tag.xung { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+.luchao-tag.duhon { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
+.luchao-tag.quyhon { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+.luchao-tag.batthuan { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+
+.luchao-banner-bridge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.luchao-dong-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #f59e0b;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.luchao-bridge-arrow {
+  font-size: 1.2rem;
+  color: #f5b041;
+  line-height: 1;
+}
+
+/* --- BẢNG 6 HÀO TỐI ƯU 100% CHIỀU RỘNG MOBILE (Không Scroll Ngang) --- */
+.luchao-lines-container {
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.88) 0%, rgba(14, 1, 5, 0.94) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+}
+
+.luchao-line-header-row {
+  display: grid;
+  grid-template-columns: 62px 1fr 52px 16px 1fr;
+  align-items: center;
+  padding: 8px 6px;
+  background: rgba(45, 6, 15, 0.9);
+  border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #f5b041;
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+
+.luchao-line-row {
+  display: grid;
+  grid-template-columns: 62px 1fr 52px 16px 1fr;
+  align-items: center;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.15s ease;
+  font-size: 0.82rem;
+}
+
+.luchao-line-row:last-child {
+  border-bottom: none;
+}
+
+.luchao-line-row.row-dong {
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.luchao-line-row.row-the {
+  border-left: 3px solid #f59e0b;
+}
+
+/* Cột 1: Lục Thú */
+.luchao-cell-thu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.luchao-thu-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+/* Cột 2: Quẻ Gốc (Lục Thân + Can Chi + Phục Thần) */
+.luchao-cell-goc {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 4px;
+}
+
+.luchao-than-chi-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.luchao-than-name {
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.luchao-branch-elem {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+
+.luchao-phuc-than-micro {
+  font-size: 0.68rem;
+  color: #c084fc;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 3px;
 }
 
-.step-number {
-  background: #8b5cf6;
-  color: #fff;
-  font-size: 0.75rem;
+.luchao-micro-tag {
+  font-size: 0.62rem;
   font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
 }
 
-.step-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #f8fafc;
-  margin: 0;
-}
+.luchao-micro-tag.tk { background: #ef4444; color: #fff; }
+.luchao-micro-tag.ad { background: #3b82f6; color: #fff; }
+.luchao-micro-tag.np { background: #dc2626; color: #fff; }
 
-.step-content {
-  font-size: 0.9rem;
-  color: #cbd5e1;
-  line-height: 1.6;
-}
-
-/* Phong Thủy 6 Hào */
-.fengshui-level-card {
+/* Cột 3: Vạch Hào Quẻ Gốc & Ký Hiệu */
+.luchao-cell-vach {
   display: flex;
-  gap: 16px;
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
 }
 
-.fengshui-level-icon {
-  font-size: 1.8rem;
-  background: rgba(15, 23, 42, 0.8);
-  width: 50px;
-  height: 50px;
+.luchao-vach-symbol {
+  width: 44px;
+  height: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
+  position: relative;
 }
 
-/* Text Report Area */
-.text-report-box {
-  background: #090d16;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 20px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 0.88rem;
-  color: #e2e8f0;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  max-height: 550px;
-  overflow-y: auto;
+/* Vạch Dương */
+.vach-yang-bar {
+  width: 100%;
+  height: 6px;
+  background: #f5b041;
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(245, 176, 65, 0.4);
 }
 
-/* Nút tiện ích copy */
-.report-actions {
+/* Vạch Âm */
+.vach-yin-bar {
+  width: 100%;
+  height: 6px;
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-bottom: 12px;
+  justify-content: space-between;
 }
 
-.btn-secondary {
-  background: rgba(30, 41, 59, 0.9);
-  color: #cbd5e1;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 8px 16px;
-  border-radius: 8px;
+.vach-yin-half {
+  width: 42%;
+  height: 6px;
+  background: #94a3b8;
+  border-radius: 2px;
+}
+
+/* Ký hiệu Động & Thế Ứng */
+.luchao-vach-meta {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.badge-the {
+  background: #f59e0b;
+  color: #000000;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 900;
+}
+
+.badge-ung {
+  background: #3b82f6;
+  color: #ffffff;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 900;
+}
+
+.mark-dong {
+  color: #ef4444;
+  font-weight: 900;
+}
+
+/* Cột 4: Mũi tên biến */
+.luchao-cell-arrow {
+  text-align: center;
+  color: #64748b;
   font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
+}
+
+.luchao-cell-arrow.has-dong {
+  color: #f59e0b;
+  font-weight: 800;
+}
+
+/* Cột 5: Quẻ Biến */
+.luchao-cell-bien {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 4px;
+}
+
+.luchao-bien-static {
+  color: #64748b;
+  font-style: italic;
+  font-size: 0.78rem;
+}
+
+.luchao-sinh-khac-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 3px;
+  align-self: flex-start;
+  margin-top: 1px;
+}
+
+.luchao-sinh-khac-tag.hoi-dau-sinh {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid #10b981;
+}
+
+.luchao-sinh-khac-tag.hoi-dau-khac {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+
+/* --- CÂN LỰC 6 HÀO DASHBOARD --- */
+.luchao-canluc-section {
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.85) 0%, rgba(16, 2, 6, 0.92) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.luchao-section-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f5b041;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 10px 0;
+  display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+.luchao-canluc-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
-/* =======================================================
-   TÍNH NĂNG 1: CẦU NỐI ỨNG KỲ -> TRẠCH CÁT ĐẠI CÁT STYLES
-   ======================================================= */
-.luchao-auspicious-results-box {
-  margin-top: 14px;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(245, 158, 11, 0.4);
+.luchao-cl-card {
+  background: rgba(12, 1, 4, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.78rem;
+}
+
+.luchao-cl-card.vuong {
+  border-left: 3px solid #10b981;
+}
+
+.luchao-cl-card.suy {
+  border-left: 3px solid #ef4444;
+}
+
+.luchao-cl-card.binh {
+  border-left: 3px solid #f59e0b;
+}
+
+.cl-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cl-hao-name {
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.cl-score-pill {
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+}
+
+.cl-score-pill.pos {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.cl-score-pill.neg {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.cl-score-pill.neu {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.cl-card-meta {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* --- SUBTAB 2: QUY TRÌNH 8 BƯỚC NHỊ PHÂN --- */
+.luchao-8steps-section {
+  width: 100%;
+}
+
+.luchao-verdict-card {
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.luchao-verdict-card.thanh {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.8) 0%, rgba(4, 47, 46, 0.9) 100%);
+  border: 1px solid #10b981;
+}
+
+.luchao-verdict-card.bai {
+  background: linear-gradient(135deg, rgba(127, 29, 29, 0.8) 0%, rgba(69, 10, 10, 0.9) 100%);
+  border: 1px solid #ef4444;
+}
+
+.verdict-icon-box {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.verdict-content-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.verdict-topic-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #fef08a;
+  letter-spacing: 0.4px;
+}
+
+.verdict-main-heading {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.verdict-explanation {
+  font-size: 0.85rem;
+  color: #f1f5f9;
+  margin: 4px 0 0 0;
+  line-height: 1.45;
+}
+
+/* Ứng Kỳ Card */
+.luchao-ungky-banner {
+  background: linear-gradient(180deg, rgba(32, 5, 12, 0.9) 0%, rgba(18, 2, 7, 0.95) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.3);
   border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.ungky-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ungky-badge-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #f59e0b;
+}
+
+.ungky-time-highlight {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fef08a;
+}
+
+.ungky-details {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.btn-trachcat-link {
+  margin-top: 10px;
+  width: 100%;
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #f5b041;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* 8 Steps Cards List */
+.luchao-step-card-item {
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.8) 0%, rgba(16, 2, 6, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.step-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.step-idx-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f59e0b;
+  color: #000000;
+  font-weight: 900;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-name-title {
+  flex: 1;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.step-status-chip {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.step-status-chip.ok {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid #10b981;
+}
+
+.step-status-chip.fail {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+
+.step-body-text {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.step-hoa-giai-box {
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid #f59e0b;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: #fef08a;
+}
+
+/* --- SUBTAB 3: PHONG THỦY GIA TRẠCH 6 HÀO --- */
+.luchao-fs-card-item {
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.85) 0%, rgba(16, 2, 6, 0.92) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.luchao-fs-card-item.khuyet-ham {
+  border-left: 3px solid #ef4444;
+}
+
+.luchao-fs-card-item.an-dinh {
+  border-left: 3px solid #10b981;
+}
+
+.fs-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.fs-hao-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f5b041;
+}
+
+.fs-status-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.fs-status-pill.safe {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.fs-status-pill.alert {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.fs-desc-row {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.fs-hg-box {
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #fca5a5;
+}
+
+/* --- SUBTAB 4: BÁO CÁO LUẬN GIẢI TOÀN VĂN --- */
+.luchao-baocao-container {
+  width: 100%;
+}
+
+.luchao-baocao-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.luchao-btn-action {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: #ffffff;
+  border: 1px solid #f59e0b;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+  transition: all 0.2s ease;
+}
+
+.luchao-btn-action:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.luchao-baocao-hint {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.luchao-baocao-paper {
+  background: rgba(18, 2, 6, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  margin-bottom: 14px;
+}
+
+.luchao-report-text {
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* --- DANH SÁCH NGÀY ĐẠI CÁT THEO ỨNG KỲ --- */
+.luchao-auspicious-results-box {
+  margin-top: 12px;
+  background: rgba(12, 1, 4, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .auspicious-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .auspicious-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #fbbf24;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f5b041;
 }
 
 .auspicious-close-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
-  font-size: 1.1rem;
+  color: #cbd5e1;
+  font-size: 1.4rem;
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.auspicious-close-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  line-height: 1;
 }
 
 .auspicious-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
-  color: #e2e8f0;
+  font-size: 0.78rem;
 }
 
 .auspicious-table th {
-  background: rgba(30, 41, 59, 0.8);
-  padding: 8px 10px;
+  background: rgba(45, 6, 15, 0.9);
+  color: #f5b041;
+  font-weight: 800;
+  padding: 6px 8px;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  color: #94a3b8;
-  font-weight: 600;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.3);
+  white-space: nowrap;
 }
 
-.auspicious-table td {
-  padding: 10px 8px;
+.auspicious-tr td {
+  padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  vertical-align: middle;
-}
-
-.auspicious-tr:hover {
-  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
 }
 
 .badge-cat-rating {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.75rem;
-  text-transform: uppercase;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  white-space: nowrap;
 }
-.badge-cat-rating.dai-cat {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
-  border: 1px solid #10b981;
-}
-.badge-cat-rating.thu-cat {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-  border: 1px solid #3b82f6;
-}
-.badge-cat-rating.binh-hoa {
-  background: rgba(148, 163, 184, 0.2);
-  color: #cbd5e1;
-  border: 1px solid #64748b;
-}
+
+.badge-cat-rating.dai-cat { background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid #10b981; }
+.badge-cat-rating.trung-cat { background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid #f59e0b; }
+.badge-cat-rating.tieu-cat { background: rgba(59, 130, 246, 0.25); color: #60a5fa; border: 1px solid #3b82f6; }
 
 .btn-goto-trachcat {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-  color: #fff;
-  border: none;
-  padding: 4px 10px;
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #f5b041;
+  padding: 3px 8px;
   border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-.btn-goto-trachcat:hover {
-  filter: brightness(1.15);
-  transform: translateY(-1px);
-}
-
-/* =======================================================
-   TÍNH NĂNG BƯỚC 2: LIÊN KẾT LA KINH VỆ TINH <-> LỤC HÀO
-   ======================================================= */
-.luchao-lakinh-synergy-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.25) 0%, rgba(49, 46, 129, 0.35) 100%);
-  border: 1px solid rgba(129, 140, 248, 0.5);
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-}
-
-.synergy-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.synergy-icon {
-  font-size: 1.8rem;
-  background: rgba(15, 23, 42, 0.6);
-  padding: 6px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.synergy-desc {
-  display: block;
-  font-size: 0.8rem;
-  color: #c7d2fe;
-  margin-top: 2px;
-}
-
-.btn-synergy-lakinh {
-  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
   white-space: nowrap;
 }
-.btn-synergy-lakinh:hover {
-  filter: brightness(1.2);
-  transform: translateY(-1px);
-}
 
-.luchao-synergy-crosscheck-box {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(129, 140, 248, 0.35);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 18px;
-}
-
-.crosscheck-header {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #a5b4fc;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.crosscheck-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.crosscheck-item {
-  background: rgba(30, 41, 59, 0.7);
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.85rem;
-}
-
-.crosscheck-item strong {
-  display: block;
-  color: #fbbf24;
-  margin-bottom: 4px;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-}
-
+/* --- SUBTAB 5: SỔ TAY NHẬT KÝ & HẬU KIỂM THỰC TẾ --- */
 .luchao-journal-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 10px;
+  width: 100%;
 }
 
 .luchao-journal-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .journal-stat-card {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 14px;
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.85) 0%, rgba(16, 2, 6, 0.92) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.2);
+  border-radius: 10px;
+  padding: 8px 4px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .stat-val {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #fbbf24;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffffff;
   line-height: 1.2;
 }
+
 .stat-val.success { color: #34d399; }
-.stat-val.pending { color: #60a5fa; }
-.stat-val.rate { color: #f43f5e; }
+.stat-val.pending { color: #facc15; }
+.stat-val.rate { color: #f59e0b; }
 
 .stat-label {
-  font-size: 0.78rem;
+  font-size: 0.62rem;
   color: #94a3b8;
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  margin-top: 2px;
 }
 
 .luchao-journal-toolbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: 10px;
-  background: rgba(15, 23, 42, 0.6);
-  padding: 10px 14px;
-  border-radius: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: rgba(20, 2, 8, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
 }
 
 .journal-filter-group {
   display: flex;
-  gap: 8px;
   align-items: center;
-  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .journal-filter-select {
-  background: #0f172a;
-  color: #f1f5f9;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 6px 10px;
+  background: rgba(12, 1, 4, 0.9);
+  color: #ffffff;
+  border: 1px solid rgba(245, 176, 65, 0.3);
   border-radius: 6px;
-  font-size: 0.85rem;
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  outline: none;
 }
 
 .journal-actions-group {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  color: #f5b041;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(245, 176, 65, 0.25);
+  color: #ffffff;
+}
+
+.journal-empty-state {
+  text-align: center;
+  padding: 30px 16px;
+  background: rgba(20, 2, 8, 0.6);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+}
+
+.journal-empty-icon {
+  font-size: 2.2rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.journal-empty-state h4 {
+  font-size: 0.95rem;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+}
+
+.journal-empty-state p {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0;
 }
 
 .luchao-journal-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .luchao-journal-card {
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.88) 0%, rgba(16, 2, 6, 0.94) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 16px;
-  transition: all 0.2s ease;
-  position: relative;
-}
-.luchao-journal-card:hover {
-  border-color: rgba(251, 191, 36, 0.4);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .journal-card-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 8px;
 }
 
 .journal-card-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #f8fafc;
-  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
 }
 
 .journal-meta-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: #94a3b8;
-  margin-bottom: 10px;
 }
 
 .journal-badge-verdict {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
-.journal-badge-verdict.thanh {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
-  border: 1px solid #10b981;
-}
-.journal-badge-verdict.bai {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
-  border: 1px solid #ef4444;
-}
+
+.journal-badge-verdict.thanh { background: rgba(16, 185, 129, 0.25); color: #34d399; }
+.journal-badge-verdict.bai { background: rgba(239, 68, 68, 0.25); color: #f87171; }
 
 .badge-verification {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-.badge-verification.pending {
-  background: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
-  border: 1px solid #3b82f6;
-}
-.badge-verification.success {
-  background: rgba(16, 185, 129, 0.25);
-  color: #6ee7b7;
-  border: 1px solid #10b981;
-}
-.badge-verification.partial {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fcd34d;
-  border: 1px solid #f59e0b;
-}
-.badge-verification.failed {
-  background: rgba(239, 68, 68, 0.25);
-  color: #fca5a5;
-  border: 1px solid #ef4444;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
+.badge-verification.success { background: #065f46; color: #6ee7b7; }
+.badge-verification.partial { background: #854d0e; color: #fde047; }
+.badge-verification.failed { background: #991b1b; color: #fca5a5; }
+.badge-verification.pending { background: #374151; color: #cbd5e1; }
+
 .journal-card-body {
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.8rem;
   color: #cbd5e1;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 10px;
-  margin-bottom: 12px;
+  line-height: 1.45;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
+  margin-top: 6px;
 }
 
 .journal-verification-box {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(12, 1, 4, 0.8);
+  border: 1px solid rgba(245, 176, 65, 0.2);
   border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
 }
 
 .journal-verify-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   margin-top: 6px;
 }
 
 .verify-input-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .verify-select {
-  background: #0f172a;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 5px 8px;
+  background: #1e1e24;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
-  font-size: 0.82rem;
+  padding: 4px 6px;
+  font-size: 0.75rem;
+  outline: none;
 }
 
 .verify-text-input {
   flex: 1;
-  background: #0f172a;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 5px 10px;
+  min-width: 140px;
+  background: #1e1e24;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
-  font-size: 0.82rem;
-  min-width: 180px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  outline: none;
 }
 
 .btn-save-verify {
-  background: #2563eb;
-  color: #fff;
+  background: #d97706;
+  color: #ffffff;
   border: none;
-  padding: 5px 12px;
   border-radius: 6px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
   cursor: pointer;
 }
-.btn-save-verify:hover { background: #1d4ed8; }
 
 .journal-card-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .btn-journal-load {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
-  border: 1px solid #10b981;
-  padding: 4px 12px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+  padding: 4px 10px;
   border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   cursor: pointer;
 }
-.btn-journal-load:hover { background: #10b981; color: #fff; }
 
 .btn-journal-delete {
   background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
   color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.4);
   padding: 4px 10px;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
   cursor: pointer;
 }
-.btn-journal-delete:hover { background: #ef4444; color: #fff; }
 
-.journal-empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  color: #94a3b8;
-}
-.journal-empty-icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: 8px;
-}
-
-/* =======================================================
-   TÍNH NĂNG 3: THƯ VIỆN 290 ÁN LỆ & 71 BÀI GIẢNG THẦY NTC
-   ======================================================= */
+/* --- SUBTAB 6: 290 ÁN LỆ THẦY CƯỜNG --- */
 .luchao-anle-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 14px;
+  width: 100%;
 }
 
 .anle-matching-box {
-  background: linear-gradient(135deg, rgba(30, 27, 75, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.5);
+  background: linear-gradient(180deg, rgba(38, 5, 14, 0.9) 0%, rgba(20, 2, 8, 0.95) 100%);
+  border: 1px solid rgba(245, 176, 65, 0.35);
   border-radius: 12px;
-  padding: 16px 20px;
-  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.15);
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .anle-matching-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fbbf24;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f5b041;
+  margin-bottom: 8px;
 }
 
 .anle-matching-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .anle-matching-item {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: rgba(12, 1, 4, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
+
 .anle-matching-item:hover {
-  border-color: #f59e0b;
-  background: rgba(30, 41, 59, 0.9);
-  transform: translateY(-1px);
+  border-color: #f5b041;
+  background: rgba(24, 3, 8, 0.9);
+}
+
+.anle-lesson-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.anle-block-tag {
+  font-size: 0.65rem;
+  color: #94a3b8;
 }
 
 .anle-toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 14px 16px;
+  margin-bottom: 12px;
 }
 
 .anle-search-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
 .anle-search-input {
-  flex: 1;
-  background: rgba(2, 6, 23, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.9rem;
-  color: #f8fafc;
-  min-width: 240px;
-}
-.anle-search-input:focus {
-  border-color: #38bdf8;
+  width: 100%;
+  padding: 9px 12px;
+  background: rgba(16, 2, 6, 0.9);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.84rem;
+  box-sizing: border-box;
   outline: none;
+}
+
+.anle-search-input:focus {
+  border-color: #f5b041;
+  box-shadow: 0 0 10px rgba(245, 176, 65, 0.3);
 }
 
 .anle-chips-row {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+
+.anle-chips-row::-webkit-scrollbar {
+  display: none;
 }
 
 .anle-chip-btn {
-  background: rgba(30, 41, 59, 0.8);
+  background: rgba(20, 2, 8, 0.85);
   color: #94a3b8;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 16px;
+  font-size: 0.74rem;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s ease;
+  flex-shrink: 0;
 }
-.anle-chip-btn:hover {
-  color: #fff;
-  background: rgba(51, 65, 85, 0.9);
-}
+
 .anle-chip-btn.active {
-  background: rgba(56, 189, 248, 0.2);
-  color: #38bdf8;
-  border-color: #38bdf8;
+  background: #d97706;
+  color: #ffffff;
+  border-color: #f59e0b;
 }
 
 .anle-results-stats {
-  font-size: 0.82rem;
-  color: #94a3b8;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  padding: 4px 2px 0 2px;
 }
 
 .anle-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .anle-card {
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transition: all 0.2s ease;
-}
-.anle-card:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(30, 41, 59, 0.85);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, rgba(28, 4, 10, 0.85) 0%, rgba(16, 2, 6, 0.92) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
 }
 
 .anle-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.anle-lesson-badge {
-  background: rgba(99, 102, 241, 0.2);
-  color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-}
-
-.anle-block-tag {
-  font-size: 0.72rem;
-  color: #64748b;
+  align-items: center;
+  margin-bottom: 4px;
 }
 
 .anle-card-title {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #f1f5f9;
-  line-height: 1.4;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 4px;
+  line-height: 1.3;
 }
 
 .anle-hex-tags {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
+  margin-bottom: 6px;
 }
 
 .anle-hex-tag {
-  background: rgba(245, 158, 11, 0.15);
-  color: #facc15;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #fef08a;
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  padding: 1px 5px;
   border-radius: 4px;
 }
 
 .anle-card-summary {
-  font-size: 0.84rem;
-  line-height: 1.55;
+  font-size: 0.78rem;
   color: #cbd5e1;
-  max-height: 120px;
-  overflow-y: auto;
-  padding-right: 4px;
+  line-height: 1.4;
+  margin-bottom: 8px;
 }
 
 .anle-card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 8px;
-  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 6px;
 }
 
 .btn-anle-view {
-  background: rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
   color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  padding: 4px 12px;
+  padding: 3px 8px;
   border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.74rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
-}
-.btn-anle-view:hover {
-  background: #0284c7;
-  color: #fff;
 }
 
-/* Modal chi tiết án lệ */
+/* ÁN LỆ MODAL */
 .anle-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
-  z-index: 10000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1562,78 +1740,76 @@
 }
 
 .anle-modal-content {
-  background: #0f172a;
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  border-radius: 14px;
+  background: linear-gradient(180deg, #22030c 0%, #120104 100%);
+  border: 1px solid rgba(245, 176, 65, 0.45);
+  border-radius: 16px;
   width: 100%;
-  max-width: 760px;
+  max-width: 520px;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  animation: anleModalFadeIn 0.2s ease;
-}
-
-@keyframes anleModalFadeIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
 }
 
 .anle-modal-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.25);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
 }
 
 .anle-modal-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fbbf24;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #fef08a;
+  line-height: 1.3;
 }
 
 .anle-modal-close {
   background: transparent;
   border: none;
-  color: #94a3b8;
-  font-size: 1.4rem;
+  color: #cbd5e1;
+  font-size: 1.6rem;
   cursor: pointer;
   line-height: 1;
-  padding: 2px 6px;
+  padding: 0;
 }
-.anle-modal-close:hover { color: #fff; }
 
 .anle-modal-body {
-  padding: 18px 20px;
+  padding: 16px;
   overflow-y: auto;
-  font-size: 0.9rem;
-  line-height: 1.7;
-  color: #e2e8f0;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .anle-meta-box {
-  background: rgba(30, 41, 59, 0.7);
-  border-radius: 8px;
-  padding: 10px 14px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  font-size: 0.82rem;
+  background: rgba(12, 1, 4, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.anle-meta-box strong {
+  color: #ffffff;
 }
 
 .anle-text-section {
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 14px 16px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.5;
   white-space: pre-wrap;
-  font-family: inherit;
+  background: rgba(12, 1, 4, 0.5);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
-
