@@ -1805,22 +1805,22 @@
 
     if (hudBack) {
       const bName = PALACE_NAMES[chiefPid] || `Cung ${chiefPid}`;
-      hudBack.textContent = `${bName} (Thu sinh khí, át vía)`;
+      hudBack.innerHTML = `<span class="hud-sector">${bName}</span> <span class="hud-note">(Thu sinh khí, át vía)</span>`;
     }
 
     if (hudAud) {
       const aNames = audiencePids.map(p => PALACE_NAMES[p] || `Cung ${p}`).join(', ');
-      hudAud.textContent = `${aNames} (Tiêu hao ý chí đối phương)`;
+      hudAud.innerHTML = `<span class="hud-sector">${aNames}</span> <span class="hud-note">(Tiêu hao ý chí đối phương)</span>`;
     }
 
     if (hudHorse) {
       const hName = PALACE_NAMES[shPid] || `Cung ${shPid}`;
-      hudHorse.textContent = `${hName} - Chi ${shBranch} (Xuất hành phá vây)`;
+      hudHorse.innerHTML = `<span class="hud-sector">${hName} - Chi ${shBranch}</span> <span class="hud-note">(Xuất hành phá vây)</span>`;
     }
 
     if (hudNonstrike) {
       const nsNames = nonStrikePids.map(p => PALACE_NAMES[p] || `Cung ${p}`).join(', ');
-      hudNonstrike.textContent = `${nsNames} (Cấm đối đầu)`;
+      hudNonstrike.innerHTML = `<span class="hud-sector">${nsNames}</span> <span class="hud-note">(Cấm đối đầu)</span>`;
     }
   }
 

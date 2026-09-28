@@ -2681,12 +2681,14 @@ body.light-theme .qmdj-hud-pill-btn {
 .qmdj-hud-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 8px;
   font-size: 0.72rem;
-  padding: 3px 6px;
+  padding: 4px 8px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.03);
   border-left: 3px solid transparent;
+  box-sizing: border-box;
 }
 
 body.light-theme .qmdj-hud-item {
@@ -2708,10 +2710,14 @@ body.light-theme .qmdj-hud-item {
 
 .qmdj-hud-item span.lbl {
   color: #94a3b8;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.70rem;
   flex-shrink: 0;
-  margin-right: 6px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.35;
 }
 
 body.light-theme .qmdj-hud-item span.lbl {
@@ -2721,9 +2727,22 @@ body.light-theme .qmdj-hud-item span.lbl {
 .qmdj-hud-item strong {
   font-size: 0.72rem;
   text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
+  flex: 1;
+}
+
+.qmdj-hud-item .hud-sector {
+  font-weight: 800;
+}
+
+.qmdj-hud-item .hud-note {
+  font-weight: 500;
+  font-size: 0.67rem;
+  opacity: 0.85;
+  display: inline-block;
+  margin-left: 2px;
 }
 
 .qmdj-hud-item.green strong { color: #4ade80; }
