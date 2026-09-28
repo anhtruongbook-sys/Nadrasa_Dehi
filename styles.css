@@ -12430,5 +12430,681 @@ body.theme-light .jy-domain-body {
   color: #334155;
 }
 
+/* ==========================================================================
+   PHA 4: JOEY YAP BÁT TỰ KỲ MÔN BẢN MỆNH & PHÁP HÀNH TỌA THIỀN ĐỊNH TÂM
+   ========================================================================== */
+
+/* 1. THẺ BÁT TỰ KỲ MÔN BẢN MỆNH (bazi_view.js) */
+.bazi-qmdj-card {
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+  background: linear-gradient(135deg, rgba(24, 18, 43, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  box-shadow: 0 4px 20px rgba(147, 51, 234, 0.15) !important;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0 !important;
+}
+
+body.theme-light .bazi-qmdj-card {
+  border: 1px solid #d8b4fe !important;
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%) !important;
+  box-shadow: 0 4px 16px rgba(147, 51, 234, 0.08) !important;
+}
+
+.bqc-title-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bqc-badge-palace {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+body.theme-light .bqc-badge-palace {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-color: #d8b4fe;
+}
+
+.bqc-btn-lakinh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(126, 34, 206, 0.4);
+  transition: all 0.2s ease;
+}
+
+.bqc-btn-lakinh:hover,
+.bqc-btn-lakinh:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.6);
+}
+
+.bqc-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  .bqc-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bqc-deity-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+body.theme-light .bqc-deity-box {
+  background: #ffffff;
+  border: 1px solid #e9d5ff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.bqc-box-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+body.theme-light .bqc-box-header {
+  border-bottom-color: #f3e8ff;
+}
+
+.bqc-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.bqc-deity-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.bqc-deity-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #f3e8ff;
+}
+
+body.theme-light .bqc-deity-name {
+  color: #581c87;
+}
+
+.bqc-deity-en {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c084fc;
+}
+
+body.theme-light .bqc-deity-en {
+  color: #7e22ce;
+}
+
+.bqc-deity-role {
+  font-size: 0.74rem;
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+body.theme-light .bqc-deity-role {
+  color: #6b21a8;
+}
+
+.bqc-prop-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bqc-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.theme-light .bqc-label {
+  color: #64748b;
+}
+
+.bqc-val {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+body.theme-light .bqc-val {
+  color: #334155;
+}
+
+.bqc-affirmation-row {
+  margin-top: 2px;
+}
+
+.bqc-affirmation-quote {
+  margin: 0;
+  padding: 6px 10px;
+  background: rgba(168, 85, 247, 0.12);
+  border-left: 3px solid #a855f7;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-style: italic;
+  color: #f5d0fe;
+  line-height: 1.45;
+}
+
+body.theme-light .bqc-affirmation-quote {
+  background: #f5f3ff;
+  border-left-color: #8b5cf6;
+  color: #4c1d95;
+}
+
+.bqc-advice {
+  color: #fbbf24;
+}
+
+body.theme-light .bqc-advice {
+  color: #b45309;
+}
+
+.bqc-details-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bqc-detail-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+body.theme-light .bqc-detail-item {
+  background: #ffffff;
+  border-color: #f3e8ff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+
+.bqc-di-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.bqc-di-icon {
+  font-size: 0.85rem;
+}
+
+.bqc-di-title {
+  font-size: 0.76rem;
+  color: #cbd5e1;
+}
+
+body.theme-light .bqc-di-title {
+  color: #475569;
+}
+
+.bqc-di-title strong {
+  color: #f1f5f9;
+}
+
+body.theme-light .bqc-di-title strong {
+  color: #0f172a;
+}
+
+.bqc-di-desc {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: #94a3b8;
+}
+
+body.theme-light .bqc-di-desc {
+  color: #64748b;
+}
+
+.bqc-formations-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.bqc-formation-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.bqc-formation-badge.badge-auspicious {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+body.theme-light .bqc-formation-badge.badge-auspicious {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.bqc-formation-badge.badge-inauspicious {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+body.theme-light .bqc-formation-badge.badge-inauspicious {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.bqc-formation-neutral {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+body.theme-light .bqc-formation-neutral {
+  color: #64748b;
+}
+
+.bqc-compass-banner {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px dashed rgba(168, 85, 247, 0.4);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body.theme-light .bqc-compass-banner {
+  background: #fdf4ff;
+  border-color: #e879f9;
+}
+
+.bqc-cb-icon {
+  font-size: 1.4rem;
+}
+
+.bqc-cb-text {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+body.theme-light .bqc-cb-text {
+  color: #334155;
+}
+
+.bqc-cb-text strong {
+  color: #f0abfc;
+}
+
+body.theme-light .bqc-cb-text strong {
+  color: #86198f;
+}
+
+
+/* 2. WIDGET TỌA THIỀN ĐỊNH TÂM KỲ MÔN (phap_hanh_view.js) */
+.ph-meditation-widget {
+  margin-bottom: 16px;
+}
+
+.ph-meditation-card {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(30, 27, 75, 0.85) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s ease;
+}
+
+body.theme-light .ph-meditation-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+  border: 1px solid #c4b5fd;
+  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.08);
+}
+
+.ph-mc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ph-mc-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ph-mc-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.ph-mc-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.ph-mc-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #e9d5ff;
+  letter-spacing: 0.3px;
+}
+
+body.theme-light .ph-mc-title {
+  color: #4c1d95;
+}
+
+.ph-mc-subtitle {
+  font-size: 0.72rem;
+  color: #a78bfa;
+}
+
+body.theme-light .ph-mc-subtitle {
+  color: #6d28d9;
+}
+
+.ph-mc-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ph-mc-time-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: rgba(139, 92, 246, 0.2);
+  color: #d8b4fe;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+body.theme-light .ph-mc-time-badge {
+  background: #ede9fe;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+
+.ph-mc-btn-toggle {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+body.theme-light .ph-mc-btn-toggle {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #5b21b6;
+}
+
+.ph-mc-btn-toggle:hover {
+  background: rgba(139, 92, 246, 0.3);
+  color: #ffffff;
+}
+
+.ph-mc-body {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ph-mc-sectors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.ph-mc-sector-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+body.theme-light .ph-mc-sector-card {
+  background: #ffffff;
+  border-color: #ede9fe;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.ph-mc-sector-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.ph-sc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.ph-sc-icon {
+  font-size: 1.1rem;
+}
+
+.ph-sc-naming {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex: 1;
+}
+
+.ph-sc-deity {
+  font-size: 0.85rem;
+  color: #f1f5f9;
+}
+
+body.theme-light .ph-sc-deity {
+  color: #1e1b4b;
+}
+
+.ph-sc-en {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+body.theme-light .ph-sc-en {
+  color: #64748b;
+}
+
+.ph-sc-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+}
+
+body.theme-light .ph-sc-tag {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.ph-sc-purpose {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+body.theme-light .ph-sc-purpose {
+  color: #0284c7;
+}
+
+.ph-sc-location {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+}
+
+body.theme-light .ph-sc-location {
+  color: #334155;
+}
+
+.ph-sc-location strong {
+  color: #facc15;
+}
+
+body.theme-light .ph-sc-location strong {
+  color: #b45309;
+}
+
+.ph-sc-affirmation {
+  margin: 0;
+  padding: 5px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 2px solid #8b5cf6;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: #e2e8f0;
+  line-height: 1.35;
+}
+
+body.theme-light .ph-sc-affirmation {
+  background: #faf5ff;
+  border-left-color: #a855f7;
+  color: #3b0764;
+}
+
+.ph-mc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 10px;
+}
+
+body.theme-light .ph-mc-footer {
+  border-top-color: #ede9fe;
+}
+
+.ph-mc-steps {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  min-width: 280px;
+}
+
+@media (max-width: 768px) {
+  .ph-mc-steps {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+.ph-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+body.theme-light .ph-step-item {
+  color: #64748b;
+}
+
+.ph-step-num {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ph-step-txt strong {
+  color: #e2e8f0;
+}
+
+body.theme-light .ph-step-txt strong {
+  color: #1e1b4b;
+}
+
+.ph-btn-open-lakinh {
+  padding: 7px 14px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+}
+
+.ph-btn-open-lakinh:hover,
+.ph-btn-open-lakinh:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.6);
+}
+
 
 

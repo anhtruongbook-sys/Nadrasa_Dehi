@@ -49,59 +49,129 @@
   };
 
   const PALACES = {
-    1: { id: 1, name: 'Khảm', pinyin: 'Kan', direction: 'Bắc', element: 'Thủy', branches: ['Tý'] },
-    2: { id: 2, name: 'Khôn', pinyin: 'Kun', direction: 'Tây Nam', element: 'Thổ', branches: ['Mùi', 'Thân'] },
-    3: { id: 3, name: 'Chấn', pinyin: 'Zhen', direction: 'Đông', element: 'Mộc', branches: ['Mão'] },
-    4: { id: 4, name: 'Tốn', pinyin: 'Xun', direction: 'Đông Nam', element: 'Mộc', branches: ['Thìn', 'Tỵ'] },
-    5: { id: 5, name: 'Trung Cung', pinyin: 'Center', direction: 'Trung Cung', element: 'Thổ', branches: [] },
-    6: { id: 6, name: 'Càn', pinyin: 'Qian', direction: 'Tây Bắc', element: 'Kim', branches: ['Tuất', 'Hợi'] },
-    7: { id: 7, name: 'Đoài', pinyin: 'Dui', direction: 'Tây', element: 'Kim', branches: ['Dậu'] },
-    8: { id: 8, name: 'Cấn', pinyin: 'Gen', direction: 'Đông Bắc', element: 'Thổ', branches: ['Sửu', 'Dần'] },
-    9: { id: 9, name: 'Ly', pinyin: 'Li', direction: 'Nam', element: 'Hỏa', branches: ['Ngọ'] }
+    1: { id: 1, name: 'Khảm', pinyin: 'Kan', direction: 'Bắc', degrees: '337.5° - 22.5°', centerDeg: 0, element: 'Thủy', branches: ['Tý'] },
+    2: { id: 2, name: 'Khôn', pinyin: 'Kun', direction: 'Tây Nam', degrees: '202.5° - 247.5°', centerDeg: 225, element: 'Thổ', branches: ['Mùi', 'Thân'] },
+    3: { id: 3, name: 'Chấn', pinyin: 'Zhen', direction: 'Đông', degrees: '67.5° - 112.5°', centerDeg: 90, element: 'Mộc', branches: ['Mão'] },
+    4: { id: 4, name: 'Tốn', pinyin: 'Xun', direction: 'Đông Nam', degrees: '112.5° - 157.5°', centerDeg: 135, element: 'Mộc', branches: ['Thìn', 'Tỵ'] },
+    5: { id: 5, name: 'Trung Cung', pinyin: 'Center', direction: 'Trung Cung', degrees: 'Trung Tâm', centerDeg: 0, element: 'Thổ', branches: [] },
+    6: { id: 6, name: 'Càn', pinyin: 'Qian', direction: 'Tây Bắc', degrees: '292.5° - 337.5°', centerDeg: 315, element: 'Kim', branches: ['Tuất', 'Hợi'] },
+    7: { id: 7, name: 'Đoài', pinyin: 'Dui', direction: 'Tây', degrees: '247.5° - 292.5°', centerDeg: 270, element: 'Kim', branches: ['Dậu'] },
+    8: { id: 8, name: 'Cấn', pinyin: 'Gen', direction: 'Đông Bắc', degrees: '22.5° - 67.5°', centerDeg: 45, element: 'Thổ', branches: ['Sửu', 'Dần'] },
+    9: { id: 9, name: 'Ly', pinyin: 'Li', direction: 'Nam', degrees: '157.5° - 202.5°', centerDeg: 180, element: 'Hỏa', branches: ['Ngọ'] }
   };
 
   const DOORS_META = {
-    'Khai':     { vn: 'Khai Môn', en: 'Open Door', element: 'Kim', nature: 'Đại Cát', homePalace: 6 },
-    'Khai Môn': { vn: 'Khai Môn', en: 'Open Door', element: 'Kim', nature: 'Đại Cát', homePalace: 6 },
-    'Hưu':      { vn: 'Hưu Môn', en: 'Rest Door', element: 'Thủy', nature: 'Cát', homePalace: 1 },
-    'Hưu Môn':  { vn: 'Hưu Môn', en: 'Rest Door', element: 'Thủy', nature: 'Cát', homePalace: 1 },
-    'Sinh':     { vn: 'Sinh Môn', en: 'Life Door', element: 'Thổ', nature: 'Đại Cát', homePalace: 8 },
-    'Sinh Môn': { vn: 'Sinh Môn', en: 'Life Door', element: 'Thổ', nature: 'Đại Cát', homePalace: 8 },
-    'Thương':   { vn: 'Thương Môn', en: 'Harm Door', element: 'Mộc', nature: 'Hung', homePalace: 3 },
-    'Thương Môn': { vn: 'Thương Môn', en: 'Harm Door', element: 'Mộc', nature: 'Hung', homePalace: 3 },
-    'Đỗ':       { vn: 'Đỗ Môn', en: 'Delusion Door', element: 'Mộc', nature: 'Bình Hòa (Bảo Mật)', homePalace: 4 },
-    'Đỗ Môn':   { vn: 'Đỗ Môn', en: 'Delusion Door', element: 'Mộc', nature: 'Bình Hòa (Bảo Mật)', homePalace: 4 },
-    'Cảnh':     { vn: 'Cảnh Môn', en: 'Scenery Door', element: 'Hỏa', nature: 'Thứ Cát (Hiển Lộ)', homePalace: 9 },
-    'Cảnh Môn': { vn: 'Cảnh Môn', en: 'Scenery Door', element: 'Hỏa', nature: 'Thứ Cát (Hiển Lộ)', homePalace: 9 },
-    'Tử':       { vn: 'Tử Môn', en: 'Death Door', element: 'Thổ', nature: 'Đại Hung', homePalace: 2 },
-    'Tử Môn':   { vn: 'Tử Môn', en: 'Death Door', element: 'Thổ', nature: 'Đại Hung', homePalace: 2 },
-    'Kinh':     { vn: 'Kinh Môn', en: 'Fear Door', element: 'Kim', nature: 'Hung', homePalace: 7 },
-    'Kinh Môn': { vn: 'Kinh Môn', en: 'Fear Door', element: 'Kim', nature: 'Hung', homePalace: 7 }
+    'Khai':     { vn: 'Khai Môn', en: 'Open Door', element: 'Kim', nature: 'Đại Cát', homePalace: 6, action: 'Hành động cởi mở, khai sáng bế tắc, đón nhận cơ hội mới, quang minh chính đại kiến tạo sự nghiệp.' },
+    'Khai Môn': { vn: 'Khai Môn', en: 'Open Door', element: 'Kim', nature: 'Đại Cát', homePalace: 6, action: 'Hành động cởi mở, khai sáng bế tắc, đón nhận cơ hội mới, quang minh chính đại kiến tạo sự nghiệp.' },
+    'Hưu':      { vn: 'Hưu Môn', en: 'Rest Door', element: 'Thủy', nature: 'Cát', homePalace: 1, action: 'Phong thái an nhiên, giải trừ căng thẳng, tìm kiếm bình an, phục hồi năng lượng và kết nối quý nhân.' },
+    'Hưu Môn':  { vn: 'Hưu Môn', en: 'Rest Door', element: 'Thủy', nature: 'Cát', homePalace: 1, action: 'Phong thái an nhiên, giải trừ căng thẳng, tìm kiếm bình an, phục hồi năng lượng và kết nối quý nhân.' },
+    'Sinh':     { vn: 'Sinh Môn', en: 'Life Door', element: 'Thổ', nature: 'Đại Cát', homePalace: 8, action: 'Sinh sôi nảy nở, tạo ra của cải tài lộc bền vững, khả năng tái sinh và biến tiềm năng thành hiện thực.' },
+    'Sinh Môn': { vn: 'Sinh Môn', en: 'Life Door', element: 'Thổ', nature: 'Đại Cát', homePalace: 8, action: 'Sinh sôi nảy nở, tạo ra của cải tài lộc bền vững, khả năng tái sinh và biến tiềm năng thành hiện thực.' },
+    'Thương':   { vn: 'Thương Môn', en: 'Harm Door', element: 'Mộc', nature: 'Hung', homePalace: 3, action: 'Hành động dũng mãnh, dám đương đầu cạnh tranh, giải quyết nợ nần, truy cầu mục tiêu quyết liệt.' },
+    'Thương Môn': { vn: 'Thương Môn', en: 'Harm Door', element: 'Mộc', nature: 'Hung', homePalace: 3, action: 'Hành động dũng mãnh, dám đương đầu cạnh tranh, giải quyết nợ nần, truy cầu mục tiêu quyết liệt.' },
+    'Đỗ':       { vn: 'Đỗ Môn', en: 'Delusion Door', element: 'Mộc', nature: 'Bình Hòa (Bảo Mật)', homePalace: 4, action: 'Bảo mật thông tin, ẩn mình nghiên cứu chuyên sâu, ngăn ngừa rò rỉ và giữ kín kế hoạch chiến lược.' },
+    'Đỗ Môn':   { vn: 'Đỗ Môn', en: 'Delusion Door', element: 'Mộc', nature: 'Bình Hòa (Bảo Mật)', homePalace: 4, action: 'Bảo mật thông tin, ẩn mình nghiên cứu chuyên sâu, ngăn ngừa rò rỉ và giữ kín kế hoạch chiến lược.' },
+    'Cảnh':     { vn: 'Cảnh Môn', en: 'Scenery Door', element: 'Hỏa', nature: 'Thứ Cát (Hiển Lộ)', homePalace: 9, action: 'Quảng bá danh tiếng, kế hoạch truyền thông nổi bật, ký kết văn bản pháp lý, yến tiệc giao lưu.' },
+    'Cảnh Môn': { vn: 'Cảnh Môn', en: 'Scenery Door', element: 'Hỏa', nature: 'Thứ Cát (Hiển Lộ)', homePalace: 9, action: 'Quảng bá danh tiếng, kế hoạch truyền thông nổi bật, ký kết văn bản pháp lý, yến tiệc giao lưu.' },
+    'Tử':       { vn: 'Tử Môn', en: 'Death Door', element: 'Thổ', nature: 'Đại Hung', homePalace: 2, action: 'Sự kiên định không lay chuyển, xử lý bất động sản, kết thúc dứt khoát, gắn liền với tâm linh sâu kín.' },
+    'Tử Môn':   { vn: 'Tử Môn', en: 'Death Door', element: 'Thổ', nature: 'Đại Hung', homePalace: 2, action: 'Sự kiên định không lay chuyển, xử lý bất động sản, kết thúc dứt khoát, gắn liền với tâm linh sâu kín.' },
+    'Kinh':     { vn: 'Kinh Môn', en: 'Fear Door', element: 'Kim', nature: 'Hung', homePalace: 7, action: 'Gây kinh ngạc cảnh báo, tranh biện pháp lý, cảnh giác cao độ trước những biến động bất ngờ.' },
+    'Kinh Môn': { vn: 'Kinh Môn', en: 'Fear Door', element: 'Kim', nature: 'Hung', homePalace: 7, action: 'Gây kinh ngạc cảnh báo, tranh biện pháp lý, cảnh giác cao độ trước những biến động bất ngờ.' }
   };
 
   const STARS_META = {
-    'Thiên Bồng': { vn: 'Thiên Bồng', element: 'Thủy', nature: 'Đại Hung' },
-    'Thiên Nhuế': { vn: 'Thiên Nhuế', element: 'Thổ', nature: 'Đại Hung' },
-    'Thiên Xung': { vn: 'Thiên Xung', element: 'Mộc', nature: 'Thứ Cát' },
-    'Thiên Phụ':  { vn: 'Thiên Phụ', element: 'Mộc', nature: 'Đại Cát' },
-    'Thiên Cầm':  { vn: 'Thiên Cầm', element: 'Thổ', nature: 'Đại Cát' },
-    'Thiên Tâm':  { vn: 'Thiên Tâm', element: 'Kim', nature: 'Đại Cát' },
-    'Thiên Trụ':  { vn: 'Thiên Trụ', element: 'Kim', nature: 'Hung' },
-    'Thiên Nhậm': { vn: 'Thiên Nhậm', element: 'Thổ', nature: 'Đại Cát' },
-    'Thiên Anh':  { vn: 'Thiên Anh', element: 'Hỏa', nature: 'Bình Hòa' }
+    'Thiên Bồng': { vn: 'Thiên Bồng', element: 'Thủy', nature: 'Đại Hung', intellect: 'Tư duy mạo hiểm, dám chấp nhận rủi ro lớn, đầu óc kinh doanh nhạy bén, thích khám phá vùng nước sâu bí ẩn.' },
+    'Thiên Nhuế': { vn: 'Thiên Nhuế', element: 'Thổ', nature: 'Đại Hung', intellect: 'Đầu óc tỉ mỉ nghiên cứu căn nguyên vấn đề, tố chất thầy thuốc khám chữa bệnh, chuyên gia phân tích và đào tạo.' },
+    'Thiên Xung': { vn: 'Thiên Xung', element: 'Mộc', nature: 'Thứ Cát', intellect: 'Phản xạ chớp nhoáng, tư duy tốc độ, dũng cảm tiên phong mở đường, dám làm dám chịu và tràn đầy xung lực.' },
+    'Thiên Phụ':  { vn: 'Thiên Phụ', element: 'Mộc', nature: 'Đại Cát', intellect: 'Trí tuệ học thuật uyên bác, phong thái văn nhân thanh nhã, năng lực truyền thụ tri thức và bồi dưỡng nhân tài.' },
+    'Thiên Cầm':  { vn: 'Thiên Cầm', element: 'Thổ', nature: 'Đại Cát', intellect: 'Tư duy quân bình, lòng trung chính công tâm, năng lực quy tụ lòng người và điều phối tổng thể đại cục.' },
+    'Thiên Tâm':  { vn: 'Thiên Tâm', element: 'Kim', nature: 'Đại Cát', intellect: 'Tư duy chiến lược gia, mưu lược đại tài, khả năng quản trị vĩ mô, tố chất lãnh đạo dẫn dắt và cứu thế.' },
+    'Thiên Trụ':  { vn: 'Thiên Trụ', element: 'Kim', nature: 'Hung', intellect: 'Tư duy phản biện sắc bén, tài năng hùng biện tranh luận, nhìn thấu lỗ hổng của đối phương, hợp đàm phán luật pháp.' },
+    'Thiên Nhậm': { vn: 'Thiên Nhậm', element: 'Thổ', nature: 'Đại Cát', intellect: 'Tư duy thực tế kiên nhẫn, cần cù liêm chính, năng lực tích lũy tài nguyên và gây dựng nền tảng vững chắc.' },
+    'Thiên Anh':  { vn: 'Thiên Anh', element: 'Hỏa', nature: 'Bình Hòa', intellect: 'Tư duy thẩm mỹ sáng tạo, say mê cái đẹp và danh vọng, có năng khiếu nghệ thuật, biểu diễn và quảng bá hình ảnh.' }
   };
 
   const DEITIES_META = {
-    'Trực Phù':  { vn: 'Trực Phù', en: 'Chief', nature: 'Cát Lợi Tối Cao' },
-    'Đằng Xà':   { vn: 'Đằng Xà', en: 'Surging Snake', nature: 'Hung Họa Quái Dị' },
-    'Thái Âm':   { vn: 'Thái Âm', en: 'Great Moon', nature: 'Cát Lợi Quý Nhân' },
-    'Lục Hợp':   { vn: 'Lục Hợp', en: 'Six Harmony', nature: 'Hòa Hợp Hôn Nhân' },
-    'Bạch Hổ':   { vn: 'Bạch Hổ', en: 'White Tiger', nature: 'Đại Hung Huyết Quang' },
-    'Câu Trần':  { vn: 'Câu Trần', en: 'Grappling Hook', nature: 'Đình Trệ Kiện Tụng' },
-    'Huyền Vũ':  { vn: 'Huyền Vũ', en: 'Black Tortoise', nature: 'Mất Cắp Lừa Đảo' },
-    'Chu Tước':  { vn: 'Chu Tước', en: 'Red Phoenix', nature: 'Thị Phi Khẩu Thiệt' },
-    'Cửu Địa':   { vn: 'Cửu Địa', en: 'Nine Earth', nature: 'Vững Chắc Phòng Thủ' },
-    'Cửu Thiên': { vn: 'Cửu Thiên', en: 'Nine Heaven', nature: 'Thăng Tiến Viễn Vọng' }
+    'Trực Phù': {
+      vn: 'Trực Phù', en: 'The Chief', nature: 'Cát Lợi Tối Cao',
+      title: 'Thần Bảo Hộ Tối Cao & Hào Quang Vũ Trụ',
+      subconscious_power: 'Khả năng lãnh đạo bẩm sinh, thu hút quý nhân trợ lực, chuyển nguy thành an, tâm nguyện lành được vũ trụ hồi đáp.',
+      affirmation: 'Kết nối với Bậc Đạo Sư & Tâm Thức Tối Cao, tâm sáng dẫn lối, vạn chướng tiêu trừ, sở nguyện tòng tâm.',
+      spiritual_focus: 'Nạp năng lượng bảo hộ tối thượng của vũ trụ, thanh lọc hào quang, tiêu trừ nghiệp lực và chướng ngại.',
+      advice: 'Hãy luôn khởi tâm đại từ bi và phát nguyện chân thành trước khi hành động, bạn sẽ được trường năng lượng tối cao tương trợ.'
+    },
+    'Đằng Xà': {
+      vn: 'Đằng Xà', en: 'Surging Snake', nature: 'Biến Hóa & Linh Cảm',
+      title: 'Thần Biến Hóa & Giác Quan Thứ Sáu',
+      subconscious_power: 'Trực giác tâm linh siêu nhạy bén, linh tính dự báo biến động, khả năng ứng biến linh hoạt và làm chủ sự bất định.',
+      affirmation: 'Lắng nghe trực giác tĩnh lặng, nhìn thấu dịch chuyển vô hình, làm chủ năng lượng chuyển hóa.',
+      spiritual_focus: 'Khai mở linh giác, rèn luyện sự nhạy cảm năng lượng, thanh tẩy ảo giác và chuyển hóa bất an.',
+      advice: 'Tin tưởng vào giác quan thứ sáu đầu tiên nảy sinh trong tâm trí, đồng thời giữ tâm bình thản để không bị hoang mang.'
+    },
+    'Thái Âm': {
+      vn: 'Thái Âm', en: 'Great Moon', nature: 'Trí Huệ & Tĩnh Lặng',
+      title: 'Thần Trí Huệ Ẩn & Chữa Lành Nội Tâm',
+      subconscious_power: 'Tư duy sâu sắc, trí tuệ mưu lược kín đáo, khả năng tự chữa lành, khai mở trực giác thấu suốt và định tâm.',
+      affirmation: 'Trí huệ như ánh trăng vằng vặc, tĩnh lặng soi sáng, thấu tỏ cội nguồn, tâm an trí sáng.',
+      spiritual_focus: 'Tĩnh tâm tuyệt đối, đi sâu vào tầng định thiền quán, chữa lành tổn thương và tái sinh tuệ giác.',
+      advice: 'Dành không gian yên tĩnh chiêm nghiệm trước khi đưa ra quyết sách, sức mạnh lớn nhất của bạn đến từ sự tĩnh lặng.'
+    },
+    'Lục Hợp': {
+      vn: 'Lục Hợp', en: 'Six Harmony', nature: 'Hòa Hợp & Kết Nối',
+      title: 'Thần Hòa Duyên & Kết Nối Nhân Duyên',
+      subconscious_power: 'Kỹ năng thấu cảm, gắn kết các mối quan hệ, hòa giải mâu thuẫn, xây dựng đồng minh và thu hút sự hợp tác bền vững.',
+      affirmation: 'Tâm từ tỏa rạng, gieo duyên thiện lành, vạn vật tương hợp, đón nhận sự đồng thuận và yêu thương.',
+      spiritual_focus: 'Quán chiếu tâm từ bi, hàn gắn các mối quan hệ rạn nứt, lan tỏa tình thương và sự hòa hợp.',
+      advice: 'Tận dụng sức mạnh kết nối và tinh thần đội nhóm; sự hòa thuận và hợp tác chính là chìa khóa mở ra cánh cửa thành công.'
+    },
+    'Bạch Hổ': {
+      vn: 'Bạch Hổ', en: 'White Tiger', nature: 'Dũng Khí & Sức Mạnh',
+      title: 'Thần Dũng Mãnh & Thể Lực Vô Song',
+      subconscious_power: 'Ý chí kiên cường, sức chịu đựng phi thường, nguồn năng lượng thể chất bùng nổ, không lùi bước trước hiểm nguy.',
+      affirmation: 'Dũng khí kiên định như kim cương, sức mạnh vô song, bứt phá mọi rào cản và chướng ngại.',
+      spiritual_focus: 'Nạp năng lượng hỏa nhiệt dũng mãnh, đập tan nỗi sợ hãi, tôi luyện ý chí và phục hồi thể lực dẻo dai.',
+      advice: 'Biến áp lực thành động lực đột phá; chú ý kiểm soát sự nóng nảy để chuyển hóa dũng khí thành hành động chuẩn xác.'
+    },
+    'Câu Trần': {
+      vn: 'Câu Trần', en: 'Grappling Hook', nature: 'Kiên Định & Vững Chãi',
+      title: 'Thần Kiên Nhẫn & Bám Trụ Vững Vàng',
+      subconscious_power: 'Sức bền phi thường, năng lực chịu đựng và giải quyết các vấn đề phức tạp, bám đuổi mục tiêu đến cùng.',
+      affirmation: 'Tâm bất biến giữa dòng đời vạn biến, bám chắc mục tiêu, kiên trì ắt thành tựu.',
+      spiritual_focus: 'Thiền định định tâm, tháo gỡ các nút thắt năng lượng bị ứ trệ, tái lập sự ổn định.',
+      advice: 'Học cách buông bỏ những điều không thể thay đổi để giải phóng năng lượng trì trệ, tập trung vào trọng tâm.'
+    },
+    'Huyền Vũ': {
+      vn: 'Huyền Vũ', en: 'Black Tortoise', nature: 'Thấu Cảm & Thuyết Phục',
+      title: 'Thần Thấu Tâm & Thuật Thuyết Phục',
+      subconscious_power: 'Khả năng đọc vị tâm lý người khác, nghệ thuật truyền cảm hứng và thuyết phục lôi cuốn, nắm bắt cơ hội ngầm.',
+      affirmation: 'Thấu cảm nhân tâm, tâm ý nhu hòa như dòng nước, chuyển hóa lòng người bằng sự thấu hiểu sâu sắc.',
+      spiritual_focus: 'Quán chiếu sự thật, thanh lọc ảo tưởng, thức tỉnh năng lực phân định chân giả sắc bén.',
+      advice: 'Sử dụng tài năng thấu cảm và thuyết phục vì mục đích thiện lương; luôn giữ sự minh bạch để xây dựng uy tín lâu bền.'
+    },
+    'Chu Tước': {
+      vn: 'Chu Tước', en: 'Red Phoenix', nature: 'Hiển Lộ & Truyền Thông',
+      title: 'Thần Hùng Biện & Lan Tỏa Danh Tiếng',
+      subconscious_power: 'Tài hùng biện sắc bén, khả năng lan tỏa thông điệp mạnh mẽ, gây dựng danh tiếng và truyền cảm hứng cộng đồng.',
+      affirmation: 'Lời nói mang ánh sáng chân lý, khai sáng tâm trí, lan tỏa thông điệp tích cực đến muôn nơi.',
+      spiritual_focus: 'Khai mở luân xa cổ họng (năng lượng khẩu nghiệp thiện lành), quán tưởng ánh sáng rực rỡ soi chiếu tâm thức.',
+      advice: 'Cẩn trọng trong lời ăn tiếng nói, hướng tài năng truyền thông vào việc chia sẻ tri thức và nâng đỡ người khác.'
+    },
+    'Cửu Địa': {
+      vn: 'Cửu Địa', en: 'Nine Earth', nature: 'Nuôi Dưỡng & An Định',
+      title: 'Thần Tiếp Đất & Nuôi Dưỡng Vững Chãi',
+      subconscious_power: 'Sự kiên nhẫn sâu dày, khả năng tích lũy tài sản và tài nguyên lâu dài, lòng bao dung nuôi dưỡng và nâng đỡ.',
+      affirmation: 'Tâm an vững như lòng đại địa, bao dung nuôi dưỡng muôn loài, tích tụ phúc đức và tài nguyên trường tồn.',
+      spiritual_focus: 'Thiền tiếp đất (Grounding), hấp thu sinh khí của đất mẹ, làm dịu tâm trí và nạp năng lượng bình an.',
+      advice: 'Đi từng bước vững chắc, tích lũy theo thời gian; sự điềm tĩnh và nền tảng gốc rễ chính là chỗ dựa vững chắc nhất của bạn.'
+    },
+    'Cửu Thiên': {
+      vn: 'Cửu Thiên', en: 'Nine Heaven', nature: 'Viễn Kiến & Khai Phóng',
+      title: 'Thần Viễn Kiến & Sáng Tạo Bất Tận',
+      subconscious_power: 'Tầm nhìn bao quát vượt thời không, tư duy đột phá không giới hạn, khát vọng vươn lên đỉnh cao và truyền cảm hứng.',
+      affirmation: 'Tâm thức mở rộng vô biên như bầu trời, vươn cao đón nguồn sáng vô lượng, hiện thực hóa những kỳ tích phi thường.',
+      spiritual_focus: 'Mở rộng tầng ý thức, kết nối nguồn cảm hứng vô tận của vũ trụ, kích hoạt tầm nhìn vĩ mô.',
+      advice: 'Đừng để tư duy bị giới hạn bởi khuôn mẫu cũ; hãy đặt ra những mục tiêu lớn và kiên định bay cao hướng về lý tưởng.'
+    }
   };
 
   const ELEMENT_PRODUCES = { 'Mộc': 'Hỏa', 'Hỏa': 'Thổ', 'Thổ': 'Kim', 'Kim': 'Thủy', 'Thủy': 'Mộc' };
@@ -791,6 +861,311 @@
           ],
           five_no_attacks: fiveRestrictions.restricted_sectors.map(s => `${s.direction} (${s.reasons.join(', ')})`)
         }
+      };
+    }
+
+    /**
+     * Tìm Tuần Thủ (Xun Shou) ẩn dưới lục nghi cho Giáp
+     */
+    getXunLeader(stem, branch) {
+      const sIdx = STEMS_10.indexOf(stem);
+      const bIdx = BRANCHES_12.indexOf(branch);
+      if (sIdx === -1 || bIdx === -1) return 'Mậu';
+      const diff = (bIdx - sIdx + 12) % 12;
+      const XUN_MAP = {
+        0: 'Mậu',  // Giáp Tý tuần
+        10: 'Kỷ',  // Giáp Tuất tuần
+        8: 'Canh', // Giáp Thân tuần
+        6: 'Tân',  // Giáp Ngọ tuần
+        4: 'Nhâm', // Giáp Thìn tuần
+        2: 'Quý'   // Giáp Dần tuần
+      };
+      return XUN_MAP[diff] || 'Mậu';
+    }
+
+    /**
+     * Bóc tách và liên kết Bát Tự với Bàn Kỳ Môn Giờ Sinh (Joey Yap Destiny Qi Men)
+     * @param {Object} baziInput - Đối tượng lá số Bát Tự (từ NetaBaziEngine hoặc { solarDate, tuTru })
+     * @param {Object} natalChart - Bàn Kỳ Môn giờ sinh (tùy chọn)
+     */
+    computeDestinyQiMen(baziInput, natalChart = null) {
+      if (!baziInput) return null;
+
+      let solarDate = baziInput.solarDate;
+      if (!solarDate && baziInput.input) {
+        solarDate = new Date(baziInput.input.year, baziInput.input.month - 1, baziInput.input.day, baziInput.input.hour, baziInput.input.minute);
+      }
+      if (!solarDate) solarDate = new Date();
+
+      // Dựng Bàn Kỳ Môn giờ sinh nếu chưa truyền vào
+      let chart = natalChart;
+      if (!chart && global.QMDJCore && global.QMDJCore.TheArtOfBecomingInvisible) {
+        try {
+          chart = new global.QMDJCore.TheArtOfBecomingInvisible(solarDate);
+        } catch (e) {
+          console.error("Lỗi dựng Bàn Kỳ Môn giờ sinh:", e);
+        }
+      }
+
+      if (!chart) return null;
+
+      let dayCan = 'Giáp', dayChi = 'Tý', yearCan = 'Giáp', yearChi = 'Tý', hourCan = 'Giáp', hourChi = 'Tý';
+      if (Array.isArray(baziInput.tuTru)) {
+        const yP = baziInput.tuTru[0] || {};
+        const dP = baziInput.tuTru[2] || {};
+        const hP = baziInput.tuTru[3] || {};
+        yearCan = yP.gan || yP.can || 'Giáp';
+        yearChi = yP.zhi || yP.chi || 'Tý';
+        dayCan = dP.gan || dP.can || 'Giáp';
+        dayChi = dP.zhi || dP.chi || 'Tý';
+        hourCan = hP.gan || hP.can || 'Giáp';
+        hourChi = hP.zhi || hP.chi || 'Tý';
+      } else if (baziInput.tuTru && typeof baziInput.tuTru === 'object') {
+        const yP = baziInput.tuTru.year || {};
+        const dP = baziInput.tuTru.day || {};
+        const hP = baziInput.tuTru.hour || {};
+        yearCan = yP.can || yP.gan || 'Giáp';
+        yearChi = yP.chi || yP.zhi || 'Tý';
+        dayCan = dP.can || dP.gan || 'Giáp';
+        dayChi = dP.chi || dP.zhi || 'Tý';
+        hourCan = hP.can || hP.gan || 'Giáp';
+        hourChi = hP.chi || hP.zhi || 'Tý';
+      } else {
+        dayCan = baziInput.dayCan || 'Giáp';
+        dayChi = baziInput.dayChi || 'Tý';
+        yearCan = baziInput.yearCan || 'Giáp';
+        yearChi = baziInput.yearChi || 'Tý';
+        hourCan = baziInput.hourCan || 'Giáp';
+        hourChi = baziInput.hourChi || 'Tý';
+      }
+
+      // Phân tích toàn diện Bàn Kỳ Môn
+      const analyzed = this.analyzeQMDJCoreChart(chart, {
+        dayCanChi: `${dayCan} ${dayChi}`,
+        hourCanChi: `${hourCan} ${hourChi}`,
+        solarTerm: baziInput.solarTermStr || ''
+      });
+
+      if (!analyzed || !analyzed.success) return null;
+
+      // Can Ngày nếu là Giáp thì lấy Tuần Thủ
+      const effectiveDayStem = (dayCan === 'Giáp') ? this.getXunLeader(dayCan, dayChi) : dayCan;
+      const effectiveYearStem = (yearCan === 'Giáp') ? this.getXunLeader(yearCan, yearChi) : yearCan;
+
+      // Tìm Cung Mệnh Can Ngày (Life Palace) trên Địa Bàn (Earth Plate)
+      let lifePalaceId = 1;
+      let yearPalaceId = 1;
+
+      // Quét tìm trong 9 cung
+      for (let pId = 1; pId <= 9; pId++) {
+        if (pId === 5) continue;
+        const p = analyzed.palaces[pId];
+        if (!p) continue;
+        const earthStem = p.ecs || p.earth_stem || '';
+        // Kiểm tra Earth Stem (Địa bàn)
+        if (earthStem === effectiveDayStem) {
+          lifePalaceId = pId;
+        }
+        if (earthStem === effectiveYearStem) {
+          yearPalaceId = pId;
+        }
+      }
+
+      // Nếu không thấy ở Địa bàn, tìm ở Thiên bàn
+      if (!lifePalaceId) {
+        for (let pId = 1; pId <= 9; pId++) {
+          if (pId === 5) continue;
+          const p = analyzed.palaces[pId];
+          const heavenStem = p ? (p.hcs || p.heaven_stem || '') : '';
+          if (heavenStem === effectiveDayStem) {
+            lifePalaceId = pId;
+            break;
+          }
+        }
+      }
+
+      const buildPalaceReport = (pid, stem, isDay = true) => {
+        const pInfo = PALACES[pid] || PALACES[1];
+        const pData = analyzed.palaces[pid] || {};
+        const dClean = (pData.door || '').replace(' Môn', '').trim();
+        const doorMeta = DOORS_META[dClean] || DOORS_META['Khai'];
+        const starMeta = STARS_META[pData.star] || STARS_META['Thiên Tâm'];
+        const deityMeta = DEITIES_META[pData.deity] || DEITIES_META['Trực Phù'];
+
+        const hStem = pData.hcs || pData.heaven_stem || 'Ất';
+        const eStem = pData.ecs || pData.earth_stem || 'Mậu';
+
+        // Lọc các cách cục rơi vào cung này và chuẩn hóa tên / tính chất
+        const rawFormations = (analyzed.detected_formations || []).filter(f => f.palace_id === pid);
+        const palaceFormations = rawFormations.map(f => ({
+          name: f.name || f.name_vn || 'Cách Cục',
+          is_auspicious: f.is_auspicious !== undefined ? f.is_auspicious : (f.nature ? f.nature.includes('Cát') : f.score > 0),
+          description: f.description || f.desc || ''
+        }));
+
+        return {
+          palace_id: pid,
+          palace_name: pInfo.name,
+          direction: pInfo.direction,
+          degrees: pInfo.degrees,
+          center_deg: pInfo.centerDeg,
+          element: pInfo.element,
+          stem,
+          heaven_stem: hStem,
+          earth_stem: eStem,
+          door: doorMeta.vn,
+          door_action: doorMeta.action,
+          star: starMeta.vn,
+          star_intellect: starMeta.intellect,
+          deity: deityMeta.vn,
+          deity_en: deityMeta.en,
+          deity_title: deityMeta.title,
+          deity_power: deityMeta.subconscious_power,
+          deity_affirmation: deityMeta.affirmation,
+          deity_focus: deityMeta.spiritual_focus,
+          deity_advice: deityMeta.advice,
+          formations: palaceFormations,
+          harmony: evaluateDoorPalaceHarmony(doorMeta.vn, pid)
+        };
+      };
+
+      const lifePalace = buildPalaceReport(lifePalaceId, dayCan, true);
+      const yearPalace = buildPalaceReport(yearPalaceId, yearCan, false);
+
+      return {
+        success: true,
+        solarDate,
+        day_stem: dayCan,
+        day_branch: dayChi,
+        year_stem: yearCan,
+        year_branch: yearChi,
+        effective_day_stem: effectiveDayStem,
+        effective_year_stem: effectiveYearStem,
+        life_palace: lifePalace,
+        year_palace: yearPalace,
+        three_victories: analyzed.three_victories,
+        sky_horse: analyzed.sky_horse,
+        chart: chart
+      };
+    }
+
+    /**
+     * Lấy chỉ dẫn Phương vị Tọa Thiền Định Tâm Thời Gian Thực theo Joey Yap Spiritual Qi Men
+     * @param {Date} date - Thời điểm thiền quán (mặc định là hiện tại)
+     */
+    getSpiritualMeditationGuide(date = new Date()) {
+      if (!global.QMDJCore || !global.QMDJCore.TheArtOfBecomingInvisible) {
+        return null;
+      }
+
+      let chart = null;
+      try {
+        chart = new global.QMDJCore.TheArtOfBecomingInvisible(date);
+      } catch (e) {
+        console.error("Lỗi dựng Bàn Kỳ Môn thiền quán:", e);
+        return null;
+      }
+
+      const analyzed = this.analyzeQMDJCoreChart(chart);
+      if (!analyzed || !analyzed.success) return null;
+
+      // Danh mục 4 hướng tọa thiền nạp khí chủ đạo
+      const TARGET_DEITIES = [
+        {
+          key: 'chief',
+          deityName: 'Trực Phù',
+          purpose: 'Nạp Khí Hộ Thân & Tiêu Trừ Nghiệp Lực',
+          icon: '✨',
+          tag: 'Tối Thượng',
+          practice_title: 'Thiền Kết Nối Nguồn Sáng Vũ Trụ'
+        },
+        {
+          key: 'moon',
+          deityName: 'Thái Âm',
+          purpose: 'Tĩnh Tâm Tuyệt Đối & Khai Mở Trí Huệ',
+          icon: '🧘',
+          tag: 'Định Huệ',
+          practice_title: 'Thiền Định Tĩnh Lặng & Chữa Lành'
+        },
+        {
+          key: 'earth',
+          deityName: 'Cửu Địa',
+          purpose: 'Tiếp Đất (Grounding) & Nuôi Dưỡng Thể Lực',
+          icon: '🌍',
+          tag: 'An Thần',
+          practice_title: 'Thiền Tiếp Đất Đại Địa Nuôi Dưỡng'
+        },
+        {
+          key: 'heaven',
+          deityName: 'Cửu Thiên',
+          purpose: 'Mở Rộng Tâm Thức & Thăng Hoa Sáng Tạo',
+          icon: '🚀',
+          tag: 'Thăng Hoa',
+          practice_title: 'Thiền Mở Rộng Ý Thức Vô Biên'
+        }
+      ];
+
+      const meditationSectors = [];
+
+      TARGET_DEITIES.forEach(td => {
+        // Tìm cung có Thần này
+        for (let pId = 1; pId <= 9; pId++) {
+          if (pId === 5) continue;
+          const pData = analyzed.palaces[pId];
+          if (pData && (pData.deity === td.deityName || (td.deityName === 'Trực Phù' && pData.is_chief))) {
+            const pInfo = PALACES[pId];
+            const dClean = (pData.door || '').replace(' Môn', '').trim();
+            const doorMeta = DOORS_META[dClean] || DOORS_META['Hưu'];
+            const deityMeta = DEITIES_META[td.deityName] || DEITIES_META['Trực Phù'];
+
+            meditationSectors.push({
+              key: td.key,
+              icon: td.icon,
+              tag: td.tag,
+              purpose: td.purpose,
+              practice_title: td.practice_title,
+              deity: deityMeta.vn,
+              deity_en: deityMeta.en,
+              deity_title: deityMeta.title,
+              affirmation: deityMeta.affirmation,
+              spiritual_focus: deityMeta.spiritual_focus,
+              palace_id: pId,
+              palace_name: pInfo.name,
+              direction: pInfo.direction,
+              degrees: pInfo.degrees,
+              center_deg: pInfo.centerDeg,
+              door: doorMeta.vn,
+              star: pData.star
+            });
+            break;
+          }
+        }
+      });
+
+      return {
+        success: true,
+        date: date,
+        hourCanChi: chart.hour ? chart.hour.cstb(true) : '',
+        dayCanChi: chart.date ? chart.date.cstb(true) : '',
+        solarTerm: analyzed.month_general ? analyzed.month_general.name_vn : '',
+        sectors: meditationSectors,
+        three_steps_guide: [
+          {
+            step: 1,
+            name: "Định Vị (Align)",
+            desc: "Ngồi tĩnh tọa trang nghiêm, giữ lưng thẳng tự nhiên. Xoay lưng (Back to Direction) về đúng phương vị của vị Thần bạn chọn."
+          },
+          {
+            step: 2,
+            name: "Phát Nguyện (Command)",
+            desc: "Khép nhẹ mi mắt, hít thở sâu 3 nhịp chậm rãi bằng cơ hoành, khởi niệm thầm hoặc tụng khẩu quyết tâm thức tương ứng với lòng thành kính."
+          },
+          {
+            step: 3,
+            name: "Kết Nối (Connect)",
+            desc: "Giữ tâm trí rỗng rang, xả buông mọi lo toan vọng niệm trong 15 - 30 phút, cảm nhận luồng sinh khí an lành bao bọc toàn bộ cơ thể."
+          }
+        ]
       };
     }
   }

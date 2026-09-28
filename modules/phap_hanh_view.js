@@ -117,6 +117,126 @@ const PhapHanhModule = (function() {
     return [...customLessons, ...builtins];
   }
 
+  // 5b. Widget Tọa Thiền Định Tâm Kỳ Môn (Real-Time Spiritual Qi Men Compass)
+  function renderMeditationCompassWidget() {
+    const container = document.getElementById('ph-meditation-widget');
+    if (!container) return;
+
+    if (!window.JoeyYapQMDJEngine || !window.JoeyYapQMDJEngine.getSpiritualMeditationGuide) {
+      container.style.display = 'none';
+      return;
+    }
+
+    const guide = window.JoeyYapQMDJEngine.getSpiritualMeditationGuide(new Date());
+    if (!guide || !guide.sectors || guide.sectors.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+
+    const isCollapsed = localStorage.getItem('neta_ph_meditation_collapsed') === 'true';
+
+    container.innerHTML = `
+      <div class="ph-meditation-card ${isCollapsed ? 'collapsed' : ''}">
+        <div class="ph-mc-header" id="ph-mc-header">
+          <div class="ph-mc-title-wrap">
+            <span class="ph-mc-icon">🧘</span>
+            <div class="ph-mc-titles">
+              <span class="ph-mc-title">TỌA THIỀN ĐỊNH TÂM KỲ MÔN</span>
+              <span class="ph-mc-subtitle">Phương vị nạp khí tâm linh thời gian thực (Joey Yap Spiritual Qi Men)</span>
+            </div>
+          </div>
+          <div class="ph-mc-meta">
+            <span class="ph-mc-time-badge">⏰ ${guide.hourCanChi ? 'Giờ ' + guide.hourCanChi : ''} • Tiết ${guide.solarTerm || 'Chính'}</span>
+            <button type="button" class="ph-mc-btn-toggle" id="btn-ph-mc-toggle" title="Thu gọn / Mở rộng bảng tọa thiền">
+              ${isCollapsed ? '▼ Mở rộng' : '▲ Thu gọn'}
+            </button>
+          </div>
+        </div>
+
+        <div class="ph-mc-body" id="ph-mc-body" style="${isCollapsed ? 'display: none;' : ''}">
+          <div class="ph-mc-sectors-grid">
+            ${guide.sectors.map(s => `
+              <div class="ph-mc-sector-card tag-${s.key}" data-deg="${s.center_deg}" data-dir="${s.direction}">
+                <div class="ph-sc-top">
+                  <span class="ph-sc-icon">${s.icon}</span>
+                  <div class="ph-sc-naming">
+                    <strong class="ph-sc-deity">${s.deity}</strong>
+                    <span class="ph-sc-en">(${s.deity_en})</span>
+                  </div>
+                  <span class="ph-sc-tag">${s.tag}</span>
+                </div>
+                <div class="ph-sc-purpose">${s.purpose}</div>
+                <div class="ph-sc-location">
+                  Tọa Lưng (Back To): <strong>${s.direction}</strong> (${s.palace_name} • ${s.degrees})
+                </div>
+                <blockquote class="ph-sc-affirmation">"${s.affirmation}"</blockquote>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Bottom Action Bar & 3-Step Practice Guide -->
+          <div class="ph-mc-footer">
+            <div class="ph-mc-steps">
+              <div class="ph-step-item">
+                <span class="ph-step-num">1</span>
+                <span class="ph-step-txt"><strong>Định Vị (Align):</strong> Ngồi tĩnh tọa, xoay lưng tựa về phương vị của Thần bạn chọn.</span>
+              </div>
+              <div class="ph-step-item">
+                <span class="ph-step-num">2</span>
+                <span class="ph-step-txt"><strong>Phát Nguyện (Command):</strong> Khép nhẹ mi mắt, hít sâu 3 nhịp, khởi niệm khẩu quyết tâm thức.</span>
+              </div>
+              <div class="ph-step-item">
+                <span class="ph-step-num">3</span>
+                <span class="ph-step-txt"><strong>Kết Nối (Connect):</strong> Giữ tâm trí rỗng rang 15 - 30 phút, cảm nhận luồng sinh khí thanh tịnh.</span>
+              </div>
+            </div>
+
+            <div class="ph-mc-action">
+              <button type="button" class="ph-btn-open-lakinh" id="btn-ph-open-lakinh" title="Mở La Kinh xoay điện thoại canh góc tọa thiền chính xác">
+                🧭 Mở La Kinh Xoay Hướng Tọa Thiền
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Gắn sự kiện Toggle Collapse
+    const btnToggle = container.querySelector('#btn-ph-mc-toggle');
+    const mcBody = container.querySelector('#ph-mc-body');
+    const mcCard = container.querySelector('.ph-meditation-card');
+    if (btnToggle && mcBody && mcCard) {
+      btnToggle.onclick = (e) => {
+        e.stopPropagation();
+        const currentlyHidden = mcBody.style.display === 'none';
+        if (currentlyHidden) {
+          mcBody.style.display = '';
+          mcCard.classList.remove('collapsed');
+          btnToggle.textContent = '▲ Thu gọn';
+          localStorage.setItem('neta_ph_meditation_collapsed', 'false');
+        } else {
+          mcBody.style.display = 'none';
+          mcCard.classList.add('collapsed');
+          btnToggle.textContent = '▼ Mở rộng';
+          localStorage.setItem('neta_ph_meditation_collapsed', 'true');
+        }
+      };
+    }
+
+    // Gắn sự kiện click mở La Kinh
+    const btnLakinh = container.querySelector('#btn-ph-open-lakinh');
+    if (btnLakinh) {
+      btnLakinh.onclick = () => {
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('lakinh');
+        } else {
+          const tabLakinh = document.getElementById('tab-mode-lakinh');
+          if (tabLakinh) tabLakinh.click();
+        }
+      };
+    }
+  }
+
   // 6. Render giao diện bộ lọc danh mục
   function renderCategoryChips() {
     const container = document.getElementById('ph-category-chips');
@@ -147,6 +267,8 @@ const PhapHanhModule = (function() {
     const emptyState = document.getElementById('ph-empty-state');
     const countBadge = document.getElementById('ph-lessons-count');
     if (!grid) return;
+
+    renderMeditationCompassWidget();
 
     const all = getAllLessons();
     const query = currentSearchQuery.trim().toLowerCase();
@@ -515,6 +637,8 @@ const PhapHanhModule = (function() {
 
   // 11. Khởi tạo toàn bộ sự kiện của Module
   function init() {
+    renderMeditationCompassWidget();
+
     initDB().then(() => {
       renderCategoryChips();
       renderLessons();
@@ -742,7 +866,8 @@ const PhapHanhModule = (function() {
     init: init,
     openViewer: openViewer,
     renderLessons: renderLessons,
-    getAllLessons: getAllLessons
+    getAllLessons: getAllLessons,
+    renderMeditationCompassWidget: renderMeditationCompassWidget
   };
 })();
 
