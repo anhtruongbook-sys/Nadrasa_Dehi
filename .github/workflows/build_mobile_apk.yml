@@ -76,11 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.1
-          name: "Neta Light v2.5.1 (Giao Diện Lục Hào Luxury Dark Spiritual Mới, Zero-Scroll Mobile & 290 Án Lệ Thầy Cường)"
+          tag_name: v2.5.2
+          name: "Neta Light v2.5.2 (Sửa Lỗi Thu Phóng Mặt Bằng La Kinh, Thanh Công Cụ Nổi HUD & Cố Định Tỉ Lệ Chuẩn)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.1
-            Bản phát hành nâng cấp toàn diện giao diện Lục Hào Luxury Dark Spiritual, tối ưu hóa 100% Mobile (Zero Horizontal Scrolling) cùng 290 Án Lệ Thầy Cường:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.2
+            Bản phát hành sửa triệt để lỗi tự động thu nhỏ mặt bằng kiến trúc và nâng cấp thanh điều khiển nổi HUD trực quan:
+            
+            - **Sửa Triệt Để Lỗi Phóng To / Thu Nhỏ & Tự Động Thu Bé Tý Khi Nạp Mặt Bằng**:
+              + Loại bỏ nhân hệ số thu nhỏ kép (`state.planScale * 0.22`), đưa ảnh mặt bằng về tỉ lệ thực 100% tự nhiên vừa vặn khung nhìn điện thoại.
+              + Tách sự kiện `onload` của ảnh mặt bằng (`img.onload = null`) ngay sau khi tải xong, ngăn chặn trình duyệt kích hoạt lại reset tỉ lệ về ban đầu khi thao tác các chức năng khác.
+              + Bổ sung thanh điều khiển nổi HUD trực tiếp trên màn hình (`.lakinh-floating-plan-bar`) gồm các nút: `🔍−`, `🔍+`, Reset `100%`, Kéo rê `✋`, Khớp hướng nhà `🧭`, Đưa về tâm `🎯`, và Độ mờ `👁️`.
+              + Hỗ trợ đầy đủ cử chỉ đa chạm (Pinch-to-Zoom 2 ngón tay, xoay 2 ngón tay) và cuộn chuột thu phóng trên Desktop.
+              + Tối ưu giao diện thanh công cụ nổi chuẩn responsive chống tràn mép trên màn hình điện thoại (360px - 390px viewport).
             
             - **Tái Thiết Kế Toàn Diện Giao Diện Lục Hào (Luxury Spiritual Dark Theme)**:
               + Bảng 6 Hào tối ưu 100% chiều rộng điện thoại (390px viewport), loại bỏ triệt để thanh cuộn ngang gây vỡ khung hình.

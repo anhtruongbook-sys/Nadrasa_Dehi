@@ -452,11 +452,23 @@
           </div>
         </div>
 
-        <!-- Banner Hướng Dẫn Kéo Dịch Tâm Mặt Bằng -->
-        <div id="lakinh-plan-pan-banner" class="lakinh-floating-helper-banner" style="display: none;">
-          <span>✋ Đang kéo dịch tâm mặt bằng. Hãy đưa tim nhà về chữ thập đỏ La Kinh.</span>
-          <button type="button" id="btn-plan-pan-done">✓ Xong</button>
+        <!-- Thanh Điều Khiển Nổi Thu Phóng & Dịch Tâm Mặt Bằng Trên Màn Hình -->
+        <div id="lakinh-plan-pan-banner" class="lakinh-floating-plan-bar" style="display: none;">
+          <div class="fl-plan-left">
+            <span class="fl-plan-title">📐<span class="fl-btn-lbl"> Mặt Bằng</span></span>
+            <button type="button" class="fl-plan-btn" id="fl-btn-scale-minus" title="Thu nhỏ (-15%)">🔍−</button>
+            <button type="button" class="fl-plan-scale-chip" id="fl-plan-scale-val" title="Tỉ lệ hiện tại. Chạm để về 100%">100%</button>
+            <button type="button" class="fl-plan-btn" id="fl-btn-scale-plus" title="Phóng to (+15%)">🔍+</button>
+          </div>
+          <div class="fl-plan-right">
+            <button type="button" class="fl-plan-btn ${state.isPlanPanActive ? 'active' : ''}" id="fl-btn-plan-pan" title="Bật/Tắt chế độ kéo rê và 2 ngón tay thu phóng">✋<span class="fl-btn-lbl"> Kéo</span></button>
+            <button type="button" class="fl-plan-btn" id="fl-btn-rot-match" title="Xoay khớp hướng nhà">🧭<span class="fl-btn-lbl"> Khớp</span></button>
+            <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa về chính tâm (0,0)">🎯<span class="fl-btn-lbl"> Tâm</span></button>
+            <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-opacity" title="Đổi độ mờ (35% / 65% / 85%)">👁️</button>
+            <button type="button" class="fl-plan-btn icon-only" id="btn-plan-pan-done" title="Ẩn thanh công cụ mặt bằng">✕</button>
+          </div>
         </div>
+
 
         <!-- 1. Cụm HUD Tọa Hướng & Huyền Không Đại Quái Tích Hợp Trên Cùng (Master Top Panel) -->
         <div id="lakinh-top-panel" class="lakinh-glass-panel">
@@ -678,12 +690,15 @@
                   <span>Tỉ lệ thu phóng (Scale)</span>
                   <span class="val" id="sheet-val-plan-scale">${Math.round(state.planScale * 100)}%</span>
                 </div>
-                <input type="range" class="lakinh-slider" id="sheet-slider-plan-scale" min="20" max="400" value="${Math.round(state.planScale * 100)}" step="5">
-                <div class="lakinh-btn-row" style="margin-top: 4px;">
+                <input type="range" class="lakinh-slider" id="sheet-slider-plan-scale" min="20" max="500" value="${Math.round(state.planScale * 100)}" step="5">
+                <div class="lakinh-btn-row" style="margin-top: 4px; flex-wrap: wrap;">
+                  <button class="lakinh-step-btn" id="btn-scale-step-m10">−10%</button>
+                  <button class="lakinh-step-btn" id="btn-scale-step-p10">+10%</button>
                   <button class="lakinh-step-btn" id="btn-scale-50">50%</button>
-                  <button class="lakinh-step-btn" id="btn-scale-100">100%</button>
+                  <button class="lakinh-step-btn active" id="btn-scale-100">100%</button>
                   <button class="lakinh-step-btn" id="btn-scale-150">150%</button>
                   <button class="lakinh-step-btn" id="btn-scale-200">200%</button>
+                  <button class="lakinh-step-btn" id="btn-scale-300">300%</button>
                 </div>
               </div>
 
@@ -1217,10 +1232,12 @@
   function updateFloorPlanTransform() {
     const wrapper = document.getElementById('lakinh-floorplan-wrapper');
     const img = document.getElementById('lakinh-floorplan-img');
+    const banner = document.getElementById('lakinh-plan-pan-banner');
     if (!wrapper || !img) return;
 
     if (!state.planImageSrc) {
       img.style.display = 'none';
+      if (banner) banner.style.display = 'none';
       const planWrap = document.getElementById('lakinh-plan-controls-wrap');
       if (planWrap) planWrap.style.display = 'none';
       const statusVal = document.getElementById('sheet-val-plan-status');
@@ -1230,12 +1247,23 @@
       return;
     }
 
-    img.src = state.planImageSrc;
+    if (img.getAttribute('src') !== state.planImageSrc) {
+      img.src = state.planImageSrc;
+    }
     img.style.display = 'block';
     wrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${state.planRotation}deg) scale(${state.planScale})`;
     wrapper.style.opacity = state.planOpacity;
 
-    // Cập nhật giá trị hiển thị trên bảng điều khiển
+    // Cập nhật giá trị hiển thị trên Floating Plan Bar trên màn hình
+    if (banner) {
+      banner.style.display = state.planImageSrc ? 'flex' : 'none';
+    }
+    const flScaleVal = document.getElementById('fl-plan-scale-val');
+    if (flScaleVal) flScaleVal.textContent = `${Math.round(state.planScale * 100)}%`;
+    const flBtnPan = document.getElementById('fl-btn-plan-pan');
+    if (flBtnPan) flBtnPan.classList.toggle('active', !!state.isPlanPanActive);
+
+    // Cập nhật giá trị hiển thị trên bảng điều khiển Bottom Sheet
     const planWrap = document.getElementById('lakinh-plan-controls-wrap');
     if (planWrap) planWrap.style.display = 'block';
     const statusVal = document.getElementById('sheet-val-plan-status');
@@ -1279,15 +1307,17 @@
     if (statusVal) statusVal.textContent = 'Đang nạp ảnh...';
 
     const onImageLoaded = () => {
-      // Tự động căn chỉnh kích thước ban đầu vừa vặn màn hình
-      const vw = window.innerWidth || 360;
-      const nw = img.naturalWidth || 800;
-      const targetW = Math.min(vw * 0.92, 500);
-      state.planScale = Math.max(0.2, Math.min(Math.round((targetW / nw) * 100) / 100, 2.5));
+      // Hủy bỏ listener ngay để chống kích hoạt lại
+      img.onload = null;
+      img.onerror = null;
+
+      // Chuẩn hóa tỉ lệ mặc định 100% (vừa vặn khung màn hình nhờ CSS max-width/max-height)
+      state.planScale = 1.0;
       state.planOffsetX = 0;
       state.planOffsetY = 0;
       state.planRotation = 0.0;
       state.planOpacity = 0.85;
+      state.isPlanPanActive = true; // Mặc định mở chế độ kéo để người dùng dễ căn chỉnh
 
       // Cập nhật DOM của Bottom Sheet nếu đang mở
       if (statusVal) statusVal.textContent = 'Đã nạp bản vẽ';
@@ -1295,20 +1325,38 @@
       if (btnRemove) btnRemove.style.display = 'block';
 
       // Tự động chuyển La Kinh sang Mica Trong Suốt và nền trong để thấy rõ mặt bằng bên dưới
-      if (state.bgOpacity > 0.2) {
-        setBgOpacity(0.15);
-      }
+      state.bgOpacity = 0.15;
+      const bCircle = document.getElementById('lakinh-backdrop-circle');
+      if (bCircle) bCircle.style.opacity = '0.15';
+      const sBg = document.getElementById('sheet-slider-bg-opacity');
+      if (sBg) sBg.value = 15;
+      const valBg = document.getElementById('sheet-val-bg-opacity');
+      if (valBg) valBg.textContent = '15%';
+
       if (state.activePlate !== 'thuoc_trans') {
-        switchPlate('thuoc_trans');
+        state.activePlate = 'thuoc_trans';
+        const disc = document.getElementById('lakinh-disc');
+        if (disc) disc.src = getPlateSrc('thuoc_trans');
+        const btnPlateTrans = document.getElementById('btn-plate-trans');
+        if (btnPlateTrans) btnPlateTrans.classList.add('active');
+        const btnPlateThuoc = document.getElementById('btn-plate-thuoc');
+        if (btnPlateThuoc) btnPlateThuoc.classList.remove('active');
+        const btnPlateGold = document.getElementById('btn-plate-gold');
+        if (btnPlateGold) btnPlateGold.classList.remove('active');
       }
 
       updateFloorPlanTransform();
       saveFloorPlanState();
-      showLaKinhToast('✅ Đã nạp mặt bằng. Tâm ảnh trùng khớp 100% tâm La Kinh.');
+      showLaKinhToast('✅ Đã nạp mặt bằng. Dùng nút + / - hoặc 2 ngón tay thu phóng.');
     };
 
     if (img) {
       img.onload = onImageLoaded;
+      img.onerror = () => {
+        img.onload = null;
+        img.onerror = null;
+        showLaKinhToast('❌ Không thể hiển thị ảnh mặt bằng');
+      };
       img.src = state.planImageSrc;
       img.style.display = 'block';
     }
@@ -1402,18 +1450,23 @@
       state.isPlanPanActive = !state.isPlanPanActive;
     }
     const btn = document.getElementById('sheet-btn-plan-pan');
+    const flPanBtn = document.getElementById('fl-btn-plan-pan');
     const banner = document.getElementById('lakinh-plan-pan-banner');
     if (btn) {
       btn.classList.toggle('active', state.isPlanPanActive);
       btn.innerHTML = state.isPlanPanActive ? '✋ Đang Kéo Tâm (Xong)' : '✋ Kéo Dịch Tâm';
     }
+    if (flPanBtn) {
+      flPanBtn.classList.toggle('active', state.isPlanPanActive);
+    }
     if (banner) {
-      banner.style.display = state.isPlanPanActive ? 'flex' : 'none';
+      banner.style.display = state.planImageSrc ? 'flex' : 'none';
     }
     showLaKinhToast(state.isPlanPanActive
-      ? '✋ Hãy kéo trên màn hình để đưa tim nhà trùng chữ thập đỏ La Kinh'
-      : '✅ Đã cố định vị trí mặt bằng');
+      ? '✋ Chế độ Kéo Tâm: Kéo 1 ngón để dịch chuyển, 2 ngón để phóng to/xoay'
+      : '🔒 Đã cố định vị trí mặt bằng');
   }
+
 
   function saveFloorPlanState() {
     try {
@@ -1436,7 +1489,8 @@
       const raw = localStorage.getItem('lakinh_floorplan_state');
       if (!raw) return;
       const data = JSON.parse(raw);
-      if (data.scale) state.planScale = data.scale;
+      if (data.scale !== undefined && data.scale > 0) state.planScale = data.scale;
+      else state.planScale = 1.0;
       if (data.rotation !== undefined) state.planRotation = data.rotation;
       if (data.opacity) state.planOpacity = data.opacity;
       if (data.offsetX !== undefined) state.planOffsetX = data.offsetX;
@@ -1445,6 +1499,7 @@
         state.planImageSrc = data.imageSrc;
         const img = document.getElementById('lakinh-floorplan-img');
         if (img) {
+          img.onload = null;
           img.src = state.planImageSrc;
           img.style.display = 'block';
         }
@@ -4771,10 +4826,97 @@ function updateQmdjStrategicLayer() {
       btnPlanRemove.addEventListener('click', removeFloorPlan);
     }
 
-    if (btnPlanPanDone) {
-      btnPlanPanDone.addEventListener('click', () => togglePlanPanMode(false));
+    // ================= 3.1. SỰ KIỆN MẶT BẰNG BẢN VẼ KIẾN TRÚC =================
+    // Nút nổi Floating Bar trên màn hình
+    const flBtnScaleMinus = document.getElementById('fl-btn-scale-minus');
+    if (flBtnScaleMinus) {
+      flBtnScaleMinus.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.planScale = Math.max(0.2, Math.round((state.planScale - 0.15) * 100) / 100);
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast(`🔍 Thu nhỏ: ${Math.round(state.planScale * 100)}%`);
+      });
     }
 
+    const flBtnScalePlus = document.getElementById('fl-btn-scale-plus');
+    if (flBtnScalePlus) {
+      flBtnScalePlus.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.planScale = Math.min(5.0, Math.round((state.planScale + 0.15) * 100) / 100);
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast(`🔍 Phóng to: ${Math.round(state.planScale * 100)}%`);
+      });
+    }
+
+    const flScaleVal = document.getElementById('fl-plan-scale-val');
+    if (flScaleVal) {
+      flScaleVal.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.planScale = 1.0;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast('📱 Đã đưa về tỉ lệ chuẩn 100%');
+      });
+    }
+
+    const flBtnPan = document.getElementById('fl-btn-plan-pan');
+    if (flBtnPan) {
+      flBtnPan.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePlanPanMode();
+      });
+    }
+
+    const flBtnRotMatch = document.getElementById('fl-btn-rot-match');
+    if (flBtnRotMatch) {
+      flBtnRotMatch.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.planRotation = state.rotation;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast(`🧭 Đã xoay bản vẽ khớp hướng nhà (${state.rotation.toFixed(1)}°)`);
+      });
+    }
+
+    const flBtnPlanCenter = document.getElementById('fl-btn-plan-center');
+    if (flBtnPlanCenter) {
+      flBtnPlanCenter.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.planOffsetX = 0;
+        state.planOffsetY = 0;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast('🎯 Đã đưa mặt bằng về chính tâm La Kinh');
+      });
+    }
+
+    const flBtnPlanOpacity = document.getElementById('fl-btn-plan-opacity');
+    if (flBtnPlanOpacity) {
+      flBtnPlanOpacity.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (state.planOpacity <= 0.4) state.planOpacity = 0.65;
+        else if (state.planOpacity <= 0.7) state.planOpacity = 0.85;
+        else state.planOpacity = 0.35;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast(`👁️ Độ mờ mặt bằng: ${Math.round(state.planOpacity * 100)}%`);
+      });
+    }
+
+    if (btnPlanPanDone) {
+      btnPlanPanDone.addEventListener('click', (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
+        const banner = document.getElementById('lakinh-plan-pan-banner');
+        if (banner) banner.style.display = 'none';
+        state.isPlanPanActive = false;
+        showLaKinhToast('Đã ẩn thanh công cụ mặt bằng. Mở lại trong Tiện ích.');
+      });
+    }
+
+
+    // Các điều khiển trong Bottom Sheet
     const sPlanScale = document.getElementById('sheet-slider-plan-scale');
     if (sPlanScale) {
       sPlanScale.addEventListener('input', (e) => {
@@ -4784,21 +4926,41 @@ function updateQmdjStrategicLayer() {
       });
     }
 
-    [
+    const btnScaleStepM10 = document.getElementById('btn-scale-step-m10');
+    if (btnScaleStepM10) {
+      btnScaleStepM10.addEventListener('click', () => {
+        state.planScale = Math.max(0.2, Math.round((state.planScale - 0.10) * 100) / 100);
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+      });
+    }
+
+    const btnScaleStepP10 = document.getElementById('btn-scale-step-p10');
+    if (btnScaleStepP10) {
+      btnScaleStepP10.addEventListener('click', () => {
+        state.planScale = Math.min(5.0, Math.round((state.planScale + 0.10) * 100) / 100);
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+      });
+    }
+
+    const scalePresets = [
       { id: 'btn-scale-50', scale: 0.5 },
       { id: 'btn-scale-100', scale: 1.0 },
       { id: 'btn-scale-150', scale: 1.5 },
-      { id: 'btn-scale-200', scale: 2.0 }
-    ].forEach(item => {
+      { id: 'btn-scale-200', scale: 2.0 },
+      { id: 'btn-scale-300', scale: 3.0 }
+    ];
+    scalePresets.forEach(item => {
       const btn = document.getElementById(item.id);
       if (btn) {
         btn.addEventListener('click', () => {
           state.planScale = item.scale;
           updateFloorPlanTransform();
           saveFloorPlanState();
-          ['btn-scale-50', 'btn-scale-100', 'btn-scale-150', 'btn-scale-200'].forEach(id => {
-            const b = document.getElementById(id);
-            if (b) b.classList.toggle('active', id === item.id);
+          scalePresets.forEach(it => {
+            const b = document.getElementById(it.id);
+            if (b) b.classList.toggle('active', it.id === item.id);
           });
         });
       }
@@ -4888,8 +5050,14 @@ function updateQmdjStrategicLayer() {
     bindPlanShift('btn-plan-shift-up', 0, -5);
     bindPlanShift('btn-plan-shift-down', 0, 5);
 
-    // Kéo rê màn hình khi ở chế độ Kéo Dịch Tâm Mặt Bằng
+    // Kéo rê & Thu phóng 2 ngón tay (Pinch-to-Zoom & Pan) khi ở chế độ Mặt Bằng
     const lkContainer = document.getElementById('view-lakinh');
+    const activePointers = new Map();
+    let isPinching = false;
+    let initialPinchDist = 0;
+    let initialPinchScale = 1.0;
+    let initialPinchAngle = 0;
+    let initialPinchRot = 0.0;
     let isPlanDragging = false;
     let planDragStartX = 0;
     let planDragStartY = 0;
@@ -4898,37 +5066,96 @@ function updateQmdjStrategicLayer() {
 
     if (lkContainer) {
       lkContainer.addEventListener('pointerdown', (e) => {
-        if (!state.isPlanPanActive) return;
-        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-plan-pan-banner, button')) return;
-        isPlanDragging = true;
-        planDragStartX = e.clientX;
-        planDragStartY = e.clientY;
-        planDragInitOx = state.planOffsetX;
-        planDragInitOy = state.planOffsetY;
+        if (!state.planImageSrc) return;
+        if (!state.isPlanPanActive && !e.shiftKey) return;
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-plan-pan-banner, .lakinh-floating-plan-bar, button, input')) return;
+
+        activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (activePointers.size === 1) {
+          isPlanDragging = true;
+          isPinching = false;
+          planDragStartX = e.clientX;
+          planDragStartY = e.clientY;
+          planDragInitOx = state.planOffsetX;
+          planDragInitOy = state.planOffsetY;
+        } else if (activePointers.size === 2) {
+          isPlanDragging = false;
+          isPinching = true;
+          const pts = Array.from(activePointers.values());
+          initialPinchDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+          initialPinchScale = state.planScale;
+          initialPinchAngle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x) * 180 / Math.PI;
+          initialPinchRot = state.planRotation;
+        }
+
         try { lkContainer.setPointerCapture(e.pointerId); } catch (_) {}
         e.stopPropagation();
       });
 
       window.addEventListener('pointermove', (e) => {
-        if (!isPlanDragging || !state.isPlanPanActive) return;
-        const dx = e.clientX - planDragStartX;
-        const dy = e.clientY - planDragStartY;
-        state.planOffsetX = Math.round(planDragInitOx + dx);
-        state.planOffsetY = Math.round(planDragInitOy + dy);
-        updateFloorPlanTransform();
-        e.stopPropagation();
+        if (!activePointers.has(e.pointerId)) return;
+        activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (isPinching && activePointers.size >= 2) {
+          const pts = Array.from(activePointers.values());
+          const curDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+          if (initialPinchDist > 10) {
+            const factor = curDist / initialPinchDist;
+            state.planScale = Math.max(0.2, Math.min(5.0, Math.round(initialPinchScale * factor * 100) / 100));
+            const curAngle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x) * 180 / Math.PI;
+            const diffAngle = curAngle - initialPinchAngle;
+            state.planRotation = Math.round(((initialPinchRot + diffAngle) % 360 + 360) % 360 * 10) / 10;
+            updateFloorPlanTransform();
+          }
+          e.stopPropagation();
+        } else if (isPlanDragging && activePointers.size === 1) {
+          const dx = e.clientX - planDragStartX;
+          const dy = e.clientY - planDragStartY;
+          state.planOffsetX = Math.round(panDragInitOx + dx);
+          state.planOffsetY = Math.round(panDragInitOy + dy);
+          updateFloorPlanTransform();
+          e.stopPropagation();
+        }
       });
 
       const endPlanDrag = (e) => {
-        if (isPlanDragging) {
-          isPlanDragging = false;
+        if (activePointers.has(e.pointerId)) {
+          activePointers.delete(e.pointerId);
           try { lkContainer.releasePointerCapture(e.pointerId); } catch (_) {}
-          saveFloorPlanState();
+        }
+        if (activePointers.size === 0) {
+          if (isPlanDragging || isPinching) {
+            saveFloorPlanState();
+          }
+          isPlanDragging = false;
+          isPinching = false;
+        } else if (activePointers.size === 1) {
+          isPinching = false;
+          isPlanDragging = true;
+          const rem = Array.from(activePointers.values())[0];
+          planDragStartX = rem.x;
+          planDragStartY = rem.y;
+          planDragInitOx = state.planOffsetX;
+          planDragInitOy = state.planOffsetY;
         }
       };
+
       window.addEventListener('pointerup', endPlanDrag);
       window.addEventListener('pointercancel', endPlanDrag);
+
+      // Cuộn chuột trên Desktop để thu phóng mặt bằng
+      lkContainer.addEventListener('wheel', (e) => {
+        if (!state.planImageSrc) return;
+        if (!state.isPlanPanActive && !e.ctrlKey) return;
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.1 : -0.1;
+        state.planScale = Math.max(0.2, Math.min(5.0, Math.round((state.planScale + delta) * 100) / 100));
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+      }, { passive: false });
     }
+
 
     // ================= 3.2. SỰ KIỆN TIA NGẮM PHONG THỦY =================
     const btnRay = document.getElementById('sheet-btn-ray');

@@ -2053,25 +2053,136 @@ body.light-theme .hud-card-divider {
   pointer-events: none;
 }
 
-/* Banner hướng dẫn kéo dịch tâm bản vẽ */
-.lakinh-floating-helper-banner {
+/* Banner hướng dẫn kéo dịch tâm bản vẽ & Thanh Điều Khiển Nổi */
+.lakinh-floating-helper-banner,
+.lakinh-floating-plan-bar {
   position: absolute;
   top: 72px;
-  left: 14px;
-  right: 14px;
+  left: 8px;
+  right: 8px;
+  max-width: calc(100vw - 16px);
   z-index: 32;
-  background: rgba(15, 23, 42, 0.94);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
   border: 1.5px solid #38bdf8;
   border-radius: 12px;
-  padding: 8px 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 15px rgba(56, 189, 248, 0.3);
+  padding: 5px 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 15px rgba(56, 189, 248, 0.35);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: #f8fafc;
+  gap: 4px;
   animation: slideDownFade 0.25s ease-out;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.lakinh-floating-plan-bar::-webkit-scrollbar {
+  display: none;
+}
+
+body.light-theme .lakinh-floating-helper-banner,
+body.light-theme .lakinh-floating-plan-bar {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: #0284c7;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.fl-plan-left, .fl-plan-right {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.fl-plan-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #38bdf8;
+  white-space: nowrap;
+  margin-right: 2px;
+}
+
+@media (max-width: 480px) {
+  .fl-btn-lbl {
+    display: none;
+  }
+  .fl-plan-title {
+    font-size: 0.85rem;
+    margin-right: 1px;
+  }
+}
+
+body.light-theme .fl-plan-title {
+  color: #0369a1;
+}
+
+.fl-plan-btn {
+  background: rgba(56, 189, 248, 0.15);
+  color: #e0f2fe;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+
+body.light-theme .fl-plan-btn {
+  background: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+
+.fl-plan-btn:hover {
+  background: rgba(56, 189, 248, 0.3);
+  color: #ffffff;
+}
+
+.fl-plan-btn:active {
+  transform: scale(0.95);
+}
+
+.fl-plan-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.fl-plan-btn.icon-only {
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.fl-plan-scale-chip {
+  background: rgba(245, 176, 65, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+
+body.light-theme .fl-plan-scale-chip {
+  background: #fefce8;
+  color: #b45309;
+  border-color: #fde047;
+}
+
+.fl-plan-scale-chip:hover {
+  background: rgba(245, 176, 65, 0.3);
+  color: #ffffff;
 }
 
 .lakinh-floating-helper-banner button {
