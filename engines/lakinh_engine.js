@@ -115,9 +115,39 @@
   // 4. TRUY VẤN DEM CAO ĐỘ SỐ & PHÂN TÍCH 3 CẤP MINH ĐƯỜNG CỤC
   // ===========================================================================
   const MINH_DUONG_CONFIG = {
-    tieu: { key: 'tieu', name: 'Tiểu Minh Đường', radiusM: 40, samples: 16, color: '#38bdf8' },
-    trung: { key: 'trung', name: 'Trung Minh Đường', radiusM: 350, samples: 24, color: '#fbbf24' },
-    dai: { key: 'dai', name: 'Đại Minh Đường', radiusM: 2000, samples: 32, color: '#f43f5e' }
+    tieu: {
+      key: 'tieu',
+      name: 'Tiểu Minh Đường',
+      rangeLabel: '20m – 40m',
+      rangeMinM: 20,
+      rangeMaxM: 40,
+      radiusM: 40,
+      rings: [20, 30, 40], // Quét 3 vành cự ly trong dải không gian [20m, 40m]
+      samplesPerRing: 12,
+      color: '#38bdf8'
+    },
+    trung: {
+      key: 'trung',
+      name: 'Trung Minh Đường',
+      rangeLabel: '40m – 350m',
+      rangeMinM: 40,
+      rangeMaxM: 350,
+      radiusM: 350,
+      rings: [80, 160, 250, 350], // Quét 4 vành cự ly trong dải không gian [40m, 350m]
+      samplesPerRing: 12,
+      color: '#fbbf24'
+    },
+    dai: {
+      key: 'dai',
+      name: 'Đại Minh Đường',
+      rangeLabel: '350m – 2000m',
+      rangeMinM: 350,
+      rangeMaxM: 2000,
+      radiusM: 2000,
+      rings: [600, 1000, 1500, 2000], // Quét 4 vành cự ly trong dải không gian [350m, 2000m]
+      samplesPerRing: 12,
+      color: '#f43f5e'
+    }
   };
 
   async function fetchElevations(points) {
@@ -150,25 +180,30 @@
 
     for (const [key, cfg] of Object.entries(MINH_DUONG_CONFIG)) {
       samplesMap[key] = [];
-      const step = 360.0 / cfg.samples;
-      for (let i = 0; i < cfg.samples; i++) {
-        const brg = i * step;
-        const pt = getDestinationPoint(centerLat, centerLng, cfg.radiusM, brg);
-        const sonDiaBan = getSonInfo(brg);
-        const sonThienBan = getThienBanSon(brg);
-        samplesMap[key].push({
-          bearing: brg,
-          lat: pt.lat,
-          lng: pt.lng,
-          son: sonDiaBan.name,
-          cung: sonDiaBan.cung,
-          hanh: sonDiaBan.hanh,
-          sonThienBan: sonThienBan.name,
-          songSon: sonThienBan.songSon,
-          distanceM: cfg.radiusM
-        });
-        allPoints.push(pt);
-      }
+      const rings = cfg.rings || [cfg.radiusM];
+      const samplesPerRing = cfg.samplesPerRing || 12;
+      const step = 360.0 / samplesPerRing;
+
+      rings.forEach(rDist => {
+        for (let i = 0; i < samplesPerRing; i++) {
+          const brg = i * step;
+          const pt = getDestinationPoint(centerLat, centerLng, rDist, brg);
+          const sonDiaBan = getSonInfo(brg);
+          const sonThienBan = getThienBanSon(brg);
+          samplesMap[key].push({
+            bearing: Math.round(brg * 10) / 10,
+            distanceM: rDist,
+            lat: pt.lat,
+            lng: pt.lng,
+            son: sonDiaBan.name,
+            cung: sonDiaBan.cung,
+            hanh: sonDiaBan.hanh,
+            sonThienBan: sonThienBan.name,
+            songSon: sonThienBan.songSon
+          });
+          allPoints.push(pt);
+        }
+      });
     }
 
     const elevations = await fetchElevations(allPoints);
@@ -210,6 +245,9 @@
 
       tiersResult[key] = {
         name: cfg.name,
+        rangeLabel: cfg.rangeLabel,
+        rangeMinM: cfg.rangeMinM,
+        rangeMaxM: cfg.rangeMaxM,
         radiusM: cfg.radiusM,
         color: cfg.color,
         centerElevation: centerElev,

@@ -60,6 +60,12 @@
     // Phân Hệ Phong Thủy Tam Hợp Phái
     isTamHopActive: false,
     isTamHopHudCollapsed: true, // Mặc định thu gọn siêu mỏng không che La Kinh
+    tamHopDuongCuc: 'tieu_cuc', // 'tieu_cuc' (20-40m) | 'trung_cuc' (40-350m) | 'dai_cuc' (350-2000m)
+    tamHopCucData: {
+      tieu_cuc: { deg: 115.0, son: 'Thìn', distM: 30 },
+      trung_cuc: { deg: 115.0, son: 'Thìn', distM: 180 },
+      dai_cuc: { deg: 115.0, son: 'Thìn', distM: 1000 }
+    },
     tamHopThuyKhauDeg: 115.0, // Mặc định Thìn (Thủy Cục)
     tamHopDongChay: 'ta_dao_huu', // 'ta_dao_huu' (Dương thuận) | 'huu_dao_ta' (Âm nghịch)
     tamHopCanChu: 'Giáp',
@@ -1990,6 +1996,7 @@
     const canChu = state.tamHopCanChu || 'Giáp';
     const chiChu = state.tamHopChiChu || 'Tý';
     const namChi = state.tamHopNamChi || 'Thìn';
+    const curCucInfo = (state.tamHopCucData && state.tamHopDuongCuc && state.tamHopCucData[state.tamHopDuongCuc]) ? state.tamHopCucData[state.tamHopDuongCuc] : null;
 
     const thuyPhap = global.TamHopEngine.evaluate_trach_thuy_phap(curHuongDeg, thuyKhauDeg, dongChay);
     const cucName = thuyPhap.cuc_name;
@@ -2022,6 +2029,7 @@
       svgHtml += `<line x1="${tkArrow.x1}" y1="${tkArrow.y1}" x2="${tkArrow.x2}" y2="${tkArrow.y2}" stroke="#06b6d4" stroke-width="4.5" stroke-dasharray="6,4" filter="url(#tamhop-glow-cyan)" marker-end="url(#tamhop-arrow-cyan)" />`;
       const tkPt = getRadialVector(thuyKhauDeg, 465, 465);
       svgHtml += `<circle cx="${tkPt.x1}" cy="${tkPt.y1}" r="12" fill="#06b6d4" stroke="#ffffff" stroke-width="2.5" />`;
+      const curDistBadge = (curCucInfo && curCucInfo.distM) ? (' • ' + curCucInfo.distM + 'm') : '';
       svgHtml += createSvgTamHopBadge({
         deg: thuyKhauDeg,
         radius: 435,
@@ -2031,7 +2039,7 @@
         borderColor: '#06b6d4',
         icon: '💧',
         title: 'THỦY KHẨU (THOÁT)',
-        subtitle: `Sơn ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(1)}°)`,
+        subtitle: `Sơn ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(1)}°${curDistBadge})`,
         hint: `Cửa nước định ${cucName.split(' ')[0]}`,
         hintColor: '#a5f3fc'
       });
@@ -2191,7 +2199,8 @@
     const cpVuong = document.getElementById('compact-th-vuong');
     const cpMo = document.getElementById('compact-th-mo');
 
-    if (cpKhau) cpKhau.textContent = `💧 Khẩu: ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(0)}°)`;
+    const curDistM = (curCucInfo && curCucInfo.distM) ? (' • ' + curCucInfo.distM + 'm') : '';
+    if (cpKhau) cpKhau.textContent = `💧 Khẩu: ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(0)}°${curDistM})`;
     if (cpSinh) cpSinh.textContent = `🌱 Sinh: ${tsSon}`;
     if (cpVuong) cpVuong.textContent = `👑 Vượng: ${dvSon}`;
     if (cpMo) cpMo.textContent = `⛩️ Mộ: ${mkSon}`;
@@ -2758,6 +2767,32 @@ function updateQmdjStrategicLayer() {
     try {
       const result = await global.NetaLaKinhEngine.analyzeMinhDuongCuc(center.lat, center.lng);
       state.centerElevation = result.center.elevation;
+      state.lastDemScanResult = result;
+
+      // Liên thông dữ liệu Thủy Khẩu DEM (Google Earth) sang Phân hệ Tam Hợp Phái
+      if (result.tiers) {
+        if (result.tiers.tieu && result.tiers.tieu.thuyKhau) {
+          state.tamHopCucData.tieu_cuc.deg = result.tiers.tieu.thuyKhau.analysis.bearing;
+          state.tamHopCucData.tieu_cuc.son = result.tiers.tieu.thuyKhau.analysis.son;
+          state.tamHopCucData.tieu_cuc.distM = result.tiers.tieu.thuyKhau.distanceM;
+        }
+        if (result.tiers.trung && result.tiers.trung.thuyKhau) {
+          state.tamHopCucData.trung_cuc.deg = result.tiers.trung.thuyKhau.analysis.bearing;
+          state.tamHopCucData.trung_cuc.son = result.tiers.trung.thuyKhau.analysis.son;
+          state.tamHopCucData.trung_cuc.distM = result.tiers.trung.thuyKhau.distanceM;
+        }
+        if (result.tiers.dai && result.tiers.dai.thuyKhau) {
+          state.tamHopCucData.dai_cuc.deg = result.tiers.dai.thuyKhau.analysis.bearing;
+          state.tamHopCucData.dai_cuc.son = result.tiers.dai.thuyKhau.analysis.son;
+          state.tamHopCucData.dai_cuc.distM = result.tiers.dai.thuyKhau.distanceM;
+        }
+        const activeTierKey = state.tamHopDuongCuc === 'dai_cuc' ? 'dai_cuc' : (state.tamHopDuongCuc === 'trung_cuc' ? 'trung_cuc' : 'tieu_cuc');
+        state.tamHopThuyKhauDeg = state.tamHopCucData[activeTierKey].deg;
+        if (state.isTamHopActive) {
+          updateTamHopLayer();
+        }
+        showLaKinhToast(`🛰️ Đã quét xong DEM Google Earth: Thủy Khẩu ${state.tamHopCucData[activeTierKey].son} (${state.tamHopThuyKhauDeg.toFixed(1)}° • ${state.tamHopCucData[activeTierKey].distM}m)`);
+      }
 
       const elevEl = document.getElementById('hud-detail-elev');
       if (elevEl) elevEl.innerHTML = `⛰️ Cao độ: ${result.center.elevation.toFixed(1)} m`;
@@ -2782,13 +2817,13 @@ function updateQmdjStrategicLayer() {
                 <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#0284c7" stroke="#ffffff" stroke-width="2"/>
                 <path d="M14 8C14 8 10 13 10 15.5C10 17.7 11.8 19.5 14 19.5C16.2 19.5 18 17.7 18 15.5C18 13 14 8 14 8Z" fill="#ffffff"/>
               </svg>
-              <span style="color:#38bdf8;font-size:11px;font-weight:800;white-space:nowrap;margin-left:3px;background:none;text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 1px 4px #000;">💧 ${t.name.split(' ')[0]} (${a.son})</span>
+              <span style="color:#38bdf8;font-size:11px;font-weight:800;white-space:nowrap;margin-left:3px;background:none;text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 1px 4px #000;">💧 ${t.name.split(' ')[0]} (${a.son} • ${t.thuyKhau.distanceM}m)</span>
             </div>`,
             iconSize: [85, 32],
             iconAnchor: [12, 32],
             popupAnchor: [0, -32]
           })
-        }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">💧 Thủy Khẩu ${t.name} (${a.son} • ${a.songSon})<br>Tam Hợp: ${a.cuc}<br>Cao độ: ${t.thuyKhau.elevation.toFixed(1)}m</div>`).addTo(elevationLayerGroup);
+        }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">💧 Thủy Khẩu ${t.name} (${a.son} • ${a.songSon})<br>Cự ly điểm thấp nhất: <strong>${t.thuyKhau.distanceM}m</strong> (trong dải ${t.rangeLabel || ''})<br>Tam Hợp: ${a.cuc}<br>Cao độ: ${t.thuyKhau.elevation.toFixed(1)}m</div>`).addTo(elevationLayerGroup);
       });
 
       openMinhDuongModal(result);
@@ -2820,7 +2855,8 @@ function updateQmdjStrategicLayer() {
             </div>
           </div>
           <div style="font-size: 0.73rem; line-height: 1.6; color: #e2e8f0;">
-            • <strong>Thủy Khẩu (Thiên Bàn Phùng Châm):</strong> Sơn <span style="color:#f5b041; font-weight:700;">${a.son}</span> (${a.bearing}°) • Song Sơn <span style="color:#f5b041; font-weight:700;">${a.songSon}</span><br>
+            • <strong>Thủy Khẩu điểm thấp nhất:</strong> Sơn <span style="color:#f5b041; font-weight:700;">${a.son}</span> (${a.bearing}°) • <strong>Cự ly thực tế:</strong> <span style="color:#38bdf8; font-weight:700;">${tk.distanceM}m</span> (trong dải ${t.rangeLabel || ''})<br>
+            • <strong>Song Sơn Thiên Bàn:</strong> <span style="color:#f5b041; font-weight:700;">${a.songSon}</span><br>
             • <strong>Tam Hợp Thủy Pháp:</strong> <span style="color: #38bdf8; font-weight: 700;">${a.cuc}</span> (${a.tamHop})<br>
             • <strong>Tam Hợp Trường Sinh:</strong> ${a.sinhVuongMo}<br>
             • <strong>Cung vị Thủy Khẩu:</strong> <span style="color: #4ade80; font-weight: 700;">${a.viTriTruongSinh}</span><br>
