@@ -24,8 +24,8 @@
   <link rel="stylesheet" href="assets/leaflet/leaflet.css">
   <link rel="stylesheet" href="assets/lakinh/lakinh.css?v=8.8">
   <link rel="stylesheet" href="assets/dichhoc/dichhoc.css?v=1.1">
-  <link rel="stylesheet" href="assets/luchao/luchao.css?v=2.0">
   <link rel="stylesheet" href="assets/trachcat/trachcat.css?v=2.2">
+
   <link rel="stylesheet" href="styles.css?v=8.3">
   <link rel="stylesheet" href="phap_hanh.css?v=1.0">
 </head>
@@ -117,15 +117,11 @@
         <div class="dropdown-section-title">DỊCH HỌC &amp; CHIÊM ĐOÁN</div>
         <div class="deck-dropdown-item" id="tab-mode-dichhoc" data-mode="dichhoc">
           <span class="dropdown-icon">☯️</span>
-          <span class="dropdown-name">Bốc Quẻ Dịch Lý (Mai Hoa &amp; Sơ Cấp)</span>
+          <span class="dropdown-name">Bốc Quẻ Dịch Lý (Lục Hào &amp; Mai Hoa)</span>
           <span class="dropdown-check" id="check-mode-dichhoc" style="opacity: 0;">✓</span>
         </div>
-        <div class="deck-dropdown-item" id="tab-mode-luchao" data-mode="luchao">
-          <span class="dropdown-icon">📜</span>
-          <span class="dropdown-name">Kinh Dịch Lục Hào (Bốc Phệ Nạp Giáp NTC)</span>
-          <span class="dropdown-check" id="check-mode-luchao" style="opacity: 0;">✓</span>
-        </div>
       </div>
+
 
       <div class="header-actions">
         <button id="btn-screenshot-header" class="btn-header-ghost" title="Lưu ảnh trải bài" aria-label="Lưu ảnh trải bài" style="display: none;">
@@ -310,17 +306,13 @@
       </div>
     </div>
 
-    <!-- View Module: Bốc Quẻ Dịch Lý (Mai Hoa & Sơ Cấp) -->
+    <!-- View Module: Bốc Quẻ Dịch Lý (Lục Hào Nạp Giáp & Mai Hoa Dịch Số) -->
     <div id="view-dichhoc" class="app-module-view" style="display: none;">
       <!-- Dynamically rendered by modules/dichhoc_view.js -->
     </div>
 
-    <!-- View Module: Kinh Dịch Lục Hào (Bốc Phệ Nạp Giáp NTC) -->
-    <div id="view-luchao" class="app-module-view" style="display: none;">
-      <!-- Dynamically rendered by modules/luchao_view.js -->
-    </div>
-
     <!-- View Module: Trạch Cát (Xem Ngày Đại Cát Toàn Diện) -->
+
     <div id="view-trachcat" class="app-module-view" style="display: none;">
       <!-- Dynamically rendered by modules/trachcat_view.js -->
     </div>
@@ -503,9 +495,7 @@
   <script src="engines/trachcat_data.js?v=2.2"></script>
   <script src="engines/trach_nhat_engine.js?v=2.2"></script>
   <script src="modules/trachcat_view.js?v=2.2"></script>
-  <script src="engines/luc_hao_engine.js?v=2.0"></script>
-  <script src="assets/luchao/luc_hao_knowledge_base.js?v=1.0"></script>
-  <script src="modules/luchao_view.js?v=2.0"></script>
   <script src="app.js?v=8.3"></script>
 </body>
 </html>
+
