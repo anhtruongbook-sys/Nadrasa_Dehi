@@ -56,7 +56,14 @@
     isQmdjStratActive: false,
     isQmdjStratHudCollapsed: false,
     qmdjStratGoal: 'deal', // 'deal' | 'wealth' | 'career' | 'escape' | 'dispute'
-    qmdjStratDate: null
+    qmdjStratDate: null,
+    // Phân Hệ Phong Thủy Tam Hợp Phái (Thầy Hạnh Nhật Tấn)
+    tamHopThuyKhauDeg: 115.0, // Mặc định Thìn (Thủy Cục)
+    tamHopDongChay: 'ta_dao_huu', // 'ta_dao_huu' (Dương thuận) | 'huu_dao_ta' (Âm nghịch)
+    tamHopCanChu: 'Giáp',
+    tamHopChiChu: 'Tý',
+    tamHopNamChi: 'Thìn',
+    tamHopMoTaSa: ''
   };
   if (typeof window !== 'undefined') {
     window.lakinhState = state;
@@ -368,6 +375,9 @@
               <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
             </div>
             <div class="lakinh-top-right-group">
+              <button class="lakinh-float-btn icon-only" id="lakinh-btn-tam-hop" title="Thẩm Định Phong Thủy Tam Hợp Phái (31 Bài Giảng)">
+                🌊
+              </button>
               <button class="lakinh-float-btn icon-only ${state.isQmdjStratActive ? 'active' : ''}" id="lakinh-btn-qmdj-strat" title="Bật/Tắt Lớp Chiến Lược Kỳ Môn (Joey Yap)">
                 ⚔️
               </button>
@@ -436,6 +446,23 @@
             <span class="hud-card-badge" id="hud-detail-hkdq-van9" style="background: rgba(2,132,199,0.18); color: #38bdf8; border-color: rgba(56,189,248,0.4);">🌊 Linh Thần Vận 9</span>
             <span class="hud-card-badge" id="hud-detail-hkdq-tkv" style="background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.3);">🛡️ Tuyến An Toàn</span>
             <span style="font-size: 0.68rem; color: #f5b041; margin-left: auto; font-weight: 700;">[Xem 384 Hào ↗]</span>
+          </div>
+          <div class="hud-card-divider"></div>
+          <!-- Tam Hợp Phái: Tam Bàn & 120 Phân Kim Vi Mô -->
+          <div class="hud-card-row hud-card-clickable" id="hud-row-tamhop" title="Chạm để mở Thẩm Định Phong Thủy Tam Hợp Phái">
+            <span style="display: flex; align-items: center; gap: 4px; color: #34d399; font-weight: 700;">🌊 Tam Bàn & Phân Kim:</span>
+            <span style="font-size: 0.68rem; color: #34d399; margin-left: auto; font-weight: 700;">[Thẩm Định Tam Hợp ↗]</span>
+          </div>
+          <div class="hud-card-row" id="hud-row-tamban-details" style="font-size: 0.72rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 3px; margin-top: 2px;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color:#94a3b8;">• Địa Bàn: <b id="hud-tamban-dia" style="color:#f5b041;">Sơn Tý</b></span>
+              <span style="color:#94a3b8;">• Nhân Bàn: <b id="hud-tamban-nhan" style="color:#38bdf8;">Sơn Nhâm</b></span>
+              <span style="color:#94a3b8;">• Thiên Bàn: <b id="hud-tamban-thien" style="color:#a78bfa;">Sơn Quý</b></span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 2px;">
+              <span style="color:#94a3b8;">120 Phân Kim:</span>
+              <span id="hud-tamban-pk120" style="font-weight: 700; color: #4ade80;">Bính/Đinh (Châu Bảo)</span>
+            </div>
           </div>
           <div class="hud-card-divider"></div>
           <div class="hud-card-row" style="margin-top: 4px;">
@@ -713,6 +740,9 @@
             </div>
             <button id="sheet-btn-scan-elev" class="lakinh-action-btn warning">
               🌊 Quét Cao Độ DEM & Định Tứ Đại Cục
+            </button>
+            <button id="sheet-btn-tam-hop" class="lakinh-action-btn emerald">
+              🌊 Thẩm Định Phong Thủy Tam Hợp Phái (31 Bài Giảng)
             </button>
             <button id="sheet-btn-huyenkhong" class="lakinh-action-btn purple">
               ☯️ Lập Tinh Bàn Huyền Không Vận 9
@@ -1046,6 +1076,26 @@
               qTag.textContent = '⛰️ Chính Thần V9';
             }
           }
+        }
+      }
+
+      if (global.TamHopEngine) {
+        const dia = global.TamHopEngine.get_son_from_degree(rounded, "dia_ban");
+        const nhan = global.TamHopEngine.get_son_from_degree(rounded, "nhan_ban");
+        const thien = global.TamHopEngine.get_son_from_degree(rounded, "thien_ban");
+        const pk120 = global.TamHopEngine.get_120_phan_kim(rounded);
+
+        const elDia = document.getElementById('hud-tamban-dia');
+        const elNhan = document.getElementById('hud-tamban-nhan');
+        const elThien = document.getElementById('hud-tamban-thien');
+        const elPk = document.getElementById('hud-tamban-pk120');
+
+        if (elDia) elDia.textContent = `Sơn ${dia.son_name} (${dia.calc_degree.toFixed(1)}°)`;
+        if (elNhan) elNhan.textContent = `Sơn ${nhan.son_name} (${nhan.calc_degree.toFixed(1)}°)`;
+        if (elThien) elThien.textContent = `Sơn ${thien.son_name} (${thien.calc_degree.toFixed(1)}°)`;
+        if (elPk) {
+          const color = pk120.duoc_phep_lay ? '#4ade80' : '#f87171';
+          elPk.innerHTML = `<span style="color:${color}; font-weight:700;">${pk120.phan_kim_type} • ${pk120.tinh_chat}</span>`;
         }
       }
     }
@@ -3933,6 +3983,22 @@
       });
     }
 
+    const hudRowTamHop = document.getElementById('hud-row-tamhop');
+    if (hudRowTamHop) {
+      hudRowTamHop.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openTamHopModal();
+      });
+    }
+
+    const btnQuickTamHop = document.getElementById('lakinh-btn-tam-hop');
+    if (btnQuickTamHop) {
+      btnQuickTamHop.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openTamHopModal();
+      });
+    }
+
     ['hud-row-hkdq-que', 'hud-row-hkdq-hao', 'hud-row-hkdq-badges'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
@@ -4622,6 +4688,14 @@
     const btnScanElev = document.getElementById('sheet-btn-scan-elev');
     if (btnScanElev) btnScanElev.addEventListener('click', scanElevationAndTiers);
 
+    const btnTamHop = document.getElementById('sheet-btn-tam-hop');
+    if (btnTamHop) {
+      btnTamHop.addEventListener('click', (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
+        openTamHopModal();
+      });
+    }
+
     const btnHK = document.getElementById('sheet-btn-huyenkhong');
     if (btnHK) btnHK.addEventListener('click', openHuyenKhongModal);
 
@@ -5056,6 +5130,580 @@
     `;
   }
 
+  // ================= 10. MODAL THẨM ĐỊNH PHONG THỦY TAM HỢP PHÁI (31 BÀI GIẢNG) =================
+  function openTamHopModal(defaultHuongDeg = null) {
+    const modalBox = document.getElementById('lakinh-modal-container');
+    if (!modalBox || !global.TamHopEngine) {
+      if (typeof showLaKinhToast === 'function') {
+        showLaKinhToast('⚠️ Chưa nạp được Động Cơ Tam Hợp Phái');
+      }
+      return;
+    }
+
+    closeBottomSheet();
+    const hudCard = document.getElementById('lakinh-hud-detail-card');
+    if (hudCard) {
+      hudCard.style.display = 'none';
+      state.isHudDetailOpen = false;
+      const hudArrow = document.getElementById('hud-pill-arrow');
+      if (hudArrow) hudArrow.textContent = '▾';
+    }
+
+    let curHuongDeg = (typeof defaultHuongDeg === 'number') ? defaultHuongDeg : state.rotation;
+    let curThuyKhauDeg = (state.rayAngle !== null && state.rayAngle !== undefined) ? state.rayAngle : state.tamHopThuyKhauDeg;
+    let curDongChay = state.tamHopDongChay || 'ta_dao_huu';
+    let curCanChu = state.tamHopCanChu || 'Giáp';
+    let curChiChu = state.tamHopChiChu || 'Tý';
+    let curNamChi = state.tamHopNamChi || 'Thìn';
+    let curMoTaSa = state.tamHopMoTaSa || '';
+
+    const STEMS = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
+    const BRANCHES = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+
+    function renderModal() {
+      curHuongDeg = ((curHuongDeg % 360) + 360) % 360;
+      curThuyKhauDeg = ((curThuyKhauDeg % 360) + 360) % 360;
+
+      const thuyPhap = global.TamHopEngine.evaluate_trach_thuy_phap(curHuongDeg, curThuyKhauDeg, curDongChay);
+      const huongSon = thuyPhap.huong_nha.son_name;
+      const toaDeg = (curHuongDeg + 180) % 360;
+      const toaInfo = global.TamHopEngine.get_son_from_degree(toaDeg, 'dia_ban');
+      const toaSon = toaInfo.son_name;
+
+      const tamSat = global.TamHopEngine.kiem_tra_tam_sat(curNamChi, huongSon);
+      const thaiTue = global.TamHopEngine.kiem_tra_thai_tue_tue_pha(curNamChi, huongSon);
+      const hoangTuyen = global.TamHopEngine.kiem_tra_hoang_tuyen(huongSon, thuyPhap.thuy_khau.son_name);
+      const batSat = global.TamHopEngine.kiem_tra_bat_sat_cung(toaSon, thuyPhap.thuy_khau.son_name);
+      const pk120 = global.TamHopEngine.get_120_phan_kim(curHuongDeg);
+      const tamCat = global.TamHopEngine.get_quy_nhan_loc_ma(curCanChu, curChiChu);
+      const maHinhThe = global.TamHopEngine.phan_tich_hinh_the_ma(curChiChu, tamCat.dich_ma, curMoTaSa || 'ngọn đồi hình yên ngựa');
+      const xuyenSon72 = global.TamHopEngine.get_72_xuyen_son_long(curHuongDeg);
+      const vongTS = global.TamHopEngine.get_vong_truong_sinh(thuyPhap.cuc_name, thuyPhap.chieu_quay);
+
+      const nhanBan = global.TamHopEngine.get_son_from_degree(curHuongDeg, 'nhan_ban');
+      const tu28 = global.TamHopEngine.nhi_thap_bat_tu_nhan_ban(curHuongDeg);
+
+      const saPhanLoai = curMoTaSa ? global.TamHopEngine.phan_loai_hinh_the_sa(curMoTaSa) : null;
+      const saTieu = saPhanLoai ? global.TamHopEngine.tieu_sa_ngu_hanh(thuyPhap.huong_nha.ngu_hanh, saPhanLoai.ngu_hanh) : null;
+
+      const isHopCach = pk120.duoc_phep_lay && !tamSat.pham_tam_sat && !thaiTue.pham_tue_pha && !batSat.pham_bat_sat && (!hoangTuyen.pham_sat || hoangTuyen.loai_sat.includes('CỨU BẦN'));
+
+      modalBox.innerHTML = `
+        <div class="lakinh-modal-overlay" id="modal-tamhop-overlay">
+          <div class="lakinh-glass-panel lakinh-modal-dialog tamhop-modal-dialog">
+            <div class="lakinh-modal-header" style="border-bottom: 1.5px solid rgba(16, 185, 129, 0.4); padding-bottom: 8px; margin-bottom: 10px;">
+              <div>
+                <div class="lakinh-modal-title" style="color: #34d399; font-size: 1.05rem; display: flex; align-items: center; gap: 6px;">
+                  🌊 THẨM ĐỊNH PHONG THỦY TAM HỢP PHÁI
+                </div>
+                <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">
+                  Toàn thư 31 bài giảng thực chiến Khóa 1 & Khóa 2 (Thầy Hạnh Nhật Tấn)
+                </div>
+              </div>
+              <button class="lakinh-modal-close" id="btn-close-tamhop-modal">✕</button>
+            </div>
+
+            <!-- THẺ ĐÁNH GIÁ TỔNG QUÁT -->
+            <div class="tamhop-hero-card" style="border-left: 4px solid ${isHopCach ? '#22c55e' : (tamSat.pham_tam_sat || thaiTue.pham_tue_pha || batSat.pham_bat_sat ? '#ef4444' : '#f59e0b')};">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span class="tamhop-badge ${isHopCach ? 'green' : (tamSat.pham_tam_sat || thaiTue.pham_tue_pha || batSat.pham_bat_sat ? 'red' : 'gold')}">
+                  ${isHopCach ? '✅ HỢP CÁCH TAM HỢP PHÁI' : '⚠️ CẦN TINH CHỈNH PHÂN KIM / CỬA CỔNG'}
+                </span>
+                <span style="font-size: 0.72rem; color: #cbd5e1; font-weight: 700;">
+                  ${thuyPhap.cuc_name} • ${thuyPhap.the_cuc.split('(')[0]}
+                </span>
+              </div>
+              <div style="font-size: 0.76rem; color: #f8fafc; line-height: 1.45; margin-top: 4px;">
+                ${isHopCach 
+                  ? 'Trạch đất đắc cách Thủy Pháp & Phân Kim thuần khiết. Đinh tài lưỡng vượng, nạp khí đại cát, gia đạo hưng long trường thọ.' 
+                  : 'Phát hiện yếu tố xung sát hoặc tuyến phân kim suy khí. Cần vi chỉnh hướng cửa, điều hướng thủy khẩu hoặc xoay bàn thờ/bếp theo hướng dẫn bên dưới.'}
+              </div>
+            </div>
+
+            <!-- PHẦN 1: THIẾT LẬP THAM SỐ KHẢO SÁT -->
+            <div class="tamhop-section-title">
+              <span>📐 1. Thiết Lập Tọa Hướng & Thủy Khẩu Thực Địa</span>
+            </div>
+            <div class="tamhop-field-group">
+              <!-- Hướng nhà (Địa Bàn) -->
+              <div class="tamhop-input-row">
+                <span style="color: #cbd5e1; font-weight: 600;">Hướng Nhà (Địa Bàn):</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <input type="number" id="th-input-huong" class="tamhop-input" style="width: 72px; text-align: right;" value="${curHuongDeg.toFixed(1)}" step="0.5" min="0" max="359.9" />
+                  <span style="color: #f5b041; font-weight: 700;">°</span>
+                  <button type="button" class="tamhop-tag-btn" id="th-btn-sync-lakinh" title="Lấy theo độ số La Kinh hiện tại">↺ La Kinh (${state.rotation.toFixed(1)}°)</button>
+                </div>
+              </div>
+              <input type="range" id="th-slider-huong" class="lakinh-slider" min="0" max="359.9" step="0.5" value="${curHuongDeg.toFixed(1)}" style="margin-bottom: 6px;" />
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #94a3b8; margin-bottom: 8px;">
+                <span>Tọa: <b style="color: #f5b041;">${toaSon}</b> • Hướng: <b style="color: #38bdf8;">${huongSon}</b> (${thuyPhap.huong_nha.cung_bat_quai})</span>
+                <span style="color: ${thuyPhap.huong_nha.is_pure_center ? '#4ade80' : '#f87171'};">${thuyPhap.huong_nha.sub_zone}</span>
+              </div>
+
+              <!-- Thủy Khẩu (Thiên Bàn) -->
+              <div class="tamhop-input-row" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+                <span style="color: #cbd5e1; font-weight: 600;">Thủy Khẩu (Thiên Bàn):</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <input type="number" id="th-input-thuykhau" class="tamhop-input" style="width: 72px; text-align: right;" value="${curThuyKhauDeg.toFixed(1)}" step="0.5" min="0" max="359.9" />
+                  <span style="color: #a78bfa; font-weight: 700;">°</span>
+                  <button type="button" class="tamhop-tag-btn" id="th-btn-sync-ray" title="Lấy theo tia ngắm hiện tại">🎯 Tia Ngắm</button>
+                </div>
+              </div>
+              <input type="range" id="th-slider-thuykhau" class="lakinh-slider" min="0" max="359.9" step="0.5" value="${curThuyKhauDeg.toFixed(1)}" style="margin-bottom: 6px;" />
+              <div style="font-size: 0.7rem; color: #a78bfa; margin-bottom: 4px;">
+                Thủy Khẩu Thiên Bàn: <b>Sơn ${thuyPhap.thuy_khau.son_name}</b> (Song Sơn <b>${thuyPhap.thuy_khau.son_name}</b> thuộc <b>${thuyPhap.cuc_name}</b>)
+              </div>
+              <div class="tamhop-quick-tags">
+                <span style="font-size: 0.68rem; color: #94a3b8; align-self: center;">Mộ khố Thủy Khẩu:</span>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 115) < 8 ? 'active' : ''}" data-tk="115">Thìn (Thủy Cục)</button>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 295) < 8 ? 'active' : ''}" data-tk="295">Tuất (Hỏa Cục)</button>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 25) < 8 ? 'active' : ''}" data-tk="25">Sửu (Kim Cục)</button>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 205) < 8 ? 'active' : ''}" data-tk="205">Mùi (Mộc Cục)</button>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 225) < 8 ? 'active' : ''}" data-tk="225">Khôn</button>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 135) < 8 ? 'active' : ''}" data-tk="135">Tốn</button>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 45) < 8 ? 'active' : ''}" data-tk="45">Cấn</button>
+                <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 315) < 8 ? 'active' : ''}" data-tk="315">Càn</button>
+              </div>
+
+              <!-- Dòng chảy Thủy Pháp -->
+              <div class="tamhop-input-row" style="margin-top: 8px;">
+                <span style="color: #cbd5e1; font-weight: 600;">Dòng Chảy Thủy Pháp:</span>
+                <div style="display: flex; gap: 4px;">
+                  <button type="button" class="tamhop-tag-btn ${curDongChay === 'ta_dao_huu' ? 'active' : ''}" id="th-btn-ta-dao-huu">Tả Thủy Đảo Hữu (Thuận)</button>
+                  <button type="button" class="tamhop-tag-btn ${curDongChay === 'huu_dao_ta' ? 'active' : ''}" id="th-btn-huu-dao-ta">Hữu Thủy Đảo Tả (Nghịch)</button>
+                </div>
+              </div>
+
+              <!-- Tuổi Gia Chủ & Năm Khảo Sát -->
+              <div class="tamhop-input-row" style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+                <span style="color: #cbd5e1; font-weight: 600;">Tuổi Gia Chủ (Can Chi):</span>
+                <div style="display: flex; gap: 4px;">
+                  <select id="th-select-can" class="tamhop-select">
+                    ${STEMS.map(s => `<option value="${s}" ${s === curCanChu ? 'selected' : ''}>${s}</option>`).join('')}
+                  </select>
+                  <select id="th-select-chi" class="tamhop-select">
+                    ${BRANCHES.map(b => `<option value="${b}" ${b === curChiChu ? 'selected' : ''}>${b}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+              <div class="tamhop-input-row">
+                <span style="color: #cbd5e1; font-weight: 600;">Năm Động Thổ / Khảo Sát:</span>
+                <select id="th-select-namchi" class="tamhop-select">
+                  ${BRANCHES.map(b => `<option value="${b}" ${b === curNamChi ? 'selected' : ''}>Năm ${b}</option>`).join('')}
+                </select>
+              </div>
+
+              <!-- Mô tả Sa Sơn -->
+              <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <span style="color: #cbd5e1; font-weight: 600; font-size: 0.78rem;">Hình Thể Gò Đồi / Sa Sơn (Nhân Bàn):</span>
+                </div>
+                <input type="text" id="th-input-mota-sa" class="tamhop-input" style="width: 100%; box-sizing: border-box;" placeholder="VD: Gò đồi hình yên ngựa, ngọn đồi tròn bát úp, tháp nhọn..." value="${curMoTaSa}" />
+                <div class="tamhop-quick-tags" style="margin-top: 4px;">
+                  <button type="button" class="tamhop-tag-btn" data-sa="ngọn đồi tròn bát úp">⛰️ Đồi Tròn (Kim Sa)</button>
+                  <button type="button" class="tamhop-tag-btn" data-sa="ngọn đồi hình yên ngựa">🐎 Đồi Yên Ngựa (Mã Quý)</button>
+                  <button type="button" class="tamhop-tag-btn" data-sa="tháp nhọn hoắt">🗼 Tháp Nhọn (Hỏa Sa)</button>
+                  <button type="button" class="tamhop-tag-btn" data-sa="sóng lượn nhấp nhô">🌊 Lượn Sóng (Thủy Sa)</button>
+                  <button type="button" class="tamhop-tag-btn" data-sa="đỉnh bằng phẳng vuông vức">⏹️ Đỉnh Vuông (Thổ Sa)</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PHẦN 2: THỦY PHÁP & VÒNG TRƯỜNG SINH 12 CUNG -->
+            <div class="tamhop-section-title">
+              <span>🌊 2. Thủy Pháp & Vòng Trường Sinh 12 Cung (Bài 7 - 9 Khóa 1)</span>
+            </div>
+            <div class="tamhop-field-group">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.76rem;">
+                <span style="color: #94a3b8;">Cục Đất:</span>
+                <strong style="color: #38bdf8;">${thuyPhap.cuc_name} (Hành ${thuyPhap.thuy_khau.ngu_hanh || 'Thủy'})</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.76rem;">
+                <span style="color: #94a3b8;">Cung Nạp Hướng Nhà:</span>
+                <strong style="color: #4ade80;">Cung ${thuyPhap.cung_nap_huong}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.76rem;">
+                <span style="color: #94a3b8;">Thế Cục Thủy Pháp:</span>
+                <strong style="color: #facc15;">${thuyPhap.the_cuc}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.76rem;">
+                <span style="color: #94a3b8;">Đánh Giá Thủy Pháp:</span>
+                <strong style="color: ${thuyPhap.danh_gia.includes('ĐẠI CÁT') ? '#4ade80' : (thuyPhap.danh_gia.includes('ĐẠI HUNG') ? '#f87171' : '#facc15')};">${thuyPhap.danh_gia}</strong>
+              </div>
+              <div style="font-size: 0.72rem; color: #cbd5e1; line-height: 1.4; margin-top: 4px; font-style: italic;">
+                ${thuyPhap.khuyen_nghi || 'Tiêu nạp thủy pháp bình hòa, hợp quy chuẩn địa thế.'}
+              </div>
+
+              <!-- Lưới 12 Cung Trường Sinh -->
+              <div style="font-size: 0.72rem; color: #34d399; font-weight: 700; margin-top: 8px;">
+                Bảng 12 Cung Trường Sinh (${thuyPhap.chieu_quay === 'thuan' ? 'Dương Thuận' : 'Âm Nghịch'}):
+              </div>
+              <div class="tamhop-ts-grid">
+                ${vongTS.map(item => {
+                  const isHuong = (item.song_son === thuyPhap.huong_song_son);
+                  const isCat = ['Trường Sinh', 'Quan Đới', 'Lâm Quan', 'Đế Vượng'].includes(item.cung_truong_sinh);
+                  const isKhu = ['Mộ', 'Tuyệt', 'Tử', 'Bệnh'].includes(item.cung_truong_sinh);
+                  const cls = isCat ? 'cat' : (isKhu ? 'khu' : '');
+                  return `
+                    <div class="tamhop-ts-card ${cls}" style="${isHuong ? 'box-shadow: 0 0 8px rgba(56, 189, 248, 0.6); border: 1.5px solid #38bdf8;' : ''}">
+                      <div style="display: flex; justify-content: space-between;">
+                        <b style="color: ${isHuong ? '#facc15' : '#f8fafc'};">${item.song_son}</b>
+                        ${isHuong ? '<span style="font-size:0.65rem; color:#facc15;">[Hướng]</span>' : ''}
+                      </div>
+                      <div style="color: ${isCat ? '#4ade80' : (isKhu ? '#38bdf8' : '#cbd5e1')}; font-weight: 700;">
+                        ${item.cung_truong_sinh}
+                      </div>
+                      <div style="font-size: 0.65rem; color: #94a3b8;">${item.tinh_chat.split('(')[0]}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- PHẦN 3: HOÀNG TUYỀN & BÁT SÁT -->
+            <div class="tamhop-section-title">
+              <span>⚠️ 3. Bát Lộ Hoàng Tuyền & Bát Sát Tiêu Vong</span>
+            </div>
+            <div class="tamhop-field-group">
+              <!-- Hoàng Tuyền -->
+              <div style="margin-bottom: 6px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
+                  <span style="color: #94a3b8;">Hoàng Tuyền Sát (Bài 10 Khóa 1):</span>
+                  <span class="tamhop-badge ${hoangTuyen.loai_sat.includes('CỨU BẦN') ? 'green' : (hoangTuyen.pham_sat ? 'red' : 'green')}">
+                    ${hoangTuyen.loai_sat}
+                  </span>
+                </div>
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">
+                  ${hoangTuyen.mo_ta}
+                </div>
+              </div>
+
+              <!-- Bát Sát -->
+              <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
+                  <span style="color: #94a3b8;">Bát Sát Tiêu Vong (Bài 6 Khóa 1):</span>
+                  <span class="tamhop-badge ${batSat.pham_bat_sat ? 'red' : 'green'}">
+                    ${batSat.pham_bat_sat ? 'ĐẠI HUNG (Phạm Bát Sát)' : 'BÌNH AN (Không Phạm)'}
+                  </span>
+                </div>
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">
+                  ${batSat.mo_ta}
+                </div>
+              </div>
+            </div>
+
+            <!-- PHẦN 4: TAM SÁT & THÁI TUẾ -->
+            <div class="tamhop-section-title">
+              <span>🛡️ 4. Tam Sát & Thái Tuế Trong Năm ${curNamChi} (Bài 2 - 3 Khóa 2)</span>
+            </div>
+            <div class="tamhop-field-group">
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Tam Sát Năm ${curNamChi}:</span>
+                <strong style="color: ${tamSat.pham_tam_sat ? '#f87171' : '#4ade80'};">
+                  Phương ${tamSat.tam_sat_phuong} (${tamSat.cac_son_sat.join(', ')}) • ${tamSat.pham_tam_sat ? 'PHẠM TAM SÁT' : 'An Toàn'}
+                </strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Thái Tuế & Tuế Phá:</span>
+                <strong style="color: ${thaiTue.pham_tue_pha ? '#f87171' : (thaiTue.pham_thai_tue ? '#facc15' : '#4ade80')};">
+                  ${thaiTue.danh_gia}
+                </strong>
+              </div>
+              <div style="font-size: 0.7rem; color: #94a3b8; font-style: italic;">
+                Nguyên lý kinh điển: "Tam Sát khả tọa bất khả hướng", Thái Tuế khả tọa bất khả hướng, Tuế Phá nghiêm cấm cả tọa lẫn hướng.
+              </div>
+            </div>
+
+            <!-- PHẦN 5: 120 PHÂN KIM VI MÔ -->
+            <div class="tamhop-section-title">
+              <span>💎 5. 120 Phân Kim Vi Mô (Bài 13 Khóa 1)</span>
+            </div>
+            <div class="tamhop-field-group">
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Vị Trí Phân Kim (${curHuongDeg.toFixed(1)}°):</span>
+                <strong style="color: #38bdf8;">${pk120.phan_kim_type}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Tính Chất Khí Tuyến:</span>
+                <span class="tamhop-badge ${pk120.duoc_phep_lay ? 'green' : 'red'}">
+                  ${pk120.tinh_chat}
+                </span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
+                <span style="color: #94a3b8;">72 Xuyên Sơn Long:</span>
+                <span style="color: ${xuyenSon72.is_quy_giap_khong_vong ? '#f87171' : '#4ade80'}; font-weight: 700;">
+                  Long thứ ${xuyenSon72.long_index_72} • ${xuyenSon72.danh_gia.split('(')[0]}
+                </span>
+              </div>
+            </div>
+
+            <!-- PHẦN 6: TAM CÁT THẦN TRỢ & TIÊU SA -->
+            <div class="tamhop-section-title">
+              <span>🐎 6. Tam Cát Thần Trợ & Tiêu Sa (Bài 5, 7, 12, 13, 14 Khóa 2)</span>
+            </div>
+            <div class="tamhop-field-group">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.76rem; margin-bottom: 6px;">
+                <div style="background: rgba(15,23,42,0.6); padding: 6px 8px; border-radius: 6px; border-left: 3px solid #38bdf8;">
+                  <span style="color: #94a3b8;">Thiên Ất Quý Nhân:</span><br/>
+                  <b style="color: #38bdf8;">Dương Quý: ${tamCat.duong_quy_nhan} • Âm Quý: ${tamCat.am_quy_nhan}</b>
+                </div>
+                <div style="background: rgba(15,23,42,0.6); padding: 6px 8px; border-radius: 6px; border-left: 3px solid #facc15;">
+                  <span style="color: #94a3b8;">Thiên Lộc (Tài Khí):</span><br/>
+                  <b style="color: #facc15;">Sơn ${tamCat.thien_loc}</b>
+                </div>
+              </div>
+              <div style="background: rgba(15,23,42,0.6); padding: 6px 8px; border-radius: 6px; border-left: 3px solid #4ade80; font-size: 0.76rem; margin-bottom: 6px;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: #94a3b8;">Dịch Mã (Thăng Quan):</span>
+                  <b style="color: #4ade80;">Phương ${tamCat.dich_ma}</b>
+                </div>
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">
+                  ${maHinhThe.danh_gia}
+                </div>
+              </div>
+
+              <!-- Tiêu Sa Lại Công & 28 Tú -->
+              <div style="font-size: 0.74rem; color: #94a3b8; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                  <span>Nhân Bàn Trung Châm: <b>Sơn ${nhanBan.son_name} (${nhanBan.calc_degree.toFixed(1)}°)</b></span>
+                  <span>28 Tú: <b style="color: #38bdf8;">Sao ${tu28.tinh_tu_name} (${tu28.tinh_chat})</b></span>
+                </div>
+                ${saPhanLoai ? `
+                  <div style="margin-top: 4px; color: #f8fafc;">
+                    Sa Sơn: <b>${saPhanLoai.loai_sa} (${saPhanLoai.hinh_thai})</b> ➔ Ngũ Sa: <b style="color: ${saTieu.danh_gia.includes('Cát') ? '#4ade80' : '#f87171'};">${saTieu.phan_loai_sa} (${saTieu.danh_gia})</b>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- NÚT TÁC VỤ CUỐI MODAL -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px;">
+              <button type="button" class="lakinh-action-btn success" id="th-btn-apply-compass">
+                🎯 Đặt La Kinh Về ${curHuongDeg.toFixed(1)}°
+              </button>
+              <button type="button" class="lakinh-action-btn purple" id="th-btn-aim-ray">
+                🎯 Bật Tia Ngắm Thủy Khẩu (${curThuyKhauDeg.toFixed(1)}°)
+              </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+              <button type="button" class="lakinh-action-btn gold" id="th-btn-copy-report">
+                📋 Sao Chép Báo Cáo
+              </button>
+              <button type="button" class="lakinh-action-btn secondary" id="th-btn-close-bottom">
+                ✕ Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Gán sự kiện cho các thành phần điều khiển
+      const closeFn = () => {
+        const overlay = document.getElementById('modal-tamhop-overlay');
+        if (overlay) overlay.remove();
+      };
+
+      const btnCloseTop = document.getElementById('btn-close-tamhop-modal');
+      const btnCloseBottom = document.getElementById('th-btn-close-bottom');
+      if (btnCloseTop) btnCloseTop.addEventListener('click', closeFn);
+      if (btnCloseBottom) btnCloseBottom.addEventListener('click', closeFn);
+
+      // Slider & Input Hướng Nhà
+      const inHuong = document.getElementById('th-input-huong');
+      const slHuong = document.getElementById('th-slider-huong');
+      if (inHuong) {
+        inHuong.addEventListener('change', (e) => {
+          curHuongDeg = parseFloat(e.target.value) || 0;
+          renderModal();
+        });
+      }
+      if (slHuong) {
+        slHuong.addEventListener('input', (e) => {
+          curHuongDeg = parseFloat(e.target.value) || 0;
+          renderModal();
+        });
+      }
+
+      // Slider & Input Thủy Khẩu
+      const inTK = document.getElementById('th-input-thuykhau');
+      const slTK = document.getElementById('th-slider-thuykhau');
+      if (inTK) {
+        inTK.addEventListener('change', (e) => {
+          curThuyKhauDeg = parseFloat(e.target.value) || 0;
+          state.tamHopThuyKhauDeg = curThuyKhauDeg;
+          renderModal();
+        });
+      }
+      if (slTK) {
+        slTK.addEventListener('input', (e) => {
+          curThuyKhauDeg = parseFloat(e.target.value) || 0;
+          state.tamHopThuyKhauDeg = curThuyKhauDeg;
+          renderModal();
+        });
+      }
+
+      // Nút đồng bộ La Kinh & Tia Ngắm
+      const btnSyncLK = document.getElementById('th-btn-sync-lakinh');
+      if (btnSyncLK) {
+        btnSyncLK.addEventListener('click', () => {
+          curHuongDeg = state.rotation;
+          renderModal();
+        });
+      }
+      const btnSyncRay = document.getElementById('th-btn-sync-ray');
+      if (btnSyncRay) {
+        btnSyncRay.addEventListener('click', () => {
+          if (state.rayAngle !== null && state.rayAngle !== undefined) {
+            curThuyKhauDeg = state.rayAngle;
+            state.tamHopThuyKhauDeg = curThuyKhauDeg;
+            renderModal();
+          } else {
+            showLaKinhToast('ℹ️ Hãy xoay tia ngắm phân kim trên bản đồ trước');
+          }
+        });
+      }
+
+      // Thủy khẩu quick tags
+      modalBox.querySelectorAll('.tamhop-tag-btn[data-tk]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          curThuyKhauDeg = parseFloat(btn.getAttribute('data-tk'));
+          state.tamHopThuyKhauDeg = curThuyKhauDeg;
+          renderModal();
+        });
+      });
+
+      // Dòng chảy
+      const btnTa = document.getElementById('th-btn-ta-dao-huu');
+      const btnHuu = document.getElementById('th-btn-huu-dao-ta');
+      if (btnTa) {
+        btnTa.addEventListener('click', () => {
+          curDongChay = 'ta_dao_huu';
+          state.tamHopDongChay = curDongChay;
+          renderModal();
+        });
+      }
+      if (btnHuu) {
+        btnHuu.addEventListener('click', () => {
+          curDongChay = 'huu_dao_ta';
+          state.tamHopDongChay = curDongChay;
+          renderModal();
+        });
+      }
+
+      // Can Chi & Năm Chi
+      const selCan = document.getElementById('th-select-can');
+      const selChi = document.getElementById('th-select-chi');
+      const selNam = document.getElementById('th-select-namchi');
+      if (selCan) {
+        selCan.addEventListener('change', (e) => {
+          curCanChu = e.target.value;
+          state.tamHopCanChu = curCanChu;
+          renderModal();
+        });
+      }
+      if (selChi) {
+        selChi.addEventListener('change', (e) => {
+          curChiChu = e.target.value;
+          state.tamHopChiChu = curChiChu;
+          renderModal();
+        });
+      }
+      if (selNam) {
+        selNam.addEventListener('change', (e) => {
+          curNamChi = e.target.value;
+          state.tamHopNamChi = curNamChi;
+          renderModal();
+        });
+      }
+
+      // Mô tả Sa
+      const inSa = document.getElementById('th-input-mota-sa');
+      if (inSa) {
+        inSa.addEventListener('change', (e) => {
+          curMoTaSa = e.target.value;
+          state.tamHopMoTaSa = curMoTaSa;
+          renderModal();
+        });
+      }
+      modalBox.querySelectorAll('.tamhop-tag-btn[data-sa]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          curMoTaSa = btn.getAttribute('data-sa');
+          state.tamHopMoTaSa = curMoTaSa;
+          renderModal();
+        });
+      });
+
+      // Nút áp dụng vào La Kinh
+      const btnApplyCompass = document.getElementById('th-btn-apply-compass');
+      if (btnApplyCompass) {
+        btnApplyCompass.addEventListener('click', () => {
+          updateRotationDisplay(curHuongDeg);
+          closeFn();
+          showLaKinhToast(`🎯 Đã xoay La Kinh về hướng ${curHuongDeg.toFixed(1)}° (${huongSon})`);
+        });
+      }
+
+      // Nút bật tia ngắm Thủy Khẩu
+      const btnAimRay = document.getElementById('th-btn-aim-ray');
+      if (btnAimRay) {
+        btnAimRay.addEventListener('click', () => {
+          state.isRayActive = true;
+          setRayAngle(curThuyKhauDeg);
+          const rayContainer = document.getElementById('lakinh-ray-container');
+          if (rayContainer) rayContainer.style.display = '';
+          updateSightingRay();
+          closeFn();
+          showLaKinhToast(`🎯 Đã ngắm tia Thủy Khẩu tại ${curThuyKhauDeg.toFixed(1)}° (${thuyPhap.thuy_khau.son_name})`);
+        });
+      }
+
+      // Nút sao chép báo cáo
+      const btnCopyReport = document.getElementById('th-btn-copy-report');
+      if (btnCopyReport) {
+        btnCopyReport.addEventListener('click', () => {
+          const reportText = `=== HỒ SƠ THẨM ĐỊNH PHONG THỦY TAM HỢP PHÁI (THẦY HẠNH NHẬT TẤN) ===
+1. TỌA HƯỚNG NHÀ:
+- Tọa: ${toaSon} (${toaDeg.toFixed(1)}°) • Hướng: ${huongSon} (${curHuongDeg.toFixed(1)}° - Cung ${thuyPhap.huong_nha.cung_bat_quai})
+- Mép biên: ${thuyPhap.huong_nha.sub_zone}
+- 120 Phân Kim: ${pk120.phan_kim_type} ➔ ${pk120.tinh_chat}
+- 72 Xuyên Sơn Long: Long thứ ${xuyenSon72.long_index_72} (${xuyenSon72.danh_gia})
+
+2. THỦY PHÁP TỨ ĐẠI CỤC:
+- Thủy Khẩu: Sơn ${thuyPhap.thuy_khau.son_name} (${curThuyKhauDeg.toFixed(1)}°) thuộc ${thuyPhap.cuc_name}
+- Dòng chảy: ${curDongChay === 'ta_dao_huu' ? 'Tả Thủy Đảo Hữu (Dương Thuận)' : 'Hữu Thủy Đảo Tả (Âm Nghịch)'}
+- Cung nạp Hướng: Cung ${thuyPhap.cung_nap_huong}
+- Thế Cục: ${thuyPhap.the_cuc}
+- Đánh giá: ${thuyPhap.danh_gia} (${thuyPhap.khuyen_nghi})
+
+3. SÁT KHÍ & THẦN SÁT:
+- Bát Lộ Hoàng Tuyền: ${hoangTuyen.loai_sat} (${hoangTuyen.mo_ta})
+- Bát Sát Tiêu Vong: ${batSat.danh_gia} (${batSat.mo_ta})
+- Tam Sát năm ${curNamChi}: Phương ${tamSat.tam_sat_phuong} (${tamSat.pham_tam_sat ? 'PHẠM TAM SÁT' : 'Không Phạm'})
+- Thái Tuế / Tuế Phá: ${thaiTue.danh_gia}
+
+4. TAM CÁT THẦN TRỢ (TUỔI ${curCanChu} ${curChiChu}):
+- Quý Nhân: Dương Quý tại ${tamCat.duong_quy_nhan}, Âm Quý tại ${tamCat.am_quy_nhan}
+- Thiên Lộc: Sơn ${tamCat.thien_loc}
+- Dịch Mã: Phương ${tamCat.dich_ma} (${maHinhThe.danh_gia})
+- Nhân Bàn Tiêu Sa: Sơn ${nhanBan.son_name} (${tu28.tinh_tu_name} Tú - ${tu28.tinh_chat})
+
+5. KẾT LUẬN TỔNG THỂ:
+${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG VƯỢNG' : 'CẦN TINH CHỈNH PHÂN KIM HOẶC XOAY CỬA CỔNG HẠN CHẾ SÁT KHÍ'}`;
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(reportText).then(() => {
+              showLaKinhToast('📋 Đã sao chép báo cáo Phong Thủy Tam Hợp vào bộ nhớ tạm!');
+            }).catch(() => {
+              showLaKinhToast('📋 Không thể sao chép tự động, vui lòng chọn văn bản.');
+            });
+          }
+        });
+      }
+    }
+
+    renderModal();
+  }
+
   function bindQmdjStratEvents() {
     const btnQuick = document.getElementById('lakinh-btn-qmdj-strat');
     const btnClose = document.getElementById('btn-qmdj-hud-close');
@@ -5146,6 +5794,7 @@
     closeBottomSheet: closeBottomSheet,
     openHuyenKhongModal: openHuyenKhongModal,
     openHKDQModal: openHKDQModal,
+    openTamHopModal: openTamHopModal,
     updateRotation: updateRotationDisplay,
     setRayAngle: setRayAngle,
     updateSightingRay: updateSightingRay,
