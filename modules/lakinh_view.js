@@ -51,7 +51,12 @@
     centerElevation: 19.0,
     centerCoords: [21.028511, 105.854167], // Mặc định Hà Nội
     userLocation: null, // [lat, lng] vị trí GPS thực tế của người dùng
-    activeLayerName: 'googleSat'
+    activeLayerName: 'googleSat',
+    // Lớp Phủ Chiến Lược Kỳ Môn Độn Giáp (Joey Yap Compendium - Phase 3)
+    isQmdjStratActive: false,
+    isQmdjStratHudCollapsed: false,
+    qmdjStratGoal: 'deal', // 'deal' | 'wealth' | 'career' | 'escape' | 'dispute'
+    qmdjStratDate: null
   };
   if (typeof window !== 'undefined') {
     window.lakinhState = state;
@@ -103,6 +108,32 @@
         <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
           <div id="lakinh-backdrop-circle" style="opacity: ${state.bgOpacity};"></div>
           <img id="lakinh-disc" src="${getPlateSrc(state.activePlate)}" alt="Thước Lập Cực 36 Tầng" style="opacity: ${state.discOpacity};" />
+          <!-- Lớp Vector Kỳ Môn Chiến Lược Joey Yap (Phase 3) -->
+          <svg id="lakinh-qmdj-svg" viewBox="0 0 1000 1000" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
+            <defs>
+              <filter id="qmdj-glow-green" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="qmdj-glow-gold" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <marker id="qmdj-arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#22c55e" />
+              </marker>
+              <marker id="qmdj-arrow-gold" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#eab308" />
+              </marker>
+            </defs>
+            <g id="lakinh-qmdj-svg-content"></g>
+          </svg>
           <!-- Thập Đạo Chỉ Tuyến Trục Dọc (Hướng 12h - Tọa 6h) Chuẩn Xác Tuyệt Đối -->
           <div id="lakinh-target-pointer">
             <div class="pointer-line-vertical"></div>
@@ -141,6 +172,50 @@
           <div id="lakinh-ray-target-handle" title="Kéo rê điểm này đến vị trí cần đo trên mặt bằng">
             <div class="ray-target-pulse"></div>
             <div class="ray-target-dot"></div>
+          </div>
+        </div>
+
+        <!-- Floating QMDJ Strategic HUD Card (Phase 3) -->
+        <div id="lakinh-qmdj-floating-hud" class="lakinh-glass-panel" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
+          <div class="qmdj-hud-header">
+            <span class="qmdj-hud-title">⚔️ KỲ MÔN CHIẾN LƯỢC</span>
+            <span class="qmdj-hud-time" id="qmdj-hud-time">Giờ Hiện Tại</span>
+            <div class="qmdj-hud-actions">
+              <button type="button" id="btn-qmdj-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn ô chiến lược">– Thu gọn</button>
+              <button type="button" id="btn-qmdj-hud-close" class="ray-hud-action-btn close" title="Tắt lớp chiến lược">✕ Tắt</button>
+            </div>
+          </div>
+          <!-- 5 Mục Tiêu Tác Chiến Mini Pills -->
+          <div class="qmdj-hud-pills">
+            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán</button>
+            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'wealth' ? 'active' : ''}" data-goal="wealth">💰 Cầu Tài</button>
+            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'career' ? 'active' : ''}" data-goal="career">📈 Thăng Tiến</button>
+            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'escape' ? 'active' : ''}" data-goal="escape">🐎 Thoát Hiểm</button>
+            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'dispute' ? 'active' : ''}" data-goal="dispute">🤝 Hòa Giải</button>
+          </div>
+          <!-- 4 Chỉ số chiến thuật trực quan -->
+          <div class="qmdj-hud-body" id="qmdj-hud-body">
+            <div class="qmdj-hud-item green">
+              <span class="lbl">🟢 Tọa Lưng:</span>
+              <strong id="qmdj-hud-back">Đang tính...</strong>
+            </div>
+            <div class="qmdj-hud-item purple">
+              <span class="lbl">🎯 Ép Đối Tác:</span>
+              <strong id="qmdj-hud-audience">Đang tính...</strong>
+            </div>
+            <div class="qmdj-hud-item gold">
+              <span class="lbl">🟡 Thiên Mã:</span>
+              <strong id="qmdj-hud-horse">Đang tính...</strong>
+            </div>
+            <div class="qmdj-hud-item red">
+              <span class="lbl">🚫 Bất Kích:</span>
+              <strong id="qmdj-hud-nonstrike">Đang tính...</strong>
+            </div>
+          </div>
+          <div class="qmdj-hud-footer">
+            <button type="button" id="btn-qmdj-hud-view-detail" class="qmdj-hud-link-btn">
+              🔮 Mở Bàn Cờ 9 Cung &amp; Khắc Ứng ↗
+            </button>
           </div>
         </div>
 
@@ -264,6 +339,9 @@
               <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
             </div>
             <div class="lakinh-top-right-group">
+              <button class="lakinh-float-btn icon-only ${state.isQmdjStratActive ? 'active' : ''}" id="lakinh-btn-qmdj-strat" title="Bật/Tắt Lớp Chiến Lược Kỳ Môn (Joey Yap)">
+                ⚔️
+              </button>
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-plan-quick" title="Bản vẽ mặt bằng kiến trúc">
                 📐
               </button>
@@ -618,6 +696,34 @@
             </button>
           </div>
 
+          <!-- Nhóm KỲ MÔN CHIẾN LƯỢC JOEY YAP COMPENDIUM (PHASE 3) -->
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>⚔️ Lớp Phủ Chiến Lược Kỳ Môn (Joey Yap)</span>
+              <span class="val" id="sheet-val-qmdj-strat-status">${state.isQmdjStratActive ? 'Đang Bật' : 'Đang Tắt'}</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <button type="button" class="lakinh-action-btn ${state.isQmdjStratActive ? 'success' : 'secondary'}" id="sheet-btn-qmdj-strat-toggle">
+                ${state.isQmdjStratActive ? '⚔️ Tắt Lớp Kỳ Môn' : '⚔️ Bật Lớp Kỳ Môn'}
+              </button>
+              <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-qmdj-view-link">
+                🔮 Mở Bàn Cờ 9 Cung ↗
+              </button>
+            </div>
+            <div id="lakinh-qmdj-sheet-controls" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
+              <div class="sheet-control-sublabel">
+                <span>Mục tiêu tác chiến (Joey Yap):</span>
+              </div>
+              <div class="sheet-qmdj-pills">
+                <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán / HĐ</button>
+                <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'wealth' ? 'active' : ''}" data-goal="wealth">💰 Cầu Tài / Vốn</button>
+                <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'career' ? 'active' : ''}" data-goal="career">📈 Thăng Tiến / Thi</button>
+                <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'escape' ? 'active' : ''}" data-goal="escape">🐎 Thoát Hiểm</button>
+                <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'dispute' ? 'active' : ''}" data-goal="dispute" style="grid-column: span 2;">🤝 Hòa Giải / Pháp Lý</button>
+              </div>
+            </div>
+          </div>
+
           <!-- Lưu & Xuất file KML -->
           <div class="sheet-control-group" style="margin-bottom: 0;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -638,6 +744,9 @@
         initLeafletMap();
         bindLaKinhEvents();
         updateRotationDisplay(state.rotation);
+        if (typeof updateQmdjStrategicLayer === 'function') {
+          updateQmdjStrategicLayer();
+        }
       } else {
         if (mapInstance) {
           mapInstance.invalidateSize();
@@ -645,6 +754,9 @@
           setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 400);
         } else {
           initLeafletMap();
+        }
+        if (state.isQmdjStratActive && typeof updateQmdjStrategicLayer === 'function') {
+          updateQmdjStrategicLayer();
         }
       }
     } catch (err) {
@@ -760,6 +872,11 @@
       // 1. Hướng đo (Sơn hướng nhà) nằm ở đỉnh 12h dưới vạch ngắm hồng ngoại
       // 2. Kim La Bàn (và Sơn Tý 0°) luôn chỉ chính xác 100% về hướng Bắc Trái Đất
       disc.style.transform = `rotate(${-rounded}deg)`;
+    }
+
+    const qmdjSvg = document.getElementById('lakinh-qmdj-svg');
+    if (qmdjSvg) {
+      qmdjSvg.style.transform = `rotate(${-rounded}deg)`;
     }
 
     const pillDeg = document.getElementById('hud-pill-deg');
@@ -1460,6 +1577,251 @@
 
   function renderSurveyRay() {
     updateSightingRay();
+  }
+
+  // ================= KỲ MÔN CHIẾN LƯỢC JOEY YAP COMPENDIUM (PHASE 3) =================
+  const PALACE_DEG = {
+    1: 0,    // Khảm (Bắc)
+    8: 45,   // Cấn (Đông Bắc)
+    3: 90,   // Chấn (Đông)
+    4: 135,  // Tốn (Đông Nam)
+    9: 180,  // Ly (Nam)
+    2: 225,  // Khôn (Tây Nam)
+    7: 270,  // Đoài (Tây)
+    6: 315   // Càn (Tây Bắc)
+  };
+
+  const PALACE_NAMES = {
+    1: 'Bắc (Khảm 1)',
+    8: 'Đông Bắc (Cấn 8)',
+    3: 'Đông (Chấn 3)',
+    4: 'Đông Nam (Tốn 4)',
+    9: 'Nam (Ly 9)',
+    2: 'Tây Nam (Khôn 2)',
+    7: 'Tây (Đoài 7)',
+    6: 'Tây Bắc (Càn 6)'
+  };
+
+  function getAnnularSectorPath(centerDeg, r1, r2, spanDeg = 45) {
+    const half = spanDeg / 2;
+    const a1 = (centerDeg - half) * Math.PI / 180;
+    const a2 = (centerDeg + half) * Math.PI / 180;
+    const x1 = 500 + r1 * Math.sin(a1);
+    const y1 = 500 - r1 * Math.cos(a1);
+    const x2 = 500 + r2 * Math.sin(a1);
+    const y2 = 500 - r2 * Math.cos(a1);
+    const x3 = 500 + r2 * Math.sin(a2);
+    const y3 = 500 - r2 * Math.cos(a2);
+    const x4 = 500 + r1 * Math.sin(a2);
+    const y4 = 500 - r1 * Math.cos(a2);
+    return `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)} A ${r2} ${r2} 0 0 1 ${x3.toFixed(1)} ${y3.toFixed(1)} L ${x4.toFixed(1)} ${y4.toFixed(1)} A ${r1} ${r1} 0 0 0 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`;
+  }
+
+  function getRadialVector(deg, r1, r2) {
+    const rad = deg * Math.PI / 180;
+    const x1 = 500 + r1 * Math.sin(rad);
+    const y1 = 500 - r1 * Math.cos(rad);
+    const x2 = 500 + r2 * Math.sin(rad);
+    const y2 = 500 - r2 * Math.cos(rad);
+    return { x1: x1.toFixed(1), y1: y1.toFixed(1), x2: x2.toFixed(1), y2: y2.toFixed(1) };
+  }
+
+  function updateQmdjStrategicLayer() {
+    const btnQuick = document.getElementById('lakinh-btn-qmdj-strat');
+    const svgOverlay = document.getElementById('lakinh-qmdj-svg');
+    const svgContent = document.getElementById('lakinh-qmdj-svg-content');
+    const hud = document.getElementById('lakinh-qmdj-floating-hud');
+    const sheetToggleBtn = document.getElementById('sheet-btn-qmdj-strat-toggle');
+    const sheetVal = document.getElementById('sheet-val-qmdj-strat-status');
+    const sheetControls = document.getElementById('lakinh-qmdj-sheet-controls');
+
+    if (!state.isQmdjStratActive) {
+      if (btnQuick) btnQuick.classList.remove('active');
+      if (svgOverlay) svgOverlay.style.display = 'none';
+      if (hud) hud.style.display = 'none';
+      if (sheetToggleBtn) {
+        sheetToggleBtn.classList.remove('success');
+        sheetToggleBtn.classList.add('secondary');
+        sheetToggleBtn.innerHTML = '⚔️ Bật Lớp Kỳ Môn';
+      }
+      if (sheetVal) sheetVal.textContent = 'Đang Tắt';
+      if (sheetControls) sheetControls.style.display = 'none';
+      return;
+    }
+
+    if (btnQuick) btnQuick.classList.add('active');
+    if (svgOverlay) {
+      svgOverlay.style.display = 'block';
+      svgOverlay.style.transform = `rotate(${-state.rotation}deg)`;
+    }
+    if (hud) hud.style.display = 'block';
+    if (sheetToggleBtn) {
+      sheetToggleBtn.classList.remove('secondary');
+      sheetToggleBtn.classList.add('success');
+      sheetToggleBtn.innerHTML = '⚔️ Đang Bật Lớp Kỳ Môn (Tắt)';
+    }
+    if (sheetVal) sheetVal.textContent = 'Đang Bật';
+    if (sheetControls) sheetControls.style.display = 'block';
+
+    const targetDate = state.qmdjStratDate || new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const timeStr = `${pad(targetDate.getHours())}:${pad(targetDate.getMinutes())} - ${pad(targetDate.getDate())}/${pad(targetDate.getMonth() + 1)}`;
+
+    let solarTerm = "Xuân Phân";
+    let lunarMonth = targetDate.getMonth() + 1;
+    let hourBranch = 'Tý';
+    let canChiStr = '';
+    if (global.NetaCalendarEngine) {
+      if (typeof global.NetaCalendarEngine.getSolarTerm === 'function') {
+        solarTerm = global.NetaCalendarEngine.getSolarTerm(targetDate.getDate(), targetDate.getMonth() + 1, targetDate.getFullYear());
+      }
+      const lInfo = global.NetaCalendarEngine.getFullDayInfo(targetDate);
+      if (lInfo && lInfo.lunar && lInfo.lunar.month) lunarMonth = lInfo.lunar.month;
+      if (lInfo && lInfo.canChiHour && lInfo.canChiHour.chi) hourBranch = lInfo.canChiHour.chi;
+      if (lInfo && lInfo.canChiHour && lInfo.canChiDay) {
+        canChiStr = `${lInfo.canChiDay.can}${lInfo.canChiDay.chi} • ${lInfo.canChiHour.can}${lInfo.canChiHour.chi}`;
+      }
+    }
+
+    if (!global.QMDJCore || !global.JoeyYapQMDJEngine) {
+      console.warn("Kỳ Môn Engines chưa nạp xong");
+      return;
+    }
+
+    let chart = null;
+    let analysis = null;
+    try {
+      chart = new global.QMDJCore.TheArtOfBecomingInvisible(targetDate);
+      analysis = global.JoeyYapQMDJEngine.analyzeQMDJCoreChart(chart, {
+        solarTerm,
+        lunarMonth,
+        hourBranch,
+        taskGoal: state.qmdjStratGoal || 'deal'
+      });
+    } catch (e) {
+      console.error("Lỗi khi phân tích Kỳ Môn cho La Kinh:", e);
+      return;
+    }
+
+    if (!analysis) return;
+
+    // Chiết xuất các thông số chiến thuật
+    const chiefPid = (analysis.three_victories && analysis.three_victories.first_victory && analysis.three_victories.first_victory.palace_id) || 1;
+    const shPid = (analysis.sky_horse && analysis.sky_horse.palace_id) || 4;
+    const shBranch = (analysis.sky_horse && analysis.sky_horse.sky_horse_branch) || 'Thìn';
+    const shDeg = (analysis.sky_horse && analysis.sky_horse.degree !== undefined) ? analysis.sky_horse.degree : PALACE_DEG[shPid];
+
+    const audiencePids = [];
+    Object.keys(analysis.palaces || {}).forEach(pid => {
+      const p = analysis.palaces[pid];
+      if (p.door === 'Tử' || p.door === 'Kinh' || p.men === 'Tử Môn' || p.men === 'Kinh Môn') {
+        audiencePids.push(parseInt(pid));
+      }
+    });
+    if (audiencePids.length === 0) audiencePids.push(1, 8);
+
+    const nonStrikePids = (analysis.five_restrictions && analysis.five_restrictions.restricted_sectors)
+      ? analysis.five_restrictions.restricted_sectors.map(s => s.palace_id)
+      : [chiefPid];
+
+    // Render SVG Vectors & Sectors
+    if (svgContent) {
+      let svgHtml = '';
+
+      // 1. Vùng Bất Kích (Non-Striking Arc - Phủ vành ngoài mỏng màu đỏ)
+      nonStrikePids.forEach(pNum => {
+        const deg = PALACE_DEG[pNum];
+        if (deg !== undefined) {
+          const pathD = getAnnularSectorPath(deg, 425, 475, 45);
+          svgHtml += `<path d="${pathD}" fill="rgba(239, 68, 68, 0.20)" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4" />`;
+          const pt = getRadialVector(deg, 450, 450);
+          svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#f87171" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle">🚫</text>`;
+        }
+      });
+
+      // 2. Bố Trí Đối Tác (Audience Placement - Màu tím)
+      audiencePids.forEach(pNum => {
+        const deg = PALACE_DEG[pNum];
+        if (deg !== undefined) {
+          const pathD = getAnnularSectorPath(deg, 220, 415, 45);
+          svgHtml += `<path d="${pathD}" fill="rgba(168, 85, 247, 0.22)" stroke="#a855f7" stroke-width="2.5" stroke-dasharray="5,4" />`;
+          const pt = getRadialVector(deg, 320, 320);
+          svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#d8b4fe" font-size="15" font-weight="bold" text-anchor="middle" dominant-baseline="middle">🎯 ÉP ĐỐI TÁC</text>`;
+        }
+      });
+
+      // 3. Tọa Lưng Đắc Thắng (Presenter Back-Facing - Màu xanh lục phát quang)
+      if (chiefPid && PALACE_DEG[chiefPid] !== undefined) {
+        const deg = PALACE_DEG[chiefPid];
+        const pathD = getAnnularSectorPath(deg, 200, 420, 45);
+        svgHtml += `<path d="${pathD}" fill="rgba(34, 197, 94, 0.28)" stroke="#22c55e" stroke-width="3.5" stroke-dasharray="6,3" />`;
+        const arrow = getRadialVector(deg, 220, 395);
+        svgHtml += `<line x1="${arrow.x1}" y1="${arrow.y1}" x2="${arrow.x2}" y2="${arrow.y2}" stroke="#22c55e" stroke-width="4.5" marker-end="url(#qmdj-arrow-green)" filter="url(#qmdj-glow-green)" />`;
+        const pt = getRadialVector(deg, 310, 310);
+        svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#4ade80" font-size="16" font-weight="900" text-anchor="middle" dominant-baseline="middle" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.9))">🟢 TỌA LƯNG</text>`;
+      }
+
+      // 4. Nếu Mục Tiêu Cầu Tài: Đánh dấu Cung Thu Tài (Sinh Môn)
+      if (state.qmdjStratGoal === 'wealth') {
+        Object.keys(analysis.palaces || {}).forEach(k => {
+          const p = analysis.palaces[k];
+          if (p.men === 'Sinh Môn' || (p.raw && p.raw.men === '生门') || p.door === 'Sinh') {
+            const deg = PALACE_DEG[k];
+            if (deg !== undefined && parseInt(k) !== chiefPid) {
+              const pathD = getAnnularSectorPath(deg, 260, 415, 45);
+              svgHtml += `<path d="${pathD}" fill="rgba(245, 158, 11, 0.25)" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,4" />`;
+              const pt = getRadialVector(deg, 340, 340);
+              svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#facc15" font-size="15" font-weight="bold" text-anchor="middle" dominant-baseline="middle">💰 THU TÀI</text>`;
+            }
+          }
+        });
+      }
+
+      // 5. Thái Trùng Thiên Mã (Sky Horse Escape - Tia Laser Hoàng Kim)
+      if (shDeg !== undefined) {
+        const arrow = getRadialVector(shDeg, 190, 455);
+        svgHtml += `<line x1="${arrow.x1}" y1="${arrow.y1}" x2="${arrow.x2}" y2="${arrow.y2}" stroke="#eab308" stroke-width="4" stroke-dasharray="8,4" filter="url(#qmdj-glow-gold)" marker-end="url(#qmdj-arrow-gold)" />`;
+        const pt = getRadialVector(shDeg, 445, 445);
+        svgHtml += `<circle cx="${pt.x1}" cy="${pt.y1}" r="12" fill="#eab308" stroke="#ffffff" stroke-width="2" />`;
+        const ptTxt = getRadialVector(shDeg, 380, 380);
+        svgHtml += `<text x="${ptTxt.x1}" y="${ptTxt.y1}" fill="#fef08a" font-size="14" font-weight="900" text-anchor="middle" dominant-baseline="middle" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.95))">🐎 THIÊN MÃ</text>`;
+      }
+
+      svgContent.innerHTML = svgHtml;
+    }
+
+    // Cập nhật Floating HUD
+    const hudTime = document.getElementById('qmdj-hud-time');
+    const hudBack = document.getElementById('qmdj-hud-back');
+    const hudAud = document.getElementById('qmdj-hud-audience');
+    const hudHorse = document.getElementById('qmdj-hud-horse');
+    const hudNonstrike = document.getElementById('qmdj-hud-nonstrike');
+
+    if (hudTime) hudTime.textContent = canChiStr ? `${timeStr} (${canChiStr})` : timeStr;
+
+    document.querySelectorAll('.qmdj-hud-pill-btn, .sheet-qmdj-goal-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-goal') === state.qmdjStratGoal);
+    });
+
+    if (hudBack) {
+      const bName = PALACE_NAMES[chiefPid] || `Cung ${chiefPid}`;
+      hudBack.textContent = `${bName} (Thu sinh khí, át vía)`;
+    }
+
+    if (hudAud) {
+      const aNames = audiencePids.map(p => PALACE_NAMES[p] || `Cung ${p}`).join(', ');
+      hudAud.textContent = `${aNames} (Tiêu hao ý chí đối phương)`;
+    }
+
+    if (hudHorse) {
+      const hName = PALACE_NAMES[shPid] || `Cung ${shPid}`;
+      hudHorse.textContent = `${hName} - Chi ${shBranch} (Xuất hành phá vây)`;
+    }
+
+    if (hudNonstrike) {
+      const nsNames = nonStrikePids.map(p => PALACE_NAMES[p] || `Cung ${p}`).join(', ');
+      hudNonstrike.textContent = `${nsNames} (Cấm đối đầu)`;
+    }
   }
 
   // ================= 4. ĐỊNH VỊ GPS VỆ TINH 2 TẦNG (HIGH ACCURACY + FALLBACK) =================
@@ -4096,6 +4458,75 @@
 
     const btnProjects = document.getElementById('lakinh-btn-projects');
     if (btnProjects) btnProjects.addEventListener('click', openProjectsModal);
+
+    // KỲ MÔN CHIẾN LƯỢC JOEY YAP COMPENDIUM (PHASE 3) EVENTS
+    bindQmdjStratEvents();
+  }
+
+  function toggleQmdjStrategicLayer(force) {
+    if (typeof force === 'boolean') {
+      state.isQmdjStratActive = force;
+    } else {
+      state.isQmdjStratActive = !state.isQmdjStratActive;
+    }
+    if (state.isQmdjStratActive) {
+      state.isQmdjStratHudCollapsed = false;
+    }
+    updateQmdjStrategicLayer();
+    showLaKinhToast(state.isQmdjStratActive
+      ? '⚔️ Đã kích hoạt Lớp Chiến Lược Kỳ Môn Joey Yap trên La Kinh'
+      : 'Đã tắt lớp chiến lược Kỳ Môn');
+  }
+
+  function bindQmdjStratEvents() {
+    const btnQuick = document.getElementById('lakinh-btn-qmdj-strat');
+    const btnClose = document.getElementById('btn-qmdj-hud-close');
+    const btnCollapse = document.getElementById('btn-qmdj-hud-collapse');
+    const btnSheetToggle = document.getElementById('sheet-btn-qmdj-strat-toggle');
+    const btnViewDetail = document.getElementById('btn-qmdj-hud-view-detail');
+    const btnSheetViewLink = document.getElementById('sheet-btn-qmdj-view-link');
+
+    if (btnQuick) btnQuick.addEventListener('click', () => toggleQmdjStrategicLayer());
+    if (btnSheetToggle) btnSheetToggle.addEventListener('click', () => toggleQmdjStrategicLayer());
+    if (btnClose) btnClose.addEventListener('click', () => toggleQmdjStrategicLayer(false));
+
+    if (btnCollapse) {
+      btnCollapse.addEventListener('click', () => {
+        state.isQmdjStratHudCollapsed = !state.isQmdjStratHudCollapsed;
+        const hudBody = document.getElementById('qmdj-hud-body');
+        const hudPills = document.querySelector('.qmdj-hud-pills');
+        const hudFooter = document.querySelector('.qmdj-hud-footer');
+        if (hudBody) hudBody.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'grid';
+        if (hudPills) hudPills.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'flex';
+        if (hudFooter) hudFooter.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'block';
+        btnCollapse.textContent = state.isQmdjStratHudCollapsed ? '+ Mở rộng' : '– Thu gọn';
+      });
+    }
+
+    // Goal buttons
+    document.querySelectorAll('.qmdj-hud-pill-btn, .sheet-qmdj-goal-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const g = btn.getAttribute('data-goal');
+        if (g && g !== state.qmdjStratGoal) {
+          state.qmdjStratGoal = g;
+          updateQmdjStrategicLayer();
+        }
+      });
+    });
+
+    const switchToQmdjBoard = () => {
+      if (typeof window.switchAppMode === 'function') {
+        window.switchAppMode('qmdj');
+      }
+      setTimeout(() => {
+        if (global.NetaQMDJView && typeof global.NetaQMDJView.setMode === 'function') {
+          global.NetaQMDJView.setMode('chienluoc');
+        }
+      }, 150);
+    };
+
+    if (btnViewDetail) btnViewDetail.addEventListener('click', switchToQmdjBoard);
+    if (btnSheetViewLink) btnSheetViewLink.addEventListener('click', switchToQmdjBoard);
   }
 
   // Public module API
@@ -4112,6 +4543,8 @@
     updateRotation: updateRotationDisplay,
     setRayAngle: setRayAngle,
     updateSightingRay: updateSightingRay,
+    toggleQmdjStrategicLayer: toggleQmdjStrategicLayer,
+    updateQmdjStrategicLayer: updateQmdjStrategicLayer,
     loadFloorPlanFile: loadFloorPlanFile,
     setFloorPlanFromDataUrl: setFloorPlanFromDataUrl,
     removeFloorPlan: removeFloorPlan,
