@@ -561,7 +561,6 @@
               <span id="hud-tamban-pk120" style="font-weight: 700; color: #4ade80;">Bính/Đinh (Châu Bảo)</span>
             </div>
           </div>
-          <div class="hud-card-divider"></div>
           <div class="hud-card-row" style="margin-top: 4px;">
             <button type="button" id="btn-hud-trachcat" style="width: 100%; background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.25) 100%); border: 1px solid rgba(245,158,11,0.5); color: #facc15; font-size: 0.75rem; font-weight: 700; padding: 6px 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
               🧭 Trạch Nhật (Xem Ngày Tốt Cho Tọa Sơn Này)

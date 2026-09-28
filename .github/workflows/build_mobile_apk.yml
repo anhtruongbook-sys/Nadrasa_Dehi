@@ -76,43 +76,31 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.4.0
-          name: "Neta Light & Phong Thủy Tam Hợp Phái v2.4.0 (Tam Hợp Thủy Pháp, Vòng Trường Sinh & Quét DEM Google Earth Đa Vành)"
+          tag_name: v2.5.0
+          name: "Neta Light v2.5.0 (Kinh Dịch Lục Hào Nạp Giáp NTC, 290 Án Lệ Thực Tế & Phong Thủy Tam Hợp Phái)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.4.0
-            Bản cập nhật lớn tích hợp toàn diện Hệ thống Phong Thủy Tam Hợp Phái & Quét Địa Hình Số DEM Google Earth:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.0
+            Bản cập nhật lớn tích hợp toàn diện Hệ thống Kinh Dịch Lục Hào Nạp Giáp (Thầy Nguyễn Tuấn Cường V2) cùng Phong Thủy Tam Hợp Phái & Quét Địa Hình Số DEM Google Earth:
+
+            - **Hệ Thống Kinh Dịch Lục Hào Nạp Giáp Chuyên Sâu (100% Deterministic • Zero-AI • Offline)**:
+              + Động cơ toán học 64 quẻ, 384 hào, Bát Cung, Thế/Ứng, Nạp Can Chi, An Lục Thân, Khởi Lục Thú theo Nhật Can.
+              + Động cơ Cân Lực Hào (Power Score Engine) thang điểm $-10.0$ đến $+10.0$ đánh giá chính xác tác động của Nguyệt Kiến, Nhật Thần, Động Hào, Hóa Biến (Hồi Đầu Sinh/Khắc, Hóa Hợp/Xung/Tuyệt/Mộ/Không, Tiến/Thoái Thần).
+              + Quy trình 8 Bước Nhị Phân Luận Đoán khẳng định Thành / Bại tất định cho 15 chuyên đề đời sống.
+              + Khảo sát Phong Thủy Gia Trạch 6 Hào (từ Móng Hào 1 đến Mái/Tổ tiên Hào 6) và đề xuất vật phẩm ngũ hành hóa giải.
+              + Cầu nối Ứng Kỳ $\rightarrow$ Tra cứu Ngày Cát Nhật Đại Cát theo Vòng Trường Sinh, Nhị Hợp, Tam Hợp và Tuần Không.
+              + Sổ tay Nhật ký Quẻ & Hậu kiểm thực tế Offline (LocalStorage) kèm công cụ sao lưu / phục hồi JSON.
+              + **Thư viện 290 Án Lệ Thực Tế & Toàn thư 71 Bài Giảng Thầy Nguyễn Tuấn Cường**: Tự động đối chiếu quẻ hiện tại với 290 án lệ kinh điển, công cụ tìm kiếm tức thì và lọc theo 6 khối kiến thức.
+              + Giao diện tối ưu chống tràn viền và độ tương phản cao đạt chuẩn WCAG AAA trên cả Desktop và Mobile.
 
             - **Phân Hệ Phong Thủy Tam Hợp Phái Chuyên Sâu**:
-              + Tự động an 12 Cung Trường Sinh (Trường Sinh, Mộc Dục, Quan Đới, Lâm Quan, Đế Vượng, Suy, Bệnh, Tử, Mộ, Tuyệt, Thai, Dưỡng) theo 4 Cục lớn (Hỏa Cục, Thủy Cục, Kim Cục, Mộc Cục).
-              + Đánh giá Tam Hợp Thủy Pháp chuẩn mực theo chiều dòng chảy Tả Đáo Hữu (Dương Thuận) hoặc Hữu Đáo Tả (Âm Nghịch).
-              + Nhận diện các thế cách cổ điển: Vượng Khứ Nghênh Sinh, Sinh Khứ Nghênh Vượng, Chánh Vượng Hướng, Chánh Sinh Hướng, Tuyệt Xứ Phùng Sinh, Hóa Tử Vi Vượng.
-              + Cảnh báo tức thì Sát Khí: Hoàng Tuyền Thủy Pháp (Tứ Đại Hoàng Tuyền), Bát Sát Hoàng Tuyền (Thanh Long Bát Sát), Tam Sát và xác định Thiên Lộc, Quý Nhân, Dịch Mã theo Can Chi trạch chủ.
+              + Tự động an 12 Cung Trường Sinh theo 4 Cục lớn (Hỏa Cục, Thủy Cục, Kim Cục, Mộc Cục).
+              + Đánh giá Tam Hợp Thủy Pháp chuẩn mực theo chiều dòng chảy Tả Đáo Hữu hoặc Hữu Đáo Tả.
+              + Cảnh báo tức thì Sát Khí: Hoàng Tuyền Thủy Pháp, Bát Sát Hoàng Tuyền, Tam Sát.
 
-            - **Khảo Sát Địa Hình Số DEM Đa Vành (Multi-Ring Radial Mesh Sampling)**:
-              + Tích hợp mô hình số độ cao toàn cầu Copernicus DEM & NASA SRTM 30m (chuẩn dữ liệu Google Earth).
-              + Khảo sát không gian theo 3 cấp độ Đường Cục:
-                * **Tiểu Minh Đường (Tiểu Cục)**: Dải bán kính [20m – 40m] qua 3 vành cự ly (20m, 30m, 40m).
-                * **Trung Minh Đường (Trung Cục)**: Dải bán kính [40m – 350m] qua 4 vành cự ly (80m, 160m, 250m, 350m).
-                * **Đại Minh Đường (Đại Cục)**: Dải bán kính [350m – 2.000m] qua 4 vành cự ly (600m, 1000m, 1500m, 2000m).
-              + Thuật toán tự động tìm đúng điểm thấp nhất tuyệt đối trong toàn bộ dải bán kính, lấy góc phương vị và cự ly thực tế tính từ tâm ($R$) chiếu lên Thiên Bàn Phùng Châm để chốt Đường Cục chính xác 100%.
-
-            - **Giao Diện La Kinh Vệ Tinh Trực Quan & Tối Ưu Màn Hình**:
-              + Thiết kế lại Mini Capsule HUD siêu gọn, xếp chồng thanh thoát với Kỳ Môn Chiến Lược, không che khuất mặt đĩa La Kinh 36 Tầng.
-              + Hiển thị trực quan toàn bộ các điểm cốt tử Tam Hợp trên La Kinh: Thủy Khẩu, Trường Sinh, Đế Vượng, Mộ, Hoàng Tuyền, Bát Sát, Quý Nhân, Lộc, Mã với cơ chế Counter-Rotation luôn giữ chữ nằm ngang theo tầm mắt.
-              + Thanh chọn Đường Cục 1 chạm [Tiểu Cục (20-40m) | Trung Cục (40-350m) | Đại Cục (350-2000m)] kèm nút quét DEM tức thời.
-                * Chấm điểm và phân tích các cách cục cát tường: *Nhất Khí Thuần Thanh Quái Khí* (+6đ), *Hợp Thập Quái Khí* (+4đ), *Sinh Thành Hà Đồ* (1-6, 2-7, 3-8, 4-9) (+3đ), *Đồng Quái Vận* (+3đ), *Quái Vận Hợp Thập* (+3đ).
-                * Phối hợp Tọa Sơn La Kinh: Tự động đánh giá Sinh Nhập (+3đ), Tỷ Hòa (+2đ), Khắc Xuất (+1đ) và **VETO LOẠI BỎ NGAY LẬP TỨC** nếu phạm *Khắc Nhập Tọa Sơn* (Đại kỵ).
-              + **Kỳ Môn Tam Nguyên (5 Quy Tắc Vàng Trương Chí Xuân & Khắc Ứng Cửu Tinh)**:
-                * Bóc tách Bàn Kỳ Môn Thời Gia trực tiếp: Xác định Cục số, Bát Môn, Cửu Tinh, Bát Thần, Can Thiên/Địa bàn.
-                * Kiểm tra Phục Ngâm / Phản Ngâm: Cảnh báo Phục Ngâm (-10đ) và cấm kỵ khởi công/động thổ/an táng; tự động loại bỏ Phản Ngâm.
-                * [Quy Tắc 2]: Kiểm tra sinh khắc Can Giờ vs Can Ngày (+5đ / -15đ), loại bỏ ngày nếu Can Ngày lâm Tuần Không.
-                * [Quy Tắc 3]: Kiểm soát Tam Hung Thần (Bạch Hổ, Đằng Xà, Huyền Vũ). Cấm kỵ Bạch Hổ cưỡi Can Ngày. **ĐẶC BIỆT: Tự động phát hiện và VETO loại bỏ nếu Tọa Sơn lâm Tuần Không hoặc Bạch Hổ/Đằng Xà ĐÁO TỌA SƠN** (Nguyên nhân thảm họa huyết quang trong Ca mộ họ Lê của Trương Chí Xuân).
-                * [Quy Tắc 4]: Trục Sinh Môn cho Dương Trạch, Khai Trương, Động Thổ, Cất Nóc, Nhập Trạch: Cấm kỵ Sinh Môn lâm Không Vong; thưởng điểm khi Sinh Môn vượng tướng hòa hợp (+8đ) và Trực Phù tương sinh (+5đ).
-                * [Quy Tắc 5]: Dự trắc Khí tượng Cửu Tinh tránh mưa dông bão lũ.
-            - **Giao Diện Trạch Cát Đa Phái Đồng Bộ Tức Thời**:
-              + Bổ sung 2 checkbox nổi bật: `[x] ☯ Huyền Không Đại Quái (64 Quẻ)` và `[x] 🔮 Kỳ Môn Tam Nguyên (Trương Chí Xuân)`.
-              + Tự động tính toán lại và cập nhật danh sách ngày Cát Lành ngay khi chuyển đổi trường phái.
-              + Hiển thị Card chi tiết độc lập cho Đại Quái (`.tc-xkdg-box`) và Kỳ Môn (`.tc-qimen-box`) với độ tương phản tuyệt đối trên cả nền Tối lẫn nền Sáng.
+            - **Khảo Sát Địa Hình Số DEM Đa Vành (Google Earth)**:
+              + Tích hợp mô hình số độ cao toàn cầu Copernicus DEM & NASA SRTM 30m.
+              + Khảo sát 3 cấp độ Đường Cục: Tiểu Minh Đường [20-40m], Trung Minh Đường [40-350m], Đại Minh Đường [350-2000m].
+              + Tự động tìm điểm thấp nhất tuyệt đối trong dải cự ly để chốt Đường Cục chính xác 100%.
             - **Đại Sự Trọng Điểm 1 Chạm (Quick Task Shortcuts)**:
               + Bổ sung thanh chọn nhanh các đại sự hệ trọng nhất: `[🏗️ Động Thổ]`, `[🏠 Cất Nóc]`, `[🏡 Nhập Trạch]`, `[🏪 Khai Trương]`, `[💍 Cưới Hỏi]`, `[🚗 Xuất Hành]`, `[⚰️ An Táng]`, `[📜 83 Việc Khác...]`.
               + Tự động hiển thị **Thuyết Minh Nguyên Tắc Trạch Nhật** chuyên sâu cho từng đại sự:

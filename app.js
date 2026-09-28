@@ -105,10 +105,16 @@
       subtitle: 'Xem Ngày Đại Cát • Trạng Trình & Đổng Công',
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
+    },
+    luchao: {
+      name: 'KINH DỊCH LỤC HÀO',
+      subtitle: 'Bốc Phệ Nạp Giáp • Thầy Nguyễn Tuấn Cường V2',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'phaphanh', 'dichhoc'];
+  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'phaphanh', 'dichhoc', 'luchao'];
 
   // DOM Elements
   const tabModeNeta = document.getElementById('tab-mode-neta');
@@ -256,6 +262,7 @@
     const viewLaKinh = document.getElementById('view-lakinh');
     const viewPhapHanh = document.getElementById('view-phaphanh');
     const viewDichHoc = document.getElementById('view-dichhoc');
+    const viewLucHao = document.getElementById('view-luchao');
     const viewTrachCat = document.getElementById('view-trachcat');
 
     const viewsMap = {
@@ -269,7 +276,8 @@
       tarot: viewTarot,
       lakinh: viewLaKinh,
       phaphanh: viewPhapHanh,
-      dichhoc: viewDichHoc
+      dichhoc: viewDichHoc,
+      luchao: viewLucHao
     };
 
     // Hide all views first, then show active
@@ -325,6 +333,9 @@
       render(); setTimeout(render, 150);
     } else if (mode === 'dichhoc') {
       const render = () => { if (window.NetaDichHocView) window.NetaDichHocView.render(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'luchao') {
+      const render = () => { if (window.NetaLucHaoView) window.NetaLucHaoView.render(); };
       render(); setTimeout(render, 150);
     } else if (mode === 'trachcat') {
       const render = () => { if (window.NetaTrachCatView) window.NetaTrachCatView.init(); };
