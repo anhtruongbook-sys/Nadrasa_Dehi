@@ -3584,6 +3584,13 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   animation: fadeIn 0.25s ease-out;
 }
 
+.tuvi-view-container > *,
+.bazi-view-container > *,
+.qmdj-view-container > *,
+.calendar-module-container > * {
+  flex-shrink: 0 !important;
+}
+
 /* Top Control Bar */
 .tuvi-ctrl-bar {
   background: #24050b;
@@ -5035,14 +5042,21 @@ body.theme-light .text-view-year {
 /* ================= KỲ MÔN 3 CHẾ ĐỘ (DƯƠNG BÀN, ÂM BÀN, PHONG THỦY) ================= */
 .qmdj-mode-tabs {
   display: flex;
-  background: rgba(20, 2, 5, 0.7);
-  border: 1px solid rgba(245, 176, 65, 0.25);
+  flex-shrink: 0 !important;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: rgba(20, 2, 5, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(245, 176, 65, 0.35);
   border-radius: 8px;
-  padding: 3px;
-  margin-bottom: 2px;
-  gap: 3px;
+  padding: 4px;
+  margin-bottom: 6px;
+  gap: 4px;
   overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .qmdj-mode-tabs::-webkit-scrollbar {
@@ -5050,18 +5064,18 @@ body.theme-light .text-view-year {
 }
 
 body.theme-light .qmdj-mode-tabs {
-  background: #fdfaf3;
+  background: rgba(253, 250, 243, 0.95);
   border-color: #e2d2b8;
 }
 
 .qmdj-tab-btn {
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   border: none;
   background: transparent;
   color: #a8a29e;
-  font-size: 0.70rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 6px 4px;
+  padding: 6px 9px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -12726,7 +12740,8 @@ body.theme-light .thien-step-item .step-content strong {
    PHA 4: JOEY YAP BÁT TỰ KỲ MÔN BẢN MỆNH & PHÁP HÀNH TỌA THIỀN ĐỊNH TÂM
    ========================================================================== */
 
-/* 1. THẺ BÁT TỰ KỲ MÔN BẢN MỆNH (bazi_view.js) */
+/* 1. THẺ KỲ MÔN BẢN MỆNH (qmdj_view.js - Tab Bản Mệnh) */
+.banmenh-card,
 .bazi-qmdj-card {
   border: 1px solid rgba(168, 85, 247, 0.35) !important;
   background: linear-gradient(135deg, rgba(24, 18, 43, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
@@ -12734,8 +12749,11 @@ body.theme-light .thien-step-item .step-content strong {
   position: relative;
   overflow: hidden;
   flex-shrink: 0 !important;
+  border-radius: 10px;
+  padding: 12px;
 }
 
+body.theme-light .banmenh-card,
 body.theme-light .bazi-qmdj-card {
   border: 1px solid #d8b4fe !important;
   background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%) !important;

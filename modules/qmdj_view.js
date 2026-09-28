@@ -9,12 +9,13 @@
 (function (global) {
   'use strict';
 
-  let currentQmdjMode = 'duongban'; // 'duongban' | 'amban' | 'phongthuy' | 'chienluoc'
+  let currentQmdjMode = 'duongban'; // 'duongban' | 'amban' | 'phongthuy' | 'chienluoc' | 'thien' | 'banmenh'
   let currentChienLuocGoal = 'deal'; // 'deal' | 'wealth' | 'career' | 'escape' | 'dispute'
   let currentQmdjDate = new Date();
   let currentChart = null;
   let currentPatterns = [];
   let isQmdjLunarMode = false;
+  let currentBanMenhIsMale = true;
 
   // State for Phong Thủy mode (16 Hướng Nhà & 24 Sơn Vị Cửa)
   let ptState = {
@@ -497,7 +498,7 @@
     const { chart, patterns } = data;
     const isPt = currentQmdjMode === 'phongthuy';
 
-    // Render Sub-Tabs (5 chế độ)
+    // Render Sub-Tabs (6 chế độ)
     let modeTabsHtml = `
       <div class="qmdj-mode-tabs">
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'duongban' ? 'active' : ''}" data-mode="duongban">
@@ -515,6 +516,9 @@
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'thien' ? 'active' : ''}" data-mode="thien">
           🧘 Tọa Thiền
         </button>
+        <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'banmenh' ? 'active' : ''}" data-mode="banmenh">
+          👤 Bản Mệnh
+        </button>
       </div>
     `;
 
@@ -524,6 +528,8 @@
       renderChienLuocMode(container, modeTabsHtml, chart);
     } else if (currentQmdjMode === 'thien') {
       renderThienMode(container, modeTabsHtml, chart);
+    } else if (currentQmdjMode === 'banmenh') {
+      renderBanMenhMode(container, modeTabsHtml, chart);
     } else {
       renderTimeMode(container, modeTabsHtml, chart, patterns);
     }
@@ -1448,6 +1454,330 @@
   function bindThienEvents(chart) {
     bindQmdjTimeEvents(chart, []);
     const btnLakinh = document.getElementById('btn-qmdj-open-lakinh');
+    if (btnLakinh) {
+      btnLakinh.onclick = () => {
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('lakinh');
+        } else {
+          const tab = document.getElementById('tab-mode-lakinh');
+          if (tab) tab.click();
+        }
+      };
+    }
+  }
+
+  /**
+   * Render Chế Độ Kỳ Môn Bản Mệnh (Joey Yap Destiny Qi Men / Life Palace)
+   */
+  function renderBanMenhMode(container, modeTabsHtml, chart) {
+    const d = currentQmdjDate;
+    const pad = n => String(n).padStart(2, '0');
+
+    let solarTermStr = "Xuân Phân";
+    if (global.NetaCalendarEngine) {
+      if (typeof global.NetaCalendarEngine.getSolarTermDetails === 'function') {
+        const std = global.NetaCalendarEngine.getSolarTermDetails(d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes());
+        solarTermStr = std.term;
+      } else {
+        solarTermStr = global.NetaCalendarEngine.getSolarTerm(d.getDate(), d.getMonth() + 1, d.getFullYear());
+      }
+    }
+
+    let dayVal = d.getDate();
+    let monthVal = d.getMonth() + 1;
+    let yearVal = d.getFullYear();
+    if (isQmdjLunarMode && global.NetaCalendarEngine) {
+      const lInfo = global.NetaCalendarEngine.getFullDayInfo(d);
+      dayVal = lInfo.lunar.day;
+      monthVal = lInfo.lunar.month;
+      yearVal = lInfo.lunar.year;
+    }
+
+    const dStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+    // Lập lá số Bát Tự & Tính Kỳ Môn Bản Mệnh
+    let baziChart = null;
+    if (global.NetaBaziEngine) {
+      try {
+        baziChart = global.NetaBaziEngine.buildBaziChart({
+          solarDate: d,
+          isMale: currentBanMenhIsMale,
+          startAge: 3
+        });
+      } catch (e) {
+        console.error("Lỗi dựng Bát Tự cho Bản Mệnh:", e);
+      }
+    }
+
+    const yStr = formatPillarCanChi(chart.year).split(' ');
+    const mStr = formatPillarCanChi(chart.month).split(' ');
+    const dStrP = formatPillarCanChi(chart.date).split(' ');
+    const hStr = formatPillarCanChi(chart.hour).split(' ');
+
+    const baziFallback = {
+      solarDate: d,
+      tuTru: [
+        { gan: yStr[0] || 'Giáp', zhi: yStr[1] || 'Tý' },
+        { gan: mStr[0] || 'Giáp', zhi: mStr[1] || 'Tý' },
+        { gan: dStrP[0] || 'Giáp', zhi: dStrP[1] || 'Tý' },
+        { gan: hStr[0] || 'Giáp', zhi: hStr[1] || 'Tý' }
+      ],
+      solarTermStr: solarTermStr
+    };
+
+    let destiny = null;
+    if (global.JoeyYapQMDJEngine && typeof global.JoeyYapQMDJEngine.computeDestinyQiMen === 'function') {
+      try {
+        destiny = global.JoeyYapQMDJEngine.computeDestinyQiMen(baziChart || baziFallback, chart);
+      } catch (e) {
+        console.error("Lỗi tính toán Bản Mệnh Kỳ Môn:", e);
+      }
+    }
+
+    const lp = (destiny && destiny.life_palace) ? destiny.life_palace : {
+      palace_id: 6,
+      palace_name: 'Càn (Tây Bắc)',
+      direction: 'Tây Bắc',
+      degrees: '292.5° - 337.5°',
+      center_deg: 315,
+      deity: 'Trực Phù',
+      deity_en: 'Chief',
+      deity_title: 'Đại Biểu Ý Chí Vũ Trụ Tối Cao',
+      deity_power: 'Hộ mệnh cao quý, chuyển hung hóa cát, tiếp nhận năng lượng lãnh đạo tối cao.',
+      deity_affirmation: 'Tôi kết nối với trường năng lượng vũ trụ cao nhất, mọi dự định đều được phù trợ quang minh.',
+      deity_advice: 'Luôn giữ tâm chính trực, hành động nhất quán và nâng đỡ những người xung quanh.',
+      star: 'Thiên Tâm',
+      star_intellect: 'Trí tuệ lãnh đạo chiến lược, mưu lược toàn cục và sự thấu suốt sâu sắc.',
+      door: 'Khai Môn',
+      door_action: 'Mở rộng cơ hội, hanh thông sự nghiệp, đón nhận chân trời mới.',
+      heaven_stem: 'Mậu',
+      earth_stem: 'Mậu',
+      formations: []
+    };
+
+    const yp = (destiny && destiny.year_palace) ? destiny.year_palace : {
+      palace_name: 'Khảm (Bắc)',
+      direction: 'Bắc',
+      deity: 'Lục Hợp',
+      door: 'Hưu Môn',
+      star: 'Thiên Bồng'
+    };
+
+    const DEITY_ICONS = {
+      'Trực Phù': '✨',
+      'Đằng Xà': '🐍',
+      'Thái Âm': '🌙',
+      'Lục Hợp': '🤝',
+      'Bạch Hổ': '🐯',
+      'Câu Trần': '⚓',
+      'Huyền Vũ': '🐢',
+      'Chu Tước': '🦚',
+      'Cửu Địa': '🌍',
+      'Cửu Thiên': '🚀'
+    };
+    const deityIcon = DEITY_ICONS[lp.deity] || '🔮';
+
+    const pillars = {
+      year: formatPillarCanChi(chart.year),
+      month: formatPillarCanChi(chart.month),
+      day: formatPillarCanChi(chart.date),
+      hour: formatPillarCanChi(chart.hour)
+    };
+
+    container.innerHTML = `
+      <div class="qmdj-view-container">
+        ${modeTabsHtml}
+
+        <!-- Unified Control Card: Nhập Ngày Giờ Sinh -->
+        <div class="unified-ctrl-card">
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-lunar">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box" id="qmdj-ucc-date-box" title="Nhập ngày tháng hoặc chọn lịch">
+              <input type="number" id="qmdj-input-day" class="num-box num-day" min="1" max="31" value="${dayVal}" placeholder="Ngày">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-month" class="num-box num-month" min="1" max="12" value="${monthVal}" placeholder="Tháng">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-year" class="num-box num-year" min="1900" max="2100" value="${yearVal}" placeholder="Năm">
+              <button type="button" class="ucc-btn-year" id="btn-qmdj-year-jumper" title="Chọn nhanh thập niên & năm">⚡Năm</button>
+              <label class="btn-picker-cal" id="qmdj-btn-native-cal" title="Mở bảng chọn Ngày & Giờ">
+                📅
+                <input type="datetime-local" id="qmdj-date-picker" value="${dStr}T${pad(d.getHours())}:${pad(d.getMinutes())}" class="native-hidden-date">
+              </label>
+            </div>
+          </div>
+
+          <!-- Row 2: Can Chi + Numeric Time & Gender -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
+              <select id="qmdj-select-canchi" class="select-canchi">
+                <option value="0" ${[23, 0].includes(d.getHours()) ? 'selected' : ''}>Tý (23-01h)</option>
+                <option value="2" ${[1, 2].includes(d.getHours()) ? 'selected' : ''}>Sửu (01-03h)</option>
+                <option value="4" ${[3, 4].includes(d.getHours()) ? 'selected' : ''}>Dần (03-05h)</option>
+                <option value="6" ${[5, 6].includes(d.getHours()) ? 'selected' : ''}>Mão (05-07h)</option>
+                <option value="8" ${[7, 8].includes(d.getHours()) ? 'selected' : ''}>Thìn (07-09h)</option>
+                <option value="10" ${[9, 10].includes(d.getHours()) ? 'selected' : ''}>Tỵ (09-11h)</option>
+                <option value="12" ${[11, 12].includes(d.getHours()) ? 'selected' : ''}>Ngọ (11-13h)</option>
+                <option value="14" ${[13, 14].includes(d.getHours()) ? 'selected' : ''}>Mùi (13-15h)</option>
+                <option value="16" ${[15, 16].includes(d.getHours()) ? 'selected' : ''}>Thân (15-17h)</option>
+                <option value="18" ${[17, 18].includes(d.getHours()) ? 'selected' : ''}>Dậu (17-19h)</option>
+                <option value="20" ${[19, 20].includes(d.getHours()) ? 'selected' : ''}>Tuất (19-21h)</option>
+                <option value="22" ${[21, 22].includes(d.getHours()) ? 'selected' : ''}>Hợi (21-23h)</option>
+              </select>
+              <div class="numeric-time-group">
+                <input type="number" id="qmdj-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(d.getHours())}" placeholder="Giờ">
+                <span class="num-colon">:</span>
+                <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}" placeholder="Phút">
+              </div>
+              <button type="button" class="ucc-step-btn" id="btn-qmdj-step-prev" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
+              <button type="button" class="ucc-step-btn" id="btn-qmdj-step-next" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
+            </div>
+            <div class="ucc-pill-gender">
+              <button type="button" class="ucc-gender-btn ${currentBanMenhIsMale ? 'active male' : ''}" id="btn-banmenh-male">♂ Nam</button>
+              <button type="button" class="ucc-gender-btn ${!currentBanMenhIsMale ? 'active female' : ''}" id="btn-banmenh-female">♀ Nữ</button>
+            </div>
+          </div>
+
+          <!-- Row 3: Actions -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-qmdj-now" title="Về thời điểm hiện tại">
+              ⚡ Giờ thực
+            </button>
+            <div class="qmdj-cuc-badge" id="btn-qmdj-cuc-modal" title="Cung Bản Mệnh">
+              <span>👤 Cung: <strong>${lp.palace_name}</strong></span>
+            </div>
+            <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập Mệnh Bàn Kỳ Môn">
+              🔮 Lập Mệnh Bàn
+            </button>
+          </div>
+        </div>
+
+        <!-- Tứ Trụ Sinh Mệnh Strip -->
+        <div class="qmdj-pillars-strip">
+          <div class="q-pillar"><span class="q-lbl">NĂM:</span><strong class="q-val">${pillars.year}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">THÁNG:</span><strong class="q-val">${pillars.month}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">NGÀY:</span><strong class="q-val">${pillars.day}</strong></div>
+          <div class="q-pillar highlight-hour"><span class="q-lbl">GIỜ:</span><strong class="q-val">${pillars.hour}</strong></div>
+        </div>
+
+        <!-- Thẻ Kỳ Môn Bản Mệnh Chính -->
+        <div class="banmenh-card" id="qmdj-banmenh-card">
+          <div class="bazi-card-title">
+            <div class="bqc-title-left">
+              <span>🔮 KỲ MÔN BẢN MỆNH (JOEY YAP LIFE PALACE)</span>
+              <span class="bqc-badge-palace">${lp.palace_name} (${lp.direction} • ${lp.degrees})</span>
+            </div>
+            <button type="button" class="bqc-btn-lakinh" id="btn-banmenh-open-lakinh" data-deg="${lp.center_deg}" data-dir="${lp.direction}" title="Mở La Kinh định vị phương vị Bản Mệnh">
+              🧭 Mở La Kinh
+            </button>
+          </div>
+
+          <div class="bqc-main-grid">
+            <!-- Cột Trái: Thần Hộ Mệnh Cá Nhân -->
+            <div class="bqc-deity-box">
+              <div class="bqc-box-header">
+                <span class="bqc-icon">${deityIcon}</span>
+                <div class="bqc-deity-titles">
+                  <div class="bqc-deity-name">${lp.deity} <span class="bqc-deity-en">(${lp.deity_en})</span></div>
+                  <div class="bqc-deity-role">${lp.deity_title}</div>
+                </div>
+              </div>
+
+              <div class="bqc-prop-row">
+                <span class="bqc-label">Năng lực Tiềm thức:</span>
+                <span class="bqc-val">${lp.deity_power}</span>
+              </div>
+
+              <div class="bqc-prop-row bqc-affirmation-row">
+                <span class="bqc-label">Khẩu quyết Kích hoạt:</span>
+                <blockquote class="bqc-affirmation-quote">"${lp.deity_affirmation}"</blockquote>
+              </div>
+
+              <div class="bqc-prop-row">
+                <span class="bqc-label">Lời khuyên Khai mở:</span>
+                <span class="bqc-val bqc-advice">${lp.deity_advice}</span>
+              </div>
+            </div>
+
+            <!-- Cột Phải: Bộ Ba Bản Mệnh (Sao, Cửa, Khí Cục & Can Tọa) -->
+            <div class="bqc-details-box">
+              <div class="bqc-detail-item">
+                <div class="bqc-di-header">
+                  <span class="bqc-di-icon">⭐</span>
+                  <span class="bqc-di-title">Sao Bản Mệnh: <strong>${lp.star}</strong></span>
+                </div>
+                <p class="bqc-di-desc">${lp.star_intellect}</p>
+              </div>
+
+              <div class="bqc-detail-item">
+                <div class="bqc-di-header">
+                  <span class="bqc-di-icon">🚪</span>
+                  <span class="bqc-di-title">Cửa Bản Mệnh: <strong>${lp.door}</strong></span>
+                </div>
+                <p class="bqc-di-desc">${lp.door_action}</p>
+              </div>
+
+              <div class="bqc-detail-item">
+                <div class="bqc-di-header">
+                  <span class="bqc-di-icon">🛡️</span>
+                  <span class="bqc-di-title">Khí Cục & Can Tọa: <strong>${lp.heaven_stem} / ${lp.earth_stem}</strong></span>
+                </div>
+                <div class="bqc-formations-list">
+                  ${lp.formations && lp.formations.length > 0 ? lp.formations.map(f => `
+                    <span class="bqc-formation-badge ${f.is_auspicious ? 'badge-auspicious' : 'badge-inauspicious'}" title="${f.description}">
+                      ${f.is_auspicious ? '✨' : '⚠️'} ${f.name}
+                    </span>
+                  `).join('') : '<span class="bqc-formation-neutral">Bình hòa, không phạm hình khắc trực xung.</span>'}
+                </div>
+              </div>
+
+              <div class="bqc-detail-item bqc-social-item">
+                <div class="bqc-di-header">
+                  <span class="bqc-di-icon">🌐</span>
+                  <span class="bqc-di-title">Cung Xã Hội (Can Năm): <strong>${yp.palace_name} (${yp.direction})</strong></span>
+                </div>
+                <p class="bqc-di-desc">Thần <strong>${yp.deity}</strong> • Môn <strong>${yp.door}</strong> • Tinh <strong>${yp.star}</strong> (Ảnh hưởng môi trường vĩ mô và uy tín xã hội).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thanh Hướng dẫn Tọa Lưng Đắc Khí Trọn Đời -->
+          <div class="bqc-compass-banner">
+            <span class="bqc-cb-icon">🧘</span>
+            <div class="bqc-cb-text">
+              <strong>Phương vị Tọa Lưng Đắc Khí Trọn Đời:</strong> Khi thiền định, lập chiến lược hoặc đối mặt quyết định trọng đại, hãy ngồi <strong>quay lưng về hướng ${lp.direction} (${lp.palace_name} • ${lp.degrees})</strong> để tiếp nhận trường khí bảo hộ mạnh nhất từ Thần Bản Mệnh ${lp.deity}.
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    bindBanMenhEvents(chart, lp);
+  }
+
+  function bindBanMenhEvents(chart, lp) {
+    bindQmdjTimeEvents(chart, []);
+    bindModeTabsEvents();
+
+    const btnMale = document.getElementById('btn-banmenh-male');
+    const btnFemale = document.getElementById('btn-banmenh-female');
+    if (btnMale) {
+      btnMale.onclick = () => {
+        currentBanMenhIsMale = true;
+        renderQmdj();
+      };
+    }
+    if (btnFemale) {
+      btnFemale.onclick = () => {
+        currentBanMenhIsMale = false;
+        renderQmdj();
+      };
+    }
+
+    const btnLakinh = document.getElementById('btn-banmenh-open-lakinh');
     if (btnLakinh) {
       btnLakinh.onclick = () => {
         if (typeof window.switchAppMode === 'function') {

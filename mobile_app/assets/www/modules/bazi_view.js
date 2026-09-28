@@ -45,131 +45,7 @@
     }
   }
 
-  function renderBaziQMDJDestinyHTML(chart) {
-    if (!chart || !global.JoeyYapQMDJEngine || !global.JoeyYapQMDJEngine.computeDestinyQiMen) {
-      return '';
-    }
 
-    let destiny = null;
-    try {
-      destiny = global.JoeyYapQMDJEngine.computeDestinyQiMen(chart);
-    } catch (e) {
-      console.error("Lỗi tính toán Bản Mệnh Kỳ Môn:", e);
-      return '';
-    }
-
-    if (!destiny || !destiny.life_palace) return '';
-
-    const lp = destiny.life_palace;
-    const yp = destiny.year_palace;
-
-    const DEITY_ICONS = {
-      'Trực Phù': '✨',
-      'Đằng Xà': '🐍',
-      'Thái Âm': '🌙',
-      'Lục Hợp': '🤝',
-      'Bạch Hổ': '🐯',
-      'Câu Trần': '⚓',
-      'Huyền Vũ': '🐢',
-      'Chu Tước': '🦚',
-      'Cửu Địa': '🌍',
-      'Cửu Thiên': '🚀'
-    };
-
-    const deityIcon = DEITY_ICONS[lp.deity] || '🔮';
-
-    return `
-      <!-- 🔮 KỲ MÔN BẢN MỆNH (JOEY YAP DESTINY QI MEN) -->
-      <div class="bazi-section-card bazi-qmdj-card" id="bazi-qmdj-card">
-        <div class="bazi-card-title">
-          <div class="bqc-title-left">
-            <span>🔮 KỲ MÔN BẢN MỆNH (JOEY YAP LIFE PALACE)</span>
-            <span class="bqc-badge-palace">${lp.palace_name} (${lp.direction} • ${lp.degrees})</span>
-          </div>
-          <button type="button" class="bqc-btn-lakinh" id="btn-bazi-open-lakinh" data-deg="${lp.center_deg}" data-dir="${lp.direction}" title="Mở La Kinh định vị phương vị Bản Mệnh">
-            🧭 La Kinh
-          </button>
-        </div>
-
-        <div class="bqc-main-grid">
-          <!-- Cột Trái: Thần Hộ Mệnh Cá Nhân (Personal Guardian Deity) -->
-          <div class="bqc-deity-box">
-            <div class="bqc-box-header">
-              <span class="bqc-icon">${deityIcon}</span>
-              <div class="bqc-deity-titles">
-                <div class="bqc-deity-name">${lp.deity} <span class="bqc-deity-en">(${lp.deity_en})</span></div>
-                <div class="bqc-deity-role">${lp.deity_title}</div>
-              </div>
-            </div>
-
-            <div class="bqc-prop-row">
-              <span class="bqc-label">Năng lực Tiềm thức:</span>
-              <span class="bqc-val">${lp.deity_power}</span>
-            </div>
-
-            <div class="bqc-prop-row bqc-affirmation-row">
-              <span class="bqc-label">Khẩu quyết Kích hoạt:</span>
-              <blockquote class="bqc-affirmation-quote">"${lp.deity_affirmation}"</blockquote>
-            </div>
-
-            <div class="bqc-prop-row">
-              <span class="bqc-label">Lời khuyên Khai mở:</span>
-              <span class="bqc-val bqc-advice">${lp.deity_advice}</span>
-            </div>
-          </div>
-
-          <!-- Cột Phải: Bộ Ba Bản Mệnh (Cửu Tinh, Bát Môn & Cách Cục) -->
-          <div class="bqc-details-box">
-            <div class="bqc-detail-item">
-              <div class="bqc-di-header">
-                <span class="bqc-di-icon">⭐</span>
-                <span class="bqc-di-title">Sao Bản Mệnh: <strong>${lp.star}</strong></span>
-              </div>
-              <p class="bqc-di-desc">${lp.star_intellect}</p>
-            </div>
-
-            <div class="bqc-detail-item">
-              <div class="bqc-di-header">
-                <span class="bqc-di-icon">🚪</span>
-                <span class="bqc-di-title">Cửa Bản Mệnh: <strong>${lp.door}</strong></span>
-              </div>
-              <p class="bqc-di-desc">${lp.door_action}</p>
-            </div>
-
-            <div class="bqc-detail-item">
-              <div class="bqc-di-header">
-                <span class="bqc-di-icon">🛡️</span>
-                <span class="bqc-di-title">Khí Cục & Can Tọa: <strong>${lp.heaven_stem} / ${lp.earth_stem}</strong></span>
-              </div>
-              <div class="bqc-formations-list">
-                ${lp.formations && lp.formations.length > 0 ? lp.formations.map(f => `
-                  <span class="bqc-formation-badge ${f.is_auspicious ? 'badge-auspicious' : 'badge-inauspicious'}" title="${f.description}">
-                    ${f.is_auspicious ? '✨' : '⚠️'} ${f.name}
-                  </span>
-                `).join('') : '<span class="bqc-formation-neutral">Bình hòa, không phạm hình khắc trực xung.</span>'}
-              </div>
-            </div>
-
-            <div class="bqc-detail-item bqc-social-item">
-              <div class="bqc-di-header">
-                <span class="bqc-di-icon">🌐</span>
-                <span class="bqc-di-title">Cung Xã Hội (Can Năm): <strong>${yp.palace_name} (${yp.direction})</strong></span>
-              </div>
-              <p class="bqc-di-desc">Thần <strong>${yp.deity}</strong> • Môn <strong>${yp.door}</strong> • Tinh <strong>${yp.star}</strong> (Ảnh hưởng môi trường vĩ mô và uy tín cộng đồng).</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Thanh Hướng dẫn Tọa Lưng Đắc Khí -->
-        <div class="bqc-compass-banner">
-          <span class="bqc-cb-icon">🧘</span>
-          <div class="bqc-cb-text">
-            <strong>Phương vị Tọa Lưng Đắc Khí:</strong> Khi thiền định, lập chiến lược hoặc đối mặt quyết định trọng đại, hãy ngồi <strong>quay lưng về hướng ${lp.direction} (${lp.palace_name} • ${lp.degrees})</strong> để tiếp nhận trường khí bảo hộ mạnh nhất từ Thần Bản Mệnh ${lp.deity}.
-          </div>
-        </div>
-      </div>
-    `;
-  }
 
   function renderBazi() {
     const container = document.getElementById('view-bazi');
@@ -385,9 +261,6 @@
             }).join('')}
           </div>
         </div>
-
-        <!-- 🔮 KỲ MÔN BẢN MỆNH (JOEY YAP DESTINY QI MEN) -->
-        ${renderBaziQMDJDestinyHTML(chart)}
 
         <!-- 10 Bước Đại Vận -->
         <div class="bazi-section-card">
@@ -707,20 +580,6 @@
         openPillarModal(chart, idx);
       };
     });
-
-    // Chuyển sang La Kinh và định vị góc Bản Mệnh
-    // Chuyển sang La Kinh và định vị góc Bản Mệnh
-    const btnLakinh = document.getElementById('btn-bazi-open-lakinh');
-    if (btnLakinh) {
-      btnLakinh.onclick = () => {
-        if (typeof window.switchAppMode === 'function') {
-          window.switchAppMode('lakinh');
-        } else {
-          const tabLakinh = document.getElementById('tab-mode-lakinh');
-          if (tabLakinh) tabLakinh.click();
-        }
-      };
-    }
 
     // Modal Close
     const modalClose = document.getElementById('bazi-modal-close');
