@@ -338,6 +338,17 @@
         else if (goodCount === 0 && badCount === 2) { rank = 8; recommendation = "Hạng tám, quyết không nên dùng"; }
         else if (badCount >= 3 && goodCount === 0) { rank = 9; recommendation = "Hạng chín, tuyệt đối chẳng nên dùng"; }
 
+        // Joey Yap - Kiểm tra Ngũ Bất Ngộ Thời (Thất Sát)
+        const dayCan = (dayCanChi || '').split(' ')[0] || '';
+        const joeyEngine = (typeof window !== 'undefined' && window.JoeyYapQMDJEngine) || global.JoeyYapQMDJEngine;
+        let isFiveDisharmony = false;
+        if (joeyEngine && typeof joeyEngine.isFiveDisharmony === 'function') {
+          isFiveDisharmony = joeyEngine.isFiveDisharmony(dayCan, hInfo.can);
+        }
+        if (isFiveDisharmony) {
+          details.push("⚠️ Phạm Ngũ Bất Ngộ Thời (Thời Can khắc Nhật Can theo thế Thất Sát - Hung)");
+        }
+
         ranked.push({
           hour_can_chi: hStr,
           hour_chi: hInfo.chi,
@@ -346,6 +357,7 @@
           good_count: goodCount,
           bad_count: badCount,
           recommendation: recommendation,
+          is_five_disharmony: isFiveDisharmony,
           details: details
         });
       });
@@ -1368,8 +1380,69 @@
           details.push(`[Quy Tắc 5 Khí Tượng] ${weatherWarnings.join('; ')} (-4đ)`);
         }
 
+        // 6. JOEY YAP QI MEN DUN JIA ENGINE INTEGRATION (Pha 1)
+        const joeyEngine = (typeof window !== 'undefined' && window.JoeyYapQMDJEngine) || global.JoeyYapQMDJEngine;
+        let joeyAnalysis = null;
+        if (joeyEngine && typeof joeyEngine.analyzeQMDJCoreChart === 'function') {
+          let sTerm = "Xuân Phân";
+          let lMonth = 2;
+          if (global.NetaCalendarEngine) {
+            if (typeof global.NetaCalendarEngine.getSolarTerm === 'function') {
+              sTerm = global.NetaCalendarEngine.getSolarTerm(dateObj.getDate(), dateObj.getMonth() + 1, dateObj.getFullYear());
+            }
+            if (typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
+              const fInfo = global.NetaCalendarEngine.getFullDayInfo(dateObj);
+              if (fInfo && fInfo.lunar && fInfo.lunar.month) lMonth = fInfo.lunar.month;
+            }
+          }
+
+          joeyAnalysis = joeyEngine.analyzeQMDJCoreChart(chart, {
+            dayCanChi: dayCanChi,
+            hourCanChi: hourCanChi,
+            solarTerm: sTerm,
+            lunarMonth: lMonth
+          });
+
+          if (joeyAnalysis && joeyAnalysis.success) {
+            // A. Kiểm tra Ngũ Bất Ngộ Thời (Thất Sát)
+            if (joeyAnalysis.is_vetoed) {
+              isDisqualified = true;
+              disqualifyReasons.push(joeyAnalysis.veto_reason || "Phạm Ngũ Bất Ngộ Thời: Can Giờ khắc Can Ngày (Thất Sát), mưu sự bất thành.");
+            }
+
+            // B. Tích hợp điểm số từ các Cách Cục nhận diện được
+            if (Array.isArray(joeyAnalysis.detected_formations) && joeyAnalysis.detected_formations.length > 0) {
+              joeyAnalysis.detected_formations.forEach(f => {
+                score += f.score;
+                if (f.score > 0) {
+                  details.push(`[Kỳ Môn Cát Cách] ${f.name_vn} (${f.direction}): ${f.nature} (+${f.score}đ) - ${f.desc}`);
+                } else if (f.score < 0) {
+                  details.push(`[Kỳ Môn Cảnh Báo] ${f.name_vn} (${f.direction}): ${f.nature} (${f.score}đ) - ${f.desc}`);
+                  if (f.score <= -25) {
+                    if (['F49', 'F50', 'F51', 'F52', 'F69'].includes(f.code)) {
+                      disqualifyReasons.push(`Phạm trọng hung cách Kỳ Môn: ${f.name_vn} (${f.desc})`);
+                    }
+                  }
+                }
+              });
+            }
+
+            // C. Thưởng điểm Du Tam Tị Ngũ
+            if (joeyAnalysis.swaying_evading) {
+              if (joeyAnalysis.swaying_evading.status === 'SWAYING_3') {
+                score += 10;
+                details.push("[Du Tam Cát Khí] Trực Phù đáo Chấn 3: Tác sự đơm hoa kết trái (+10đ)");
+              } else if (joeyAnalysis.swaying_evading.status === 'EVADING_5') {
+                score -= 15;
+                details.push("[Tị Ngũ Hung Trệ] Trực Phù nhập Trung 5: Nguy cơ bế tắc (-15đ)");
+              }
+            }
+          }
+        }
+
         let rating = "Bình Hòa";
         if (isDisqualified) rating = "Phạm Đại Hung Kỳ Môn (Loại Bỏ)";
+        else if (score >= 25) rating = "Đại Cát Thượng Cách (Đắc Cát Bảo / Cửu Độn)";
         else if (score >= 15) rating = "Thượng Cát (Đắc Kỳ Đắc Môn Đắc Thần)";
         else if (score >= 8) rating = "Thứ Cát (Dùng Rất Tốt)";
         else if (score >= 0) rating = "Bình Thường (Dùng Được)";
@@ -1388,7 +1461,18 @@
           mountain_palace: mountainInfo ? mountainInfo.palace : null,
           mountain_god: mountainInfo ? mountainInfo.god : null,
           weather_warnings: weatherWarnings,
-          details: details
+          details: details,
+          joey_strategy: joeyAnalysis ? {
+            is_vetoed: joeyAnalysis.is_vetoed,
+            veto_reason: joeyAnalysis.veto_reason,
+            month_general: joeyAnalysis.month_general,
+            sky_horse: joeyAnalysis.sky_horse,
+            three_victories: joeyAnalysis.three_victories,
+            five_restrictions: joeyAnalysis.five_restrictions,
+            detected_formations: joeyAnalysis.detected_formations,
+            evidential_omens: joeyAnalysis.evidential_omens,
+            spatial_strategy: joeyAnalysis.spatial_strategy
+          } : null
         };
       } catch (err) {
         console.warn("Lỗi tính toán Kỳ Môn Trạch Cát:", err);

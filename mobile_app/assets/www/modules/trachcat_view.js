@@ -357,8 +357,8 @@
             <label class="tc-toggle-label highlight-xkdg" title="Huyền Không Đại Quái 64 Quẻ: Quái Khí, Quái Vận, Hợp Thập, Hà Đồ & Tọa Sơn">
               <input type="checkbox" id="tc-chk-xkdg" ${state.schools.enable_xkdg ? 'checked' : ''}> ☯ Huyền Không Đại Quái (64 Quẻ)
             </label>
-            <label class="tc-toggle-label highlight-qimen" title="Kỳ Môn Tam Nguyên: 5 Quy Tắc Vàng Trương Chí Xuân & Khắc Ứng Cửu Tinh">
-              <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Tam Nguyên (Trương Chí Xuân)
+            <label class="tc-toggle-label highlight-qimen" title="Kỳ Môn Chiến Lược: 5 Quy Tắc Vàng Trương Chí Xuân & 76 Cách Cục, Tam Thắng, Thiên Mã Joey Yap Compendium">
+              <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Chiến Lược (Joey Yap & Trương Chí Xuân)
             </label>
           </div>
 
@@ -514,21 +514,81 @@
             </div>
           ` : ''}
 
-          <!-- Kỳ Môn Tam Nguyên Trương Chí Xuân Box (nếu bật) -->
+          <!-- Kỳ Môn Chiến Lược (Joey Yap & Trương Chí Xuân) Box (nếu bật) -->
           ${d.qimen ? `
             <div class="tc-qimen-box">
               <div class="tc-qimen-header">
-                <span class="tc-qimen-title">🔮 KỲ MÔN TAM NGUYÊN (TRƯƠNG CHÍ XUÂN): ${d.qimen.rating} (${d.qimen.score > 0 ? '+' : ''}${d.qimen.score}đ)</span>
-                <span class="tc-badge ${d.qimen.is_disqualified ? 'tc-badge-warn' : 'tc-badge-good'}">
-                  ${d.qimen.is_disqualified ? 'Đại Hung Bị Loại' : 'Đắc Cách'}
-                </span>
+                <span class="tc-qimen-title">🔮 KỲ MÔN CHIẾN LƯỢC: ${d.qimen.rating} (${d.qimen.score > 0 ? '+' : ''}${d.qimen.score}đ)</span>
+                <div class="tc-qimen-badges">
+                  ${d.qimen.is_disqualified ? '<span class="tc-badge tc-badge-warn">Đại Hung Bị Loại</span>' : ''}
+                  ${d.qimen.joey_strategy && d.qimen.joey_strategy.is_vetoed ? '<span class="tc-badge tc-badge-warn">⚠️ Ngũ Bất Ngộ Thời</span>' : ''}
+                  ${!d.qimen.is_disqualified && d.qimen.score >= 25 ? '<span class="tc-badge tc-badge-good">👑 Đại Cát Cách</span>' : ''}
+                  ${!d.qimen.is_disqualified && d.qimen.score < 25 && d.qimen.score >= 8 ? '<span class="tc-badge tc-badge-good">Đắc Cách</span>' : ''}
+                </div>
               </div>
               <div class="tc-qimen-body">
                 <div class="tc-qimen-meta">
                   <span>Bàn: <strong>${d.qimen.cuc_name || 'Thời Gia Kỳ Môn'}</strong></span>
                   ${d.qimen.sinh_mon_palace ? `<span>Sinh Môn: <strong>Cung ${d.qimen.sinh_mon_palace}</strong></span>` : ''}
                   ${d.qimen.mountain_palace ? `<span>Tọa Sơn: <strong>Cung ${d.qimen.mountain_palace} (${d.qimen.mountain_god || ''})</strong></span>` : ''}
+                  ${d.qimen.joey_strategy && d.qimen.joey_strategy.month_general ? `<span>Nguyệt Tướng: <strong>${d.qimen.joey_strategy.month_general.name_vn} (${d.qimen.joey_strategy.month_general.branch})</strong></span>` : ''}
                 </div>
+
+                <!-- Thước Ngắm Chiến Lược Không Gian Joey Yap -->
+                ${d.qimen.joey_strategy && d.qimen.joey_strategy.spatial_strategy ? `
+                  <div class="tc-joey-spatial">
+                    <div class="tc-spatial-header">🧭 THƯỚC NGẮM CHIẾN LƯỢC KHÔNG GIAN (JOEY YAP)</div>
+                    <div class="tc-spatial-grid">
+                      <div class="tc-spatial-item victory">
+                        <span class="tc-spatial-label">🟢 Tọa Lưng Đắc Thắng:</span>
+                        <span class="tc-spatial-val">${d.qimen.joey_strategy.spatial_strategy.presenter_back_facing}</span>
+                        <small class="tc-spatial-tip">Ngồi quay lưng hướng này khi đàm phán, chốt hợp đồng</small>
+                      </div>
+                      <div class="tc-spatial-item horse">
+                        <span class="tc-spatial-label">🟡 Thái Trùng Thiên Mã:</span>
+                        <span class="tc-spatial-val">${d.qimen.joey_strategy.spatial_strategy.emergency_escape_vector}</span>
+                        <small class="tc-spatial-tip">Phương vị xuất hành thoát hiểm, giải vây cấp tốc</small>
+                      </div>
+                      <div class="tc-spatial-item restrict">
+                        <span class="tc-spatial-label">🔴 Vùng Bất Kích:</span>
+                        <span class="tc-spatial-val">${d.qimen.joey_strategy.spatial_strategy.five_no_attacks.join(' • ')}</span>
+                        <small class="tc-spatial-tip">Cấm hướng mặt hoặc đối đầu trực diện</small>
+                      </div>
+                      <div class="tc-spatial-item target">
+                        <span class="tc-spatial-label">🎯 Bố Trí Đối Tác:</span>
+                        <span class="tc-spatial-val">${d.qimen.joey_strategy.spatial_strategy.target_placement_sectors.join(' • ')}</span>
+                        <small class="tc-spatial-tip">Hướng đối tác ngồi vào cung yếu để chiếm ưu thế</small>
+                      </div>
+                    </div>
+
+                    <!-- Cách Cục Nhận Diện Được -->
+                    ${d.qimen.joey_strategy.detected_formations && d.qimen.joey_strategy.detected_formations.length > 0 ? `
+                      <div class="tc-formations-section">
+                        <span class="tc-formations-title">⚡ 76 Cách Cục Nhận Diện Được:</span>
+                        <div class="tc-formations-tags">
+                          ${d.qimen.joey_strategy.detected_formations.map(f => `
+                            <span class="tc-formation-tag ${f.score > 0 ? 'good' : 'bad'}" title="${f.desc}">
+                              ${f.score > 0 ? '🟢' : '🔴'} [${f.code}] ${f.name_vn} (${f.direction}): ${f.score > 0 ? '+' : ''}${f.score}đ
+                            </span>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+
+                    <!-- Khắc Ứng Thực Địa (Section H) -->
+                    ${d.qimen.joey_strategy.evidential_omens ? `
+                      <div class="tc-omen-box">
+                        <div class="tc-omen-title">👁️ KHẮC ỨNG THỰC ĐỊA (30 PHÚT ĐẦU):</div>
+                        <div class="tc-omen-body">
+                          <div>• <strong>Hiện tượng chính (${d.qimen.joey_strategy.evidential_omens.door_omen.door_name}):</strong> ${d.qimen.joey_strategy.evidential_omens.door_omen.prime_phenomenon}</div>
+                          <div>• <strong>Tín hiệu nhận biết:</strong> ${d.qimen.joey_strategy.evidential_omens.door_omen.signals.join(' • ')}</div>
+                          <div class="tc-omen-sub">• <em>Quy tắc: Khi xuất hành hoặc khởi sự trong vòng 30 phút, gặp ít nhất 1 điềm báo trên là trường năng lượng đã kích hoạt thành công.</em></div>
+                        </div>
+                      </div>
+                    ` : ''}
+                  </div>
+                ` : ''}
+
                 ${d.qimen.details && d.qimen.details.length > 0 ? `
                   <div class="tc-qimen-details">
                     ${d.qimen.details.map(dt => `<div>• ${dt}</div>`).join('')}
@@ -551,10 +611,13 @@
             </div>
             <div class="tc-hours-grid">
               ${(d.ranked_hours || []).map(h => `
-                <div class="tc-hour-card ${h.rank <= 2 ? 'rank-top' : ''}">
-                  <div class="tc-hour-name">Giờ ${h.hour_chi}</div>
+                <div class="tc-hour-card ${h.rank <= 2 ? 'rank-top' : ''} ${h.is_five_disharmony ? 'disharmony-hour' : ''}">
+                  <div class="tc-hour-name">
+                    Giờ ${h.hour_chi}
+                    ${h.is_five_disharmony ? '<span class="tc-hour-veto" title="Phạm Ngũ Bất Ngộ Thời (Thất Sát)">⚠️ Veto</span>' : ''}
+                  </div>
                   <div class="tc-hour-time">${h.solar_time_range}</div>
-                  <div class="tc-hour-rank">Bậc ${h.rank}</div>
+                  <div class="tc-hour-rank">${h.is_five_disharmony ? 'Ngũ Bất Ngộ' : 'Bậc ' + h.rank}</div>
                 </div>
               `).join('')}
             </div>
