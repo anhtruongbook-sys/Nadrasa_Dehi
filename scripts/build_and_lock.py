@@ -19,6 +19,15 @@ def load_token():
                 t = f.read().strip()
         except Exception:
             pass
+    if not t:
+        try:
+            proc = subprocess.run(['git', 'credential', 'fill'], input='protocol=https\nhost=github.com\n', text=True, capture_output=True)
+            for line in proc.stdout.splitlines():
+                if line.startswith('password='):
+                    t = line.split('=', 1)[1]
+                    break
+        except Exception:
+            pass
     return t
 
 def get_current_repo():
@@ -35,9 +44,20 @@ def get_current_repo():
         pass
     return 'anhtruongbook-sys/Nadrasa_Dehi'
 
+def get_tag():
+    try:
+        if os.path.exists('.github/workflows/build_mobile_apk.yml'):
+            with open('.github/workflows/build_mobile_apk.yml', 'r', encoding='utf-8') as f:
+                for line in f:
+                    if 'tag_name:' in line:
+                        return line.split('tag_name:')[-1].strip()
+    except Exception:
+        pass
+    return 'v2.5.0'
+
 TOKEN = load_token()
 REPO = get_current_repo()
-TAG = 'v2.2.5'
+TAG = get_tag()
 
 def get_latest_commit():
     try:
@@ -90,30 +110,38 @@ def download_apk():
         'User-Agent': 'Mozilla/5.0',
         'Authorization': f'Bearer {TOKEN}'
     })
-    downloaded = 0
-    try:
-        with urllib.request.urlopen(req) as resp:
-            rel_data = json.loads(resp.read().decode('utf-8'))
-            for asset in rel_data.get('assets', []):
-                asset_name = asset.get('name')
-                if asset_name.endswith('.apk'):
-                    asset_id = asset.get('id')
-                    asset_api_url = f'https://api.github.com/repos/{REPO}/releases/assets/{asset_id}'
-                    print(f'Downloading {asset_name} (id {asset_id}, {asset.get("size")/1024/1024:.1f} MB)...')
-                    dl_req = urllib.request.Request(asset_api_url, headers={
-                        'User-Agent': 'Mozilla/5.0',
-                        'Authorization': f'Bearer {TOKEN}',
-                        'Accept': 'application/octet-stream'
-                    })
-                    with urllib.request.urlopen(dl_req) as dl_resp:
-                        with open(asset_name, 'wb') as f:
-                            f.write(dl_resp.read())
-                    sz = os.path.getsize(asset_name) / (1024 * 1024)
-                    print(f'SUCCESS: Downloaded {asset_name} ({sz:.2f} MB)')
-                    downloaded += 1
-            return downloaded > 0
-    except Exception as e:
-        print(f"Error fetching release: {e}")
+    for attempt in range(10):
+        downloaded = 0
+        try:
+            with urllib.request.urlopen(req) as resp:
+                rel_data = json.loads(resp.read().decode('utf-8'))
+                assets = rel_data.get('assets', [])
+                if not assets:
+                    print(f"Waiting for release assets to finish uploading (attempt {attempt+1}/10)...")
+                    time.sleep(5)
+                    continue
+                for asset in assets:
+                    asset_name = asset.get('name')
+                    if asset_name.endswith('.apk'):
+                        asset_id = asset.get('id')
+                        asset_api_url = f'https://api.github.com/repos/{REPO}/releases/assets/{asset_id}'
+                        print(f'Downloading {asset_name} (id {asset_id}, {asset.get("size")/1024/1024:.1f} MB)...')
+                        dl_req = urllib.request.Request(asset_api_url, headers={
+                            'User-Agent': 'Mozilla/5.0',
+                            'Authorization': f'Bearer {TOKEN}',
+                            'Accept': 'application/octet-stream'
+                        })
+                        with urllib.request.urlopen(dl_req) as dl_resp:
+                            with open(asset_name, 'wb') as f:
+                                f.write(dl_resp.read())
+                        sz = os.path.getsize(asset_name) / (1024 * 1024)
+                        print(f'SUCCESS: Downloaded {asset_name} ({sz:.2f} MB)')
+                        downloaded += 1
+                if downloaded > 0:
+                    return True
+        except Exception as e:
+            print(f"Waiting for release {TAG} (attempt {attempt+1}/10): {e}")
+            time.sleep(5)
     return False
 
 if __name__ == '__main__':
