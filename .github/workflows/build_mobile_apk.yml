@@ -76,23 +76,35 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.2.5
-          name: "Neta Light & Huyền Học v2.2.5 (Liên Kết Trạch Cát Sang Lịch Ngày Chuẩn Xác & Đồng Bộ Đa Chiều)"
+          tag_name: v2.3.0
+          name: "Neta Light & Toàn Thư Kỳ Môn Joey Yap v2.3.0 (Kỳ Môn Độn Giáp 4 Pha Toàn Diện)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.2.5
-            - **Sửa Lỗi Chuyển Lịch Ngày ("Xem Lịch Ngày Này")**:
-              + Bấm `[📅 Xem Lịch Ngày Này]` trong Trạch Cát giờ đây nhảy **chính xác 100%** đến ngày được chọn trên Lịch Âm Dương.
-              + Tự động mở thẳng giao diện **Lịch Ngày (Daily Bloc Card)** hiển thị chi tiết: Thứ, Ngày Dương, Ngày Âm, Can Chi (Năm, Tháng, Ngày), Trực, Nhị Thập Bát Tú, Giờ Hoàng Đạo, Tiết Khí và giờ chuyển tiết chính xác.
-              + Đồng bộ trạng thái: Khi bấm `< Lịch Tháng` từ ngày bloc vừa mở, bảng lịch tháng tự động hiển thị đúng tháng và đánh dấu viền vàng nổi bật ô ngày đã chọn.
-            - **Khắc Phục Hoàn Toàn Lỗi Cài Đặt ("There was a problem parsing the package")**:
-              + **Tích Hợp Chứng Chỉ Ký Số Vĩnh Viễn (`netalight-release.keystore`)**: Chuẩn PKCS12 hiệu lực đến năm 2054, đảm bảo chữ ký đồng nhất tuyệt đối giữa mọi lần nâng cấp app, không bao giờ bị xung đột chữ ký với bản cũ.
-              + **Kích Hoạt Đồng Thời Ký Số Kép v1 (JAR Scheme) & v2 (Full APK Scheme)**: Khắc phục lỗi trình cài đặt gói mặc định trên Android không đọc được file APK tải từ Google Chrome Downloads.
-              + **Phát Hành Bản Siêu Nhẹ Tối Ưu `NetaLight-arm64.apk` (~40MB)**: Dung lượng giảm hơn 75% so với bản Universal (166MB), tải về trong 3 giây, loại bỏ hoàn toàn tình trạng file bị lỗi/đứt gãy khi tải trên mạng di động.
-              + **Bản `NetaLight.apk` (Universal Fat APK)**: Tương thích toàn diện cho mọi thiết bị Android.
-
-            - **Tích Hợp Toàn Diện 2 Trường Phái Trạch Nhật Tối Thượng**:
-              + **Huyền Không Đại Quái (64 Quẻ, 384 Hào Vi Phân & Tương Phối Tọa Sơn)**:
-                * Tự động tính Quái Khí (1-9) và Quái Vận (1-9) cho Ngày và Giờ Hoàng Đạo.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.3.0
+            Phiên bản nâng cấp đột phá tích hợp toàn bộ kho tàng thuật toán từ **"Qi Men Dun Jia Compendium (Second Edition)" của Joey Yap**:
+            
+            - **Pha 1: Trạch Cát Kỳ Môn Nâng Cao**:
+              + Thước ngắm không gian 4 phương vị (Trực Phù, Cửu Thiên, Sinh Môn, Thái Trùng Thiên Mã).
+              + Bộ lọc phủ quyết Ngũ Bất Ngộ Thời (Five Disharmony Hour) cho Giờ Hoàng Đạo.
+              + Nhận diện tự động 76 Cách Cục Toàn Thư (Tam Cát Bảo, Cửu Độn, Tam Trá, Ngũ Giả...).
+            
+            - **Pha 2: Kỳ Môn Chiến Lược & Tác Quyết Thực Địa**:
+              + Bản đồ tác chiến 9 cung tương tác trực quan với 5 mục tiêu chiến lược (Đàm Phán, Cầu Tài, Thăng Tiến, Thoát Hiểm, Hòa Giải).
+              + Thuyết Chủ - Khách luận phân định hành động chủ động vs tiếp nhận.
+              + Khắc ứng thực địa 30 phút theo Bát Môn & Cửu Tinh.
+            
+            - **Pha 3: Lớp Phủ Vector Kỳ Môn Trên La Kinh Vệ Tinh 36 Tầng**:
+              + Lớp vector SVG xoay đồng bộ góc la bàn thời gian thực (Tọa Lưng Đắc Thắng, Thái Trùng Thiên Mã, Ép Đối Tác, Vùng Bất Kích).
+              + Floating HUD điều khiển chiến lược linh hoạt, chuyển tiếp 1 chạm sang Kỳ Môn.
+              + Khắc phục hoàn toàn lỗi tràn chữ, tự động xuống dòng mềm mại trên mọi kích thước màn hình.
+            
+            - **Pha 4: Liên Kết Bát Tự Kỳ Môn Bản Mệnh & Pháp Hành Tọa Thiền Định Tâm**:
+              + Thẻ card **Kỳ Môn Bản Mệnh (Joey Yap Life Palace)** trong Bát Tự: Thần Hộ Mệnh, Cửu Tinh, Bát Môn, Cách Cục & Khẩu quyết kích hoạt tâm thức.
+              + Widget **Tọa Thiền Định Tâm Kỳ Môn** trong Pháp Hành: 4 hướng tọa thiền nạp khí thời gian thực (Trực Phù, Thái Âm, Cửu Địa, Cửu Thiên) kèm quy trình 3 bước Align - Command - Connect.
+            
+            - **Đóng gói 100% Hoạt động Offline**:
+              + **`NetaLight-arm64.apk` (~40MB)**: Bản siêu nhẹ tối ưu cho chip ARM64 (Snapdragon, MediaTek, Exynos).
+              + **`NetaLight.apk` (Universal Fat APK)**: Tương thích toàn diện cho mọi thiết bị Android.
+              + Chứng chỉ ký số vĩnh viễn PKCS12 (2054) & Ký số kép v1/v2 chống lỗi phân tích cú pháp gói.
                 * Chấm điểm và phân tích các cách cục cát tường: *Nhất Khí Thuần Thanh Quái Khí* (+6đ), *Hợp Thập Quái Khí* (+4đ), *Sinh Thành Hà Đồ* (1-6, 2-7, 3-8, 4-9) (+3đ), *Đồng Quái Vận* (+3đ), *Quái Vận Hợp Thập* (+3đ).
                 * Phối hợp Tọa Sơn La Kinh: Tự động đánh giá Sinh Nhập (+3đ), Tỷ Hòa (+2đ), Khắc Xuất (+1đ) và **VETO LOẠI BỎ NGAY LẬP TỨC** nếu phạm *Khắc Nhập Tọa Sơn* (Đại kỵ).
               + **Kỳ Môn Tam Nguyên (5 Quy Tắc Vàng Trương Chí Xuân & Khắc Ứng Cửu Tinh)**:
