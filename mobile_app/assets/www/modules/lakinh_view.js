@@ -178,44 +178,73 @@
         <!-- Floating QMDJ Strategic HUD Card (Phase 3) -->
         <div id="lakinh-qmdj-floating-hud" class="lakinh-glass-panel" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
           <div class="qmdj-hud-header">
-            <span class="qmdj-hud-title">⚔️ KỲ MÔN CHIẾN LƯỢC</span>
-            <span class="qmdj-hud-time" id="qmdj-hud-time">Giờ Hiện Tại</span>
+            <div class="qmdj-hud-title-group">
+              <span class="qmdj-hud-title">⚔️ KỲ MÔN CHIẾN LƯỢC</span>
+              <button type="button" id="btn-qmdj-hud-time-picker" class="qmdj-hud-time-btn" title="Bấm để đổi Ngày &amp; Giờ tác chiến">
+                <span class="qmdj-clock-icon">🕒</span>
+                <span id="qmdj-hud-time">Giờ Hiện Tại</span>
+                <span class="qmdj-time-edit-badge">✏️ Đổi giờ</span>
+              </button>
+              <button type="button" id="btn-qmdj-reset-now" class="qmdj-hud-reset-btn" title="Quay về giờ hiện tại thực tế" style="${state.qmdjStratDate ? 'display: inline-flex;' : 'display: none;'}">
+                ↺ Hiện tại
+              </button>
+            </div>
             <div class="qmdj-hud-actions">
-              <button type="button" id="btn-qmdj-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn ô chiến lược">– Thu gọn</button>
+              <button type="button" id="btn-qmdj-hud-guide" class="ray-hud-action-btn guide" title="Xem hướng dẫn giải nghĩa các phương vị chiến lược">ℹ️ Hướng dẫn</button>
+              <button type="button" id="btn-qmdj-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn ô chiến lược">${state.isQmdjStratHudCollapsed ? '+ Mở rộng' : '– Thu gọn'}</button>
               <button type="button" id="btn-qmdj-hud-close" class="ray-hud-action-btn close" title="Tắt lớp chiến lược">✕ Tắt</button>
             </div>
           </div>
+
+          <!-- Thanh Tóm Tắt Khi Thu Gọn (Compact Summary Strip) -->
+          <div id="qmdj-hud-compact-summary" class="qmdj-hud-compact-summary" style="${state.isQmdjStratHudCollapsed ? 'display: flex;' : 'display: none;'}">
+            <span class="compact-pill green" id="compact-hud-back">🟢 Tọa: Đang tính...</span>
+            <span class="compact-pill purple" id="compact-hud-aud">🎯 Ép: Đang tính...</span>
+            <span class="compact-pill gold" id="compact-hud-horse">🐎 Mã: Đang tính...</span>
+          </div>
+
           <!-- 5 Mục Tiêu Tác Chiến Mini Pills -->
-          <div class="qmdj-hud-pills">
+          <div class="qmdj-hud-pills" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: flex;'}">
             <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán</button>
             <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'wealth' ? 'active' : ''}" data-goal="wealth">💰 Cầu Tài</button>
             <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'career' ? 'active' : ''}" data-goal="career">📈 Thăng Tiến</button>
             <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'escape' ? 'active' : ''}" data-goal="escape">🐎 Thoát Hiểm</button>
             <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'dispute' ? 'active' : ''}" data-goal="dispute">🤝 Hòa Giải</button>
           </div>
-          <!-- 4 Chỉ số chiến thuật trực quan -->
-          <div class="qmdj-hud-body" id="qmdj-hud-body">
+
+          <!-- Các chỉ số chiến thuật trực quan -->
+          <div class="qmdj-hud-body" id="qmdj-hud-body" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: grid;'}">
             <div class="qmdj-hud-item green">
-              <span class="lbl">🟢 Tọa Lưng:</span>
+              <span class="lbl">🟢 Tọa Lưng (Ngồi quay lưng):</span>
               <strong id="qmdj-hud-back">Đang tính...</strong>
             </div>
             <div class="qmdj-hud-item purple">
-              <span class="lbl">🎯 Ép Đối Tác:</span>
+              <span class="lbl">🎯 Ép Đối Tác (Xếp đối thủ ngồi):</span>
               <strong id="qmdj-hud-audience">Đang tính...</strong>
             </div>
             <div class="qmdj-hud-item gold">
-              <span class="lbl">🟡 Thiên Mã:</span>
+              <span class="lbl">🟡 Thiên Mã (Hướng phá vây):</span>
               <strong id="qmdj-hud-horse">Đang tính...</strong>
             </div>
             <div class="qmdj-hud-item red">
-              <span class="lbl">🚫 Bất Kích:</span>
+              <span class="lbl">🚫 Bất Kích (Đại kỵ cấm ngồi):</span>
               <strong id="qmdj-hud-nonstrike">Đang tính...</strong>
             </div>
+            <div class="qmdj-hud-item amber" id="qmdj-hud-item-wealth" style="${state.qmdjStratGoal === 'wealth' ? 'display: flex;' : 'display: none;'}">
+              <span class="lbl">💰 Thu Tài (Sinh Môn nạp khí):</span>
+              <strong id="qmdj-hud-wealth">Đang tính...</strong>
+            </div>
           </div>
-          <div class="qmdj-hud-footer">
-            <button type="button" id="btn-qmdj-hud-view-detail" class="qmdj-hud-link-btn">
-              🔮 Mở Bàn Cờ 9 Cung &amp; Khắc Ứng ↗
-            </button>
+
+          <div class="qmdj-hud-footer" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: block;'}">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <button type="button" id="btn-qmdj-hud-open-time" class="qmdj-hud-link-btn" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.5); color: #38bdf8;">
+                🕒 Đổi Giờ Tác Chiến
+              </button>
+              <button type="button" id="btn-qmdj-hud-view-detail" class="qmdj-hud-link-btn">
+                🔮 Bàn Cờ 9 Cung ↗
+              </button>
+            </div>
           </div>
         </div>
 
@@ -721,6 +750,23 @@
                 <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'escape' ? 'active' : ''}" data-goal="escape">🐎 Thoát Hiểm</button>
                 <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'dispute' ? 'active' : ''}" data-goal="dispute" style="grid-column: span 2;">🤝 Hòa Giải / Pháp Lý</button>
               </div>
+
+              <!-- Thời gian áp dụng Kỳ Môn -->
+              <div class="sheet-control-sublabel" style="margin-top: 10px;">
+                <span>Thời gian áp dụng Kỳ Môn:</span>
+                <span class="val" id="sheet-val-qmdj-time" style="color: #facc15; font-weight: 700;">Giờ Hiện Tại</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-qmdj-change-time">
+                  🕒 Đổi Ngày &amp; Giờ Kế Hoạch
+                </button>
+                <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-qmdj-reset-time">
+                  ↺ Về Giờ Hiện Tại
+                </button>
+              </div>
+              <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-qmdj-guide" style="width: 100%; margin-bottom: 4px; color: #38bdf8; border-color: rgba(56, 189, 248, 0.45);">
+                ℹ️ Xem Cẩm Nang Hướng Dẫn Ý Nghĩa Các Hướng
+              </button>
             </div>
           </div>
 
@@ -877,6 +923,13 @@
     const qmdjSvg = document.getElementById('lakinh-qmdj-svg');
     if (qmdjSvg) {
       qmdjSvg.style.transform = `rotate(${-rounded}deg)`;
+      qmdjSvg.querySelectorAll('.qmdj-counter-rotate').forEach(el => {
+        const cx = el.getAttribute('data-cx');
+        const cy = el.getAttribute('data-cy');
+        if (cx && cy) {
+          el.setAttribute('transform', `rotate(${rounded}, ${cx}, ${cy})`);
+        }
+      });
     }
 
     const pillDeg = document.getElementById('hud-pill-deg');
@@ -1602,6 +1655,66 @@
     6: 'Tây Bắc (Càn 6)'
   };
 
+  const PALACE_DIRECTIONS = {
+    1: 'Bắc 0°',
+    8: 'Đông Bắc 45°',
+    3: 'Đông 90°',
+    4: 'Đông Nam 135°',
+    9: 'Nam 180°',
+    2: 'Tây Nam 225°',
+    7: 'Tây 270°',
+    6: 'Tây Bắc 315°'
+  };
+
+  function createSvgStrategicBadge({
+    deg,
+    radius,
+    width = 220,
+    height = 58,
+    bgColor = 'rgba(15, 23, 42, 0.95)',
+    borderColor = '#22c55e',
+    icon = '🟢',
+    title = 'TỌA LƯNG',
+    subtitle = 'Cung Tốn • 135°',
+    hint = 'Ngồi quay lưng hướng này',
+    hintColor = '#a7f3d0'
+  }) {
+    const pt = getRadialVector(deg, radius, radius);
+    const cx = parseFloat(pt.x1);
+    const cy = parseFloat(pt.y1);
+    const halfW = width / 2;
+    const halfH = height / 2;
+    const bx = (cx - halfW).toFixed(1);
+    const by = (cy - halfH).toFixed(1);
+    const curRot = state.rotation || 0;
+
+    return `
+      <g class="qmdj-counter-rotate" data-cx="${cx}" data-cy="${cy}" transform="rotate(${curRot}, ${cx}, ${cy})">
+        <!-- Nền Đậm Chống Nhiễu 36 Tầng La Kinh -->
+        <rect x="${bx}" y="${by}" width="${width}" height="${height}" rx="10" 
+              fill="${bgColor}" 
+              stroke="${borderColor}" stroke-width="2.5" 
+              filter="drop-shadow(0 4px 12px rgba(0,0,0,0.92))" />
+        <!-- Dòng 1: Tiêu đề & Icon nổi bật -->
+        <text x="${cx}" y="${(parseFloat(by) + 18).toFixed(1)}" fill="${borderColor}" font-size="16" font-weight="900" 
+              text-anchor="middle" dominant-baseline="middle" letter-spacing="0.5">
+          ${icon} ${title}
+        </text>
+        <!-- Dòng 2: Cung vị & Góc độ -->
+        <text x="${cx}" y="${(parseFloat(by) + 35).toFixed(1)}" fill="#ffffff" font-size="13" font-weight="800" 
+              text-anchor="middle" dominant-baseline="middle">
+          ${subtitle}
+        </text>
+        ${hint ? `
+        <!-- Dòng 3: Ý nghĩa hành động thực tế -->
+        <text x="${cx}" y="${(parseFloat(by) + 48).toFixed(1)}" fill="${hintColor}" font-size="10.5" font-weight="600" 
+              text-anchor="middle" dominant-baseline="middle">
+          ${hint}
+        </text>` : ''}
+      </g>
+    `;
+  }
+
   function getAnnularSectorPath(centerDeg, r1, r2, spanDeg = 45) {
     const half = spanDeg / 2;
     const a1 = (centerDeg - half) * Math.PI / 180;
@@ -1733,9 +1846,21 @@
         const deg = PALACE_DEG[pNum];
         if (deg !== undefined) {
           const pathD = getAnnularSectorPath(deg, 425, 475, 45);
-          svgHtml += `<path d="${pathD}" fill="rgba(239, 68, 68, 0.20)" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4" />`;
-          const pt = getRadialVector(deg, 450, 450);
-          svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#f87171" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle">🚫</text>`;
+          svgHtml += `<path d="${pathD}" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4,4" />`;
+          const dirStr = PALACE_DIRECTIONS[pNum] || `${deg}°`;
+          svgHtml += createSvgStrategicBadge({
+            deg,
+            radius: 450,
+            width: 175,
+            height: 38,
+            bgColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: '#ef4444',
+            icon: '🚫',
+            title: 'BẤT KÍCH (TRÁNH)',
+            subtitle: `${PALACE_NAMES[pNum]} • ${dirStr}`,
+            hint: 'Cấm ngồi hoặc tấn công',
+            hintColor: '#fca5a5'
+          });
         }
       });
 
@@ -1744,9 +1869,21 @@
         const deg = PALACE_DEG[pNum];
         if (deg !== undefined) {
           const pathD = getAnnularSectorPath(deg, 220, 415, 45);
-          svgHtml += `<path d="${pathD}" fill="rgba(168, 85, 247, 0.22)" stroke="#a855f7" stroke-width="2.5" stroke-dasharray="5,4" />`;
-          const pt = getRadialVector(deg, 320, 320);
-          svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#d8b4fe" font-size="15" font-weight="bold" text-anchor="middle" dominant-baseline="middle">🎯 ÉP ĐỐI TÁC</text>`;
+          svgHtml += `<path d="${pathD}" fill="rgba(168, 85, 247, 0.28)" stroke="#a855f7" stroke-width="2.5" stroke-dasharray="5,4" />`;
+          const dirStr = PALACE_DIRECTIONS[pNum] || `${deg}°`;
+          svgHtml += createSvgStrategicBadge({
+            deg,
+            radius: 325,
+            width: 215,
+            height: 58,
+            bgColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: '#a855f7',
+            icon: '🎯',
+            title: 'ÉP ĐỐI TÁC',
+            subtitle: `${PALACE_NAMES[pNum]} • ${dirStr}`,
+            hint: 'Xếp đối thủ ngồi ở hướng này',
+            hintColor: '#e9d5ff'
+          });
         }
       });
 
@@ -1754,11 +1891,23 @@
       if (chiefPid && PALACE_DEG[chiefPid] !== undefined) {
         const deg = PALACE_DEG[chiefPid];
         const pathD = getAnnularSectorPath(deg, 200, 420, 45);
-        svgHtml += `<path d="${pathD}" fill="rgba(34, 197, 94, 0.28)" stroke="#22c55e" stroke-width="3.5" stroke-dasharray="6,3" />`;
+        svgHtml += `<path d="${pathD}" fill="rgba(34, 197, 94, 0.32)" stroke="#22c55e" stroke-width="3.5" stroke-dasharray="6,3" />`;
         const arrow = getRadialVector(deg, 220, 395);
         svgHtml += `<line x1="${arrow.x1}" y1="${arrow.y1}" x2="${arrow.x2}" y2="${arrow.y2}" stroke="#22c55e" stroke-width="4.5" marker-end="url(#qmdj-arrow-green)" filter="url(#qmdj-glow-green)" />`;
-        const pt = getRadialVector(deg, 310, 310);
-        svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#4ade80" font-size="16" font-weight="900" text-anchor="middle" dominant-baseline="middle" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.9))">🟢 TỌA LƯNG</text>`;
+        const dirStr = PALACE_DIRECTIONS[chiefPid] || `${deg}°`;
+        svgHtml += createSvgStrategicBadge({
+          deg,
+          radius: 310,
+          width: 225,
+          height: 60,
+          bgColor: 'rgba(15, 23, 42, 0.96)',
+          borderColor: '#22c55e',
+          icon: '🟢',
+          title: 'TỌA LƯNG (ĐẮC THẮNG)',
+          subtitle: `${PALACE_NAMES[chiefPid]} • ${dirStr}`,
+          hint: 'Bạn ngồi quay lưng vào đây',
+          hintColor: '#a7f3d0'
+        });
       }
 
       // 4. Nếu Mục Tiêu Cầu Tài: Đánh dấu Cung Thu Tài (Sinh Môn)
@@ -1769,9 +1918,21 @@
             const deg = PALACE_DEG[k];
             if (deg !== undefined && parseInt(k) !== chiefPid) {
               const pathD = getAnnularSectorPath(deg, 260, 415, 45);
-              svgHtml += `<path d="${pathD}" fill="rgba(245, 158, 11, 0.25)" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,4" />`;
-              const pt = getRadialVector(deg, 340, 340);
-              svgHtml += `<text x="${pt.x1}" y="${pt.y1}" fill="#facc15" font-size="15" font-weight="bold" text-anchor="middle" dominant-baseline="middle">💰 THU TÀI</text>`;
+              svgHtml += `<path d="${pathD}" fill="rgba(245, 158, 11, 0.28)" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,4" />`;
+              const dirStr = PALACE_DIRECTIONS[k] || `${deg}°`;
+              svgHtml += createSvgStrategicBadge({
+                deg,
+                radius: 340,
+                width: 215,
+                height: 58,
+                bgColor: 'rgba(15, 23, 42, 0.95)',
+                borderColor: '#f59e0b',
+                icon: '💰',
+                title: 'THU TÀI (SINH MÔN)',
+                subtitle: `${PALACE_NAMES[k]} • ${dirStr}`,
+                hint: 'Đón khách VIP, chốt hợp đồng',
+                hintColor: '#fef08a'
+              });
             }
           }
         });
@@ -1783,8 +1944,19 @@
         svgHtml += `<line x1="${arrow.x1}" y1="${arrow.y1}" x2="${arrow.x2}" y2="${arrow.y2}" stroke="#eab308" stroke-width="4" stroke-dasharray="8,4" filter="url(#qmdj-glow-gold)" marker-end="url(#qmdj-arrow-gold)" />`;
         const pt = getRadialVector(shDeg, 445, 445);
         svgHtml += `<circle cx="${pt.x1}" cy="${pt.y1}" r="12" fill="#eab308" stroke="#ffffff" stroke-width="2" />`;
-        const ptTxt = getRadialVector(shDeg, 380, 380);
-        svgHtml += `<text x="${ptTxt.x1}" y="${ptTxt.y1}" fill="#fef08a" font-size="14" font-weight="900" text-anchor="middle" dominant-baseline="middle" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.95))">🐎 THIÊN MÃ</text>`;
+        svgHtml += createSvgStrategicBadge({
+          deg: shDeg,
+          radius: 390,
+          width: 205,
+          height: 56,
+          bgColor: 'rgba(15, 23, 42, 0.95)',
+          borderColor: '#eab308',
+          icon: '🐎',
+          title: 'THIÊN MÃ (PHÁ VÂY)',
+          subtitle: `Chi ${shBranch} • ${shDeg.toFixed(1)}°`,
+          hint: 'Hướng xuất hành / rút lui',
+          hintColor: '#fef08a'
+        });
       }
 
       svgContent.innerHTML = svgHtml;
@@ -1792,35 +1964,74 @@
 
     // Cập nhật Floating HUD
     const hudTime = document.getElementById('qmdj-hud-time');
+    const btnResetNow = document.getElementById('btn-qmdj-reset-now');
+    const sheetValTime = document.getElementById('sheet-val-qmdj-time');
     const hudBack = document.getElementById('qmdj-hud-back');
     const hudAud = document.getElementById('qmdj-hud-audience');
     const hudHorse = document.getElementById('qmdj-hud-horse');
     const hudNonstrike = document.getElementById('qmdj-hud-nonstrike');
+    const hudWealthItem = document.getElementById('qmdj-hud-item-wealth');
+    const hudWealth = document.getElementById('qmdj-hud-wealth');
 
-    if (hudTime) hudTime.textContent = canChiStr ? `${timeStr} (${canChiStr})` : timeStr;
+    const compactBack = document.getElementById('compact-hud-back');
+    const compactAud = document.getElementById('compact-hud-aud');
+    const compactHorse = document.getElementById('compact-hud-horse');
+
+    const isCustomTime = !!state.qmdjStratDate;
+    if (btnResetNow) btnResetNow.style.display = isCustomTime ? 'inline-flex' : 'none';
+
+    const fullTimeStr = canChiStr ? `${timeStr} (${canChiStr})` : timeStr;
+    const displayTimeStr = isCustomTime ? `${fullTimeStr} ⏰ Kế Hoạch` : fullTimeStr;
+    if (hudTime) hudTime.textContent = displayTimeStr;
+    if (sheetValTime) sheetValTime.textContent = displayTimeStr;
 
     document.querySelectorAll('.qmdj-hud-pill-btn, .sheet-qmdj-goal-btn').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-goal') === state.qmdjStratGoal);
     });
 
+    const bName = PALACE_NAMES[chiefPid] || `Cung ${chiefPid}`;
+    const bDir = PALACE_DIRECTIONS[chiefPid] || '';
     if (hudBack) {
-      const bName = PALACE_NAMES[chiefPid] || `Cung ${chiefPid}`;
-      hudBack.innerHTML = `<span class="hud-sector">${bName}</span> <span class="hud-note">(Thu sinh khí, át vía)</span>`;
+      hudBack.innerHTML = `<span class="hud-sector">${bName} (${bDir})</span> <span class="hud-note">(Đón Trực Phù trợ lực, át vía đối phương)</span>`;
+    }
+    if (compactBack) {
+      compactBack.textContent = `🟢 Tọa: ${bName.split(' ')[0]}`;
     }
 
+    const aNames = audiencePids.map(p => `${PALACE_NAMES[p]} (${PALACE_DIRECTIONS[p] || ''})`).join(', ');
     if (hudAud) {
-      const aNames = audiencePids.map(p => PALACE_NAMES[p] || `Cung ${p}`).join(', ');
-      hudAud.innerHTML = `<span class="hud-sector">${aNames}</span> <span class="hud-note">(Tiêu hao ý chí đối phương)</span>`;
+      hudAud.innerHTML = `<span class="hud-sector">${aNames}</span> <span class="hud-note">(Phạm Tử/Kinh Môn, làm đối phương phân tâm)</span>`;
+    }
+    if (compactAud) {
+      compactAud.textContent = `🎯 Ép: ${audiencePids.map(p => (PALACE_NAMES[p] || '').split(' ')[0]).join(',')}`;
     }
 
+    const hName = PALACE_NAMES[shPid] || `Cung ${shPid}`;
     if (hudHorse) {
-      const hName = PALACE_NAMES[shPid] || `Cung ${shPid}`;
-      hudHorse.innerHTML = `<span class="hud-sector">${hName} - Chi ${shBranch}</span> <span class="hud-note">(Xuất hành phá vây)</span>`;
+      hudHorse.innerHTML = `<span class="hud-sector">${hName} (Chi ${shBranch} • ${shDeg.toFixed(1)}°)</span> <span class="hud-note">(Xuất hành phá vây, giải thoát bế tắc)</span>`;
+    }
+    if (compactHorse) {
+      compactHorse.textContent = `🐎 Mã: ${shBranch}`;
     }
 
+    const nsNames = nonStrikePids.map(p => `${PALACE_NAMES[p]} (${PALACE_DIRECTIONS[p] || ''})`).join(', ');
     if (hudNonstrike) {
-      const nsNames = nonStrikePids.map(p => PALACE_NAMES[p] || `Cung ${p}`).join(', ');
-      hudNonstrike.innerHTML = `<span class="hud-sector">${nsNames}</span> <span class="hud-note">(Cấm đối đầu)</span>`;
+      hudNonstrike.innerHTML = `<span class="hud-sector">${nsNames}</span> <span class="hud-note">(Kỵ đối đầu, cấm ngồi xuất phát)</span>`;
+    }
+
+    if (hudWealthItem) {
+      hudWealthItem.style.display = (state.qmdjStratGoal === 'wealth') ? 'flex' : 'none';
+      if (hudWealth) {
+        let wealthPids = [];
+        Object.keys(analysis.palaces || {}).forEach(k => {
+          const p = analysis.palaces[k];
+          if (p.men === 'Sinh Môn' || (p.raw && p.raw.men === '生门') || p.door === 'Sinh') {
+            if (parseInt(k) !== chiefPid) wealthPids.push(k);
+          }
+        });
+        const wStr = wealthPids.map(p => `${PALACE_NAMES[p]} (${PALACE_DIRECTIONS[p] || ''})`).join(', ') || '---';
+        hudWealth.innerHTML = `<span class="hud-sector">${wStr}</span> <span class="hud-note">(Đón tài khí, ký kết hợp đồng, mở hàng)</span>`;
+      }
     }
   }
 
@@ -4478,6 +4689,373 @@
       : 'Đã tắt lớp chiến lược Kỳ Môn');
   }
 
+  function openQmdjTimeModal() {
+    const modalBox = document.getElementById('lakinh-modal-container');
+    if (!modalBox) return;
+
+    closeBottomSheet();
+
+    let curDate = state.qmdjStratDate ? new Date(state.qmdjStratDate) : new Date();
+    
+    const pad = n => String(n).padStart(2, '0');
+    const formatYMD = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const formatHM = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+    const CAN_CHI_HOURS = [
+      { chi: 'Tý', range: '23h - 01h', h: 0, m: 0, icon: '🐀' },
+      { chi: 'Sửu', range: '01h - 03h', h: 2, m: 0, icon: '🐂' },
+      { chi: 'Dần', range: '03h - 05h', h: 4, m: 0, icon: '🐅' },
+      { chi: 'Mão', range: '05h - 07h', h: 6, m: 0, icon: '🐈' },
+      { chi: 'Thìn', range: '07h - 09h', h: 8, m: 0, icon: '🐉' },
+      { chi: 'Tỵ', range: '09h - 11h', h: 10, m: 0, icon: '🐍' },
+      { chi: 'Ngọ', range: '11h - 13h', h: 12, m: 0, icon: '🐎' },
+      { chi: 'Mùi', range: '13h - 15h', h: 14, m: 0, icon: '🐐' },
+      { chi: 'Thân', range: '15h - 17h', h: 16, m: 0, icon: '🐒' },
+      { chi: 'Dậu', range: '17h - 19h', h: 18, m: 0, icon: '🐓' },
+      { chi: 'Tuất', range: '19h - 21h', h: 20, m: 0, icon: '🐕' },
+      { chi: 'Hợi', range: '21h - 23h', h: 22, m: 0, icon: '🐖' }
+    ];
+
+    function getHourChi(h) {
+      const MAP = [
+        { chi: 'Tý', match: [23, 0] },
+        { chi: 'Sửu', match: [1, 2] },
+        { chi: 'Dần', match: [3, 4] },
+        { chi: 'Mão', match: [5, 6] },
+        { chi: 'Thìn', match: [7, 8] },
+        { chi: 'Tỵ', match: [9, 10] },
+        { chi: 'Ngọ', match: [11, 12] },
+        { chi: 'Mùi', match: [13, 14] },
+        { chi: 'Thân', match: [15, 16] },
+        { chi: 'Dậu', match: [17, 18] },
+        { chi: 'Tuất', match: [19, 20] },
+        { chi: 'Hợi', match: [21, 22] }
+      ];
+      const found = MAP.find(item => item.match.includes(h));
+      return found ? found.chi : 'Tý';
+    }
+
+    let tempDate = new Date(curDate);
+
+    function renderModalContent() {
+      const curH = tempDate.getHours();
+      const activeChi = getHourChi(curH);
+
+      let canChiDayStr = '';
+      let canChiHourStr = '';
+      let solarTermStr = '';
+      let isDisharmony = false;
+
+      if (global.NetaCalendarEngine) {
+        const full = global.NetaCalendarEngine.getFullDayInfo(tempDate);
+        if (full) {
+          if (full.canChiDay) canChiDayStr = `${full.canChiDay.can} ${full.canChiDay.chi}`;
+          if (full.canChiHour) canChiHourStr = `${full.canChiHour.can} ${full.canChiHour.chi}`;
+        }
+        if (typeof global.NetaCalendarEngine.getSolarTerm === 'function') {
+          solarTermStr = global.NetaCalendarEngine.getSolarTerm(tempDate.getDate(), tempDate.getMonth() + 1, tempDate.getFullYear());
+        }
+      }
+
+      if (global.JoeyYapQMDJEngine && typeof global.JoeyYapQMDJEngine.isDisharmonyHour === 'function' && canChiDayStr && canChiHourStr) {
+        const dStem = canChiDayStr.split(' ')[0] || '';
+        const hStem = canChiHourStr.split(' ')[0] || '';
+        isDisharmony = global.JoeyYapQMDJEngine.isDisharmonyHour(dStem, hStem);
+      }
+
+      modalBox.innerHTML = `
+        <div class="lakinh-modal-overlay" id="modal-qmdj-time-overlay">
+          <div class="lakinh-glass-panel lakinh-modal-dialog qmdj-time-modal-dialog">
+            <div class="lakinh-modal-header">
+              <div class="lakinh-modal-title">
+                🕒 ĐỔI GIỜ TÁC CHIẾN KỲ MÔN
+              </div>
+              <button class="lakinh-modal-close" id="btn-close-qmdj-time-modal">✕</button>
+            </div>
+
+            <!-- Hướng dẫn ngắn -->
+            <div class="qmdj-time-modal-desc">
+              Chọn thời điểm diễn ra cuộc gặp, phỏng vấn, đàm phán hoặc xuất hành để tính toán phương vị Kỳ Môn chiến lược trên La Kinh.
+            </div>
+
+            <!-- Khối 1: Chọn Ngày -->
+            <div class="qmdj-time-section">
+              <div class="qmdj-time-section-title">📅 1. CHỌN NGÀY THỰC HIỆN</div>
+              <div class="qmdj-time-quick-days">
+                <button type="button" class="qmdj-quick-btn" id="btn-qmdj-quick-today">Hôm nay</button>
+                <button type="button" class="qmdj-quick-btn" id="btn-qmdj-quick-tomorrow">Ngày mai</button>
+                <button type="button" class="qmdj-quick-btn" id="btn-qmdj-quick-in2days">+2 ngày</button>
+                <button type="button" class="qmdj-quick-btn" id="btn-qmdj-quick-now">↺ Giờ Hiện Tại</button>
+              </div>
+              <div class="qmdj-time-input-row" style="margin-top: 8px;">
+                <label for="qmdj-time-picker-date">Ngày Dương lịch:</label>
+                <input type="date" id="qmdj-time-picker-date" class="qmdj-native-datetime-input" value="${formatYMD(tempDate)}" />
+              </div>
+            </div>
+
+            <!-- Khối 2: Chọn 12 Giờ Can Chi Kỳ Môn -->
+            <div class="qmdj-time-section">
+              <div class="qmdj-time-section-title">⏱️ 2. CHỌN GIỜ KỲ MÔN (12 THỜI THẦN)</div>
+              <div class="qmdj-12-hours-grid">
+                ${CAN_CHI_HOURS.map(ch => {
+                  const isSel = (ch.chi === activeChi);
+                  return `
+                    <button type="button" class="qmdj-hour-card ${isSel ? 'active' : ''}" data-hour="${ch.h}" data-min="${ch.m}">
+                      <span class="hour-icon">${ch.icon}</span>
+                      <span class="hour-chi">Giờ ${ch.chi}</span>
+                      <span class="hour-range">${ch.range}</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+              <div class="qmdj-time-input-row" style="margin-top: 8px;">
+                <label for="qmdj-time-picker-exact">Giờ : Phút cụ thể:</label>
+                <input type="time" id="qmdj-time-picker-exact" class="qmdj-native-datetime-input" value="${formatHM(tempDate)}" />
+              </div>
+            </div>
+
+            <!-- Khối 3: Thẻ Xem Trước Trạng Thái Kỳ Môn -->
+            <div class="qmdj-time-preview-card">
+              <div class="preview-title">🔮 BÀN CỜ DỰ KIẾN ÁP DỤNG:</div>
+              <div class="preview-time-str">
+                ${pad(tempDate.getHours())}:${pad(tempDate.getMinutes())} — Ngày ${pad(tempDate.getDate())}/${pad(tempDate.getMonth() + 1)}/${tempDate.getFullYear()}
+              </div>
+              <div class="preview-canchi">
+                <span>Trụ Ngày: <strong>${canChiDayStr || '---'}</strong></span>
+                <span>•</span>
+                <span>Trụ Giờ: <strong>${canChiHourStr || '---'}</strong></span>
+                ${solarTermStr ? `<span>• Tiết: <strong>${solarTermStr}</strong></span>` : ''}
+              </div>
+              ${isDisharmony ? `
+                <div class="preview-alert warning">
+                  ⚠️ <strong>Cảnh Báo:</strong> Giờ này phạm <em>Ngũ Bất Ngộ Thời</em> (Can Ngày khắc Can Giờ). Hãy thận trọng khi xuất hành hoặc ký kết đại sự!
+                </div>
+              ` : `
+                <div class="preview-alert success">
+                  ✅ Khí trường thông thuận, phù hợp cho việc triển khai tác chiến Kỳ Môn!
+                </div>
+              `}
+            </div>
+
+            <!-- Nút Hành Động -->
+            <div class="qmdj-time-modal-actions">
+              <button type="button" class="lakinh-action-btn secondary" id="btn-cancel-qmdj-time">Đóng</button>
+              <button type="button" class="lakinh-action-btn success" id="btn-apply-qmdj-time">🎯 Áp Dụng Lên La Kinh</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      bindModalEvents();
+    }
+
+    function bindModalEvents() {
+      const overlay = document.getElementById('modal-qmdj-time-overlay');
+      const btnClose = document.getElementById('btn-close-qmdj-time-modal');
+      const btnCancel = document.getElementById('btn-cancel-qmdj-time');
+      const btnApply = document.getElementById('btn-apply-qmdj-time');
+      const dateInput = document.getElementById('qmdj-time-picker-date');
+      const timeInput = document.getElementById('qmdj-time-picker-exact');
+
+      const closeMe = () => { if (overlay) overlay.remove(); };
+      if (btnClose) btnClose.onclick = closeMe;
+      if (btnCancel) btnCancel.onclick = closeMe;
+
+      // Quick buttons
+      const btnToday = document.getElementById('btn-qmdj-quick-today');
+      const btnTomorrow = document.getElementById('btn-qmdj-quick-tomorrow');
+      const btnIn2Days = document.getElementById('btn-qmdj-quick-in2days');
+      const btnNow = document.getElementById('btn-qmdj-quick-now');
+
+      if (btnToday) {
+        btnToday.onclick = () => {
+          const now = new Date();
+          tempDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
+          renderModalContent();
+        };
+      }
+      if (btnTomorrow) {
+        btnTomorrow.onclick = () => {
+          const now = new Date();
+          now.setDate(now.getDate() + 1);
+          tempDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
+          renderModalContent();
+        };
+      }
+      if (btnIn2Days) {
+        btnIn2Days.onclick = () => {
+          const now = new Date();
+          now.setDate(now.getDate() + 2);
+          tempDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
+          renderModalContent();
+        };
+      }
+      if (btnNow) {
+        btnNow.onclick = () => {
+          tempDate = new Date();
+          renderModalContent();
+        };
+      }
+
+      // Date input change
+      if (dateInput) {
+        dateInput.onchange = () => {
+          const val = dateInput.value;
+          if (val) {
+            const parts = val.split('-');
+            if (parts.length === 3) {
+              tempDate.setFullYear(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+              renderModalContent();
+            }
+          }
+        };
+      }
+
+      // Time input change
+      if (timeInput) {
+        timeInput.onchange = () => {
+          const val = timeInput.value;
+          if (val) {
+            const parts = val.split(':');
+            if (parts.length >= 2) {
+              tempDate.setHours(parseInt(parts[0]), parseInt(parts[1]), 0);
+              renderModalContent();
+            }
+          }
+        };
+      }
+
+      // Hour card clicks
+      document.querySelectorAll('.qmdj-hour-card').forEach(btn => {
+        btn.onclick = () => {
+          const h = parseInt(btn.getAttribute('data-hour') || '0');
+          const m = parseInt(btn.getAttribute('data-min') || '0');
+          tempDate.setHours(h, m, 0);
+          renderModalContent();
+        };
+      });
+
+      // Apply button
+      if (btnApply) {
+        btnApply.onclick = () => {
+          state.qmdjStratDate = new Date(tempDate);
+          closeMe();
+          updateQmdjStrategicLayer();
+          if (typeof showLaKinhToast === 'function') {
+            const pad = n => String(n).padStart(2, '0');
+            const str = `${pad(tempDate.getHours())}:${pad(tempDate.getMinutes())} ngày ${pad(tempDate.getDate())}/${pad(tempDate.getMonth() + 1)}`;
+            showLaKinhToast(`✅ Đã áp dụng Kỳ Môn cho lúc ${str}`);
+          }
+        };
+      }
+    }
+
+    renderModalContent();
+  }
+
+  function openQmdjGuideModal() {
+    const modalBox = document.getElementById('lakinh-modal-container');
+    if (!modalBox) return;
+
+    closeBottomSheet();
+
+    modalBox.innerHTML = `
+      <div class="lakinh-modal-overlay" id="modal-qmdj-guide-overlay">
+        <div class="lakinh-glass-panel lakinh-modal-dialog qmdj-guide-modal-dialog">
+          <div class="lakinh-modal-header">
+            <div class="lakinh-modal-title">
+              ⚔️ CẨM NANG KỲ MÔN CHIẾN LƯỢC JOEY YAP
+            </div>
+            <button class="lakinh-modal-close" onclick="document.getElementById('modal-qmdj-guide-overlay').remove()">✕</button>
+          </div>
+
+          <div class="qmdj-guide-scroll-body">
+            <p style="font-size: 0.78rem; line-height: 1.5; color: #cbd5e1; margin-bottom: 12px;">
+              Kỳ Môn Chiến Lược (Strategic Qi Men) của Joey Yap là nghệ thuật kiểm soát không gian, khí trường và tâm lý học hành vi trong đàm phán, kinh doanh và xuất hành thực địa:
+            </p>
+
+            <!-- Mục 1: Tọa Lưng -->
+            <div class="qmdj-guide-item green">
+              <div class="guide-item-header">
+                <span class="guide-icon">🟢</span>
+                <span class="guide-name">TỌA LƯNG ĐẮC THẮNG (Presenter Back-Facing)</span>
+              </div>
+              <div class="guide-item-content">
+                <strong>Ý nghĩa:</strong> Đây là phương vị có <em>Trực Phù (Thần thủ lĩnh tối cao)</em> ngự trị.<br>
+                <strong>Cách thực hiện:</strong> Khi vào phòng họp, quán cafe hay bàn đàm phán, hãy <strong>chủ động chọn vị trí ngồi sao cho LƯNG QUAY VỀ HƯỚNG NÀY</strong> (mặt nhìn ra hướng đối diện). Khí trường từ sau lưng sẽ tạo thế vững chãi như tựa núi, giúp tâm trí điềm tĩnh, lời nói có trọng lượng và tự nhiên áp đảo uy thế đối phương.
+              </div>
+            </div>
+
+            <!-- Mục 2: Ép Đối Tác -->
+            <div class="qmdj-guide-item purple">
+              <div class="guide-item-header">
+                <span class="guide-icon">🎯</span>
+                <span class="guide-name">ÉP ĐỐI TÁC (Audience Placement)</span>
+              </div>
+              <div class="guide-item-content">
+                <strong>Ý nghĩa:</strong> Phương vị rơi vào <em>Tử Môn</em> (bế tắc, nặng nề) hoặc <em>Kinh Môn</em> (nghi ngờ, dao động).<br>
+                <strong>Cách thực hiện:</strong> Hãy khéo léo <strong>mời hoặc xếp ghế cho đối thủ/đối tác ngồi quay lưng về hướng này</strong> (hoặc ta ngồi nhìn thẳng vào họ ở hướng này). Áp lực vô hình sẽ khiến họ dễ mất kiên nhẫn, thiếu quyết đoán, phòng thủ sơ hở và nhanh chóng nhượng bộ các điều khoản có lợi cho ta.
+              </div>
+            </div>
+
+            <!-- Mục 3: Thiên Mã -->
+            <div class="qmdj-guide-item gold">
+              <div class="guide-item-header">
+                <span class="guide-icon">🟡</span>
+                <span class="guide-name">THÁI TRÙNG THIÊN MÃ (Sky Horse Escape)</span>
+              </div>
+              <div class="guide-item-content">
+                <strong>Ý nghĩa:</strong> Thần mã cứu viện, phương vị dịch chuyển và giải vây thần tốc.<br>
+                <strong>Cách thực hiện:</strong> Khi gặp bế tắc, tranh cãi gay gắt, nguy cơ xung đột hoặc thế trận bất lợi, hãy <strong>rời vị trí, đi dạo hoặc xuất hành di chuyển theo hướng này</strong>. Bạn sẽ dễ dàng gặp quý nhân hỗ trợ, tìm thấy lối thoát an toàn và xoay chuyển cục diện.
+              </div>
+            </div>
+
+            <!-- Mục 4: Bất Kích -->
+            <div class="qmdj-guide-item red">
+              <div class="guide-item-header">
+                <span class="guide-icon">🚫</span>
+                <span class="guide-name">VÙNG BẤT KÍCH (Non-Striking Sector)</span>
+              </div>
+              <div class="guide-item-content">
+                <strong>Ý nghĩa:</strong> Phương vị phạm sát khí hoặc đối xung nguy hiểm.<br>
+                <strong>Cách thực hiện:</strong> <strong>TUYỆT ĐỐI TRÁNH:</strong> Không ngồi quay lưng vào đây, không tổ chức ký kết hợp đồng và không phát động tấn công đối phương từ hướng này để tránh thất bại bất ngờ.
+              </div>
+            </div>
+
+            <!-- Mục 5: Thu Tài -->
+            <div class="qmdj-guide-item amber">
+              <div class="guide-item-header">
+                <span class="guide-icon">💰</span>
+                <span class="guide-name">THU TÀI CHIÊU LỘC (Sinh Môn)</span>
+              </div>
+              <div class="guide-item-content">
+                <strong>Ý nghĩa:</strong> Cung vị nạp tài khí mạnh nhất của bàn cờ (khi kích hoạt mục tiêu <em>Cầu Tài</em>).<br>
+                <strong>Cách thực hiện:</strong> Hướng đón tiếp khách hàng lớn, bàn giao tiền bạc, đặt quầy thu ngân hoặc hướng đặt bút ký kết các thương vụ kinh doanh mang lại dòng tiền lớn.
+              </div>
+            </div>
+
+            <!-- Mục 6: Đổi Giờ Thực Hiện -->
+            <div class="qmdj-guide-item blue" style="border-left-color: #38bdf8;">
+              <div class="guide-item-header">
+                <span class="guide-icon">🕒</span>
+                <span class="guide-name">CÁCH ĐỔI GIỜ TÁC CHIẾN KẾ HOẠCH</span>
+              </div>
+              <div class="guide-item-content">
+                Để lập kế hoạch trước cho một cuộc gặp trong tương lai (không phải giờ hiện tại), bạn chỉ cần <strong>bấm vào ô giờ [ 🕒 Giờ ✏️ ] trên thanh chiến lược</strong> hoặc mở menu <strong>[ Công Cụ ] &gt; [ Đổi Ngày &amp; Giờ Kế Hoạch ]</strong> để chọn bất kỳ ngày nào và 12 Giờ Can Chi mong muốn!
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; text-align: center;">
+            <button type="button" class="lakinh-action-btn success" style="width: 100%;" onclick="document.getElementById('modal-qmdj-guide-overlay').remove()">
+              Đã Hiểu, Quay Lại La Kinh
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function bindQmdjStratEvents() {
     const btnQuick = document.getElementById('lakinh-btn-qmdj-strat');
     const btnClose = document.getElementById('btn-qmdj-hud-close');
@@ -4485,6 +5063,15 @@
     const btnSheetToggle = document.getElementById('sheet-btn-qmdj-strat-toggle');
     const btnViewDetail = document.getElementById('btn-qmdj-hud-view-detail');
     const btnSheetViewLink = document.getElementById('sheet-btn-qmdj-view-link');
+
+    const btnTimePicker = document.getElementById('btn-qmdj-hud-time-picker');
+    const btnResetNow = document.getElementById('btn-qmdj-reset-now');
+    const btnOpenTimeFooter = document.getElementById('btn-qmdj-hud-open-time');
+    const btnGuide = document.getElementById('btn-qmdj-hud-guide');
+
+    const btnSheetChangeTime = document.getElementById('sheet-btn-qmdj-change-time');
+    const btnSheetResetTime = document.getElementById('sheet-btn-qmdj-reset-time');
+    const btnSheetGuide = document.getElementById('sheet-btn-qmdj-guide');
 
     if (btnQuick) btnQuick.addEventListener('click', () => toggleQmdjStrategicLayer());
     if (btnSheetToggle) btnSheetToggle.addEventListener('click', () => toggleQmdjStrategicLayer());
@@ -4496,12 +5083,31 @@
         const hudBody = document.getElementById('qmdj-hud-body');
         const hudPills = document.querySelector('.qmdj-hud-pills');
         const hudFooter = document.querySelector('.qmdj-hud-footer');
+        const hudCompact = document.getElementById('qmdj-hud-compact-summary');
         if (hudBody) hudBody.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'grid';
         if (hudPills) hudPills.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'flex';
         if (hudFooter) hudFooter.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'block';
+        if (hudCompact) hudCompact.style.display = state.isQmdjStratHudCollapsed ? 'flex' : 'none';
         btnCollapse.textContent = state.isQmdjStratHudCollapsed ? '+ Mở rộng' : '– Thu gọn';
       });
     }
+
+    if (btnTimePicker) btnTimePicker.addEventListener('click', () => openQmdjTimeModal());
+    if (btnOpenTimeFooter) btnOpenTimeFooter.addEventListener('click', () => openQmdjTimeModal());
+    if (btnGuide) btnGuide.addEventListener('click', () => openQmdjGuideModal());
+    if (btnSheetChangeTime) btnSheetChangeTime.addEventListener('click', () => openQmdjTimeModal());
+    if (btnSheetGuide) btnSheetGuide.addEventListener('click', () => openQmdjGuideModal());
+
+    const resetToNow = () => {
+      state.qmdjStratDate = null;
+      updateQmdjStrategicLayer();
+      if (typeof showLaKinhToast === 'function') {
+        showLaKinhToast('↺ Đã quay về giờ hiện tại thực tế');
+      }
+    };
+
+    if (btnResetNow) btnResetNow.addEventListener('click', resetToNow);
+    if (btnSheetResetTime) btnSheetResetTime.addEventListener('click', resetToNow);
 
     // Goal buttons
     document.querySelectorAll('.qmdj-hud-pill-btn, .sheet-qmdj-goal-btn').forEach(btn => {

@@ -76,35 +76,28 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.3.0
-          name: "Neta Light & Toàn Thư Kỳ Môn Joey Yap v2.3.0 (Kỳ Môn Độn Giáp 4 Pha Toàn Diện)"
+          tag_name: v2.3.1
+          name: "Neta Light & Kỳ Môn Joey Yap v2.3.1 (Chọn Giờ Tác Chiến & Nhãn Chiến Lược Trực Quan)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.3.0
-            Phiên bản nâng cấp đột phá tích hợp toàn bộ kho tàng thuật toán từ **"Qi Men Dun Jia Compendium (Second Edition)" của Joey Yap**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.3.1
+            Bản cập nhật nâng cấp trải nghiệm trực chiến Kỳ Môn Độn Giáp trên La Kinh Vệ Tinh 36 Tầng:
             
-            - **Pha 1: Trạch Cát Kỳ Môn Nâng Cao**:
-              + Thước ngắm không gian 4 phương vị (Trực Phù, Cửu Thiên, Sinh Môn, Thái Trùng Thiên Mã).
-              + Bộ lọc phủ quyết Ngũ Bất Ngộ Thời (Five Disharmony Hour) cho Giờ Hoàng Đạo.
-              + Nhận diện tự động 76 Cách Cục Toàn Thư (Tam Cát Bảo, Cửu Độn, Tam Trá, Ngũ Giả...).
+            - **Hộp Thoại Chọn Ngày & Giờ Tác Chiến Kỳ Môn (Time Picker Modal)**:
+              + Cho phép chọn bất kỳ thời điểm nào trong tương lai (Hôm nay, Ngày mai, hoặc chọn ngày bất kỳ trên lịch).
+              + Bảng chọn nhanh 12 Giờ Can Chi Kỳ Môn (Tý, Sửu, Dần, Mão, Thìn, Tỵ, Ngọ, Mùi, Thân, Dậu, Tuất, Hợi) kèm khoảng giờ 24h và ô nhập giờ:phút cụ thể.
+              + Thẻ xem trước Can Chi Trụ Ngày, Can Chi Trụ Giờ, Tiết khí và cảnh báo tức thì *Ngũ Bất Ngộ Thời*.
+              + Nút chuyển đổi nhanh một chạm `[ ↺ Hiện Tại ]` để quay về thời gian thực bất cứ lúc nào.
             
-            - **Pha 2: Kỳ Môn Chiến Lược & Tác Quyết Thực Địa**:
-              + Bản đồ tác chiến 9 cung tương tác trực quan với 5 mục tiêu chiến lược (Đàm Phán, Cầu Tài, Thăng Tiến, Thoát Hiểm, Hòa Giải).
-              + Thuyết Chủ - Khách luận phân định hành động chủ động vs tiếp nhận.
-              + Khắc ứng thực địa 30 phút theo Bát Môn & Cửu Tinh.
+            - **Nhãn Chiến Lược Chống Nhiễu 36 Tầng (High-Contrast Upright Badges)**:
+              + Nhãn thẻ chip nguyên khối nền tối viền phát quang (`🟢 TỌA LƯNG`, `🎯 ÉP ĐỐI TÁC`, `🐎 THIÊN MÃ`, `🚫 BẤT KÍCH`, `💰 THU TÀI`).
+              + Hiển thị đầy đủ Tên Cung, Phương Hướng, Số Độ và Lời dặn hành động thực tế (*"Bạn ngồi quay lưng vào đây"*, *"Xếp đối thủ ngồi ở hướng này"*, *"Hướng phá vây rút lui"*).
+              + **Cơ chế Counter-Rotation**: Nhãn luôn tự động xoay ngược góc La Kinh để **LUÔN NẰM NGANG CHUẨN XÁC VỚI TẦM MẮT**, không bao giờ bị lộn ngược khi xoay đĩa.
             
-            - **Pha 3: Lớp Phủ Vector Kỳ Môn Trên La Kinh Vệ Tinh 36 Tầng**:
-              + Lớp vector SVG xoay đồng bộ góc la bàn thời gian thực (Tọa Lưng Đắc Thắng, Thái Trùng Thiên Mã, Ép Đối Tác, Vùng Bất Kích).
-              + Floating HUD điều khiển chiến lược linh hoạt, chuyển tiếp 1 chạm sang Kỳ Môn.
-              + Khắc phục hoàn toàn lỗi tràn chữ, tự động xuống dòng mềm mại trên mọi kích thước màn hình.
+            - **Cẩm Nang Kỳ Môn Chiến Lược (Guide Modal)**:
+              + Tích hợp nút `[ ℹ️ Hướng dẫn ]` ngay trên thanh HUD và Bottom Sheet giải nghĩa chi tiết toàn bộ nguyên lý và cách ứng dụng thực chiến trong phòng họp, quán cafe, đàm phán hợp đồng.
             
-            - **Pha 4: Liên Kết Bát Tự Kỳ Môn Bản Mệnh & Pháp Hành Tọa Thiền Định Tâm**:
-              + Thẻ card **Kỳ Môn Bản Mệnh (Joey Yap Life Palace)** trong Bát Tự: Thần Hộ Mệnh, Cửu Tinh, Bát Môn, Cách Cục & Khẩu quyết kích hoạt tâm thức.
-              + Widget **Tọa Thiền Định Tâm Kỳ Môn** trong Pháp Hành: 4 hướng tọa thiền nạp khí thời gian thực (Trực Phù, Thái Âm, Cửu Địa, Cửu Thiên) kèm quy trình 3 bước Align - Command - Connect.
-            
-            - **Đóng gói 100% Hoạt động Offline**:
-              + **`NetaLight-arm64.apk` (~40MB)**: Bản siêu nhẹ tối ưu cho chip ARM64 (Snapdragon, MediaTek, Exynos).
-              + **`NetaLight.apk` (Universal Fat APK)**: Tương thích toàn diện cho mọi thiết bị Android.
-              + Chứng chỉ ký số vĩnh viễn PKCS12 (2054) & Ký số kép v1/v2 chống lỗi phân tích cú pháp gói.
+            - **Thanh Tóm Tắt Thu Gọn (Compact Summary Strip)**:
+              + Khi thu gọn HUD, vẫn hiển thị thanh tóm tắt siêu gọn `🟢 Tọa: ... | 🎯 Ép: ... | 🐎 Mã: ...` kèm nút đổi giờ không che khuất mặt đĩa.
                 * Chấm điểm và phân tích các cách cục cát tường: *Nhất Khí Thuần Thanh Quái Khí* (+6đ), *Hợp Thập Quái Khí* (+4đ), *Sinh Thành Hà Đồ* (1-6, 2-7, 3-8, 4-9) (+3đ), *Đồng Quái Vận* (+3đ), *Quái Vận Hợp Thập* (+3đ).
                 * Phối hợp Tọa Sơn La Kinh: Tự động đánh giá Sinh Nhập (+3đ), Tỷ Hòa (+2đ), Khắc Xuất (+1đ) và **VETO LOẠI BỎ NGAY LẬP TỨC** nếu phạm *Khắc Nhập Tọa Sơn* (Đại kỵ).
               + **Kỳ Môn Tam Nguyên (5 Quy Tắc Vàng Trương Chí Xuân & Khắc Ứng Cửu Tinh)**:
