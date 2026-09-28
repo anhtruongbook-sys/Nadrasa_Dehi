@@ -2046,7 +2046,7 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '8.0';
+  const CURRENT_APP_VERSION = '8.5';
   function registerServiceWorker() {
     const isFlutterApp = (typeof window !== 'undefined' && (
       window.NativeBridge !== undefined ||
@@ -2072,18 +2072,22 @@
       if (savedVersion !== CURRENT_APP_VERSION) {
         if ('caches' in window) {
           caches.keys().then((keys) => {
-            keys.forEach((key) => {
-              caches.delete(key);
-            });
+            return Promise.all(keys.map((key) => caches.delete(key)));
+          }).then(() => {
+            localStorage.setItem('neta_poker_app_version', CURRENT_APP_VERSION);
+            if (savedVersion) {
+              window.location.reload();
+            }
           });
+        } else {
+          localStorage.setItem('neta_poker_app_version', CURRENT_APP_VERSION);
         }
-        localStorage.setItem('neta_poker_app_version', CURRENT_APP_VERSION);
       }
     } catch (e) {}
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=7.9')
+        navigator.serviceWorker.register('sw.js?v=8.5')
           .then((reg) => {
             reg.update();
           })
