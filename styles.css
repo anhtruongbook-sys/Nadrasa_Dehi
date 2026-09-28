@@ -12064,4 +12064,371 @@ body.theme-light .tarot-deep-error-box .error-msg {
   gap: 8px;
 }
 
+/* ==========================================================================
+   JOEY YAP QI MEN STRATEGIC EXECUTION TAB (PHA 2)
+   ========================================================================== */
+.jy-goal-selector {
+  background: rgba(20, 2, 5, 0.75);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+body.theme-light .jy-goal-selector {
+  background: #fdfaf3;
+  border-color: #e2d2b8;
+}
+
+.jy-goal-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #f5b041;
+  letter-spacing: 0.3px;
+}
+
+body.theme-light .jy-goal-title {
+  color: #b45309;
+}
+
+.jy-goal-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.jy-goal-btn {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  background: rgba(0, 0, 0, 0.3);
+  color: #d6d3d1;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+body.theme-light .jy-goal-btn {
+  background: #f5efe6;
+  border-color: #d6c5ad;
+  color: #57534e;
+}
+
+.jy-goal-btn:hover {
+  border-color: #f5b041;
+  color: #fff;
+}
+
+.jy-goal-btn.active {
+  background: linear-gradient(135deg, #f5b041, #d48806);
+  color: #1a0a00;
+  font-weight: 800;
+  border-color: #f5b041;
+  box-shadow: 0 2px 6px rgba(245, 176, 65, 0.35);
+}
+
+body.theme-light .jy-goal-btn.active {
+  background: linear-gradient(135deg, #b45309, #78350f);
+  color: #ffffff;
+  border-color: #b45309;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.25);
+}
+
+/* Strategic Summary Box */
+.jy-strat-summary {
+  background: rgba(147, 51, 234, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+
+body.theme-light .jy-strat-summary {
+  background: #faf5ff;
+  border-color: #d8b4fe;
+}
+
+.jy-strat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.jy-strat-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #d8b4fe;
+}
+
+body.theme-light .jy-strat-title {
+  color: #6b21a8;
+}
+
+.jy-strat-badges {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+/* 3x3 Battle Map */
+.jy-battle-map-wrapper {
+  margin-top: 10px;
+}
+
+.jy-battle-map-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #f5b041;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+body.theme-light .jy-battle-map-title {
+  color: #b45309;
+}
+
+.jy-battle-map {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.jy-battle-cell {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1.5px solid rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+  padding: 6px 7px;
+  min-height: 98px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3px;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.theme-light .jy-battle-cell {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.jy-battle-cell:hover {
+  transform: translateY(-1px);
+  border-color: #f5b041;
+}
+
+.jy-battle-cell.cell-vic1 {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.35) !important;
+}
+
+.jy-battle-cell.cell-vic3 {
+  border: 2px solid #eab308 !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.25) !important;
+}
+
+.jy-battle-cell.cell-horse {
+  border: 2px solid #38bdf8 !important;
+}
+
+.jy-battle-cell.cell-target {
+  border: 1.5px dashed #f43f5e !important;
+}
+
+.jy-cell-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.jy-cell-name {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+
+body.theme-light .jy-cell-name {
+  color: #0f172a;
+}
+
+.jy-cell-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+}
+
+.jy-badge {
+  font-size: 0.58rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.jy-badge.vic1 { background: #22c55e; color: #052e16; }
+.jy-badge.vic2 { background: #06b6d4; color: #083344; }
+.jy-badge.vic3 { background: #eab308; color: #422006; }
+.jy-badge.horse { background: #38bdf8; color: #082f49; }
+.jy-badge.restrict { background: #ef4444; color: #ffffff; }
+.jy-badge.target { background: #f43f5e; color: #ffffff; }
+
+.jy-cell-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jy-row-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  gap: 2px;
+}
+
+.jy-row-stems {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.66rem;
+  color: #94a3b8;
+}
+
+body.theme-light .jy-row-stems {
+  color: #64748b;
+}
+
+.jy-badge-kw {
+  font-size: 0.6rem;
+  color: #f87171;
+  font-weight: 700;
+  border: 1px solid #f87171;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.jy-cell-forms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.jy-form-tag {
+  font-size: 0.6rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.jy-form-tag.good { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+.jy-form-tag.bad { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+body.theme-light .jy-form-tag.good { background: #dcfce7; color: #15803d; }
+body.theme-light .jy-form-tag.bad { background: #fee2e2; color: #b91c1c; }
+
+/* Host vs Guest Box */
+.jy-host-guest-box {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-left: 3.5px solid #06b6d4;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+body.theme-light .jy-host-guest-box {
+  background: #f0fdfa;
+  border-color: #99f6e4;
+  border-left-color: #0d9488;
+}
+
+.jy-hg-header {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+body.theme-light .jy-hg-header {
+  color: #0f766e;
+}
+
+.jy-hg-body {
+  font-size: 0.73rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin-top: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+body.theme-light .jy-hg-body {
+  color: #334155;
+}
+
+.highlight-action {
+  color: #facc15;
+}
+
+body.theme-light .highlight-action {
+  color: #b45309;
+}
+
+/* Domain Useful Gods Box */
+.jy-domain-box {
+  background: rgba(20, 2, 5, 0.7);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-left: 3.5px solid #f5b041;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+body.theme-light .jy-domain-box {
+  background: #fffbeb;
+  border-color: #fde68a;
+  border-left-color: #d97706;
+}
+
+.jy-domain-header {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #f5b041;
+}
+
+body.theme-light .jy-domain-header {
+  color: #b45309;
+}
+
+.jy-domain-body {
+  font-size: 0.73rem;
+  color: #e2e8f0;
+  line-height: 1.45;
+  margin-top: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+body.theme-light .jy-domain-body {
+  color: #334155;
+}
+
+
 

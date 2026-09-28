@@ -9,7 +9,8 @@
 (function (global) {
   'use strict';
 
-  let currentQmdjMode = 'duongban'; // 'duongban' | 'amban' | 'phongthuy'
+  let currentQmdjMode = 'duongban'; // 'duongban' | 'amban' | 'phongthuy' | 'chienluoc'
+  let currentChienLuocGoal = 'deal'; // 'deal' | 'wealth' | 'career' | 'escape' | 'dispute'
   let currentQmdjDate = new Date();
   let currentChart = null;
   let currentPatterns = [];
@@ -460,7 +461,7 @@
     const { chart, patterns } = data;
     const isPt = currentQmdjMode === 'phongthuy';
 
-    // Render Sub-Tabs (3 chế độ)
+    // Render Sub-Tabs (4 chế độ)
     let modeTabsHtml = `
       <div class="qmdj-mode-tabs">
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'duongban' ? 'active' : ''}" data-mode="duongban">
@@ -472,11 +473,16 @@
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'phongthuy' ? 'active' : ''}" data-mode="phongthuy">
           🏡 Phong Thủy
         </button>
+        <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'chienluoc' ? 'active' : ''}" data-mode="chienluoc">
+          ⚔️ Tác Quyết
+        </button>
       </div>
     `;
 
     if (isPt) {
       renderPhongThuyMode(container, modeTabsHtml, chart);
+    } else if (currentQmdjMode === 'chienluoc') {
+      renderChienLuocMode(container, modeTabsHtml, chart);
     } else {
       renderTimeMode(container, modeTabsHtml, chart, patterns);
     }
@@ -648,6 +654,480 @@
 
     bindQmdjTimeEvents(chart, patterns);
     bindModeTabsEvents();
+  }
+
+  const STEM_ELEMENTS = {
+    'Giáp': 'Mộc', 'Ất': 'Mộc', 'Bính': 'Hỏa', 'Đinh': 'Hỏa', 'Mậu': 'Thổ',
+    'Kỷ': 'Thổ', 'Canh': 'Kim', 'Tân': 'Kim', 'Nhâm': 'Thủy', 'Quý': 'Thủy'
+  };
+
+  function evaluateHostGuest(dayStem, hourStem) {
+    const dElem = STEM_ELEMENTS[dayStem] || 'Mộc';
+    const hElem = STEM_ELEMENTS[hourStem] || 'Kim';
+
+    const FIVE_DISHARMONY_MAP = {
+      'Giáp': 'Canh', 'Ất': 'Tân', 'Bính': 'Nhâm', 'Đinh': 'Quý', 'Mậu': 'Giáp',
+      'Kỷ': 'Ất', 'Canh': 'Bính', 'Tân': 'Đinh', 'Nhâm': 'Mậu', 'Quý': 'Kỷ'
+    };
+
+    if (hourStem === FIVE_DISHARMONY_MAP[dayStem]) {
+      return {
+        role: "Ngũ Bất Ngộ Thời (Thất Sát)",
+        advice: "Khách khắc Chủ nghiêm trọng: Đại kỵ khởi sự, đàm phán hay xuất hành. Dễ gặp thất bại, trở mặt hoặc áp lực áp đảo.",
+        action: "Hủy bỏ hoặc hoãn kế hoạch sang giờ khác."
+      };
+    }
+    if (hElem === dElem) {
+      return {
+        role: "Chủ Khách Tỷ Hòa",
+        advice: `Cùng hành ${dElem}: Thế trận cân bằng, hợp tác đôi bên cùng có lợi (Win - Win).`,
+        action: "Đàm phán cởi mở, bình đẳng, đôi bên chia sẻ quyền lợi."
+      };
+    }
+    const ELEM_PROD = { 'Mộc': 'Hỏa', 'Hỏa': 'Thổ', 'Thổ': 'Kim', 'Kim': 'Thủy', 'Thủy': 'Mộc' };
+    const ELEM_CTRL = { 'Mộc': 'Thổ', 'Thổ': 'Thủy', 'Thủy': 'Hỏa', 'Hỏa': 'Kim', 'Kim': 'Mộc' };
+
+    if (ELEM_PROD[hElem] === dElem) {
+      return {
+        role: "Khách Sinh Chủ (Nên Làm Chủ)",
+        advice: `Khách (${hElem}) sinh Chủ (${dElem}): Khách mang lại lợi ích cho Chủ. Đối tác tự tìm đến, phục tùng ý kiến của bạn.`,
+        action: "Nên làm CHỦ: Ở yên vị trí, mời đối tác đến văn phòng của mình, để đối tác trình bày và ra giá trước."
+      };
+    }
+    if (ELEM_PROD[dElem] === hElem) {
+      return {
+        role: "Chủ Sinh Khách (Nên Làm Khách)",
+        advice: `Chủ (${dElem}) sinh Khách (${hElem}): Chủ hao tổn năng lượng cho Khách nếu ngồi thụ động.`,
+        action: "Nên làm KHÁCH: Chủ động hẹn gặp bên ngoài, chủ động đưa ra đề xuất và dẫn dắt cuộc thảo luận."
+      };
+    }
+    if (ELEM_CTRL[dElem] === hElem) {
+      return {
+        role: "Chủ Khắc Khách (Chủ Thắng Thế)",
+        advice: `Chủ (${dElem}) khắc Khách (${hElem}): Chủ hoàn toàn kiểm soát và áp chế được đối phương.`,
+        action: "Nên làm CHỦ: Giữ vững lập trường, quyết đoán đưa ra điều kiện, đối tác sẽ phải nhượng bộ."
+      };
+    }
+    if (ELEM_CTRL[hElem] === dElem) {
+      return {
+        role: "Khách Khắc Chủ (Khách Thắng Thế)",
+        advice: `Khách (${hElem}) khắc Chủ (${dElem}): Đối phương nắm thế thượng phong, dễ bị ép giá.`,
+        action: "Nên làm KHÁCH: Xuất kích bất ngờ, đổi vị trí đàm phán sang địa điểm trung lập, không để bị dồn vào chân tường."
+      };
+    }
+    return { role: "Bình Hòa", advice: "Tương tác bình thường.", action: "Hành xử linh hoạt." };
+  }
+
+  function evaluateUsefulGod(goal, palaces, skyHorse) {
+    if (goal === 'deal') {
+      let canhPalace = null, lucHopPalace = null;
+      for (const [pid, p] of Object.entries(palaces)) {
+        if (p.door && p.door.includes('Cảnh')) canhPalace = p;
+        if (p.deity && p.deity.includes('Lục Hợp')) lucHopPalace = p;
+      }
+      return {
+        title: "💼 Dụng Thần Đàm Phán & Ký Kết Hợp Đồng",
+        items: [
+          `Cung Hợp Đồng (Cảnh Môn): ${canhPalace ? `Cung ${canhPalace.palace} (${PALACE_DIRECTIONS[canhPalace.palace]}) đới ${canhPalace.hcs}/${canhPalace.ecs}` : 'Bình'}`,
+          `Cung Đối Tác (Lục Hợp): ${lucHopPalace ? `Cung ${lucHopPalace.palace} (${PALACE_DIRECTIONS[lucHopPalace.palace]}) đới ${lucHopPalace.door} Môn` : 'Bình'}`,
+          `Chiến thuật: Hợp đồng và Đối tác tương sinh là điềm đại cát, ký kết thuận lợi; nếu tương khắc đề phòng tranh chấp điều khoản.`
+        ]
+      };
+    }
+    if (goal === 'wealth') {
+      let sinhPalace = null, mauPalace = null;
+      for (const [pid, p] of Object.entries(palaces)) {
+        if (p.door && p.door.includes('Sinh')) sinhPalace = p;
+        if (p.hcs && p.hcs.includes('Mậu')) mauPalace = p;
+      }
+      return {
+        title: "💰 Dụng Thần Cầu Tài & Gọi Vốn Đầu Tư",
+        items: [
+          `Cung Lợi Nhuận (Sinh Môn): ${sinhPalace ? `Cung ${sinhPalace.palace} (${PALACE_DIRECTIONS[sinhPalace.palace]}) đới ${sinhPalace.star}` : 'Bình'}`,
+          `Cung Nguồn Vốn (Can Mậu): ${mauPalace ? `Cung ${mauPalace.palace} (${PALACE_DIRECTIONS[mauPalace.palace]})` : 'Bình'}`,
+          `Chiến thuật: Sinh Môn sinh cho cung Bản Mệnh là tiền bạc tự chảy về túi; Sinh Môn phạm Không Vong kỵ xuất tiền đầu tư lớn.`
+        ]
+      };
+    }
+    if (goal === 'career') {
+      let khaiPalace = null, trucPhuPalace = null;
+      for (const [pid, p] of Object.entries(palaces)) {
+        if (p.door && p.door.includes('Khai')) khaiPalace = p;
+        if (p.deity && p.deity.includes('Trực Phù')) trucPhuPalace = p;
+      }
+      return {
+        title: "📈 Dụng Thần Thăng Tiến & Công Danh",
+        items: [
+          `Cung Công Việc (Khai Môn): ${khaiPalace ? `Cung ${khaiPalace.palace} (${PALACE_DIRECTIONS[khaiPalace.palace]})` : 'Bình'}`,
+          `Cung Lãnh Đạo (Trực Phù): ${trucPhuPalace ? `Cung ${trucPhuPalace.palace} (${PALACE_DIRECTIONS[trucPhuPalace.palace]})` : 'Bình'}`,
+          `Chiến thuật: Khai Môn tương sinh Trực Phù được cấp trên trọng dụng nâng đỡ; Khai Môn lâm Kích Hình đề phòng kỷ luật khiển trách.`
+        ]
+      };
+    }
+    if (goal === 'escape') {
+      let doPalace = null;
+      for (const [pid, p] of Object.entries(palaces)) {
+        if (p.door && p.door.includes('Đỗ')) doPalace = p;
+      }
+      return {
+        title: "🐎 Dụng Thần Thoát Hiểm & Bảo Mật",
+        items: [
+          `Phương Vị Thiên Mã: ${skyHorse ? `${skyHorse.direction} (Cung ${skyHorse.palace_name} - Chi ${skyHorse.sky_horse_branch})` : 'Bình'}`,
+          `Cung Ẩn Danh (Đỗ Môn): ${doPalace ? `Cung ${doPalace.palace} (${PALACE_DIRECTIONS[doPalace.palace]})` : 'Bình'}`,
+          `Chiến thuật: Di chuyển nhanh về hướng Thiên Mã để giải cứu áp lực; Đỗ Môn bảo toàn thông tin cơ mật, đối thủ không thể dò xét.`
+        ]
+      };
+    }
+    let huuPalace = null, kinhPalace = null;
+    for (const [pid, p] of Object.entries(palaces)) {
+      if (p.door && p.door.includes('Hưu')) huuPalace = p;
+      if (p.door && p.door.includes('Kinh')) kinhPalace = p;
+    }
+    return {
+      title: "🤝 Dụng Thần Hòa Giải & Kiện Tụng",
+      items: [
+        `Cung Hòa Giải (Hưu Môn): ${huuPalace ? `Cung ${huuPalace.palace} (${PALACE_DIRECTIONS[huuPalace.palace]})` : 'Bình'}`,
+        `Cung Tranh Tụng (Kinh Môn): ${kinhPalace ? `Cung ${kinhPalace.palace} (${PALACE_DIRECTIONS[kinhPalace.palace]})` : 'Bình'}`,
+        `Chiến thuật: Tọa hướng Hưu Môn tiếp xúc đối phương với thái độ hòa nhã; tránh để đối phương kích động tại cung Kinh Môn.`
+      ]
+    };
+  }
+
+  /**
+   * Render Chế Độ Chiến Lược Tác Quyết (Joey Yap Strategic Execution)
+   */
+  function renderChienLuocMode(container, modeTabsHtml, chart) {
+    const d = currentQmdjDate;
+    const pad = n => String(n).padStart(2, '0');
+    const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())} - ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+
+    const pillars = {
+      year: chart.year ? translate(chart.year.cstb(true)) : '',
+      month: chart.month ? translate(chart.month.cstb(true)) : '',
+      day: chart.date ? translate(chart.date.cstb(true)) : '',
+      hour: chart.hour ? translate(chart.hour.cstb(true)) : ''
+    };
+
+    let solarTerm = "Xuân Phân";
+    let solarTermFullStr = "";
+    let std = null;
+    let lMonth = 2;
+    if (global.NetaCalendarEngine) {
+      if (typeof global.NetaCalendarEngine.getSolarTermDetails === 'function') {
+        std = global.NetaCalendarEngine.getSolarTermDetails(d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes());
+        solarTerm = std.term;
+        solarTermFullStr = std.fullDisplayStr;
+      } else {
+        solarTerm = global.NetaCalendarEngine.getSolarTerm(d.getDate(), d.getMonth() + 1, d.getFullYear());
+      }
+      const lInfo = global.NetaCalendarEngine.getFullDayInfo(d);
+      if (lInfo && lInfo.lunar && lInfo.lunar.month) lMonth = lInfo.lunar.month;
+    }
+
+    let dayVal = d.getDate();
+    let monthVal = d.getMonth() + 1;
+    let yearVal = d.getFullYear();
+    if (isQmdjLunarMode && global.NetaCalendarEngine) {
+      const lInfo = global.NetaCalendarEngine.getFullDayInfo(d);
+      dayVal = lInfo.lunar.day;
+      monthVal = lInfo.lunar.month;
+      yearVal = lInfo.lunar.year;
+    }
+
+    // Joey Yap Analysis
+    const joeyEngine = (typeof window !== 'undefined' && window.JoeyYapQMDJEngine) || global.JoeyYapQMDJEngine;
+    let analysis = null;
+    if (joeyEngine && typeof joeyEngine.analyzeQMDJCoreChart === 'function') {
+      analysis = joeyEngine.analyzeQMDJCoreChart(chart, {
+        dayCanChi: pillars.day,
+        hourCanChi: pillars.hour,
+        solarTerm: solarTerm,
+        lunarMonth: lMonth,
+        taskGoal: currentChienLuocGoal
+      });
+    }
+
+    const strat = (analysis && analysis.spatial_strategy) || {
+      presenter_back_facing: "Bắc (Khảm)",
+      emergency_escape_vector: "Đông Nam (Tốn)",
+      target_placement_sectors: ["Đông Nam (Tử Môn)", "Nam (Kinh Môn)"],
+      five_no_attacks: ["Bắc", "Tây Nam", "Tây Bắc", "Tây"]
+    };
+
+    const hostGuest = evaluateHostGuest(
+      (pillars.day || '').split(' ')[0],
+      (pillars.hour || '').split(' ')[0]
+    );
+
+    const usefulGod = evaluateUsefulGod(
+      currentChienLuocGoal,
+      (analysis && analysis.palaces) || {},
+      (analysis && analysis.sky_horse)
+    );
+
+    const roundVal = chart.round || 1;
+    const roundText = roundVal > 0 ? `Dương ${roundVal} Cục` : `Âm ${Math.abs(roundVal)} Cục`;
+
+    // 3x3 Lạc Thư Layout
+    const layout = [
+      [4, 9, 2],
+      [3, 5, 7],
+      [8, 1, 6]
+    ];
+
+    container.innerHTML = `
+      <div class="qmdj-view-container">
+        ${modeTabsHtml}
+
+        <!-- Unified Control Card (Thời Gian) -->
+        <div class="unified-ctrl-card">
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-lunar">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box" id="qmdj-ucc-date-box" title="Nhập ngày tháng hoặc mở lịch">
+              <input type="number" id="qmdj-input-day" class="num-box num-day" min="1" max="31" value="${dayVal}">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-month" class="num-box num-month" min="1" max="12" value="${monthVal}">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-year" class="num-box num-year" min="1900" max="2100" value="${yearVal}">
+              <button type="button" class="ucc-btn-year" id="btn-qmdj-year-jumper">⚡Năm</button>
+              <label class="btn-picker-cal" id="qmdj-btn-native-cal">
+                📅
+                <input type="datetime-local" id="qmdj-date-picker" value="${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}" class="native-hidden-date">
+              </label>
+            </div>
+          </div>
+
+          <!-- Row 2: Can Chi + Numeric Time -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
+              <select id="qmdj-select-canchi" class="select-canchi">
+                <option value="0" ${[23, 0].includes(d.getHours()) ? 'selected' : ''}>Tý (23-01h)</option>
+                <option value="2" ${[1, 2].includes(d.getHours()) ? 'selected' : ''}>Sửu (01-03h)</option>
+                <option value="4" ${[3, 4].includes(d.getHours()) ? 'selected' : ''}>Dần (03-05h)</option>
+                <option value="6" ${[5, 6].includes(d.getHours()) ? 'selected' : ''}>Mão (05-07h)</option>
+                <option value="8" ${[7, 8].includes(d.getHours()) ? 'selected' : ''}>Thìn (07-09h)</option>
+                <option value="10" ${[9, 10].includes(d.getHours()) ? 'selected' : ''}>Tỵ (09-11h)</option>
+                <option value="12" ${[11, 12].includes(d.getHours()) ? 'selected' : ''}>Ngọ (11-13h)</option>
+                <option value="14" ${[13, 14].includes(d.getHours()) ? 'selected' : ''}>Mùi (13-15h)</option>
+                <option value="16" ${[15, 16].includes(d.getHours()) ? 'selected' : ''}>Thân (15-17h)</option>
+                <option value="18" ${[17, 18].includes(d.getHours()) ? 'selected' : ''}>Dậu (17-19h)</option>
+                <option value="20" ${[19, 20].includes(d.getHours()) ? 'selected' : ''}>Tuất (19-21h)</option>
+                <option value="22" ${[21, 22].includes(d.getHours()) ? 'selected' : ''}>Hợi (21-23h)</option>
+              </select>
+              <div class="numeric-time-group">
+                <input type="number" id="qmdj-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(d.getHours())}">
+                <span class="num-colon">:</span>
+                <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}">
+              </div>
+            </div>
+            <div class="ucc-step-group">
+              <button type="button" class="btn-step" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (Can Chi)">◀ Giờ</button>
+              <button type="button" class="btn-step" id="btn-qmdj-now" title="Thời gian hiện tại">⏺ Giờ Này</button>
+              <button type="button" class="btn-step" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (Can Chi)">Giờ ▶</button>
+            </div>
+          </div>
+
+          <!-- Row 3: Info & Submit -->
+          <div class="ucc-row ucc-row-meta">
+            <div class="ucc-meta-info">
+              <span>${roundText}</span>
+              <span class="cuc-dot">•</span>
+              <span>${solarTerm}</span>
+            </div>
+            <button class="ucc-btn-submit" id="btn-qmdj-submit">⚔️ Tác Quyết</button>
+          </div>
+        </div>
+
+        <!-- 4 Pillars Summary Header -->
+        <div class="qmdj-pillars-strip">
+          <div class="q-pillar"><span class="q-lbl">NĂM</span><strong class="q-val">${pillars.year}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">THÁNG</span><strong class="q-val">${pillars.month}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">NGÀY</span><strong class="q-val">${pillars.day}</strong></div>
+          <div class="q-pillar highlight-hour"><span class="q-lbl">GIỜ</span><strong class="q-val">${pillars.hour}</strong></div>
+        </div>
+
+        <!-- Mục Tiêu Tác Chiến (Goal Selector) -->
+        <div class="jy-goal-selector">
+          <div class="jy-goal-title">🎯 CHỌN MỤC TIÊU TÁC CHIẾN (JOEY YAP COMPENDIUM):</div>
+          <div class="jy-goal-pills">
+            <button type="button" class="jy-goal-btn ${currentChienLuocGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán / Hợp Đồng</button>
+            <button type="button" class="jy-goal-btn ${currentChienLuocGoal === 'wealth' ? 'active' : ''}" data-goal="wealth">💰 Cầu Tài / Gọi Vốn</button>
+            <button type="button" class="jy-goal-btn ${currentChienLuocGoal === 'career' ? 'active' : ''}" data-goal="career">📈 Thăng Tiến / Thi Cử</button>
+            <button type="button" class="jy-goal-btn ${currentChienLuocGoal === 'escape' ? 'active' : ''}" data-goal="escape">🐎 Thoát Hiểm / Cứu Nguy</button>
+            <button type="button" class="jy-goal-btn ${currentChienLuocGoal === 'dispute' ? 'active' : ''}" data-goal="dispute">🤝 Hòa Giải / Pháp Lý</button>
+          </div>
+        </div>
+
+        <!-- Khối Bảng Tóm Tắt Tác Quyết (Strategic Dashboard) -->
+        <div class="jy-strat-summary">
+          <div class="jy-strat-header">
+            <span class="jy-strat-title">🧭 THƯỚC NGẮM CHIẾN LƯỢC KHÔNG GIAN</span>
+            <div class="jy-strat-badges">
+              ${analysis && analysis.is_vetoed ? '<span class="tc-badge tc-badge-warn">⚠️ Ngũ Bất Ngộ Thời</span>' : ''}
+              ${analysis && !analysis.is_vetoed && analysis.score >= 25 ? '<span class="tc-badge tc-badge-good">👑 Đại Cát Cách</span>' : ''}
+              <span class="tc-badge ${analysis && analysis.score >= 0 ? 'tc-badge-good' : 'tc-badge-warn'}">Điểm: ${analysis ? (analysis.score > 0 ? '+' : '') + analysis.score : 0}đ</span>
+            </div>
+          </div>
+          <div class="tc-spatial-grid">
+            <div class="tc-spatial-item victory">
+              <span class="tc-spatial-label">🟢 Tọa Lưng Đắc Thắng (Presenter Back-Facing):</span>
+              <span class="tc-spatial-val">${strat.presenter_back_facing}</span>
+              <small class="tc-spatial-tip">Ngồi quay lưng hướng này để tiếp nhận sinh khí, át vía đối phương</small>
+            </div>
+            <div class="tc-spatial-item horse">
+              <span class="tc-spatial-label">🟡 Thái Trùng Thiên Mã:</span>
+              <span class="tc-spatial-val">${strat.emergency_escape_vector}</span>
+              <small class="tc-spatial-tip">Phương vị xuất hành giải cứu khẩn cấp, thoát hiểm an toàn</small>
+            </div>
+            <div class="tc-spatial-item restrict">
+              <span class="tc-spatial-label">🔴 Vùng Bất Kích (Non-Striking):</span>
+              <span class="tc-spatial-val">${strat.five_no_attacks.join(' • ')}</span>
+              <small class="tc-spatial-tip">Tuyệt đối cấm hướng mặt hoặc đối đầu trực diện</small>
+            </div>
+            <div class="tc-spatial-item target">
+              <span class="tc-spatial-label">🎯 Bố Trí Đối Tác (Audience Placement):</span>
+              <span class="tc-spatial-val">${strat.target_placement_sectors.join(' • ')}</span>
+              <small class="tc-spatial-tip">Bố trí đối tác ngồi vào cung yếu để chiếm ưu thế đàm phán</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bản Đồ Tác Chiến 9 Cung Lạc Thư (3x3 Battle Map) -->
+        <div class="jy-battle-map-wrapper">
+          <div class="jy-battle-map-title">⚔️ BẢN ĐỒ TÁC CHIẾN 9 CUNG LẠC THƯ (CHẠM CUNG ĐỂ XEM CHI TIẾT)</div>
+          <div class="jy-battle-map">
+            ${layout.map(row => row.map(pNum => {
+              const p = (analysis && analysis.palaces && analysis.palaces[pNum]) || {};
+              const dir = PALACE_DIRECTIONS[pNum] || '';
+              const pName = PALACE_NAMES[pNum - 1] || `Cung ${pNum}`;
+
+              const isVic1 = analysis && analysis.three_victories && analysis.three_victories.first_victory.palace_id === pNum;
+              const isVic2 = analysis && analysis.three_victories && analysis.three_victories.second_victory.palace_id === pNum;
+              const isVic3 = analysis && analysis.three_victories && analysis.three_victories.third_victory.palace_id === pNum;
+              const isHorse = analysis && analysis.sky_horse && analysis.sky_horse.palace_id === pNum;
+              const isRestrict = analysis && analysis.five_restrictions && analysis.five_restrictions.restricted_sectors.some(s => s.palace_id === pNum);
+              const isTarget = p.door && (p.door.includes('Tử') || p.door.includes('Kinh'));
+
+              let cellClass = 'jy-battle-cell';
+              if (isVic1) cellClass += ' cell-vic1';
+              else if (isVic3) cellClass += ' cell-vic3';
+              else if (isHorse) cellClass += ' cell-horse';
+              else if (isTarget) cellClass += ' cell-target';
+
+              return `
+                <div class="${cellClass}" data-palace-index="${pNum - 1}" role="button" tabindex="0">
+                  <div class="jy-cell-head">
+                    <span class="jy-cell-name">${pName} (${dir})</span>
+                    <div class="jy-cell-badges">
+                      ${isVic1 ? '<span class="jy-badge vic1">👑 TỌA LƯNG</span>' : ''}
+                      ${isVic2 ? '<span class="jy-badge vic2">🦅 DƯƠNG BINH</span>' : ''}
+                      ${isVic3 ? '<span class="jy-badge vic3">💰 THU TÀI</span>' : ''}
+                      ${isHorse ? '<span class="jy-badge horse">🐎 THIÊN MÃ</span>' : ''}
+                      ${isRestrict ? '<span class="jy-badge restrict">🚫 BẤT KÍCH</span>' : ''}
+                      ${isTarget ? '<span class="jy-badge target">🎯 ÉP ĐỐI TÁC</span>' : ''}
+                    </div>
+                  </div>
+                  <div class="jy-cell-body">
+                    <div class="jy-row-main">
+                      <span class="jy-val-god ${getCatClass(p.deity)}">${p.deity || '—'}</span>
+                      <span class="jy-val-star ${getCatClass(p.star)}">${p.star || '—'}</span>
+                      <span class="jy-val-door ${getCatClass(p.door)}">${p.door ? p.door + ' Môn' : '—'}</span>
+                    </div>
+                    <div class="jy-row-stems">
+                      <span class="jy-stem">Thiên: <strong>${p.hcs || '—'}</strong></span>
+                      <span class="jy-stem">Địa: <strong>${p.ecs || '—'}</strong></span>
+                      ${p.isKongWang ? '<span class="jy-badge-kw">Không</span>' : ''}
+                    </div>
+                  </div>
+                  ${p.formations && p.formations.length > 0 ? `
+                    <div class="jy-cell-forms">
+                      ${p.formations.slice(0, 2).map(f => `
+                        <span class="jy-form-tag ${f.score > 0 ? 'good' : 'bad'}" title="${f.desc}">
+                          ${f.score > 0 ? '🟢' : '🔴'} ${f.name_vn}
+                        </span>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            }).join('')).join('')}
+          </div>
+        </div>
+
+        <!-- Khối Chủ - Khách Luận (Section E: Host vs Guest) -->
+        <div class="jy-host-guest-box">
+          <div class="jy-hg-header">
+            <span>⚖️ CHỦ - KHÁCH LUẬN: <strong>${hostGuest.role}</strong></span>
+          </div>
+          <div class="jy-hg-body">
+            <div>• <strong>Nhận định thế cuộc:</strong> ${hostGuest.advice}</div>
+            <div>• <strong>Chiến thuật hành động:</strong> <strong class="highlight-action">${hostGuest.action}</strong></div>
+          </div>
+        </div>
+
+        <!-- Khối Dụng Thần Chuyên Sâu (Section A: Useful Gods) -->
+        <div class="jy-domain-box">
+          <div class="jy-domain-header">${usefulGod.title}</div>
+          <div class="jy-domain-body">
+            ${usefulGod.items.map(it => `<div>• ${it}</div>`).join('')}
+          </div>
+        </div>
+
+        <!-- Khối Khắc Ứng Thực Địa (Section H: Evidential Verification) -->
+        ${analysis && analysis.evidential_omens ? `
+          <div class="tc-omen-box" style="margin-top: 10px;">
+            <div class="tc-omen-title">👁️ KHẮC ỨNG NGOẠI CẢNH THỰC ĐỊA (30 PHÚT ĐẦU):</div>
+            <div class="tc-omen-body">
+              <div>• <strong>Hiện tượng chính (${analysis.evidential_omens.door_omen.door_name}):</strong> ${analysis.evidential_omens.door_omen.prime_phenomenon}</div>
+              <div>• <strong>Tín hiệu nhận biết:</strong> ${analysis.evidential_omens.door_omen.signals.join(' • ')}</div>
+              <div class="tc-omen-sub">• <em>Quy tắc: Khi xuất hành hoặc khởi sự trong vòng 30 phút, nếu gặp ít nhất 1 điềm báo trên là trường năng lượng đã kích hoạt thành công.</em></div>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+
+      <!-- Palace Detail Modal -->
+      <div class="modal-overlay" id="qmdj-palace-modal" style="display: none;">
+        <div class="modal-dialog qmdj-palace-dialog">
+          <div class="guide-header">
+            <h2 id="qmdj-modal-title">🏰 Chi Tiết Cung Kỳ Môn</h2>
+            <button class="modal-close" id="qmdj-modal-close" aria-label="Đóng">&times;</button>
+          </div>
+          <div class="qmdj-modal-body" id="qmdj-modal-body">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    `;
+
+    bindQmdjTimeEvents(chart, (analysis && analysis.detected_formations) || []);
+    bindModeTabsEvents();
+    bindChienLuocEvents(chart, (analysis && analysis.detected_formations) || []);
+  }
+
+  function bindChienLuocEvents(chart, patterns) {
+    // Goal selector buttons
+    document.querySelectorAll('.jy-goal-btn').forEach(btn => {
+      btn.onclick = () => {
+        const goal = btn.getAttribute('data-goal');
+        if (goal && goal !== currentChienLuocGoal) {
+          currentChienLuocGoal = goal;
+          renderQmdj();
+        }
+      };
+    });
+
+    // Battle cells click to view palace detail modal
+    document.querySelectorAll('.jy-battle-cell').forEach(cell => {
+      cell.onclick = () => {
+        const pIndex = parseInt(cell.getAttribute('data-palace-index'));
+        openPalaceDetailModal(chart, patterns, pIndex);
+      };
+    });
   }
 
   /**
