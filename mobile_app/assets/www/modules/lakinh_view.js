@@ -54,10 +54,12 @@
     activeLayerName: 'googleSat',
     // Lớp Phủ Chiến Lược Kỳ Môn Độn Giáp (Joey Yap Compendium - Phase 3)
     isQmdjStratActive: false,
-    isQmdjStratHudCollapsed: false,
+    isQmdjStratHudCollapsed: true,
     qmdjStratGoal: 'deal', // 'deal' | 'wealth' | 'career' | 'escape' | 'dispute'
     qmdjStratDate: null,
-    // Phân Hệ Phong Thủy Tam Hợp Phái (Thầy Hạnh Nhật Tấn)
+    // Phân Hệ Phong Thủy Tam Hợp Phái
+    isTamHopActive: false,
+    isTamHopHudCollapsed: true, // Mặc định thu gọn siêu mỏng không che La Kinh
     tamHopThuyKhauDeg: 115.0, // Mặc định Thìn (Thủy Cục)
     tamHopDongChay: 'ta_dao_huu', // 'ta_dao_huu' (Dương thuận) | 'huu_dao_ta' (Âm nghịch)
     tamHopCanChu: 'Giáp',
@@ -141,6 +143,42 @@
             </defs>
             <g id="lakinh-qmdj-svg-content"></g>
           </svg>
+          <!-- Lớp Vector Phong Thủy Tam Hợp Phái (Thủy Khẩu, 4 Cung Cốt Tử, Hoàng Tuyền, Bát Sát, Tam Cát) -->
+          <svg id="lakinh-tamhop-svg" viewBox="0 0 1000 1000" style="${state.isTamHopActive ? '' : 'display: none;'}">
+            <defs>
+              <filter id="tamhop-glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="tamhop-glow-gold" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="tamhop-glow-red" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <marker id="tamhop-arrow-cyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#06b6d4" />
+              </marker>
+              <marker id="tamhop-arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+              </marker>
+              <marker id="tamhop-arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+              </marker>
+            </defs>
+            <g id="lakinh-tamhop-svg-content"></g>
+          </svg>
           <!-- Thập Đạo Chỉ Tuyến Trục Dọc (Hướng 12h - Tọa 6h) Chuẩn Xác Tuyệt Đối -->
           <div id="lakinh-target-pointer">
             <div class="pointer-line-vertical"></div>
@@ -182,80 +220,166 @@
           </div>
         </div>
 
-        <!-- Floating QMDJ Strategic HUD Card (Phase 3) -->
-        <div id="lakinh-qmdj-floating-hud" class="lakinh-glass-panel" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
-          <div class="qmdj-hud-header">
-            <div class="qmdj-hud-title-group">
-              <span class="qmdj-hud-title">⚔️ KỲ MÔN CHIẾN LƯỢC</span>
-              <button type="button" id="btn-qmdj-hud-time-picker" class="qmdj-hud-time-btn" title="Bấm để đổi Ngày &amp; Giờ tác chiến">
-                <span class="qmdj-clock-icon">🕒</span>
-                <span id="qmdj-hud-time">Giờ Hiện Tại</span>
-                <span class="qmdj-time-edit-badge">✏️ Đổi giờ</span>
-              </button>
-              <button type="button" id="btn-qmdj-reset-now" class="qmdj-hud-reset-btn" title="Quay về giờ hiện tại thực tế" style="${state.qmdjStratDate ? 'display: inline-flex;' : 'display: none;'}">
-                ↺ Hiện tại
-              </button>
+        <!-- Stack Gom Nhóm Các Mini Capsule & Floating HUD (Không Che La Kinh) -->
+        <div id="lakinh-hud-capsule-stack">
+          <!-- 1. Mini Card Thu Gọn Của Ray HUD -->
+          <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-card" style="display: none;">
+            <div class="ray-mini-header-row">
+              <div class="ray-mini-deg-box" id="btn-ray-mini-expand-header" title="Chạm để xem bảng thông số chi tiết">
+                <span class="ray-mini-icon">🎯</span>
+                <span class="ray-mini-deg" id="ray-mini-deg">0.0°</span>
+                <span class="hud-capsule-sep">•</span>
+                <span class="ray-mini-son" id="ray-mini-son">Sơn Tý (Khảm)</span>
+              </div>
+              <div class="ray-mini-actions">
+                <button type="button" id="btn-ray-mini-expand" class="ray-mini-btn-expand" title="Xem chi tiết">▾ Chi tiết</button>
+                <button type="button" id="btn-ray-mini-close" class="ray-mini-close-btn" title="Tắt tia ngắm">✕</button>
+              </div>
             </div>
-            <div class="qmdj-hud-actions">
-              <button type="button" id="btn-qmdj-hud-guide" class="ray-hud-action-btn guide" title="Xem hướng dẫn giải nghĩa các phương vị chiến lược">ℹ️ Hướng dẫn</button>
-              <button type="button" id="btn-qmdj-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn ô chiến lược">${state.isQmdjStratHudCollapsed ? '+ Mở rộng' : '– Thu gọn'}</button>
-              <button type="button" id="btn-qmdj-hud-close" class="ray-hud-action-btn close" title="Tắt lớp chiến lược">✕ Tắt</button>
-            </div>
-          </div>
-
-          <!-- Thanh Tóm Tắt Khi Thu Gọn (Compact Summary Strip) -->
-          <div id="qmdj-hud-compact-summary" class="qmdj-hud-compact-summary" style="${state.isQmdjStratHudCollapsed ? 'display: flex;' : 'display: none;'}">
-            <span class="compact-pill green" id="compact-hud-back">🟢 Tọa: Đang tính...</span>
-            <span class="compact-pill purple" id="compact-hud-aud">🎯 Ép: Đang tính...</span>
-            <span class="compact-pill gold" id="compact-hud-horse">🐎 Mã: Đang tính...</span>
-          </div>
-
-          <!-- 5 Mục Tiêu Tác Chiến Mini Pills -->
-          <div class="qmdj-hud-pills" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: flex;'}">
-            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán</button>
-            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'wealth' ? 'active' : ''}" data-goal="wealth">💰 Cầu Tài</button>
-            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'career' ? 'active' : ''}" data-goal="career">📈 Thăng Tiến</button>
-            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'escape' ? 'active' : ''}" data-goal="escape">🐎 Thoát Hiểm</button>
-            <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'dispute' ? 'active' : ''}" data-goal="dispute">🤝 Hòa Giải</button>
-          </div>
-
-          <!-- Các chỉ số chiến thuật trực quan -->
-          <div class="qmdj-hud-body" id="qmdj-hud-body" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: grid;'}">
-            <div class="qmdj-hud-item green">
-              <span class="lbl">🟢 Tọa Lưng (Ngồi quay lưng):</span>
-              <strong id="qmdj-hud-back">Đang tính...</strong>
-            </div>
-            <div class="qmdj-hud-item purple">
-              <span class="lbl">🎯 Ép Đối Tác (Xếp đối thủ ngồi):</span>
-              <strong id="qmdj-hud-audience">Đang tính...</strong>
-            </div>
-            <div class="qmdj-hud-item gold">
-              <span class="lbl">🟡 Thiên Mã (Hướng phá vây):</span>
-              <strong id="qmdj-hud-horse">Đang tính...</strong>
-            </div>
-            <div class="qmdj-hud-item red">
-              <span class="lbl">🚫 Bất Kích (Đại kỵ cấm ngồi):</span>
-              <strong id="qmdj-hud-nonstrike">Đang tính...</strong>
-            </div>
-            <div class="qmdj-hud-item amber" id="qmdj-hud-item-wealth" style="${state.qmdjStratGoal === 'wealth' ? 'display: flex;' : 'display: none;'}">
-              <span class="lbl">💰 Thu Tài (Sinh Môn nạp khí):</span>
-              <strong id="qmdj-hud-wealth">Đang tính...</strong>
+            <div class="ray-mini-hkdq-row" id="ray-mini-hkdq-strip" title="Chạm để xem bảng phân kim 64 Quẻ 384 Hào chi tiết">
+              <div class="hkdq-row-left">
+                <span class="hkdq-qp-icon">🔱</span>
+                <span class="hkdq-qp-que" id="ray-mini-que">Bát Thuần Khôn</span>
+              </div>
+              <div class="hkdq-row-right">
+                <span class="hkdq-qp-khivan" id="ray-mini-khivan">Khí 1 • Vận 1</span>
+                <span class="hkdq-qp-sep">•</span>
+                <span class="hkdq-qp-hao" id="ray-mini-hao">Hào 6</span>
+                <span class="hkdq-qp-tag chinh" id="ray-mini-badge">⛰️ Chính Thần V9</span>
+              </div>
             </div>
           </div>
 
-          <div class="qmdj-hud-footer" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: block;'}">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-              <button type="button" id="btn-qmdj-hud-open-time" class="qmdj-hud-link-btn" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.5); color: #38bdf8;">
-                🕒 Đổi Giờ Tác Chiến
-              </button>
-              <button type="button" id="btn-qmdj-hud-view-detail" class="qmdj-hud-link-btn">
-                🔮 Bàn Cờ 9 Cung ↗
+          <!-- 2. Floating QMDJ Strategic HUD Card (Phase 3) -->
+          <div id="lakinh-qmdj-floating-hud" class="lakinh-glass-panel ${state.isQmdjStratHudCollapsed ? 'is-collapsed' : ''}" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
+            <div class="qmdj-hud-header">
+              <div class="qmdj-hud-title-group">
+                <span class="qmdj-hud-title">⚔️ KỲ MÔN CHIẾN LƯỢC</span>
+                <button type="button" id="btn-qmdj-hud-time-picker" class="qmdj-hud-time-btn" title="Bấm để đổi Ngày &amp; Giờ tác chiến">
+                  <span class="qmdj-clock-icon">🕒</span>
+                  <span id="qmdj-hud-time">Giờ Hiện Tại</span>
+                  <span class="qmdj-time-edit-badge">✏️ Đổi giờ</span>
+                </button>
+                <button type="button" id="btn-qmdj-reset-now" class="qmdj-hud-reset-btn" title="Quay về giờ hiện tại thực tế" style="${state.qmdjStratDate ? 'display: inline-flex;' : 'display: none;'}">
+                  ↺ Hiện tại
+                </button>
+              </div>
+              <div class="qmdj-hud-actions">
+                <button type="button" id="btn-qmdj-hud-guide" class="ray-hud-action-btn guide" title="Xem hướng dẫn giải nghĩa các phương vị chiến lược">ℹ️ Hướng dẫn</button>
+                <button type="button" id="btn-qmdj-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn ô chiến lược">${state.isQmdjStratHudCollapsed ? '+ Mở rộng' : '– Thu gọn'}</button>
+                <button type="button" id="btn-qmdj-hud-close" class="ray-hud-action-btn close" title="Tắt lớp chiến lược">✕ Tắt</button>
+              </div>
+            </div>
+
+            <!-- Thanh Tóm Tắt Khi Thu Gọn (Mini Capsule Cao ~32px Không Che La Kinh) -->
+            <div id="qmdj-hud-compact-summary" class="qmdj-hud-compact-summary" style="${state.isQmdjStratHudCollapsed ? 'display: flex;' : 'display: none;'}">
+              <span class="compact-pill green" id="compact-hud-back">🟢 Tọa: Đang tính...</span>
+              <span class="compact-pill purple" id="compact-hud-aud">🎯 Ép: Đang tính...</span>
+              <span class="compact-pill gold" id="compact-hud-horse">🐎 Mã: Đang tính...</span>
+            </div>
+
+            <!-- 5 Mục Tiêu Tác Chiến Mini Pills -->
+            <div class="qmdj-hud-pills" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: flex;'}">
+              <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán</button>
+              <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'wealth' ? 'active' : ''}" data-goal="wealth">💰 Cầu Tài</button>
+              <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'career' ? 'active' : ''}" data-goal="career">📈 Thăng Tiến</button>
+              <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'escape' ? 'active' : ''}" data-goal="escape">🐎 Thoát Hiểm</button>
+              <button type="button" class="qmdj-hud-pill-btn ${state.qmdjStratGoal === 'dispute' ? 'active' : ''}" data-goal="dispute">🤝 Hòa Giải</button>
+            </div>
+
+            <!-- Các chỉ số chiến thuật trực quan -->
+            <div class="qmdj-hud-body" id="qmdj-hud-body" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: grid;'}">
+              <div class="qmdj-hud-item green">
+                <span class="lbl">🟢 Tọa Lưng (Ngồi quay lưng):</span>
+                <strong id="qmdj-hud-back">Đang tính...</strong>
+              </div>
+              <div class="qmdj-hud-item purple">
+                <span class="lbl">🎯 Ép Đối Tác (Xếp đối thủ ngồi):</span>
+                <strong id="qmdj-hud-audience">Đang tính...</strong>
+              </div>
+              <div class="qmdj-hud-item gold">
+                <span class="lbl">🟡 Thiên Mã (Hướng phá vây):</span>
+                <strong id="qmdj-hud-horse">Đang tính...</strong>
+              </div>
+              <div class="qmdj-hud-item red">
+                <span class="lbl">🚫 Bất Kích (Đại kỵ cấm ngồi):</span>
+                <strong id="qmdj-hud-nonstrike">Đang tính...</strong>
+              </div>
+              <div class="qmdj-hud-item amber" id="qmdj-hud-item-wealth" style="${state.qmdjStratGoal === 'wealth' ? 'display: flex;' : 'display: none;'}">
+                <span class="lbl">💰 Thu Tài (Sinh Môn nạp khí):</span>
+                <strong id="qmdj-hud-wealth">Đang tính...</strong>
+              </div>
+            </div>
+
+            <div class="qmdj-hud-footer" style="${state.isQmdjStratHudCollapsed ? 'display: none;' : 'display: block;'}">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <button type="button" id="btn-qmdj-hud-open-time" class="qmdj-hud-link-btn" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.5); color: #38bdf8;">
+                  🕒 Đổi Giờ Tác Chiến
+                </button>
+                <button type="button" id="btn-qmdj-hud-view-detail" class="qmdj-hud-link-btn">
+                  🔮 Bàn Cờ 9 Cung ↗
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Floating Tam Hợp HUD Card (Phong Thủy Tam Hợp Phái) -->
+          <div id="lakinh-tamhop-floating-hud" class="lakinh-glass-panel ${state.isTamHopHudCollapsed ? 'is-collapsed' : ''}" style="${state.isTamHopActive ? '' : 'display: none;'}">
+            <div class="tamhop-hud-header">
+              <div class="tamhop-hud-title-group">
+                <span class="tamhop-hud-title">🌊 TAM HỢP PHÁI</span>
+                <button type="button" id="btn-tamhop-hud-config" class="tamhop-hud-cfg-btn" title="Chỉnh sửa Thủy Khẩu &amp; Gia Chủ">
+                  <span>⚙️</span>
+                  <span id="tamhop-hud-cuc-label">Thủy Cục</span>
+                </button>
+              </div>
+              <div class="tamhop-hud-actions">
+                <button type="button" id="btn-tamhop-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn / Mở rộng">${state.isTamHopHudCollapsed ? '+ Mở rộng' : '– Thu gọn'}</button>
+                <button type="button" id="btn-tamhop-hud-close" class="ray-hud-action-btn close" title="Tắt lớp Tam Hợp">✕ Tắt</button>
+              </div>
+            </div>
+
+            <!-- Thanh Tóm Tắt Khi Thu Gọn (Mini Capsule Cao ~32px Không Che La Kinh) -->
+            <div id="tamhop-hud-compact-summary" class="tamhop-hud-compact-summary" style="${state.isTamHopHudCollapsed ? 'display: flex;' : 'display: none;'}">
+              <span class="tamhop-pill cyan" id="compact-th-khau">💧 Khẩu: Đang tính...</span>
+              <span class="tamhop-pill green" id="compact-th-sinh">🌱 Sinh: Đang tính...</span>
+              <span class="tamhop-pill gold" id="compact-th-vuong">👑 Vượng: Đang tính...</span>
+              <span class="tamhop-pill purple" id="compact-th-mo">⛩️ Mộ: Đang tính...</span>
+            </div>
+
+            <!-- Bảng Thông Số Chi Tiết Khi Mở Rộng -->
+            <div class="tamhop-hud-body" id="tamhop-hud-body" style="${state.isTamHopHudCollapsed ? 'display: none;' : 'display: grid;'}">
+              <div class="tamhop-hud-item cyan">
+                <span class="lbl">💧 Thủy Khẩu:</span>
+                <strong id="tamhop-hud-khau">Đang tính...</strong>
+              </div>
+              <div class="tamhop-hud-item green">
+                <span class="lbl">🌱 Vòng Trường Sinh:</span>
+                <strong id="tamhop-hud-sinh">Đang tính...</strong>
+              </div>
+              <div class="tamhop-hud-item red">
+                <span class="lbl">⚠️ Bát Lộ Hoàng Tuyền:</span>
+                <strong id="tamhop-hud-hoangtuyen">Đang tính...</strong>
+              </div>
+              <div class="tamhop-hud-item red">
+                <span class="lbl">🚫 Bát Sát Tiêu Vong:</span>
+                <strong id="tamhop-hud-batsat">Đang tính...</strong>
+              </div>
+              <div class="tamhop-hud-item gold">
+                <span class="lbl">💎 Tam Cát Thần Trợ:</span>
+                <strong id="tamhop-hud-tamcat">Đang tính...</strong>
+              </div>
+            </div>
+
+            <div class="tamhop-hud-footer" style="${state.isTamHopHudCollapsed ? 'display: none;' : 'display: block;'}">
+              <button type="button" id="btn-tamhop-hud-open-modal" class="tamhop-hud-link-btn">
+                🌊 Mở Thẩm Định Chuyên Sâu 6 Bước ↗
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Floating Ray HUD Card trên màn hình (Đầy đủ thông tin Quẻ & Hào theo tia) -->
+        <!-- Floating Ray HUD Card trên màn hình (Chi tiết khi mở rộng tia ngắm) -->
         <div id="lakinh-ray-floating-hud" class="lakinh-glass-panel" style="display: none;">
           <div class="ray-hud-header">
             <span class="ray-hud-title">🎯 TIA NGẮM PHÂN KIM</span>
@@ -266,13 +390,10 @@
             </div>
           </div>
           <div class="ray-hud-body">
-            <!-- 1. Sơn Hướng -->
             <div class="ray-hud-item">
               <span class="lbl">Sơn Hướng:</span>
               <strong id="ray-hud-son" style="color: #38bdf8;">Sơn Tý (Khảm • Thủy)</strong>
             </div>
-
-            <!-- 2. Quẻ Đại Quái (64 Quẻ) -->
             <div class="ray-hud-item">
               <span class="lbl">Đại Quái:</span>
               <span style="text-align: right;">
@@ -284,8 +405,6 @@
               <span id="ray-hud-que-range">Dải 337.5° – 343.1°</span>
               <span id="ray-hud-que-ha-thuong" style="color: #cbd5e1;">Thượng Tốn Hạ Khôn</span>
             </div>
-
-            <!-- 3. Hào Vi Phân (384 Hào) -->
             <div class="ray-hud-item" style="border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 3px; margin-top: 2px;">
               <span class="lbl">Hào Vị:</span>
               <span style="text-align: right;">
@@ -297,19 +416,14 @@
               <span id="ray-hud-hao-range">Dải: 341.25° – 342.19°</span>
               <span id="ray-hud-hao-amduong" style="color: #38bdf8;">Thuận (1 → 6)</span>
             </div>
-
-            <!-- 4. Lời khuyên Phong Thủy & Lục Thân Vận 9 -->
             <div id="ray-hud-advice-box" style="background: rgba(2, 132, 199, 0.12); border-left: 2px solid #38bdf8; padding: 4px 6px; border-radius: 4px; font-size: 0.68rem; color: #e2e8f0; line-height: 1.35; margin-top: 3px;">
               <div id="ray-hud-advice-van9" style="color: #facc15; font-weight: 600;">Linh Thần Vận 9</div>
               <div id="ray-hud-advice-text" style="color: #cbd5e1; margin-top: 1px;">Cần ĐỘNG KHÍ, mở Cửa, Cổng, nạp Thủy chiêu tài.</div>
             </div>
-
-            <!-- 5. So Hướng Nhà & Nút Xem 384 Hào -->
             <div class="ray-hud-item" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 4px; margin-top: 4px;">
               <span class="lbl">So Hướng Nhà:</span>
               <span id="ray-hud-diff" style="color: #f43f5e; font-weight: 700;">Trùng Chính Hướng</span>
             </div>
-
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; padding-top: 3px; border-top: 1px solid rgba(255,255,255,0.08);">
               <span id="ray-hud-ung-ky" style="color: #94a3b8; font-size: 0.63rem;"></span>
               <div style="display: flex; gap: 4px;">
@@ -320,37 +434,6 @@
                   🔱 Xem Đủ 6 Hào
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mini Card Thu Gọn Của Ray HUD - Đầy Đủ 100% Thông Tin Quẻ, Khí Vận, Lục Thân, Linh/Chính Thần (Chuẩn Mực Đối Xứng Hướng Nhà) -->
-        <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-card" style="display: none;">
-          <!-- Hàng 1: Độ Số & Sơn Của Tia Ngắm + Các Nút Điều Khiển -->
-          <div class="ray-mini-header-row">
-            <div class="ray-mini-deg-box" id="btn-ray-mini-expand-header" title="Chạm để xem bảng thông số chi tiết">
-              <span class="ray-mini-icon">🎯</span>
-              <span class="ray-mini-deg" id="ray-mini-deg">0.0°</span>
-              <span class="hud-capsule-sep">•</span>
-              <span class="ray-mini-son" id="ray-mini-son">Sơn Tý (Khảm)</span>
-            </div>
-            <div class="ray-mini-actions">
-              <button type="button" id="btn-ray-mini-expand" class="ray-mini-btn-expand" title="Xem chi tiết">▾ Chi tiết</button>
-              <button type="button" id="btn-ray-mini-close" class="ray-mini-close-btn" title="Tắt tia ngắm">✕</button>
-            </div>
-          </div>
-
-          <!-- Hàng 2: Huyền Không Đại Quái Của Tia Ngắm (Tên Quẻ, Khí Vận, Hào + Lục Thân, Linh/Chính Thần) -->
-          <div class="ray-mini-hkdq-row" id="ray-mini-hkdq-strip" title="Chạm để xem bảng phân kim 64 Quẻ 384 Hào chi tiết">
-            <div class="hkdq-row-left">
-              <span class="hkdq-qp-icon">🔱</span>
-              <span class="hkdq-qp-que" id="ray-mini-que">Bát Thuần Khôn</span>
-            </div>
-            <div class="hkdq-row-right">
-              <span class="hkdq-qp-khivan" id="ray-mini-khivan">Khí 1 • Vận 1</span>
-              <span class="hkdq-qp-sep">•</span>
-              <span class="hkdq-qp-hao" id="ray-mini-hao">Hào 6</span>
-              <span class="hkdq-qp-tag chinh" id="ray-mini-badge">⛰️ Chính Thần V9</span>
             </div>
           </div>
         </div>
@@ -375,7 +458,7 @@
               <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
             </div>
             <div class="lakinh-top-right-group">
-              <button class="lakinh-float-btn icon-only" id="lakinh-btn-tam-hop" title="Thẩm Định Phong Thủy Tam Hợp Phái (31 Bài Giảng)">
+              <button class="lakinh-float-btn icon-only" id="lakinh-btn-tam-hop" title="Thẩm Định Phong Thủy Tam Hợp Phái ">
                 🌊
               </button>
               <button class="lakinh-float-btn icon-only ${state.isQmdjStratActive ? 'active' : ''}" id="lakinh-btn-qmdj-strat" title="Bật/Tắt Lớp Chiến Lược Kỳ Môn (Joey Yap)">
@@ -742,7 +825,7 @@
               🌊 Quét Cao Độ DEM & Định Tứ Đại Cục
             </button>
             <button id="sheet-btn-tam-hop" class="lakinh-action-btn emerald">
-              🌊 Thẩm Định Phong Thủy Tam Hợp Phái (31 Bài Giảng)
+              🌊 Thẩm Định Phong Thủy Tam Hợp Phái 
             </button>
             <button id="sheet-btn-huyenkhong" class="lakinh-action-btn purple">
               ☯️ Lập Tinh Bàn Huyền Không Vận 9
@@ -954,6 +1037,18 @@
     if (qmdjSvg) {
       qmdjSvg.style.transform = `rotate(${-rounded}deg)`;
       qmdjSvg.querySelectorAll('.qmdj-counter-rotate').forEach(el => {
+        const cx = el.getAttribute('data-cx');
+        const cy = el.getAttribute('data-cy');
+        if (cx && cy) {
+          el.setAttribute('transform', `rotate(${rounded}, ${cx}, ${cy})`);
+        }
+      });
+    }
+
+    const tamHopSvg = document.getElementById('lakinh-tamhop-svg');
+    if (tamHopSvg) {
+      tamHopSvg.style.transform = `rotate(${-rounded}deg)`;
+      tamHopSvg.querySelectorAll('.tamhop-counter-rotate').forEach(el => {
         const cx = el.getAttribute('data-cx');
         const cy = el.getAttribute('data-cy');
         if (cx && cy) {
@@ -1789,7 +1884,339 @@
     return { x1: x1.toFixed(1), y1: y1.toFixed(1), x2: x2.toFixed(1), y2: y2.toFixed(1) };
   }
 
-  function updateQmdjStrategicLayer() {
+      function normalizeDeg(deg) {
+    let d = parseFloat(deg) || 0;
+    d = d % 360.0;
+    if (d < 0) d += 360.0;
+    return d;
+  }
+
+  function getSonCenterDeg(sonName) {
+    if (!sonName) return 0;
+    const s = String(sonName).trim();
+    const map = {
+      'Tý': 0, 'Quý': 15, 'Sửu': 30, 'Cấn': 45, 'Dần': 60, 'Giáp': 75,
+      'Mão': 90, 'Ất': 105, 'Thìn': 120, 'Tốn': 135, 'Tỵ': 150, 'Bính': 165,
+      'Ngọ': 180, 'Đinh': 195, 'Mùi': 210, 'Khôn': 225, 'Thân': 240, 'Canh': 255,
+      'Dậu': 270, 'Tân': 285, 'Tuất': 300, 'Càn': 315, 'Hợi': 330, 'Nhâm': 345
+    };
+    return map[s] !== undefined ? map[s] : 0;
+  }
+
+  function createSvgTamHopBadge({
+    deg,
+    radius,
+    width = 175,
+    height = 42,
+    bgColor = 'rgba(15, 23, 42, 0.94)',
+    borderColor = '#10b981',
+    icon = '🌱',
+    title = '',
+    subtitle = '',
+    hint = '',
+    hintColor = '#cbd5e1'
+  }) {
+    const rad = deg * Math.PI / 180;
+    const cx = (500 + radius * Math.sin(rad)).toFixed(1);
+    const cy = (500 - radius * Math.cos(rad)).toFixed(1);
+    const halfW = width / 2;
+    const halfH = height / 2;
+    const bx = (cx - halfW).toFixed(1);
+    const by = (cy - halfH).toFixed(1);
+    const curRot = state.rotation || 0;
+
+    return `
+      <g class="tamhop-counter-rotate" data-cx="${cx}" data-cy="${cy}" transform="rotate(${curRot}, ${cx}, ${cy})">
+        <rect x="${bx}" y="${by}" width="${width}" height="${height}" rx="10" 
+              fill="${bgColor}" 
+              stroke="${borderColor}" stroke-width="2.2" 
+              filter="drop-shadow(0 4px 12px rgba(0,0,0,0.92))" />
+        <text x="${cx}" y="${(parseFloat(by) + 16).toFixed(1)}" fill="${borderColor}" font-size="14.5" font-weight="900" 
+              text-anchor="middle" dominant-baseline="middle" letter-spacing="0.5">
+          ${icon} ${title}
+        </text>
+        <text x="${cx}" y="${(parseFloat(by) + 31).toFixed(1)}" fill="#ffffff" font-size="12" font-weight="800" 
+              text-anchor="middle" dominant-baseline="middle">
+          ${subtitle}
+        </text>
+        ${hint ? `
+        <text x="${cx}" y="${(parseFloat(by) + 43).toFixed(1)}" fill="${hintColor}" font-size="9.5" font-weight="600" 
+              text-anchor="middle" dominant-baseline="middle">
+          ${hint}
+        </text>` : ''}
+      </g>
+    `;
+  }
+
+  function updateTamHopLayer() {
+    const btnQuick = document.getElementById('lakinh-btn-tam-hop');
+    const svgOverlay = document.getElementById('lakinh-tamhop-svg');
+    const svgContent = document.getElementById('lakinh-tamhop-svg-content');
+    const hud = document.getElementById('lakinh-tamhop-floating-hud');
+
+    if (!state.isTamHopActive) {
+      if (btnQuick) btnQuick.classList.remove('active');
+      if (svgOverlay) svgOverlay.style.display = 'none';
+      if (hud) hud.style.display = 'none';
+      return;
+    }
+
+    if (btnQuick) btnQuick.classList.add('active');
+    if (svgOverlay) {
+      svgOverlay.style.display = 'block';
+      svgOverlay.style.transform = `rotate(${-state.rotation}deg)`;
+    }
+    if (hud) {
+      hud.style.display = 'block';
+      hud.classList.toggle('is-collapsed', !!state.isTamHopHudCollapsed);
+    }
+
+    if (!global.TamHopEngine) {
+      console.warn("TamHopEngine chưa nạp xong");
+      return;
+    }
+
+    const curHuongDeg = normalizeDeg(state.rotation || 0);
+    const thuyKhauDeg = normalizeDeg(state.tamHopThuyKhauDeg || 115.0);
+    const dongChay = state.tamHopDongChay || 'ta_dao_huu';
+    const canChu = state.tamHopCanChu || 'Giáp';
+    const chiChu = state.tamHopChiChu || 'Tý';
+    const namChi = state.tamHopNamChi || 'Thìn';
+
+    const thuyPhap = global.TamHopEngine.evaluate_trach_thuy_phap(curHuongDeg, thuyKhauDeg, dongChay);
+    const cucName = thuyPhap.cuc_name;
+    const chieuQuay = thuyPhap.chieu_quay;
+    const vongTS = global.TamHopEngine.get_vong_truong_sinh(cucName, chieuQuay);
+    const tamCat = global.TamHopEngine.get_quy_nhan_loc_ma(canChu, chiChu);
+    const tamSat = global.TamHopEngine.kiem_tra_tam_sat(namChi, thuyPhap.huong_nha.son_name);
+    const hoangTuyen = global.TamHopEngine.kiem_tra_hoang_tuyen(thuyPhap.huong_nha.son_name, thuyPhap.thuy_khau.son_name);
+
+    let cungTS = vongTS.find(c => c.cung_truong_sinh === 'Trường Sinh');
+    let cungDV = vongTS.find(c => c.cung_truong_sinh === 'Đế Vượng');
+    let cungLQ = vongTS.find(c => c.cung_truong_sinh === 'Lâm Quan');
+    let cungMK = vongTS.find(c => c.cung_truong_sinh === 'Mộ');
+
+    const tsSon = cungTS ? cungTS.song_son.split('/')[0] : 'Thân';
+    const dvSon = cungDV ? cungDV.song_son.split('/')[0] : 'Tý';
+    const lqSon = cungLQ ? cungLQ.song_son.split('/')[0] : 'Càn';
+    const mkSon = cungMK ? cungMK.song_son.split('/')[0] : 'Thìn';
+
+    const tsDeg = getSonCenterDeg(tsSon);
+    const dvDeg = getSonCenterDeg(dvSon);
+    const lqDeg = getSonCenterDeg(lqSon);
+    const mkDeg = getSonCenterDeg(mkSon);
+
+    if (svgContent) {
+      let svgHtml = '';
+
+      // 1. Thủy Khẩu (Tia nước thoát & Điểm chốt định Cục)
+      const tkArrow = getRadialVector(thuyKhauDeg, 250, 475);
+      svgHtml += `<line x1="${tkArrow.x1}" y1="${tkArrow.y1}" x2="${tkArrow.x2}" y2="${tkArrow.y2}" stroke="#06b6d4" stroke-width="4.5" stroke-dasharray="6,4" filter="url(#tamhop-glow-cyan)" marker-end="url(#tamhop-arrow-cyan)" />`;
+      const tkPt = getRadialVector(thuyKhauDeg, 465, 465);
+      svgHtml += `<circle cx="${tkPt.x1}" cy="${tkPt.y1}" r="12" fill="#06b6d4" stroke="#ffffff" stroke-width="2.5" />`;
+      svgHtml += createSvgTamHopBadge({
+        deg: thuyKhauDeg,
+        radius: 435,
+        width: 190,
+        height: 54,
+        bgColor: 'rgba(15, 23, 42, 0.95)',
+        borderColor: '#06b6d4',
+        icon: '💧',
+        title: 'THỦY KHẨU (THOÁT)',
+        subtitle: `Sơn ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(1)}°)`,
+        hint: `Cửa nước định ${cucName.split(' ')[0]}`,
+        hintColor: '#a5f3fc'
+      });
+
+      // 2. Vòng Trường Sinh: Trường Sinh (Sinh Khí Khởi Phát)
+      const tsArrow = getRadialVector(tsDeg, 200, 395);
+      svgHtml += `<line x1="${tsArrow.x1}" y1="${tsArrow.y1}" x2="${tsArrow.x2}" y2="${tsArrow.y2}" stroke="#10b981" stroke-width="3" stroke-dasharray="4,4" />`;
+      svgHtml += createSvgTamHopBadge({
+        deg: tsDeg,
+        radius: 360,
+        width: 175,
+        height: 52,
+        bgColor: 'rgba(15, 23, 42, 0.95)',
+        borderColor: '#10b981',
+        icon: '🌱',
+        title: 'TRƯỜNG SINH (CÁT)',
+        subtitle: `Sơn ${cungTS ? cungTS.song_son : tsSon}`,
+        hint: 'Nguồn nước đến / Sinh khí tụ',
+        hintColor: '#86efac'
+      });
+
+      // 3. Vòng Trường Sinh: Đế Vượng (Đỉnh Cao Tụ Khí)
+      const dvArrow = getRadialVector(dvDeg, 200, 395);
+      svgHtml += `<line x1="${dvArrow.x1}" y1="${dvArrow.y1}" x2="${dvArrow.x2}" y2="${dvArrow.y2}" stroke="#f59e0b" stroke-width="3.5" filter="url(#tamhop-glow-gold)" />`;
+      svgHtml += createSvgTamHopBadge({
+        deg: dvDeg,
+        radius: 360,
+        width: 175,
+        height: 52,
+        bgColor: 'rgba(15, 23, 42, 0.95)',
+        borderColor: '#f59e0b',
+        icon: '👑',
+        title: 'ĐẾ VƯỢNG (ĐẠI CÁT)',
+        subtitle: `Sơn ${cungDV ? cungDV.song_son : dvSon}`,
+        hint: 'Cực vượng tụ khí / Minh đường',
+        hintColor: '#fef08a'
+      });
+
+      // 4. Vòng Trường Sinh: Lâm Quan (Thôi Quan Tiến Lộc)
+      svgHtml += createSvgTamHopBadge({
+        deg: lqDeg,
+        radius: 360,
+        width: 175,
+        height: 52,
+        bgColor: 'rgba(15, 23, 42, 0.95)',
+        borderColor: '#0ea5e9',
+        icon: '⭐',
+        title: 'LÂM QUAN (TIẾN LỘC)',
+        subtitle: `Sơn ${cungLQ ? cungLQ.song_son : lqSon}`,
+        hint: 'Thôi quan quý tài vững bền',
+        hintColor: '#bae6fd'
+      });
+
+      // 5. Vòng Trường Sinh: Mộ Khố (Tiêu Thủy Đúng Vị)
+      svgHtml += createSvgTamHopBadge({
+        deg: mkDeg,
+        radius: 360,
+        width: 175,
+        height: 52,
+        bgColor: 'rgba(15, 23, 42, 0.95)',
+        borderColor: '#8b5cf6',
+        icon: '⛩️',
+        title: 'MỘ KHỐ (QUY TÀNG)',
+        subtitle: `Sơn ${cungMK ? cungMK.song_son : mkSon}`,
+        hint: 'Tụ tài tàng phong quy thủy',
+        hintColor: '#ddd6fe'
+      });
+
+      // 6. Hoàng Tuyền Sát
+      const htMap = {
+        'Giáp': 'Cấn', 'Ất': 'Tốn', 'Bính': 'Tốn', 'Đinh': 'Khôn',
+        'Canh': 'Khôn', 'Tân': 'Càn', 'Nhâm': 'Càn', 'Quý': 'Cấn'
+      };
+      const htSon = htMap[thuyPhap.huong_nha.son_name];
+      if (htSon) {
+        const htDeg = getSonCenterDeg(htSon);
+        const pathD = getAnnularSectorPath(htDeg, 430, 480, 15);
+        svgHtml += `<path d="${pathD}" fill="rgba(239, 68, 68, 0.28)" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4,4" filter="url(#tamhop-glow-red)" />`;
+        svgHtml += createSvgTamHopBadge({
+          deg: htDeg,
+          radius: 450,
+          width: 185,
+          height: 52,
+          bgColor: 'rgba(15, 23, 42, 0.95)',
+          borderColor: '#ef4444',
+          icon: '☠️',
+          title: 'HOÀNG TUYỀN (ĐẠI KỴ)',
+          subtitle: `Sơn ${htSon}`,
+          hint: 'Tuyệt đối cấm khứ thủy / mở cửa',
+          hintColor: '#fca5a5'
+        });
+      }
+
+      // 7. Bát Sát Tiêu Vong
+      const batSatChiMap = {
+        'Khảm': 'Thìn', 'Khôn': 'Mão', 'Chấn': 'Thân', 'Tốn': 'Dậu',
+        'Càn': 'Ngọ', 'Đoài': 'Tỵ', 'Cấn': 'Dần', 'Ly': 'Hợi'
+      };
+      const bsChi = batSatChiMap[thuyPhap.huong_nha.cung_bat_quai];
+      if (bsChi) {
+        const bsDeg = getSonCenterDeg(bsChi);
+        svgHtml += createSvgTamHopBadge({
+          deg: bsDeg,
+          radius: 450,
+          width: 185,
+          height: 52,
+          bgColor: 'rgba(15, 23, 42, 0.95)',
+          borderColor: '#dc2626',
+          icon: '🚫',
+          title: 'BÁT SÁT TIÊU VONG',
+          subtitle: `Sơn ${bsChi} (${thuyPhap.huong_nha.cung_bat_quai} Quái)`,
+          hint: 'Kỵ lai thủy & mở cổng cửa',
+          hintColor: '#fca5a5'
+        });
+      }
+
+      // 8. Tam Cát Thần Trợ (Vành trong r=275)
+      if (tamCat.duong_quy_nhan && tamCat.duong_quy_nhan !== 'Chưa rõ') {
+        const qnDeg = getSonCenterDeg(tamCat.duong_quy_nhan);
+        svgHtml += createSvgTamHopBadge({
+          deg: qnDeg,
+          radius: 275,
+          width: 155,
+          height: 38,
+          bgColor: 'rgba(15, 23, 42, 0.92)',
+          borderColor: '#06b6d4',
+          icon: '💎',
+          title: 'DƯƠNG QUÝ NHÂN',
+          subtitle: `Sơn ${tamCat.duong_quy_nhan}`,
+          hintColor: '#67e8f9'
+        });
+      }
+      if (tamCat.thien_loc && tamCat.thien_loc !== 'Chưa rõ') {
+        const locDeg = getSonCenterDeg(tamCat.thien_loc);
+        svgHtml += createSvgTamHopBadge({
+          deg: locDeg,
+          radius: 275,
+          width: 145,
+          height: 38,
+          bgColor: 'rgba(15, 23, 42, 0.92)',
+          borderColor: '#eab308',
+          icon: '💰',
+          title: 'THIÊN LỘC VỊ',
+          subtitle: `Sơn ${tamCat.thien_loc}`,
+          hintColor: '#fef08a'
+        });
+      }
+
+      svgContent.innerHTML = svgHtml;
+    }
+
+    const cucLabel = document.getElementById('tamhop-hud-cuc-label');
+    if (cucLabel) cucLabel.textContent = cucName.split(' ')[0];
+
+    const cpKhau = document.getElementById('compact-th-khau');
+    const cpSinh = document.getElementById('compact-th-sinh');
+    const cpVuong = document.getElementById('compact-th-vuong');
+    const cpMo = document.getElementById('compact-th-mo');
+
+    if (cpKhau) cpKhau.textContent = `💧 Khẩu: ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(0)}°)`;
+    if (cpSinh) cpSinh.textContent = `🌱 Sinh: ${tsSon}`;
+    if (cpVuong) cpVuong.textContent = `👑 Vượng: ${dvSon}`;
+    if (cpMo) cpMo.textContent = `⛩️ Mộ: ${mkSon}`;
+
+    const hudKhau = document.getElementById('tamhop-hud-khau');
+    const hudSinh = document.getElementById('tamhop-hud-sinh');
+    const hudHT = document.getElementById('tamhop-hud-hoangtuyen');
+    const hudBS = document.getElementById('tamhop-hud-batsat');
+    const hudTC = document.getElementById('tamhop-hud-tamcat');
+
+    if (hudKhau) hudKhau.innerHTML = `<span style="color:#06b6d4;">${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(1)}°)</span> • <strong>${cucName}</strong> (${thuyPhap.the_cuc})`;
+    if (hudSinh) hudSinh.innerHTML = `Sinh: <b style="color:#4ade80;">${tsSon}</b> • Vượng: <b style="color:#facc15;">${dvSon}</b> • Quan: <b style="color:#38bdf8;">${lqSon}</b> • Mộ: <b style="color:#c084fc;">${mkSon}</b>`;
+    if (hudHT) hudHT.innerHTML = `${hoangTuyen.loai_sat} (${hoangTuyen.pham_sat ? 'Cảnh báo' : 'An toàn'})`;
+    const batSatRes = global.TamHopEngine.kiem_tra_bat_sat_cung(thuyPhap.huong_nha.son_name, thuyPhap.thuy_khau.son_name);
+    if (hudBS) hudBS.innerHTML = `${batSatRes.danh_gia}`;
+    if (hudTC) hudTC.innerHTML = `Quý: <b>${tamCat.duong_quy_nhan}/${tamCat.am_quy_nhan}</b> • Lộc: <b>${tamCat.thien_loc}</b> • Mã: <b>${tamCat.dich_ma}</b>`;
+  }
+
+  function toggleTamHopLayer(forceState) {
+    if (forceState !== undefined) {
+      state.isTamHopActive = forceState;
+    } else {
+      state.isTamHopActive = !state.isTamHopActive;
+    }
+    updateTamHopLayer();
+    if (state.isTamHopActive) {
+      if (typeof showLaKinhToast === 'function') {
+        showLaKinhToast('🌊 Đã bật Lớp Phong Thủy Tam Hợp Phái');
+      }
+    }
+  }
+
+function updateQmdjStrategicLayer() {
     const btnQuick = document.getElementById('lakinh-btn-qmdj-strat');
     const svgOverlay = document.getElementById('lakinh-qmdj-svg');
     const svgContent = document.getElementById('lakinh-qmdj-svg-content');
@@ -3995,6 +4422,43 @@
     if (btnQuickTamHop) {
       btnQuickTamHop.addEventListener('click', (e) => {
         e.stopPropagation();
+        toggleTamHopLayer();
+      });
+    }
+
+    const btnThCollapse = document.getElementById('btn-tamhop-hud-collapse');
+    if (btnThCollapse) {
+      btnThCollapse.addEventListener('click', () => {
+        state.isTamHopHudCollapsed = !state.isTamHopHudCollapsed;
+        const hud = document.getElementById('lakinh-tamhop-floating-hud');
+        const hudBody = document.getElementById('tamhop-hud-body');
+        const hudFooter = document.querySelector('.tamhop-hud-footer');
+        const hudCompact = document.getElementById('tamhop-hud-compact-summary');
+        if (hud) hud.classList.toggle('is-collapsed', state.isTamHopHudCollapsed);
+        if (hudBody) hudBody.style.display = state.isTamHopHudCollapsed ? 'none' : 'grid';
+        if (hudFooter) hudFooter.style.display = state.isTamHopHudCollapsed ? 'none' : 'block';
+        if (hudCompact) hudCompact.style.display = state.isTamHopHudCollapsed ? 'flex' : 'none';
+        btnThCollapse.textContent = state.isTamHopHudCollapsed ? '+ Mở rộng' : '– Thu gọn';
+      });
+    }
+
+    const btnThClose = document.getElementById('btn-tamhop-hud-close');
+    if (btnThClose) {
+      btnThClose.addEventListener('click', () => {
+        toggleTamHopLayer(false);
+      });
+    }
+
+    const btnThConfig = document.getElementById('btn-tamhop-hud-config');
+    if (btnThConfig) {
+      btnThConfig.addEventListener('click', () => {
+        openTamHopModal();
+      });
+    }
+
+    const btnThOpenModal = document.getElementById('btn-tamhop-hud-open-modal');
+    if (btnThOpenModal) {
+      btnThOpenModal.addEventListener('click', () => {
         openTamHopModal();
       });
     }
@@ -5197,7 +5661,7 @@
                   🌊 THẨM ĐỊNH PHONG THỦY TAM HỢP PHÁI
                 </div>
                 <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">
-                  Toàn thư 31 bài giảng thực chiến Khóa 1 & Khóa 2 (Thầy Hạnh Nhật Tấn)
+                  Hệ Thống Phương Pháp Luận Phong Thủy Tam Hợp Phái Toàn Thư
                 </div>
               </div>
               <button class="lakinh-modal-close" id="btn-close-tamhop-modal">✕</button>
@@ -5311,7 +5775,7 @@
 
             <!-- PHẦN 2: THỦY PHÁP & VÒNG TRƯỜNG SINH 12 CUNG -->
             <div class="tamhop-section-title">
-              <span>🌊 2. Thủy Pháp & Vòng Trường Sinh 12 Cung (Bài 7 - 9 Khóa 1)</span>
+              <span>🌊 2. Thủy Pháp & Vòng Trường Sinh 12 Cung</span>
             </div>
             <div class="tamhop-field-group">
               <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.76rem;">
@@ -5368,7 +5832,7 @@
               <!-- Hoàng Tuyền -->
               <div style="margin-bottom: 6px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
-                  <span style="color: #94a3b8;">Hoàng Tuyền Sát (Bài 10 Khóa 1):</span>
+                  <span style="color: #94a3b8;">Hoàng Tuyền Sát:</span>
                   <span class="tamhop-badge ${hoangTuyen.loai_sat.includes('CỨU BẦN') ? 'green' : (hoangTuyen.pham_sat ? 'red' : 'green')}">
                     ${hoangTuyen.loai_sat}
                   </span>
@@ -5381,7 +5845,7 @@
               <!-- Bát Sát -->
               <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
-                  <span style="color: #94a3b8;">Bát Sát Tiêu Vong (Bài 6 Khóa 1):</span>
+                  <span style="color: #94a3b8;">Bát Sát Tiêu Vong:</span>
                   <span class="tamhop-badge ${batSat.pham_bat_sat ? 'red' : 'green'}">
                     ${batSat.pham_bat_sat ? 'ĐẠI HUNG (Phạm Bát Sát)' : 'BÌNH AN (Không Phạm)'}
                   </span>
@@ -5394,7 +5858,7 @@
 
             <!-- PHẦN 4: TAM SÁT & THÁI TUẾ -->
             <div class="tamhop-section-title">
-              <span>🛡️ 4. Tam Sát & Thái Tuế Trong Năm ${curNamChi} (Bài 2 - 3 Khóa 2)</span>
+              <span>🛡️ 4. Tam Sát & Thái Tuế Trong Năm ${curNamChi}</span>
             </div>
             <div class="tamhop-field-group">
               <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
@@ -5416,7 +5880,7 @@
 
             <!-- PHẦN 5: 120 PHÂN KIM VI MÔ -->
             <div class="tamhop-section-title">
-              <span>💎 5. 120 Phân Kim Vi Mô (Bài 13 Khóa 1)</span>
+              <span>💎 5. 120 Phân Kim Vi Mô</span>
             </div>
             <div class="tamhop-field-group">
               <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
@@ -5439,7 +5903,7 @@
 
             <!-- PHẦN 6: TAM CÁT THẦN TRỢ & TIÊU SA -->
             <div class="tamhop-section-title">
-              <span>🐎 6. Tam Cát Thần Trợ & Tiêu Sa (Bài 5, 7, 12, 13, 14 Khóa 2)</span>
+              <span>🐎 6. Tam Cát Thần Trợ & Tiêu Sa</span>
             </div>
             <div class="tamhop-field-group">
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.76rem; margin-bottom: 6px;">
@@ -5637,9 +6101,11 @@
       const btnApplyCompass = document.getElementById('th-btn-apply-compass');
       if (btnApplyCompass) {
         btnApplyCompass.addEventListener('click', () => {
+          state.isTamHopActive = true;
+          updateTamHopLayer();
           updateRotationDisplay(curHuongDeg);
           closeFn();
-          showLaKinhToast(`🎯 Đã xoay La Kinh về hướng ${curHuongDeg.toFixed(1)}° (${huongSon})`);
+          showLaKinhToast(`🎯 Đã xoay La Kinh về hướng ${curHuongDeg.toFixed(1)}° (${huongSon}) và kích hoạt lớp Tam Hợp`);
         });
       }
 
@@ -5728,6 +6194,8 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     if (btnCollapse) {
       btnCollapse.addEventListener('click', () => {
         state.isQmdjStratHudCollapsed = !state.isQmdjStratHudCollapsed;
+        const hud = document.getElementById('lakinh-qmdj-floating-hud');
+        if (hud) hud.classList.toggle('is-collapsed', state.isQmdjStratHudCollapsed);
         const hudBody = document.getElementById('qmdj-hud-body');
         const hudPills = document.querySelector('.qmdj-hud-pills');
         const hudFooter = document.querySelector('.qmdj-hud-footer');
@@ -5800,6 +6268,8 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     updateSightingRay: updateSightingRay,
     toggleQmdjStrategicLayer: toggleQmdjStrategicLayer,
     updateQmdjStrategicLayer: updateQmdjStrategicLayer,
+    toggleTamHopLayer: toggleTamHopLayer,
+    updateTamHopLayer: updateTamHopLayer,
     loadFloorPlanFile: loadFloorPlanFile,
     setFloorPlanFromDataUrl: setFloorPlanFromDataUrl,
     removeFloorPlan: removeFloorPlan,

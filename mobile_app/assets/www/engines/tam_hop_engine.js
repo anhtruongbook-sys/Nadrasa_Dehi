@@ -3,7 +3,7 @@
  * File: engines/tam_hop_engine.js
  * ---------------------------------------------------------------------------------
  * Chuyển hóa 100% thuật toán định lượng Phong Thủy Tam Hợp Phái từ tam_hop_engine.py
- * dựa trên toàn bộ hệ thống 31 bài giảng thực chiến Khóa 1 & Khóa 2 của Thầy Hạnh Nhật Tấn.
+ * dựa trên toàn bộ hệ thống phương pháp luận thực chiến Tam Hợp Phái.
  *
  * BAO QUÁT TOÀN DIỆN 31 BÀI HỌC:
  * 1. Tam Bàn La Kinh (Địa Bàn Chính Châm, Nhân Bàn Trung Châm, Thiên Bàn Phùng Châm).
@@ -117,7 +117,7 @@
     "Càn": ["Tân", "Nhâm"]
   };
 
-  // Bát Sát Tiêu Vong (Bài 6 Khóa 1 & Bài 3 Khóa 2)
+  // Bát Sát Tiêu Vong
   const BAT_SAT_CUNG = {
     "Khảm": { chi_sat: "Thìn", con_vat: "Long (Rồng)", son_quai: ["Nhâm", "Tý", "Quý"] },
     "Khôn": { chi_sat: "Mão",  con_vat: "Thỏ (Mèo)",   son_quai: ["Mùi", "Khôn", "Thân"] },
@@ -129,7 +129,7 @@
     "Ly":   { chi_sat: "Hợi",  con_vat: "Trư (Lợn)",   son_quai: ["Bính", "Ngọ", "Đinh"] }
   };
 
-  // Nạp Giáp Bát Quái (Bài 11 Khóa 1)
+  // Nạp Giáp Bát Quái
   const NAP_GIAP_MAP = {
     "Càn":  ["Giáp", "Nhâm"],
     "Khôn": ["Ất", "Quý"],
@@ -141,7 +141,7 @@
     "Ly":   ["Kỷ", "Dần", "Tuất"]
   };
 
-  // Lại Công Ngũ Hành (Bài 5 Khóa 2 - Dùng cho Tiêu Sa)
+  // Lại Công Ngũ Hành
   const LAI_CONG_NGU_HANH_MAP = {
     "Càn": "Mộc", "Khôn": "Mộc", "Cấn": "Mộc", "Tốn": "Mộc",
     "Dần": "Thủy", "Thân": "Thủy", "Tỵ": "Thủy", "Hợi": "Thủy",
@@ -151,7 +151,7 @@
     "Ất": "Thổ", "Tân": "Thổ", "Đinh": "Thổ", "Quý": "Thổ"
   };
 
-  // 28 Tinh Tú trên Nhân Bàn (Bài 7 Khóa 2)
+  // 28 Tinh Tú trên Nhân Bàn
   const NHI_THAP_BAT_TU_LIST = [
     { name: "Giác",  phuong: "Đông", ngu_hanh: "Mộc",  tinh_chat: "Cát" },
     { name: "Cang",  phuong: "Đông", ngu_hanh: "Kim",  tinh_chat: "Hung" },
@@ -183,7 +183,7 @@
     { name: "Chẩn",  phuong: "Nam",  ngu_hanh: "Thủy", tinh_chat: "Cát" }
   ];
 
-  // Phụ Tinh Phiên Quái (Bài 8 Khóa 2)
+  // Phụ Tinh Phiên Quái
   const PHU_TINH_9_SAO = [
     { sao: "Phụ Bật",   tinh_chat: "Cát",  tuong_ung: "Phục Vị",   mo_ta: "Trợ lực, bình an, duy trì cơ nghiệp" },
     { sao: "Vũ Khúc",   tinh_chat: "Cát",  tuong_ung: "Diên Niên", mo_ta: "Tài lộc vững vàng, trường thọ, con cháu hòa thuận" },
@@ -225,7 +225,7 @@
     "Hợi": "Tỵ", "Mão": "Tỵ", "Mùi": "Tỵ"
   };
 
-  // Tam Sát (Bài 2 Khóa 2)
+  // Tam Sát
   const TAM_SAT = {
     "Dần": { tam_sat: "Bắc", chi_sat: ["Hợi", "Tý", "Sửu"] },
     "Ngọ": { tam_sat: "Bắc", chi_sat: ["Hợi", "Tý", "Sửu"] },
