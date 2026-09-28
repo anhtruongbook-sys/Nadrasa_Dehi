@@ -339,6 +339,14 @@
               </div>
             </div>
 
+            <!-- Thanh Chọn Đường Cục (Tiểu Cục 40m / Trung Cục 350m / Đại Cục 2km / Quét DEM) -->
+            <div class="tamhop-hud-duong-cuc-row">
+              <button type="button" class="tamhop-cuc-btn ${state.tamHopDuongCuc === 'tieu_cuc' ? 'active' : ''}" data-duongcuc="tieu_cuc" title="Tiểu Minh Đường (40m): Cống ngầm, rãnh nước">🏠 Tiểu Cục</button>
+              <button type="button" class="tamhop-cuc-btn ${state.tamHopDuongCuc === 'trung_cuc' ? 'active' : ''}" data-duongcuc="trung_cuc" title="Trung Minh Đường (350m): Ngã ba phố, kênh rạch">🏘️ Trung Cục</button>
+              <button type="button" class="tamhop-cuc-btn ${state.tamHopDuongCuc === 'dai_cuc' ? 'active' : ''}" data-duongcuc="dai_cuc" title="Đại Minh Đường (2000m): Hợp lưu sông cái, hồ lớn">⛰️ Đại Cục</button>
+              <button type="button" id="btn-tamhop-sync-dem" class="tamhop-cuc-btn dem-sync" title="Quét cao độ Google Earth / DEM để lấy Thủy Khẩu tự động">🛰️ Quét DEM</button>
+            </div>
+
             <!-- Thanh Tóm Tắt Khi Thu Gọn (Mini Capsule Cao ~32px Không Che La Kinh) -->
             <div id="tamhop-hud-compact-summary" class="tamhop-hud-compact-summary" style="${state.isTamHopHudCollapsed ? 'display: flex;' : 'display: none;'}">
               <span class="tamhop-pill cyan" id="compact-th-khau">💧 Khẩu: Đang tính...</span>
@@ -5685,10 +5693,31 @@ function updateQmdjStrategicLayer() {
             </div>
 
             <!-- PHẦN 1: THIẾT LẬP THAM SỐ KHẢO SÁT -->
-            <div class="tamhop-section-title">
+            <div class="tamhop-section-title" style="display: flex; justify-content: space-between; align-items: center;">
               <span>📐 1. Thiết Lập Tọa Hướng & Thủy Khẩu Thực Địa</span>
+              <button type="button" id="th-btn-modal-scan-dem" style="background: rgba(56,189,248,0.18); border: 1px solid #38bdf8; color: #38bdf8; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; cursor: pointer;">
+                🛰️ Quét DEM Vệ Tinh
+              </button>
             </div>
             <div class="tamhop-field-group">
+              <!-- Bộ Chọn 3 Cấp Đường Cục: Tiểu Cục / Trung Cục / Đại Cục -->
+              <div style="margin-bottom: 8px;">
+                <div style="font-size: 0.70rem; color: #94a3b8; font-weight: 700; margin-bottom: 4px;">CẤP BẬC ĐƯỜNG CỤC THỦY PHÁP:</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
+                  <button type="button" class="tamhop-duongcuc-btn ${state.tamHopDuongCuc === 'tieu_cuc' ? 'active' : ''}" data-modal-duongcuc="tieu_cuc">
+                    🏠 Tiểu Cục (40m)
+                    <small style="display:block; font-size: 0.58rem; opacity: 0.85;">Cống ngầm / Hố ga</small>
+                  </button>
+                  <button type="button" class="tamhop-duongcuc-btn ${state.tamHopDuongCuc === 'trung_cuc' ? 'active' : ''}" data-modal-duongcuc="trung_cuc">
+                    🏘️ Trung Cục (350m)
+                    <small style="display:block; font-size: 0.58rem; opacity: 0.85;">Ngã ba phố / Kênh</small>
+                  </button>
+                  <button type="button" class="tamhop-duongcuc-btn ${state.tamHopDuongCuc === 'dai_cuc' ? 'active' : ''}" data-modal-duongcuc="dai_cuc">
+                    ⛰️ Đại Cục (2000m)
+                    <small style="display:block; font-size: 0.58rem; opacity: 0.85;">Sông cái / Cửa biển</small>
+                  </button>
+                </div>
+              </div>
               <!-- Hướng nhà (Địa Bàn) -->
               <div class="tamhop-input-row">
                 <span style="color: #cbd5e1; font-weight: 600;">Hướng Nhà (Địa Bàn):</span>
@@ -6096,6 +6125,28 @@ function updateQmdjStrategicLayer() {
           renderModal();
         });
       });
+
+      // Sự kiện chọn Đường Cục trong Modal
+      modalBox.querySelectorAll('.tamhop-duongcuc-btn[data-modal-duongcuc]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cKey = btn.getAttribute('data-modal-duongcuc');
+          if (cKey && state.tamHopCucData[cKey]) {
+            state.tamHopDuongCuc = cKey;
+            curThuyKhauDeg = state.tamHopCucData[cKey].deg;
+            state.tamHopThuyKhauDeg = curThuyKhauDeg;
+            renderModal();
+          }
+        });
+      });
+
+      const btnModalScanDem = document.getElementById('th-btn-modal-scan-dem');
+      if (btnModalScanDem) {
+        btnModalScanDem.addEventListener('click', async () => {
+          closeFn();
+          await scanElevationAndTiers();
+          setTimeout(() => openTamHopModal(), 600);
+        });
+      }
 
       // Nút áp dụng vào La Kinh
       const btnApplyCompass = document.getElementById('th-btn-apply-compass');

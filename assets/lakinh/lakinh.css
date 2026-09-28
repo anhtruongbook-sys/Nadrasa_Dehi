@@ -3814,3 +3814,94 @@ body.light-theme .tamhop-hud-link-btn {
 .tamhop-counter-rotate {
   transition: transform 0.12s linear;
 }
+
+
+/* Đường Cục Selector trong Tam Hợp HUD & Modal */
+.tamhop-hud-duong-cuc-row {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  padding: 2px 0;
+  margin-top: 2px;
+}
+
+.tamhop-cuc-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 1.5px 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.tamhop-cuc-btn:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  color: #34d399;
+}
+
+.tamhop-cuc-btn.active {
+  background: #059669 !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.tamhop-cuc-btn.dem-sync {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  margin-left: auto;
+}
+
+body.light-theme .tamhop-cuc-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+body.light-theme .tamhop-cuc-btn.active {
+  background: #059669 !important;
+  color: #ffffff !important;
+}
+
+.tamhop-duongcuc-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 6px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tamhop-duongcuc-btn:hover {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.tamhop-duongcuc-btn.active {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.4) 100%) !important;
+  border-color: #10b981 !important;
+  color: #6ee7b7 !important;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+body.light-theme .tamhop-duongcuc-btn {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+body.light-theme .tamhop-duongcuc-btn.active {
+  background: #d1fae5 !important;
+  border-color: #059669 !important;
+  color: #065f46 !important;
+}
