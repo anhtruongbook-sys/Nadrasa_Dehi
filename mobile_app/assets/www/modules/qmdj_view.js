@@ -125,6 +125,30 @@
     9: "Nam"
   };
 
+  const SHORT_DIRECTIONS = {
+    1: "Bắc",
+    2: "T.Nam",
+    3: "Đông",
+    4: "Đ.Nam",
+    5: "Trung",
+    6: "T.Bắc",
+    7: "Tây",
+    8: "Đ.Bắc",
+    9: "Nam"
+  };
+
+  const PALACE_DEG_RANGE = {
+    1: "337.5° - 22.5° (Chính Bắc 0°)",
+    2: "202.5° - 247.5° (Chính Tây Nam 225°)",
+    3: "67.5° - 112.5° (Chính Đông 90°)",
+    4: "112.5° - 157.5° (Chính Đông Nam 135°)",
+    5: "Trung Cung",
+    6: "292.5° - 337.5° (Chính Tây Bắc 315°)",
+    7: "247.5° - 292.5° (Chính Tây 270°)",
+    8: "22.5° - 67.5° (Chính Đông Bắc 45°)",
+    9: "157.5° - 202.5° (Chính Nam 180°)"
+  };
+
   // Clockwise order of 8 palaces around center (NW -> N -> NE -> E -> SE -> S -> SW -> W)
   const CLOCKWISE_8 = [6, 1, 8, 3, 4, 9, 2, 7];
 
@@ -177,6 +201,18 @@
     const keys = Object.keys(VI_DICT).sort((a, b) => b.length - a.length);
     keys.forEach(k => { res = res.split(k).join(VI_DICT[k]); });
     return res;
+  }
+
+  function formatPillarCanChi(p) {
+    if (!p) return '';
+    const raw = typeof p.cstb === 'function' ? p.cstb(true) : String(p);
+    if (!raw) return '';
+    if (raw.length === 2 && !raw.includes(' ')) {
+      const c1 = translate(raw[0]);
+      const c2 = translate(raw[1]);
+      return `${c1} ${c2}`;
+    }
+    return translate(raw);
   }
 
   function getCatClass(text) {
@@ -461,7 +497,7 @@
     const { chart, patterns } = data;
     const isPt = currentQmdjMode === 'phongthuy';
 
-    // Render Sub-Tabs (4 chế độ)
+    // Render Sub-Tabs (5 chế độ)
     let modeTabsHtml = `
       <div class="qmdj-mode-tabs">
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'duongban' ? 'active' : ''}" data-mode="duongban">
@@ -476,6 +512,9 @@
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'chienluoc' ? 'active' : ''}" data-mode="chienluoc">
           ⚔️ Tác Quyết
         </button>
+        <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'thien' ? 'active' : ''}" data-mode="thien">
+          🧘 Tọa Thiền
+        </button>
       </div>
     `;
 
@@ -483,6 +522,8 @@
       renderPhongThuyMode(container, modeTabsHtml, chart);
     } else if (currentQmdjMode === 'chienluoc') {
       renderChienLuocMode(container, modeTabsHtml, chart);
+    } else if (currentQmdjMode === 'thien') {
+      renderThienMode(container, modeTabsHtml, chart);
     } else {
       renderTimeMode(container, modeTabsHtml, chart, patterns);
     }
@@ -499,10 +540,10 @@
       : (roundVal > 0 ? `Dương ${roundVal} Cục` : `Âm ${Math.abs(roundVal)} Cục`);
 
     const pillars = {
-      year: chart.year ? translate(chart.year.cstb(true)) : '',
-      month: chart.month ? translate(chart.month.cstb(true)) : '',
-      day: chart.date ? translate(chart.date.cstb(true)) : '',
-      hour: chart.hour ? translate(chart.hour.cstb(true)) : ''
+      year: formatPillarCanChi(chart.year),
+      month: formatPillarCanChi(chart.month),
+      day: formatPillarCanChi(chart.date),
+      hour: formatPillarCanChi(chart.hour)
     };
 
     const d = currentQmdjDate;
@@ -802,10 +843,10 @@
     const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())} - ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 
     const pillars = {
-      year: chart.year ? translate(chart.year.cstb(true)) : '',
-      month: chart.month ? translate(chart.month.cstb(true)) : '',
-      day: chart.date ? translate(chart.date.cstb(true)) : '',
-      hour: chart.hour ? translate(chart.hour.cstb(true)) : ''
+      year: formatPillarCanChi(chart.year),
+      month: formatPillarCanChi(chart.month),
+      day: formatPillarCanChi(chart.date),
+      hour: formatPillarCanChi(chart.hour)
     };
 
     let solarTerm = "Xuân Phân";
@@ -919,26 +960,26 @@
                 <option value="22" ${[21, 22].includes(d.getHours()) ? 'selected' : ''}>Hợi (21-23h)</option>
               </select>
               <div class="numeric-time-group">
-                <input type="number" id="qmdj-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(d.getHours())}">
+                <input type="number" id="qmdj-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(d.getHours())}" placeholder="Giờ">
                 <span class="num-colon">:</span>
-                <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}">
+                <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}" placeholder="Phút">
               </div>
             </div>
             <div class="ucc-step-group">
-              <button type="button" class="btn-step" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (Can Chi)">◀ Giờ</button>
-              <button type="button" class="btn-step" id="btn-qmdj-now" title="Thời gian hiện tại">⏺ Giờ Này</button>
-              <button type="button" class="btn-step" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (Can Chi)">Giờ ▶</button>
+              <button class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀ 2h</button>
+              <button class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">2h ▶</button>
             </div>
           </div>
 
           <!-- Row 3: Info & Submit -->
-          <div class="ucc-row ucc-row-meta">
-            <div class="ucc-meta-info">
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
+            <div class="qmdj-cuc-badge" title="Cục số và Tiết khí: ${solarTermFullStr || solarTerm}">
               <span>${roundText}</span>
               <span class="cuc-dot">•</span>
               <span>${solarTerm}</span>
             </div>
-            <button class="ucc-btn-submit" id="btn-qmdj-submit">⚔️ Tác Quyết</button>
+            <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn Tác Quyết">⚡ Lập Bàn</button>
           </div>
         </div>
 
@@ -1003,6 +1044,7 @@
             ${layout.map(row => row.map(pNum => {
               const p = (analysis && analysis.palaces && analysis.palaces[pNum]) || {};
               const dir = PALACE_DIRECTIONS[pNum] || '';
+              const shortDir = SHORT_DIRECTIONS[pNum] || dir;
               const pName = PALACE_NAMES[pNum - 1] || `Cung ${pNum}`;
 
               const isVic1 = analysis && analysis.three_victories && analysis.three_victories.first_victory.palace_id === pNum;
@@ -1018,10 +1060,13 @@
               else if (isHorse) cellClass += ' cell-horse';
               else if (isTarget) cellClass += ' cell-target';
 
+              const shortStar = (p.star || '—').replace(/Thiên\s*/g, '');
+              const shortDoor = (p.door || '—').replace(/\s*Môn$/g, '');
+
               return `
                 <div class="${cellClass}" data-palace-index="${pNum - 1}" role="button" tabindex="0">
                   <div class="jy-cell-head">
-                    <span class="jy-cell-name">${pName} (${dir})</span>
+                    <span class="jy-cell-name">${pName} (${shortDir})</span>
                     <div class="jy-cell-badges">
                       ${isVic1 ? '<span class="jy-badge vic1">👑 TỌA LƯNG</span>' : ''}
                       ${isVic2 ? '<span class="jy-badge vic2">🦅 DƯƠNG BINH</span>' : ''}
@@ -1033,13 +1078,13 @@
                   </div>
                   <div class="jy-cell-body">
                     <div class="jy-row-main">
-                      <span class="jy-val-god ${getCatClass(p.deity)}">${p.deity || '—'}</span>
-                      <span class="jy-val-star ${getCatClass(p.star)}">${p.star || '—'}</span>
-                      <span class="jy-val-door ${getCatClass(p.door)}">${p.door ? p.door + ' Môn' : '—'}</span>
+                      <span class="jy-val-god ${getCatClass(p.deity)}" title="${p.deity || ''}">${p.deity || '—'}</span>
+                      <span class="jy-val-star ${getCatClass(p.star)}" title="${p.star || ''}">${shortStar}</span>
+                      <span class="jy-val-door ${getCatClass(p.door)}" title="${p.door || ''}">${shortDoor}</span>
                     </div>
                     <div class="jy-row-stems">
-                      <span class="jy-stem">Thiên: <strong>${p.hcs || '—'}</strong></span>
-                      <span class="jy-stem">Địa: <strong>${p.ecs || '—'}</strong></span>
+                      <span class="jy-stem">T: <strong>${p.hcs || '—'}</strong></span>
+                      <span class="jy-stem">Đ: <strong>${p.ecs || '—'}</strong></span>
                       ${p.isKongWang ? '<span class="jy-badge-kw">Không</span>' : ''}
                     </div>
                   </div>
@@ -1128,6 +1173,291 @@
         openPalaceDetailModal(chart, patterns, pIndex);
       };
     });
+  }
+
+  /**
+   * Render Chế Độ Tọa Thiền Định Tâm Kỳ Môn (Spiritual Qi Men Meditation)
+   */
+  function renderThienMode(container, modeTabsHtml, chart) {
+    const isAmBan = currentQmdjMode === 'amban';
+    const roundVal = chart.round || 1;
+    const roundText = roundVal > 0 ? `Dương ${roundVal} Cục` : `Âm ${Math.abs(roundVal)} Cục`;
+
+    const pillars = {
+      year: formatPillarCanChi(chart.year),
+      month: formatPillarCanChi(chart.month),
+      day: formatPillarCanChi(chart.date),
+      hour: formatPillarCanChi(chart.hour)
+    };
+
+    const d = currentQmdjDate;
+    const pad = n => String(n).padStart(2, '0');
+
+    let solarTerm = "Xuân Phân";
+    let solarTermStr = "Xuân Phân";
+    let solarTermFullStr = "";
+    let std = null;
+    if (global.NetaCalendarEngine) {
+      if (typeof global.NetaCalendarEngine.getSolarTermDetails === 'function') {
+        std = global.NetaCalendarEngine.getSolarTermDetails(d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes());
+        solarTerm = std.term;
+        solarTermStr = std.displayStr;
+        solarTermFullStr = std.fullDisplayStr;
+      } else {
+        solarTerm = global.NetaCalendarEngine.getSolarTerm(d.getDate(), d.getMonth() + 1, d.getFullYear());
+        solarTermStr = solarTerm;
+      }
+    }
+
+    let dayVal = d.getDate();
+    let monthVal = d.getMonth() + 1;
+    let yearVal = d.getFullYear();
+    if (isQmdjLunarMode && global.NetaCalendarEngine) {
+      const lInfo = global.NetaCalendarEngine.getFullDayInfo(d);
+      dayVal = lInfo.lunar.day;
+      monthVal = lInfo.lunar.month;
+      yearVal = lInfo.lunar.year;
+    }
+
+    // Identify Deity palaces in current chart
+    const deityMap = {};
+    if (chart && chart.box) {
+      chart.box.flat().forEach(p => {
+        if (!p || p.index === 4) return; // Skip center palace
+        const divinity = translate(p.getDivinity(true));
+        const door = translate(p.getDoor(true));
+        const stars = Array.isArray(p.getStar(true)) ? p.getStar(true).map(translate) : [translate(p.getStar(true))];
+        const pNum = p.index + 1;
+        deityMap[divinity] = {
+          palace: pNum,
+          palaceName: PALACE_NAMES[p.index] || `Cung ${pNum}`,
+          direction: PALACE_DIRECTIONS[pNum],
+          degrees: PALACE_DEG_RANGE[pNum] || '',
+          door: door,
+          star: stars[0] || ''
+        };
+      });
+    }
+
+    const DEITY_CONFIGS = [
+      {
+        key: 'Trực Phù',
+        icon: '👑',
+        title: 'Trực Phù - Thần Tối Thượng (Chief)',
+        desc: 'Đại diện cho ý chí vũ trụ tối cao, hộ mệnh vô lượng, chuyển hung thành cát, cầu gì ứng nấy.',
+        color: '#f59e0b',
+        energy: 'Ánh sáng vàng kim',
+        guide: 'Ngồi thẳng lưng, lưng quay chuẩn về phương vị Trực Phù. Nhắm mắt hít sâu, cảm nhận hào quang vàng kim ấm áp từ sau lưng rót qua cột sống, phát khởi ý niệm bảo trợ và định hướng cuộc đời.'
+      },
+      {
+        key: 'Thái Âm',
+        icon: '🌙',
+        title: 'Thái Âm - Thần Trí Tuệ & Định Tâm (Moon)',
+        desc: 'Chủ về sự an tĩnh thâm sâu, khai mở tuệ giác, xoa dịu stress, tìm ra đáp án sáng suốt cho bế tắc.',
+        color: '#38bdf8',
+        energy: 'Ánh trăng bạc thanh lương',
+        guide: 'Lưng quay về hướng Thái Âm. Quán tưởng ánh trăng bạc mát dịu thẩm thấu từ đỉnh đầu xuống đan điền, quét sạch mọi căng thẳng lo âu, tâm trí trở nên phẳng lặng như mặt hồ mùa thu.'
+      },
+      {
+        key: 'Cửu Địa',
+        icon: '🌍',
+        title: 'Cửu Địa - Thần Đất & Phục Hồi Thể Chất (Earth)',
+        desc: 'Tiếp đất (grounding), ổn định khí huyết, chữa lành bệnh tật và tái tạo tế bào sinh học vững vàng như núi đá.',
+        color: '#10b981',
+        energy: 'Ánh sáng xanh ngọc bích',
+        guide: 'Lưng quay về hướng Cửu Địa. Cảm nhận từ trường dày đặc vững chãi từ lòng đất truyền lên lưng, đan điền ấm dần, hơi thở trở nên sâu, chậm và êm ái tự nhiên.'
+      },
+      {
+        key: 'Cửu Thiên',
+        icon: '⚡',
+        title: 'Cửu Thiên - Thần Sáng Tạo & Tầm Nhìn (Heaven)',
+        desc: 'Khơi dậy dũng khí, kích hoạt năng lực đột phá, nâng cao tần số rung động và mở rộng tầm nhìn dài hạn.',
+        color: '#a855f7',
+        energy: 'Ánh sáng tím tử khí đông lai',
+        guide: 'Lưng quay về hướng Cửu Thiên. Hít sâu vào ngực trên, cảm nhận luồng khí thế mạnh mẽ tiếp thêm năng lượng và lòng tin vào bản thân, sẵn sàng vượt qua mọi chướng ngại.'
+      },
+      {
+        key: 'Lục Hợp',
+        icon: '🤝',
+        title: 'Lục Hợp - Thần Hòa Hợp & Bình Yên (Harmony)',
+        desc: 'Chữa lành các mối quan hệ gia đình/công việc, xóa bỏ xung đột, thu hút quý nhân và sự đồng điệu.',
+        color: '#ec4899',
+        energy: 'Ánh sáng hồng ấm áp',
+        guide: 'Lưng quay về hướng Lục Hợp. Quán tưởng ánh sáng hồng bao bọc lấy trái tim, khởi tâm từ bi và tha thứ cho mọi khúc mắc, lan tỏa bình an đến người thân và đối tác.'
+      }
+    ];
+
+    container.innerHTML = `
+      <div class="qmdj-view-container">
+        ${modeTabsHtml}
+
+        <!-- Unified Control Card (Thời Gian) -->
+        <div class="unified-ctrl-card">
+          <!-- Row 1: Calendar switch & Date Box -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-solar">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${isQmdjLunarMode ? 'active' : ''}" id="btn-qmdj-lunar">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box" id="qmdj-ucc-date-box" title="Nhập ngày tháng hoặc mở lịch">
+              <input type="number" id="qmdj-input-day" class="num-box num-day" min="1" max="31" value="${dayVal}">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-month" class="num-box num-month" min="1" max="12" value="${monthVal}">
+              <span class="num-slash">/</span>
+              <input type="number" id="qmdj-input-year" class="num-box num-year" min="1900" max="2100" value="${yearVal}">
+              <button type="button" class="ucc-btn-year" id="btn-qmdj-year-jumper">⚡Năm</button>
+              <label class="btn-picker-cal" id="qmdj-btn-native-cal">
+                📅
+                <input type="datetime-local" id="qmdj-date-picker" value="${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}" class="native-hidden-date">
+              </label>
+            </div>
+          </div>
+
+          <!-- Row 2: Can Chi + Numeric Time -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
+              <select id="qmdj-select-canchi" class="select-canchi">
+                <option value="0" ${[23, 0].includes(d.getHours()) ? 'selected' : ''}>Tý (23-01h)</option>
+                <option value="2" ${[1, 2].includes(d.getHours()) ? 'selected' : ''}>Sửu (01-03h)</option>
+                <option value="4" ${[3, 4].includes(d.getHours()) ? 'selected' : ''}>Dần (03-05h)</option>
+                <option value="6" ${[5, 6].includes(d.getHours()) ? 'selected' : ''}>Mão (05-07h)</option>
+                <option value="8" ${[7, 8].includes(d.getHours()) ? 'selected' : ''}>Thìn (07-09h)</option>
+                <option value="10" ${[9, 10].includes(d.getHours()) ? 'selected' : ''}>Tỵ (09-11h)</option>
+                <option value="12" ${[11, 12].includes(d.getHours()) ? 'selected' : ''}>Ngọ (11-13h)</option>
+                <option value="14" ${[13, 14].includes(d.getHours()) ? 'selected' : ''}>Mùi (13-15h)</option>
+                <option value="16" ${[15, 16].includes(d.getHours()) ? 'selected' : ''}>Thân (15-17h)</option>
+                <option value="18" ${[17, 18].includes(d.getHours()) ? 'selected' : ''}>Dậu (17-19h)</option>
+                <option value="20" ${[19, 20].includes(d.getHours()) ? 'selected' : ''}>Tuất (19-21h)</option>
+                <option value="22" ${[21, 22].includes(d.getHours()) ? 'selected' : ''}>Hợi (21-23h)</option>
+              </select>
+              <div class="numeric-time-group">
+                <input type="number" id="qmdj-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(d.getHours())}" placeholder="Giờ">
+                <span class="num-colon">:</span>
+                <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}" placeholder="Phút">
+              </div>
+            </div>
+            <div class="ucc-step-group">
+              <button class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 1 Giờ (2 tiếng)">◀ 2h</button>
+              <button class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 1 Giờ (2 tiếng)">2h ▶</button>
+            </div>
+          </div>
+
+          <!-- Row 3: Info & Submit -->
+          <div class="ucc-row ucc-row-actions">
+            <button class="ucc-btn-now" id="btn-qmdj-now" title="Thời gian hiện tại">⚡ Giờ thực</button>
+            <div class="qmdj-cuc-badge" title="Cục số và Tiết khí: ${solarTermFullStr || solarTerm}">
+              <span>${roundText}</span>
+              <span class="cuc-dot">•</span>
+              <span>${solarTerm}</span>
+            </div>
+            <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập Bàn Tọa Thiền">🧘 Lập Bàn</button>
+          </div>
+        </div>
+
+        <!-- 4 Pillars Summary Header -->
+        <div class="qmdj-pillars-strip">
+          <div class="q-pillar"><span class="q-lbl">NĂM</span><strong class="q-val">${pillars.year}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">THÁNG</span><strong class="q-val">${pillars.month}</strong></div>
+          <div class="q-pillar"><span class="q-lbl">NGÀY</span><strong class="q-val">${pillars.day}</strong></div>
+          <div class="q-pillar highlight-hour"><span class="q-lbl">GIỜ</span><strong class="q-val">${pillars.hour}</strong></div>
+        </div>
+
+        <!-- Intro Banner -->
+        <div class="qmdj-thien-banner">
+          <div class="qmdj-thien-badge">🧘 TỌA THIỀN ĐỊNH TÂM KỲ MÔN • SPIRITUAL QI MEN</div>
+          <p class="qmdj-thien-desc">
+            Ứng dụng nguyên lý <strong>Tọa Lưng (Back-To)</strong> đón nhận linh khí từ các Đại Cát Thần trong bàn Kỳ Môn tại thời điểm hiện tại để tĩnh tâm, tiếp dẫn năng lượng sinh học và giải trừ bế tắc nội tâm.
+          </p>
+          <button type="button" class="btn-qmdj-open-lakinh" id="btn-qmdj-open-lakinh">
+            🧭 Mở La Kinh Để Định Vị Hướng Ngồi
+          </button>
+        </div>
+
+        <!-- Noble Deities Cards -->
+        <div class="qmdj-deities-list">
+          ${DEITY_CONFIGS.map(cfg => {
+            const match = deityMap[cfg.key] || {
+              palaceName: 'Đang xác định',
+              direction: 'Tùy Cục',
+              degrees: 'Xem bàn cờ',
+              door: '—',
+              star: '—'
+            };
+            return `
+              <div class="qmdj-deity-card" style="border-left: 4px solid ${cfg.color};">
+                <div class="deity-card-header">
+                  <div class="deity-title-wrap">
+                    <span class="deity-icon">${cfg.icon}</span>
+                    <strong class="deity-name" style="color: ${cfg.color};">${cfg.title}</strong>
+                  </div>
+                  <div class="deity-backto-badge">
+                    Tọa Lưng: <strong>${match.direction}</strong>
+                  </div>
+                </div>
+                <div class="deity-meta-strip">
+                  <span>🏰 Cung: <strong>${match.palaceName}</strong></span>
+                  <span class="sep">•</span>
+                  <span>🧭 Độ Số: <strong>${match.degrees}</strong></span>
+                  <span class="sep">•</span>
+                  <span>🚪 Môn: <strong>${match.door}</strong></span>
+                </div>
+                <p class="deity-desc">${cfg.desc}</p>
+                <div class="deity-practice-box">
+                  <div class="practice-label">🧘 Pháp Quán Tưởng (${cfg.energy}):</div>
+                  <p class="practice-text">${cfg.guide}</p>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- 3-Step Practice Guide -->
+        <div class="qmdj-thien-guide-box">
+          <div class="thien-guide-title">📖 QUY TRÌNH 3 BƯỚC TỌA THIỀN KỲ MÔN CHUẨN MỰC:</div>
+          <div class="thien-steps-grid">
+            <div class="thien-step-item">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Định Tọa & Khóa Hướng:</strong>
+                <p>Ngồi tư thế thoải mái (bán già, kiết già hoặc ngồi ghế thẳng lưng). Lưng quay chính xác về phương vị của Thần muốn kết nối.</p>
+              </div>
+            </div>
+            <div class="thien-step-item">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>Đếm Ngược Định Khí (64 ➔ 1):</strong>
+                <p>Nhắm hờ mắt, thở bụng sâu êm. Đếm thầm ngược từng nhịp thở từ 64 về 1 để đưa não bộ về tần số Alpha / Theta an tịnh.</p>
+              </div>
+            </div>
+            <div class="thien-step-item">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <strong>Quán Chiếu & Phát Khởi Ý Niệm:</strong>
+                <p>Quán tưởng năng lượng ánh sáng của Thần từ sau lưng rót tràn ngập cơ thể. Khởi niệm ước nguyện cụ thể với lòng biết ơn sâu sắc.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    bindThienEvents(chart);
+    bindModeTabsEvents();
+  }
+
+  function bindThienEvents(chart) {
+    bindQmdjTimeEvents(chart, []);
+    const btnLakinh = document.getElementById('btn-qmdj-open-lakinh');
+    if (btnLakinh) {
+      btnLakinh.onclick = () => {
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('lakinh');
+        } else {
+          const tab = document.getElementById('tab-mode-lakinh');
+          if (tab) tab.click();
+        }
+      };
+    }
   }
 
   /**

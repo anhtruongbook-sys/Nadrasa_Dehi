@@ -4706,6 +4706,14 @@ body.theme-light .text-view-year {
   flex-grow: 1;
 }
 
+.numeric-time-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .num-box {
   background: transparent;
   border: none;
@@ -5032,7 +5040,13 @@ body.theme-light .text-view-year {
   border-radius: 8px;
   padding: 3px;
   margin-bottom: 2px;
-  gap: 4px;
+  gap: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.qmdj-mode-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 body.theme-light .qmdj-mode-tabs {
@@ -5041,11 +5055,11 @@ body.theme-light .qmdj-mode-tabs {
 }
 
 .qmdj-tab-btn {
-  flex: 1;
+  flex: 1 0 auto;
   border: none;
   background: transparent;
   color: #a8a29e;
-  font-size: 0.72rem;
+  font-size: 0.70rem;
   font-weight: 700;
   padding: 6px 4px;
   border-radius: 6px;
@@ -12146,6 +12160,7 @@ body.theme-light .jy-goal-btn.active {
   padding: 8px 10px;
   margin-top: 8px;
   box-sizing: border-box;
+  flex-shrink: 0 !important;
 }
 
 body.theme-light .jy-strat-summary {
@@ -12181,6 +12196,11 @@ body.theme-light .jy-strat-title {
 /* 3x3 Battle Map */
 .jy-battle-map-wrapper {
   margin-top: 10px;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
 }
 
 .jy-battle-map-title {
@@ -12196,23 +12216,30 @@ body.theme-light .jy-battle-map-title {
 }
 
 .jy-battle-map {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  gap: 4px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 .jy-battle-cell {
   background: rgba(15, 23, 42, 0.65);
   border: 1.5px solid rgba(148, 163, 184, 0.25);
   border-radius: 8px;
-  padding: 6px 7px;
-  min-height: 98px;
+  padding: 5px 4px !important;
+  min-height: 94px;
+  min-width: 0 !important;
+  max-width: 100% !important;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 3px;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -12247,15 +12274,18 @@ body.theme-light .jy-battle-cell {
 
 .jy-cell-head {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .jy-cell-name {
-  font-size: 0.7rem;
+  font-size: 0.68rem !important;
   font-weight: 800;
   color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.theme-light .jy-cell-name {
@@ -12264,18 +12294,19 @@ body.theme-light .jy-cell-name {
 
 .jy-cell-badges {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 2px;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .jy-badge {
-  font-size: 0.58rem;
-  font-weight: 800;
-  padding: 1px 4px;
-  border-radius: 3px;
-  white-space: nowrap;
-  line-height: 1.2;
+  font-size: 0.52rem !important;
+  font-weight: 800 !important;
+  padding: 1px 3px !important;
+  border-radius: 3px !important;
+  white-space: normal !important;
+  line-height: 1.1 !important;
 }
 
 .jy-badge.vic1 { background: #22c55e; color: #052e16; }
@@ -12289,23 +12320,26 @@ body.theme-light .jy-cell-name {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .jy-row-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.72rem;
+  font-size: 0.70rem !important;
   font-weight: 700;
   gap: 2px;
+  white-space: nowrap;
 }
 
 .jy-row-stems {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.66rem;
+  font-size: 0.64rem !important;
   color: #94a3b8;
+  white-space: nowrap;
 }
 
 body.theme-light .jy-row-stems {
@@ -12328,8 +12362,8 @@ body.theme-light .jy-row-stems {
 }
 
 .jy-form-tag {
-  font-size: 0.6rem;
-  padding: 1px 4px;
+  font-size: 0.58rem !important;
+  padding: 1px 3px !important;
   border-radius: 3px;
   font-weight: 700;
 }
@@ -12349,6 +12383,7 @@ body.theme-light .jy-form-tag.bad { background: #fee2e2; color: #b91c1c; }
   padding: 8px 10px;
   margin-top: 10px;
   box-sizing: border-box;
+  flex-shrink: 0 !important;
 }
 
 body.theme-light .jy-host-guest-box {
@@ -12398,6 +12433,7 @@ body.theme-light .highlight-action {
   padding: 8px 10px;
   margin-top: 10px;
   box-sizing: border-box;
+  flex-shrink: 0 !important;
 }
 
 body.theme-light .jy-domain-box {
@@ -12428,6 +12464,262 @@ body.theme-light .jy-domain-header {
 
 body.theme-light .jy-domain-body {
   color: #334155;
+}
+
+/* ================= SPIRITUAL QI MEN MEDITATION (TỌA THIỀN KỲ MÔN) ================= */
+.qmdj-thien-banner {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+body.theme-light .qmdj-thien-banner {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border-color: #c4b5fd;
+}
+
+.qmdj-thien-badge {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #c084fc;
+  letter-spacing: 0.3px;
+}
+
+body.theme-light .qmdj-thien-badge {
+  color: #7c3aed;
+}
+
+.qmdj-thien-desc {
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+body.theme-light .qmdj-thien-desc {
+  color: #334155;
+}
+
+.btn-qmdj-open-lakinh {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.2s ease;
+}
+
+.btn-qmdj-open-lakinh:hover {
+  opacity: 0.9;
+}
+
+.qmdj-deities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.qmdj-deity-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+body.theme-light .qmdj-deity-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.deity-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.deity-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deity-icon {
+  font-size: 1rem;
+}
+
+.deity-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.deity-backto-badge {
+  background: rgba(245, 176, 65, 0.15);
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  color: #f5b041;
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+body.theme-light .deity-backto-badge {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+.deity-meta-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+body.theme-light .deity-meta-strip {
+  color: #64748b;
+}
+
+.deity-desc {
+  font-size: 0.70rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin: 0;
+}
+
+body.theme-light .deity-desc {
+  color: #475569;
+}
+
+.deity-practice-box {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin-top: 2px;
+}
+
+body.theme-light .deity-practice-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.practice-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-bottom: 2px;
+}
+
+body.theme-light .practice-label {
+  color: #d97706;
+}
+
+.practice-text {
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+body.theme-light .practice-text {
+  color: #334155;
+}
+
+.qmdj-thien-guide-box {
+  background: rgba(20, 2, 5, 0.6);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+body.theme-light .qmdj-thien-guide-box {
+  background: #fdfbf7;
+  border-color: #e2d2b8;
+}
+
+.thien-guide-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #f5b041;
+}
+
+body.theme-light .thien-guide-title {
+  color: #b45309;
+}
+
+.thien-steps-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.thien-step-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.thien-step-item .step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f5b041;
+  color: #120104;
+  font-weight: 900;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.thien-step-item .step-content {
+  font-size: 0.70rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+body.theme-light .thien-step-item .step-content {
+  color: #334155;
+}
+
+.thien-step-item .step-content strong {
+  color: #f7dc6f;
+  display: block;
+  margin-bottom: 2px;
+}
+
+body.theme-light .thien-step-item .step-content strong {
+  color: #b45309;
+}
+
+.thien-step-item .step-content p {
+  margin: 0;
 }
 
 /* ==========================================================================
