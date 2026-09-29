@@ -1083,13 +1083,16 @@
                     </div>
                   </div>
                   <div class="jy-cell-body">
-                    <div class="jy-row-main">
+                    <div class="jy-row-god-star">
                       <span class="jy-val-god ${getCatClass(p.deity)}" title="${p.deity || ''}">${p.deity || '—'}</span>
                       <span class="jy-val-star ${getCatClass(p.star)}" title="${p.star || ''}">${shortStar}</span>
+                    </div>
+                    <div class="jy-row-door">
                       <span class="jy-val-door ${getCatClass(p.door)}" title="${p.door || ''}">${shortDoor}</span>
                     </div>
                     <div class="jy-row-stems">
                       <span class="jy-stem">T: <strong>${p.hcs || '—'}</strong></span>
+                      <span class="jy-stem-sep">•</span>
                       <span class="jy-stem">Đ: <strong>${p.ecs || '—'}</strong></span>
                       ${p.isKongWang ? '<span class="jy-badge-kw">Không</span>' : ''}
                     </div>
@@ -2028,12 +2031,17 @@
             const isDoor = pData.isDoor;
             const isTrucSu = pData.isTrucSu;
 
+            const ptShortStar = String(stars[0] || '—').replace(/Thiên\s*/g, '');
+            const ptShortDoor = String(door || '—').replace(/\s*Môn$/g, '');
+            const cleanHcs = String(hcs[0] || '—').replace(/\s*\([^)]*\)/g, '').trim();
+            const cleanEcs = String(ecs[0] || '—').replace(/\s*\([^)]*\)/g, '').trim();
+
             html += `
               <div class="qmdj-palace-cell pt-palace-cell ${isFacing ? 'pt-palace-facing' : ''} ${isDoor ? 'pt-palace-door' : ''}" data-palace-index="${pIndex}">
                 <!-- Top Row: Thần, Sao & Số Cung -->
                 <div class="p-top pt-cell-top">
                   <span class="p-divinity ${getCatClass(divinity)}">${divinity}</span>
-                  <span class="pt-cell-star ${getCatClass(stars[0])}">${stars[0]}</span>
+                  <span class="pt-cell-star ${getCatClass(stars[0])}">${ptShortStar}</span>
                   <div class="p-top-right">
                     <span class="p-num">${pIndex + 1}</span>
                   </div>
@@ -2053,13 +2061,13 @@
                 <!-- Bottom Row: Cửa, Trực Sử, Tên Cung & Can Thiên/Địa -->
                 <div class="p-bot pt-cell-bot">
                   <div class="p-bot-left">
-                    <span class="p-door ${getCatClass(door)}">${door}</span>
+                    <span class="p-door ${getCatClass(door)}">${ptShortDoor}</span>
                     ${isTrucSu ? '<span class="pt-badge pt-badge-trucsu">Trực Sử</span>' : ''}
                   </div>
                   <div class="pt-cell-stems">
-                    <span class="p-hcs ${getCatClass(hcs[0])}">${hcs[0]}</span>
+                    <span class="p-hcs ${getCatClass(cleanHcs)}">${cleanHcs}</span>
                     <span class="p-stems-slash">/</span>
-                    <span class="p-ecs-stem ${getCatClass(ecs[0])}">${ecs[0]}</span>
+                    <span class="p-ecs-stem ${getCatClass(cleanEcs)}">${cleanEcs}</span>
                   </div>
                 </div>
               </div>

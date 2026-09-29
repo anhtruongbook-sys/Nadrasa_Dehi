@@ -5376,13 +5376,14 @@ body.theme-light .pt-summary-strip {
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid rgba(245, 176, 65, 0.15);
-  padding-top: 1px;
-  overflow: hidden;
+  padding-top: 2px;
   gap: 2px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .pt-cell-bot .p-door {
-  font-size: 0.62rem !important;
+  font-size: 0.66rem !important;
   font-weight: 900;
   white-space: nowrap;
 }
@@ -5392,14 +5393,11 @@ body.theme-light .pt-summary-strip {
   align-items: center;
   gap: 1px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 58px;
 }
 
 .pt-cell-stems .p-hcs,
 .pt-cell-stems .p-ecs-stem {
-  font-size: 0.58rem !important;
+  font-size: 0.62rem !important;
   font-weight: 800 !important;
   line-height: 1 !important;
 }
@@ -12337,23 +12335,39 @@ body.theme-light .jy-cell-name {
   min-width: 0;
 }
 
-.jy-row-main {
+.jy-row-god-star {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.70rem !important;
+  font-size: 0.65rem !important;
   font-weight: 700;
   gap: 2px;
   white-space: nowrap;
 }
 
+.jy-row-door {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.78rem !important;
+  font-weight: 900;
+  margin: 1px 0;
+  white-space: nowrap;
+}
+
 .jy-row-stems {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  font-size: 0.64rem !important;
+  gap: 4px;
+  font-size: 0.62rem !important;
   color: #94a3b8;
   white-space: nowrap;
+}
+
+.jy-stem-sep {
+  font-size: 0.55rem;
+  opacity: 0.6;
 }
 
 body.theme-light .jy-row-stems {

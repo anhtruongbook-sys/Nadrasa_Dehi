@@ -154,7 +154,7 @@
   const btnGuide = document.getElementById('btn-guide');
   const btnTheme = document.getElementById('btn-theme');
   const themeIcon = document.getElementById('theme-icon');
-  let currentTheme = localStorage.getItem('neta_theme') || 'dark';
+  let currentTheme = localStorage.getItem('neta_theme') || 'light';
   const toast = document.getElementById('toast');
 
   // Screenshot Elements
@@ -2046,7 +2046,7 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '8.6';
+  const CURRENT_APP_VERSION = '8.7';
   function registerServiceWorker() {
     const isFlutterApp = (typeof window !== 'undefined' && (
       window.NativeBridge !== undefined ||
@@ -2087,7 +2087,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=8.6')
+        navigator.serviceWorker.register('sw.js?v=8.7')
           .then((reg) => {
             reg.update();
           })
