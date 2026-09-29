@@ -2700,7 +2700,8 @@ body.light-theme .ray-hud-action-btn.close {
   box-sizing: border-box;
 }
 
-body.light-theme #lakinh-qmdj-floating-hud {
+body.light-theme #lakinh-qmdj-floating-hud,
+body.theme-light #lakinh-qmdj-floating-hud {
   background: rgba(255, 255, 255, 0.96);
   border-color: rgba(217, 119, 6, 0.5);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -3628,34 +3629,151 @@ body.light-theme .tamhop-ts-card {
 /* KỲ MÔN CHIẾN LƯỢC: CHẾ ĐỘ THU GỌN MINI CAPSULE SIÊU MỎNG                  */
 /* ========================================================================= */
 #lakinh-qmdj-floating-hud.is-collapsed {
-  padding: 3px 6px !important;
+  padding: 4px 6px !important;
   border-radius: 12px !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+body.light-theme #lakinh-qmdj-floating-hud.is-collapsed,
+body.theme-light #lakinh-qmdj-floating-hud.is-collapsed {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(217, 119, 6, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
 }
 
 #lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-header {
   border-bottom: none !important;
   padding-bottom: 0 !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  gap: 4px !important;
+}
+
+#lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-wrap: nowrap !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  cursor: pointer;
 }
 
 #lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-title {
-  font-size: 0.70rem !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  letter-spacing: 0.2px !important;
 }
 
 #lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-time-btn {
-  padding: 1px 5px !important;
+  padding: 1.5px 5px !important;
   font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+}
+
+#lakinh-qmdj-floating-hud.is-collapsed .qmdj-time-edit-badge {
+  display: none !important;
+}
+
+#lakinh-qmdj-floating-hud.is-collapsed #btn-qmdj-hud-guide {
+  display: none !important;
+}
+
+#lakinh-qmdj-floating-hud.is-collapsed .btn-txt-close {
+  display: none !important;
+}
+
+#lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+#lakinh-qmdj-floating-hud.is-collapsed #btn-qmdj-hud-collapse {
+  background: rgba(245, 158, 11, 0.18) !important;
+  border: 1px solid rgba(245, 158, 11, 0.45) !important;
+  color: #facc15 !important;
+  border-radius: 999px !important;
+  padding: 2px 7px !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+}
+
+body.light-theme #lakinh-qmdj-floating-hud.is-collapsed #btn-qmdj-hud-collapse,
+body.theme-light #lakinh-qmdj-floating-hud.is-collapsed #btn-qmdj-hud-collapse {
+  background: rgba(217, 119, 6, 0.12) !important;
+  border-color: rgba(217, 119, 6, 0.4) !important;
+  color: #b45309 !important;
+}
+
+#lakinh-qmdj-floating-hud.is-collapsed #btn-qmdj-hud-close {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border: 1px solid rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  flex-shrink: 0 !important;
+  transition: all 0.15s ease !important;
+}
+
+body.light-theme #lakinh-qmdj-floating-hud.is-collapsed #btn-qmdj-hud-close,
+body.theme-light #lakinh-qmdj-floating-hud.is-collapsed #btn-qmdj-hud-close {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #dc2626 !important;
 }
 
 #lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-compact-summary {
-  padding: 1px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 2px 0 0 0 !important;
+  margin-top: 1px !important;
+  border-top: 1px solid rgba(245, 158, 11, 0.22) !important;
   gap: 3px !important;
+  overflow: hidden !important;
+  cursor: pointer;
+}
+
+body.light-theme #lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-compact-summary,
+body.theme-light #lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-compact-summary {
+  border-top-color: rgba(217, 119, 6, 0.2) !important;
 }
 
 #lakinh-qmdj-floating-hud.is-collapsed .compact-pill {
   font-size: 0.62rem !important;
+  font-weight: 700 !important;
   padding: 1.5px 5px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
 }
 
 /* ========================================================================= */
@@ -3675,7 +3793,8 @@ body.light-theme .tamhop-ts-card {
   box-sizing: border-box;
 }
 
-body.light-theme #lakinh-tamhop-floating-hud {
+body.light-theme #lakinh-tamhop-floating-hud,
+body.theme-light #lakinh-tamhop-floating-hud {
   background: rgba(255, 255, 255, 0.96);
   border-color: rgba(5, 150, 105, 0.5);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -3683,9 +3802,22 @@ body.light-theme #lakinh-tamhop-floating-hud {
 }
 
 #lakinh-tamhop-floating-hud.is-collapsed {
-  padding: 3px 6px !important;
+  padding: 4px 6px !important;
   border-radius: 12px !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+body.light-theme #lakinh-tamhop-floating-hud.is-collapsed,
+body.theme-light #lakinh-tamhop-floating-hud.is-collapsed {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(5, 150, 105, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
 }
 
 .tamhop-hud-header {
@@ -3701,7 +3833,13 @@ body.light-theme #lakinh-tamhop-floating-hud {
 #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-header {
   border-bottom: none !important;
   padding-bottom: 0 !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  gap: 4px !important;
 }
 
 .tamhop-hud-title-group {
@@ -3711,6 +3849,17 @@ body.light-theme #lakinh-tamhop-floating-hud {
   flex-wrap: wrap;
 }
 
+#lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-wrap: nowrap !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  cursor: pointer;
+}
+
 .tamhop-hud-title {
   font-size: 0.78rem;
   font-weight: 800;
@@ -3718,12 +3867,17 @@ body.light-theme #lakinh-tamhop-floating-hud {
   letter-spacing: 0.5px;
 }
 
-body.light-theme .tamhop-hud-title {
+body.light-theme .tamhop-hud-title,
+body.theme-light .tamhop-hud-title {
   color: #059669;
 }
 
 #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-title {
-  font-size: 0.70rem !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  letter-spacing: 0.2px !important;
 }
 
 .tamhop-hud-cfg-btn {
@@ -3745,16 +3899,151 @@ body.light-theme .tamhop-hud-title {
   background: rgba(16, 185, 129, 0.35);
 }
 
-body.light-theme .tamhop-hud-cfg-btn {
+body.light-theme .tamhop-hud-cfg-btn,
+body.theme-light .tamhop-hud-cfg-btn {
   background: #d1fae5;
   border-color: #10b981;
   color: #047857;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-cfg-btn {
+  padding: 1.5px 5px !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed .btn-txt-close {
+  display: none !important;
 }
 
 .tamhop-hud-actions {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed #btn-tamhop-hud-collapse {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border: 1px solid rgba(16, 185, 129, 0.45) !important;
+  color: #34d399 !important;
+  border-radius: 999px !important;
+  padding: 2px 7px !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+}
+
+body.light-theme #lakinh-tamhop-floating-hud.is-collapsed #btn-tamhop-hud-collapse,
+body.theme-light #lakinh-tamhop-floating-hud.is-collapsed #btn-tamhop-hud-collapse {
+  background: rgba(5, 150, 105, 0.12) !important;
+  border-color: rgba(5, 150, 105, 0.4) !important;
+  color: #059669 !important;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed #btn-tamhop-hud-close {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border: 1px solid rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  flex-shrink: 0 !important;
+  transition: all 0.15s ease !important;
+}
+
+body.light-theme #lakinh-tamhop-floating-hud.is-collapsed #btn-tamhop-hud-close,
+body.theme-light #lakinh-tamhop-floating-hud.is-collapsed #btn-tamhop-hud-close {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #dc2626 !important;
+}
+
+#lakinh-qmdj-floating-hud:not(.is-collapsed) #btn-qmdj-hud-collapse,
+#lakinh-tamhop-floating-hud:not(.is-collapsed) #btn-tamhop-hud-collapse {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  padding: 3px 8px !important;
+  font-size: 0.68rem !important;
+}
+
+#lakinh-qmdj-floating-hud:not(.is-collapsed) #btn-qmdj-hud-close,
+#lakinh-tamhop-floating-hud:not(.is-collapsed) #btn-tamhop-hud-close {
+  background: rgba(239, 68, 68, 0.22) !important;
+  border: 1px solid rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+  border-radius: 12px !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 3px 8px !important;
+  font-size: 0.68rem !important;
+}
+
+body.light-theme #lakinh-qmdj-floating-hud:not(.is-collapsed) #btn-qmdj-hud-collapse,
+body.theme-light #lakinh-qmdj-floating-hud:not(.is-collapsed) #btn-qmdj-hud-collapse,
+body.light-theme #lakinh-tamhop-floating-hud:not(.is-collapsed) #btn-tamhop-hud-collapse,
+body.theme-light #lakinh-tamhop-floating-hud:not(.is-collapsed) #btn-tamhop-hud-collapse {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.light-theme #lakinh-qmdj-floating-hud:not(.is-collapsed) #btn-qmdj-hud-close,
+body.theme-light #lakinh-qmdj-floating-hud:not(.is-collapsed) #btn-qmdj-hud-close,
+body.light-theme #lakinh-tamhop-floating-hud:not(.is-collapsed) #btn-tamhop-hud-close,
+body.theme-light #lakinh-tamhop-floating-hud:not(.is-collapsed) #btn-tamhop-hud-close {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #dc2626 !important;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-duong-cuc-row {
+  display: none !important;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-compact-summary {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 2px 0 0 0 !important;
+  margin-top: 1px !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.22) !important;
+  gap: 3px !important;
+  overflow: hidden !important;
+  cursor: pointer;
+}
+
+body.light-theme #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-compact-summary,
+body.theme-light #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-compact-summary {
+  border-top-color: rgba(5, 150, 105, 0.2) !important;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed .tamhop-pill {
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  padding: 1.5px 5px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
 }
 
 .tamhop-hud-compact-summary {

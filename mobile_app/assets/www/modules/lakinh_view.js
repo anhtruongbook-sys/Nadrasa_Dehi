@@ -31,7 +31,7 @@
     isLocked: false,
     // Tia ngắm phong thủy (lập cực qua 1 điểm bất kỳ)
     isRayActive: false,
-    isRayHudCollapsed: false, // Thu gọn floating HUD thành mini capsule khi bấm [✕]
+    isRayHudCollapsed: true, // Mặc định mở dạng rút gọn 2 dòng mini capsule
     rayAngle: null, // Góc độ số của tia ngắm trên đĩa La Kinh (null = tự động trùng hướng nhà khi bật)
     rayDistance: 160, // Khoảng cách từ tâm đến điểm mục tiêu ghim trên bản vẽ (px)
     isDraggingRayTarget: false,
@@ -259,21 +259,21 @@
           <!-- 2. Floating QMDJ Strategic HUD Card (Phase 3) -->
           <div id="lakinh-qmdj-floating-hud" class="lakinh-glass-panel ${state.isQmdjStratHudCollapsed ? 'is-collapsed' : ''}" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
             <div class="qmdj-hud-header">
-              <div class="qmdj-hud-title-group">
-                <span class="qmdj-hud-title">⚔️ KỲ MÔN CHIẾN LƯỢC</span>
+              <div class="qmdj-hud-title-group" id="btn-qmdj-mini-expand-header" title="Chạm để xem bảng chiến lược chi tiết">
+                <span class="qmdj-hud-title">⚔️ Kỳ Môn Chiến Lược</span>
                 <button type="button" id="btn-qmdj-hud-time-picker" class="qmdj-hud-time-btn" title="Bấm để đổi Ngày &amp; Giờ tác chiến">
                   <span class="qmdj-clock-icon">🕒</span>
                   <span id="qmdj-hud-time">Giờ Hiện Tại</span>
                   <span class="qmdj-time-edit-badge">✏️ Đổi giờ</span>
                 </button>
                 <button type="button" id="btn-qmdj-reset-now" class="qmdj-hud-reset-btn" title="Quay về giờ hiện tại thực tế" style="${state.qmdjStratDate ? 'display: inline-flex;' : 'display: none;'}">
-                  ↺ Hiện tại
+                  ↺
                 </button>
               </div>
               <div class="qmdj-hud-actions">
                 <button type="button" id="btn-qmdj-hud-guide" class="ray-hud-action-btn guide" title="Xem hướng dẫn giải nghĩa các phương vị chiến lược">ℹ️ Hướng dẫn</button>
-                <button type="button" id="btn-qmdj-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn ô chiến lược">${state.isQmdjStratHudCollapsed ? '+ Mở rộng' : '– Thu gọn'}</button>
-                <button type="button" id="btn-qmdj-hud-close" class="ray-hud-action-btn close" title="Tắt lớp chiến lược">✕ Tắt</button>
+                <button type="button" id="btn-qmdj-hud-collapse" class="ray-mini-btn-expand" title="Thu gọn / Mở rộng">${state.isQmdjStratHudCollapsed ? '▾ Chi tiết' : '– Thu gọn'}</button>
+                <button type="button" id="btn-qmdj-hud-close" class="ray-mini-close-btn" title="Tắt lớp chiến lược">✕<span class="btn-txt-close"> Tắt</span></button>
               </div>
             </div>
 
@@ -332,21 +332,21 @@
           <!-- 3. Floating Tam Hợp HUD Card (Phong Thủy Tam Hợp Phái) -->
           <div id="lakinh-tamhop-floating-hud" class="lakinh-glass-panel ${state.isTamHopHudCollapsed ? 'is-collapsed' : ''}" style="${state.isTamHopActive ? '' : 'display: none;'}">
             <div class="tamhop-hud-header">
-              <div class="tamhop-hud-title-group">
-                <span class="tamhop-hud-title">🌊 TAM HỢP PHÁI</span>
+              <div class="tamhop-hud-title-group" id="btn-tamhop-mini-expand-header" title="Chạm để xem bảng Tam Hợp chi tiết">
+                <span class="tamhop-hud-title">🌊 Tam Hợp Phái</span>
                 <button type="button" id="btn-tamhop-hud-config" class="tamhop-hud-cfg-btn" title="Chỉnh sửa Thủy Khẩu &amp; Gia Chủ">
                   <span>⚙️</span>
                   <span id="tamhop-hud-cuc-label">Thủy Cục</span>
                 </button>
               </div>
               <div class="tamhop-hud-actions">
-                <button type="button" id="btn-tamhop-hud-collapse" class="ray-hud-action-btn collapse" title="Thu gọn / Mở rộng">${state.isTamHopHudCollapsed ? '+ Mở rộng' : '– Thu gọn'}</button>
-                <button type="button" id="btn-tamhop-hud-close" class="ray-hud-action-btn close" title="Tắt lớp Tam Hợp">✕ Tắt</button>
+                <button type="button" id="btn-tamhop-hud-collapse" class="ray-mini-btn-expand" title="Thu gọn / Mở rộng">${state.isTamHopHudCollapsed ? '▾ Chi tiết' : '– Thu gọn'}</button>
+                <button type="button" id="btn-tamhop-hud-close" class="ray-mini-close-btn" title="Tắt lớp Tam Hợp">✕<span class="btn-txt-close"> Tắt</span></button>
               </div>
             </div>
 
             <!-- Thanh Chọn Đường Cục (Tiểu Cục 40m / Trung Cục 350m / Đại Cục 2km / Quét DEM) -->
-            <div class="tamhop-hud-duong-cuc-row">
+            <div class="tamhop-hud-duong-cuc-row" style="${state.isTamHopHudCollapsed ? 'display: none;' : 'display: flex;'}">
               <button type="button" class="tamhop-cuc-btn ${state.tamHopDuongCuc === 'tieu_cuc' ? 'active' : ''}" data-duongcuc="tieu_cuc" title="Tiểu Minh Đường (40m): Cống ngầm, rãnh nước">🏠 Tiểu Cục</button>
               <button type="button" class="tamhop-cuc-btn ${state.tamHopDuongCuc === 'trung_cuc' ? 'active' : ''}" data-duongcuc="trung_cuc" title="Trung Minh Đường (350m): Ngã ba phố, kênh rạch">🏘️ Trung Cục</button>
               <button type="button" class="tamhop-cuc-btn ${state.tamHopDuongCuc === 'dai_cuc' ? 'active' : ''}" data-duongcuc="dai_cuc" title="Đại Minh Đường (2000m): Hợp lưu sông cái, hồ lớn">⛰️ Đại Cục</button>
@@ -2037,6 +2037,16 @@
     if (hud) {
       hud.style.display = 'block';
       hud.classList.toggle('is-collapsed', !!state.isTamHopHudCollapsed);
+      const hudBody = document.getElementById('tamhop-hud-body');
+      const hudFooter = document.querySelector('.tamhop-hud-footer');
+      const hudCompact = document.getElementById('tamhop-hud-compact-summary');
+      const hudDuongCuc = document.querySelector('.tamhop-hud-duong-cuc-row');
+      const btnThCollapse = document.getElementById('btn-tamhop-hud-collapse');
+      if (hudBody) hudBody.style.display = state.isTamHopHudCollapsed ? 'none' : 'grid';
+      if (hudFooter) hudFooter.style.display = state.isTamHopHudCollapsed ? 'none' : 'block';
+      if (hudCompact) hudCompact.style.display = state.isTamHopHudCollapsed ? 'flex' : 'none';
+      if (hudDuongCuc) hudDuongCuc.style.display = state.isTamHopHudCollapsed ? 'none' : 'flex';
+      if (btnThCollapse) btnThCollapse.textContent = state.isTamHopHudCollapsed ? '▾ Chi tiết' : '– Thu gọn';
     }
 
     if (!global.TamHopEngine) {
@@ -2253,8 +2263,7 @@
     const cpVuong = document.getElementById('compact-th-vuong');
     const cpMo = document.getElementById('compact-th-mo');
 
-    const curDistM = (curCucInfo && curCucInfo.distM) ? (' • ' + curCucInfo.distM + 'm') : '';
-    if (cpKhau) cpKhau.textContent = `💧 Khẩu: ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(0)}°${curDistM})`;
+    if (cpKhau) cpKhau.textContent = `💧 Khẩu: ${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(0)}°)`;
     if (cpSinh) cpSinh.textContent = `🌱 Sinh: ${tsSon}`;
     if (cpVuong) cpVuong.textContent = `👑 Vượng: ${dvSon}`;
     if (cpMo) cpMo.textContent = `⛩️ Mộ: ${mkSon}`;
@@ -2278,6 +2287,9 @@
       state.isTamHopActive = forceState;
     } else {
       state.isTamHopActive = !state.isTamHopActive;
+    }
+    if (state.isTamHopActive) {
+      state.isTamHopHudCollapsed = true; // Mở dạng rút gọn 2 dòng
     }
     updateTamHopLayer();
     if (state.isTamHopActive) {
@@ -2315,7 +2327,20 @@ function updateQmdjStrategicLayer() {
       svgOverlay.style.display = 'block';
       svgOverlay.style.transform = `rotate(${-state.rotation}deg)`;
     }
-    if (hud) hud.style.display = 'block';
+    if (hud) {
+      hud.style.display = 'block';
+      hud.classList.toggle('is-collapsed', !!state.isQmdjStratHudCollapsed);
+      const hudBody = document.getElementById('qmdj-hud-body');
+      const hudPills = document.querySelector('.qmdj-hud-pills');
+      const hudFooter = document.querySelector('.qmdj-hud-footer');
+      const hudCompact = document.getElementById('qmdj-hud-compact-summary');
+      const btnCollapse = document.getElementById('btn-qmdj-hud-collapse');
+      if (hudBody) hudBody.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'grid';
+      if (hudPills) hudPills.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'flex';
+      if (hudFooter) hudFooter.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'block';
+      if (hudCompact) hudCompact.style.display = state.isQmdjStratHudCollapsed ? 'flex' : 'none';
+      if (btnCollapse) btnCollapse.textContent = state.isQmdjStratHudCollapsed ? '▾ Chi tiết' : '– Thu gọn';
+    }
     if (sheetToggleBtn) {
       sheetToggleBtn.classList.remove('secondary');
       sheetToggleBtn.classList.add('success');
@@ -2530,7 +2555,8 @@ function updateQmdjStrategicLayer() {
 
     const fullTimeStr = canChiStr ? `${timeStr} (${canChiStr})` : timeStr;
     const displayTimeStr = isCustomTime ? `${fullTimeStr} ⏰ Kế Hoạch` : fullTimeStr;
-    if (hudTime) hudTime.textContent = displayTimeStr;
+    const shortTimeStr = isCustomTime ? `${timeStr} ⏰` : timeStr;
+    if (hudTime) hudTime.textContent = state.isQmdjStratHudCollapsed ? shortTimeStr : displayTimeStr;
     if (sheetValTime) sheetValTime.textContent = displayTimeStr;
 
     document.querySelectorAll('.qmdj-hud-pill-btn, .sheet-qmdj-goal-btn').forEach(btn => {
@@ -4525,20 +4551,28 @@ function updateQmdjStrategicLayer() {
     }
 
     const btnThCollapse = document.getElementById('btn-tamhop-hud-collapse');
-    if (btnThCollapse) {
-      btnThCollapse.addEventListener('click', () => {
-        state.isTamHopHudCollapsed = !state.isTamHopHudCollapsed;
-        const hud = document.getElementById('lakinh-tamhop-floating-hud');
-        const hudBody = document.getElementById('tamhop-hud-body');
-        const hudFooter = document.querySelector('.tamhop-hud-footer');
-        const hudCompact = document.getElementById('tamhop-hud-compact-summary');
-        if (hud) hud.classList.toggle('is-collapsed', state.isTamHopHudCollapsed);
-        if (hudBody) hudBody.style.display = state.isTamHopHudCollapsed ? 'none' : 'grid';
-        if (hudFooter) hudFooter.style.display = state.isTamHopHudCollapsed ? 'none' : 'block';
-        if (hudCompact) hudCompact.style.display = state.isTamHopHudCollapsed ? 'flex' : 'none';
-        btnThCollapse.textContent = state.isTamHopHudCollapsed ? '+ Mở rộng' : '– Thu gọn';
-      });
-    }
+    const toggleThCollapse = () => {
+      state.isTamHopHudCollapsed = !state.isTamHopHudCollapsed;
+      const hud = document.getElementById('lakinh-tamhop-floating-hud');
+      const hudBody = document.getElementById('tamhop-hud-body');
+      const hudFooter = document.querySelector('.tamhop-hud-footer');
+      const hudCompact = document.getElementById('tamhop-hud-compact-summary');
+      const hudDuongCuc = document.querySelector('.tamhop-hud-duong-cuc-row');
+      if (hud) hud.classList.toggle('is-collapsed', state.isTamHopHudCollapsed);
+      if (hudBody) hudBody.style.display = state.isTamHopHudCollapsed ? 'none' : 'grid';
+      if (hudFooter) hudFooter.style.display = state.isTamHopHudCollapsed ? 'none' : 'block';
+      if (hudCompact) hudCompact.style.display = state.isTamHopHudCollapsed ? 'flex' : 'none';
+      if (hudDuongCuc) hudDuongCuc.style.display = state.isTamHopHudCollapsed ? 'none' : 'flex';
+      if (btnThCollapse) btnThCollapse.textContent = state.isTamHopHudCollapsed ? '▾ Chi tiết' : '– Thu gọn';
+    };
+    if (btnThCollapse) btnThCollapse.addEventListener('click', toggleThCollapse);
+    const compactTh = document.getElementById('tamhop-hud-compact-summary');
+    if (compactTh) compactTh.addEventListener('click', toggleThCollapse);
+    const miniThHeader = document.getElementById('btn-tamhop-mini-expand-header');
+    if (miniThHeader) miniThHeader.addEventListener('click', (e) => {
+      if (e.target.closest('#btn-tamhop-hud-config')) return;
+      toggleThCollapse();
+    });
 
     const btnThClose = document.getElementById('btn-tamhop-hud-close');
     if (btnThClose) {
@@ -5165,7 +5199,7 @@ function updateQmdjStrategicLayer() {
     const toggleSightingRay = () => {
       state.isRayActive = !state.isRayActive;
       if (state.isRayActive) {
-        state.isRayHudCollapsed = false;
+        state.isRayHudCollapsed = true; // Mở dạng rút gọn 2 dòng, không mở cả ô to
         if (state.rayAngle === null || state.rayAngle === undefined) {
           state.rayAngle = state.rotation;
         }
@@ -5489,7 +5523,7 @@ function updateQmdjStrategicLayer() {
       state.isQmdjStratActive = !state.isQmdjStratActive;
     }
     if (state.isQmdjStratActive) {
-      state.isQmdjStratHudCollapsed = false;
+      state.isQmdjStratHudCollapsed = true; // Mở dạng rút gọn 2 dòng
     }
     updateQmdjStrategicLayer();
     showLaKinhToast(state.isQmdjStratActive
@@ -6504,22 +6538,28 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     if (btnSheetToggle) btnSheetToggle.addEventListener('click', () => toggleQmdjStrategicLayer());
     if (btnClose) btnClose.addEventListener('click', () => toggleQmdjStrategicLayer(false));
 
-    if (btnCollapse) {
-      btnCollapse.addEventListener('click', () => {
-        state.isQmdjStratHudCollapsed = !state.isQmdjStratHudCollapsed;
-        const hud = document.getElementById('lakinh-qmdj-floating-hud');
-        if (hud) hud.classList.toggle('is-collapsed', state.isQmdjStratHudCollapsed);
-        const hudBody = document.getElementById('qmdj-hud-body');
-        const hudPills = document.querySelector('.qmdj-hud-pills');
-        const hudFooter = document.querySelector('.qmdj-hud-footer');
-        const hudCompact = document.getElementById('qmdj-hud-compact-summary');
-        if (hudBody) hudBody.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'grid';
-        if (hudPills) hudPills.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'flex';
-        if (hudFooter) hudFooter.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'block';
-        if (hudCompact) hudCompact.style.display = state.isQmdjStratHudCollapsed ? 'flex' : 'none';
-        btnCollapse.textContent = state.isQmdjStratHudCollapsed ? '+ Mở rộng' : '– Thu gọn';
-      });
-    }
+    const toggleQmdjCollapse = () => {
+      state.isQmdjStratHudCollapsed = !state.isQmdjStratHudCollapsed;
+      const hud = document.getElementById('lakinh-qmdj-floating-hud');
+      if (hud) hud.classList.toggle('is-collapsed', state.isQmdjStratHudCollapsed);
+      const hudBody = document.getElementById('qmdj-hud-body');
+      const hudPills = document.querySelector('.qmdj-hud-pills');
+      const hudFooter = document.querySelector('.qmdj-hud-footer');
+      const hudCompact = document.getElementById('qmdj-hud-compact-summary');
+      if (hudBody) hudBody.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'grid';
+      if (hudPills) hudPills.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'flex';
+      if (hudFooter) hudFooter.style.display = state.isQmdjStratHudCollapsed ? 'none' : 'block';
+      if (hudCompact) hudCompact.style.display = state.isQmdjStratHudCollapsed ? 'flex' : 'none';
+      if (btnCollapse) btnCollapse.textContent = state.isQmdjStratHudCollapsed ? '▾ Chi tiết' : '– Thu gọn';
+    };
+    if (btnCollapse) btnCollapse.addEventListener('click', toggleQmdjCollapse);
+    const compactQmdj = document.getElementById('qmdj-hud-compact-summary');
+    if (compactQmdj) compactQmdj.addEventListener('click', toggleQmdjCollapse);
+    const miniQmdjHeader = document.getElementById('btn-qmdj-mini-expand-header');
+    if (miniQmdjHeader) miniQmdjHeader.addEventListener('click', (e) => {
+      if (e.target.closest('#btn-qmdj-hud-time-picker, #btn-qmdj-reset-now')) return;
+      toggleQmdjCollapse();
+    });
 
     if (btnTimePicker) btnTimePicker.addEventListener('click', () => openQmdjTimeModal());
     if (btnOpenTimeFooter) btnOpenTimeFooter.addEventListener('click', () => openQmdjTimeModal());
