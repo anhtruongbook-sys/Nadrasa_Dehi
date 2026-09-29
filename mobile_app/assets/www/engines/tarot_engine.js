@@ -1922,24 +1922,26 @@
       
       // I. CỐT TỦY & TỔNG LUẬN
       if (report.quintessence) {
-        md.push('## I. LÁ BÀI CỐT TỦY & BÀI HỌC LINH HỒN (THE QUINTESSENCE)');
+        md.push('## I. LÁ BÀI CỐT TỦY (THE QUINTESSENCE CARD)');
         md.push(`* **Lá bài đại diện cốt tủy:** **${report.quintessence.name_vi} (${report.quintessence.name_en})** (Số học: \`${report.quintessence.rawSum} -> ${report.quintessence.reducedNumber}\`)`);
-        md.push(`* **Thông điệp cốt tủy:** *${report.quintessence.lesson}*\n`);
+        md.push(`* **Bài học linh hồn cốt lõi:** *${report.quintessence.lesson}*\n`);
       }
 
-      md.push('## II. TỔNG LUẬN MẠCH TRUYỆN BIỆN CHỨNG (SYNTHESIZED NARRATIVE)');
+      md.push('## II. TỔNG LUẬN MẠCH TRUYỆN BIỆN CHỨNG (STORYLINE NARRATIVE)');
       md.push(`> ${report.synthesizedStory}\n`);
 
+      md.push('## III. MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS)');
       if (report.archetypalPatterns && report.archetypalPatterns.length > 0) {
-        md.push('### Mẫu hình cổ mẫu nổi bật (Archetypal Constellations):');
         report.archetypalPatterns.forEach(p => {
           md.push(`- **${p.title}** [${p.badge}]: ${p.desc}`);
         });
-        md.push('');
+      } else {
+        md.push('- Không có mẫu hình cổ mẫu đặc biệt xung đột.');
       }
+      md.push('');
 
       md.push('---');
-      md.push('## III. PHÂN TÍCH ĐỊNH LƯỢNG VĨ MÔ (MACRO SCAN)');
+      md.push('## IV. PHÂN TÍCH ĐỊNH LƯỢNG VĨ MÔ (MACRO SCAN)');
       md.push(`* **Bản chất trải bài:** **${report.fateVerdict}**`);
       md.push(`* **Tỷ lệ Ẩn chính (Major Arcana):** \`${report.majorRatio}\``);
       md.push(`* **Trạng thái chiều bài:** \`${report.orientationStat}\``);
@@ -1957,8 +1959,8 @@
       }
 
       md.push('---');
-      md.push('## IV. CHI TIẾT LUẬN GIẢI TỪNG VỊ TRÍ');
-      report.cardReadings.forEach(c => {
+      md.push('## V. LUẬN GIẢI CHI TIẾT TỪNG VỊ TRÍ');
+      (report.cardReadings || []).forEach(c => {
         md.push(`### ${c.position}: ${c.cardName} — *[${c.orientation}]*`);
         md.push(`- **Phân loại & Nguyên tố:** ${c.arcana} Arcana | Nguyên tố ${c.element}`);
         md.push(`- **Từ khóa trọng tâm:** \`${c.keywords}\``);
@@ -1967,14 +1969,8 @@
       });
 
       md.push('---');
-      md.push('## V. TỔNG KẾT VÀ LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)');
+      md.push('## VI. TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)');
       md.push(`> **THÔNG ĐIỆP CHỐT:** ${report.finalAdvice}\n`);
-
-      if (report.deepSynthesis) {
-        md.push('---');
-        md.push('## VI. LUẬN GIẢI CHIỀU SÂU & HƯỚNG DẪN CỤ THỂ');
-        md.push(`${report.deepSynthesis}\n`);
-      }
       return md.join('\n');
     }
   };

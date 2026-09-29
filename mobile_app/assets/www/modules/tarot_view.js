@@ -851,6 +851,65 @@
           </div>
         </div>
 
+        <!-- Thanh Công Cụ Hành Động Báo Cáo & Trau Chuốt Văn Phong -->
+        <div class="tarot-analysis-action-bar">
+          <div class="tarot-badge-offline">
+            <span>🔮</span>
+            <span>Tarot Học Thuật &amp; Tâm Lý Chiều Sâu</span>
+          </div>
+          <div class="tarot-action-btns">
+            <button class="tarot-btn-action-sm" id="btn-tarot-top-copy" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
+              📋 Sao Chép Luận Giải
+            </button>
+            <button class="tarot-btn-action-sm" id="btn-tarot-top-pdf" title="Tải xuống tệp PDF">
+              📄 Tải File PDF
+            </button>
+            <button class="tarot-btn-polish-ai" id="btn-tarot-polish-ai" title="Trau chuốt văn phong toàn diện cả 6 mục bằng AI">
+              ${report.isDeepLoading ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
+            </button>
+          </div>
+        </div>
+
+        <!-- Hộp Kết Quả Trau Chuốt Văn Phong Toàn Diện Cả 6 Mục (Khi Kích Hoạt) -->
+        ${report.showDeepAiBox ? `
+          <div class="tuvi-ai-result-box tarot-ai-result-box" id="tarot-ai-box">
+            <div class="tuvi-ai-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>✨ BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG (MỤC I ĐẾN VI)</span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                ${report.deepSynthesis ? `
+                  <button class="tarot-btn-action-sm" id="btn-copy-tarot-ai" style="padding: 2px 8px; font-size: 0.7rem;">
+                    📋 Chép Văn Bản
+                  </button>
+                ` : ''}
+                <button class="tarot-btn-action-sm" id="btn-close-tarot-ai-box" style="padding: 2px 8px; font-size: 0.7rem;">
+                  ✕ Đóng
+                </button>
+              </div>
+            </div>
+            <div class="tuvi-ai-body" style="max-height: 520px; overflow-y: auto; padding: 14px; font-size: 0.88rem; line-height: 1.7; color: var(--text-color); white-space: normal;">
+              ${report.isDeepLoading ? `
+                <div style="display: flex; align-items: center; gap: 10px; color: var(--gold-glow); font-weight: 600;">
+                  <span class="loading-spinner">⏳</span>
+                  Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...
+                </div>
+              ` : ''}
+              ${report.deepError ? `
+                <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
+                  <div>⚠️ ${escapeHTML(report.deepError)}</div>
+                  <div style="margin-top: 10px;">
+                    <button type="button" class="tarot-btn-action-sm" id="btn-tarot-err-open-key" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                      ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+              ${report.deepSynthesis ? formatMarkdownDeep(report.deepSynthesis) : ''}
+            </div>
+          </div>
+        ` : ''}
+
         <!-- PHẦN I: LÁ BÀI CỐT TỦY & BÀI HỌC LINH HỒN (THE QUINTESSENCE) -->
         ${report.quintessence ? `
           <div class="tarot-section-box tarot-quintessence-box">
@@ -888,54 +947,32 @@
           </div>
         </div>
 
-        <!-- PHẦN ĐẶC BIỆT: LUẬN GIẢI CHIỀU SÂU & HƯỚNG DẪN CỤ THỂ -->
-        ${(global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled()) ? `
-          <div class="tarot-section-box tarot-deep-box ${report.isDeepLoading ? 'is-loading' : ''}" id="tarot-deep-section-box">
-            <div class="tarot-section-header">
-              <span class="tarot-sec-icon">✨</span>
-              <span class="tarot-sec-title">LUẬN GIẢI CHIỀU SÂU &amp; HƯỚNG DẪN CỤ THỂ</span>
-            </div>
-            <div class="tarot-deep-body" id="tarot-deep-body-content">
-              ${report.deepSynthesis ? `
-                <div class="tarot-deep-rendered">
-                  ${formatMarkdownDeep(report.deepSynthesis)}
-                </div>
-              ` : (report.isDeepLoading ? `
-                <div class="tarot-deep-loading-state">
-                  <div class="tarot-deep-spinner"></div>
-                  <div class="tarot-deep-loading-msg">Đang kết nối chiều sâu trực giác và tổng hợp các mối tương quan...</div>
-                </div>
-              ` : `
-                <div class="tarot-deep-trigger-row">
-                  <button id="btn-trigger-deep-synthesis" class="tarot-btn-deep-trigger">
-                    ✨ Bấm Để Phân Tích Luận Giải Chiều Sâu Ngay
-                  </button>
-                </div>
-              `)}
-            </div>
+        <!-- PHẦN III: MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS) -->
+        <div class="tarot-section-box tarot-patterns-box">
+          <div class="tarot-section-header">
+            <span class="tarot-sec-icon">🌌</span>
+            <span class="tarot-sec-title">III. MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS)</span>
           </div>
-        ` : ''}
-
-        <!-- PHẦN III: MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL CONSTELLATIONS) -->
-        ${report.archetypalPatterns && report.archetypalPatterns.length > 0 ? `
-          <div class="tarot-section-box tarot-patterns-box">
-            <div class="tarot-section-header">
-              <span class="tarot-sec-icon">🌌</span>
-              <span class="tarot-sec-title">III. MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS)</span>
-            </div>
-            <div class="tarot-patterns-list">
-              ${report.archetypalPatterns.map(p => `
-                <div class="tarot-pattern-item">
-                  <div class="pattern-header">
-                    <span class="pattern-title">${p.title}</span>
-                    <span class="pattern-badge">${p.badge}</span>
-                  </div>
-                  <div class="pattern-desc">${formatMarkdownInline(p.desc)}</div>
+          <div class="tarot-patterns-list">
+            ${(report.archetypalPatterns && report.archetypalPatterns.length > 0) ? report.archetypalPatterns.map(p => `
+              <div class="tarot-pattern-item">
+                <div class="pattern-header">
+                  <span class="pattern-title">${p.title}</span>
+                  <span class="pattern-badge">${p.badge}</span>
                 </div>
-              `).join('')}
-            </div>
+                <div class="pattern-desc">${formatMarkdownInline(p.desc)}</div>
+              </div>
+            `).join('') : `
+              <div class="tarot-pattern-item">
+                <div class="pattern-header">
+                  <span class="pattern-title">Dòng Chảy Năng Lượng Đơn Lập &amp; Đồng Nhất</span>
+                  <span class="pattern-badge">Thuần Nhất</span>
+                </div>
+                <div class="pattern-desc">Trải bài không xuất hiện các mẫu hình xung đột nguyên tố hoặc đối kháng phân cực cực đoan. Năng lượng vận hành tự nhiên theo từng vị trí lá bài cụ thể.</div>
+              </div>
+            `}
           </div>
-        ` : ''}
+        </div>
 
         <!-- PHẦN IV: MACRO SCAN & ELEMENTAL DIGNITIES -->
         <div class="tarot-section-box">
@@ -1349,29 +1386,22 @@
   // --- DEEP SYNTHESIS & KEY CONFIGURATION (EXTENDED) ---
   async function fetchDeepInterpretation(report) {
     if (!report || report.isDeepLoading || !global.NetaGeminiService) return;
-    if (!global.NetaGeminiService.isDeepSynthesisEnabled()) return;
+    if (!global.NetaGeminiService.isDeepSynthesisEnabled()) {
+      global.NetaGeminiService.setDeepSynthesisEnabled(true);
+    }
     if (!global.NetaGeminiService.hasActiveKey()) {
-      openTarotKeyConfigModal();
+      report.deepError = 'Chưa cài đặt Google Gemini API Key. Bạn có thể bấm nút "Cài Đặt Khóa" bên dưới để nhập khóa dùng chung cho toàn bộ ứng dụng.';
+      report.showDeepAiBox = true;
+      report.isDeepLoading = false;
+      report.userClosedAiBox = false;
+      renderTarot();
       return;
     }
 
     report.isDeepLoading = true;
-
-    const deepBox = document.getElementById('tarot-deep-section-box');
-    if (deepBox) {
-      deepBox.classList.add('is-loading');
-      const bodyEl = document.getElementById('tarot-deep-body-content');
-      if (bodyEl) {
-        bodyEl.innerHTML = `
-          <div class="tarot-deep-loading-state">
-            <div class="tarot-deep-spinner"></div>
-            <div class="tarot-deep-loading-msg">Đang kết nối chiều sâu trực giác và tổng hợp các mối tương quan...</div>
-          </div>
-        `;
-      }
-    } else {
-      renderTarot();
-    }
+    report.showDeepAiBox = true;
+    report.userClosedAiBox = false;
+    renderTarot();
 
     try {
       const qInput = document.getElementById('tarot-question-input');
@@ -1393,35 +1423,10 @@
       report.deepError = 'Không thể kết nối dịch vụ trực tuyến. Vui lòng kiểm tra mạng.';
     }
 
-    const deepBoxAfter = document.getElementById('tarot-deep-section-box');
-    if (deepBoxAfter) {
-      deepBoxAfter.classList.remove('is-loading');
-      const bodyEl = document.getElementById('tarot-deep-body-content');
-      if (bodyEl && report.deepSynthesis) {
-        bodyEl.innerHTML = `
-          <div class="tarot-deep-rendered">
-            ${formatMarkdownDeep(report.deepSynthesis)}
-          </div>
-        `;
-      } else if (bodyEl) {
-        bodyEl.innerHTML = `
-          <div class="tarot-deep-error-box">
-            <div class="error-icon">⚠️</div>
-            <div class="error-msg">${escapeHTML(report.deepError || 'Không thể tải nội dung luận giải.')}</div>
-            <div class="error-actions">
-              <button class="tarot-btn-subtle" id="btn-deep-retry">🔄 Thử Lại Ngay</button>
-              <button class="tarot-btn-subtle" id="btn-deep-open-key">🔑 Kiểm Tra Khóa API</button>
-            </div>
-          </div>
-        `;
-        const btnRetry = bodyEl.querySelector('#btn-deep-retry');
-        if (btnRetry) btnRetry.onclick = () => fetchDeepInterpretation(report);
-        const btnOpenKey = bodyEl.querySelector('#btn-deep-open-key');
-        if (btnOpenKey) btnOpenKey.onclick = () => openTarotKeyConfigModal();
-      }
-    } else {
-      renderTarot();
+    if (!report.userClosedAiBox) {
+      report.showDeepAiBox = true;
     }
+    renderTarot();
   }
 
   function openTarotKeyConfigModal() {
@@ -1816,6 +1821,69 @@
       tabSpreadBtn.addEventListener('touchcancel', () => {
         if (tabPressTimer) clearTimeout(tabPressTimer);
       });
+    }
+
+    // Trau Chuốt Văn Phong Toàn Diện 6 Mục
+    const btnPolishAi = container.querySelector('#btn-tarot-polish-ai');
+    if (btnPolishAi && currentReadingReport) {
+      btnPolishAi.addEventListener('click', () => {
+        if (!currentReadingReport.showDeepAiBox && currentReadingReport.deepSynthesis) {
+          currentReadingReport.showDeepAiBox = true;
+          currentReadingReport.userClosedAiBox = false;
+          renderTarot();
+          return;
+        }
+        currentReadingReport.showDeepAiBox = true;
+        currentReadingReport.userClosedAiBox = false;
+        fetchDeepInterpretation(currentReadingReport);
+      });
+    }
+
+    const btnCloseTarotAi = container.querySelector('#btn-close-tarot-ai-box');
+    if (btnCloseTarotAi) {
+      btnCloseTarotAi.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        if (currentReadingReport) {
+          currentReadingReport.showDeepAiBox = false;
+          currentReadingReport.userClosedAiBox = true;
+        }
+        const box = document.getElementById('tarot-ai-box');
+        if (box) box.style.display = 'none';
+        renderTarot();
+      };
+    }
+
+    const btnCopyTarotAi = container.querySelector('#btn-copy-tarot-ai');
+    if (btnCopyTarotAi && currentReadingReport && currentReadingReport.deepSynthesis) {
+      btnCopyTarotAi.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(currentReadingReport.deepSynthesis).then(() => {
+            showTarotToast('✅ Đã sao chép toàn bộ bản trau chuốt AI 6 mục!');
+          });
+        }
+      };
+    }
+
+    const btnErrKey = container.querySelector('#btn-tarot-err-open-key');
+    if (btnErrKey) {
+      btnErrKey.onclick = () => openTarotKeyConfigModal();
+    }
+
+    const btnTopCopy = container.querySelector('#btn-tarot-top-copy');
+    if (btnTopCopy) {
+      btnTopCopy.onclick = () => {
+        const btnCopyMD = container.querySelector('#btn-tarot-copy-markdown');
+        if (btnCopyMD) btnCopyMD.click();
+      };
+    }
+
+    const btnTopPdf = container.querySelector('#btn-tarot-top-pdf');
+    if (btnTopPdf) {
+      btnTopPdf.onclick = () => {
+        const btnPdf = container.querySelector('#btn-tarot-export-pdf');
+        if (btnPdf) btnPdf.click();
+      };
     }
 
     const btnTriggerDeep = container.querySelector('#btn-trigger-deep-synthesis');

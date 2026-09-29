@@ -23,6 +23,7 @@
   let aiPolishedText = null;
   let aiErrorMessage = null;
   let showAiBox = false;
+  let userClosedAiBox = false;
 
   function initBaziView() {
     const container = document.getElementById('view-bazi');
@@ -298,15 +299,22 @@ Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn
       throw new Error('Dịch vụ Gemini AI chưa sẵn sàng trên trình duyệt.');
     };
 
+    userClosedAiBox = false;
     callAI()
       .then(res => {
         isAiPolishing = false;
         aiPolishedText = res;
+        if (!userClosedAiBox) {
+          showAiBox = true;
+        }
         renderBazi();
       })
       .catch(err => {
         isAiPolishing = false;
         aiErrorMessage = 'Lỗi kết nối khi trau chuốt văn bản: ' + (err.message || err);
+        if (!userClosedAiBox) {
+          showAiBox = true;
+        }
         renderBazi();
       });
   }
@@ -1475,8 +1483,12 @@ Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn
     }
 
     if (btnCloseAiBox) {
-      btnCloseAiBox.onclick = () => {
+      btnCloseAiBox.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
         showAiBox = false;
+        userClosedAiBox = true;
+        const box = document.getElementById('bazi-ai-box');
+        if (box) box.style.display = 'none';
         renderBazi();
       };
     }

@@ -22,6 +22,7 @@
   let isAiPolishing = false;
   let aiErrorMessage = '';
   let showAiBox = false;
+  let userClosedAiBox = false;
   let currentAnalysisSubTab = 'dashboard'; // 'dashboard' or 'full-report'
   let currentPalaceFilter = 'ALL'; // 'ALL' or specific palace name
 
@@ -509,6 +510,7 @@
     if (isAiPolishing) return;
 
     showAiBox = true;
+    userClosedAiBox = false;
     isAiPolishing = true;
     aiErrorMessage = '';
     renderTuVi();
@@ -567,6 +569,9 @@
       aiErrorMessage = err.message || 'Có lỗi xảy ra trong quá trình kết nối với Gemini AI.';
     } finally {
       isAiPolishing = false;
+      if (!userClosedAiBox) {
+        showAiBox = true;
+      }
       renderTuVi();
     }
   }
@@ -1295,8 +1300,12 @@
 
     const btnCloseAiBox = document.getElementById('btn-close-ai-box');
     if (btnCloseAiBox) {
-      btnCloseAiBox.onclick = () => {
+      btnCloseAiBox.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
         showAiBox = false;
+        userClosedAiBox = true;
+        const box = document.getElementById('tuvi-ai-box');
+        if (box) box.style.display = 'none';
         renderTuVi();
       };
     }

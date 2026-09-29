@@ -4435,7 +4435,8 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   box-sizing: border-box;
 }
 
-.tuvi-analysis-action-bar {
+.tuvi-analysis-action-bar,
+.tarot-analysis-action-bar {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -4509,7 +4510,8 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   color: #fff;
 }
 
-.tuvi-ai-result-box {
+.tuvi-ai-result-box,
+.tarot-ai-result-box {
   background: rgba(24, 8, 38, 0.95);
   border: 1.5px solid rgba(155, 89, 182, 0.6);
   border-radius: 12px;
@@ -4520,7 +4522,8 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   gap: 10px;
 }
 
-.tuvi-ai-header {
+.tuvi-ai-header,
+.tarot-ai-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -4531,7 +4534,8 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   color: #d7bde2;
 }
 
-.tuvi-ai-body {
+.tuvi-ai-body,
+.tarot-ai-body {
   font-size: 0.85rem;
   line-height: 1.65;
   color: #ecf0f1;
@@ -4825,6 +4829,7 @@ body.theme-light .bloc-term-strip .tk-exact-time {
 
 /* Light Theme overrides */
 body.theme-light .tuvi-analysis-action-bar,
+body.theme-light .tarot-analysis-action-bar,
 body.theme-light .tuvi-analysis-card {
   background: #ffffff !important;
   border: 1px solid #d4af37 !important;
@@ -4839,16 +4844,19 @@ body.theme-light .tuvi-palace-treatise-card {
   border: 1px solid #e0d0b8 !important;
 }
 
-body.theme-light .tuvi-ai-result-box {
+body.theme-light .tuvi-ai-result-box,
+body.theme-light .tarot-ai-result-box {
   background: #f8f0fc !important;
   border: 1.5px solid #8e44ad !important;
 }
 
-body.theme-light .tuvi-ai-header {
+body.theme-light .tuvi-ai-header,
+body.theme-light .tarot-ai-header {
   color: #6c3483 !important;
 }
 
-body.theme-light .tuvi-ai-body {
+body.theme-light .tuvi-ai-body,
+body.theme-light .tarot-ai-body {
   color: #2c3e50 !important;
 }
 

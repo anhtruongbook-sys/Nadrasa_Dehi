@@ -379,51 +379,71 @@
       lines.push(`Trải bài: ${report.spreadName} | Chủ đề: ${report.domain.toUpperCase()}`);
       if (questionToUse) lines.push(`Câu hỏi người hỏi: "${questionToUse}"`);
       if (report.quintessence) {
-        lines.push(`Lá bài cốt tủy: ${report.quintessence.name_vi} (${report.quintessence.name_en}) - Bài học linh hồn: ${report.quintessence.lesson}`);
+        lines.push(`Lá bài cốt tủy: ${report.quintessence.name_vi || report.quintessence.nameVi} (${report.quintessence.name_en || report.quintessence.nameEn}) - Bài học linh hồn: ${report.quintessence.lesson}`);
       }
       lines.push(`Tổng luận mạch truyện nhân quả: ${report.synthesizedStory}`);
-      lines.push(`Bản chất trải bài: ${report.fateVerdict} | Dòng chảy năng lượng: ${report.flowVerdict}`);
+      if (report.archetypalPatterns && report.archetypalPatterns.length > 0) {
+        lines.push('Mẫu hình cổ mẫu nổi bật:');
+        report.archetypalPatterns.forEach(p => lines.push(`  * ${p.title} [${p.badge}]: ${p.desc}`));
+      }
+      lines.push(`Bản chất trải bài: ${report.fateVerdict} | Dòng chảy năng lượng: ${report.flowVerdict} | Ẩn chính: ${report.majorRatio || ''} | Chiều bài: ${report.orientationStat || ''} | Nguyên tố thống trị: ${report.dominantElement || ''} | Thiếu hụt: ${report.missingElementsDesc || ''}`);
+      if (report.pairAnalysis && report.pairAnalysis.length > 0) {
+        lines.push('Tương tác nguyên tố (Golden Dawn Elemental Dignities):');
+        report.pairAnalysis.forEach(p => lines.push(`  * ${p.fromCard} -> ${p.toCard}: ${p.relation} - ${p.explanation}`));
+      }
       (report.cardReadings || []).forEach(c => {
         lines.push(`- Vị trí ${c.position}: Lá ${c.cardName} (${c.orientation}) - Từ khóa: ${c.keywords} - Luận giải: ${c.detailMeaning} - Lời khuyên: ${c.advice}`);
       });
-      if (report.pairAnalysis && report.pairAnalysis.length > 0) {
-        lines.push('Tương tác nguyên tố:');
-        report.pairAnalysis.forEach(p => lines.push(`  * ${p.fromCard} -> ${p.toCard}: ${p.relation} - ${p.explanation}`));
-      }
       lines.push(`Lời khuyên chiến lược: ${report.finalAdvice}`);
       offlineReportText = lines.join('\n');
     }
 
     const systemInstruction = `BẠN LÀ MỘT BẬC THẦY TỔNG BIÊN TẬP VĂN BẢN TAROT & TÂM LÝ HỌC CHIỀU SÂU (JUNGIAN ARCHETYPE) UYÊN BÁC.
-DƯỚI ĐÂY LÀ "TOÀN VĂN BẢN LUẬN GIẢI TRẢI BÀI TAROT" ĐÃ ĐƯỢC THUẬT TOÁN XÁC ĐỊNH OFFLINE TÍNH TOÁN VÀ XUẤT RA CHÍNH XÁC 100%.
+DƯỚI ĐÂY LÀ "TOÀN VĂN BẢN LUẬN GIẢI TRẢI BÀI TAROT" ĐÃ ĐƯỢC THUẬT TOÁN XÁC ĐỊNH OFFLINE TÍNH TOÁN VÀ XUẤT RA CHÍNH XÁC 100% GỒM 6 MỤC (TỪ MỤC I ĐẾN MỤC VI).
 
 NHIỆM VỤ DUY NHẤT CỦA BẠN:
-SOẠN LẠI, BIÊN TẬP LẠI VÀ TRAU CHUỐT TOÀN BỘ NỘI DUNG BẢN LUẬN GIẢI THUẬT TOÁN OFFLINE DƯỚI ĐÂY THÀNH MỘT BÀI THAM VẤN TÂM LÝ HOÀN CHỈNH, MẠCH LẠC, TRANG NHÃ, SÂU SẮC, GIÀU CHẤT VĂN HỌC VÀ TRUYỀN CẢM HỨNG (ĐỘ DÀI KHOẢNG 1.200 - 1.800 TỪ).
+SOẠN LẠI, BIÊN TẬP LẠI VÀ TRAU CHUỐT TOÀN DIỆN TẤT CẢ 6 MỤC CỦA BẢN LUẬN GIẢI THUẬT TOÁN OFFLINE DƯỚI ĐÂY THÀNH MỘT BÀI THAM VẤN TÂM LÝ HOÀN CHỈNH, MẠCH LẠC, TRANG NHÃ, SÂU SẮC, GIÀU CHẤT VĂN HỌC VÀ TRUYỀN CẢM HỨNG (ĐỘ DÀI KHOẢNG 1.200 - 1.800 TỪ).
 
-[CÁC NGUYÊN TẮC BẤT BIẾN - ZERO-FABRICATION EDITORIAL RULES]:
-1. TUYỆT ĐỐI KHÔNG TỰ LUẬN GIẢI: Bạn KHÔNG được tự ý sáng tác, suy đoán hay bịa thêm bất kỳ lá bài nào khác ngoài trải bài thuật toán đã cho.
-2. TRUNG THỰC 100% VỚI BẢN GỐC THUẬT TOÁN:
+[CÁC NGUYÊN TẮC BẤT BIẾN - ZERO-FABRICATION & STRICT GROUND-TRUTH RULES]:
+1. BẮT BUỘC 100% GIỮ NGUYÊN TÊN GỌI VÀ SỐ THỨ TỰ CỦA 6 MỤC CHÍNH (TỪ MỤC I ĐẾN MỤC VI) Y NHƯ BẢN GỐC, TUYỆT ĐỐI KHÔNG ĐƯỢC TỰ Ý ĐỔI TÊN, KHÔNG ĐẶT TÊN MỚI, KHÔNG RÚT GỌN HOẶC GỘP BẤT KỲ MỤC NÀO:
+   ## I. LÁ BÀI CỐT TỦY (THE QUINTESSENCE CARD)
+   ## II. TỔNG LUẬN MẠCH TRUYỆN BIỆN CHỨNG (STORYLINE NARRATIVE)
+   ## III. MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS)
+   ## IV. PHÂN TÍCH ĐỊNH LƯỢNG VĨ MÔ (MACRO SCAN)
+   ## V. LUẬN GIẢI CHI TIẾT TỪNG VỊ TRÍ
+   ## VI. TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)
+
+2. BIÊN TẬP VÀ TRAU CHUỐT TOÀN DIỆN CẢ 6 MỤC (TUYỆT ĐỐI KHÔNG ĐƯỢC BỎ SÓT HOẶC CHỈ LÀM 1 MỤC):
+   - Mọi mục từ I đến VI đều phải được nâng tầm văn phong và chiều sâu triết lý Hermetic & Jungian.
+   - Không được sơ sài: Bản biên tập phải sâu sắc, chi tiết, văn phong sắc bén hơn cả thuật toán thô, không được tóm tắt qua loa.
+3. TUYỆT ĐỐI TRUNG THỰC VỚI BẢN GỐC:
    - Giữ nguyên toàn bộ các lá bài, vị trí và chiều bài (Xuôi/Ngược).
-   - Bám sát ý nghĩa chi tiết, từ khóa, cốt tủy (The Quintessence) và mạch truyện biện chứng mà thuật toán đã xâu chuỗi.
+   - Bám sát ý nghĩa chi tiết, từ khóa, cốt tủy (The Quintessence), mẫu hình cổ mẫu và mạch truyện biện chứng mà thuật toán đã xâu chuỗi.
    - Bám sát lời khuyên hành động cụ thể từ bản gốc thuật toán.
    - ${questionToUse ? `ĐẶC BIỆT: Người hỏi có câu hỏi cụ thể: "${questionToUse}". Hãy ánh xạ mọi luận điểm của thuật toán vào bối cảnh thực tế của câu hỏi này một cách trực diện và thấu suốt.` : 'Phân tích dòng chảy cuộc sống và bài học nội tâm một cách thấu suốt.'}
-3. KỶ LUẬT ĐỊNH DẠNG VĂN BẢN (ANTI-CLUTTER):
+4. KỶ LUẬT ĐỊNH DẠNG VĂN BẢN (ANTI-CLUTTER):
    - TUYỆT ĐỐI KHÔNG DÙNG CODE BLOCK (dấu \`\`\`), KHÔNG VẼ SƠ ĐỒ ASCII DẠNG '| | |' hay '--->'. Hãy diễn giải dòng chảy bằng văn xuôi mượt mà, tự nhiên.
    - TUYỆT ĐỐI KHÔNG DÙNG CÁC TỪ: 'AI', 'Gemini', 'trí tuệ nhân tạo', 'bot', 'máy tính', 'thuật toán', 'mô hình'.
-   - Dùng đề mục Markdown ## cho các phần chính và ### cho từng lá bài.
+   - Dùng đề mục Markdown ## cho đúng 6 phần chính và ### cho từng lá bài / từng mẫu hình.
 
-CẤU TRÚC BÀI BIÊN TẬP BẮT BUỘC:
-## I. THÔNG ĐIỆP CỐT TỦY & TỔNG QUAN NĂNG LƯỢNG
-(Biên tập lại từ phần Cốt tủy & Đánh giá vĩ mô của thuật toán, trực diện vào câu hỏi đương số.)
+CẤU TRÚC BÀI BIÊN TẬP BẮT BUỘC (GIỮ NGUYÊN 100% TIÊU ĐỀ NGUYÊN BẢN):
+## I. LÁ BÀI CỐT TỦY (THE QUINTESSENCE CARD)
+(Biên tập trau chuốt phần Cốt tủy & Bài học linh hồn, liên kết sâu sắc với câu hỏi của đương số.)
 
-## II. MẠCH TRUYỆN NHÂN QUẢ & PHÂN TÍCH CHI TIẾT TỪNG LÁ BÀI
-(Biên tập lại mạch truyện 3 thì và phân tích từng lá bài theo vị trí từ bản gốc thuật toán.)
+## II. TỔNG LUẬN MẠCH TRUYỆN BIỆN CHỨNG (STORYLINE NARRATIVE)
+(Biên tập trau chuốt dòng chảy biện chứng, liên kết nhân quả giữa các giai đoạn hoặc các mặt vấn đề.)
 
-## III. CHIỀU SÂU TƯƠNG TÁC NGUYÊN TỐ & NĂNG LƯỢNG NỘI TÂM
-(Biên tập lại ma trận tương tác nguyên tố Golden Dawn từ bản gốc thuật toán.)
+## III. MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS)
+(Biên tập trau chuốt các mẫu hình biểu tượng, chiều sâu tâm lý học vô thức tập thể Jungian.)
 
-## IV. LỜI KHUYÊN HÀNH ĐỘNG CHIẾN LƯỢC & BÀI HỌC CHUYỂN HÓA
-(Biên tập lại định hướng hành động cụ thể và bài học chuyển hóa thực tiễn từ thuật toán.)
+## IV. PHÂN TÍCH ĐỊNH LƯỢNG VĨ MÔ (MACRO SCAN)
+(Biên tập trau chuốt tương quan nguyên tố, tỷ lệ Ẩn chính, dòng chảy số phận vs tự do ý chí và tương tác nguyên tố Golden Dawn.)
+
+## V. LUẬN GIẢI CHI TIẾT TỪNG VỊ TRÍ
+(Biên tập trau chuốt chi tiết từng lá bài theo vị trí, từ khóa, ý nghĩa và lời khuyên riêng biệt.)
+
+## VI. TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)
+(Biên tập trau chuốt lời khuyên hành động cụ thể, giải pháp thực tế và thông điệp chuyển hóa cốt lõi.)
 
 [TOÀN VĂN BẢN LUẬN GIẢI THUẬT TOÁN OFFLINE CẦN BIÊN TẬP]:
 ${offlineReportText}`;
@@ -442,9 +462,9 @@ ${offlineReportText}`;
 
     const prompt = buildHermeticPrompt(report, customQuestion);
     const res = await callGeminiCascade(prompt, key, {
-      temperature: 0.5,
-      maxOutputTokens: 4096,
-      timeoutMs: 45000
+      temperature: 0.35,
+      maxOutputTokens: 8192,
+      timeoutMs: 90000
     });
 
     if (res && res.text) {
