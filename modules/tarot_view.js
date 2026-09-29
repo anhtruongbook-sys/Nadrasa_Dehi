@@ -1686,9 +1686,6 @@
         setTimeout(() => {
           modal.remove();
           renderTarot();
-          if (shouldEnableDeep && currentReadingReport && areAllCardsFlipped() && !currentReadingReport.deepSynthesis) {
-            fetchDeepInterpretation(currentReadingReport);
-          }
         }, 600);
       });
     }
@@ -2045,9 +2042,6 @@
           triggerHaptic(15);
           renderTarot();
           if (areAllCardsFlipped()) {
-            if (global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled() && currentReadingReport && !currentReadingReport.deepSynthesis) {
-              fetchDeepInterpretation(currentReadingReport);
-            }
             setTimeout(() => {
               const rep = document.getElementById('tarot-report-section');
               if (rep) rep.scrollIntoView({ behavior: 'smooth' });
@@ -2065,9 +2059,6 @@
         playCardFlipSound();
         triggerHaptic(20);
         renderTarot();
-        if (global.NetaGeminiService && global.NetaGeminiService.isDeepSynthesisEnabled() && currentReadingReport && !currentReadingReport.deepSynthesis) {
-          fetchDeepInterpretation(currentReadingReport);
-        }
         setTimeout(() => {
           const rep = document.getElementById('tarot-report-section');
           if (rep) rep.scrollIntoView({ behavior: 'smooth' });
