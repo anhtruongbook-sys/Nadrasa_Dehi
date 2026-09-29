@@ -353,11 +353,12 @@
           <div id="lakinh-tamhop-floating-hud" class="lakinh-glass-panel ${state.isTamHopHudCollapsed ? 'is-collapsed' : ''} ${state.isTamHopActive ? '' : 'is-hidden'}" style="${state.isTamHopActive ? '' : 'display: none;'}">
             <div class="tamhop-hud-header">
               <div class="tamhop-hud-title-group" id="btn-tamhop-mini-expand-header" title="Chạm để xem bảng Tam Hợp chi tiết">
-                <span class="tamhop-hud-title">🌊 Tam Hợp Phái</span>
+                <span class="tamhop-hud-title">🌊 Tam Hợp</span>
                 <button type="button" id="btn-tamhop-hud-config" class="tamhop-hud-cfg-btn" title="Chỉnh sửa Thủy Khẩu &amp; Gia Chủ">
                   <span>⚙️</span>
                   <span id="tamhop-hud-cuc-label">Thủy Cục</span>
                 </button>
+                <span class="tamhop-pill cyan" id="compact-th-khau" title="Thủy Khẩu">💧 Khẩu: Đang tính...</span>
               </div>
               <div class="tamhop-hud-actions">
                 <button type="button" id="btn-tamhop-hud-collapse" class="ray-mini-btn-expand" title="Thu gọn / Mở rộng">${state.isTamHopHudCollapsed ? '▾ Chi tiết' : '– Thu gọn'}</button>
@@ -375,7 +376,6 @@
 
             <!-- Thanh Tóm Tắt Khi Thu Gọn (Mini Capsule Cao ~32px Không Che La Kinh) -->
             <div id="tamhop-hud-compact-summary" class="tamhop-hud-compact-summary" style="${state.isTamHopHudCollapsed ? 'display: flex;' : 'display: none;'}">
-              <span class="tamhop-pill cyan" id="compact-th-khau">💧 Khẩu: Đang tính...</span>
               <span class="tamhop-pill green" id="compact-th-sinh">🌱 Sinh: Đang tính...</span>
               <span class="tamhop-pill gold" id="compact-th-vuong">👑 Vượng: Đang tính...</span>
               <span class="tamhop-pill purple" id="compact-th-mo">⛩️ Mộ: Đang tính...</span>
@@ -2092,11 +2092,13 @@
       const hudFooter = document.querySelector('.tamhop-hud-footer');
       const hudCompact = document.getElementById('tamhop-hud-compact-summary');
       const hudDuongCuc = document.querySelector('.tamhop-hud-duong-cuc-row');
+      const cpKhau = document.getElementById('compact-th-khau');
       const btnThCollapse = document.getElementById('btn-tamhop-hud-collapse');
       if (hudBody) hudBody.style.display = state.isTamHopHudCollapsed ? 'none' : 'grid';
       if (hudFooter) hudFooter.style.display = state.isTamHopHudCollapsed ? 'none' : 'block';
       if (hudCompact) hudCompact.style.display = state.isTamHopHudCollapsed ? 'flex' : 'none';
       if (hudDuongCuc) hudDuongCuc.style.display = state.isTamHopHudCollapsed ? 'none' : 'flex';
+      if (cpKhau) cpKhau.style.display = state.isTamHopHudCollapsed ? 'inline-flex' : 'none';
       if (btnThCollapse) btnThCollapse.textContent = state.isTamHopHudCollapsed ? '▾ Chi tiết' : '– Thu gọn';
     }
 
@@ -4632,6 +4634,7 @@ function updateQmdjStrategicLayer() {
       const hudFooter = document.querySelector('.tamhop-hud-footer');
       const hudCompact = document.getElementById('tamhop-hud-compact-summary');
       const hudDuongCuc = document.querySelector('.tamhop-hud-duong-cuc-row');
+      const cpKhau = document.getElementById('compact-th-khau');
       if (hud) {
         hud.classList.toggle('is-collapsed', state.isTamHopHudCollapsed);
         hud.style.display = state.isTamHopHudCollapsed ? 'flex' : 'block';
@@ -4640,6 +4643,7 @@ function updateQmdjStrategicLayer() {
       if (hudFooter) hudFooter.style.display = state.isTamHopHudCollapsed ? 'none' : 'block';
       if (hudCompact) hudCompact.style.display = state.isTamHopHudCollapsed ? 'flex' : 'none';
       if (hudDuongCuc) hudDuongCuc.style.display = state.isTamHopHudCollapsed ? 'none' : 'flex';
+      if (cpKhau) cpKhau.style.display = state.isTamHopHudCollapsed ? 'inline-flex' : 'none';
       if (btnThCollapse) btnThCollapse.textContent = state.isTamHopHudCollapsed ? '▾ Chi tiết' : '– Thu gọn';
     };
     if (btnThCollapse) btnThCollapse.addEventListener('click', toggleThCollapse);

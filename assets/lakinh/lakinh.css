@@ -3846,9 +3846,9 @@ body.light-theme .tamhop-ts-card {
   margin-top: 1px !important;
   border-top: 1px solid rgba(245, 158, 11, 0.22) !important;
   gap: 3px !important;
-  flex-wrap: wrap !important;
+  flex-wrap: nowrap !important;
   box-sizing: border-box !important;
-  overflow: visible !important;
+  overflow: hidden !important;
   cursor: pointer;
 }
 
@@ -3927,7 +3927,7 @@ body.light-theme .tamhop-ts-card {
 #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-title-group {
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
+  gap: 3px !important;
   flex-wrap: nowrap !important;
   min-width: 0 !important;
   overflow: hidden !important;
@@ -3940,6 +3940,10 @@ body.light-theme .tamhop-ts-card {
   font-weight: 800;
   color: #34d399;
   letter-spacing: 0.5px;
+}
+
+#lakinh-tamhop-floating-hud:not(.is-collapsed) .tamhop-hud-title::after {
+  content: " Phái";
 }
 
 #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-title {
@@ -3970,11 +3974,27 @@ body.light-theme .tamhop-ts-card {
 }
 
 #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-cfg-btn {
-  padding: 1.5px 5px !important;
-  font-size: 0.62rem !important;
+  padding: 1.5px 4px !important;
+  font-size: 0.60rem !important;
   font-weight: 700 !important;
   border-radius: 6px !important;
   white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+#lakinh-tamhop-floating-hud.is-collapsed #compact-th-khau {
+  display: inline-flex !important;
+  align-items: center !important;
+  font-size: 0.60rem !important;
+  font-weight: 700 !important;
+  padding: 1.5px 5px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+#lakinh-tamhop-floating-hud:not(.is-collapsed) #compact-th-khau {
+  display: none !important;
 }
 
 #lakinh-tamhop-floating-hud.is-collapsed .btn-txt-close {
@@ -4060,9 +4080,9 @@ body.light-theme .tamhop-ts-card {
   margin-top: 1px !important;
   border-top: 1px solid rgba(16, 185, 129, 0.22) !important;
   gap: 3px !important;
-  flex-wrap: wrap !important;
+  flex-wrap: nowrap !important;
   box-sizing: border-box !important;
-  overflow: visible !important;
+  overflow: hidden !important;
   cursor: pointer;
 }
 
