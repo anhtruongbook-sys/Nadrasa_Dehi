@@ -1,8 +1,8 @@
 /**
  * NETA LIGHT - LỤC HÀO INTERPRETER ENGINE (engines/luc_hao_interpreter.js)
  * 
- * Hệ thống Luận Giải Kinh Dịch Lục Hào Chuyên Sâu theo Phương pháp Nguyễn Tuấn Cường V2
- * và chuẩn mực cổ thư Bốc Phệ Chính Tông & Tăng San Bốc Dịch.
+ * Hệ thống Luận Giải Kinh Dịch Lục Hào Chuyên Sâu
+ * theo chuẩn mực cổ thư Bốc Phệ Chính Tông & Tăng San Bốc Dịch.
  * 
  * Tích hợp cơ chế Lưỡng Động Cơ (Dual-Engine Architecture):
  * 1. Động cơ Thuần Quy Tắc (Deterministic Expert System) - 100% Offline, độ trễ 0ms.
@@ -74,7 +74,7 @@
   ];
 
   // =========================================================================
-  // 2. ĐỘNG CƠ CÂN LỰC HÀO (-10.0 ĐẾN +10.0) CHUẨN NGUYỄN TUẤN CƯỜNG
+  // 2. ĐỘNG CƠ CÂN LỰC HÀO (-10.0 ĐẾN +10.0) THEO DỊCH LÝ ĐỊNH LƯỢNG
   // =========================================================================
   function tinhCanLucHao(hao, chiNgay, chiThang, tuanKhongList = []) {
     let score = 0.0;
@@ -214,7 +214,7 @@
   }
 
   // =========================================================================
-  // 3. ĐỘNG CƠ PHÂN TÍCH SUY LUẬN 8 BƯỚC NGUYỄN TUẤN CƯỜNG
+  // 3. ĐỘNG CƠ PHÂN TÍCH SUY LUẬN 8 BƯỚC CỔ PHÁP CHUYÊN SÂU
   // =========================================================================
   function evaluate8Steps(queResult, topicKey = 'cautai', customQuestion = '') {
     const goc = queResult.que_goc;
@@ -447,7 +447,7 @@
 
     const lines = [];
     lines.push('═══════════════════════════════════════════════════════════════════════════════');
-    lines.push('               BẢN LUẬN GIẢI KINH DỊCH LỤC HÀO NÂNG CAO (NTC V2)');
+    lines.push('               BẢN LUẬN GIẢI KINH DỊCH LỤC HÀO CHUYÊN SÂU');
     lines.push(`  Sự Vụ Chiêm Đoán: "${evalData.customQuestion}"`);
     lines.push(`  Chủ Đề Dụng Thần: [${evalData.topic.label}] ➔ Thủ Ngôi: ${evalData.targetLucThan}`);
     lines.push('═══════════════════════════════════════════════════════════════════════════════\n');
@@ -554,13 +554,13 @@
   // Lớp 2: Prompt Ép Khung Chống Ảo Giác
   function buildAntiHallucinationPrompt(factSheet) {
     return `
-BẠN LÀ MỘT CHUYÊN GIA DỊCH HỌC KINH DỊCH LỤC HÀO HỌC THUẬT (PHƯƠNG PHÁP NGUYỄN TUẤN CƯỜNG V2).
+BẠN LÀ MỘT BẬC THẦY DỊCH HỌC KINH DỊCH LỤC HÀO UYÊN BÁC THEO CHUẨN MỰC CỔ THƯ KINH ĐIỂN (BỐC PHỆ CHÍNH TÔNG & TĂNG SAN BỐC DỊCH).
 DƯỚI ĐÂY LÀ "BẢN KHÓA CHÂN LÝ TOÁN HỌC" ĐÃ ĐƯỢC TÍNH TOÁN XÁC ĐỊNH 100%. BẠN BẮT BUỘC PHẢI TUÂN THỦ TUYỆT ĐỐI CÁC SỰ THỰC NÀY:
 
 [KHÓA CHÂN LÝ DỊCH HỌC - GROUND-TRUTH FACT SHEET]:
 - Câu hỏi chiêm đoán: "${factSheet.question}"
 - Quẻ Chính: ${factSheet.hexName} (Cung ${factSheet.palace} - Hành ${factSheet.palaceElement})
-- Quẻ Biến: ${factSheet.bienHexName} (Hào động: [${factSheet.dongHaos.join(', ') || 'Không có'}])
+- Quẻ Biến: ${factSheet.bienHexName} (Hào động: [${factSheet.dongHaos.join(', ') || 'Không có - Quẻ Tĩnh'}])
 - Thời gian: ${factSheet.time} | Tuần Không: [${factSheet.tuanKhong.join(', ')}]
 - Chủ đề: ${factSheet.topic} -> Dụng Thần BẮT BUỘC là: [${factSheet.targetLucThan}] ngự Hào ${factSheet.dungThanPos}
 - Cân Lực Dụng Thần: ${factSheet.dungThanScore > 0 ? '+' : ''}${factSheet.dungThanScore} (${factSheet.dungThanStatus})
@@ -569,19 +569,46 @@ DƯỚI ĐÂY LÀ "BẢN KHÓA CHÂN LÝ TOÁN HỌC" ĐÃ ĐƯỢC TÍNH TOÁN 
 - KẾT LUẬN TOÁN HỌC: [${factSheet.judgment}] (Điểm số: ${factSheet.totalScore})
 - ỨNG KỲ ĐỊNH THỜI: ${factSheet.ungKy.join('; ')}
 
-[CÁC RÀO CHẮN NGHIÊM CẤM 100% (ANTI-HALLUCINATION RULES)]:
+[CÁC RÀO CHẮN NGHIÊM CẤM TUYỆT ĐỐI (ANTI-HALLUCINATION RULES)]:
 1. CẤM BỊA ĐẶT HOẶC ĐỔI TÊN QUẺ: Quẻ chính phải là "${factSheet.hexName}", quẻ biến là "${factSheet.bienHexName}".
 2. CẤM ĐỔI DỤNG THẦN: Dụng thần phải là Lục Thân "${factSheet.targetLucThan}".
 3. CẤM ĐẢO NGƯỢC KẾT LUẬN: Nếu Kết luận là Bất Lợi/Hung thì TUYỆT ĐỐI CẤM khen "đại cát", "thành công rực rỡ". Nếu Kết luận là Cát Lợi thì TUYỆT ĐỐI CẤM dọa nạt hung hiểm.
-4. CẤM TỰ Ý BỊA HÀO ĐỘNG: Chỉ được phân tích các hào phát động trong danh sách [${factSheet.dongHaos.join(', ')}].
-5. VĂN PHONG CHUẨN MỰC: Hành chính - kỹ thuật, triết lý Kinh Dịch trong sáng, không dùng từ ngữ mê tín bùa chú, không nói về số phận trọn đời.
+4. CẤM TỰ Ý BỊA HÀO ĐỘNG: Chỉ được phân tích các hào phát động trong danh sách [${factSheet.dongHaos.join(', ') || 'Quẻ Tĩnh'}].
+5. VĂN PHONG CHUẨN MỰC: Hành chính - kỹ thuật, triết lý Kinh Dịch trong sáng, không dùng từ ngữ mê tín bùa chú, không phán xét số phận trọn đời.
 
-YÊU CẦU: Hãy viết bài luận giải chuyên sâu (khoảng 400 - 600 từ) gồm 5 phần:
-I. Tổng Quan Quẻ Khí & Phán Quyết Cốt Lõi.
-II. Phân Tích Dụng Thần & Tứ Thần (Nguyên Thần, Kỵ Thần).
-III. Tương Quan Hào Thế & Thiên Cơ Biến Hóa.
-IV. Thời Điểm Ứng Nghiệm (Ứng Kỳ).
-V. Lời Khuyên Hành Động Thực Tiễn.
+YÊU CẦU ĐỘ DÀI & ĐỘ SÂU (BÀI LUẬN GIẢI CHUYÊN SÂU 1000 - 1500 TỪ):
+Hãy viết một bài phân tích chuyên sâu toàn diện, uyên bác và mạch lạc (độ dài khoảng 1.000 đến 1.500 từ). Đào sâu phân tích từng nguyên lý ngũ hành, sinh khắc chế hóa, vượng suy hưu tù, bóc tách tiến trình nhân quả. TUYỆT ĐỐI KHÔNG viết tóm tắt hay kết luận sơ sài.
+
+BÀI VIẾT BẮT BUỘC TRÌNH BÀY THEO CẤU TRÚC 7 ĐỀ MỤC SAU:
+## I. TỔNG QUAN QUẺ KHÍ & PHÁN QUYẾT CỐT LÕI
+- Phân tích tượng quẻ chính ${factSheet.hexName} (quái thượng, quái hạ, ý nghĩa quẻ đối với việc được hỏi).
+- Trực diện câu hỏi: "${factSheet.question}".
+- Phán đoán xác quyết: [${factSheet.judgment}] (Điểm khí số: ${factSheet.totalScore > 0 ? '+' : ''}${factSheet.totalScore}). Luận giải lý do cốt tủy dẫn đến phán quyết này.
+
+## II. DỤNG THẦN CHUYÊN KHẢO & KHÍ SỐ CÂN LỰC
+- Bóc tách chi tiết Dụng Thần [${factSheet.targetLucThan}] tại Hào ${factSheet.dungThanPos}.
+- Phân tích điểm cân lực (${factSheet.dungThanScore > 0 ? '+' : ''}${factSheet.dungThanScore} - ${factSheet.dungThanStatus}): Tương quan với Nguyệt Lệnh (Tháng) và Nhật Thần (Ngày).
+- Trạng thái Không Vong, Mộ Tuyệt, Sinh Vượng, suy thoái của Dụng Thần.
+
+## III. HỆ THỐNG TỨ THẦN TRỢ KHÍ (NGUYÊN, KỴ, CỪU, TIẾT)
+- Phân tích vai trò của Nguyên Thần (nguồn sinh trợ), Kỵ Thần (nguồn xung khắc), Cừu Thần và Tiết Thần.
+- Cân bằng lực lượng giữa các bên: Nguyên Thần có đắc lực để cứu Dụng Thần hay Kỵ Thần đang chiếm ưu thế áp đảo.
+
+## IV. TÂM PHÁP HÀO THẾ & TƯƠNG QUAN CHỦ - KHÁCH
+- Phân tích Hào Thế (tâm thế, năng lực nội tại của người hỏi) tại Hào ${factSheet.thePos} (${factSheet.theLucThan} - Cân lực: ${factSheet.theScore > 0 ? '+' : ''}${factSheet.theScore}).
+- Ma trận Thế - Dụng [${factSheet.theDungStatus}]: Phân tích sự tương tác giữa nội lực người hỏi và sự việc mong cầu (đắc địa, tương sinh, hay hao tổn, xung khắc).
+- Đối chiếu Hào Ứng (đối tác, khách hàng hoặc hoàn cảnh bên ngoài).
+
+## V. TIẾN TRÌNH NHÂN QUẢ HÀO BIẾN HÓA
+- ${factSheet.dongHaos.length > 0 ? `Phân tích tỉ mỉ từng hào phát động: Hào [${factSheet.dongHaos.join(', ')}]. Luận giải chiều hướng Hóa Tiến/Hóa Thoái, Hóa Sinh/Hóa Khắc, Hóa Hồi Đầu và quẻ Biến ${factSheet.bienHexName}.` : `Phân tích Quẻ Tĩnh (Sáu hào an định): Không có hào động biến, phân tích quy luật nội tại tích lũy, sự kiên định của hoàn cảnh, cách giữ vững vị thế.`}
+
+## VI. ỨNG KỲ TOÀN DIỆN & MỐC THỜI GIAN ĐỊNH LƯỢNG
+- Luận giải chi tiết các mốc Ứng Kỳ định thời: ${factSheet.ungKy.join('; ')}.
+- Cơ chế và điều kiện kích hoạt ứng nghiệm: Khi nào xuất Không, xung Mộ, tương hợp hoặc xung khởi ngày giờ chi phối sự thành bại.
+
+## VII. PHONG THỦY SÁU HÀO & SÁCH LƯỢC HÀNH ĐỘNG THỰC TIỄN
+- Ứng dụng quy luật phong thủy 6 tầng không gian đối với hoàn cảnh thực tế.
+- Sách lược hành vi chiến lược: Những việc nên làm ngay, những cạm bẫy cần phòng tránh tuyệt đối, kế hoạch hành động từng bước để tối ưu hóa kết quả.
 `.trim();
   }
 
@@ -681,7 +708,11 @@ V. Lời Khuyên Hành Động Thực Tiễn.
       }
 
       const prompt = buildAntiHallucinationPrompt(factSheet);
-      const aiResult = await global.NetaGeminiService.callGeminiCascade(prompt, apiKey);
+      const aiResult = await global.NetaGeminiService.callGeminiCascade(prompt, apiKey, {
+        temperature: 0.25,
+        maxOutputTokens: 4096,
+        timeoutMs: 35000
+      });
 
       if (aiResult && aiResult.text) {
         // Kiểm toán độc lập qua Verifier

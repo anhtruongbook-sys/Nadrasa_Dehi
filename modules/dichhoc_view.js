@@ -827,7 +827,7 @@
           <div class="thoan-text"><strong>${goc.name}:</strong> "${goc.tho || 'Cương nhu ứng hội, đạo trời tuần hoàn, giữ lòng trung chính ắt được hanh thông.'}"</div>
         </div>
 
-        <!-- F. BẢNG LUẬN GIẢI KINH DỊCH LỤC HÀO CHUYÊN SÂU (NTC V2 & GEMINI AI) -->
+        <!-- F. BẢNG LUẬN GIẢI KINH DỊCH LỤC HÀO CHUYÊN SÂU (CỔ ĐIỂN & GEMINI AI) -->
         ${renderInterpretationBlock(isLucHao)}
       </div>
     `;
@@ -912,7 +912,7 @@
           <!-- 5. Toàn Văn Luận Giải Chi Tiết -->
           <div class="dh-eval-card">
             <div class="dh-card-title">
-              <span>📖 Toàn Văn Luận Giải ${interp.aiUsed ? `(Gemini AI - Mô hình: ${interp.model || 'gemini-3.5-flash'})` : '(Phương Pháp Nguyễn Tuấn Cường V2)'}:</span>
+              <span>📖 Toàn Văn Luận Giải ${interp.aiUsed ? `(Gemini AI - Mô hình: ${interp.model || 'gemini-3.5-flash'})` : '(Chuẩn Mực Kinh Dịch Lục Hào)'}:</span>
             </div>
             <div class="dh-interp-raw-box" id="dh-interp-text-content">${interp.reportText}</div>
           </div>

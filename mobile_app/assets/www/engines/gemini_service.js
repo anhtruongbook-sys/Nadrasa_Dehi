@@ -206,18 +206,22 @@
    * Tự động gọi API Google với cơ chế đa chiến lược (x-goog-api-key, URL param, Bearer)
    * Tương thích 100% với cả Auth Key mới (AQ...) và Standard API Key (AIza...)
    */
-  async function callGeminiCascade(promptText, apiKey) {
+  async function callGeminiCascade(promptText, apiKey, options = {}) {
     let lastErrorReason = null;
     let hadAuthError = false;
 
     // Tìm mô hình tốt nhất khả dụng trước khi luận đoán
     const candidateModels = await discoverAvailableModels(apiKey);
 
+    const temperature = options.temperature !== undefined ? options.temperature : 0.7;
+    const maxOutputTokens = options.maxOutputTokens || 4096;
+    const timeoutMs = options.timeoutMs || 25000;
+
     const payload = {
       contents: [{ parts: [{ text: promptText }] }],
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 2500
+        temperature: temperature,
+        maxOutputTokens: maxOutputTokens
       }
     };
 
@@ -229,9 +233,9 @@
           'x-goog-api-key': apiKey
         };
 
-        // Timeout 10s per candidate to allow solid generation
+        // Timeout động (mặc định 25s cho bài phân tích dài, hoặc theo options)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         const resp = await fetch(url, {
           method: 'POST',
