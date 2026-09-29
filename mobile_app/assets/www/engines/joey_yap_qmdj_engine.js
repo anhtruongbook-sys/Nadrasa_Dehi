@@ -81,14 +81,16 @@
 
   const STARS_META = {
     'Thiên Bồng': { vn: 'Thiên Bồng', element: 'Thủy', nature: 'Đại Hung', intellect: 'Tư duy mạo hiểm, dám chấp nhận rủi ro lớn, đầu óc kinh doanh nhạy bén, thích khám phá vùng nước sâu bí ẩn.' },
-    'Thiên Nhuế': { vn: 'Thiên Nhuế', element: 'Thổ', nature: 'Đại Hung', intellect: 'Đầu óc tỉ mỉ nghiên cứu căn nguyên vấn đề, tố chất thầy thuốc khám chữa bệnh, chuyên gia phân tích và đào tạo.' },
+    'Thiên Nhuế': { vn: 'Thiên Nhuế', element: 'Thổ', nature: 'Đại Hung (Học Vấn & Y Đạo)', intellect: 'Đầu óc tỉ mỉ nghiên cứu căn nguyên vấn đề, tố chất thầy thuốc khám chữa bệnh, chuyên gia phân tích và đào tạo.' },
     'Thiên Xung': { vn: 'Thiên Xung', element: 'Mộc', nature: 'Thứ Cát', intellect: 'Phản xạ chớp nhoáng, tư duy tốc độ, dũng cảm tiên phong mở đường, dám làm dám chịu và tràn đầy xung lực.' },
     'Thiên Phụ':  { vn: 'Thiên Phụ', element: 'Mộc', nature: 'Đại Cát', intellect: 'Trí tuệ học thuật uyên bác, phong thái văn nhân thanh nhã, năng lực truyền thụ tri thức và bồi dưỡng nhân tài.' },
     'Thiên Cầm':  { vn: 'Thiên Cầm', element: 'Thổ', nature: 'Đại Cát', intellect: 'Tư duy quân bình, lòng trung chính công tâm, năng lực quy tụ lòng người và điều phối tổng thể đại cục.' },
     'Thiên Tâm':  { vn: 'Thiên Tâm', element: 'Kim', nature: 'Đại Cát', intellect: 'Tư duy chiến lược gia, mưu lược đại tài, khả năng quản trị vĩ mô, tố chất lãnh đạo dẫn dắt và cứu thế.' },
     'Thiên Trụ':  { vn: 'Thiên Trụ', element: 'Kim', nature: 'Hung', intellect: 'Tư duy phản biện sắc bén, tài năng hùng biện tranh luận, nhìn thấu lỗ hổng của đối phương, hợp đàm phán luật pháp.' },
     'Thiên Nhậm': { vn: 'Thiên Nhậm', element: 'Thổ', nature: 'Đại Cát', intellect: 'Tư duy thực tế kiên nhẫn, cần cù liêm chính, năng lực tích lũy tài nguyên và gây dựng nền tảng vững chắc.' },
-    'Thiên Anh':  { vn: 'Thiên Anh', element: 'Hỏa', nature: 'Bình Hòa', intellect: 'Tư duy thẩm mỹ sáng tạo, say mê cái đẹp và danh vọng, có năng khiếu nghệ thuật, biểu diễn và quảng bá hình ảnh.' }
+    'Thiên Anh':  { vn: 'Thiên Anh', element: 'Hỏa', nature: 'Bình Hòa', intellect: 'Tư duy thẩm mỹ sáng tạo, say mê cái đẹp và danh vọng, có năng khiếu nghệ thuật, biểu diễn và quảng bá hình ảnh.' },
+    'Thiên Nhuế/Thiên Cầm': { vn: 'Thiên Nhuế & Thiên Cầm', element: 'Thổ', nature: 'Cầm Nhuế Đồng Cung (Cát Hung Đồng Tọa)', intellect: 'Tư duy nghiên cứu tỉ mỉ, đào sâu căn nguyên bản chất (Thiên Nhuế) kết hợp đức tính trung chính công tâm, năng lực quy tụ và điều phối đại cục (Thiên Cầm).' },
+    'Thiên Cầm/Thiên Nhuế': { vn: 'Thiên Cầm & Thiên Nhuế', element: 'Thổ', nature: 'Cầm Nhuế Đồng Cung (Cát Hung Đồng Tọa)', intellect: 'Lòng trung chính công tâm, năng lực điều phối quy tụ vạn sự (Thiên Cầm) kết hợp khả năng phân tích tỉ mỉ, thấu đáo căn nguyên vấn đề (Thiên Nhuế).' }
   };
 
   const DEITIES_META = {
@@ -620,14 +622,68 @@
     'Thiên Tâm':  { star_vn: 'Thiên Tâm', omen: 'Gặp thầy thuốc mang hòm thuốc, người tu đạo, người đeo trang sức vàng bạc.' },
     'Thiên Trụ':  { star_vn: 'Thiên Trụ', omen: 'Gặp gió lốc, chuông đồng ngân vang, người thổi sáo, đồ sắt gỉ sét vỡ đôi.' },
     'Thiên Nhậm': { star_vn: 'Thiên Nhậm', omen: 'Gặp nông dân vác cuốc, người gù lưng, bao tải lúa gạo, núi đá sừng sững.' },
-    'Thiên Anh':  { star_vn: 'Thiên Anh', omen: 'Gặp ánh chớp, lửa cháy bập bùng, phụ nữ trang điểm lộng lẫy, người say rượu.' }
+    'Thiên Anh':  { star_vn: 'Thiên Anh', omen: 'Gặp ánh chớp, lửa cháy bập bùng, phụ nữ trang điểm lộng lẫy, người say rượu.' },
+    'Thiên Nhuế/Thiên Cầm': { star_vn: 'Thiên Nhuế & Thiên Cầm', omen: 'Gặp thầy thuốc đông y, phụ nữ mang thai, đồng thời gặp người có uy quyền chính trực, đồ vật quý giá bằng đất hoặc kim loại màu vàng.' },
+    'Thiên Cầm/Thiên Nhuế': { star_vn: 'Thiên Cầm & Thiên Nhuế', omen: 'Gặp người lãnh đạo điềm tĩnh, chim quý cất tiếng, kết hợp thấy thầy thuốc khám bệnh hoặc người mang sách thuốc.' }
   };
+
+  /**
+   * Phân giải chính xác thông tin Sao (hỗ trợ Cầm Nhuế đồng cung và tránh fallback mù quáng)
+   */
+  function resolveStarMeta(starRaw, roleTitle = '') {
+    if (!starRaw) {
+      if (roleTitle && roleTitle.includes('Sức Khỏe')) return STARS_META['Thiên Nhuế'];
+      return STARS_META['Thiên Tâm'];
+    }
+    const clean = String(starRaw).trim();
+    if (STARS_META[clean]) {
+      if (roleTitle && roleTitle.includes('Sức Khỏe') && clean.includes('Thiên Nhuế')) {
+        return STARS_META['Thiên Nhuế'];
+      }
+      return STARS_META[clean];
+    }
+
+    // Trường hợp Cầm Nhuế đồng cung
+    if (clean.includes('Thiên Nhuế') && clean.includes('Thiên Cầm')) {
+      if (roleTitle && roleTitle.includes('Sức Khỏe')) {
+        return STARS_META['Thiên Nhuế'];
+      }
+      return STARS_META['Thiên Nhuế/Thiên Cầm'];
+    }
+
+    // Khớp đơn tinh trong chuỗi ghép
+    for (const [k, v] of Object.entries(STARS_META)) {
+      if (!k.includes('/') && clean.includes(k)) {
+        return v;
+      }
+    }
+
+    return {
+      vn: clean || 'Thiên Tâm',
+      element: 'Thổ',
+      nature: 'Bình Hòa',
+      intellect: 'Trí tuệ thích ứng linh hoạt theo thời cuộc và điều kiện ngoại cảnh.'
+    };
+  }
+
+  function resolveStarOmen(starRaw) {
+    if (!starRaw) return STAR_OMENS['Thiên Tâm'];
+    const clean = String(starRaw).trim();
+    if (STAR_OMENS[clean]) return STAR_OMENS[clean];
+    if (clean.includes('Thiên Nhuế') && clean.includes('Thiên Cầm')) {
+      return STAR_OMENS['Thiên Nhuế/Thiên Cầm'];
+    }
+    for (const [k, v] of Object.entries(STAR_OMENS)) {
+      if (!k.includes('/') && clean.includes(k)) return v;
+    }
+    return STAR_OMENS['Thiên Tâm'];
+  }
 
   function getEvidentialOmens(doorName, starName, direction) {
     const dClean = (doorName || '').replace(' Môn', '').trim();
     const dInfo = DOOR_OMENS[dClean] || DOOR_OMENS['Khai'];
     const sClean = (starName || '').trim();
-    const sInfo = STAR_OMENS[sClean] || STAR_OMENS['Thiên Tâm'];
+    const sInfo = resolveStarOmen(sClean);
 
     return {
       direction_of_departure: direction || 'Bắc',
@@ -1018,7 +1074,7 @@
         const pData = analyzed.palaces[pid] || {};
         const dClean = (pData.door || '').replace(' Môn', '').trim();
         const doorMeta = DOORS_META[dClean] || DOORS_META['Khai'];
-        const starMeta = STARS_META[pData.star] || STARS_META['Thiên Tâm'];
+        const starMeta = resolveStarMeta(pData.star, roleTitle);
         const deityMeta = DEITIES_META[pData.deity] || DEITIES_META['Trực Phù'];
 
         const hStem = pData.hcs || pData.heaven_stem || 'Ất';
