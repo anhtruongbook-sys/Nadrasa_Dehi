@@ -2046,7 +2046,7 @@
   }
 
   // Quản lý Service Worker và Tự động làm mới Cache khi có bản mới
-  const CURRENT_APP_VERSION = '8.5';
+  const CURRENT_APP_VERSION = '8.6';
   function registerServiceWorker() {
     const isFlutterApp = (typeof window !== 'undefined' && (
       window.NativeBridge !== undefined ||
@@ -2087,7 +2087,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=8.5')
+        navigator.serviceWorker.register('sw.js?v=8.6')
           .then((reg) => {
             reg.update();
           })

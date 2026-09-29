@@ -5041,7 +5041,9 @@ body.theme-light .text-view-year {
 
 /* ================= KỲ MÔN 3 CHẾ ĐỘ (DƯƠNG BÀN, ÂM BÀN, PHONG THỦY) ================= */
 .qmdj-mode-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
   flex-shrink: 0 !important;
   position: sticky;
   top: 0;
@@ -5053,14 +5055,8 @@ body.theme-light .text-view-year {
   border-radius: 8px;
   padding: 4px;
   margin-bottom: 6px;
-  gap: 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.qmdj-mode-tabs::-webkit-scrollbar {
-  display: none;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 body.theme-light .qmdj-mode-tabs {
@@ -5069,18 +5065,22 @@ body.theme-light .qmdj-mode-tabs {
 }
 
 .qmdj-tab-btn {
-  flex: 0 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: transparent;
   color: #a8a29e;
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 6px 9px;
+  padding: 7px 2px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
   text-align: center;
+  box-sizing: border-box;
 }
 
 body.theme-light .qmdj-tab-btn {
