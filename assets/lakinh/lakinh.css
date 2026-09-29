@@ -11,6 +11,7 @@
   height: 100% !important;
   position: relative !important;
   overflow: hidden !important;
+  overscroll-behavior: none !important;
   background: #070a12 !important;
 }
 
@@ -282,16 +283,16 @@ body.light-theme .lakinh-float-btn {
 /* Master HUD Panel Tích Hợp (Góc + Sơn 24 + 64 Quẻ 384 Hào Đầy Đủ) */
 #lakinh-top-panel {
   position: absolute;
-  top: 8px;
-  left: 6px;
-  right: 6px;
+  top: 6px;
+  left: 4px;
+  right: 4px;
   z-index: 25;
   background: rgba(15, 23, 42, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(245, 176, 65, 0.4);
   border-radius: 14px;
-  padding: 4px 6px;
+  padding: 3px 5px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -314,25 +315,25 @@ body.light-theme #lakinh-top-panel {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: 3px;
+  gap: 2px;
   box-sizing: border-box;
 }
 
 #lakinh-top-panel .lakinh-float-btn.icon-only {
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
   padding: 0;
   border-radius: 50%;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   flex-shrink: 0;
 }
 
 .lakinh-top-right-group {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 1.5px;
   flex-shrink: 0;
 }
 
@@ -341,10 +342,10 @@ body.light-theme #lakinh-top-panel {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 8px;
+  padding: 1px 2px;
+  border-radius: 6px;
   transition: background 0.15s ease;
   flex: 1 1 auto;
   min-width: 0;
@@ -356,7 +357,7 @@ body.light-theme #lakinh-top-panel {
 }
 
 .hud-pill-deg {
-  font-size: 1.05rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: #38bdf8;
   font-variant-numeric: tabular-nums;
@@ -367,6 +368,7 @@ body.light-theme #lakinh-top-panel {
   display: inline-flex;
   align-items: center;
   gap: 2px;
+  flex-shrink: 0;
   transition: transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
   user-select: none;
 }
@@ -422,15 +424,19 @@ body.light-theme .hud-edit-deg-btn {
 .hud-capsule-sep {
   color: rgba(148, 163, 184, 0.45);
   font-size: 0.65rem;
+  flex-shrink: 0;
 }
 
 .hud-pill-son {
-  font-size: 0.78rem;
+  font-size: 0.70rem;
   font-weight: 700;
+  letter-spacing: -0.2px;
   color: var(--gold-primary, #f5b041);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 body.light-theme .hud-pill-son {
@@ -2117,12 +2123,12 @@ body.light-theme .hud-card-divider {
   -webkit-backdrop-filter: blur(14px);
   border: 1.5px solid #38bdf8;
   border-radius: 12px;
-  padding: 4px 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 15px rgba(56, 189, 248, 0.35);
+  padding: 3px 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75), 0 0 12px rgba(56, 189, 248, 0.35);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: 2px;
   animation: slideDownFade 0.2s ease-out;
   overflow-x: auto;
   scrollbar-width: none;
@@ -2136,16 +2142,16 @@ body.light-theme .hud-card-divider {
 .fl-plan-left, .fl-plan-right {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   flex-shrink: 0;
 }
 
 .fl-plan-title {
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: #38bdf8;
   white-space: nowrap;
-  margin-right: 2px;
+  margin-right: 1px;
 }
 
 @media (max-width: 480px) {
@@ -2153,7 +2159,7 @@ body.light-theme .hud-card-divider {
     display: none;
   }
   .fl-plan-title {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     margin-right: 1px;
   }
 }
@@ -2167,15 +2173,14 @@ body.light-theme .fl-plan-title {
   color: #e0f2fe;
   border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 0.72rem;
+  padding: 3px 5px;
+  font-size: 0.68rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
   user-select: none;
 }
-
 
 body.light-theme .fl-plan-btn {
   background: #f0f9ff;
@@ -2200,8 +2205,9 @@ body.light-theme .fl-plan-btn {
 }
 
 .fl-plan-btn.icon-only {
-  padding: 4px 6px;
-  font-size: 0.85rem;
+  padding: 3px 5px;
+  font-size: 0.8rem;
+  min-width: 22px;
   line-height: 1;
 }
 
@@ -2210,8 +2216,8 @@ body.light-theme .fl-plan-btn {
   color: #facc15;
   border: 1px solid rgba(245, 176, 65, 0.4);
   border-radius: 6px;
-  padding: 3px 6px;
-  font-size: 0.75rem;
+  padding: 2.5px 5px;
+  font-size: 0.7rem;
   font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
@@ -2527,6 +2533,41 @@ body.light-theme .ray-mini-close-btn {
   box-sizing: border-box;
   overflow: hidden;
   transition: background 0.15s ease;
+}
+
+.ray-mini-hkdq-row .hkdq-row-left {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ray-mini-hkdq-row .hkdq-row-left .hkdq-qp-que {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #38bdf8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ray-mini-hkdq-row .hkdq-row-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.ray-mini-hkdq-row .hkdq-qp-tag {
+  font-size: 0.58rem;
+  padding: 1px 4px;
+  border-radius: 4px;
 }
 
 body.light-theme .ray-mini-hkdq-row {
@@ -3640,7 +3681,7 @@ body.light-theme .tamhop-ts-card {
 /* ========================================================================= */
 #lakinh-hud-capsule-stack {
   position: absolute;
-  top: 72px;
+  top: 76px;
   left: 6px;
   right: 6px;
   max-width: 410px;
@@ -3651,6 +3692,15 @@ body.light-theme .tamhop-ts-card {
   gap: 4px;
   pointer-events: none;
   z-index: 25;
+  box-sizing: border-box;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#lakinh-hud-capsule-stack::-webkit-scrollbar {
+  display: none;
 }
 
 #lakinh-hud-capsule-stack > * {
@@ -3661,6 +3711,7 @@ body.light-theme .tamhop-ts-card {
   right: auto !important;
   width: 100% !important;
   margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 /* ========================================================================= */
@@ -3689,6 +3740,8 @@ body.light-theme .tamhop-ts-card {
   gap: 3px !important;
   user-select: none;
   touch-action: manipulation;
+  box-sizing: border-box !important;
+  width: 100% !important;
 }
 
 #lakinh-qmdj-floating-hud.is-collapsed .qmdj-hud-header {
@@ -3792,17 +3845,20 @@ body.light-theme .tamhop-ts-card {
   padding: 2px 0 0 0 !important;
   margin-top: 1px !important;
   border-top: 1px solid rgba(245, 158, 11, 0.22) !important;
-  gap: 4px !important;
-  overflow: hidden !important;
+  gap: 3px !important;
+  flex-wrap: wrap !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
   cursor: pointer;
 }
 
 #lakinh-qmdj-floating-hud.is-collapsed .compact-pill {
-  font-size: 0.62rem !important;
+  font-size: 0.6rem !important;
   font-weight: 700 !important;
   padding: 1.5px 5px !important;
   border-radius: 6px !important;
   white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 /* ========================================================================= */
@@ -3998,35 +4054,34 @@ body.light-theme .tamhop-ts-card {
 #lakinh-tamhop-floating-hud.is-collapsed .tamhop-hud-compact-summary {
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
   width: 100% !important;
   padding: 2px 0 0 0 !important;
   margin-top: 1px !important;
   border-top: 1px solid rgba(16, 185, 129, 0.22) !important;
   gap: 3px !important;
-  overflow: hidden !important;
+  flex-wrap: wrap !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
   cursor: pointer;
 }
 
 #lakinh-tamhop-floating-hud.is-collapsed .tamhop-pill {
-  font-size: 0.62rem !important;
+  font-size: 0.6rem !important;
   font-weight: 700 !important;
   padding: 1.5px 5px !important;
   border-radius: 6px !important;
   white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .tamhop-hud-compact-summary {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   align-items: center;
-  overflow-x: auto;
+  flex-wrap: wrap;
   padding: 2px 0;
-  scrollbar-width: none;
-}
-
-.tamhop-hud-compact-summary::-webkit-scrollbar {
-  display: none;
+  box-sizing: border-box;
 }
 
 .tamhop-pill {

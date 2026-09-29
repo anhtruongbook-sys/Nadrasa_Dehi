@@ -43,6 +43,7 @@
     planOffsetX: 0,
     planOffsetY: 0,
     isPlanPanActive: false,
+    isPlanPinchRotateEnabled: false, // Mặc định TẮT xoay góc khi dùng 2 ngón tay (chỉ thu phóng)
     isTracingPlot: false,
     isSheetOpen: false,
     isHudDetailOpen: false,
@@ -231,13 +232,15 @@
           <!-- 0. Thanh Điều Khiển Nổi Thu Phóng & Dịch Tâm Mặt Bằng Trên Màn Hình -->
           <div id="lakinh-plan-pan-banner" class="lakinh-floating-plan-bar is-hidden" style="display: none;">
             <div class="fl-plan-left">
-              <span class="fl-plan-title">📐<span class="fl-btn-lbl"> Mặt Bằng</span></span>
+              <span class="fl-plan-title" title="Bản vẽ mặt bằng kiến trúc">📐</span>
               <button type="button" class="fl-plan-btn" id="fl-btn-scale-minus" title="Thu nhỏ (-15%)">🔍−</button>
               <button type="button" class="fl-plan-scale-chip" id="fl-plan-scale-val" title="Tỉ lệ hiện tại. Chạm để về 100%">100%</button>
               <button type="button" class="fl-plan-btn" id="fl-btn-scale-plus" title="Phóng to (+15%)">🔍+</button>
+              <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-change" title="Tải / Thay ảnh mặt bằng khác">📁</button>
             </div>
             <div class="fl-plan-right">
-              <button type="button" class="fl-plan-btn ${state.isPlanPanActive ? 'active' : ''}" id="fl-btn-plan-pan" title="Bật/Tắt chế độ kéo rê và 2 ngón tay thu phóng">✋<span class="fl-btn-lbl"> Kéo</span></button>
+              <button type="button" class="fl-plan-btn ${state.isPlanPanActive ? 'active' : ''}" id="fl-btn-plan-pan" title="Bật/Tắt chế độ kéo rê 1 ngón">✋<span class="fl-btn-lbl"> Kéo</span></button>
+              <button type="button" class="fl-plan-btn ${state.isPlanPinchRotateEnabled ? 'active' : ''}" id="fl-btn-toggle-pinch-rot" title="Cho phép 2 ngón xoay góc mặt bằng (Mặc định: TẮT, chỉ thu phóng)">${state.isPlanPinchRotateEnabled ? '🔄' : '🔒'}<span class="fl-btn-lbl"> ${state.isPlanPinchRotateEnabled ? 'Xoay' : 'Khóa'}</span></button>
               <button type="button" class="fl-plan-btn" id="fl-btn-rot-match" title="Xoay khớp hướng nhà">🧭<span class="fl-btn-lbl"> Khớp</span></button>
               <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa về chính tâm (0,0)">🎯<span class="fl-btn-lbl"> Tâm</span></button>
               <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-opacity" title="Đổi độ mờ (35% / 65% / 85%)">👁️</button>
@@ -715,6 +718,10 @@
                   <button class="lakinh-step-btn" id="btn-plan-rot-m1">-1°</button>
                   <button class="lakinh-step-btn" id="btn-plan-rot-p1">+1°</button>
                 </div>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 0.74rem; color: #cbd5e1; cursor: pointer; margin-top: 8px; background: rgba(15, 23, 42, 0.6); padding: 6px 10px; border-radius: 8px; border: 1px dashed rgba(56, 189, 248, 0.35);">
+                  <input type="checkbox" id="sheet-chk-plan-pinch-rotate" ${state.isPlanPinchRotateEnabled ? 'checked' : ''} style="width: 16px; height: 16px; accent-color: #38bdf8;">
+                  <span>🔄 Cho phép 2 ngón tay xoay góc mặt bằng (Mặc định: TẮT, chỉ thu phóng)</span>
+                </label>
               </div>
 
               <!-- Độ mờ bản vẽ -->
@@ -1506,7 +1513,8 @@
         rotation: state.planRotation,
         opacity: state.planOpacity,
         offsetX: state.planOffsetX,
-        offsetY: state.planOffsetY
+        offsetY: state.planOffsetY,
+        pinchRotate: state.isPlanPinchRotateEnabled
       };
       if (state.planImageSrc && state.planImageSrc.length < 2.5 * 1024 * 1024) {
         data.imageSrc = state.planImageSrc;
@@ -1526,6 +1534,14 @@
       if (data.opacity) state.planOpacity = data.opacity;
       if (data.offsetX !== undefined) state.planOffsetX = data.offsetX;
       if (data.offsetY !== undefined) state.planOffsetY = data.offsetY;
+      if (data.pinchRotate !== undefined) state.isPlanPinchRotateEnabled = !!data.pinchRotate;
+      const flBtnPinch = document.getElementById('fl-btn-toggle-pinch-rot');
+      const sheetChkPinch = document.getElementById('sheet-chk-plan-pinch-rotate');
+      if (flBtnPinch) {
+        flBtnPinch.classList.toggle('active', state.isPlanPinchRotateEnabled);
+        flBtnPinch.innerHTML = `${state.isPlanPinchRotateEnabled ? '🔄' : '🔒'}<span class="fl-btn-lbl"> ${state.isPlanPinchRotateEnabled ? 'Xoay' : 'Khóa'}</span>`;
+      }
+      if (sheetChkPinch) sheetChkPinch.checked = state.isPlanPinchRotateEnabled;
       if (data.imageSrc) {
         state.planImageSrc = data.imageSrc;
         const img = document.getElementById('lakinh-floorplan-img');
@@ -4909,6 +4925,7 @@ function updateQmdjStrategicLayer() {
       if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
         window.NativeBridge.postMessage(JSON.stringify({ action: 'pickFloorPlan' }));
       } else if (inputPlanFile) {
+        inputPlanFile.value = ''; // Reset to ensure re-selecting same/new file works 100%
         inputPlanFile.click();
       }
     };
@@ -4918,14 +4935,69 @@ function updateQmdjStrategicLayer() {
     }
 
     if (btnPlanQuick) {
-      btnPlanQuick.addEventListener('click', () => {
+      btnPlanQuick.addEventListener('click', (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         if (!state.planImageSrc) {
           triggerFloorPlanPicker();
         } else {
-          openBottomSheet();
-          const el = document.getElementById('lakinh-plan-controls-wrap');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          const banner = document.getElementById('lakinh-plan-pan-banner');
+          if (banner) {
+            const isVisible = banner.style.display !== 'none' && !banner.classList.contains('is-hidden');
+            if (isVisible) {
+              banner.style.display = 'none';
+              banner.classList.add('is-hidden');
+              btnPlanQuick.classList.remove('active');
+              showLaKinhToast('Đã ẩn thanh công cụ mặt bằng. Chạm lại 📐 để mở.');
+            } else {
+              banner.style.display = 'flex';
+              banner.classList.remove('is-hidden');
+              btnPlanQuick.classList.add('active');
+              showLaKinhToast('📐 Đã mở thanh công cụ căn chỉnh mặt bằng');
+            }
+          }
         }
+      });
+    }
+
+    const flBtnPlanChange = document.getElementById('fl-btn-plan-change');
+    if (flBtnPlanChange) {
+      flBtnPlanChange.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerFloorPlanPicker();
+      });
+    }
+
+    const togglePinchRotateMode = (enabled) => {
+      if (typeof enabled === 'boolean') {
+        state.isPlanPinchRotateEnabled = enabled;
+      } else {
+        state.isPlanPinchRotateEnabled = !state.isPlanPinchRotateEnabled;
+      }
+      const flBtn = document.getElementById('fl-btn-toggle-pinch-rot');
+      const sheetChk = document.getElementById('sheet-chk-plan-pinch-rotate');
+      if (flBtn) {
+        flBtn.classList.toggle('active', state.isPlanPinchRotateEnabled);
+        flBtn.innerHTML = `${state.isPlanPinchRotateEnabled ? '🔄' : '🔒'}<span class="fl-btn-lbl"> ${state.isPlanPinchRotateEnabled ? 'Xoay' : 'Khóa'}</span>`;
+      }
+      if (sheetChk) sheetChk.checked = state.isPlanPinchRotateEnabled;
+      saveFloorPlanState();
+      showLaKinhToast(state.isPlanPinchRotateEnabled
+        ? '🔄 Đã BẬT xoay góc: Dùng 2 ngón tay có thể xoay mặt bằng'
+        : '🔒 Đã KHÓA xoay: 2 ngón tay chỉ phóng to / thu nhỏ mặt bằng');
+    };
+
+    const flBtnTogglePinch = document.getElementById('fl-btn-toggle-pinch-rot');
+    if (flBtnTogglePinch) {
+      flBtnTogglePinch.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePinchRotateMode();
+      });
+    }
+
+    const sheetChkPlanPinch = document.getElementById('sheet-chk-plan-pinch-rotate');
+    if (sheetChkPlanPinch) {
+      sheetChkPlanPinch.addEventListener('change', (e) => {
+        togglePinchRotateMode(e.target.checked);
       });
     }
 
@@ -5033,8 +5105,10 @@ function updateQmdjStrategicLayer() {
           banner.style.display = 'none';
           banner.classList.add('is-hidden');
         }
+        const qBtn = document.getElementById('lakinh-btn-plan-quick');
+        if (qBtn) qBtn.classList.remove('active');
         state.isPlanPanActive = false;
-        showLaKinhToast('Đã ẩn thanh công cụ mặt bằng. Mở lại trong Tiện ích.');
+        showLaKinhToast('Đã ẩn thanh công cụ mặt bằng. Chạm lại 📐 để mở lại.');
       };
       btnPlanPanDone.addEventListener('click', handleClosePlanBar);
       btnPlanPanDone.addEventListener('touchend', handleClosePlanBar);
@@ -5228,17 +5302,20 @@ function updateQmdjStrategicLayer() {
           if (initialPinchDist > 10) {
             const factor = curDist / initialPinchDist;
             state.planScale = Math.max(0.2, Math.min(5.0, Math.round(initialPinchScale * factor * 100) / 100));
-            const curAngle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x) * 180 / Math.PI;
-            const diffAngle = curAngle - initialPinchAngle;
-            state.planRotation = Math.round(((initialPinchRot + diffAngle) % 360 + 360) % 360 * 10) / 10;
+            // Chỉ xoay góc khi người dùng đã tích chọn / bật tùy chọn xoay
+            if (state.isPlanPinchRotateEnabled) {
+              const curAngle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x) * 180 / Math.PI;
+              const diffAngle = curAngle - initialPinchAngle;
+              state.planRotation = Math.round(((initialPinchRot + diffAngle) % 360 + 360) % 360 * 10) / 10;
+            }
             updateFloorPlanTransform();
           }
           e.stopPropagation();
         } else if (isPlanDragging && activePointers.size === 1) {
           const dx = e.clientX - planDragStartX;
           const dy = e.clientY - planDragStartY;
-          state.planOffsetX = Math.round(panDragInitOx + dx);
-          state.planOffsetY = Math.round(panDragInitOy + dy);
+          state.planOffsetX = Math.round(planDragInitOx + dx);
+          state.planOffsetY = Math.round(planDragInitOy + dy);
           updateFloorPlanTransform();
           e.stopPropagation();
         }
@@ -6979,7 +7056,8 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     setFloorPlanFromDataUrl: setFloorPlanFromDataUrl,
     removeFloorPlan: removeFloorPlan,
     togglePlanPanMode: togglePlanPanMode,
-    updateFloorPlanTransform: updateFloorPlanTransform
+    updateFloorPlanTransform: updateFloorPlanTransform,
+    getState: () => state
   };
 
   global.NetaLaKinhView = NetaLaKinhView;
