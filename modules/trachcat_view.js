@@ -357,8 +357,8 @@
             <label class="tc-toggle-label highlight-xkdg" title="Huyền Không Đại Quái 64 Quẻ: Quái Khí, Quái Vận, Hợp Thập, Hà Đồ & Tọa Sơn">
               <input type="checkbox" id="tc-chk-xkdg" ${state.schools.enable_xkdg ? 'checked' : ''}> ☯ Huyền Không Đại Quái (64 Quẻ)
             </label>
-            <label class="tc-toggle-label highlight-qimen" title="Kỳ Môn Chiến Lược: 5 Quy Tắc Vàng Trương Chí Xuân & 76 Cách Cục, Tam Thắng, Thiên Mã Joey Yap Compendium">
-              <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Chiến Lược (Joey Yap & Trương Chí Xuân)
+            <label class="tc-toggle-label highlight-qimen" title="Kỳ Môn Chiến Lược: 5 Quy Tắc Vàng & 76 Cách Cục, Tam Thắng, Thiên Mã">
+              <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Chiến Lược &amp; Tác Quyết
             </label>
           </div>
 
@@ -537,7 +537,7 @@
                 <!-- Thước Ngắm Chiến Lược Không Gian Joey Yap -->
                 ${d.qimen.joey_strategy && d.qimen.joey_strategy.spatial_strategy ? `
                   <div class="tc-joey-spatial">
-                    <div class="tc-spatial-header">🧭 THƯỚC NGẮM CHIẾN LƯỢC KHÔNG GIAN (JOEY YAP)</div>
+                    <div class="tc-spatial-header">🧭 THƯỚC NGẮM CHIẾN LƯỢC KHÔNG GIAN</div>
                     <div class="tc-spatial-grid">
                       <div class="tc-spatial-item victory">
                         <span class="tc-spatial-label">🟢 Tọa Lưng Đắc Thắng:</span>

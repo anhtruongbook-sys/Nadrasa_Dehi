@@ -1450,6 +1450,16 @@
             ${hasKey ? '🔑 Trạng thái: Đã cài đặt Khóa API cá nhân (Đã mã hóa và lưu an toàn trên máy)' : '⚠️ Chưa cài đặt Khóa: Hãy dán khóa cá nhân để kích hoạt'}
           </div>
 
+          <div class="tarot-model-row" style="margin: 8px 0; background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+              <span style="font-size: 0.72rem; color: #e2e8f0; font-weight: 700;">🤖 Mô hình: <strong id="tarot-active-model-name" style="color: #facc15;">${(global.NetaGeminiService && global.NetaGeminiService.getActiveModelName()) || 'gemini-3.5-flash'}</strong></span>
+              <span style="font-size: 0.65rem; color: #94a3b8;">Tự động phát hiện &amp; xếp hạng mô hình Flash tối ưu</span>
+            </div>
+            <button type="button" id="btn-tarot-test-model" class="tarot-btn-subtle" style="white-space: nowrap; font-size: 0.68rem; padding: 4px 8px; border-radius: 6px;">
+              🔍 Kiểm Tra Model
+            </button>
+          </div>
+
           <div class="tarot-key-guide-box">
             <div class="tarot-guide-title">📌 Cách nhận Khóa API Google AI Studio miễn phí:</div>
             <div class="tarot-guide-step">1. Đăng nhập Google và truy cập: <code>https://aistudio.google.com/app/apikey</code></div>
@@ -1509,6 +1519,55 @@
     const pasteBtn = modal.querySelector('#btn-tarot-paste-key');
     const eyeBtn = modal.querySelector('#btn-tarot-toggle-eye');
     const deepToggle = modal.querySelector('#modal-deep-synth-toggle');
+    const testBtn = modal.querySelector('#btn-tarot-test-model');
+    const activeModelEl = modal.querySelector('#tarot-active-model-name');
+
+    if (testBtn) {
+      testBtn.addEventListener('click', async () => {
+        const inputKey = keyInput ? keyInput.value.trim() : '';
+        const testKey = inputKey || (global.NetaGeminiService ? global.NetaGeminiService.getActiveKey() : '');
+        if (!testKey) {
+          if (feedback) {
+            feedback.className = 'tarot-key-feedback error';
+            feedback.textContent = '⚠️ Vui lòng dán hoặc nhập Khóa API trước khi kiểm tra.';
+          }
+          return;
+        }
+
+        testBtn.disabled = true;
+        testBtn.textContent = '⏳ Đang quét...';
+        if (feedback) {
+          feedback.className = 'tarot-key-feedback info';
+          feedback.textContent = '🔄 Đang truy vấn danh mục models và kiểm tra kết nối Google AI Studio...';
+        }
+
+        try {
+          if (global.NetaGeminiService && typeof global.NetaGeminiService.testConnection === 'function') {
+            const res = await global.NetaGeminiService.testConnection(testKey);
+            if (res.success) {
+              if (activeModelEl) activeModelEl.textContent = res.model;
+              if (feedback) {
+                feedback.className = 'tarot-key-feedback success';
+                feedback.textContent = `✅ ${res.message}`;
+              }
+            } else {
+              if (feedback) {
+                feedback.className = 'tarot-key-feedback error';
+                feedback.textContent = `⚠️ Lỗi: ${res.error}`;
+              }
+            }
+          }
+        } catch (e) {
+          if (feedback) {
+            feedback.className = 'tarot-key-feedback error';
+            feedback.textContent = `⚠️ Lỗi: ${e.message}`;
+          }
+        } finally {
+          testBtn.disabled = false;
+          testBtn.textContent = '🔍 Kiểm Tra Model';
+        }
+      });
+    }
 
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (closeBtn2) closeBtn2.addEventListener('click', closeModal);

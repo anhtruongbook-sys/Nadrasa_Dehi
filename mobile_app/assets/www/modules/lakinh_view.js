@@ -493,7 +493,7 @@
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-tam-hop" title="Thẩm Định Phong Thủy Tam Hợp Phái ">
                 🌊
               </button>
-              <button class="lakinh-float-btn icon-only ${state.isQmdjStratActive ? 'active' : ''}" id="lakinh-btn-qmdj-strat" title="Bật/Tắt Lớp Chiến Lược Kỳ Môn (Joey Yap)">
+              <button class="lakinh-float-btn icon-only ${state.isQmdjStratActive ? 'active' : ''}" id="lakinh-btn-qmdj-strat" title="Bật/Tắt Lớp Chiến Lược Kỳ Môn">
                 ⚔️
               </button>
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-plan-quick" title="Bản vẽ mặt bằng kiến trúc">
@@ -880,10 +880,10 @@
             </button>
           </div>
 
-          <!-- Nhóm KỲ MÔN CHIẾN LƯỢC JOEY YAP COMPENDIUM (PHASE 3) -->
+          <!-- Nhóm KỲ MÔN CHIẾN LƯỢC TÁC QUYẾT (PHASE 3) -->
           <div class="sheet-control-group">
             <div class="sheet-control-label">
-              <span>⚔️ Lớp Phủ Chiến Lược Kỳ Môn (Joey Yap)</span>
+              <span>⚔️ Lớp Phủ Chiến Lược Kỳ Môn</span>
               <span class="val" id="sheet-val-qmdj-strat-status">${state.isQmdjStratActive ? 'Đang Bật' : 'Đang Tắt'}</span>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
@@ -896,7 +896,7 @@
             </div>
             <div id="lakinh-qmdj-sheet-controls" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
               <div class="sheet-control-sublabel">
-                <span>Mục tiêu tác chiến (Joey Yap):</span>
+                <span>Mục tiêu tác chiến:</span>
               </div>
               <div class="sheet-qmdj-pills">
                 <button type="button" class="sheet-qmdj-goal-btn ${state.qmdjStratGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán / HĐ</button>
@@ -5721,7 +5721,7 @@ function updateQmdjStrategicLayer() {
     }
     updateQmdjStrategicLayer();
     showLaKinhToast(state.isQmdjStratActive
-      ? '⚔️ Đã kích hoạt Lớp Chiến Lược Kỳ Môn Joey Yap trên La Kinh'
+      ? '⚔️ Đã kích hoạt Lớp Chiến Lược Kỳ Môn trên La Kinh'
       : 'Đã tắt lớp chiến lược Kỳ Môn');
   }
 
@@ -6246,14 +6246,14 @@ function updateQmdjStrategicLayer() {
         <div class="lakinh-glass-panel lakinh-modal-dialog qmdj-guide-modal-dialog">
           <div class="lakinh-modal-header">
             <div class="lakinh-modal-title">
-              ⚔️ CẨM NANG KỲ MÔN CHIẾN LƯỢC JOEY YAP
+              ⚔️ CẨM NANG KỲ MÔN CHIẾN LƯỢC
             </div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-qmdj-guide-overlay').remove()">✕</button>
           </div>
 
           <div class="qmdj-guide-scroll-body">
             <p style="font-size: 0.78rem; line-height: 1.5; color: #cbd5e1; margin-bottom: 12px;">
-              Kỳ Môn Chiến Lược (Strategic Qi Men) của Joey Yap là nghệ thuật kiểm soát không gian, khí trường và tâm lý học hành vi trong đàm phán, kinh doanh và xuất hành thực địa:
+              Kỳ Môn Chiến Lược (Strategic Qi Men) là nghệ thuật kiểm soát không gian, khí trường và tâm lý học hành vi trong đàm phán, kinh doanh và xuất hành thực địa:
             </p>
 
             <!-- Mục 1: Tọa Lưng -->

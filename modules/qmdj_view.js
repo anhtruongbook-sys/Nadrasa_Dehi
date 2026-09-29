@@ -999,7 +999,7 @@
 
         <!-- Mục Tiêu Tác Chiến (Goal Selector) -->
         <div class="jy-goal-selector">
-          <div class="jy-goal-title">🎯 CHỌN MỤC TIÊU TÁC CHIẾN (JOEY YAP COMPENDIUM):</div>
+          <div class="jy-goal-title">🎯 CHỌN MỤC TIÊU TÁC CHIẾN:</div>
           <div class="jy-goal-pills">
             <button type="button" class="jy-goal-btn ${currentChienLuocGoal === 'deal' ? 'active' : ''}" data-goal="deal">💼 Đàm Phán / Hợp Đồng</button>
             <button type="button" class="jy-goal-btn ${currentChienLuocGoal === 'wealth' ? 'active' : ''}" data-goal="wealth">💰 Cầu Tài / Gọi Vốn</button>
@@ -1724,7 +1724,7 @@
         <div class="banmenh-card" id="qmdj-banmenh-card">
           <div class="bazi-card-title">
             <div class="bqc-title-left">
-              <span>🔮 KỲ MÔN BẢN MỆNH (JOEY YAP LIFE PALACE)</span>
+              <span>🔮 KỲ MÔN BẢN MỆNH</span>
               <span class="bqc-badge-palace">${lp.palace_name} (${lp.direction} • ${lp.degrees})</span>
             </div>
             <button type="button" class="bqc-btn-lakinh" id="btn-banmenh-open-lakinh" data-deg="${lp.center_deg}" data-dir="${lp.direction}" title="Mở La Kinh định vị phương vị Bản Mệnh">
