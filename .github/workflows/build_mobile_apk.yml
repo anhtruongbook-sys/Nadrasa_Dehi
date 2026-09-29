@@ -76,11 +76,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.6
-          name: "Neta Light v2.5.6 (Nâng Tầm Luận Giải Lục Hào Chuyên Sâu, Loại Bỏ Mã Thô & Triệt Tiêu Ảo Giác)"
+          tag_name: v2.5.7
+          name: "Neta Light v2.5.7 (Chuẩn Hóa AI Biên Tập & Soạn Lại Luận Giải Thuật Toán Lục Hào & Tarot)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.6
-            Bản nâng cấp toàn diện chất lượng Luận Giải Kinh Dịch Lục Hào Chuyên Sâu:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.7
+            Chuẩn hóa kiến trúc AI đóng vai trò Ban Biên Tập & Soạn Lại Văn Phong cho cả Lục Hào và Tarot:
+            
+            - **Chỉ Dùng AI Soạn Lại & Biên Tập Lại Toàn Bộ Bản Luận Giải Offline (Bằng Thuật Toán)**:
+              + AI không tự luận giải hoặc bịa đặt nội dung từ hư vô. Toàn bộ nhận định cốt lõi, tượng quẻ, hào động, ngũ hành, lá bài Tarot, tương tác nguyên tố và lời khuyên đều do thuật toán xác định 100% offline tính toán.
+              + AI đóng vai trò Bậc Thầy Tổng Biên Tập, chuyển hóa toàn bộ dữ liệu thuật toán thành bài văn xuôi nghị luận triết học và tâm lý học chiều sâu mượt mà, sâu sắc, trang nhã.
+            
+            - **Áp Dụng Đồng Bộ Cho Cả Kinh Dịch Lục Hào & Tarot**:
+              + Lục Hào: AI biên tập lại toàn văn bản luận giải xác định 8 bước, giữ nguyên 100% ngũ hành Dụng Thần, phục thần và mốc ứng kỳ.
+              + Tarot: AI biên tập lại toàn văn trải bài thuật toán, mạch truyện 3 thì (Dialectical Narrative), tương tác nguyên tố Golden Dawn và bài học Cốt tủy (The Quintessence).
+            
+            - **Tuyệt Đối Không Dùng Code Block hay Bảng ASCII Thô**:
+              + Toàn văn bản xuất ra đều là văn xuôi nghệ thuật, không vỡ layout, đạt chuẩn tương phản cao WCAG AAA.
             
             - **Loại Bỏ Triệt Để Khối Code Block & Bảng ASCII Thô**:
               + Không còn hiện tượng AI lặp lại bảng 6 hào nạp giáp trong khối monospace text.

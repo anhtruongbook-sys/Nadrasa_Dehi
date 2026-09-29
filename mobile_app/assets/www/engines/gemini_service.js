@@ -337,82 +337,75 @@
   }
 
   /**
-   * Xây dựng Prompt kỹ thuật bám sát 100% dữ liệu gốc & câu hỏi cụ thể của người dùng
+   * Xây dựng Prompt Biên Tập & Soạn Lại Văn Phong Trải Bài Tarot Từ Thuật Toán Offline
+   * AI TUYỆT ĐỐI KHÔNG TỰ LUẬN GIẢI MÀ CHỈ ĐÓNG VAI TRÒ BIÊN TẬP VIÊN TRAU CHUỐT NỘI DUNG THUẬT TOÁN
    */
   function buildHermeticPrompt(report, customQuestion) {
     const questionToUse = (customQuestion || report.question || '').trim();
-    const isGeneralQuestion = !questionToUse || questionToUse === 'Tổng quan vận thế';
 
-    const systemInstruction = `Bạn là một Bậc Thầy Tham Vấn Tarot Cổ Điển và Triết Gia Chiêm Tinh Học Uyên Bác.
-MỤC TIÊU DUY NHẤT:
-- Dựa DUY NHẤT 100% trên dữ liệu định lượng của thuật toán bốc bài đã cho dưới đây để biên soạn bản luận giải sâu sắc, mạch lạc, trang nhã, giàu chất tâm lý học chiều sâu (Jungian Archetype) và truyền cảm.
-- ${!isGeneralQuestion ? `NGƯỜI HỎI CÓ CÂU HỎI CỤ THỂ: "${questionToUse}". BẮT BUỘC bạn phải nhập cuộc và trả lời TRỰC DIỆN, SẮC BÉN vào đúng bản chất của sự việc/quyết định được hỏi (thay vì nói chung chung). Từng lá bài phải được ánh xạ vào bối cảnh thực tế của câu hỏi này.` : `Người hỏi quan tâm đến vận thế tổng quan. Hãy phân tích dòng chảy nội tâm và các xu hướng cuộc sống một cách thấu suốt.`}
-- Nối kết các lá bài, chiều bài và tương tác nguyên tố thành một dòng chảy nhân quả thuyết phục.
+    // Lấy toàn văn bản luận giải thuật toán offline
+    let offlineReportText = '';
+    if (global.NetaTarotEngine && typeof global.NetaTarotEngine.formatMarkdownReport === 'function') {
+      offlineReportText = global.NetaTarotEngine.formatMarkdownReport(report);
+    } else {
+      const lines = [];
+      lines.push(`Trải bài: ${report.spreadName} | Chủ đề: ${report.domain.toUpperCase()}`);
+      if (questionToUse) lines.push(`Câu hỏi người hỏi: "${questionToUse}"`);
+      if (report.quintessence) {
+        lines.push(`Lá bài cốt tủy: ${report.quintessence.name_vi} (${report.quintessence.name_en}) - Bài học linh hồn: ${report.quintessence.lesson}`);
+      }
+      lines.push(`Tổng luận mạch truyện nhân quả: ${report.synthesizedStory}`);
+      lines.push(`Bản chất trải bài: ${report.fateVerdict} | Dòng chảy năng lượng: ${report.flowVerdict}`);
+      (report.cardReadings || []).forEach(c => {
+        lines.push(`- Vị trí ${c.position}: Lá ${c.cardName} (${c.orientation}) - Từ khóa: ${c.keywords} - Luận giải: ${c.detailMeaning} - Lời khuyên: ${c.advice}`);
+      });
+      if (report.pairAnalysis && report.pairAnalysis.length > 0) {
+        lines.push('Tương tác nguyên tố:');
+        report.pairAnalysis.forEach(p => lines.push(`  * ${p.fromCard} -> ${p.toCard}: ${p.relation} - ${p.explanation}`));
+      }
+      lines.push(`Lời khuyên chiến lược: ${report.finalAdvice}`);
+      offlineReportText = lines.join('\n');
+    }
 
-QUY CHUẨN ĐỊNH DẠNG VĂN BẢN (BẮT BUỘC):
-1. Định dạng văn bản bằng Markdown chuẩn:
-   - Dùng '## ' cho 5 đề mục chính (1. Thông điệp mở đầu, 2. Phân tích dòng chảy nhân quả...).
-   - Dùng '### ' cho tiêu đề từng lá bài ở mục 2.
-   - TUYỆT ĐỐI KHÔNG dùng '#### ' hay nhiều hơn 3 dấu thăng #.
-   - TUYỆT ĐỐI KHÔNG dùng khối mã code block (dấu \`\`\`), không vẽ sơ đồ ASCII dạng '| | |' hay '--->'. Hãy diễn giải dòng chảy bằng câu văn xuôi mượt mà, tự nhiên.
-   - Dùng gạch đầu dòng '- ' cho các ý phân tích cụ thể và lời khuyên hành động.
+    const systemInstruction = `BẠN LÀ MỘT BẬC THẦY TỔNG BIÊN TẬP VĂN BẢN TAROT & TÂM LÝ HỌC CHIỀU SÂU (JUNGIAN ARCHETYPE) UYÊN BÁC.
+DƯỚI ĐÂY LÀ "TOÀN VĂN BẢN LUẬN GIẢI TRẢI BÀI TAROT" ĐÃ ĐƯỢC THUẬT TOÁN XÁC ĐỊNH OFFLINE TÍNH TOÁN VÀ XUẤT RA CHÍNH XÁC 100%.
 
-ĐIỀU KHOẢN CẤM KỴ TUYỆT ĐỐI (ZERO-FABRICATION):
-1. TUYỆT ĐỐI KHÔNG đề cập đến các từ: 'AI', 'Gemini', 'trí tuệ nhân tạo', 'bot', 'máy tính', 'mô hình', 'thuật toán', 'hệ thống' trong toàn bộ bài viết.
-2. TUYỆT ĐỐI KHÔNG tự bịa thêm các lá bài khác, không đổi chiều bài (Xuôi/Ngược), không bịa đặt sự kiện viển vông ngoài đời. Toàn bộ luận điểm phải bắt nguồn từ các lá bài và nguyên tố đã rút dưới đây.`;
+NHIỆM VỤ DUY NHẤT CỦA BẠN:
+SOẠN LẠI, BIÊN TẬP LẠI VÀ TRAU CHUỐT TOÀN BỘ NỘI DUNG BẢN LUẬN GIẢI THUẬT TOÁN OFFLINE DƯỚI ĐÂY THÀNH MỘT BÀI THAM VẤN TÂM LÝ HOÀN CHỈNH, MẠCH LẠC, TRANG NHÃ, SÂU SẮC, GIÀU CHẤT VĂN HỌC VÀ TRUYỀN CẢM HỨNG (ĐỘ DÀI KHOẢNG 1.200 - 1.800 TỪ).
 
-    const cardsDetail = report.cardReadings.map(c => {
-      return `* Vị trí: ${c.position}
-  - Lá bài: ${c.cardName} (${c.orientation})
-  - Thuộc nhóm: ${c.arcana} Arcana | Nguyên tố: ${c.element}
-  - Từ khóa cốt lõi: ${c.keywords}
-  - Luận giải cơ sở: ${c.detailMeaning}
-  - Lời khuyên lá bài: ${c.advice}`;
-    }).join('\n\n');
+[CÁC NGUYÊN TẮC BẤT BIẾN - ZERO-FABRICATION EDITORIAL RULES]:
+1. TUYỆT ĐỐI KHÔNG TỰ LUẬN GIẢI: Bạn KHÔNG được tự ý sáng tác, suy đoán hay bịa thêm bất kỳ lá bài nào khác ngoài trải bài thuật toán đã cho.
+2. TRUNG THỰC 100% VỚI BẢN GỐC THUẬT TOÁN:
+   - Giữ nguyên toàn bộ các lá bài, vị trí và chiều bài (Xuôi/Ngược).
+   - Bám sát ý nghĩa chi tiết, từ khóa, cốt tủy (The Quintessence) và mạch truyện biện chứng mà thuật toán đã xâu chuỗi.
+   - Bám sát lời khuyên hành động cụ thể từ bản gốc thuật toán.
+   - ${questionToUse ? `ĐẶC BIỆT: Người hỏi có câu hỏi cụ thể: "${questionToUse}". Hãy ánh xạ mọi luận điểm của thuật toán vào bối cảnh thực tế của câu hỏi này một cách trực diện và thấu suốt.` : 'Phân tích dòng chảy cuộc sống và bài học nội tâm một cách thấu suốt.'}
+3. KỶ LUẬT ĐỊNH DẠNG VĂN BẢN (ANTI-CLUTTER):
+   - TUYỆT ĐỐI KHÔNG DÙNG CODE BLOCK (dấu \`\`\`), KHÔNG VẼ SƠ ĐỒ ASCII DẠNG '| | |' hay '--->'. Hãy diễn giải dòng chảy bằng văn xuôi mượt mà, tự nhiên.
+   - TUYỆT ĐỐI KHÔNG DÙNG CÁC TỪ: 'AI', 'Gemini', 'trí tuệ nhân tạo', 'bot', 'máy tính', 'thuật toán', 'mô hình'.
+   - Dùng đề mục Markdown ## cho các phần chính và ### cho từng lá bài.
 
-    const pairDetail = (report.pairAnalysis && report.pairAnalysis.length > 0)
-      ? report.pairAnalysis.map(p => `- ${p.fromCard} -> ${p.toCard}: ${p.relation} (${p.score > 0 ? '+' + p.score : p.score}) - ${p.explanation}`).join('\n')
-      : 'Không có cặp tương tác đặc biệt';
+CẤU TRÚC BÀI BIÊN TẬP BẮT BUỘC:
+## I. THÔNG ĐIỆP CỐT TỦY & TỔNG QUAN NĂNG LƯỢNG
+(Biên tập lại từ phần Cốt tủy & Đánh giá vĩ mô của thuật toán, trực diện vào câu hỏi đương số.)
 
-    const quintDetail = report.quintessence
-      ? `Lá bài: ${report.quintessence.name_vi} (${report.quintessence.name_en}) - Thông điệp cốt tủy: ${report.quintessence.lesson}`
-      : 'Không áp dụng';
+## II. MẠCH TRUYỆN NHÂN QUẢ & PHÂN TÍCH CHI TIẾT TỪNG LÁ BÀI
+(Biên tập lại mạch truyện 3 thì và phân tích từng lá bài theo vị trí từ bản gốc thuật toán.)
 
-    const promptBody = `DỮ LIỆU ĐỊNH LƯỢNG TỪ TRẢI BÀI:
-- Trải bài: ${report.spreadName}
-- Chủ đề: ${report.domain.toUpperCase()}
-- Câu hỏi người hỏi: ${questionToUse || 'Tổng quan'}
-- Đánh giá tổng quan: ${report.fateVerdict}
-- Tỷ lệ Ẩn chính: ${report.majorRatio}
-- Trạng thái chiều bài: ${report.orientationStat}
-- Nguyên tố thống trị: ${report.dominantElement}
-- Nguyên tố thiếu hụt: ${report.missingElementsDesc}
-- Dòng chảy năng lượng: ${report.flowVerdict}
+## III. CHIỀU SÂU TƯƠNG TÁC NGUYÊN TỐ & NĂNG LƯỢNG NỘI TÂM
+(Biên tập lại ma trận tương tác nguyên tố Golden Dawn từ bản gốc thuật toán.)
 
-CHI TIẾT TỪNG LÁ BÀI:
-${cardsDetail}
+## IV. LỜI KHUYÊN HÀNH ĐỘNG CHIẾN LƯỢC & BÀI HỌC CHUYỂN HÓA
+(Biên tập lại định hướng hành động cụ thể và bài học chuyển hóa thực tiễn từ thuật toán.)
 
-TƯƠNG TÁC NGUYÊN TỐ (ELEMENTAL DIGNITIES):
-${pairDetail}
+[TOÀN VĂN BẢN LUẬN GIẢI THUẬT TOÁN OFFLINE CẦN BIÊN TẬP]:
+${offlineReportText}`;
 
-LÁ BÀI CỐT TỦY (THE QUINTESSENCE):
-${quintDetail}
-
-LỜI KHUYÊN HÀNH ĐỘNG GỐC:
-${report.finalAdvice}
-
-HÃY BIÊN SOẠN BẢN LUẬN GIẢI CHI TIẾT THEO CẤU TRÚC:
-## 1. Thông điệp mở đầu & Trực diện câu hỏi
-## 2. Phân tích dòng chảy nhân quả qua từng lá bài
-## 3. Chiều sâu tương tác nguyên tố & Năng lượng tâm thức
-## 4. Bài học linh hồn từ Lá bài Cốt tủy
-## 5. Lời khuyên hành động sáng suốt`;
-
-    return systemInstruction + '\n\n---\n\n' + promptBody;
+    return systemInstruction;
   }
 
   /**
-   * Hàm chính thực thi luận giải chuyên sâu
+   * Hàm chính thực thi biên tập lại trải bài Tarot bằng AI
    */
   async function interpretTarotReading(report, customQuestion) {
     const key = getActiveKey();
@@ -421,7 +414,21 @@ HÃY BIÊN SOẠN BẢN LUẬN GIẢI CHI TIẾT THEO CẤU TRÚC:
     }
 
     const prompt = buildHermeticPrompt(report, customQuestion);
-    return await callGeminiCascade(prompt, key);
+    const res = await callGeminiCascade(prompt, key, {
+      temperature: 0.5,
+      maxOutputTokens: 4096,
+      timeoutMs: 45000
+    });
+
+    if (res && res.text) {
+      // Làm sạch triệt để code blocks và đường kẻ thô nếu AI lỡ sinh
+      let cleaned = res.text.trim();
+      cleaned = cleaned.replace(/```(?:text|markdown)?[^\n]*\n?([\s\S]*?)```/g, '$1');
+      cleaned = cleaned.replace(/```[a-zA-Z]*/g, '').replace(/```/g, '');
+      cleaned = cleaned.replace(/^[=\-~_]{3,}\s*$/gm, '');
+      res.text = cleaned;
+    }
+    return res;
   }
 
   // Export module ra global

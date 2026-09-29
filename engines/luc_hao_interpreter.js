@@ -741,70 +741,56 @@
     };
   }
 
-  // Lớp 2: Prompt Ép Khung Chống Ảo Giác Tuyệt Đối & Nâng Tầm Luận Giải Chuyên Sâu
-  function buildAntiHallucinationPrompt(factSheet) {
+  // Lớp 2: Prompt Biên Tập & Soạn Lại Văn Phong Thuật Toán Offline
+  // AI TUYỆT ĐỐI KHÔNG TỰ LUẬN GIẢI, CHỈ ĐÓNG VAI TRÒ BIÊN TẬP VIÊN TRAU CHUỐT NỘI DUNG TỪ BẢN GỐC THUẬT TOÁN
+  function buildEditorialPolishPrompt(deterministicReportText, factSheet) {
     const dt = factSheet.dungThan;
     return `
-BẠN LÀ MỘT BẬC THẦY DỊCH HỌC KINH DỊCH LỤC HÀO ĐẦU NGÀNH UYÊN BÁC, NGHIÊN CỨU SÂU SẮC THEO CHUẨN CỔ THƯ KINH ĐIỂN (BỐC PHỆ CHÍNH TÔNG, TĂNG SAN BỐC DỊCH, DỊCH ẨN).
-NHIỆM VỤ CỦA BẠN: VIẾT MỘT BẢN "LUẬN GIẢI CHUYÊN SÂU" TOÀN DIỆN, UYÊN BÁC, BIỆN CHỨNG TRIẾT HỌC SÂU SẮC VÀ ĐỊNH HƯỚNG CHIẾN LƯỢC THỰC CHIẾN (ĐỘ DÀI TỪ 1.500 ĐẾN 2.200 TỪ).
+BẠN LÀ MỘT BẬC THẦY TỔNG BIÊN TẬP VĂN BẢN KINH DỊCH & TRIẾT HỌC CỔ ĐIỂN UYÊN BÁC.
+DƯỚI ĐÂY LÀ "TOÀN VĂN BẢN LUẬN GIẢI KINH DỊCH LỤC HÀO" ĐÃ ĐƯỢC THUẬT TOÁN XÁC ĐỊNH OFFLINE TÍNH TOÁN VÀ XUẤT RA CHÍNH XÁC 100%.
 
-[CẢNH BÁO QUAN TRỌNG VỀ GIAO DIỆN & VĂN PHONG - BẮT BUỘC TUÂN THỦ 100%]:
-1. GIAO DIỆN NGƯỜI DÙNG ĐÃ CÓ 2 BẢNG NẠP GIÁP 6 HÀO VÀ BẢNG THẦN SÁT ĐẦY ĐỦ Ở TRÊN. BẠN TUYỆT ĐỐI NGHIÊM CẤM CHÉP LẠI DANH SÁCH 6 HÀO HAY VẼ BẢNG TEXT/ASCII.
-2. TUYỆT ĐỐI NGHIÊM CẤM DÙNG CODE BLOCK (\`\`\` hoặc \`\`\`text, \`\`\`markdown). TOÀN BỘ VĂN BẢN PHẢI LÀ VĂN XUÔI NGHỆ THUẬT VÀ PHÂN TÍCH TRIẾT HỌC DỊCH LÝ SÂU SẮC.
-3. TUYỆT ĐỐI NGHIÊM CẤM DÙNG ĐƯỜNG KẺ THÔ (==== hoặc ----).
-4. TUYỆT ĐỐI NGHIÊM CẤM VIẾT SƠ SÀI HAY TÓM TẮT. MỖI ĐỀ MỤC TRONG 7 ĐỀ MỤC BẮT BUỘC PHẢI CÓ TỪ 2 ĐẾN 3 ĐOẠN VĂN XUÔI PHÂN TÍCH TỈ MỈ, ĐÀO SÂU BẢN CHẤT SINH KHẮC, VƯỢNG SUY, TÂM THÁI VÀ CHIẾN LƯỢC.
+NHIỆM VỤ DUY NHẤT CỦA BẠN:
+SOẠN LẠI, BIÊN TẬP LẠI VÀ TRAU CHUỐT TOÀN BỘ NỘI DUNG BẢN LUẬN GIẢI THUẬT TOÁN DƯỚI ĐÂY THÀNH MỘT BÀI VĂN XUÔI NGHỊ LUẬN TRIẾT HỌC HOÀN CHỈNH, MẠCH LẠC, TRANG NHÃ, LIỀN MẠCH VÀ GIÀU CHIỀU SÂU (ĐỘ DÀI KHOẢNG 1.200 - 1.800 TỪ).
 
-[DỮ LIỆU CHÂN LÝ DỊCH LÝ ĐÃ XÁC ĐỊNH - GROUND TRUTH 100%]:
-- Câu hỏi chiêm đoán: "${factSheet.question}"
-- Quẻ Chính: ${factSheet.hexName} (Cung ${factSheet.palace} - Hành ${factSheet.palaceElement})
-- Quẻ Biến: ${factSheet.bienHexName} (Hào động: [${factSheet.dongHaos.join(', ') || 'Không có - Quẻ Tĩnh'}])
-- Trục thời gian: ${factSheet.time} | Tuần Không: [${factSheet.tuanKhong.join(', ')}]
-- HÀO THẾ (Đương số): Hào ${factSheet.thePos} (${factSheet.theLucThan} ${factSheet.theCanChi} • Hành ${factSheet.theElement}) - Cân lực: ${factSheet.theScore > 0 ? '+' : ''}${factSheet.theScore} (${factSheet.theStatus})
-- TƯƠNG QUAN THẾ - DỤNG: [${factSheet.theDungStatus}] ➔ ${factSheet.theDungDesc}
-- PHÁN QUYẾT TOÁN HỌC: [${factSheet.judgment}] (Điểm số: ${factSheet.totalScore})
-- ỨNG KỲ ĐỊNH THỜI: ${factSheet.ungKy.join('; ')}
+[CÁC NGUYÊN TẮC BẤT BIẾN - STRICT GROUND-TRUTH & EDITORIAL RULES]:
+1. TUYỆT ĐỐI KHÔNG TỰ LUẬN GIẢI: Bạn KHÔNG được tự ý sáng tác, suy đoán hay bịa thêm bất kỳ thông tin nào ngoài bản luận giải thuật toán gốc.
+2. TRUNG THỰC 100% VỚI BẢN GỐC THUẬT TOÁN:
+   - Giữ nguyên Quẻ Chính: "${factSheet.hexName}", Quẻ Biến: "${factSheet.bienHexName}".
+   - Giữ nguyên Dụng Thần: [${dt.lucThan}] (${dt.chi} • Hành [${dt.element.toUpperCase()}]). TUYỆT ĐỐI KHÔNG đổi ngũ hành Dụng Thần sang bất kỳ hành nào khác!
+   - Giữ nguyên Tình trạng Dụng Thần: ${dt.presenceType}.
+   - Giữ nguyên Phán Quyết Cốt Lõi: [${factSheet.judgment}] (Điểm số: ${factSheet.totalScore}). Nếu quẻ Bất Lợi/Hung thì giữ nguyên, không được nịnh hót đảo ngược thành cát lợi.
+   - Giữ nguyên toàn bộ các mốc thời gian Ứng Kỳ và lời khuyên hành động thực chiến từ bản gốc thuật toán.
+3. KỶ LUẬT ĐỊNH DẠNG VĂN BẢN (ANTI-CLUTTER):
+   - TUYỆT ĐỐI NGHIÊM CẤM DÙNG CODE BLOCK (dấu \`\`\` hoặc \`\`\`text, \`\`\`markdown). Toàn bộ bài viết BẮT BUỘC là văn bản Markdown thuần túy.
+   - TUYỆT ĐỐI NGHIÊM CẤM VẼ BẢNG TEXT/ASCII HOẶC CHÉP LẠI BẢNG 6 HÀO THÔ (Giao diện người dùng đã có sẵn 2 bảng nạp giáp ở trên).
+   - TUYỆT ĐỐI NGHIÊM CẤM DÙNG ĐƯỜNG KẺ THÔ (==== hoặc ----).
+4. PHƯƠNG PHÁP BIÊN TẬP NÂNG CAO:
+   - Chuyển hóa toàn bộ các gạch đầu dòng khô khan của bản gốc thuật toán thành các đoạn văn xuôi mượt mà, sâu sắc, lập luận chặt chẽ theo dòng chảy nhân quả.
+   - Mỗi phần đề mục giữ nguyên cấu trúc rõ ràng, sử dụng các tiêu đề ## chuẩn mực:
 
-[KHÓA BẢO MẬT DỤNG THẦN - TUYỆT ĐỐI KHÔNG ĐƯỢC ẢO GIÁC]:
-- Dụng Thần Lục Thân: [${dt.lucThan}]
-- Can Chi Dụng Thần: [${dt.can}-${dt.chi}]
-- NGŨ HÀNH DỤNG THẦN: BẮT BUỘC LÀ HÀNH [${dt.element.toUpperCase()}]
-  (Khóa chuẩn: Cung ${factSheet.palace} hành ${factSheet.palaceElement} -> Địa chi ${dt.chi} mang ngũ hành [${dt.element.toUpperCase()}]. TUYỆT ĐỐI CẤM đổi Dụng Thần sang bất kỳ hành nào khác!)
-- TÌNH TRẠNG HIỆN DIỆN: [${dt.presenceType}]
-  ${dt.isPhuc ? `* DỤNG THẦN LÀ HÀO TÀNG PHỤC (Phục Thần): Ẩn phục dưới Hào Phi ${dt.phiThanInfo?.pos} (${dt.phiThanInfo?.lucThan} ${dt.phiThanInfo?.chi} • Hành ${dt.phiThanInfo?.element}). Quan hệ Phi - Phục: [${dt.phiThanInfo?.relation}]. ${dt.phiThanInfo?.relationDesc}. Điều kiện xuất phục: Cần ngày/tháng xung Phi Thần hoặc trực Phục Thần.` : `* DỤNG THẦN LÀ CHÍNH THẦN HIỆN DIỆN MINH BẠCH: Đang ngự trực tiếp tại Hào ${dt.pos} (${dt.can}-${dt.chi} • Hành ${dt.element}), KHÔNG PHẢI hào tàng phục.`}
-- Tương quan Nguyệt Lệnh: ${dt.nguyetRel}
-- Tương quan Nhật Thần: ${dt.nhatRel}
-- Cân Lực Dụng Thần: ${dt.score > 0 ? '+' : ''}${dt.score} (${dt.status})
-- Chi tiết khí số: ${dt.notes.join('; ')}
-- Tình trạng hào tàng phục khác trong quẻ: ${factSheet.allPhucThanSummary}
+## I. TỔNG QUAN BÀN QUẺ & PHÁN QUYẾT CỐT LÕI
+(Biên tập lại từ Phần I & II của thuật toán: Luận giải quẻ khí, tượng quẻ, hoàn cảnh người hỏi "${factSheet.question}" và phán quyết dứt khoát.)
 
-[THÔNG SỐ CẤU TRÚC 6 HÀO THAM CHIẾU (CHỈ DÙNG ĐỂ LUẬN SUY, CẤM IN LẠI DẠNG BẢNG)]:
-${factSheet.haosOverview.map(h => `  * ${h}`).join('\n')}
-
-[CẤU TRÚC BẮT BUỘC CỦA BÀI LUẬN GIẢI CHUYÊN SÂU (VIẾT ĐẦY ĐỦ 7 PHẦN)]:
-
-## I. TỔNG QUAN QUẺ KHÍ & PHÁN QUYẾT CỐT LÕI
-(Viết 2 - 3 đoạn văn sâu sắc: Phân tích cấu trúc Thượng quái, Hạ quái của quẻ chính ${factSheet.hexName}, ý nghĩa triết học sâu xa của tên quẻ đối với câu hỏi "${factSheet.question}". Tiếp theo, phán quyết dứt khoát theo kết quả toán học [${factSheet.judgment}], giải thích nguyên do cốt tủy tại sao khí số lại đi đến phán đoán này.)
-
-## II. DỤNG THẦN CHUYÊN KHẢO & KHÍ SỐ CÂN LỰC
-(Viết 2 - 3 đoạn văn: Khảo sát tường tận Dụng Thần [${dt.lucThan} ${dt.can}-${dt.chi} • Hành ${dt.element.toUpperCase()}] ngự Hào ${dt.pos}. Phân tích sâu sắc thế vượng suy theo Nguyệt Lệnh (${dt.nguyetRel}) và Nhật Thần (${dt.nhatRel}). ${dt.isPhuc ? `Phân tích thế kẹt tàng phục dưới Hào Phi ${dt.phiThanInfo?.pos}, cơ chế phá kén trồi lên.` : `Khẳng định vị thế phát lộ minh bạch trên bàn quẻ, không bị che khuất.`} Đánh giá trạng thái Sinh, Vượng, Mộ, Tuyệt, Không Vong và tổng hòa Cân Lực [${dt.score > 0 ? '+' : ''}${dt.score} - ${dt.status}].)
+## II. DỤNG THẦN CHUYÊN KHẢO & CÂN LỰC KHÍ SỐ
+(Biên tập lại từ Phần III & IV của thuật toán: Luận giải vị thế Dụng Thần ${dt.lucThan} ${dt.can}-${dt.chi} hành ${dt.element.toUpperCase()}, vượng suy theo Nhật Nguyệt, tình trạng chính thần hoặc phục thần.)
 
 ## III. HỆ THỐNG TỨ THẦN TRỢ KHÍ (NGUYÊN, KỴ, CỪU, TIẾT)
-(Viết 2 đoạn văn: Phân tích mối tương tác giữa Nguyên Thần (nguồn vốn, nguồn lực hỗ trợ), Kỵ Thần (trở lực, rủi ro, đối thủ), Cừu Thần và Tiết Thần. Đánh giá tương quan lực lượng: Nguyên Thần có đủ mạnh để tương trợ Dụng Thần không, hay Kỵ Thần đang chiếm ưu thế khắc phạt?)
+(Biên tập lại tương quan lực lượng giữa Nguyên Thần sinh trợ và Kỵ Thần khắc hại theo thuật toán.)
 
-## IV. TÂM PHÁP HÀO THẾ & TƯƠNG QUAN CHỦ - KHÁCH
-(Viết 2 - 3 đoạn văn: Phân tích Hào Thế tại Hào ${factSheet.thePos} (${factSheet.theLucThan} ${factSheet.theCanChi} • Hành ${factSheet.theElement}) phản ánh tâm trạng, năng lực, vị thế nội tại của người hỏi. Luận giải thế cục Thế - Dụng [${factSheet.theDungStatus}]: Người hỏi nắm đằng chuôi hay đang phụ thuộc vào ngoại cảnh. Đối chiếu tương quan với Hào Ứng.)
+## IV. TÂM PHÁP HÀO THẾ & CỤC DIỆN THẾ - DỤNG
+(Biên tập lại từ Phần V của thuật toán: Tâm thế của đương số tại Hào Thế và tương quan Thế - Dụng.)
 
-## V. TIẾN TRÌNH NHÂN QUẢ HÀO BIẾN HÓA
-(Viết 2 đoạn văn: ${factSheet.dongHaos.length > 0 ? `Phân tích tỉ mỉ từng hào phát động [${factSheet.dongHaos.join(', ')}]. Luận giải ý nghĩa Hóa Sinh/Hóa Khắc, Hóa Tiến/Hóa Thoái, Hóa Mộ/Hóa Không và sự chuyển dịch sang Quẻ Biến ${factSheet.bienHexName}. Điểm bùng phát sự kiện sẽ nằm ở đâu.` : `Quẻ Tĩnh an định: Giải thích ý nghĩa của sự an tĩnh, vạn sự quy về nội lực tích lũy, quy luật 'tĩnh dĩ chế động' và bài học giữ vững tâm định.`})
+## V. ĐỘNG THÁI BIẾN HÓA & TIẾN TRÌNH NHÂN QUẢ
+(Biên tập lại chiều hướng phát động biến hóa của các hào hoặc sự an định tích lũy của quẻ tĩnh theo thuật toán.)
 
-## VI. ỨNG KỲ TOÀN DIỆN & MỐC THỜI GIAN ĐỊNH LƯỢNG
-(Viết 2 đoạn văn: Luận giải các mốc thời gian cụ thể: ${factSheet.ungKy.join('; ')}. Giải thích cơ chế kích hoạt thời điểm theo Dịch lý: Ngày nào tháng nào xung động, hợp khởi, xuất không hay xung mộ để sự việc ngã ngũ thành bại.)
+## VI. ĐỊNH THỜI ĐIỂM ỨNG KỲ
+(Biên tập lại các mốc thời gian ngày/tháng cụ thể theo thuật toán xác định: ${factSheet.ungKy.join('; ')}.)
 
-## VII. PHONG THỦY SÁU HÀO & SÁCH LƯỢC HÀNH ĐỘNG THỰC TIỄN
-(Viết 3 đoạn văn: Đưa ra sách lược thực chiến rõ ràng:
-- Về tâm pháp & xử thế: Đương số nên có thái độ và hành động thế nào.
-- 3 điều NÊN LÀM NGAY: Hành động cụ thể, thiết thực.
-- 3 điều TUYỆT ĐỐI NÉ TRÁNH: Cạm bẫy cần phòng ngừa để bảo toàn khí số.)
+## VII. PHONG THỦY GIA TRẠCH & LỜI KHUYÊN DỊCH LÝ THỰC CHIẾN
+(Biên tập lại chẩn đoán phong thủy 6 hào và lời khuyên hành vi thực tiễn từ bản thuật toán.)
+
+[TOÀN VĂN BẢN LUẬN GIẢI THUẬT TOÁN OFFLINE GỐC CẦN BIÊN TẬP]:
+${deterministicReportText}
 `.trim();
   }
 
@@ -931,9 +917,9 @@ ${factSheet.haosOverview.map(h => `  * ${h}`).join('\n')}
         };
       }
 
-      const prompt = buildAntiHallucinationPrompt(factSheet);
+      const prompt = buildEditorialPolishPrompt(deterministicText, factSheet);
       const aiResult = await global.NetaGeminiService.callGeminiCascade(prompt, apiKey, {
-        temperature: 0.7,
+        temperature: 0.5,
         maxOutputTokens: 4096,
         timeoutMs: 45000
       });
@@ -1014,7 +1000,8 @@ ${factSheet.haosOverview.map(h => `  * ${h}`).join('\n')}
     evaluate8Steps,
     generateDeterministicReport,
     createGroundTruthFactSheet,
-    buildAntiHallucinationPrompt,
+    buildEditorialPolishPrompt,
+    buildAntiHallucinationPrompt: buildEditorialPolishPrompt,
     verifyFactualConsistency,
     interpretHexagram
   };
