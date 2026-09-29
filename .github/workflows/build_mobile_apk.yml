@@ -76,14 +76,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.3
-          name: "Neta Light v2.5.3 (Nâng Cấp Gemini 3.5 Flash, Bỏ Branding Rác & Sửa Thuật Toán Cầm Nhuế Kỳ Môn Mệnh)"
+          tag_name: v2.5.4
+          name: "Neta Light v2.5.4 (Khắc Phục Toàn Diện Kết Nối Gemini API & Dự Phòng Tự Động)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.3
-            Bản phát hành nâng cấp mô hình trí tuệ nhân tạo Gemini 3.5 Flash, loại bỏ toàn bộ thông tin rác và hoàn thiện thuật toán Kỳ Môn Mệnh Lý:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.4
+            Bản phát hành tối ưu hóa và khắc phục triệt để lỗi kết nối Google Gemini API:
+            
+            - **Khắc Phục Triệt Để Lỗi 401/403 Sai Khi Kiểm Tra & Gọi Gemini API**:
+              + Loại bỏ hoàn toàn header `Authorization: Bearer` không tương thích với Google AI Studio API.
+              + Chuẩn hóa 100% việc truyền khóa xác thực qua tham số `?key=` và header `x-goog-api-key`.
+              + Sửa lỗi xác thực độ dài phản hồi trong hàm kiểm tra kết nối (`testConnection`).
+            
+            - **Chuỗi Dự Phòng Tự Động Thông Minh (Resilient Cascade)**:
+              + Tự động định tuyến ưu tiên `gemini-3.5-flash` và dự phòng tức thì sang `gemini-2.5-flash`, `gemini-3.5-flash-lite`, `gemini-2.5-flash-lite`.
+              + Tự động chuyển mô hình mượt mà khi gặp tình trạng quá tải cục bộ từ máy chủ Google (HTTP 503 / 429), bảo đảm trải nghiệm luận giải Tarot và dự đoán luôn thông suốt.
             
             - **Nâng Cấp Động Cơ Gemini Tarot & Dò Tìm Model Khả Dụng (Auto-Discovery)**:
-              + Tự động định tuyến ưu tiên model ổn định và nhanh nhất `gemini-3.5-flash`.
               + Cơ chế tự động dò tìm model qua Google AI Studio API (`/v1beta/models`) và xếp hạng thông minh.
               + Bổ sung nút kiểm tra model `🔍 Kiểm Tra Model` ngay trên màn hình thiết lập khóa.
             
