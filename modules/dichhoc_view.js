@@ -845,23 +845,23 @@
       <div class="dh-interp-container" id="dh-interp-section">
         <div class="dh-interp-head">
           <div class="dh-interp-title-box">
-            <h3 class="dh-interp-title">📜 BẢN LUẬN GIẢI LỤC HÀO CHUYÊN SÂU</h3>
+            <h3 class="dh-interp-title">📜 BẢN LUẬN GIẢI KINH DỊCH LỤC HÀO</h3>
             ${interp.aiUsed ? `
-              <span class="dh-guardrail-badge" title="Đã qua kiểm toán độc lập 6 tiêu chí chống ảo giác">
-                🛡️ KIỂM TOÁN CHỐNG ẢO GIÁC: ĐẠT CHUẨN
+              <span class="dh-guardrail-badge" title="Luận giải đa tầng chuyên sâu 7 chuyên mục">
+                📖 LUẬN GIẢI CHUYÊN SÂU
               </span>
             ` : `
-              <span class="dh-guardrail-badge" style="background:rgba(245,176,65,0.15); color:#f5b041; border-color:rgba(245,176,65,0.35);" title="Tính toán thuần quy tắc 100% xác định">
-                📐 HỆ CHUYÊN GIA QUY TẮC (OFFLINE)
+              <span class="dh-guardrail-badge" style="background:rgba(245,176,65,0.15); color:#f5b041; border-color:rgba(245,176,65,0.35);" title="Luận giải tiêu chuẩn theo quy tắc Dịch học cổ thư">
+                📜 LUẬN GIẢI TIÊU CHUẨN
               </span>
             `}
           </div>
           <div class="dh-interp-actions">
-            <button type="button" class="dh-btn-interp ${!interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-rule" title="Luận giải thuần quy tắc Dịch học (Offline 0ms)">
-              📜 Quy Tắc
+            <button type="button" class="dh-btn-interp ${!interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-rule" title="Luận giải tiêu chuẩn (Quy tắc Dịch học cổ truyền)">
+              📜 Luận Giải Tiêu Chuẩn
             </button>
-            <button type="button" class="dh-btn-interp ${interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Luận giải bằng Gemini AI có rào chắn chống ảo giác">
-              ${state.isInterpretingAI ? '<span class="dh-spinner"></span> Đang suy luận...' : '🤖 Gemini AI'}
+            <button type="button" class="dh-btn-interp ${interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Luận giải đa tầng chuyên sâu">
+              ${state.isInterpretingAI ? '<span class="dh-spinner"></span> Đang phân tích...' : '📖 Luận Giải Chuyên Sâu'}
             </button>
             <button type="button" class="dh-btn-interp" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
               📋 Sao Chép
@@ -909,16 +909,220 @@
             </div>
           ` : ''}
 
-          <!-- 5. Toàn Văn Luận Giải Chi Tiết -->
-          <div class="dh-eval-card">
-            <div class="dh-card-title">
-              <span>📖 Toàn Văn Luận Giải ${interp.aiUsed ? `(Gemini AI - Mô hình: ${interp.model || 'gemini-3.5-flash'})` : '(Chuẩn Mực Kinh Dịch Lục Hào)'}:</span>
+          <!-- 5. Toàn Văn Luận Giải Chi Tiết Được Format Đẹp -->
+          <div class="dh-eval-card" style="padding: 10px 10px;">
+            <div class="dh-card-title" style="margin-bottom: 8px;">
+              <span>📖 Toàn Văn ${interp.aiUsed ? 'Luận Giải Chuyên Sâu' : 'Luận Giải Tiêu Chuẩn'}:</span>
             </div>
-            <div class="dh-interp-raw-box" id="dh-interp-text-content">${interp.reportText}</div>
+            <div class="dh-report-rich-view" id="dh-interp-text-content">
+              ${formatReportToRichHtml(interp.reportText)}
+            </div>
           </div>
         </div>
       </div>
     `;
+  }
+
+  // Chuyển đổi văn bản luận giải thành cấu trúc HTML giàu đồ họa và mỹ cảm
+  function formatReportToRichHtml(rawText) {
+    if (!rawText) return '';
+    let text = rawText.trim();
+
+    // 1. Tách và chuẩn hóa biểu ngữ tiêu đề nếu có
+    let bannerHtml = '';
+    const headerMatch = text.match(/═+\s*\n\s*BẢN LUẬN GIẢI[^\n]*\n\s*Sự Vụ Chiêm Đoán:\s*"([^"]*)"\s*\n\s*Chủ Đề Dụng Thần:\s*\[([^\]]*)\]\s*➔\s*Thủ Ngôi:\s*([^\n]*)\n\s*═+/);
+    if (headerMatch) {
+      const q = headerMatch[1];
+      const topic = headerMatch[2];
+      const target = headerMatch[3];
+      bannerHtml = `
+        <div class="dh-formatted-banner">
+          <div class="dh-fb-tag">KINH DỊCH LỤC HÀO CỔ THƯ</div>
+          <div class="dh-fb-title">BẢN LUẬN GIẢI CHUYÊN SÂU</div>
+          <div class="dh-fb-meta">
+            <div class="dh-fb-meta-item"><strong>Sự Vụ:</strong> <span>${escapeReportHtml(q || 'Chiêm đoán việc')}</span></div>
+            <div class="dh-fb-meta-item"><strong>Dụng Thần:</strong> <span class="dh-badge-gold">${escapeReportHtml(target || topic)}</span></div>
+          </div>
+        </div>
+      `;
+      text = text.replace(headerMatch[0], '').trim();
+    }
+
+    // 2. Phân tách theo từng chuyên mục (Section)
+    const lines = text.split('\n');
+    let html = bannerHtml;
+    let currentSecTitle = '';
+    let currentSecNum = '';
+    let sectionLines = [];
+
+    function flushCurrentSection() {
+      if (!currentSecTitle && sectionLines.length === 0) return;
+      html += `
+        <div class="dh-report-card">
+          ${currentSecTitle ? `
+            <div class="dh-report-card-head">
+              ${currentSecNum ? `<span class="dh-sec-badge">${escapeReportHtml(currentSecNum)}</span>` : ''}
+              <span class="dh-sec-name">${escapeReportHtml(currentSecTitle)}</span>
+            </div>
+          ` : ''}
+          <div class="dh-report-card-body">
+            ${renderReportSectionLines(sectionLines)}
+          </div>
+        </div>
+      `;
+      currentSecTitle = '';
+      currentSecNum = '';
+      sectionLines = [];
+    }
+
+    const secHeaderRegex = /^(?:##\s+)?([I|V|X|0-9]+)\.\s+(.*)$/;
+
+    for (let i = 0; i < lines.length; i++) {
+      const rawLine = lines[i];
+      const line = rawLine.trim();
+      if (!line) continue;
+
+      // Nhận diện tiêu đề chuyên mục: "I. ...", "II. ...", "## I. ...", "## 1. ..."
+      const match = line.match(secHeaderRegex);
+      if (match) {
+        flushCurrentSection();
+        currentSecNum = match[1];
+        currentSecTitle = match[2].replace(/:$/, '').trim();
+        continue;
+      }
+
+      // Nhận diện tiêu đề markdown: "## ...", "### ..."
+      const mdMatch = line.match(/^#{2,3}\s+(.*)$/);
+      if (mdMatch) {
+        flushCurrentSection();
+        currentSecNum = '';
+        currentSecTitle = mdMatch[1].replace(/:$/, '').trim();
+        continue;
+      }
+
+      sectionLines.push(rawLine);
+    }
+
+    flushCurrentSection();
+    return html;
+  }
+
+  // Render các dòng nội dung bên trong một chuyên mục
+  function renderReportSectionLines(lines) {
+    let out = '';
+    for (let rawLine of lines) {
+      const l = rawLine.trim();
+      if (!l) continue;
+
+      // 1. Phán đoán cốt lõi: ">>> PHÁN ĐOÁN: [...] (Điểm khí số: ...)"
+      if (l.startsWith('>>> PHÁN ĐOÁN:') || l.includes('PHÁN ĐOÁN: [')) {
+        const matchPd = l.match(/PHÁN ĐOÁN:\s*\[([^\]]+)\](?:\s*\(Điểm khí số:\s*([^\)]+)\))?/i);
+        if (matchPd) {
+          const textPd = matchPd[1];
+          const scorePd = matchPd[2] || '';
+          const isCat = textPd.includes('CÁT') || textPd.includes('THUẬN') || textPd.includes('THÀNH CÔNG');
+          const isHung = textPd.includes('HUNG') || textPd.includes('BẤT LỢI') || textPd.includes('THẤT BẠI');
+          const cls = isCat ? 'verdict-cat' : (isHung ? 'verdict-hung' : 'verdict-binh');
+          out += `
+            <div class="dh-verdict-box ${cls}">
+              <div class="dh-verdict-top">KẾT LUẬN & PHÁN QUYẾT CỐT LÕI</div>
+              <div class="dh-verdict-title">${escapeReportHtml(textPd)}</div>
+              ${scorePd ? `<div class="dh-verdict-score">Điểm khí số: <strong>${escapeReportHtml(scorePd)}</strong></div>` : ''}
+            </div>
+          `;
+          continue;
+        }
+      }
+
+      // 2. Trích dẫn / Callout: "> ..."
+      if (l.startsWith('>')) {
+        const cleanQuote = l.replace(/^>\s*/, '');
+        out += `<div class="dh-report-callout">${formatInlineMarkup(cleanQuote)}</div>`;
+        continue;
+      }
+
+      // 3. Dòng mục con: "   * ..." hoặc "* ..."
+      if (rawLine.match(/^\s*[\*]\s+/) || l.startsWith('* ')) {
+        const cleanText = l.replace(/^[\*]\s*/, '');
+        out += `
+          <div class="dh-report-row sub">
+            <span class="dh-row-bullet sub">▸</span>
+            <div class="dh-row-content">${formatInlineMarkup(cleanText)}</div>
+          </div>
+        `;
+        continue;
+      }
+
+      // 4. Tiêu đề mục con được đánh số: "1. Dụng Thần...", "2. Khảo sát..."
+      if (l.match(/^\d+\.\s+/)) {
+        const numMatch = l.match(/^(\d+)\.\s+(.*)$/);
+        out += `
+          <div class="dh-report-subhead">
+            <span class="dh-subhead-num">${numMatch[1]}</span>
+            <span class="dh-subhead-text">${formatInlineMarkup(numMatch[2])}</span>
+          </div>
+        `;
+        continue;
+      }
+
+      // 5. Dòng danh sách chính: "- ..." hoặc "• ..."
+      if (l.startsWith('- ') || l.startsWith('• ')) {
+        const cleanText = l.replace(/^[-•]\s*/, '');
+        out += `
+          <div class="dh-report-row">
+            <span class="dh-row-bullet">•</span>
+            <div class="dh-row-content">${formatInlineMarkup(cleanText)}</div>
+          </div>
+        `;
+        continue;
+      }
+
+      // 6. Đoạn văn xuôi thông thường
+      out += `<p class="dh-report-para">${formatInlineMarkup(l)}</p>`;
+    }
+    return out;
+  }
+
+  // Định dạng chữ in đậm, in nghiêng, các badge nhãn và mũi tên
+  function formatInlineMarkup(str) {
+    if (!str) return '';
+    let s = escapeReportHtml(str);
+
+    // Chữ in đậm **text**
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // Chữ in nghiêng *text*
+    s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+    // Thẻ nhãn định lượng [...]
+    s = s.replace(/\[([^\]]+)\]/g, (m, p1) => {
+      const up = p1.toUpperCase();
+      if (up.includes('CÁT') || up.includes('VƯỢNG') || up.includes('SINH') || up.includes('TIẾN') || up.includes('ĐẮC LỰC')) {
+        return `<span class="dh-badge-pill pill-cat">[${p1}]</span>`;
+      }
+      if (up.includes('HUNG') || up.includes('BẤT LỢI') || up.includes('KHẮC') || up.includes('THOÁI') || up.includes('PHÁ') || up.includes('CẢNH BÁO')) {
+        return `<span class="dh-badge-pill pill-hung">[${p1}]</span>`;
+      }
+      if (up.includes('KHÔNG VONG') || up.includes('MỘ') || up.includes('TUYỆT') || up.includes('GIẰNG CO') || up.includes('ẨN PHỤC')) {
+        return `<span class="dh-badge-pill pill-warn">[${p1}]</span>`;
+      }
+      return `<span class="dh-badge-pill pill-neutral">[${p1}]</span>`;
+    });
+
+    // Mũi tên chuyển hóa
+    s = s.replace(/(?:-&gt;|&gt;|&rarr;|➔|->)/g, '<span class="dh-arrow">➔</span>');
+
+    return s;
+  }
+
+  function escapeReportHtml(text) {
+    if (!text) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   // Render 6 vạch hào thanh mảnh
@@ -1213,7 +1417,7 @@
       };
     }
 
-    // Nút chạy luận giải Gemini AI (có rào chắn chống ảo giác)
+    // Nút chạy Luận Giải Chuyên Sâu
     const btnRunAI = document.getElementById('dh-btn-run-ai');
     if (btnRunAI) {
       btnRunAI.onclick = async () => {
@@ -1230,11 +1434,11 @@
           state.interpretation = aiRes;
           if (global.showToast) {
             if (aiRes.aiUsed) {
-              global.showToast('🤖 Luận giải Gemini thành công & đã qua kiểm toán chống ảo giác!');
+              global.showToast('📖 Luận giải chuyên sâu hoàn tất thành công!');
             } else if (aiRes.hallucinationDetected) {
-              global.showToast('⚠️ Phát hiện ảo giác AI, đã kích hoạt Bản Quy Tắc an toàn!');
+              global.showToast('⚠️ Đã tự động kích hoạt Bản Luận Giải Tiêu Chuẩn an toàn!');
             } else {
-              global.showToast(aiRes.warning || 'Đã xuất bản luận giải quy tắc!');
+              global.showToast(aiRes.warning || 'Đã xuất bản Luận giải tiêu chuẩn!');
             }
           }
         } catch (e) {
