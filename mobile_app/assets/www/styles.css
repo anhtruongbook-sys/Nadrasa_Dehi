@@ -13430,5 +13430,216 @@ body.theme-light .ph-step-txt strong {
   box-shadow: 0 4px 14px rgba(139, 92, 246, 0.6);
 }
 
+/* ================= THIỀN ĐỊNH & KỲ MÔN MỆNH MATRIX BADGES ================= */
+.qmdj-badge-thien {
+  display: inline-block;
+  font-size: 0.50rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(168, 85, 247, 0.25);
+  color: #e9d5ff;
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  white-space: nowrap;
+  line-height: 1.1;
+  margin-right: 2px;
+}
+
+body.theme-light .qmdj-badge-thien {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border-color: #d8b4fe;
+}
+
+.cell-highlight-thien {
+  border-color: rgba(168, 85, 247, 0.6) !important;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.25) !important;
+}
+
+.qmdj-cell-destiny-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 1px 0 2px 0;
+}
+
+.qmdj-destiny-badge {
+  font-size: 0.48rem;
+  font-weight: 800;
+  padding: 1px 3px;
+  border-radius: 3px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.qmdj-destiny-badge.badge-life {
+  background: #f59e0b;
+  color: #000000;
+  font-weight: 900;
+}
+
+.qmdj-destiny-badge.badge-career {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.qmdj-destiny-badge.badge-wealth {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.qmdj-destiny-badge.badge-relation {
+  background: #ec4899;
+  color: #ffffff;
+}
+
+.qmdj-destiny-badge.badge-health {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.qmdj-destiny-badge.badge-nobleman {
+  background: #a855f7;
+  color: #ffffff;
+}
+
+.qmdj-destiny-badge.badge-social {
+  background: #64748b;
+  color: #ffffff;
+}
+
+.qmdj-destiny-badge.badge-children {
+  background: #06b6d4;
+  color: #ffffff;
+}
+
+.cell-highlight-banmenh {
+  border: 1.5px solid #f59e0b !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Sub-palaces Section in Ban Menh Mode */
+.banmenh-subpalaces-section {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bm-subpalaces-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #f7dc6f;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+body.theme-light .bm-subpalaces-title {
+  color: #854d0e;
+}
+
+.bm-subpalaces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+.bm-sub-card {
+  background: rgba(20, 15, 35, 0.75);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+body.theme-light .bm-sub-card {
+  background: #ffffff;
+  border-color: #e9d5ff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.bm-sub-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+.bm-sc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 4px;
+}
+
+body.theme-light .bm-sc-head {
+  border-bottom-color: #f3e8ff;
+}
+
+.bm-sc-role {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+body.theme-light .bm-sc-role {
+  color: #1e1b4b;
+}
+
+.bm-sc-palace {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+body.theme-light .bm-sc-palace {
+  color: #7e22ce;
+  background: #f3e8ff;
+}
+
+.bm-sc-body {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+body.theme-light .bm-sc-body {
+  color: #334155;
+}
+
+.bm-sc-body strong {
+  color: #fbbf24;
+}
+
+body.theme-light .bm-sc-body strong {
+  color: #b45309;
+}
+
+.bm-sc-stems {
+  font-size: 0.70rem;
+  color: #94a3b8;
+}
+
+.bm-sc-desc {
+  margin: 2px 0 0 0;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: #94a3b8;
+}
+
+body.theme-light .bm-sc-desc {
+  color: #64748b;
+}
+
+
 
 

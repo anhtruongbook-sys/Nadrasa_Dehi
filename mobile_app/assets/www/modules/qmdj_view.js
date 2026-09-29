@@ -1201,6 +1201,7 @@
 
     const d = currentQmdjDate;
     const pad = n => String(n).padStart(2, '0');
+    const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())} - ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 
     let solarTerm = "Xuân Phân";
     let solarTermStr = "Xuân Phân";
@@ -1371,6 +1372,11 @@
           <div class="q-pillar highlight-hour"><span class="q-lbl">GIỜ</span><strong class="q-val">${pillars.hour}</strong></div>
         </div>
 
+        <!-- 9-Palace Matrix (Lưới 3x3 Lạc Thư Chuẩn Tọa Thiền) -->
+        <div class="qmdj-matrix-grid">
+          ${renderPalacesHTML(chart, [], pillars, timeStr)}
+        </div>
+
         <!-- Intro Banner -->
         <div class="qmdj-thien-banner">
           <div class="qmdj-thien-badge">🧘 TỌA THIỀN ĐỊNH TÂM KỲ MÔN • SPIRITUAL QI MEN</div>
@@ -1448,6 +1454,18 @@
           </div>
         </div>
       </div>
+
+      <!-- Palace Detail Modal -->
+      <div class="modal-overlay" id="qmdj-palace-modal" style="display: none;">
+        <div class="modal-dialog qmdj-palace-dialog">
+          <div class="guide-header">
+            <h2 id="qmdj-modal-title">🏰 Chi Tiết Cung Kỳ Môn</h2>
+            <button class="modal-close" id="qmdj-modal-close" aria-label="Đóng">&times;</button>
+          </div>
+          <div class="qmdj-modal-body" id="qmdj-modal-body">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
     `;
 
     bindThienEvents(chart);
@@ -1497,6 +1515,7 @@
     }
 
     const dStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())} - ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 
     // Lập lá số Bát Tự & Tính Kỳ Môn Bản Mệnh
     let baziChart = null;
@@ -1537,6 +1556,9 @@
       }
     }
 
+    // Attach destinyRoles to chart for 9-palace matrix badges
+    chart.destinyRoles = (destiny && destiny.all_palaces_roles) ? destiny.all_palaces_roles : null;
+
     const lp = (destiny && destiny.life_palace) ? destiny.life_palace : {
       palace_id: 6,
       palace_name: 'Càn (Tây Bắc)',
@@ -1563,7 +1585,34 @@
       direction: 'Bắc',
       deity: 'Lục Hợp',
       door: 'Hưu Môn',
-      star: 'Thiên Bồng'
+      star: 'Thiên Bồng',
+      heaven_stem: '—',
+      earth_stem: '—'
+    };
+
+    const cp = (destiny && destiny.career_palace) || {
+      palace_name: 'Càn (Tây Bắc)', direction: 'Tây Bắc', door: 'Khai Môn', star: 'Thiên Tâm', deity: 'Trực Phù',
+      door_action: 'Mở rộng cơ hội, quan lộ hanh thông, công việc phát triển.', heaven_stem: '—', earth_stem: '—'
+    };
+    const wp = (destiny && destiny.wealth_palace) || {
+      palace_name: 'Cấn (Đông Bắc)', direction: 'Đông Bắc', door: 'Sinh Môn', star: 'Thiên Nhậm', deity: 'Cửu Địa',
+      door_action: 'Tài nguyên dồi dào, sinh sôi lợi nhuận, tích lũy của cải.', heaven_stem: '—', earth_stem: '—'
+    };
+    const rp = (destiny && destiny.relationship_palace) || {
+      palace_name: 'Khôn (Tây Nam)', direction: 'Tây Nam', door: 'Hưu Môn', star: 'Thiên Nhuế', deity: 'Lục Hợp',
+      deity_power: 'Hòa hợp nhân duyên, gia đạo ấm êm, thu hút đồng đội chân thành.', heaven_stem: '—', earth_stem: '—'
+    };
+    const hp = (destiny && destiny.health_palace) || {
+      palace_name: 'Khôn (Tây Nam)', direction: 'Tây Nam', door: 'Tử Môn', star: 'Thiên Nhuế', deity: 'Đằng Xà',
+      heaven_stem: '—', earth_stem: '—'
+    };
+    const np = (destiny && destiny.nobleman_palace) || {
+      palace_name: 'Khảm (Bắc)', direction: 'Bắc', door: 'Khai Môn', star: 'Thiên Cầm', deity: 'Trực Phù',
+      heaven_stem: '—', earth_stem: '—'
+    };
+    const chp = (destiny && destiny.hour_palace) || {
+      palace_name: 'Cấn (Đông Bắc)', direction: 'Đông Bắc', door: 'Sinh Môn', star: 'Thiên Nhậm', deity: 'Thái Âm',
+      heaven_stem: '—', earth_stem: '—'
     };
 
     const DEITY_ICONS = {
@@ -1635,8 +1684,8 @@
                 <span class="num-colon">:</span>
                 <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}" placeholder="Phút">
               </div>
-              <button type="button" class="ucc-step-btn" id="btn-qmdj-step-prev" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
-              <button type="button" class="ucc-step-btn" id="btn-qmdj-step-next" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
+              <button type="button" class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
+              <button type="button" class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
             </div>
             <div class="ucc-pill-gender">
               <button type="button" class="ucc-gender-btn ${currentBanMenhIsMale ? 'active male' : ''}" id="btn-banmenh-male">♂ Nam</button>
@@ -1664,6 +1713,11 @@
           <div class="q-pillar"><span class="q-lbl">THÁNG:</span><strong class="q-val">${pillars.month}</strong></div>
           <div class="q-pillar"><span class="q-lbl">NGÀY:</span><strong class="q-val">${pillars.day}</strong></div>
           <div class="q-pillar highlight-hour"><span class="q-lbl">GIỜ:</span><strong class="q-val">${pillars.hour}</strong></div>
+        </div>
+
+        <!-- 9-Palace Matrix (Lưới 3x3 Lạc Thư Kỳ Môn Bản Mệnh) -->
+        <div class="qmdj-matrix-grid">
+          ${renderPalacesHTML(chart, [], pillars, timeStr)}
         </div>
 
         <!-- Thẻ Kỳ Môn Bản Mệnh Chính -->
@@ -1753,6 +1807,103 @@
             <div class="bqc-cb-text">
               <strong>Phương vị Tọa Lưng Đắc Khí Trọn Đời:</strong> Khi thiền định, lập chiến lược hoặc đối mặt quyết định trọng đại, hãy ngồi <strong>quay lưng về hướng ${lp.direction} (${lp.palace_name} • ${lp.degrees})</strong> để tiếp nhận trường khí bảo hộ mạnh nhất từ Thần Bản Mệnh ${lp.deity}.
             </div>
+          </div>
+        </div>
+
+        <!-- Bát Đại Cung Chức Năng Bổ Trợ (Functional Palaces) -->
+        <div class="banmenh-subpalaces-section">
+          <div class="bm-subpalaces-title">✨ CÁC CUNG CHỨC NĂNG TRỌNG YẾU (BÁT ĐẠI CUNG KỲ MÔN MỆNH)</div>
+          <div class="bm-subpalaces-grid">
+            <!-- Cung Sự Nghiệp -->
+            <div class="bm-sub-card">
+              <div class="bm-sc-head">
+                <span class="bm-sc-role">💼 CUNG SỰ NGHIỆP</span>
+                <span class="bm-sc-palace">${cp.palace_name} (${cp.direction})</span>
+              </div>
+              <div class="bm-sc-body">
+                <div>🚪 <strong>${cp.door}</strong> • ⭐ <strong>${cp.star}</strong> • 🔮 <strong>${cp.deity}</strong></div>
+                <div class="bm-sc-stems">Thiên/Địa: <strong>${cp.heaven_stem} / ${cp.earth_stem}</strong></div>
+                <p class="bm-sc-desc">${cp.door_action}</p>
+              </div>
+            </div>
+
+            <!-- Cung Tài Lộc -->
+            <div class="bm-sub-card">
+              <div class="bm-sc-head">
+                <span class="bm-sc-role">💰 CUNG TÀI LỘC</span>
+                <span class="bm-sc-palace">${wp.palace_name} (${wp.direction})</span>
+              </div>
+              <div class="bm-sc-body">
+                <div>🚪 <strong>${wp.door}</strong> • ⭐ <strong>${wp.star}</strong> • 🔮 <strong>${wp.deity}</strong></div>
+                <div class="bm-sc-stems">Thiên/Địa: <strong>${wp.heaven_stem} / ${wp.earth_stem}</strong></div>
+                <p class="bm-sc-desc">${wp.door_action}</p>
+              </div>
+            </div>
+
+            <!-- Cung Hôn Nhân -->
+            <div class="bm-sub-card">
+              <div class="bm-sc-head">
+                <span class="bm-sc-role">❤️ CUNG HÔN NHÂN / DUYÊN</span>
+                <span class="bm-sc-palace">${rp.palace_name} (${rp.direction})</span>
+              </div>
+              <div class="bm-sc-body">
+                <div>🔮 <strong>${rp.deity}</strong> • 🚪 <strong>${rp.door}</strong> • ⭐ <strong>${rp.star}</strong></div>
+                <div class="bm-sc-stems">Thiên/Địa: <strong>${rp.heaven_stem} / ${rp.earth_stem}</strong></div>
+                <p class="bm-sc-desc">${rp.deity_power}</p>
+              </div>
+            </div>
+
+            <!-- Cung Sức Khỏe -->
+            <div class="bm-sub-card">
+              <div class="bm-sc-head">
+                <span class="bm-sc-role">🩺 CUNG SỨC KHỎE</span>
+                <span class="bm-sc-palace">${hp.palace_name} (${hp.direction})</span>
+              </div>
+              <div class="bm-sc-body">
+                <div>⭐ <strong>${hp.star}</strong> • 🚪 <strong>${hp.door}</strong> • 🔮 <strong>${hp.deity}</strong></div>
+                <div class="bm-sc-stems">Thiên/Địa: <strong>${hp.heaven_stem} / ${hp.earth_stem}</strong></div>
+                <p class="bm-sc-desc">Chủ về thể chất, đề kháng sinh học và các cơ quan nhạy cảm theo Tượng Cung.</p>
+              </div>
+            </div>
+
+            <!-- Cung Quý Nhân -->
+            <div class="bm-sub-card">
+              <div class="bm-sc-head">
+                <span class="bm-sc-role">✨ CUNG QUÝ NHÂN</span>
+                <span class="bm-sc-palace">${np.palace_name} (${np.direction})</span>
+              </div>
+              <div class="bm-sc-body">
+                <div>👑 <strong>${np.deity}</strong> • 🚪 <strong>${np.door}</strong> • ⭐ <strong>${np.star}</strong></div>
+                <div class="bm-sc-stems">Thiên/Địa: <strong>${np.heaven_stem} / ${np.earth_stem}</strong></div>
+                <p class="bm-sc-desc">Phương vị quý nhân nâng đỡ, giải nguy và mở lối cơ hội lớn.</p>
+              </div>
+            </div>
+
+            <!-- Cung Tử Tức -->
+            <div class="bm-sub-card">
+              <div class="bm-sc-head">
+                <span class="bm-sc-role">👶 CUNG TỬ TỨC (CAN GIỜ)</span>
+                <span class="bm-sc-palace">${chp.palace_name} (${chp.direction})</span>
+              </div>
+              <div class="bm-sc-body">
+                <div>🚪 <strong>${chp.door}</strong> • ⭐ <strong>${chp.star}</strong> • 🔮 <strong>${chp.deity}</strong></div>
+                <div class="bm-sc-stems">Thiên/Địa: <strong>${chp.heaven_stem} / ${chp.earth_stem}</strong></div>
+                <p class="bm-sc-desc">Hậu vận, con cái, cấp dưới và các thành quả tạo tác lâu dài.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Palace Detail Modal -->
+      <div class="modal-overlay" id="qmdj-palace-modal" style="display: none;">
+        <div class="modal-dialog qmdj-palace-dialog">
+          <div class="guide-header">
+            <h2 id="qmdj-modal-title">🏰 Chi Tiết Cung Kỳ Môn</h2>
+            <button class="modal-close" id="qmdj-modal-close" aria-label="Đóng">&times;</button>
+          </div>
+          <div class="qmdj-modal-body" id="qmdj-modal-body">
+            <!-- Dynamically populated -->
           </div>
         </div>
       </div>
@@ -2073,16 +2224,49 @@
               </div>
             `;
           } else {
+            let modeBadgeTop = '';
+            let modeBadgesSub = '';
+            let cellHighlightClass = '';
+
+            if (currentQmdjMode === 'thien') {
+              const THIEN_DEITIES = {
+                'Trực Phù': '👑 TỌA LƯNG',
+                'Thái Âm': '🌙 TỌA LƯNG',
+                'Cửu Địa': '🌍 TỌA LƯNG',
+                'Cửu Thiên': '⚡ TỌA LƯNG',
+                'Lục Hợp': '🤝 TỌA LƯNG'
+              };
+              if (THIEN_DEITIES[divinity]) {
+                modeBadgeTop = `<span class="qmdj-badge-thien">${THIEN_DEITIES[divinity]}</span>`;
+                cellHighlightClass = 'cell-highlight-thien';
+              }
+            } else if (currentQmdjMode === 'banmenh' && chart.destinyRoles && chart.destinyRoles[pNum]) {
+              const roles = chart.destinyRoles[pNum];
+              if (roles && roles.length > 0) {
+                modeBadgesSub = `
+                  <div class="qmdj-cell-destiny-badges">
+                    ${roles.map(r => `<span class="qmdj-destiny-badge ${r.class}">${r.text}</span>`).join('')}
+                  </div>
+                `;
+                if (roles.some(r => r.class === 'badge-life')) {
+                  cellHighlightClass = 'cell-highlight-banmenh';
+                }
+              }
+            }
+
             html += `
-              <div class="qmdj-palace-cell" data-palace-index="${pIndex}">
+              <div class="qmdj-palace-cell ${cellHighlightClass}" data-palace-index="${pIndex}">
                 <!-- Top Row: Thần & Số Cung -->
                 <div class="p-top">
                   <span class="p-divinity ${getCatClass(divinity)}">${divinity}</span>
                   <div class="p-top-right">
+                    ${modeBadgeTop}
                     ${isVoid ? '<span class="p-void-mark" title="Tuần Không">〇</span>' : ''}
                     <span class="p-num">${pIndex + 1}</span>
                   </div>
                 </div>
+
+                ${modeBadgesSub}
 
                 <!-- Mid Row: Cửa & Sao (trái), Can Thiên Bàn (phải) -->
                 <div class="p-mid">

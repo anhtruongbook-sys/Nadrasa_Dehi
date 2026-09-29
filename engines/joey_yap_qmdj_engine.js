@@ -772,11 +772,15 @@
         const door = tr(p.getDoor(true));
         const star = tr(p.getStar(true));
         const deity = tr(p.getDivinity(true));
-        const hcs = tr(p.getHCS(true)).split('/')[0];
-        const ecs = tr(p.getECS(true)).split('/')[0];
+        const hcsRaw = tr(p.getHCS(true));
+        const ecsRaw = tr(p.getECS(true));
+        const hcsList = (Array.isArray(hcsRaw) ? hcsRaw : String(hcsRaw).split('/')).map(s => s.trim()).filter(Boolean);
+        const ecsList = (Array.isArray(ecsRaw) ? ecsRaw : String(ecsRaw).split('/')).map(s => s.trim()).filter(Boolean);
+        const hcs = hcsList[0] || '';
+        const ecs = ecsList[0] || '';
         const isKongWang = !!p.de;
 
-        palaces[pNum] = { palace: pNum, door, star, deity, hcs, ecs, isKongWang, formations: [] };
+        palaces[pNum] = { palace: pNum, door, star, deity, hcs, hcsList, ecs, ecsList, isKongWang, formations: [] };
 
         if (deity === 'Trực Phù') chiefPalace = pNum;
         if (deity === 'Cửu Thiên') nineHeavenPalace = pNum;
@@ -948,43 +952,68 @@
 
       if (!analyzed || !analyzed.success) return null;
 
-      // Can Ngày nếu là Giáp thì lấy Tuần Thủ
+      // Can Ngày / Năm / Giờ nếu là Giáp thì lấy Tuần Thủ
       const effectiveDayStem = (dayCan === 'Giáp') ? this.getXunLeader(dayCan, dayChi) : dayCan;
       const effectiveYearStem = (yearCan === 'Giáp') ? this.getXunLeader(yearCan, yearChi) : yearCan;
+      const effectiveHourStem = (hourCan === 'Giáp') ? this.getXunLeader(hourCan, hourChi) : hourCan;
 
-      // Tìm Cung Mệnh Can Ngày (Life Palace) trên Địa Bàn (Earth Plate)
+      // Xác định các Cung Mệnh Kỳ Môn chuẩn học thuật Joey Yap & Kỳ Môn Mệnh Lý:
+      // 1. Cung Bản Mệnh (Life Palace): Tìm Can Ngày (effectiveDayStem) trên THIÊN BÀN (Heaven Plate)
+      // 2. Cung Xã Hội / Niên Mệnh (Year Palace): Tìm Can Năm (effectiveYearStem) trên THIÊN BÀN
+      // 3. Cung Tử Tức / Hậu Vận (Children Palace): Tìm Can Giờ (effectiveHourStem) trên THIÊN BÀN
+      // 4. Cung Sự Nghiệp (Career Palace): Tìm Khai Môn (Open Door)
+      // 5. Cung Tài Lộc (Wealth Palace): Tìm Sinh Môn (Life Door)
+      // 6. Cung Hôn Nhân / Nhân Duyên (Relationship Palace): Tìm Lục Hợp (Six Harmony)
+      // 7. Cung Sức Khỏe (Health Palace): Tìm Thiên Nhuế (Tian Rui Star)
+      // 8. Cung Quý Nhân (Mentor Palace): Tìm Trực Phù (Chief Deity)
+
       let lifePalaceId = 1;
       let yearPalaceId = 1;
+      let hourPalaceId = 1;
+      let careerPalaceId = 6;
+      let wealthPalaceId = 8;
+      let relationshipPalaceId = 2;
+      let healthPalaceId = 2;
+      let noblemanPalaceId = 1;
 
-      // Quét tìm trong 9 cung
       for (let pId = 1; pId <= 9; pId++) {
         if (pId === 5) continue;
         const p = analyzed.palaces[pId];
         if (!p) continue;
-        const earthStem = p.ecs || p.earth_stem || '';
-        // Kiểm tra Earth Stem (Địa bàn)
-        if (earthStem === effectiveDayStem) {
-          lifePalaceId = pId;
-        }
-        if (earthStem === effectiveYearStem) {
-          yearPalaceId = pId;
-        }
+        const hList = p.hcsList || [p.hcs];
+        if (hList.includes(effectiveDayStem)) lifePalaceId = pId;
+        if (hList.includes(effectiveYearStem)) yearPalaceId = pId;
+        if (hList.includes(effectiveHourStem)) hourPalaceId = pId;
+        if (p.door && p.door.includes('Khai')) careerPalaceId = pId;
+        if (p.door && p.door.includes('Sinh')) wealthPalaceId = pId;
+        if (p.deity && p.deity.includes('Lục Hợp')) relationshipPalaceId = pId;
+        if (p.star && p.star.includes('Thiên Nhuế')) healthPalaceId = pId;
+        if (p.deity && p.deity.includes('Trực Phù')) noblemanPalaceId = pId;
       }
 
-      // Nếu không thấy ở Địa bàn, tìm ở Thiên bàn
-      if (!lifePalaceId) {
-        for (let pId = 1; pId <= 9; pId++) {
-          if (pId === 5) continue;
-          const p = analyzed.palaces[pId];
-          const heavenStem = p ? (p.hcs || p.heaven_stem || '') : '';
-          if (heavenStem === effectiveDayStem) {
-            lifePalaceId = pId;
-            break;
-          }
-        }
-      }
+      // Xử lý ký Cung Khôn 2 nếu Thiên Can rơi vào Trung Cung 5
+      if (!lifePalaceId || lifePalaceId === 5) lifePalaceId = 2;
+      if (!yearPalaceId || yearPalaceId === 5) yearPalaceId = 2;
+      if (!hourPalaceId || hourPalaceId === 5) hourPalaceId = 2;
 
-      const buildPalaceReport = (pid, stem, isDay = true) => {
+      const allPalacesRoles = {};
+      for (let i = 1; i <= 9; i++) allPalacesRoles[i] = [];
+
+      const addRole = (pid, badgeText, badgeClass) => {
+        if (!allPalacesRoles[pid]) allPalacesRoles[pid] = [];
+        allPalacesRoles[pid].push({ text: badgeText, class: badgeClass });
+      };
+
+      addRole(lifePalaceId, '👑 BẢN MỆNH', 'badge-life');
+      addRole(careerPalaceId, '💼 SỰ NGHIỆP', 'badge-career');
+      addRole(wealthPalaceId, '💰 TÀI LỘC', 'badge-wealth');
+      addRole(relationshipPalaceId, '❤️ HÔN NHÂN', 'badge-relation');
+      addRole(healthPalaceId, '🩺 SỨC KHỎE', 'badge-health');
+      addRole(noblemanPalaceId, '✨ QUÝ NHÂN', 'badge-nobleman');
+      if (yearPalaceId !== lifePalaceId) addRole(yearPalaceId, '🌐 XÃ HỘI', 'badge-social');
+      if (hourPalaceId !== lifePalaceId && hourPalaceId !== noblemanPalaceId) addRole(hourPalaceId, '👶 TỬ TỨC', 'badge-children');
+
+      const buildPalaceReport = (pid, stem, roleTitle = '') => {
         const pInfo = PALACES[pid] || PALACES[1];
         const pData = analyzed.palaces[pid] || {};
         const dClean = (pData.door || '').replace(' Môn', '').trim();
@@ -1010,6 +1039,7 @@
           degrees: pInfo.degrees,
           center_deg: pInfo.centerDeg,
           element: pInfo.element,
+          role_title: roleTitle,
           stem,
           heaven_stem: hStem,
           earth_stem: eStem,
@@ -1029,8 +1059,14 @@
         };
       };
 
-      const lifePalace = buildPalaceReport(lifePalaceId, dayCan, true);
-      const yearPalace = buildPalaceReport(yearPalaceId, yearCan, false);
+      const lifePalace = buildPalaceReport(lifePalaceId, dayCan, '👑 Cung Bản Mệnh (Life Palace)');
+      const yearPalace = buildPalaceReport(yearPalaceId, yearCan, '🌐 Cung Xã Hội / Niên Mệnh (Year Palace)');
+      const hourPalace = buildPalaceReport(hourPalaceId, hourCan, '👶 Cung Tử Tức / Hậu Vận (Children Palace)');
+      const careerPalace = buildPalaceReport(careerPalaceId, null, '💼 Cung Sự Nghiệp (Career Palace - Khai Môn)');
+      const wealthPalace = buildPalaceReport(wealthPalaceId, null, '💰 Cung Tài Lộc (Wealth Palace - Sinh Môn)');
+      const relationshipPalace = buildPalaceReport(relationshipPalaceId, null, '❤️ Cung Hôn Nhân / Nhân Duyên (Relationship Palace - Lục Hợp)');
+      const healthPalace = buildPalaceReport(healthPalaceId, null, '🩺 Cung Sức Khỏe (Health Palace - Thiên Nhuế)');
+      const noblemanPalace = buildPalaceReport(noblemanPalaceId, null, '✨ Cung Quý Nhân (Nobleman Palace - Trực Phù)');
 
       return {
         success: true,
@@ -1041,8 +1077,16 @@
         year_branch: yearChi,
         effective_day_stem: effectiveDayStem,
         effective_year_stem: effectiveYearStem,
+        effective_hour_stem: effectiveHourStem,
         life_palace: lifePalace,
         year_palace: yearPalace,
+        hour_palace: hourPalace,
+        career_palace: careerPalace,
+        wealth_palace: wealthPalace,
+        relationship_palace: relationshipPalace,
+        health_palace: healthPalace,
+        nobleman_palace: noblemanPalace,
+        all_palaces_roles: allPalacesRoles,
         three_victories: analyzed.three_victories,
         sky_horse: analyzed.sky_horse,
         chart: chart
