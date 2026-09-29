@@ -257,7 +257,7 @@
           </div>
 
           <!-- 2. Floating QMDJ Strategic HUD Card (Phase 3) -->
-          <div id="lakinh-qmdj-floating-hud" class="lakinh-glass-panel ${state.isQmdjStratHudCollapsed ? 'is-collapsed' : ''}" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
+          <div id="lakinh-qmdj-floating-hud" class="lakinh-glass-panel ${state.isQmdjStratHudCollapsed ? 'is-collapsed' : ''} ${state.isQmdjStratActive ? '' : 'is-hidden'}" style="${state.isQmdjStratActive ? '' : 'display: none;'}">
             <div class="qmdj-hud-header">
               <div class="qmdj-hud-title-group" id="btn-qmdj-mini-expand-header" title="Chạm để xem bảng chiến lược chi tiết">
                 <span class="qmdj-hud-title">⚔️ Kỳ Môn Chiến Lược</span>
@@ -330,7 +330,7 @@
           </div>
 
           <!-- 3. Floating Tam Hợp HUD Card (Phong Thủy Tam Hợp Phái) -->
-          <div id="lakinh-tamhop-floating-hud" class="lakinh-glass-panel ${state.isTamHopHudCollapsed ? 'is-collapsed' : ''}" style="${state.isTamHopActive ? '' : 'display: none;'}">
+          <div id="lakinh-tamhop-floating-hud" class="lakinh-glass-panel ${state.isTamHopHudCollapsed ? 'is-collapsed' : ''} ${state.isTamHopActive ? '' : 'is-hidden'}" style="${state.isTamHopActive ? '' : 'display: none;'}">
             <div class="tamhop-hud-header">
               <div class="tamhop-hud-title-group" id="btn-tamhop-mini-expand-header" title="Chạm để xem bảng Tam Hợp chi tiết">
                 <span class="tamhop-hud-title">🌊 Tam Hợp Phái</span>
@@ -931,8 +931,11 @@
         initLeafletMap();
         bindLaKinhEvents();
         updateRotationDisplay(state.rotation);
-        if (typeof updateQmdjStrategicLayer === 'function') {
+        if (state.isQmdjStratActive && typeof updateQmdjStrategicLayer === 'function') {
           updateQmdjStrategicLayer();
+        }
+        if (state.isTamHopActive && typeof updateTamHopLayer === 'function') {
+          updateTamHopLayer();
         }
       } else {
         if (mapInstance) {
@@ -944,6 +947,9 @@
         }
         if (state.isQmdjStratActive && typeof updateQmdjStrategicLayer === 'function') {
           updateQmdjStrategicLayer();
+        }
+        if (state.isTamHopActive && typeof updateTamHopLayer === 'function') {
+          updateTamHopLayer();
         }
       }
     } catch (err) {
@@ -2025,7 +2031,10 @@
     if (!state.isTamHopActive) {
       if (btnQuick) btnQuick.classList.remove('active');
       if (svgOverlay) svgOverlay.style.display = 'none';
-      if (hud) hud.style.display = 'none';
+      if (hud) {
+        hud.style.display = 'none';
+        hud.classList.add('is-hidden');
+      }
       return;
     }
 
@@ -2035,7 +2044,8 @@
       svgOverlay.style.transform = `rotate(${-state.rotation}deg)`;
     }
     if (hud) {
-      hud.style.display = 'block';
+      hud.classList.remove('is-hidden');
+      hud.style.display = state.isTamHopHudCollapsed ? 'flex' : 'block';
       hud.classList.toggle('is-collapsed', !!state.isTamHopHudCollapsed);
       const hudBody = document.getElementById('tamhop-hud-body');
       const hudFooter = document.querySelector('.tamhop-hud-footer');
@@ -2292,10 +2302,10 @@
       state.isTamHopHudCollapsed = true; // Mở dạng rút gọn 2 dòng
     }
     updateTamHopLayer();
-    if (state.isTamHopActive) {
-      if (typeof showLaKinhToast === 'function') {
-        showLaKinhToast('🌊 Đã bật Lớp Phong Thủy Tam Hợp Phái');
-      }
+    if (typeof showLaKinhToast === 'function') {
+      showLaKinhToast(state.isTamHopActive
+        ? '🌊 Đã bật Lớp Phong Thủy Tam Hợp Phái'
+        : 'Đã tắt lớp Tam Hợp Phái');
     }
   }
 
@@ -2311,7 +2321,10 @@ function updateQmdjStrategicLayer() {
     if (!state.isQmdjStratActive) {
       if (btnQuick) btnQuick.classList.remove('active');
       if (svgOverlay) svgOverlay.style.display = 'none';
-      if (hud) hud.style.display = 'none';
+      if (hud) {
+        hud.style.display = 'none';
+        hud.classList.add('is-hidden');
+      }
       if (sheetToggleBtn) {
         sheetToggleBtn.classList.remove('success');
         sheetToggleBtn.classList.add('secondary');
@@ -2328,7 +2341,8 @@ function updateQmdjStrategicLayer() {
       svgOverlay.style.transform = `rotate(${-state.rotation}deg)`;
     }
     if (hud) {
-      hud.style.display = 'block';
+      hud.classList.remove('is-hidden');
+      hud.style.display = state.isQmdjStratHudCollapsed ? 'flex' : 'block';
       hud.classList.toggle('is-collapsed', !!state.isQmdjStratHudCollapsed);
       const hudBody = document.getElementById('qmdj-hud-body');
       const hudPills = document.querySelector('.qmdj-hud-pills');
@@ -4551,14 +4565,18 @@ function updateQmdjStrategicLayer() {
     }
 
     const btnThCollapse = document.getElementById('btn-tamhop-hud-collapse');
-    const toggleThCollapse = () => {
+    const toggleThCollapse = (e) => {
+      if (e) e.stopPropagation();
       state.isTamHopHudCollapsed = !state.isTamHopHudCollapsed;
       const hud = document.getElementById('lakinh-tamhop-floating-hud');
       const hudBody = document.getElementById('tamhop-hud-body');
       const hudFooter = document.querySelector('.tamhop-hud-footer');
       const hudCompact = document.getElementById('tamhop-hud-compact-summary');
       const hudDuongCuc = document.querySelector('.tamhop-hud-duong-cuc-row');
-      if (hud) hud.classList.toggle('is-collapsed', state.isTamHopHudCollapsed);
+      if (hud) {
+        hud.classList.toggle('is-collapsed', state.isTamHopHudCollapsed);
+        hud.style.display = state.isTamHopHudCollapsed ? 'flex' : 'block';
+      }
       if (hudBody) hudBody.style.display = state.isTamHopHudCollapsed ? 'none' : 'grid';
       if (hudFooter) hudFooter.style.display = state.isTamHopHudCollapsed ? 'none' : 'block';
       if (hudCompact) hudCompact.style.display = state.isTamHopHudCollapsed ? 'flex' : 'none';
@@ -4571,14 +4589,20 @@ function updateQmdjStrategicLayer() {
     const miniThHeader = document.getElementById('btn-tamhop-mini-expand-header');
     if (miniThHeader) miniThHeader.addEventListener('click', (e) => {
       if (e.target.closest('#btn-tamhop-hud-config')) return;
-      toggleThCollapse();
+      toggleThCollapse(e);
     });
 
     const btnThClose = document.getElementById('btn-tamhop-hud-close');
     if (btnThClose) {
-      btnThClose.addEventListener('click', () => {
+      const handleCloseTamHop = (e) => {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
         toggleTamHopLayer(false);
-      });
+      };
+      btnThClose.addEventListener('click', handleCloseTamHop);
+      btnThClose.addEventListener('touchend', handleCloseTamHop);
     }
 
     const btnThConfig = document.getElementById('btn-tamhop-hud-config');
@@ -6536,12 +6560,26 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
 
     if (btnQuick) btnQuick.addEventListener('click', () => toggleQmdjStrategicLayer());
     if (btnSheetToggle) btnSheetToggle.addEventListener('click', () => toggleQmdjStrategicLayer());
-    if (btnClose) btnClose.addEventListener('click', () => toggleQmdjStrategicLayer(false));
+    if (btnClose) {
+      const handleCloseQmdj = (e) => {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        toggleQmdjStrategicLayer(false);
+      };
+      btnClose.addEventListener('click', handleCloseQmdj);
+      btnClose.addEventListener('touchend', handleCloseQmdj);
+    }
 
-    const toggleQmdjCollapse = () => {
+    const toggleQmdjCollapse = (e) => {
+      if (e) e.stopPropagation();
       state.isQmdjStratHudCollapsed = !state.isQmdjStratHudCollapsed;
       const hud = document.getElementById('lakinh-qmdj-floating-hud');
-      if (hud) hud.classList.toggle('is-collapsed', state.isQmdjStratHudCollapsed);
+      if (hud) {
+        hud.classList.toggle('is-collapsed', state.isQmdjStratHudCollapsed);
+        hud.style.display = state.isQmdjStratHudCollapsed ? 'flex' : 'block';
+      }
       const hudBody = document.getElementById('qmdj-hud-body');
       const hudPills = document.querySelector('.qmdj-hud-pills');
       const hudFooter = document.querySelector('.qmdj-hud-footer');
@@ -6558,7 +6596,7 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     const miniQmdjHeader = document.getElementById('btn-qmdj-mini-expand-header');
     if (miniQmdjHeader) miniQmdjHeader.addEventListener('click', (e) => {
       if (e.target.closest('#btn-qmdj-hud-time-picker, #btn-qmdj-reset-now')) return;
-      toggleQmdjCollapse();
+      toggleQmdjCollapse(e);
     });
 
     if (btnTimePicker) btnTimePicker.addEventListener('click', () => openQmdjTimeModal());
