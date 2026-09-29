@@ -18,14 +18,13 @@
   const STORAGE_KEY_TOKEN = '__neta_synth_enc_token';
   const STORAGE_KEY_ENABLED = '__neta_deep_synth_enabled';
 
-  // Hàng đợi mô hình dự phòng: gemini-3.5-flash là ưu tiên số 1 theo yêu cầu người dùng
+  // Hàng đợi mô hình dự phòng: gemini-3.5-flash & gemini-2.5-flash là ưu tiên hàng đầu
   const DEFAULT_CANDIDATE_MODELS = [
     'gemini-3.5-flash',
-    'gemini-3.5-flash-lite',
-    'gemini-3.8-flash',
     'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-2.5-flash-lite',
+    'gemini-3.8-flash',
     'gemini-flash-latest'
   ];
 
@@ -55,7 +54,7 @@
     for (const url of urls) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
 
         const resp = await fetch(url, {
           method: 'GET',
@@ -78,19 +77,14 @@
             if (validModels.length > 0) {
               const scoreModel = (name) => {
                 const n = name.toLowerCase();
-                // gemini-3.5-flash là ưu tiên cao nhất tuyệt đối (1000 điểm)
                 if (n === 'gemini-3.5-flash') return 1000;
+                if (n === 'gemini-2.5-flash') return 980;
                 if (n.includes('3.5-flash')) return 950;
-                if (n.includes('3.5')) return 900;
-                if (n.includes('3.8-flash')) return 850;
-                if (n.includes('3.8')) return 800;
-                if (n.includes('2.5-flash')) return 750;
-                if (n.includes('2.5')) return 700;
-                if (n.includes('2.0-flash')) return 650;
-                if (n.includes('2.0')) return 600;
-                if (n.includes('1.5-flash')) return 550;
-                if (n.includes('1.5-pro')) return 500;
-                if (n.includes('flash')) return 400;
+                if (n.includes('2.5-flash')) return 920;
+                if (n.includes('3.8-flash')) return 880;
+                if (n.includes('3.5')) return 850;
+                if (n.includes('2.5')) return 800;
+                if (n.includes('flash')) return 500;
                 return 100;
               };
 
@@ -219,24 +213,6 @@
     // Tìm mô hình tốt nhất khả dụng trước khi luận đoán
     const candidateModels = await discoverAvailableModels(apiKey);
 
-    const strategies = [
-      {
-        name: 'header_x_goog',
-        getUrl: (m, k) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,
-        getHeaders: (k) => ({ 'Content-Type': 'application/json', 'x-goog-api-key': k })
-      },
-      {
-        name: 'url_and_header',
-        getUrl: (m, k) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(k)}`,
-        getHeaders: (k) => ({ 'Content-Type': 'application/json', 'x-goog-api-key': k })
-      },
-      {
-        name: 'bearer_token',
-        getUrl: (m, k) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,
-        getHeaders: (k) => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` })
-      }
-    ];
-
     const payload = {
       contents: [{ parts: [{ text: promptText }] }],
       generationConfig: {
@@ -246,54 +222,69 @@
     };
 
     for (const model of candidateModels) {
-      for (const strat of strategies) {
-        try {
-          const url = strat.getUrl(model, apiKey);
-          const headers = strat.getHeaders(apiKey);
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        const headers = {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        };
 
-          // Timeout 6.5s per candidate to keep UI fast and responsive
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 6500);
+        // Timeout 10s per candidate to allow solid generation
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-          const resp = await fetch(url, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(payload),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
 
-          if (resp.ok) {
-            const data = await resp.json();
-            const cand = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (cand && cand.trim().length > 50) {
-              lastActiveModel = model;
-              return { text: cand.trim(), model: model, error: null };
-            }
-          } else {
-            const status = resp.status;
-            if (status === 401 || status === 403) {
+        if (resp.ok) {
+          const data = await resp.json();
+          const cand = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (cand && cand.trim().length > 0) {
+            lastActiveModel = model;
+            return { text: cand.trim(), model: model, error: null };
+          }
+        } else {
+          const status = resp.status;
+          let errJson = null;
+          try { errJson = await resp.json(); } catch(e) {}
+          const errMsg = errJson?.error?.message || '';
+          const errReason = errJson?.error?.details?.[0]?.reason || '';
+
+          if (status === 400 && (errReason === 'API_KEY_INVALID' || errMsg.includes('API key not valid'))) {
+            hadAuthError = true;
+            lastErrorReason = 'Khóa API không hợp lệ. Vui lòng kiểm tra lại khóa tại Google AI Studio.';
+            break;
+          } else if (status === 401 || status === 403) {
+            if (errMsg.includes('API key') || errReason.includes('API_KEY') || errMsg.includes('PERMISSION_DENIED')) {
               hadAuthError = true;
-              lastErrorReason = 'Khóa API không hợp lệ hoặc đã bị vô hiệu hóa (Mã 401/403). Vui lòng kiểm tra lại khóa tại Google AI Studio.';
-            } else if (status === 404 || status === 400) {
-              // Model không tồn tại hoặc lỗi tham số tên model, chuyển tiếp sang model kế tiếp
-              console.log(`Mô hình ${model} không khả dụng (HTTP ${status}), chuyển tiếp mô hình...`);
+              lastErrorReason = 'Khóa API không có quyền truy cập hoặc đã bị vô hiệu hóa (Mã 401/403). Vui lòng kiểm tra lại khóa tại Google AI Studio.';
               break;
-            } else if (status === 429) {
-              lastErrorReason = 'Hệ thống Google đang quá tải hạn mức miễn phí (Mã lỗi 429). Đang thử mô hình khác...';
-              break; // Thử mô hình kế tiếp
-            } else {
-              lastErrorReason = `Mô hình ${model} phản hồi mã ${status}. Đang chuyển tiếp...`;
             }
-          }
-        } catch (err) {
-          if (err.name === 'AbortError') {
-            console.warn(`Model ${model} (${strat.name}) timeout sau 6.5s, chuyển tiếp...`);
+          } else if (status === 503 || status === 429 || status === 500 || status === 502 || status === 504) {
+            console.log(`Mô hình ${model} phản hồi HTTP ${status} (Quá tải/Tạm ngưng), chuyển tiếp sang mô hình dự phòng...`);
+            lastErrorReason = `Mô hình ${model} đang tạm thời quá tải (HTTP ${status}). Hệ thống đã chuyển đổi sang mô hình dự phòng.`;
+            continue;
+          } else if (status === 404 || status === 400) {
+            console.log(`Mô hình ${model} không khả dụng (HTTP ${status}), chuyển tiếp mô hình...`);
+            continue;
           } else {
-            console.warn(`Lỗi kết nối với ${model} (${strat.name}):`, err.message);
+            lastErrorReason = `Mô hình ${model} phản hồi mã ${status}. Đang chuyển tiếp...`;
+            continue;
           }
-          lastErrorReason = 'Không thể kết nối đến máy chủ Google. Vui lòng kiểm tra mạng Internet.';
         }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          console.warn(`Model ${model} timeout sau 10s, chuyển tiếp mô hình dự phòng...`);
+        } else {
+          console.warn(`Lỗi kết nối với ${model}:`, err.message);
+        }
+        lastErrorReason = 'Không thể kết nối đến máy chủ Google. Vui lòng kiểm tra mạng Internet.';
+        continue;
       }
 
       if (hadAuthError) break;
@@ -321,10 +312,10 @@
 
     const models = await discoverAvailableModels(key);
     if (!models || models.length === 0) {
-      return { success: false, error: 'Không thể tìm thấy mô hình tương thích.' };
+      return { success: false, error: 'Không thể kết nối đến Google API để lấy danh mục mô hình.' };
     }
 
-    const testPrompt = 'Xin chào, hãy trả lời đúng 2 chữ: Hoạt động.';
+    const testPrompt = 'Xin chào, hãy phản hồi: Hoạt động tốt.';
     const res = await callGeminiCascade(testPrompt, key);
     if (res && res.text) {
       const activeM = res.model || lastActiveModel || 'gemini-3.5-flash';
@@ -440,6 +431,7 @@ HÃY BIÊN SOẠN BẢN LUẬN GIẢI CHI TIẾT THEO CẤU TRÚC:
     setDeepSynthesisEnabled,
     interpretTarotReading,
     discoverAvailableModels,
+    callGeminiCascade,
     testConnection,
     getActiveModelName: () => lastActiveModel || 'gemini-3.5-flash',
     CANDIDATE_MODELS: DEFAULT_CANDIDATE_MODELS
