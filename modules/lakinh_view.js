@@ -228,6 +228,23 @@
 
         <!-- Stack Gom Nhóm Các Mini Capsule & Floating HUD (Không Che La Kinh) -->
         <div id="lakinh-hud-capsule-stack">
+          <!-- 0. Thanh Điều Khiển Nổi Thu Phóng & Dịch Tâm Mặt Bằng Trên Màn Hình -->
+          <div id="lakinh-plan-pan-banner" class="lakinh-floating-plan-bar is-hidden" style="display: none;">
+            <div class="fl-plan-left">
+              <span class="fl-plan-title">📐<span class="fl-btn-lbl"> Mặt Bằng</span></span>
+              <button type="button" class="fl-plan-btn" id="fl-btn-scale-minus" title="Thu nhỏ (-15%)">🔍−</button>
+              <button type="button" class="fl-plan-scale-chip" id="fl-plan-scale-val" title="Tỉ lệ hiện tại. Chạm để về 100%">100%</button>
+              <button type="button" class="fl-plan-btn" id="fl-btn-scale-plus" title="Phóng to (+15%)">🔍+</button>
+            </div>
+            <div class="fl-plan-right">
+              <button type="button" class="fl-plan-btn ${state.isPlanPanActive ? 'active' : ''}" id="fl-btn-plan-pan" title="Bật/Tắt chế độ kéo rê và 2 ngón tay thu phóng">✋<span class="fl-btn-lbl"> Kéo</span></button>
+              <button type="button" class="fl-plan-btn" id="fl-btn-rot-match" title="Xoay khớp hướng nhà">🧭<span class="fl-btn-lbl"> Khớp</span></button>
+              <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa về chính tâm (0,0)">🎯<span class="fl-btn-lbl"> Tâm</span></button>
+              <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-opacity" title="Đổi độ mờ (35% / 65% / 85%)">👁️</button>
+              <button type="button" class="fl-plan-btn icon-only" id="btn-plan-pan-done" title="Ẩn thanh công cụ mặt bằng">✕</button>
+            </div>
+          </div>
+
           <!-- 1. Mini Card Thu Gọn Của Ray HUD -->
           <div id="lakinh-ray-mini-pill" class="lakinh-ray-mini-card" style="display: none;">
             <div class="ray-mini-header-row">
@@ -451,24 +468,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Thanh Điều Khiển Nổi Thu Phóng & Dịch Tâm Mặt Bằng Trên Màn Hình -->
-        <div id="lakinh-plan-pan-banner" class="lakinh-floating-plan-bar" style="display: none;">
-          <div class="fl-plan-left">
-            <span class="fl-plan-title">📐<span class="fl-btn-lbl"> Mặt Bằng</span></span>
-            <button type="button" class="fl-plan-btn" id="fl-btn-scale-minus" title="Thu nhỏ (-15%)">🔍−</button>
-            <button type="button" class="fl-plan-scale-chip" id="fl-plan-scale-val" title="Tỉ lệ hiện tại. Chạm để về 100%">100%</button>
-            <button type="button" class="fl-plan-btn" id="fl-btn-scale-plus" title="Phóng to (+15%)">🔍+</button>
-          </div>
-          <div class="fl-plan-right">
-            <button type="button" class="fl-plan-btn ${state.isPlanPanActive ? 'active' : ''}" id="fl-btn-plan-pan" title="Bật/Tắt chế độ kéo rê và 2 ngón tay thu phóng">✋<span class="fl-btn-lbl"> Kéo</span></button>
-            <button type="button" class="fl-plan-btn" id="fl-btn-rot-match" title="Xoay khớp hướng nhà">🧭<span class="fl-btn-lbl"> Khớp</span></button>
-            <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa về chính tâm (0,0)">🎯<span class="fl-btn-lbl"> Tâm</span></button>
-            <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-opacity" title="Đổi độ mờ (35% / 65% / 85%)">👁️</button>
-            <button type="button" class="fl-plan-btn icon-only" id="btn-plan-pan-done" title="Ẩn thanh công cụ mặt bằng">✕</button>
-          </div>
-        </div>
-
 
         <!-- 1. Cụm HUD Tọa Hướng & Huyền Không Đại Quái Tích Hợp Trên Cùng (Master Top Panel) -->
         <div id="lakinh-top-panel" class="lakinh-glass-panel">
@@ -1243,7 +1242,10 @@
 
     if (!state.planImageSrc) {
       img.style.display = 'none';
-      if (banner) banner.style.display = 'none';
+      if (banner) {
+        banner.style.display = 'none';
+        banner.classList.add('is-hidden');
+      }
       const planWrap = document.getElementById('lakinh-plan-controls-wrap');
       if (planWrap) planWrap.style.display = 'none';
       const statusVal = document.getElementById('sheet-val-plan-status');
@@ -1262,7 +1264,13 @@
 
     // Cập nhật giá trị hiển thị trên Floating Plan Bar trên màn hình
     if (banner) {
-      banner.style.display = state.planImageSrc ? 'flex' : 'none';
+      if (state.planImageSrc) {
+        banner.classList.remove('is-hidden');
+        banner.style.display = 'flex';
+      } else {
+        banner.classList.add('is-hidden');
+        banner.style.display = 'none';
+      }
     }
     const flScaleVal = document.getElementById('fl-plan-scale-val');
     if (flScaleVal) flScaleVal.textContent = `${Math.round(state.planScale * 100)}%`;
@@ -1425,7 +1433,10 @@
     state.planScale = 1.0;
     state.isPlanPanActive = false;
     const banner = document.getElementById('lakinh-plan-pan-banner');
-    if (banner) banner.style.display = 'none';
+    if (banner) {
+      banner.style.display = 'none';
+      banner.classList.add('is-hidden');
+    }
     const btnPan = document.getElementById('sheet-btn-plan-pan');
     if (btnPan) btnPan.classList.remove('active');
 
@@ -1466,7 +1477,13 @@
       flPanBtn.classList.toggle('active', state.isPlanPanActive);
     }
     if (banner) {
-      banner.style.display = state.planImageSrc ? 'flex' : 'none';
+      if (state.planImageSrc) {
+        banner.classList.remove('is-hidden');
+        banner.style.display = 'flex';
+      } else {
+        banner.classList.add('is-hidden');
+        banner.style.display = 'none';
+      }
     }
     showLaKinhToast(state.isPlanPanActive
       ? '✋ Chế độ Kéo Tâm: Kéo 1 ngón để dịch chuyển, 2 ngón để phóng to/xoay'
@@ -4964,13 +4981,21 @@ function updateQmdjStrategicLayer() {
     }
 
     if (btnPlanPanDone) {
-      btnPlanPanDone.addEventListener('click', (e) => {
-        if (e && e.stopPropagation) e.stopPropagation();
+      const handleClosePlanBar = (e) => {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
         const banner = document.getElementById('lakinh-plan-pan-banner');
-        if (banner) banner.style.display = 'none';
+        if (banner) {
+          banner.style.display = 'none';
+          banner.classList.add('is-hidden');
+        }
         state.isPlanPanActive = false;
         showLaKinhToast('Đã ẩn thanh công cụ mặt bằng. Mở lại trong Tiện ích.');
-      });
+      };
+      btnPlanPanDone.addEventListener('click', handleClosePlanBar);
+      btnPlanPanDone.addEventListener('touchend', handleClosePlanBar);
     }
 
 
