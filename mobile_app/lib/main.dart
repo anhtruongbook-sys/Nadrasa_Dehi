@@ -76,8 +76,6 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF120104))
-      ..clearCache()
-      ..clearLocalStorage()
       ..addJavaScriptChannel(
         'NativeBridge',
         onMessageReceived: (JavaScriptMessage message) {
@@ -200,6 +198,20 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
           _startCompass();
         } else if (action == 'stopCompass') {
           _stopCompass();
+        } else if (action == 'haptic' || action == 'vibrate') {
+          final int duration = data['duration'] ?? 20;
+          try {
+            if (duration <= 25) {
+              HapticFeedback.lightImpact();
+            } else if (duration <= 45) {
+              HapticFeedback.mediumImpact();
+            } else {
+              HapticFeedback.heavyImpact();
+            }
+          } catch (_) {}
+          try {
+            _platform.invokeMethod('vibrate', {'duration': duration});
+          } catch (_) {}
         }
       }
     } catch (e) {

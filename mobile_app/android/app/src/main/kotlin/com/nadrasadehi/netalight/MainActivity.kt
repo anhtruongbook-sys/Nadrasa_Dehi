@@ -268,6 +268,28 @@ class MainActivity: FlutterActivity() {
                         result.error("ERROR", e.localizedMessage, null)
                     }
                 }
+                "vibrate" -> {
+                    val duration = (call.argument<Int>("duration") ?: 20).toLong()
+                    try {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? android.os.VibratorManager
+                            val vibrator = vibratorManager?.defaultVibrator
+                            vibrator?.vibrate(android.os.VibrationEffect.createOneShot(duration, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+                        } else {
+                            @Suppress("DEPRECATION")
+                            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                vibrator?.vibrate(android.os.VibrationEffect.createOneShot(duration, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+                            } else {
+                                @Suppress("DEPRECATION")
+                                vibrator?.vibrate(duration)
+                            }
+                        }
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.success(false)
+                    }
+                }
                 else -> {
                     result.notImplemented()
                 }

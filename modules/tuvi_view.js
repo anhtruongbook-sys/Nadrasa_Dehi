@@ -13,9 +13,38 @@
   let currentTuViDate = new Date();
   let currentIsMale = true;
   let isLunarMode = false; // Chuyển đổi Dương Lịch <-> Âm Lịch
-  let currentViewMode = 'grid'; // 'grid' (4x4) or 'list'
+  let currentViewMode = 'grid'; // 'grid' (4x4), 'list', or 'analysis'
   let currentChartData = null;
   let currentViewYear = new Date().getFullYear(); // Mặc định năm xem hạn là năm hiện tại
+  let cachedAnalysisResult = null;
+  let cachedAnalysisKey = '';
+  let aiPolishedText = '';
+  let isAiPolishing = false;
+  let aiErrorMessage = '';
+  let showAiBox = false;
+  let currentAnalysisSubTab = 'dashboard'; // 'dashboard' or 'full-report'
+  let currentPalaceFilter = 'ALL'; // 'ALL' or specific palace name
+
+  function showTuViToast(msg) {
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    } else if (global.showToast) {
+      global.showToast(msg);
+    }
+  }
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   // Grid row & col mappings for 12 Chi in 4x4 grid (1-based for CSS Grid)
   // Row 1: Tỵ(5), Ngọ(6), Mùi(7), Thân(8)
@@ -181,6 +210,9 @@
               <button class="ucc-view-btn ${currentViewMode === 'list' ? 'active' : ''}" id="btn-tuvi-mode-list" title="Danh sách 12 cung">
                 📜 12 Cung
               </button>
+              <button class="ucc-view-btn ${currentViewMode === 'analysis' ? 'active' : ''}" id="btn-tuvi-mode-analysis" title="Bản luận giải chuyên sâu hệ chuyên gia">
+                📖 Luận Giải
+              </button>
             </div>
             <button class="ucc-btn-submit" id="btn-tuvi-submit" title="Lập lại lá số">
               🔮 Lập Lá Số
@@ -202,7 +234,11 @@
         </div>
 
         <!-- Main Chart Display -->
-        ${currentViewMode === 'grid' ? renderGrid4x4HTML(meta, palaces) : renderListModeHTML(meta, palaces)}
+        ${currentViewMode === 'grid' 
+          ? renderGrid4x4HTML(meta, palaces) 
+          : (currentViewMode === 'list' 
+              ? renderListModeHTML(meta, palaces) 
+              : renderAnalysisModeHTML(chart))}
       </div>
 
       <!-- Palace Detail Modal -->
@@ -429,7 +465,739 @@
     `;
   }
 
+  function getOrRunAnalysis(chart) {
+    if (!global.NetaTuViInterpreter) return null;
+    const meta = chart.meta;
+    const targetYear = currentViewYear || meta.viewYear || new Date().getFullYear();
+    const key = `${meta.solarDay}_${meta.solarMonth}_${meta.solarYear}_${meta.hour}_${currentIsMale ? 'M' : 'F'}_${targetYear}`;
+
+    if (cachedAnalysisResult && cachedAnalysisKey === key) {
+      return cachedAnalysisResult;
+    }
+
+    try {
+      const res = global.NetaTuViInterpreter.interpret(chart, targetYear);
+      cachedAnalysisResult = res;
+      cachedAnalysisKey = key;
+      return res;
+    } catch (e) {
+      console.error('[TuViView] Analysis execution error:', e);
+      return null;
+    }
+  }
+
+  function downloadReportFile(content, filename) {
+    try {
+      const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'Bao_Cao_Luan_Giai_Tu_Vi.md';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showTuViToast('Đã tải tệp báo cáo markdown thành công!');
+    } catch (e) {
+      console.error('Download error:', e);
+      showTuViToast('Không thể tải file, vui lòng sao chép văn bản.');
+    }
+  }
+
+  async function triggerAiPolish(analysisResult) {
+    if (!analysisResult) return;
+    if (isAiPolishing) return;
+
+    showAiBox = true;
+    isAiPolishing = true;
+    aiErrorMessage = '';
+    renderTuVi();
+
+    try {
+      const geminiService = global.NetaGeminiService;
+      if (!geminiService) {
+        throw new Error('Dịch vụ Gemini AI chưa sẵn sàng. Vui lòng kiểm tra lại kết nối mạng hoặc cấu hình hệ thống.');
+      }
+
+      const apiKey = (geminiService.getActiveKey && geminiService.getActiveKey()) || (geminiService.getApiKey && geminiService.getApiKey()) || '';
+      if (!apiKey) {
+        throw new Error('Chưa cài đặt Google Gemini API Key. Bạn có thể cài đặt khóa tại mục Cài Đặt hoặc trong Trải Bài Tarot để sử dụng chung cho toàn bộ ứng dụng.');
+      }
+
+      const prompt = analysisResult.buildEditorialPolishPrompt 
+        ? analysisResult.buildEditorialPolishPrompt()
+        : (global.NetaTuViInterpreter && global.NetaTuViInterpreter.buildEditorialPolishPrompt 
+            ? global.NetaTuViInterpreter.buildEditorialPolishPrompt(analysisResult.reportMarkdown) 
+            : `Bạn là Tổng Biên Tập cao cấp chuyên ngành Tử Vi Đẩu Số. Hãy biên tập trau chuốt văn phong cho toàn văn báo cáo sau mà không tóm tắt hay lược bỏ bất kỳ mục nào:\n\n${analysisResult.reportMarkdown}`);
+
+      const sysInstruction = "Bạn là Tổng Biên Tập học thuật Tử Vi Đẩu Số cao cấp. Nhiệm vụ duy nhất của bạn là trau chuốt, biên tập và hoàn thiện văn phong từ bản báo cáo offline 100% được cung cấp. TUYỆT ĐỐI NGHIÊM CẤM tóm tắt rút gọn, nghiêm cấm tự ý sáng tác thêm bớt dữ liệu ngoài báo cáo gốc. Độ dài bài xuất bản phải tương đương bản gốc (>500 dòng).";
+
+      let responseText = null;
+      if (typeof geminiService.polishReport === 'function') {
+        const response = await geminiService.polishReport(prompt, {
+          temperature: 0.3,
+          maxOutputTokens: 8192,
+          timeoutMs: 90000,
+          systemInstruction: sysInstruction
+        });
+        responseText = typeof response === 'string' ? response : (response && response.text ? response.text : '');
+      } else if (typeof geminiService.callGeminiCascade === 'function') {
+        const response = await geminiService.callGeminiCascade(prompt, apiKey, {
+          temperature: 0.3,
+          maxOutputTokens: 8192,
+          timeoutMs: 90000,
+          systemInstruction: sysInstruction
+        });
+        if (response && response.text) {
+          responseText = response.text.replace(/```(?:text|markdown)?[^\n]*\n?([\s\S]*?)```/g, '$1').replace(/```/g, '').trim();
+        } else if (response && response.error) {
+          throw new Error(response.error);
+        }
+      } else {
+        throw new Error('Dịch vụ Gemini AI chưa sẵn sàng trên trình duyệt.');
+      }
+
+      if (responseText) {
+        aiPolishedText = responseText;
+      } else {
+        throw new Error('Không nhận được văn bản phản hồi từ máy chủ Gemini.');
+      }
+    } catch (err) {
+      console.error('[TuVi AI Polish Error]', err);
+      aiErrorMessage = err.message || 'Có lỗi xảy ra trong quá trình kết nối với Gemini AI.';
+    } finally {
+      isAiPolishing = false;
+      renderTuVi();
+    }
+  }
+
+  function formatMarkdownInline(str) {
+    if (!str) return '';
+    return str
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>')
+      .replace(/`([^`\n]+?)`/g, '<code class="tuvi-inline-code">$1</code>');
+  }
+
+  function renderMarkdownToHTML(str) {
+    if (!str) return '';
+    const lines = str.split('\n');
+    let html = '';
+    let inList = false;
+    let inTable = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      let rawLine = lines[i];
+      let line = rawLine.trim();
+
+      if (!line) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        continue;
+      }
+
+      if (line === '---' || line === '***' || line === '___') {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        html += '<hr class="tuvi-report-divider">';
+        continue;
+      }
+
+      if (line.startsWith('>')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        const quoteText = line.replace(/^>\s*/, '');
+        if (quoteText.startsWith('[!IMPORTANT]')) {
+          html += '<div class="tuvi-callout-box important"><strong>⚠️ Cảnh Báo Trọng Yếu:</strong> ' + formatMarkdownInline(quoteText.replace('[!IMPORTANT]', '').trim()) + '</div>';
+        } else if (quoteText.startsWith('[!NOTE]')) {
+          html += '<div class="tuvi-callout-box note"><strong>📌 Lưu Ý:</strong> ' + formatMarkdownInline(quoteText.replace('[!NOTE]', '').trim()) + '</div>';
+        } else {
+          html += '<blockquote class="tuvi-report-quote">' + formatMarkdownInline(quoteText) + '</blockquote>';
+        }
+        continue;
+      }
+
+      if (line.startsWith('|') && line.endsWith('|')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (/^\|[\s\-:]+(\|[\s\-:]+)+\|$/.test(line)) {
+          continue;
+        }
+
+        const cells = line.split('|').slice(1, -1).map(c => c.trim());
+        if (!inTable) {
+          inTable = true;
+          html += '<div class="tuvi-table-wrap"><table class="tuvi-report-table"><thead><tr>';
+          cells.forEach(cell => {
+            html += `<th>${formatMarkdownInline(cell)}</th>`;
+          });
+          html += '</tr></thead><tbody>';
+        } else {
+          html += '<tr>';
+          cells.forEach(cell => {
+            html += `<td>${formatMarkdownInline(cell)}</td>`;
+          });
+          html += '</tr>';
+        }
+        continue;
+      } else if (inTable) {
+        html += '</tbody></table></div>';
+        inTable = false;
+      }
+
+      if (line.startsWith('# ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const text = line.substring(2).trim();
+        html += `<h1 class="tuvi-report-h1">${formatMarkdownInline(text)}</h1>`;
+        continue;
+      }
+      if (line.startsWith('## ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const text = line.substring(3).trim();
+        const secId = 'sec-' + text.split('.')[0].trim().replace(/[^a-zA-Z0-9]/g, '');
+        html += `<h2 class="tuvi-report-h2" id="${secId}">${formatMarkdownInline(text)}</h2>`;
+        continue;
+      }
+      if (line.startsWith('### ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const text = line.substring(4).trim();
+        html += `<h3 class="tuvi-report-h3">${formatMarkdownInline(text)}</h3>`;
+        continue;
+      }
+      if (line.startsWith('#### ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const text = line.substring(5).trim();
+        html += `<h4 class="tuvi-report-h4">${formatMarkdownInline(text)}</h4>`;
+        continue;
+      }
+
+      if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('+ ')) {
+        if (!inList) { html += '<ul class="tuvi-report-list">'; inList = true; }
+        const itemText = line.substring(2).trim();
+        html += `<li>${formatMarkdownInline(itemText)}</li>`;
+        continue;
+      }
+
+      const numMatch = line.match(/^(\d+)\.\s+(.*)$/);
+      if (numMatch) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<div class="tuvi-report-num-item"><span class="tuvi-num-badge">${numMatch[1]}.</span> <div>${formatMarkdownInline(numMatch[2])}</div></div>`;
+        continue;
+      }
+
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<p class="tuvi-report-p">${formatMarkdownInline(line)}</p>`;
+    }
+
+    if (inList) html += '</ul>';
+    if (inTable) html += '</tbody></table></div>';
+    return html;
+  }
+
+  function renderAnalysisModeHTML(chart) {
+    const analysis = getOrRunAnalysis(chart);
+    if (!analysis) {
+      return `
+        <div class="tuvi-analysis-container">
+          <div class="tuvi-analysis-card" style="text-align: center; padding: 30px;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+              ⏳ Đang nạp Động cơ Hệ Chuyên Gia Tử Vi Đẩu Số...
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    const { chartData, patternData, evaluatedPalaces, tuHoaData, timingData, scoresData, reportMarkdown } = analysis;
+    const meta = chartData.meta;
+    const targetYear = meta.target_year;
+
+    // Helper: Map score to bar color gradient
+    const getScoreGradient = (sc) => {
+      if (sc >= 85) return 'linear-gradient(90deg, #27ae60, #2ecc71)';
+      if (sc >= 70) return 'linear-gradient(90deg, #2980b9, #3498db)';
+      if (sc >= 55) return 'linear-gradient(90deg, #f39c12, #f1c40f)';
+      if (sc >= 40) return 'linear-gradient(90deg, #d35400, #e67e22)';
+      return 'linear-gradient(90deg, #c0392b, #e74c3c)';
+    };
+
+    const getGradeLabel = (g) => {
+      if (!g) return 'Bình Hòa';
+      if (typeof g === 'object') return g.label || g.grade || 'Bình Hòa';
+      return String(g);
+    };
+
+    const getGradeClass = (gradeKey) => {
+      const g = String(getGradeLabel(gradeKey)).toLowerCase();
+      if (g.includes('excellent') || g.includes('thượng') || g.includes('xuất sắc')) return 'grade-excellent';
+      if (g.includes('good') || g.includes('cát') || g.includes('khá')) return 'grade-good';
+      if (g.includes('fair') || g.includes('bình') || g.includes('trung')) return 'grade-fair';
+      if (g.includes('warning') || g.includes('thử thách') || g.includes('trung hạ')) return 'grade-warning';
+      return 'grade-danger';
+    };
+
+    const lineCount = (reportMarkdown || '').split('\n').length;
+    const charCount = (reportMarkdown || '').length;
+
+    // Filter palaces for Card 6
+    const displayedPalaces = (currentPalaceFilter === 'ALL')
+      ? (evaluatedPalaces || [])
+      : (evaluatedPalaces || []).filter(ep => (ep.ten_cung || ep.cung_name) === currentPalaceFilter);
+
+    const PALACE_PILL_LIST = ['Mệnh', 'Quan Lộc', 'Tài Bạch', 'Phu Thê', 'Phúc Đức', 'Điền Trạch', 'Thiên Di', 'Tật Ách', 'Tử Tức', 'Huynh Đệ', 'Nô Bộc', 'Phụ Mẫu'];
+
+    return `
+      <div class="tuvi-analysis-container">
+        <!-- 1. Thanh Công Cụ Điều Hướng & Hành Động -->
+        <div class="tuvi-analysis-action-bar">
+          <div class="tuvi-badge-offline">
+            <span>📜</span>
+            <span>Tử Vi Đẩu Số Học Thuật (Nam Phái)</span>
+          </div>
+          <div class="tuvi-action-btns">
+            <button class="tuvi-btn-action-sm" id="btn-tuvi-copy-report" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
+              📋 Sao Chép Luận Giải
+            </button>
+            <button class="tuvi-btn-action-sm" id="btn-tuvi-download-report" title="Tải xuống bài luận giải dạng Markdown">
+              💾 Tải File (.MD)
+            </button>
+            <button class="tuvi-btn-polish-ai" id="btn-tuvi-polish-ai" title="Trau chuốt văn phong mượt mà">
+              ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
+            </button>
+          </div>
+        </div>
+
+        <!-- Sub-Tab Navigation -->
+        <div class="tuvi-analysis-subnav">
+          <button class="tuvi-subnav-btn ${currentAnalysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-tuvi-tab-dashboard">
+            📊 Bảng Phân Tích Tổng Hợp (7 Cột Trụ & 12 Cung)
+          </button>
+          <button class="tuvi-subnav-btn ${currentAnalysisSubTab === 'full-report' ? 'active' : ''}" id="btn-tuvi-tab-full-report">
+            📜 Toàn Văn Báo Cáo Học Thuật (>500 Dòng)
+          </button>
+        </div>
+
+        <!-- 2. Hộp Kết Quả Trau Chuốt Văn Phong (Nếu được kích hoạt) -->
+        ${showAiBox ? `
+          <div class="tuvi-ai-result-box" id="tuvi-ai-box">
+            <div class="tuvi-ai-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>✨ BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG</span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                ${aiPolishedText ? `
+                  <button class="tuvi-btn-action-sm" id="btn-copy-ai-polished" style="padding: 2px 8px; font-size: 0.7rem;">
+                    📋 Chép Văn Bản
+                  </button>
+                ` : ''}
+                <button class="tuvi-btn-action-sm" id="btn-close-ai-box" style="padding: 2px 8px; font-size: 0.7rem;">
+                  ✕ Đóng
+                </button>
+              </div>
+            </div>
+            <div class="tuvi-ai-body" style="max-height: 480px; overflow-y: auto; padding: 14px; font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
+              ${isAiPolishing ? `
+                <div style="display: flex; align-items: center; gap: 10px; color: var(--gold-glow); font-weight: 600;">
+                  <span class="loading-spinner">⏳</span>
+                  Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật...
+                </div>
+              ` : ''}
+              ${aiErrorMessage ? `
+                <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
+                  <div>⚠️ ${escapeHTML(aiErrorMessage)}</div>
+                  <div style="margin-top: 10px;">
+                    <button type="button" class="tuvi-btn-action-sm" id="btn-tuvi-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                      ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+              ${aiPolishedText ? renderMarkdownToHTML(aiPolishedText) : ''}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- 3. Nội dung hiển thị theo Sub-Tab -->
+        ${currentAnalysisSubTab === 'full-report' ? `
+          <!-- Full Report Reader Container -->
+          <div class="tuvi-full-report-wrap">
+            <div class="tuvi-report-meta-bar">
+              <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
+                <span>📜</span> BẢN TOÀN VĂN LUẬN GIẢI TỬ VI ĐẨU SỐ CHUYÊN SÂU
+              </div>
+              <div class="tuvi-report-stats-badge">
+                📄 ${lineCount} Dòng • ${charCount.toLocaleString('vi-VN')} Ký Tự • Năm Khảo Sát ${targetYear}
+              </div>
+            </div>
+
+            <!-- Table of Contents -->
+            <div class="tuvi-report-toc">
+              <span style="font-weight: 700; font-size: 0.72rem; color: var(--gold-primary); align-self: center; margin-right: 4px;">Mục lục nhanh:</span>
+              <a class="tuvi-report-toc-pill" href="#sec-I">I. Tổng Quan</a>
+              <a class="tuvi-report-toc-pill" href="#sec-II">II. Cách Cục</a>
+              <a class="tuvi-report-toc-pill" href="#sec-III">III. 6 Trụ Cột</a>
+              <a class="tuvi-report-toc-pill" href="#sec-IV">IV. 12 Cung Chức Năng</a>
+              <a class="tuvi-report-toc-pill" href="#sec-V">V. Tứ Hóa Khâm Thiên</a>
+              <a class="tuvi-report-toc-pill" href="#sec-VI">VI. Đại Vận 80 Năm</a>
+              <a class="tuvi-report-toc-pill" href="#sec-VII">VII. Niên Vận ${targetYear}</a>
+              <a class="tuvi-report-toc-pill" href="#sec-VIII">VIII. Đa Năm</a>
+              <a class="tuvi-report-toc-pill" href="#sec-IX">IX. Đạo Hóa Giải</a>
+            </div>
+
+            <div class="tuvi-full-report-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
+              ${renderMarkdownToHTML(reportMarkdown)}
+            </div>
+
+            <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid rgba(245, 176, 65, 0.3); display: flex; justify-content: flex-end; gap: 8px;">
+              <button class="tuvi-btn-action-sm" id="btn-tuvi-copy-report-bottom">
+                📋 Sao Chép Toàn Bộ Báo Cáo
+              </button>
+              <button class="tuvi-btn-action-sm" id="btn-tuvi-download-report-bottom">
+                💾 Tải File Báo Cáo (.MD)
+              </button>
+            </div>
+          </div>
+        ` : `
+          <!-- 3. Card 1: BẢNG ĐIỂM ĐỊNH LƯỢNG 6 TRỤ CỘT CUỘC ĐỜI (1 - 100) -->
+        <div class="tuvi-analysis-card">
+          <div class="tuvi-card-header">
+            <div class="tuvi-card-title">
+              <span>📊</span> BẢNG ĐIỂM ĐỊNH LƯỢNG 6 TRỤ CỘT CUỘC ĐỜI (1 - 100)
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Mô hình chấm điểm đa biến 40 chỉ số</span>
+          </div>
+
+          <div class="tuvi-scores-grid">
+            <!-- 1. Vận Mạng Căn Cốt -->
+            <div class="tuvi-score-item">
+              <div class="tuvi-score-head">
+                <span class="tuvi-score-label">1. Cốt Cách Bản Mệnh</span>
+                <span class="tuvi-score-num">${scoresData.overall_destiny.score}<small style="font-size: 0.65rem; color: var(--text-muted);">/100</small></span>
+              </div>
+              <div class="tuvi-score-bar-bg">
+                <div class="tuvi-score-bar-fill" style="width: ${scoresData.overall_destiny.score}%; background: ${getScoreGradient(scoresData.overall_destiny.score)};"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span class="tuvi-grade-badge ${getGradeClass(scoresData.overall_destiny.grade)}">${getGradeLabel(scoresData.overall_destiny.grade)}</span>
+                <span class="tuvi-score-desc">${scoresData.overall_destiny.desc}</span>
+              </div>
+            </div>
+
+            <!-- 2. Sự Nghiệp & Quyền Lực -->
+            <div class="tuvi-score-item">
+              <div class="tuvi-score-head">
+                <span class="tuvi-score-label">2. Sự Nghiệp & Quyền Lực</span>
+                <span class="tuvi-score-num">${scoresData.career_power.score}<small style="font-size: 0.65rem; color: var(--text-muted);">/100</small></span>
+              </div>
+              <div class="tuvi-score-bar-bg">
+                <div class="tuvi-score-bar-fill" style="width: ${scoresData.career_power.score}%; background: ${getScoreGradient(scoresData.career_power.score)};"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span class="tuvi-grade-badge ${getGradeClass(scoresData.career_power.grade)}">${getGradeLabel(scoresData.career_power.grade)}</span>
+                <span class="tuvi-score-desc">${scoresData.career_power.desc}</span>
+              </div>
+            </div>
+
+            <!-- 3. Tài Chính & Điền Sản -->
+            <div class="tuvi-score-item">
+              <div class="tuvi-score-head">
+                <span class="tuvi-score-label">3. Tài Chính & Điền Sản</span>
+                <span class="tuvi-score-num">${scoresData.wealth_assets.score}<small style="font-size: 0.65rem; color: var(--text-muted);">/100</small></span>
+              </div>
+              <div class="tuvi-score-bar-bg">
+                <div class="tuvi-score-bar-fill" style="width: ${scoresData.wealth_assets.score}%; background: ${getScoreGradient(scoresData.wealth_assets.score)};"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span class="tuvi-grade-badge ${getGradeClass(scoresData.wealth_assets.grade)}">${getGradeLabel(scoresData.wealth_assets.grade)}</span>
+                <span class="tuvi-score-desc">${scoresData.wealth_assets.desc}</span>
+              </div>
+            </div>
+
+            <!-- 4. Hôn Nhân & Gia Đạo -->
+            <div class="tuvi-score-item">
+              <div class="tuvi-score-head">
+                <span class="tuvi-score-label">4. Hôn Nhân & Gia Đạo</span>
+                <span class="tuvi-score-num">${scoresData.marriage_harmony.score}<small style="font-size: 0.65rem; color: var(--text-muted);">/100</small></span>
+              </div>
+              <div class="tuvi-score-bar-bg">
+                <div class="tuvi-score-bar-fill" style="width: ${scoresData.marriage_harmony.score}%; background: ${getScoreGradient(scoresData.marriage_harmony.score)};"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span class="tuvi-grade-badge ${getGradeClass(scoresData.marriage_harmony.grade)}">${getGradeLabel(scoresData.marriage_harmony.grade)}</span>
+                <span class="tuvi-score-desc">${scoresData.marriage_harmony.desc}</span>
+              </div>
+            </div>
+
+            <!-- 5. Sức Khỏe & Thọ Mệnh -->
+            <div class="tuvi-score-item">
+              <div class="tuvi-score-head">
+                <span class="tuvi-score-label">5. Sức Khỏe & Thọ Mệnh</span>
+                <span class="tuvi-score-num">${scoresData.health_longevity.score}<small style="font-size: 0.65rem; color: var(--text-muted);">/100</small></span>
+              </div>
+              <div class="tuvi-score-bar-bg">
+                <div class="tuvi-score-bar-fill" style="width: ${scoresData.health_longevity.score}%; background: ${getScoreGradient(scoresData.health_longevity.score)};"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span class="tuvi-grade-badge ${getGradeClass(scoresData.health_longevity.grade)}">${getGradeLabel(scoresData.health_longevity.grade)}</span>
+                <span class="tuvi-score-desc">${scoresData.health_longevity.desc}</span>
+              </div>
+            </div>
+
+            <!-- 6. Vận Hạn Năm Hiện Tại -->
+            <div class="tuvi-score-item">
+              <div class="tuvi-score-head">
+                <span class="tuvi-score-label">6. Vận Hạn Năm ${targetYear}</span>
+                <span class="tuvi-score-num">${scoresData.annual_fortune.score}<small style="font-size: 0.65rem; color: var(--text-muted);">/100</small></span>
+              </div>
+              <div class="tuvi-score-bar-bg">
+                <div class="tuvi-score-bar-fill" style="width: ${scoresData.annual_fortune.score}%; background: ${getScoreGradient(scoresData.annual_fortune.score)};"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span class="tuvi-grade-badge ${getGradeClass(scoresData.annual_fortune.grade)}">${getGradeLabel(scoresData.annual_fortune.grade)}</span>
+                <span class="tuvi-score-desc">${scoresData.annual_fortune.desc}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Card 2: NHẬN DIỆN CÁCH CỤC TIÊN THIÊN & BỘ SAO -->
+        <div class="tuvi-analysis-card">
+          <div class="tuvi-card-header">
+            <div class="tuvi-card-title">
+              <span>🏛️</span> CÁCH CỤC TIÊN THIÊN & TỔ HỢP TINH TÚ
+            </div>
+            <span style="font-size: 0.72rem; color: var(--gold-glow);">Bộ quy tắc 16 đại cách</span>
+          </div>
+
+          <div class="tuvi-patterns-wrap">
+            ${patternData.favorable && patternData.favorable.length > 0 ? `
+              <div style="margin-bottom: 12px;">
+                <div style="font-size: 0.75rem; color: #2ecc71; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">
+                  🌟 Cát Cách Thượng Đẳng Nhận Diện Được:
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${patternData.favorable.map(pat => `
+                    <div class="tuvi-pattern-badge favorable">
+                      <div class="tuvi-pat-name">✨ ${pat.name} <span style="font-size: 0.72rem; color: var(--gold-glow);">(${pat.level})</span></div>
+                      <div class="tuvi-pat-desc">${pat.description}</div>
+                      ${pat.career ? `<div style="margin-top: 4px; font-size: 0.74rem; color: var(--text-color);">🎯 <strong>Khuyên dùng chức nghiệp:</strong> ${pat.career}</div>` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : `
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0 0 10px 0;">
+                Mệnh Thân bình hòa, cách cục không rơi vào thế thiên lệch, thành bại do sự kiên trì và tích lũy tự thân.
+              </p>
+            `}
+
+            ${patternData.unfavorable && patternData.unfavorable.length > 0 ? `
+              <div>
+                <div style="font-size: 0.75rem; color: #e74c3c; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">
+                  ⚠️ Bại Cách Cần Chú Ý Hóa Giải:
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${patternData.unfavorable.map(pat => `
+                    <div class="tuvi-pattern-badge unfavorable">
+                      <div class="tuvi-pat-name">⚡ ${pat.name} <span style="font-size: 0.72rem; color: #f1948a;">(${pat.level})</span></div>
+                      <div class="tuvi-pat-desc">${pat.description}</div>
+                      ${pat.warning ? `<div style="margin-top: 4px; font-size: 0.74rem; color: #f5b7b1;">🛡️ <strong>Hóa giải:</strong> ${pat.warning}</div>` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- 5. Card 3: TỨ HÓA TIÊN THIÊN KHÂM THIÊN MÔN -->
+        <div class="tuvi-analysis-card">
+          <div class="tuvi-card-header">
+            <div class="tuvi-card-title">
+              <span>⚡</span> TỨ HÓA TIÊN THIÊN (KHÂM THIÊN MÔN & LỤC NỘI / NGOẠI)
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Khởi từ Can ${tuHoaData.year_gan}</span>
+          </div>
+
+          <div class="tuvi-tuhoa-grid">
+            ${['Hóa Lộc', 'Hóa Quyền', 'Hóa Khoa', 'Hóa Kỵ'].map(thName => {
+              const thObj = (tuHoaData.transformationsSummary && tuHoaData.transformationsSummary[thName]) || 
+                            (tuHoaData.transformations && tuHoaData.transformations[thName]) || 
+                            {};
+              const isNoi = thObj.palace_type === 'Nội Cung';
+              return `
+                <div class="tuvi-tuhoa-card ${thName === 'Hóa Kỵ' ? 'ky' : (thName === 'Hóa Lộc' ? 'loc' : 'common')}">
+                  <div class="tuvi-tuhoa-title">
+                    <span style="font-weight: 800;">${thName}</span>
+                    <span style="font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: ${isNoi ? 'rgba(46,204,113,0.2)' : 'rgba(230,126,34,0.2)'}; color: ${isNoi ? '#2ecc71' : '#e67e22'};">
+                      ${thObj.palace_type || 'Nội Cung'}
+                    </span>
+                  </div>
+                  <div style="font-size: 0.78rem; font-weight: 700; color: var(--gold-glow); margin: 4px 0;">
+                    ${thObj.star_name || ''} ➔ Cung ${thObj.cung_name || ''} (${thObj.dia_chi || ''})
+                  </div>
+                  <div style="font-size: 0.74rem; color: var(--text-color); line-height: 1.45;">
+                    ${thObj.kham_thien_doctrine || thObj.doctrine || 'Dòng năng lượng vận hành tiên thiên.'}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          ${tuHoaData.ky_clash_warning ? `
+            <div style="margin-top: 10px; background: rgba(231,76,60,0.12); border-left: 3px solid #e74c3c; padding: 8px 12px; border-radius: 4px; font-size: 0.76rem; color: #f1948a;">
+              <strong>Cảnh báo Xung Kỵ:</strong> ${tuHoaData.ky_clash_warning}
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- 6. Card 4: LỘ TRÌNH VẬN HẠN ĐA TẦNG (80 NĂM ĐẠI VẬN) -->
+        <div class="tuvi-analysis-card">
+          <div class="tuvi-card-header">
+            <div class="tuvi-card-title">
+              <span>⏳</span> LỘ TRÌNH ĐẠI VẬN SUỐT CUỘC ĐỜI (80 NĂM KHÍ SỐ)
+            </div>
+            <span style="font-size: 0.72rem; color: var(--gold-glow);">8 bước chuyển dịch vận mệnh</span>
+          </div>
+
+          <div class="tuvi-daivan-timeline">
+            ${(timingData.all_life_dai_vans || []).map(dv => {
+              const rel = dv.element_interaction || {};
+              return `
+                <div class="tuvi-daivan-step ${dv.is_active ? 'active' : ''}">
+                  <div class="tuvi-dv-head">
+                    <span class="tuvi-dv-range">${dv.range} Tuổi</span>
+                    <span class="tuvi-dv-cung">${dv.palace_name} (${dv.dia_chi})</span>
+                  </div>
+                  <div style="font-size: 0.72rem; color: var(--gold-glow); margin: 3px 0;">
+                    Can Chi: ${dv.thien_can} ${dv.dia_chi} • ${dv.nap_am}
+                  </div>
+                  <div class="tuvi-dv-desc">${dv.summary}</div>
+                  <div style="font-size: 0.7rem; color: #2ecc71; margin-top: 3px;">
+                    ${rel.status ? `Tương tác: ${rel.status}` : ''}
+                  </div>
+                  ${dv.is_active ? '<div class="tuvi-active-pill">Đang Vận Hành</div>' : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- 7. Card 5: VẬN HẠN LƯU NIÊN NĂM ${targetYear} & 12 THÁNG -->
+        <div class="tuvi-analysis-card">
+          <div class="tuvi-card-header">
+            <div class="tuvi-card-title">
+              <span>📅</span> NIÊN VẬN NĂM ${targetYear} (${meta.viewYearCanChi}) & KHÍ SỐ 12 THÁNG
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Tuổi mụ ${meta.lunar_age || meta.currentAgeMu} tuổi</span>
+          </div>
+
+          <div style="margin-bottom: 12px; font-size: 0.8rem; line-height: 1.6; color: var(--text-color);">
+            <div style="font-weight: 700; color: var(--gold-primary); margin-bottom: 4px;">
+              🎯 Trọng Tâm Cần Chú Ý Trong Năm:
+            </div>
+            <ul style="margin: 0; padding-left: 18px; color: var(--text-color);">
+              ${(Array.isArray(timingData.annual_focus) 
+                  ? timingData.annual_focus 
+                  : (timingData.annual_focus_list || (timingData.annual_focus && timingData.annual_focus.analysis ? [timingData.annual_focus.analysis] : []))
+                ).map(af => `<li style="margin-bottom: 4px;">${af}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div style="font-size: 0.76rem; font-weight: 700; color: var(--gold-primary); margin-bottom: 6px;">
+            🌙 Diễn Biến Khí Số Chi Tiết 12 Tháng Âm Lịch:
+          </div>
+
+          <div class="tuvi-months-grid">
+            ${(timingData.monthly_forecast || []).map(m => `
+              <div class="tuvi-month-card">
+                <div class="tuvi-m-head">
+                  <span class="tuvi-m-name">${m.month_name}</span>
+                  <span class="tuvi-m-cung">${m.palace} (${m.chi})</span>
+                </div>
+                <div class="tuvi-m-stars">Sao: ${m.chinh_tinh}</div>
+                <div class="tuvi-m-note">${m.note}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 8. Card 6: TOÀN DIỆN LUẬN GIẢI 12 CUNG CHỨC NĂNG -->
+        <div class="tuvi-analysis-card">
+          <div class="tuvi-card-header">
+            <div class="tuvi-card-title">
+              <span>📜</span> TOÀN DIỆN LUẬN GIẢI 12 CUNG CHỨC NĂNG (TOÀN VĂN HỌC THUẬT)
+            </div>
+            <span style="font-size: 0.72rem; color: var(--gold-glow);">Khảo luận 12 cung chức năng</span>
+          </div>
+
+          <!-- Palace Quick Filter Bar -->
+          <div class="tuvi-palace-filter-bar">
+            <button class="tuvi-palace-pill ${currentPalaceFilter === 'ALL' ? 'active' : ''}" data-palace-filter="ALL">🏰 Tất Cả 12 Cung</button>
+            ${PALACE_PILL_LIST.map(c => `
+              <button class="tuvi-palace-pill ${currentPalaceFilter === c ? 'active' : ''}" data-palace-filter="${c}">
+                ${c}
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="tuvi-palaces-treatise-list">
+            ${displayedPalaces.map(ep => {
+              const cungName = ep.ten_cung || ep.cung_name || 'Cung';
+              const canChi = ep.can_chi || `${ep.thien_can || ''} ${ep.dia_chi || ''}`.trim();
+              const score = ep.score != null ? ep.score : (ep.quality_score != null ? ep.quality_score : 50);
+              const level = ep.level || (score >= 70 ? 'Thượng Cát' : (score >= 50 ? 'Trung Bình Khá' : 'Cần Hóa Giải'));
+              const isMenh = cungName === 'Mệnh';
+              const treatiseContent = ep.deep_treatise || ep.summary || '';
+              const deepTreatiseHTML = renderMarkdownToHTML(treatiseContent);
+
+              return `
+                <div class="tuvi-palace-treatise-card" id="palace-card-${cungName}">
+                  <div class="tuvi-treatise-head">
+                    <span class="tuvi-treatise-name">
+                      🏰 CUNG ${String(cungName).toUpperCase()} ${canChi ? `(${canChi})` : ''}
+                      ${isMenh ? '<span style="color: var(--gold-glow); font-size: 0.72rem; margin-left: 6px;">[MỆNH CHỦ]</span>' : ''}
+                    </span>
+                    <span class="tuvi-grade-badge ${getGradeClass(level)}">
+                      Phẩm cách: ${level}
+                    </span>
+                  </div>
+
+                  <div class="tuvi-treatise-body" style="font-size: 0.8rem; line-height: 1.65;">
+                    ${deepTreatiseHTML}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- 9. Card 7: CHIẾN LƯỢC QUẢN TRỊ VẬN MỆNH & ĐẠO HÓA GIẢI -->
+        <div class="tuvi-analysis-card">
+          <div class="tuvi-card-header">
+            <div class="tuvi-card-title">
+              <span>🛡️</span> CHIẾN LƯỢC QUẢN TRỊ VẬN MỆNH & ĐẠO HÓA GIẢI
+            </div>
+            <span style="font-size: 0.72rem; color: var(--gold-glow);">Tâm niệm cổ thư</span>
+          </div>
+
+          <div style="font-size: 0.8rem; line-height: 1.65; color: var(--text-color);">
+            <p style="margin: 0 0 10px 0;">
+              Tử Vi Đẩu Số không phải là công cụ định kiến số phận bất biến mà là <strong>tấm bản đồ dự báo khí số thời gian</strong> giúp đương số hiểu rõ điểm mạnh tiên thiên để phát huy, nhận diện điểm khuyết hãm để hóa giải và nắm bắt đúng nhịp điệu của vận thế.
+            </p>
+            <ul style="margin: 0; padding-left: 18px; color: var(--text-color);">
+              <li style="margin-bottom: 6px;"><strong style="color: var(--gold-primary);">Đắc Thời Tận Lực:</strong> Khi vào đại hạn hoặc lưu niên cát lợi (Cát tinh, Hóa Lộc, Hóa Quyền hội tụ), cần chủ động dấn thân, mở rộng quy mô và quyết đoán nắm bắt cơ hội.</li>
+              <li style="margin-bottom: 6px;"><strong style="color: var(--gold-primary);">Thất Thời Tu Thân:</strong> Khi gặp đại hạn nghịch cảnh hoặc năm có sát tinh, Hóa Kỵ xung phá, cần thu hẹp biên độ rủi ro, quản trị tiền mặt, đầu tư vào tri thức, giữ gìn sức khỏe và hòa khí gia đình.</li>
+              <li style="margin-bottom: 6px;"><strong style="color: var(--gold-primary);">Đức Năng Thắng Số:</strong> Lấy đức hạnh, sự chân thành và tu dưỡng nội tâm làm gốc rễ cứu giải mọi hung tinh, biến hiểm nguy thành cơ hội rèn luyện bản lĩnh.</li>
+            </ul>
+          </div>
+        </div>
+      `}
+      </div>
+    `;
+  }
+
   function generateHourOptions(selectedHour) {
+
     const CHI_HOURS = [
       { name: 'Tý (23h - 01h)', hour: 0 },
       { name: 'Sửu (01h - 03h)', hour: 2 },
@@ -460,6 +1228,7 @@
     // Mode toggles
     const btnGrid = document.getElementById('btn-tuvi-mode-grid');
     const btnList = document.getElementById('btn-tuvi-mode-list');
+    const btnAnalysis = document.getElementById('btn-tuvi-mode-analysis');
     if (btnGrid) {
       btnGrid.onclick = () => {
         currentViewMode = 'grid';
@@ -470,6 +1239,138 @@
       btnList.onclick = () => {
         currentViewMode = 'list';
         renderTuVi();
+      };
+    }
+    if (btnAnalysis) {
+      btnAnalysis.onclick = () => {
+        currentViewMode = 'analysis';
+        renderTuVi();
+      };
+    }
+
+    // Analysis mode actions
+    const btnCopyReport = document.getElementById('btn-tuvi-copy-report');
+    if (btnCopyReport) {
+      btnCopyReport.onclick = () => {
+        const analysis = getOrRunAnalysis(chart);
+        if (analysis && analysis.reportMarkdown) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(analysis.reportMarkdown).then(() => {
+              showTuViToast('Đã sao chép toàn bộ bài luận giải vào bộ nhớ tạm!');
+            }).catch(() => {
+              showTuViToast('Không thể sao chép tự động.');
+            });
+          } else {
+            showTuViToast('Trình duyệt không hỗ trợ tự động chép.');
+          }
+        }
+      };
+    }
+
+    const btnDownloadReport = document.getElementById('btn-tuvi-download-report');
+    if (btnDownloadReport) {
+      btnDownloadReport.onclick = () => {
+        const analysis = getOrRunAnalysis(chart);
+        if (analysis && analysis.reportMarkdown) {
+          const fn = `Bao_Cao_Tu_Vi_${chart.meta.solarDay}_${chart.meta.solarMonth}_${chart.meta.solarYear}_Nam_${chart.meta.viewYear}.md`;
+          downloadReportFile(analysis.reportMarkdown, fn);
+        }
+      };
+    }
+
+    const btnPolishAi = document.getElementById('btn-tuvi-polish-ai');
+    if (btnPolishAi) {
+      btnPolishAi.onclick = () => {
+        if (!showAiBox && aiPolishedText) {
+          showAiBox = true;
+          renderTuVi();
+          return;
+        }
+        const analysis = getOrRunAnalysis(chart);
+        if (analysis) {
+          triggerAiPolish(analysis);
+        }
+      };
+    }
+
+    const btnCloseAiBox = document.getElementById('btn-close-ai-box');
+    if (btnCloseAiBox) {
+      btnCloseAiBox.onclick = () => {
+        showAiBox = false;
+        renderTuVi();
+      };
+    }
+
+    const btnTuViOpenKey = document.getElementById('btn-tuvi-open-key-modal');
+    if (btnTuViOpenKey) {
+      btnTuViOpenKey.onclick = () => {
+        if (global.NetaGeminiService && typeof global.NetaGeminiService.openConfigModal === 'function') {
+          global.NetaGeminiService.openConfigModal();
+        } else if (global.NetaTarotView && typeof global.NetaTarotView.openKeyConfigModal === 'function') {
+          global.NetaTarotView.openKeyConfigModal();
+        }
+      };
+    }
+
+    const btnCopyAiPolished = document.getElementById('btn-copy-ai-polished');
+    if (btnCopyAiPolished && aiPolishedText) {
+      btnCopyAiPolished.onclick = () => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(aiPolishedText).then(() => {
+            showTuViToast('Đã sao chép bản luận giải trau chuốt vào bộ nhớ tạm!');
+          });
+        }
+      };
+    }
+
+    // Analysis Sub-Tab Navigation
+    const btnTabDash = document.getElementById('btn-tuvi-tab-dashboard');
+    if (btnTabDash) {
+      btnTabDash.onclick = () => {
+        currentAnalysisSubTab = 'dashboard';
+        renderTuVi();
+      };
+    }
+    const btnTabFull = document.getElementById('btn-tuvi-tab-full-report');
+    if (btnTabFull) {
+      btnTabFull.onclick = () => {
+        currentAnalysisSubTab = 'full-report';
+        renderTuVi();
+      };
+    }
+
+    // Palace Filter Pills
+    document.querySelectorAll('.tuvi-palace-pill').forEach(pill => {
+      pill.onclick = () => {
+        const val = pill.getAttribute('data-palace-filter');
+        currentPalaceFilter = val || 'ALL';
+        renderTuVi();
+      };
+    });
+
+    // Bottom Action Buttons
+    const btnCopyBottom = document.getElementById('btn-tuvi-copy-report-bottom');
+    if (btnCopyBottom) {
+      btnCopyBottom.onclick = () => {
+        const analysis = getOrRunAnalysis(chart);
+        if (analysis && analysis.reportMarkdown) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(analysis.reportMarkdown).then(() => {
+              showTuViToast('Đã sao chép toàn bộ bài luận giải vào bộ nhớ tạm!');
+            });
+          }
+        }
+      };
+    }
+
+    const btnDownloadBottom = document.getElementById('btn-tuvi-download-report-bottom');
+    if (btnDownloadBottom) {
+      btnDownloadBottom.onclick = () => {
+        const analysis = getOrRunAnalysis(chart);
+        if (analysis && analysis.reportMarkdown) {
+          const fn = `Bao_Cao_Tu_Vi_${chart.meta.solarDay}_${chart.meta.solarMonth}_${chart.meta.solarYear}_Nam_${chart.meta.viewYear}.md`;
+          downloadReportFile(analysis.reportMarkdown, fn);
+        }
       };
     }
 

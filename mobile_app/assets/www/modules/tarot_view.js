@@ -151,6 +151,17 @@
 
   function triggerHaptic(duration = 15) {
     if (!hapticEnabled) return; // MẶC ĐỊNH TẮT, CHỈ CHẠY KHI NGƯỜI DÙNG BẬT
+    // 1. Cầu nối NativeBridge cho ứng dụng Android APK Flutter
+    try {
+      if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+        window.NativeBridge.postMessage(JSON.stringify({
+          action: 'haptic',
+          duration: duration
+        }));
+      }
+    } catch (e) {}
+
+    // 2. Dự phòng cho trình duyệt Web thông thường (HTML5 Vibration API)
     try {
       if (typeof navigator !== 'undefined' && navigator.vibrate) {
         navigator.vibrate(duration);

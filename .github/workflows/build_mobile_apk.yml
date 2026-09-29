@@ -76,10 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.7
-          name: "Neta Light v2.5.7 (Chuẩn Hóa AI Biên Tập & Soạn Lại Luận Giải Thuật Toán Lục Hào & Tarot)"
+          tag_name: v2.5.8
+          name: "Neta Light v2.5.8 (Khắc Phục Rung Haptic Trên APK, Bát Tự & Tử Vi Học Thuật)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.7
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.8
+            - **Khắc phục triệt để tính năng Rung (Haptic Feedback) trên ứng dụng Android APK**:
+              + Tích hợp NativeBridge kết nối trực tiếp bộ rung phần cứng Android và Flutter HapticFeedback.
+              + Bổ sung quyền `android.permission.VIBRATE` trong AndroidManifest.xml.
+              + Loại bỏ lệnh xóa bộ nhớ đệm giúp lưu trữ vĩnh viễn cấu hình bật/tắt rung, API key và dữ liệu lá số.
+            - **Chuẩn hóa Module Luận Giải Bát Tự & Tử Vi Đẩu Số**:
+              + Khắc phục nút đóng kết quả trau chuốt AI.
+              + Nâng cấp dung lượng token kịch trần 8192 tokens với chỉ thị Zero-Truncation, bảo toàn toàn văn >500 dòng chi tiết.
             Chuẩn hóa kiến trúc AI đóng vai trò Ban Biên Tập & Soạn Lại Văn Phong cho cả Lục Hào và Tarot:
             
             - **Chỉ Dùng AI Soạn Lại & Biên Tập Lại Toàn Bộ Bản Luận Giải Offline (Bằng Thuật Toán)**:

@@ -100,6 +100,15 @@
 
   // Rung phản hồi xúc giác nhẹ (Haptic)
   function triggerHaptic(duration = 20) {
+    try {
+      if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+        window.NativeBridge.postMessage(JSON.stringify({
+          action: 'haptic',
+          duration: duration
+        }));
+      }
+    } catch (e) {}
+
     if (navigator.vibrate) {
       try { navigator.vibrate(duration); } catch (e) {}
     }

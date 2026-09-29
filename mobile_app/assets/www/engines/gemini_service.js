@@ -206,7 +206,28 @@
    * Tự động gọi API Google với cơ chế đa chiến lược (x-goog-api-key, URL param, Bearer)
    * Tương thích 100% với cả Auth Key mới (AQ...) và Standard API Key (AIza...)
    */
-  async function callGeminiCascade(promptText, apiKey, options = {}) {
+  async function callGeminiCascade(promptTextOrObj, apiKeyParam, optionsParam = {}) {
+    let promptText = promptTextOrObj;
+    let apiKey = apiKeyParam;
+    let options = optionsParam;
+
+    if (typeof promptTextOrObj === 'object' && promptTextOrObj !== null) {
+      promptText = promptTextOrObj.prompt || promptTextOrObj.promptText || '';
+      apiKey = promptTextOrObj.apiKey || apiKeyParam;
+      options = Object.assign({}, promptTextOrObj, optionsParam);
+    }
+
+    if (!apiKey) {
+      apiKey = getActiveKey();
+    }
+
+    if (!apiKey) {
+      return {
+        text: null,
+        error: 'Chưa cài đặt Gemini API Key. Bạn có thể cài đặt khóa tại mục Cài Đặt hoặc trong Trải Bài Tarot để sử dụng chung cho toàn bộ ứng dụng.'
+      };
+    }
+
     let lastErrorReason = null;
     let hadAuthError = false;
 
@@ -214,8 +235,8 @@
     const candidateModels = await discoverAvailableModels(apiKey);
 
     const temperature = options.temperature !== undefined ? options.temperature : 0.7;
-    const maxOutputTokens = options.maxOutputTokens || 4096;
-    const timeoutMs = options.timeoutMs || 25000;
+    const maxOutputTokens = options.maxOutputTokens || 8192;
+    const timeoutMs = options.timeoutMs || 90000;
 
     const payload = {
       contents: [{ parts: [{ text: promptText }] }],
@@ -224,6 +245,12 @@
         maxOutputTokens: maxOutputTokens
       }
     };
+
+    if (options.systemInstruction) {
+      payload.systemInstruction = {
+        parts: [{ text: options.systemInstruction }]
+      };
+    }
 
     for (const model of candidateModels) {
       try {
@@ -431,9 +458,60 @@ ${offlineReportText}`;
     return res;
   }
 
+  /**
+   * Hàm dùng chung biên tập, trau chuốt văn bản luận giải học thuật
+   * (Dùng chung cho Bát Tự, Tử Vi, Lục Hào, Phong Thủy)
+   */
+  async function polishReport(promptTextOrObj, optionsParam = {}) {
+    let promptText = promptTextOrObj;
+    let options = optionsParam;
+
+    if (typeof promptTextOrObj === 'object' && promptTextOrObj !== null) {
+      promptText = promptTextOrObj.prompt || promptTextOrObj.promptText || '';
+      options = Object.assign({}, promptTextOrObj, optionsParam);
+    }
+
+    const key = (options && options.apiKey) || getActiveKey();
+    if (!key) {
+      throw new Error('Chưa cài đặt Google Gemini API Key. Bạn có thể cài đặt khóa tại mục Cài Đặt hoặc trong Trải Bài Tarot để sử dụng chung cho toàn bộ ứng dụng.');
+    }
+
+    const res = await callGeminiCascade(promptText, key, Object.assign({
+      temperature: 0.3,
+      maxOutputTokens: 8192,
+      timeoutMs: 90000
+    }, options));
+
+    if (res && res.text) {
+      let cleaned = res.text.trim();
+      cleaned = cleaned.replace(/```(?:text|markdown)?[^\n]*\n?([\s\S]*?)```/g, '$1');
+      cleaned = cleaned.replace(/```[a-zA-Z]*/g, '').replace(/```/g, '');
+      cleaned = cleaned.replace(/^[=\-~_]{3,}\s*$/gm, '');
+      return cleaned;
+    }
+
+    if (res && res.error) {
+      throw new Error(res.error);
+    }
+
+    throw new Error('Không nhận được văn bản phản hồi từ máy chủ Gemini.');
+  }
+
+  /**
+   * Mở modal cấu hình khóa Gemini dùng chung
+   */
+  function openConfigModal() {
+    if (global.NetaTarotView && typeof global.NetaTarotView.openKeyConfigModal === 'function') {
+      global.NetaTarotView.openKeyConfigModal();
+    } else {
+      console.warn('Modal cấu hình khóa chưa sẵn sàng.');
+    }
+  }
+
   // Export module ra global
   global.NetaGeminiService = {
     getActiveKey,
+    getApiKey: getActiveKey, // Alias tương thích ngược 100%
     hasActiveKey,
     setCustomKey,
     clearCustomKey,
@@ -441,6 +519,8 @@ ${offlineReportText}`;
     isDeepSynthesisEnabled,
     setDeepSynthesisEnabled,
     interpretTarotReading,
+    polishReport,
+    openConfigModal,
     discoverAvailableModels,
     callGeminiCascade,
     testConnection,

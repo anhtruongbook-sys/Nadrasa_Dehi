@@ -240,13 +240,133 @@
     }));
   }
 
-  function calcLuckPillars(yearGan, monthGan, monthZhi, dayGan, isMale, startAge = 3, birthYear = 2000) {
+  // ==========================================
+  // THUẬT TOÁN THIÊN VĂN TÍNH NĂM KHỞI ĐẠI VẬN CHÍNH XÁC (JEAN MEEUS)
+  // ==========================================
+
+  const MAJOR_SOLAR_TERMS = [
+    { name: 'Lập Xuân', zhi: 'Dần', deg: 315.0, approx_month: 2 },
+    { name: 'Kinh Trập', zhi: 'Mão', deg: 345.0, approx_month: 3 },
+    { name: 'Thanh Minh', zhi: 'Thìn', deg: 15.0, approx_month: 4 },
+    { name: 'Lập Hạ', zhi: 'Tỵ', deg: 45.0, approx_month: 5 },
+    { name: 'Mang Chủng', zhi: 'Ngọ', deg: 75.0, approx_month: 6 },
+    { name: 'Tiểu Thử', zhi: 'Mùi', deg: 105.0, approx_month: 7 },
+    { name: 'Lập Thu', zhi: 'Thân', deg: 135.0, approx_month: 8 },
+    { name: 'Bạch Lộ', zhi: 'Dậu', deg: 165.0, approx_month: 9 },
+    { name: 'Hàn Lộ', zhi: 'Tuất', deg: 195.0, approx_month: 10 },
+    { name: 'Lập Đông', zhi: 'Hợi', deg: 225.0, approx_month: 11 },
+    { name: 'Đại Tuyết', zhi: 'Tý', deg: 255.0, approx_month: 12 },
+    { name: 'Tiểu Hàn', zhi: 'Sửu', deg: 285.0, approx_month: 1 }
+  ];
+
+  function sunLongitude(date) {
+    let y = date.getFullYear();
+    let m = date.getMonth() + 1;
+    const d = date.getDate() + (date.getHours() + date.getMinutes() / 60.0 + date.getSeconds() / 3600.0) / 24.0;
+    if (m <= 2) { y -= 1; m += 12; }
+    const a = Math.floor(y / 100);
+    const b = 2 - a + Math.floor(a / 4);
+    const jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + b - 1524.5;
+    const jdUtc = jd - 7.0 / 24.0;
+    const T = (jdUtc - 2451545.0) / 36525.0;
+
+    const L0 = (280.46646 + 36000.76983 * T + 0.0003032 * T * T) % 360.0;
+    const M = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) % 360.0;
+    const Mr = M * Math.PI / 180.0;
+    let C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(Mr);
+    C += (0.019993 - 0.000101 * T) * Math.sin(2 * Mr);
+    C += 0.000289 * Math.sin(3 * Mr);
+
+    return ((L0 + C) % 360.0 + 360.0) % 360.0;
+  }
+
+  function findSolarTermTime(year, targetDeg, approxMonth) {
+    const tStart = new Date(year, approxMonth - 1, 1).getTime() - 12 * 86400000;
+    const tEnd = new Date(year, approxMonth - 1, 28, 23, 59).getTime() + 12 * 86400000;
+    let low = tStart;
+    let high = tEnd;
+    for (let i = 0; i < 50; i++) {
+      const mid = (low + high) / 2.0;
+      const deg = sunLongitude(new Date(mid));
+      let diff = (deg - targetDeg + 180) % 360 - 180;
+      if (diff < 0) low = mid;
+      else high = mid;
+    }
+    return new Date((low + high) / 2.0);
+  }
+
+  /**
+   * Tính Tuổi & Năm Khởi Đại Vận chính xác 100% theo Tử Bình cổ thư và Tiết Khí thiên văn
+   * Dương Nam / Âm Nữ: Đi Thuận đến Tiết Khí kế tiếp
+   * Âm Nam / Dương Nữ: Đi Nghịch lùi về Tiết Khí trước đó
+   */
+  function calculateLuckStart(solarDate, isMale, yearGan) {
+    const isYangYear = GAN_YIN_YANG[yearGan] === '+';
+    const isForward = (isMale && isYangYear) || (!isMale && !isYangYear);
+    const y = solarDate.getFullYear();
+    const allTerms = [];
+    for (const yearVal of [y - 1, y, y + 1]) {
+      for (const item of MAJOR_SOLAR_TERMS) {
+        const termDt = findSolarTermTime(yearVal, item.deg, item.approx_month);
+        allTerms.push({ name: item.name, zhi: item.zhi, dt: termDt });
+      }
+    }
+    allTerms.sort((a, b) => a.dt.getTime() - b.dt.getTime());
+
+    let targetTerm = null;
+    let diffDays = 0.0;
+    const birthTime = solarDate.getTime();
+    if (isForward) {
+      for (const t of allTerms) {
+        if (t.dt.getTime() > birthTime) {
+          targetTerm = t;
+          diffDays = (t.dt.getTime() - birthTime) / 86400000.0;
+          break;
+        }
+      }
+    } else {
+      for (let i = allTerms.length - 1; i >= 0; i--) {
+        const t = allTerms[i];
+        if (t.dt.getTime() <= birthTime) {
+          targetTerm = t;
+          diffDays = (birthTime - t.dt.getTime()) / 86400000.0;
+          break;
+        }
+      }
+    }
+
+    const yearsFloat = diffDays / 3.0;
+    const yPart = Math.floor(yearsFloat);
+    const mPart = Math.floor((yearsFloat - yPart) * 12);
+    const dPart = Math.round(((yearsFloat - yPart) * 12 - mPart) * 30);
+    let curY = solarDate.getFullYear() + yPart;
+    let curM = (solarDate.getMonth() + 1) + mPart;
+    while (curM > 12) {
+      curY += 1;
+      curM -= 12;
+    }
+    const startYear = curY;
+    const startAge = startYear - solarDate.getFullYear();
+    return {
+      isForward,
+      direction: isForward ? 'Thuận' : 'Nghịch',
+      startYear,
+      startAge,
+      startAgeLunar: startAge + 1,
+      targetTerm: targetTerm ? targetTerm.name : '',
+      diffDays: parseFloat(diffDays.toFixed(2)),
+      detailStr: `${yPart} năm ${mPart} tháng ${dPart} ngày (Khởi từ ${curY}-${String(curM).padStart(2, '0')} => Năm ${startYear})`
+    };
+  }
+
+  function calcLuckPillars(yearGan, monthGan, monthZhi, dayGan, isMale, startAge = 2, birthYear = 2000, startYear = null) {
     const isYangYear = GAN_YIN_YANG[yearGan] === '+';
     // Dương Nam Âm Nữ đi thuận (+1), Âm Nam Dương Nữ đi nghịch (-1)
     const dir = ((isMale && isYangYear) || (!isMale && !isYangYear)) ? 1 : -1;
     let curGanIdx = getGanIdx(monthGan);
     let curZhiIdx = getZhiIdx(monthZhi);
     const results = [];
+    const baseStartYear = (startYear !== null && startYear !== undefined) ? startYear : (birthYear > 0 ? (birthYear + startAge) : 0);
 
     for (let i = 1; i <= 10; i++) {
       curGanIdx = ((curGanIdx + dir) % 10 + 10) % 10;
@@ -268,7 +388,7 @@
       }));
 
       const age = startAge + (i - 1) * 10;
-      const year = birthYear > 0 ? birthYear + age : 0;
+      const year = baseStartYear > 0 ? (baseStartYear + (i - 1) * 10) : 0;
       const annualPillars = [];
 
       if (year > 0) {
@@ -401,14 +521,18 @@
     solarDate = null,
     day = 24, month = 9, year = 2026, hour = 11, minute = 0,
     isMale = true,
-    startAge = 3
+    startAge = null,
+    startYear = null
   }) {
-    let d = day, m = month, y = year, h = hour;
+    let d = day, m = month, y = year, h = hour, min = minute;
     if (solarDate instanceof Date) {
       d = solarDate.getDate();
       m = solarDate.getMonth() + 1;
       y = solarDate.getFullYear();
       h = solarDate.getHours();
+      min = solarDate.getMinutes();
+    } else {
+      solarDate = new Date(y, m - 1, d, h, min, 0);
     }
 
     // Sử dụng NetaCalendarEngine tính Can Chi theo Tiết Khí chuẩn
@@ -487,11 +611,22 @@
     const mengGong = (canChiData && canChiData.mengGong) ? canChiData.mengGong : mengGongZhi;
     const palaces = array12Palaces(mengGongZhi, isMale);
     const spirits = array12Spirits(yearZhi, isMale);
-    const luckData = calcLuckPillars(yearGan, monthGan, monthZhi, dayGan, isMale, startAge, y);
+
+    // Tính toán Tuổi & Năm Khởi Đại Vận chính xác 100% theo Tiết Khí thiên văn
+    const luckStartCalc = calculateLuckStart(solarDate, isMale, yearGan);
+    const actualStartAge = (startAge !== null && startAge !== undefined) ? startAge : luckStartCalc.startAge;
+    const actualStartYear = (startYear !== null && startYear !== undefined) ? startYear : luckStartCalc.startYear;
+    const luckStart = {
+      ...luckStartCalc,
+      startAge: actualStartAge,
+      startYear: actualStartYear
+    };
+
+    const luckData = calcLuckPillars(yearGan, monthGan, monthZhi, dayGan, isMale, actualStartAge, y, actualStartYear);
     const interactions = evaluateBaziInteractions(zhiArr);
 
     return {
-      input: { day: d, month: m, year: y, hour: h, minute, isMale, startAge },
+      input: { day: d, month: m, year: y, hour: h, minute, isMale, startAge: actualStartAge, startYear: actualStartYear },
       dayMaster: {
         gan: dayGan,
         wx: dayMasterWx,
@@ -508,6 +643,7 @@
         palaces,
         spirits
       },
+      luckStart,
       daYun: luckData
     };
   }
@@ -533,6 +669,9 @@
     calcMengGong,
     evaluateBaziInteractions,
     calcLuckPillars,
+    calculateLuckStart,
+    findSolarTermTime,
+    sunLongitude,
     getWuXingColorClass,
     TIAN_GAN,
     DI_ZHI,
