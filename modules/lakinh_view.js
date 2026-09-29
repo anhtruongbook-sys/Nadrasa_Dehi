@@ -2343,12 +2343,12 @@
     if (hudKhau) hudKhau.innerHTML = `<span style="color:#06b6d4;">${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(1)}°)</span> • <strong>${cucName}</strong> (${thuyPhap.the_cuc})`;
     if (hudSinh) hudSinh.innerHTML = `Sinh: <b style="color:#4ade80;">${tsSon}</b> • Vượng: <b style="color:#facc15;">${dvSon}</b> • Quan: <b style="color:#38bdf8;">${lqSon}</b> • Mộ: <b style="color:#c084fc;">${mkSon}</b>`;
     if (hudHT) {
-      const htCacSon = (htChiTiet && htChiTiet.danh_sach_son.length > 0) ? htChiTiet.danh_sach_son.map(s => `Sơn ${s.son} (${s.deg_range})`).join(', ') : 'Không có';
-      hudHT.innerHTML = `${hoangTuyen.loai_sat} • Kỵ khứ thủy & cấm mở cổng tại: <b style="color:#fca5a5;">${htCacSon}</b>`;
+      const htCacSon = (htChiTiet && htChiTiet.danh_sach_son.length > 0) ? htChiTiet.danh_sach_son.map(s => `Sơn ${s.son} (Thoát Nước Thiên Bàn: ${s.deg_range_thien_ban} | Cửa Địa Bàn: ${s.deg_range_dia_ban})`).join(', ') : 'Không có';
+      hudHT.innerHTML = `${hoangTuyen.loai_sat} • Kỵ: <b style="color:#fca5a5;">${htCacSon}</b>`;
     }
     if (hudBS) {
-      const bsInfoStr = bsChiTiet ? `Sơn <b style="color:#f87171;">${bsChiTiet.chi_sat} (${bsChiTiet.deg_range})</b> (Cung ${bsChiTiet.cung_sat} - ${bsChiTiet.con_vat})` : 'Không xác định';
-      hudBS.innerHTML = `Đại kỵ Cửa Cổng & Lai thủy tại: ${bsInfoStr}`;
+      const bsInfoStr = bsChiTiet ? `Sơn <b style="color:#f87171;">${bsChiTiet.chi_sat}</b> (Cửa & Bể Phốt Địa Bàn: ${bsChiTiet.deg_range_dia_ban} • Lai Thủy Thiên Bàn: ${bsChiTiet.deg_range_thien_ban} • Sa Xung Nhân Bàn: ${bsChiTiet.deg_range_nhan_ban})` : 'Không xác định';
+      hudBS.innerHTML = `Đại kỵ Cửa Cổng, Sa & Thủy tại: ${bsInfoStr}`;
     }
     if (hudTS) {
       const tsInfoStr = tsChiTiet ? `Phương <b style="color:#fde047;">${tsChiTiet.phuong_tam_sat} (${tsChiTiet.dai_do_so})</b>` : 'Không xác định';
@@ -6615,19 +6615,25 @@ function updateQmdjStrategicLayer() {
                   <div style="font-size: 0.70rem; color: #fca5a5; font-weight: 700; margin-bottom: 4px;">
                     🚫 CÁC HƯỚNG PHẠM HOÀNG TUYỀN CỦA HƯỚNG ${huongSon}:
                   </div>
-                  <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
+                  <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 5px;">
                     ${hoangTuyenChiTiet && hoangTuyenChiTiet.danh_sach_son.length > 0 
                       ? hoangTuyenChiTiet.danh_sach_son.map(item => `
-                        <span style="background: rgba(239, 68, 68, 0.28); border: 1px solid #ef4444; color: #ffffff; padding: 2px 7px; border-radius: 6px; font-size: 0.68rem; font-weight: 700;">
-                          Sơn ${item.son} (${item.deg_range} • Cung ${item.cung})
-                        </span>
+                        <div style="background: rgba(239, 68, 68, 0.25); border: 1px solid #ef4444; color: #ffffff; padding: 3px 8px; border-radius: 6px; font-size: 0.68rem;">
+                          <div style="font-weight: 800; color: #fecaca; margin-bottom: 2px;">
+                            Sơn ${item.son} (Cung ${item.cung})
+                          </div>
+                          <div style="font-size: 0.65rem; color: #cbd5e1; display: grid; grid-template-columns: 1fr; gap: 1px;">
+                            <div>🌊 <b>Thoát Nước (Thiên Bàn Phùng Châm):</b> <span style="color: #38bdf8;">${item.deg_range_thien_ban}</span></div>
+                            <div>🚪 <b>Cửa/Cổng (Địa Bàn Chính Châm):</b> <span style="color: #fbbf24;">${item.deg_range_dia_ban}</span></div>
+                          </div>
+                        </div>
                       `).join('') 
                       : '<span style="color: #4ade80; font-size: 0.68rem;">Hướng này không có phương vị Hoàng Tuyền trực tiếp</span>'
                     }
                   </div>
                   <div style="font-size: 0.68rem; color: #cbd5e1; line-height: 1.45;">
-                    • <strong style="color: #f87171;">Thoát Nước (Khứ Thủy):</strong> CẤM đào cống ngầm, rãnh xả nước, hố ga chảy thoát qua các phương vị trên (tránh phạm <em>Sát Nhân Hoàng Tuyền</em> gây hao tài tổn đinh).<br>
-                    • <strong style="color: #facc15;">Cửa & Cổng:</strong> Tránh mở cổng ngõ hoặc cửa phụ đón lối đi tại các phương này nếu phía trước có dòng nước xiết.
+                    • <strong style="color: #f87171;">Thoát Nước (Khứ Thủy):</strong> CẤM đào cống ngầm, rãnh xả nước, hố ga chảy thoát qua phương vị trên theo <em>Thiên Bàn Phùng Châm</em> (tránh phạm <em>Sát Nhân Hoàng Tuyền</em> gây hao tài tổn đinh).<br>
+                    • <strong style="color: #facc15;">Cửa & Cổng:</strong> Tránh mở cổng ngõ đón dòng nước xiết xộc thẳng vào từ phương này theo <em>Địa Bàn Chính Châm</em>.
                   </div>
                 </div>
               </div>
@@ -6650,11 +6656,15 @@ function updateQmdjStrategicLayer() {
                     🚫 PHƯƠNG VỊ BÁT SÁT ĐẠI KỴ CỦA TRẠCH NÀY (TỌA ${toaSon} • CUNG ${toaInfo.cung_bat_quai}):
                   </div>
                   ${batSatChiTiet ? `
-                    <div style="margin-bottom: 5px;">
-                      <span style="background: rgba(220, 38, 38, 0.4); border: 1.5px solid #dc2626; color: #ffffff; padding: 2.5px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
-                        <span>🚫 Sơn ${batSatChiTiet.chi_sat} (${batSatChiTiet.deg_range})</span>
-                        <span style="color: #fecaca;">• Cung ${batSatChiTiet.cung_sat} (${batSatChiTiet.con_vat})</span>
-                      </span>
+                    <div style="background: rgba(220, 38, 38, 0.35); border: 1.5px solid #dc2626; border-radius: 6px; padding: 4px 8px; margin-bottom: 5px;">
+                      <div style="font-size: 0.73rem; font-weight: 800; color: #ffffff; margin-bottom: 3px;">
+                        🚫 Sơn ${batSatChiTiet.chi_sat} • Cung ${batSatChiTiet.cung_sat} (${batSatChiTiet.con_vat})
+                      </div>
+                      <div style="font-size: 0.65rem; color: #e2e8f0; display: grid; grid-template-columns: 1fr; gap: 1.5px;">
+                        <div>🚪 <b>Cửa/Cổng & Bể Phốt (Địa Bàn):</b> <span style="color: #fbbf24;">${batSatChiTiet.deg_range_dia_ban}</span></div>
+                        <div>⛰️ <b>Hình Thể Sa Xung (Nhân Bàn Trung Châm):</b> <span style="color: #f87171;">${batSatChiTiet.deg_range_nhan_ban}</span></div>
+                        <div>🌊 <b>Nước Đến / Lai Thủy (Thiên Bàn Phùng Châm):</b> <span style="color: #38bdf8;">${batSatChiTiet.deg_range_thien_ban}</span></div>
+                      </div>
                     </div>
                     <div style="font-size: 0.68rem; color: #e2e8f0; line-height: 1.45;">
                       • <strong style="color: #f87171;">Cửa Chính, Cửa Phụ, Cổng Ngõ:</strong> ${batSatChiTiet.canh_bao_cua_cong}.<br>

@@ -290,10 +290,18 @@
     static get_son_from_degree(deg, ban = "dia_ban") {
       deg = normalizeDeg(deg);
       let calc_deg = deg;
+      // Quy đổi góc ngắm thực địa về hệ tọa độ Địa Bàn để tra cứu bảng SON_24:
+      // - Địa bàn (Chính châm): Chuẩn 0° Bắc, không lệch.
+      // - Thiên bàn (Phùng châm): Vành ngoài lệch thuận +7.5° (về Đông).
+      //   Tâm Tý Thiên bàn ở 7.5° (giữa Tý và Quý Địa bàn). Sơn Tý: [0.0°, 15.0°).
+      //   Muốn một góc thực địa deg quy về Địa bàn để tra SON_24: calc_deg = deg - 7.5°.
+      // - Nhân bàn (Trung châm): Vành giữa lệch nghịch -7.5° (về Tây).
+      //   Tâm Tý Nhân bàn ở 352.5° (giữa Nhâm và Tý Địa bàn). Sơn Tý: [345.0°, 360.0°).
+      //   Muốn một góc thực địa deg quy về Địa bàn để tra SON_24: calc_deg = deg + 7.5°.
       if (ban === "nhan_ban") {
-        calc_deg = normalizeDeg(deg - 7.5);
-      } else if (ban === "thien_ban") {
         calc_deg = normalizeDeg(deg + 7.5);
+      } else if (ban === "thien_ban") {
+        calc_deg = normalizeDeg(deg - 7.5);
       }
 
       let matched_son = null;
@@ -850,7 +858,7 @@
     // MODULE 14: NHỊ THẬP BÁT TÚ TRÊN NHÂN BÀN (BÀI 7 KHÓA 2)
     // =========================================================================
     static nhi_thap_bat_tu_nhan_ban(deg) {
-      const calc_deg = normalizeDeg(deg - 7.5);
+      const calc_deg = normalizeDeg(deg + 7.5);
       const step = 360.0 / 28.0;
       const idx = Math.floor(calc_deg / step) % 28;
       const tu_info = NHI_THAP_BAT_TU_LIST[idx];
@@ -1048,6 +1056,36 @@
       return TamHopEngine.kiem_tra_tam_sat(chi_nam_hoac_cuc, huong_nha_son);
     }
 
+    static get_son_degree_range(son_name, ban = "dia_ban") {
+      const found = SON_24.find(item => item.name === son_name);
+      if (!found) return null;
+      let offset = 0.0;
+      if (ban === "thien_ban") offset = 7.5;
+      else if (ban === "nhan_ban") offset = -7.5;
+
+      const raw_start = normalizeDeg(found.deg_start + offset);
+      const raw_end = normalizeDeg(found.deg_end + offset);
+      let center = 0.0;
+      if (found.name === "Tý") {
+        center = normalizeDeg(offset);
+      } else {
+        center = normalizeDeg(((found.deg_start + found.deg_end) / 2) + offset);
+      }
+
+      return {
+        son_name: son_name,
+        ban: ban,
+        cung_bat_quai: found.cung_bat_quai,
+        deg_start: raw_start,
+        deg_end: raw_end,
+        deg_center: center,
+        deg_range_str: `${raw_start.toFixed(1)}° - ${raw_end.toFixed(1)}° (Tâm ${center.toFixed(1)}°)`
+      };
+    }
+    get_son_degree_range(son_name, ban = "dia_ban") {
+      return TamHopEngine.get_son_degree_range(son_name, ban);
+    }
+
     static get_chi_tiet_hoang_tuyen(huong_son) {
       const huong = String(huong_son).trim();
       const target = HOANG_TUYEN_MAP[huong];
@@ -1059,20 +1097,23 @@
       }
 
       const chi_tiet_son = danh_sach_sat.map(s => {
-        const found = SON_24.find(item => item.name === s);
+        const diaRange = TamHopEngine.get_son_degree_range(s, "dia_ban");
+        const thienRange = TamHopEngine.get_son_degree_range(s, "thien_ban");
         return {
           son: s,
-          cung: found ? found.cung_bat_quai : "",
-          deg_range: found ? `${found.deg_start}° - ${found.deg_end}°` : "",
-          deg_center: found ? ((found.deg_start + found.deg_end) / 2) : 0
+          cung: diaRange ? diaRange.cung_bat_quai : "",
+          deg_range_dia_ban: diaRange ? diaRange.deg_range_str : "",
+          deg_range_thien_ban: thienRange ? thienRange.deg_range_str : "",
+          deg_range: thienRange ? `${thienRange.deg_start.toFixed(1)}° - ${thienRange.deg_end.toFixed(1)}°` : "",
+          deg_center: thienRange ? thienRange.deg_center : 0
         };
       });
 
       return {
         huong_nha: huong,
         danh_sach_son: chi_tiet_son,
-        canh_bao_khu_thuy: "Kỵ khứ thủy (cấm đào cống ngầm, rãnh thoát nước chảy ra các phương này)",
-        canh_bao_cua_cong: "Kỵ mở cổng phụ, cửa ngõ đón luồng khí trực xung tại phương vị Hoàng Tuyền",
+        canh_bao_khu_thuy: "Kỵ khứ thủy (cấm đào cống ngầm, rãnh thoát nước, hố ga chảy ra các phương này theo THIÊN BÀN PHÙNG CHÂM)",
+        canh_bao_cua_cong: "Kỵ mở cổng phụ, cửa ngõ đón dòng nước xiết hoặc xung chiếu tại phương vị Hoàng Tuyền theo ĐỊA BÀN CHÍNH CHÂM",
         khuyen_nghi: "Nếu nước chảy xiết thoát đi tại đây phạm 'Sát Nhân Hoàng Tuyền' (đoạt mạng, phá tài). Cần di dời vị trí xả nước hoặc dịch chuyển cổng/cửa sang cung vị Cát."
       };
     }
@@ -1092,19 +1133,24 @@
       if (!quai_toa || !BAT_SAT_CUNG[quai_toa]) return null;
       const sat_info = BAT_SAT_CUNG[quai_toa];
       const chi_sat = sat_info.chi_sat;
-      const found = SON_24.find(item => item.name === chi_sat);
+      const diaRange = TamHopEngine.get_son_degree_range(chi_sat, "dia_ban");
+      const nhanRange = TamHopEngine.get_son_degree_range(chi_sat, "nhan_ban");
+      const thienRange = TamHopEngine.get_son_degree_range(chi_sat, "thien_ban");
 
       return {
         toa_son: toa_son,
         quai_toa: quai_toa,
         chi_sat: chi_sat,
-        cung_sat: found ? found.cung_bat_quai : "",
-        deg_range: found ? `${found.deg_start}° - ${found.deg_end}°` : "",
-        deg_center: found ? ((found.deg_start + found.deg_end) / 2) : 0,
+        cung_sat: diaRange ? diaRange.cung_bat_quai : "",
+        deg_range_dia_ban: diaRange ? diaRange.deg_range_str : "",
+        deg_range_nhan_ban: nhanRange ? nhanRange.deg_range_str : "",
+        deg_range_thien_ban: thienRange ? thienRange.deg_range_str : "",
+        deg_range: diaRange ? `${diaRange.deg_start.toFixed(1)}° - ${diaRange.deg_end.toFixed(1)}°` : "",
+        deg_center: diaRange ? diaRange.deg_center : 0,
         con_vat: sat_info.con_vat,
-        canh_bao_cua_cong: `TUYỆT ĐỐI CẤM mở cửa chính, cửa phụ, trổ cổng, mở ngõ đi tại Sơn ${chi_sat} (${found ? `${found.deg_start}° - ${found.deg_end}°` : ""})`,
-        canh_bao_thuy: `Cấm đón nước đến (Lai Thủy), đào giếng khoan, đặt bồn nước ngầm/bể phốt tại phương ${chi_sat}`,
-        canh_bao_ngoai_canh: `Kỵ góc nhọn, tháp cao, cột điện, góc đình chùa xung chiếu từ phương ${chi_sat} (chủ tổn đinh, bệnh nan y, tai họa bất ngờ).`
+        canh_bao_cua_cong: `TUYỆT ĐỐI CẤM mở cửa chính, cửa phụ, trổ cổng, mở ngõ đi tại Sơn ${chi_sat} (Đo theo Địa Bàn: ${diaRange ? diaRange.deg_range_str : ""})`,
+        canh_bao_thuy: `Cấm đón nước đến (Lai Thủy), đào giếng khoan, đặt bồn nước ngầm/bể phốt tại phương ${chi_sat} (Lai Thủy đo Thiên Bàn: ${thienRange ? thienRange.deg_range_str : ""}; Bể phốt trạch trù đo Địa Bàn: ${diaRange ? diaRange.deg_range_str : ""})`,
+        canh_bao_ngoai_canh: `Kỵ góc nhọn, tháp cao, cột điện, góc đình chùa xung chiếu từ phương ${chi_sat} (Đo theo Nhân Bàn Trung Châm: ${nhanRange ? nhanRange.deg_range_str : ""}, chủ tổn đinh, bệnh nan y, tai họa bất ngờ).`
       };
     }
     get_chi_tiet_bat_sat(toa_son) {
