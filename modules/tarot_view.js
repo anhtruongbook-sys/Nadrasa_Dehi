@@ -851,61 +851,71 @@
           </div>
         </div>
 
-        <!-- Thanh Công Cụ Hành Động Báo Cáo & Trau Chuốt Văn Phong -->
-        <div class="tarot-analysis-action-bar">
-          <div class="tarot-badge-offline">
+        <!-- Thanh Công Cụ Chuẩn Hóa Neta -->
+        <div class="neta-action-toolbar">
+          <div class="neta-module-badge">
             <span>🔮</span>
-            <span>Tarot Học Thuật &amp; Tâm Lý Chiều Sâu</span>
+            <span>Tarot • Học Thuật &amp; Tâm Lý Chiều Sâu</span>
           </div>
-          <div class="tarot-action-btns">
-            <button class="tarot-btn-action-sm" id="btn-tarot-top-copy" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
+          <div class="neta-toolbar-actions">
+            <button class="neta-btn-action" id="btn-tarot-top-copy" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
               📋 Sao Chép Luận Giải
             </button>
-            <button class="tarot-btn-action-sm" id="btn-tarot-top-pdf" title="Tải xuống tệp PDF">
+            <button class="neta-btn-action" id="btn-tarot-top-pdf" title="Tải xuống tệp PDF">
               📄 Tải File PDF
             </button>
-            <button class="tarot-btn-polish-ai" id="btn-tarot-polish-ai" title="Trau chuốt văn phong toàn diện cả 6 mục bằng AI">
+            <button class="neta-btn-polish-ai" id="btn-tarot-polish-ai" title="Trau chuốt văn phong toàn diện cả 6 mục bằng AI">
               ${report.isDeepLoading ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
             </button>
           </div>
         </div>
 
-        <!-- Hộp Kết Quả Trau Chuốt Văn Phong Toàn Diện Cả 6 Mục (Khi Kích Hoạt) -->
+        <!-- Khung Kết Quả Trau Chuốt Văn Phong AI Chuẩn Hóa Neta -->
         ${report.showDeepAiBox ? `
-          <div class="tuvi-ai-result-box tarot-ai-result-box" id="tarot-ai-box">
-            <div class="tuvi-ai-header">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>✨ BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG (MỤC I ĐẾN VI)</span>
+          <div class="neta-ai-editorial-card ${report.isExpanded ? 'expanded' : ''}" id="tarot-ai-box">
+            <div class="neta-ai-card-header">
+              <div class="neta-ai-card-title-group">
+                <span class="neta-ai-sparkle-icon">✨</span>
+                <span class="neta-ai-title-text">BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG AI</span>
+                <span class="neta-ai-engine-chip">⚡ GEMINI AI • 6 MỤC HỌC THUẬT</span>
               </div>
-              <div style="display: flex; gap: 6px;">
+              <div class="neta-ai-card-controls">
                 ${report.deepSynthesis ? `
-                  <button class="tarot-btn-action-sm" id="btn-copy-tarot-ai" style="padding: 2px 8px; font-size: 0.7rem;">
-                    📋 Chép Văn Bản
+                  <button class="neta-btn-icon" id="btn-copy-tarot-ai" title="Sao chép văn bản">
+                    📋 Sao Chép
+                  </button>
+                  <button class="neta-btn-icon" id="btn-expand-tarot-ai" title="Mở rộng / Thu gọn">
+                    ${report.isExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng'}
                   </button>
                 ` : ''}
-                <button class="tarot-btn-action-sm" id="btn-close-tarot-ai-box" style="padding: 2px 8px; font-size: 0.7rem;">
+                <button class="neta-btn-icon neta-btn-close" id="btn-close-tarot-ai-box" title="Đóng khung AI">
                   ✕ Đóng
                 </button>
               </div>
             </div>
-            <div class="tuvi-ai-body" style="max-height: 520px; overflow-y: auto; padding: 14px; font-size: 0.88rem; line-height: 1.7; color: var(--text-color); white-space: normal;">
+            <div class="neta-ai-card-body">
               ${report.isDeepLoading ? `
-                <div style="display: flex; align-items: center; gap: 10px; color: var(--gold-glow); font-weight: 600;">
-                  <span class="loading-spinner">⏳</span>
-                  Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...
+                <div class="neta-ai-loading-wrap">
+                  <div class="neta-ai-loading-step">
+                    <span class="neta-ai-sparkle-icon">✨</span>
+                    <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...</span>
+                  </div>
+                  <div class="neta-ai-shimmer-track">
+                    <div class="neta-ai-shimmer-thumb"></div>
+                  </div>
                 </div>
               ` : ''}
               ${report.deepError ? `
                 <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
                   <div>⚠️ ${escapeHTML(report.deepError)}</div>
                   <div style="margin-top: 10px;">
-                    <button type="button" class="tarot-btn-action-sm" id="btn-tarot-err-open-key" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                    <button type="button" class="neta-btn-action" id="btn-tarot-err-open-key" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
                       ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
                     </button>
                   </div>
                 </div>
               ` : ''}
-              ${report.deepSynthesis ? formatMarkdownDeep(report.deepSynthesis) : ''}
+              ${report.deepSynthesis ? `<div class="neta-drop-cap">${formatMarkdownDeep(report.deepSynthesis)}</div>` : ''}
             </div>
           </div>
         ` : ''}
@@ -1858,6 +1868,19 @@
           navigator.clipboard.writeText(currentReadingReport.deepSynthesis).then(() => {
             showTarotToast('✅ Đã sao chép toàn bộ bản trau chuốt AI 6 mục!');
           });
+        }
+      };
+    }
+
+    const btnExpandTarotAi = container.querySelector('#btn-expand-tarot-ai');
+    if (btnExpandTarotAi && currentReadingReport) {
+      btnExpandTarotAi.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        currentReadingReport.isExpanded = !currentReadingReport.isExpanded;
+        const box = document.getElementById('tarot-ai-box');
+        if (box) {
+          box.classList.toggle('expanded', currentReadingReport.isExpanded);
+          btnExpandTarotAi.textContent = currentReadingReport.isExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng';
         }
       };
     }

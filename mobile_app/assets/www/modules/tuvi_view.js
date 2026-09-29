@@ -23,6 +23,7 @@
   let aiErrorMessage = '';
   let showAiBox = false;
   let userClosedAiBox = false;
+  let isAiExpanded = false;
   let currentAnalysisSubTab = 'dashboard'; // 'dashboard' or 'full-report'
   let currentPalaceFilter = 'ALL'; // 'ALL' or specific palace name
 
@@ -752,20 +753,20 @@
 
     return `
       <div class="tuvi-analysis-container">
-        <!-- 1. Thanh Công Cụ Điều Hướng & Hành Động -->
-        <div class="tuvi-analysis-action-bar">
-          <div class="tuvi-badge-offline">
-            <span>📜</span>
-            <span>Tử Vi Đẩu Số Học Thuật (Nam Phái)</span>
+        <!-- Thanh Công Cụ Chuẩn Hóa Neta -->
+        <div class="neta-action-toolbar">
+          <div class="neta-module-badge">
+            <span>🌌</span>
+            <span>Tử Vi Đẩu Số • Nam Phái Học Thuật</span>
           </div>
-          <div class="tuvi-action-btns">
-            <button class="tuvi-btn-action-sm" id="btn-tuvi-copy-report" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
+          <div class="neta-toolbar-actions">
+            <button class="neta-btn-action" id="btn-tuvi-copy-report" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
               📋 Sao Chép Luận Giải
             </button>
-            <button class="tuvi-btn-action-sm" id="btn-tuvi-download-report" title="Tải xuống bài luận giải dạng Markdown">
+            <button class="neta-btn-action" id="btn-tuvi-download-report" title="Tải xuống bài luận giải dạng Markdown">
               💾 Tải File (.MD)
             </button>
-            <button class="tuvi-btn-polish-ai" id="btn-tuvi-polish-ai" title="Trau chuốt văn phong mượt mà">
+            <button class="neta-btn-polish-ai" id="btn-tuvi-polish-ai" title="Trau chuốt văn phong toàn diện bằng AI">
               ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
             </button>
           </div>
@@ -781,42 +782,52 @@
           </button>
         </div>
 
-        <!-- 2. Hộp Kết Quả Trau Chuốt Văn Phong (Nếu được kích hoạt) -->
+        <!-- Khung Kết Quả Trau Chuốt Văn Phong AI Chuẩn Hóa Neta -->
         ${showAiBox ? `
-          <div class="tuvi-ai-result-box" id="tuvi-ai-box">
-            <div class="tuvi-ai-header">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>✨ BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG</span>
+          <div class="neta-ai-editorial-card ${isAiExpanded ? 'expanded' : ''}" id="tuvi-ai-box">
+            <div class="neta-ai-card-header">
+              <div class="neta-ai-card-title-group">
+                <span class="neta-ai-sparkle-icon">✨</span>
+                <span class="neta-ai-title-text">BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG AI</span>
+                <span class="neta-ai-engine-chip">⚡ GEMINI AI • TỬ VI HỌC THUẬT</span>
               </div>
-              <div style="display: flex; gap: 6px;">
+              <div class="neta-ai-card-controls">
                 ${aiPolishedText ? `
-                  <button class="tuvi-btn-action-sm" id="btn-copy-ai-polished" style="padding: 2px 8px; font-size: 0.7rem;">
-                    📋 Chép Văn Bản
+                  <button class="neta-btn-icon" id="btn-copy-ai-polished" title="Sao chép văn bản">
+                    📋 Sao Chép
+                  </button>
+                  <button class="neta-btn-icon" id="btn-expand-tuvi-ai" title="Mở rộng / Thu gọn">
+                    ${isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng'}
                   </button>
                 ` : ''}
-                <button class="tuvi-btn-action-sm" id="btn-close-ai-box" style="padding: 2px 8px; font-size: 0.7rem;">
+                <button class="neta-btn-icon neta-btn-close" id="btn-close-ai-box" title="Đóng khung AI">
                   ✕ Đóng
                 </button>
               </div>
             </div>
-            <div class="tuvi-ai-body" style="max-height: 480px; overflow-y: auto; padding: 14px; font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
+            <div class="neta-ai-card-body">
               ${isAiPolishing ? `
-                <div style="display: flex; align-items: center; gap: 10px; color: var(--gold-glow); font-weight: 600;">
-                  <span class="loading-spinner">⏳</span>
-                  Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật...
+                <div class="neta-ai-loading-wrap">
+                  <div class="neta-ai-loading-step">
+                    <span class="neta-ai-sparkle-icon">✨</span>
+                    <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tử Vi...</span>
+                  </div>
+                  <div class="neta-ai-shimmer-track">
+                    <div class="neta-ai-shimmer-thumb"></div>
+                  </div>
                 </div>
               ` : ''}
               ${aiErrorMessage ? `
                 <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
                   <div>⚠️ ${escapeHTML(aiErrorMessage)}</div>
                   <div style="margin-top: 10px;">
-                    <button type="button" class="tuvi-btn-action-sm" id="btn-tuvi-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                    <button type="button" class="neta-btn-action" id="btn-tuvi-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
                       ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
                     </button>
                   </div>
                 </div>
               ` : ''}
-              ${aiPolishedText ? renderMarkdownToHTML(aiPolishedText) : ''}
+              ${aiPolishedText ? `<div class="neta-drop-cap">${renderMarkdownToHTML(aiPolishedText)}</div>` : ''}
             </div>
           </div>
         ` : ''}
@@ -1307,6 +1318,19 @@
         const box = document.getElementById('tuvi-ai-box');
         if (box) box.style.display = 'none';
         renderTuVi();
+      };
+    }
+
+    const btnExpandTuvi = document.getElementById('btn-expand-tuvi-ai');
+    if (btnExpandTuvi) {
+      btnExpandTuvi.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        isAiExpanded = !isAiExpanded;
+        const box = document.getElementById('tuvi-ai-box');
+        if (box) {
+          box.classList.toggle('expanded', isAiExpanded);
+          btnExpandTuvi.textContent = isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng';
+        }
       };
     }
 

@@ -19,6 +19,11 @@
     selectedTopic: 'cautai', // Chủ đề Dụng thần mặc định
     interpretation: null, // Báo cáo luận giải chuyên sâu (Quy tắc & Gemini)
     isInterpretingAI: false, // Trạng thái đang gọi Gemini AI
+    showAiBox: false,
+    userClosedAiBox: false,
+    aiErrorMessage: null,
+    aiPolishedText: null,
+    isAiExpanded: false,
     
     // 1. Phân hệ Lục Hào Nạp Giáp
     lucHao: {
@@ -861,31 +866,74 @@
 
     return `
       <div class="dh-interp-container" id="dh-interp-section">
-        <div class="dh-interp-head">
-          <div class="dh-interp-title-box">
-            <h3 class="dh-interp-title">📜 BẢN LUẬN GIẢI KINH DỊCH LỤC HÀO</h3>
-            ${interp.aiUsed ? `
-              <span class="dh-guardrail-badge" title="Luận giải đa tầng chuyên sâu 7 chuyên mục">
-                📖 LUẬN GIẢI CHUYÊN SÂU
-              </span>
-            ` : `
-              <span class="dh-guardrail-badge standard" title="Luận giải tiêu chuẩn theo quy tắc Dịch học cổ thư">
-                📜 LUẬN GIẢI TIÊU CHUẨN
-              </span>
-            `}
+        <!-- Thanh Công Cụ Chuẩn Hóa Neta -->
+        <div class="neta-action-toolbar">
+          <div class="neta-module-badge">
+            <span>📜</span>
+            <span>Kinh Dịch Lục Hào • Bốc Phệ Cổ Thư</span>
           </div>
-          <div class="dh-interp-actions">
-            <button type="button" class="dh-btn-interp ${!interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-rule" title="Luận giải tiêu chuẩn (Quy tắc Dịch học cổ truyền)">
-              📜 Luận Giải Tiêu Chuẩn
+          <div class="neta-toolbar-actions">
+            <button type="button" class="neta-btn-action" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
+              📋 Sao Chép Luận Giải
             </button>
-            <button type="button" class="dh-btn-interp ${interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Luận giải đa tầng chuyên sâu">
-              ${state.isInterpretingAI ? '<span class="dh-spinner"></span> Đang phân tích...' : '📖 Luận Giải Chuyên Sâu'}
+            <button type="button" class="neta-btn-action" id="dh-btn-download-report" title="Tải xuống bài luận giải (.MD)">
+              💾 Tải File (.MD)
             </button>
-            <button type="button" class="dh-btn-interp" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
-              📋 Sao Chép
+            <button type="button" class="neta-btn-polish-ai" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Trau chuốt văn phong toàn diện bằng AI">
+              ${state.isInterpretingAI ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
             </button>
           </div>
         </div>
+
+        <!-- Khung Kết Quả Trau Chuốt Văn Phong AI Chuẩn Hóa Neta -->
+        ${state.showAiBox ? `
+          <div class="neta-ai-editorial-card ${state.isAiExpanded ? 'expanded' : ''}" id="dh-ai-box">
+            <div class="neta-ai-card-header">
+              <div class="neta-ai-card-title-group">
+                <span class="neta-ai-sparkle-icon">✨</span>
+                <span class="neta-ai-title-text">BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG AI</span>
+                <span class="neta-ai-engine-chip">⚡ GEMINI AI • LỤC HÀO HỌC THUẬT</span>
+              </div>
+              <div class="neta-ai-card-controls">
+                ${state.aiPolishedText ? `
+                  <button class="neta-btn-icon" id="btn-copy-dh-ai" title="Sao chép văn bản">
+                    📋 Sao Chép
+                  </button>
+                  <button class="neta-btn-icon" id="btn-expand-dh-ai" title="Mở rộng / Thu gọn">
+                    ${state.isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng'}
+                  </button>
+                ` : ''}
+                <button class="neta-btn-icon neta-btn-close" id="btn-close-dh-ai-box" title="Đóng khung AI">
+                  ✕ Đóng
+                </button>
+              </div>
+            </div>
+            <div class="neta-ai-card-body">
+              ${state.isInterpretingAI ? `
+                <div class="neta-ai-loading-wrap">
+                  <div class="neta-ai-loading-step">
+                    <span class="neta-ai-sparkle-icon">✨</span>
+                    <span>Đang tiến hành biên tập, trau chuốt ngôn từ Dịch lý và phân tích khí số...</span>
+                  </div>
+                  <div class="neta-ai-shimmer-track">
+                    <div class="neta-ai-shimmer-thumb"></div>
+                  </div>
+                </div>
+              ` : ''}
+              ${state.aiErrorMessage ? `
+                <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
+                  <div>⚠️ ${escapeReportHtml(state.aiErrorMessage)}</div>
+                  <div style="margin-top: 10px;">
+                    <button type="button" class="neta-btn-action" id="btn-dh-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                      ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+              ${state.aiPolishedText ? `<div class="neta-drop-cap">${formatReportToRichHtml(state.aiPolishedText)}</div>` : ''}
+            </div>
+          </div>
+        ` : ''}
 
         <!-- Banner Phán Quyết Cát / Hung Chuẩn Tương Phản -->
         <div class="dh-judgment-banner ${bannerClass}">
@@ -1461,13 +1509,17 @@
       };
     }
 
-    // Nút chạy Luận Giải Chuyên Sâu
+    // Nút Trau Chuốt Văn Phong AI Chuẩn Hóa
     const btnRunAI = document.getElementById('dh-btn-run-ai');
     if (btnRunAI) {
       btnRunAI.onclick = async () => {
         if (state.isInterpretingAI) return;
         if (!state.lucHao.result || !global.NetaLucHaoInterpreter) return;
+        state.showAiBox = true;
+        state.userClosedAiBox = false;
         state.isInterpretingAI = true;
+        state.aiErrorMessage = null;
+        state.aiPolishedText = null;
         render();
         try {
           const aiRes = await global.NetaLucHaoInterpreter.interpretHexagram(state.lucHao.result, {
@@ -1475,21 +1527,96 @@
             customQuestion: state.purpose,
             useAI: true
           });
-          state.interpretation = aiRes;
-          if (global.showToast) {
-            if (aiRes.aiUsed) {
-              global.showToast('📖 Luận giải chuyên sâu hoàn tất thành công!');
-            } else if (aiRes.hallucinationDetected) {
-              global.showToast('⚠️ Đã tự động kích hoạt Bản Luận Giải Tiêu Chuẩn an toàn!');
-            } else {
-              global.showToast(aiRes.warning || 'Đã xuất bản Luận giải tiêu chuẩn!');
-            }
+          if (aiRes.aiUsed && aiRes.reportText) {
+            state.aiPolishedText = aiRes.reportText;
+            state.interpretation = aiRes;
+          } else if (aiRes.warning) {
+            state.aiErrorMessage = aiRes.warning;
+          } else {
+            state.aiPolishedText = aiRes.reportText;
+            state.interpretation = aiRes;
           }
+          if (global.showToast) global.showToast('✨ Trau chuốt văn phong hoàn tất!');
         } catch (e) {
+          state.aiErrorMessage = e.message || 'Lỗi trau chuốt văn phong AI';
           if (global.showToast) global.showToast('Lỗi: ' + e.message);
         } finally {
           state.isInterpretingAI = false;
+          if (!state.userClosedAiBox) state.showAiBox = true;
           render();
+        }
+      };
+    }
+
+    const btnCloseDhAi = document.getElementById('btn-close-dh-ai-box');
+    if (btnCloseDhAi) {
+      btnCloseDhAi.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        state.showAiBox = false;
+        state.userClosedAiBox = true;
+        const box = document.getElementById('dh-ai-box');
+        if (box) box.style.display = 'none';
+        render();
+      };
+    }
+
+    const btnCopyDhAi = document.getElementById('btn-copy-dh-ai');
+    if (btnCopyDhAi) {
+      btnCopyDhAi.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        const textToCopy = state.aiPolishedText || (state.interpretation && state.interpretation.reportText);
+        if (textToCopy && navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            if (global.showToast) global.showToast('📋 Đã sao chép bản trau chuốt AI!');
+          });
+        }
+      };
+    }
+
+    const btnExpandDhAi = document.getElementById('btn-expand-dh-ai');
+    if (btnExpandDhAi) {
+      btnExpandDhAi.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        state.isAiExpanded = !state.isAiExpanded;
+        const box = document.getElementById('dh-ai-box');
+        if (box) {
+          box.classList.toggle('expanded', state.isAiExpanded);
+          btnExpandDhAi.textContent = state.isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng';
+        }
+      };
+    }
+
+    const btnDhOpenKey = document.getElementById('btn-dh-open-key-modal');
+    if (btnDhOpenKey) {
+      btnDhOpenKey.onclick = () => {
+        if (global.NetaGeminiService && typeof global.NetaGeminiService.openConfigModal === 'function') {
+          global.NetaGeminiService.openConfigModal();
+        } else if (global.NetaTarotView && typeof global.NetaTarotView.openKeyConfigModal === 'function') {
+          global.NetaTarotView.openKeyConfigModal();
+        }
+      };
+    }
+
+    // Nút tải xuống file bài luận giải
+    const btnDownloadReport = document.getElementById('dh-btn-download-report');
+    if (btnDownloadReport) {
+      btnDownloadReport.onclick = () => {
+        const text = state.aiPolishedText || (state.interpretation && state.interpretation.reportText);
+        if (text) {
+          try {
+            const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Luan_Giai_Luc_Hao.md';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            if (global.showToast) global.showToast('💾 Đã tải tệp báo cáo thành công!');
+          } catch (err) {
+            if (global.showToast) global.showToast('Không thể tải file, hãy bấm Sao Chép.');
+          }
         }
       };
     }
