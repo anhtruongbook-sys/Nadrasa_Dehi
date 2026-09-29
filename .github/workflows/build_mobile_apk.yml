@@ -76,11 +76,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.2
-          name: "Neta Light v2.5.2 (Sửa Lỗi Thu Phóng Mặt Bằng La Kinh, Thanh Công Cụ Nổi HUD & Cố Định Tỉ Lệ Chuẩn)"
+          tag_name: v2.5.3
+          name: "Neta Light v2.5.3 (Nâng Cấp Gemini 3.5 Flash, Bỏ Branding Rác & Sửa Thuật Toán Cầm Nhuế Kỳ Môn Mệnh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.2
-            Bản phát hành sửa triệt để lỗi tự động thu nhỏ mặt bằng kiến trúc và nâng cấp thanh điều khiển nổi HUD trực quan:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.3
+            Bản phát hành nâng cấp mô hình trí tuệ nhân tạo Gemini 3.5 Flash, loại bỏ toàn bộ thông tin rác và hoàn thiện thuật toán Kỳ Môn Mệnh Lý:
+            
+            - **Nâng Cấp Động Cơ Gemini Tarot & Dò Tìm Model Khả Dụng (Auto-Discovery)**:
+              + Tự động định tuyến ưu tiên model ổn định và nhanh nhất `gemini-3.5-flash`.
+              + Cơ chế tự động dò tìm model qua Google AI Studio API (`/v1beta/models`) và xếp hạng thông minh.
+              + Bổ sung nút kiểm tra model `🔍 Kiểm Tra Model` ngay trên màn hình thiết lập khóa.
+            
+            - **Chuẩn Hóa Giao Diện & Loại Bỏ Hoàn Toàn Thông Tin Rác**:
+              + Xóa sạch toàn bộ nhãn và thông tin branding không phù hợp ("Joey Yap", "Compendium") trên toàn bộ hệ thống.
+              + Trả lại các thuật ngữ phong thủy - kỹ thuật học thuật chuẩn mực, trong sáng.
+            
+            - **Khắc Phục Triệt Để Lỗi Thuật Toán Cầm Nhuế Đồng Cung trong Kỳ Môn Bản Mệnh**:
+              + Bổ sung xử lý cặp song tinh Cầm Nhuế Đồng Cung (`Thiên Nhuế & Thiên Cầm`).
+              + Loại bỏ hoàn toàn lỗi fallback mù quáng về `Thiên Tâm`, đưa tỷ lệ phân bổ các sao Bản Mệnh, Sức Khỏe, Hôn Nhân về trạng thái cân bằng chuẩn mực 100%.
             
             - **Sửa Triệt Để Lỗi Phóng To / Thu Nhỏ & Tự Động Thu Bé Tý Khi Nạp Mặt Bằng**:
               + Loại bỏ nhân hệ số thu nhỏ kép (`state.planScale * 0.22`), đưa ảnh mặt bằng về tỉ lệ thực 100% tự nhiên vừa vặn khung nhìn điện thoại.
