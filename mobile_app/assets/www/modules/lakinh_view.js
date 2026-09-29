@@ -476,8 +476,8 @@
             <button class="lakinh-float-btn icon-only" id="lakinh-btn-search" title="Tìm địa chỉ / tọa độ GPS">
               🔍
             </button>
-            <div id="lakinh-hud-pill" class="lakinh-deg-center" title="Chạm để xem thông số tọa hướng chi tiết">
-              <span class="hud-pill-deg" id="hud-pill-deg">0.0°</span>
+            <div id="lakinh-hud-pill" class="lakinh-deg-center" title="Chạm độ số để nhập trực tiếp, chạm tên sơn để xem chi tiết">
+              <span class="hud-pill-deg" id="hud-pill-deg" title="Chạm để nhập trực tiếp độ số La Kinh (hướng đo 12h)">0.0°<span class="hud-deg-edit-badge">✏️</span></span>
               <span class="hud-capsule-sep">•</span>
               <span class="hud-pill-son" id="hud-pill-son">Sơn Tý (Khảm)</span>
               <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
@@ -536,6 +536,7 @@
           <div class="hud-card-row">
             <span>Tọa - Hướng:</span>
             <strong id="hud-detail-toa-huong" style="color: #f5b041;">Tọa Ngọ Hướng Tý</strong>
+            <button type="button" id="btn-hud-edit-deg" class="hud-edit-deg-btn" title="Nhập độ số hướng đo 12h">✏️ Nhập độ</button>
           </div>
           <div class="hud-card-row">
             <span>Cung & Ngũ Hành:</span>
@@ -751,11 +752,14 @@
 
           <!-- Xoay góc hướng nhà & Vi chỉnh -->
           <div class="sheet-control-group">
-            <div class="sheet-control-label">
+            <div class="sheet-control-label" style="display: flex; justify-content: space-between; align-items: center;">
               <span>Góc hướng nhà (Hướng đo 12h)</span>
-              <span class="val" id="sheet-val-rotation">0.0°</span>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <input type="number" id="sheet-input-rotation" class="tamhop-input" style="width: 76px; text-align: right; font-weight: 700; color: #38bdf8; padding: 2px 6px; font-size: 0.82rem; border-radius: 6px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.4);" min="0" max="359.9" step="0.1" value="${state.rotation.toFixed(1)}">
+                <span style="color: #38bdf8; font-weight: 700;">°</span>
+              </div>
             </div>
-            <input type="range" class="lakinh-slider" id="sheet-slider-rotation" min="0" max="360" value="0" step="0.5">
+            <input type="range" class="lakinh-slider" id="sheet-slider-rotation" min="0" max="360" value="${state.rotation.toFixed(1)}" step="0.5">
             <div class="lakinh-btn-row">
               <button class="lakinh-step-btn" id="btn-rot-zero" style="font-weight: 700; color: #38bdf8;">🧭 Chuẩn Bắc (0°)</button>
               <button class="lakinh-step-btn" id="btn-rot-m5">-5°</button>
@@ -1093,12 +1097,16 @@
     const pillDeg = document.getElementById('hud-pill-deg');
     const pillSon = document.getElementById('hud-pill-son');
     const sheetValRot = document.getElementById('sheet-val-rotation');
+    const sheetInputRot = document.getElementById('sheet-input-rotation');
     const sheetSliderRot = document.getElementById('sheet-slider-rotation');
     const detailToaHuong = document.getElementById('hud-detail-toa-huong');
     const detailCungHanh = document.getElementById('hud-detail-cung-hanh');
 
-    if (pillDeg) pillDeg.textContent = `${rounded.toFixed(1)}°`;
+    if (pillDeg) pillDeg.innerHTML = `${rounded.toFixed(1)}°<span class="hud-deg-edit-badge">✏️</span>`;
     if (sheetValRot) sheetValRot.textContent = `${rounded.toFixed(1)}°`;
+    if (sheetInputRot && document.activeElement !== sheetInputRot) {
+      sheetInputRot.value = rounded.toFixed(1);
+    }
     if (sheetSliderRot && parseFloat(sheetSliderRot.value) !== rounded) {
       sheetSliderRot.value = rounded;
     }
@@ -4489,15 +4497,33 @@ function updateQmdjStrategicLayer() {
     const hudPill = document.getElementById('lakinh-hud-pill');
     const hudCard = document.getElementById('lakinh-hud-detail-card');
     const hudArrow = document.getElementById('hud-pill-arrow');
+    const hudPillDeg = document.getElementById('hud-pill-deg');
+    const btnHudEditDeg = document.getElementById('btn-hud-edit-deg');
 
     if (hudPill && hudCard) {
-      hudPill.addEventListener('click', () => {
+      hudPill.addEventListener('click', (e) => {
+        // Nếu chạm vào phần độ số để nhập độ, không toggle dropdown
+        if (e.target.closest('#hud-pill-deg')) return;
         state.isHudDetailOpen = !state.isHudDetailOpen;
         hudCard.style.display = state.isHudDetailOpen ? 'block' : 'none';
         if (hudArrow) hudArrow.textContent = state.isHudDetailOpen ? '▴' : '▾';
         if (state.isHudDetailOpen) {
           updateRotationDisplay(state.rotation);
         }
+      });
+    }
+
+    if (hudPillDeg) {
+      hudPillDeg.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openDegreeInputModal();
+      });
+    }
+
+    if (btnHudEditDeg) {
+      btnHudEditDeg.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openDegreeInputModal();
       });
     }
 
@@ -4808,6 +4834,22 @@ function updateQmdjStrategicLayer() {
     if (sRot) {
       sRot.addEventListener('input', (e) => {
         updateRotationDisplay(parseFloat(e.target.value));
+      });
+    }
+
+    const sInputRot = document.getElementById('sheet-input-rotation');
+    if (sInputRot) {
+      sInputRot.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        if (!isNaN(val)) {
+          updateRotationDisplay(val);
+        }
+      });
+      sInputRot.addEventListener('change', (e) => {
+        let val = parseFloat(e.target.value);
+        if (isNaN(val)) val = 0.0;
+        val = ((val % 360) + 360) % 360;
+        updateRotationDisplay(val);
       });
     }
 
@@ -5578,6 +5620,252 @@ function updateQmdjStrategicLayer() {
     showLaKinhToast(state.isQmdjStratActive
       ? '⚔️ Đã kích hoạt Lớp Chiến Lược Kỳ Môn Joey Yap trên La Kinh'
       : 'Đã tắt lớp chiến lược Kỳ Môn');
+  }
+
+  function openDegreeInputModal() {
+    const modalBox = document.getElementById('lakinh-modal-container');
+    if (!modalBox) return;
+
+    closeBottomSheet();
+    if (state.isHudDetailOpen) {
+      const hudCard = document.getElementById('lakinh-hud-detail-card');
+      const hudArrow = document.getElementById('hud-pill-arrow');
+      state.isHudDetailOpen = false;
+      if (hudCard) hudCard.style.display = 'none';
+      if (hudArrow) hudArrow.textContent = '▾';
+    }
+
+    let tempDeg = Math.round(state.rotation * 10) / 10;
+
+    const renderDegreeModal = () => {
+      let norm = ((tempDeg % 360) + 360) % 360;
+      norm = Math.round(norm * 10) / 10;
+
+      let sonName = 'Tý';
+      let cungName = 'Khảm';
+      let toaName = 'Ngọ';
+      let toaCung = 'Ly';
+      let hkdqQue = 'Bát Thuần Khôn';
+      let hkdqKhivan = 'Khí 1 • Vận 1';
+      let hkdqHao = 'Hào 6';
+      let hkdqTag = 'Linh Thần V9';
+
+      if (global.NetaLaKinhEngine) {
+        const huongInfo = global.NetaLaKinhEngine.getSonInfo(norm);
+        const toaInfo = global.NetaLaKinhEngine.getSonInfo((norm + 180) % 360);
+        sonName = huongInfo.name;
+        cungName = huongInfo.cung;
+        toaName = toaInfo.name;
+        toaCung = toaInfo.cung;
+
+        if (global.NetaLaKinhEngine.getHKDQInfo) {
+          const hkdq = global.NetaLaKinhEngine.getHKDQInfo(norm);
+          if (hkdq) {
+            hkdqQue = hkdq.que_name || hkdqQue;
+            hkdqKhivan = `Khí ${hkdq.khi || 1} • Vận ${hkdq.van || 1}`;
+            hkdqHao = `Hào ${hkdq.hao || 6}`;
+            hkdqTag = hkdq.tag || hkdqTag;
+          }
+        }
+      }
+
+      modalBox.innerHTML = `
+        <div class="lakinh-modal-overlay" id="modal-degree-overlay">
+          <div class="lakinh-glass-panel lakinh-modal-dialog" style="max-width: 380px; width: 92%;">
+            <div class="lakinh-modal-header" style="border-bottom: 1.5px solid rgba(56, 189, 248, 0.4); padding-bottom: 8px; margin-bottom: 12px;">
+              <div>
+                <div class="lakinh-modal-title" style="color: #38bdf8; font-size: 1.0rem; display: flex; align-items: center; gap: 6px;">
+                  🧭 NHẬP ĐỘ SỐ LA KINH (HƯỚNG 12h)
+                </div>
+                <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">
+                  Định vị hướng đo chính xác tuyệt đối (0.0° - 359.9°)
+                </div>
+              </div>
+              <button class="lakinh-modal-close" id="btn-close-degree-modal">✕</button>
+            </div>
+
+            <!-- Ô nhập độ số to rõ nổi bật -->
+            <div style="display: flex; flex-direction: column; align-items: center; margin: 6px 0 14px 0;">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <input type="number" id="input-degree-val" step="0.1" min="0" max="359.9" value="${norm.toFixed(1)}" style="font-size: 1.9rem; font-weight: 800; color: #38bdf8; background: rgba(15, 23, 42, 0.95); border: 2px solid #0284c7; border-radius: 12px; width: 140px; text-align: center; padding: 6px 10px; outline: none; box-shadow: 0 0 16px rgba(2, 132, 199, 0.35); font-variant-numeric: tabular-nums;" autofocus />
+                <span style="font-size: 1.6rem; font-weight: 800; color: #38bdf8;">°</span>
+              </div>
+              <div style="font-size: 0.7rem; color: #64748b; margin-top: 4px;">
+                Nhập số từ bàn phím hoặc dùng các nút vi chỉnh bên dưới
+              </div>
+            </div>
+
+            <!-- Nút vi chỉnh bước nhảy -->
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 10px;">
+              <button type="button" class="tamhop-cuc-btn" data-step="-5" title="Giảm 5 độ">-5°</button>
+              <button type="button" class="tamhop-cuc-btn" data-step="-1" title="Giảm 1 độ">-1°</button>
+              <button type="button" class="tamhop-cuc-btn" data-step="-0.1" title="Giảm 0.1 độ">-0.1°</button>
+              <button type="button" class="tamhop-cuc-btn" data-step="0.1" title="Tăng 0.1 độ">+0.1°</button>
+              <button type="button" class="tamhop-cuc-btn" data-step="1" title="Tăng 1 độ">+1°</button>
+              <button type="button" class="tamhop-cuc-btn" data-step="5" title="Tăng 5 độ">+5°</button>
+            </div>
+
+            <!-- 4 Phương Chính (Bắc / Đông / Nam / Tây) -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 14px;">
+              <button type="button" class="tamhop-cuc-btn ${Math.abs(norm - 0) < 0.1 ? 'active' : ''}" data-cardinal="0">🧭 Bắc 0°</button>
+              <button type="button" class="tamhop-cuc-btn ${Math.abs(norm - 90) < 0.1 ? 'active' : ''}" data-cardinal="90">🌅 Đông 90°</button>
+              <button type="button" class="tamhop-cuc-btn ${Math.abs(norm - 180) < 0.1 ? 'active' : ''}" data-cardinal="180">☀️ Nam 180°</button>
+              <button type="button" class="tamhop-cuc-btn ${Math.abs(norm - 270) < 0.1 ? 'active' : ''}" data-cardinal="270">🌇 Tây 270°</button>
+            </div>
+
+            <!-- Bảng Xem Trước Thông Số Sơn Hướng & Quẻ Phân Kim Thực Tế -->
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; padding: 10px 12px; font-size: 0.75rem; line-height: 1.5; margin-bottom: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Tọa - Hướng:</span>
+                <strong id="span-degree-modal-toahuong" style="color: #facc15; font-size: 0.82rem;">Tọa ${toaName} (${toaCung}) ➔ Hướng ${sonName} (${cungName})</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Cung & Bát Quái:</span>
+                <span id="span-degree-modal-cung" style="color: #38bdf8; font-weight: 700;">Sơn ${sonName} • Cung ${cungName}</span>
+              </div>
+              <div style="border-top: 1px dashed rgba(255, 255, 255, 0.12); margin: 6px 0;"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                <span style="color: #94a3b8;">Huyền Không Đại Quái:</span>
+                <strong id="span-degree-modal-que" style="color: #38bdf8; font-size: 0.8rem;">🔱 ${hkdqQue}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #cbd5e1;">
+                <span id="span-degree-modal-khivan">${hkdqKhivan} • ${hkdqHao}</span>
+                <span id="span-degree-modal-tag" style="color: #4ade80; font-weight: 700;">${hkdqTag}</span>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px;">
+              <button type="button" class="lakinh-action-btn secondary" id="btn-cancel-degree-modal" style="padding: 8px 10px;">Hủy</button>
+              <button type="button" class="lakinh-action-btn primary" id="btn-apply-degree-modal" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-color: #38bdf8; color: #ffffff; font-weight: 800; padding: 8px 10px; font-size: 0.82rem;">
+                🧭 Xoay Về ${norm.toFixed(1)}°
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const inputDeg = document.getElementById('input-degree-val');
+      if (inputDeg) {
+        inputDeg.focus();
+        inputDeg.select();
+        inputDeg.addEventListener('input', (e) => {
+          const val = parseFloat(e.target.value);
+          if (!isNaN(val)) {
+            tempDeg = val;
+            updatePreviewElements();
+          }
+        });
+        inputDeg.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            applyDegree();
+          }
+        });
+      }
+
+      modalBox.querySelectorAll('button[data-step]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const step = parseFloat(btn.getAttribute('data-step'));
+          tempDeg = ((tempDeg + step) % 360 + 360) % 360;
+          tempDeg = Math.round(tempDeg * 10) / 10;
+          renderDegreeModal();
+        });
+      });
+
+      modalBox.querySelectorAll('button[data-cardinal]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          tempDeg = parseFloat(btn.getAttribute('data-cardinal'));
+          renderDegreeModal();
+        });
+      });
+
+      const closeMe = () => {
+        modalBox.innerHTML = '';
+      };
+
+      const applyDegree = () => {
+        const finalDeg = ((tempDeg % 360) + 360) % 360;
+        updateRotationDisplay(finalDeg);
+        if (state.isTamHopActive && typeof updateTamHopLayer === 'function') {
+          updateTamHopLayer();
+        }
+        if (state.isQmdjStratActive && typeof updateQmdjStrategicLayer === 'function') {
+          updateQmdjStrategicLayer();
+        }
+        closeMe();
+        let finalSon = '';
+        if (global.NetaLaKinhEngine) {
+          const info = global.NetaLaKinhEngine.getSonInfo(finalDeg);
+          if (info && info.name) finalSon = ` (Sơn ${info.name})`;
+        }
+        if (typeof showLaKinhToast === 'function') {
+          showLaKinhToast(`🧭 Đã xoay La Kinh về Hướng 12h: ${finalDeg.toFixed(1)}°${finalSon}`);
+        }
+      };
+
+      const updatePreviewElements = () => {
+        let n = ((tempDeg % 360) + 360) % 360;
+        n = Math.round(n * 10) / 10;
+        const btnApply = document.getElementById('btn-apply-degree-modal');
+        if (btnApply) {
+          btnApply.textContent = `🧭 Xoay Về ${n.toFixed(1)}°`;
+        }
+        let sName = 'Tý', cName = 'Khảm', tName = 'Ngọ', tCung = 'Ly';
+        let hQue = 'Bát Thuần Khôn', hKhivan = 'Khí 1 • Vận 1', hHao = 'Hào 6', hTag = 'Linh Thần V9';
+        if (global.NetaLaKinhEngine) {
+          const huongInfo = global.NetaLaKinhEngine.getSonInfo(n);
+          const toaInfo = global.NetaLaKinhEngine.getSonInfo((n + 180) % 360);
+          if (huongInfo) {
+            sName = huongInfo.name;
+            cName = huongInfo.cung;
+          }
+          if (toaInfo) {
+            tName = toaInfo.name;
+            tCung = toaInfo.cung;
+          }
+          if (global.NetaLaKinhEngine.getHKDQInfo) {
+            const hkdq = global.NetaLaKinhEngine.getHKDQInfo(n);
+            if (hkdq) {
+              hQue = hkdq.que_name || hQue;
+              hKhivan = `Khí ${hkdq.khi || 1} • Vận ${hkdq.van || 1}`;
+              hHao = `Hào ${hkdq.hao || 6}`;
+              hTag = hkdq.tag || hTag;
+            }
+          }
+        }
+        const elToaHuong = document.getElementById('span-degree-modal-toahuong');
+        if (elToaHuong) elToaHuong.textContent = `Tọa ${tName} (${tCung}) ➔ Hướng ${sName} (${cName})`;
+        const elCung = document.getElementById('span-degree-modal-cung');
+        if (elCung) elCung.textContent = `Sơn ${sName} • Cung ${cName}`;
+        const elQue = document.getElementById('span-degree-modal-que');
+        if (elQue) elQue.textContent = `🔱 ${hQue}`;
+        const elKhivan = document.getElementById('span-degree-modal-khivan');
+        if (elKhivan) elKhivan.textContent = `${hKhivan} • ${hHao}`;
+        const elTag = document.getElementById('span-degree-modal-tag');
+        if (elTag) elTag.textContent = hTag;
+
+        modalBox.querySelectorAll('button[data-cardinal]').forEach(btn => {
+          const cardDeg = parseFloat(btn.getAttribute('data-cardinal'));
+          btn.classList.toggle('active', Math.abs(n - cardDeg) < 0.1);
+        });
+      };
+
+      const btnClose = document.getElementById('btn-close-degree-modal');
+      const btnCancel = document.getElementById('btn-cancel-degree-modal');
+      const btnApply = document.getElementById('btn-apply-degree-modal');
+      const backdrop = document.getElementById('modal-degree-overlay');
+
+      if (btnClose) btnClose.addEventListener('click', closeMe);
+      if (btnCancel) btnCancel.addEventListener('click', closeMe);
+      if (btnApply) btnApply.addEventListener('click', applyDegree);
+      if (backdrop) {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) closeMe();
+        });
+      }
+    };
+
+    renderDegreeModal();
   }
 
   function openQmdjTimeModal() {
@@ -6679,6 +6967,7 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     openHuyenKhongModal: openHuyenKhongModal,
     openHKDQModal: openHKDQModal,
     openTamHopModal: openTamHopModal,
+    openDegreeInputModal: openDegreeInputModal,
     updateRotation: updateRotationDisplay,
     setRayAngle: setRayAngle,
     updateSightingRay: updateSightingRay,

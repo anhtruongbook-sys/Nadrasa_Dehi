@@ -363,9 +363,59 @@ body.light-theme #lakinh-top-panel {
   line-height: 1;
   letter-spacing: -0.2px;
   white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+  user-select: none;
+}
+
+.hud-pill-deg:hover {
+  opacity: 0.95;
+  filter: brightness(1.2);
+  transform: scale(1.04);
+}
+
+.hud-deg-edit-badge {
+  font-size: 0.62rem;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+  margin-left: 1px;
+}
+
+.hud-pill-deg:hover .hud-deg-edit-badge {
+  opacity: 1;
 }
 
 body.light-theme .hud-pill-deg {
+  color: #0284c7;
+}
+
+.hud-edit-deg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(2, 132, 199, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hud-edit-deg-btn:hover {
+  background: rgba(2, 132, 199, 0.45);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+body.light-theme .hud-edit-deg-btn {
+  background: #f0fdf4;
+  border-color: #0284c7;
   color: #0284c7;
 }
 
