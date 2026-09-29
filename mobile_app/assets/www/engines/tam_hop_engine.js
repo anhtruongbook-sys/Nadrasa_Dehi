@@ -1048,6 +1048,109 @@
       return TamHopEngine.kiem_tra_tam_sat(chi_nam_hoac_cuc, huong_nha_son);
     }
 
+    static get_chi_tiet_hoang_tuyen(huong_son) {
+      const huong = String(huong_son).trim();
+      const target = HOANG_TUYEN_MAP[huong];
+      let danh_sach_sat = [];
+      if (typeof target === "string") {
+        danh_sach_sat = [target];
+      } else if (Array.isArray(target)) {
+        danh_sach_sat = target;
+      }
+
+      const chi_tiet_son = danh_sach_sat.map(s => {
+        const found = SON_24.find(item => item.name === s);
+        return {
+          son: s,
+          cung: found ? found.cung_bat_quai : "",
+          deg_range: found ? `${found.deg_start}° - ${found.deg_end}°` : "",
+          deg_center: found ? ((found.deg_start + found.deg_end) / 2) : 0
+        };
+      });
+
+      return {
+        huong_nha: huong,
+        danh_sach_son: chi_tiet_son,
+        canh_bao_khu_thuy: "Kỵ khứ thủy (cấm đào cống ngầm, rãnh thoát nước chảy ra các phương này)",
+        canh_bao_cua_cong: "Kỵ mở cổng phụ, cửa ngõ đón luồng khí trực xung tại phương vị Hoàng Tuyền",
+        khuyen_nghi: "Nếu nước chảy xiết thoát đi tại đây phạm 'Sát Nhân Hoàng Tuyền' (đoạt mạng, phá tài). Cần di dời vị trí xả nước hoặc dịch chuyển cổng/cửa sang cung vị Cát."
+      };
+    }
+    get_chi_tiet_hoang_tuyen(huong_son) {
+      return TamHopEngine.get_chi_tiet_hoang_tuyen(huong_son);
+    }
+
+    static get_chi_tiet_bat_sat(toa_son) {
+      toa_son = String(toa_son).trim();
+      let quai_toa = null;
+      for (let i = 0; i < SON_24.length; i++) {
+        if (SON_24[i].name === toa_son) {
+          quai_toa = SON_24[i].cung_bat_quai;
+          break;
+        }
+      }
+      if (!quai_toa || !BAT_SAT_CUNG[quai_toa]) return null;
+      const sat_info = BAT_SAT_CUNG[quai_toa];
+      const chi_sat = sat_info.chi_sat;
+      const found = SON_24.find(item => item.name === chi_sat);
+
+      return {
+        toa_son: toa_son,
+        quai_toa: quai_toa,
+        chi_sat: chi_sat,
+        cung_sat: found ? found.cung_bat_quai : "",
+        deg_range: found ? `${found.deg_start}° - ${found.deg_end}°` : "",
+        deg_center: found ? ((found.deg_start + found.deg_end) / 2) : 0,
+        con_vat: sat_info.con_vat,
+        canh_bao_cua_cong: `TUYỆT ĐỐI CẤM mở cửa chính, cửa phụ, trổ cổng, mở ngõ đi tại Sơn ${chi_sat} (${found ? `${found.deg_start}° - ${found.deg_end}°` : ""})`,
+        canh_bao_thuy: `Cấm đón nước đến (Lai Thủy), đào giếng khoan, đặt bồn nước ngầm/bể phốt tại phương ${chi_sat}`,
+        canh_bao_ngoai_canh: `Kỵ góc nhọn, tháp cao, cột điện, góc đình chùa xung chiếu từ phương ${chi_sat} (chủ tổn đinh, bệnh nan y, tai họa bất ngờ).`
+      };
+    }
+    get_chi_tiet_bat_sat(toa_son) {
+      return TamHopEngine.get_chi_tiet_bat_sat(toa_son);
+    }
+
+    static get_chi_tiet_tam_sat(chi_nam) {
+      const chi = String(chi_nam).trim();
+      const sat_info = TAM_SAT[chi];
+      if (!sat_info) return null;
+
+      const phuong = sat_info.tam_sat;
+      const cac_son = sat_info.chi_sat;
+      const TEN_TAM_SAT = ["Kiếp Sát", "Tai Sát", "Tuế Sát"];
+
+      const chi_tiet = cac_son.map((s, idx) => {
+        const found = SON_24.find(item => item.name === s);
+        return {
+          loai_sat: TEN_TAM_SAT[idx],
+          son: s,
+          cung: found ? found.cung_bat_quai : "",
+          deg_range: found ? `${found.deg_start}° - ${found.deg_end}°` : "",
+          deg_center: found ? ((found.deg_start + found.deg_end) / 2) : 0
+        };
+      });
+
+      let dai_do = "";
+      if (phuong === "Bắc") dai_do = "315° - 45° (Hợi - Tý - Sửu)";
+      else if (phuong === "Nam") dai_do = "135° - 225° (Tỵ - Ngọ - Mùi)";
+      else if (phuong === "Đông") dai_do = "45° - 135° (Dần - Mão - Thìn)";
+      else if (phuong === "Tây") dai_do = "225° - 315° (Thân - Dậu - Tuất)";
+
+      return {
+        nam_chi: chi,
+        phuong_tam_sat: phuong,
+        dai_do_so: dai_do,
+        cac_son: chi_tiet,
+        canh_bao_dong_tho: `CẤM ĐỘNG THỔ / SỬA CHỮA: Tuyệt đối không đào móng, đập phá, khoan tường, cơi nới ở phương ${phuong} trong năm ${chi}`,
+        canh_bao_huong_nha_cua: `NGUYÊN TẮC 'TỌA ĐƯỢC NHƯNG HƯỚNG CẤM': Nhà được phép tọa ${phuong}, nhưng CẤM mở Cửa chính, Cửa phụ, Cổng ngõ nhìn về phương ${phuong}`,
+        khuyen_nghi: `Nếu cửa/cổng hiện hữu nhìn về hướng Tam Sát (${dai_do}), trong năm ${chi} nên hạn chế đi lại cửa này, sử dụng cửa ngách hoặc treo gương Bát Quái / vật phẩm ngũ hành hóa giải.`
+      };
+    }
+    get_chi_tiet_tam_sat(chi_nam) {
+      return TamHopEngine.get_chi_tiet_tam_sat(chi_nam);
+    }
+
     static get_quy_nhan_loc_ma(can_chu, chi_chu) {
       const can_clean = String(can_chu).trim();
       const chi_clean = String(chi_chu).trim();

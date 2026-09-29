@@ -399,6 +399,10 @@
                 <span class="lbl">🚫 Bát Sát Tiêu Vong:</span>
                 <strong id="tamhop-hud-batsat">Đang tính...</strong>
               </div>
+              <div class="tamhop-hud-item amber">
+                <span class="lbl">🛡️ Tam Sát Trong Năm:</span>
+                <strong id="tamhop-hud-tamsat">Đang tính...</strong>
+              </div>
               <div class="tamhop-hud-item gold">
                 <span class="lbl">💎 Tam Cát Thần Trợ:</span>
                 <strong id="tamhop-hud-tamcat">Đang tính...</strong>
@@ -2123,6 +2127,14 @@
     const tamSat = global.TamHopEngine.kiem_tra_tam_sat(namChi, thuyPhap.huong_nha.son_name);
     const hoangTuyen = global.TamHopEngine.kiem_tra_hoang_tuyen(thuyPhap.huong_nha.son_name, thuyPhap.thuy_khau.son_name);
 
+    const toaDeg = (curHuongDeg + 180) % 360;
+    const toaInfo = global.TamHopEngine.get_son_from_degree(toaDeg, 'dia_ban');
+    const toaSon = toaInfo.son_name;
+
+    const htChiTiet = global.TamHopEngine.get_chi_tiet_hoang_tuyen(thuyPhap.huong_nha.son_name);
+    const bsChiTiet = global.TamHopEngine.get_chi_tiet_bat_sat(toaSon);
+    const tsChiTiet = global.TamHopEngine.get_chi_tiet_tam_sat(namChi);
+
     let cungTS = vongTS.find(c => c.cung_truong_sinh === 'Trường Sinh');
     let cungDV = vongTS.find(c => c.cung_truong_sinh === 'Đế Vượng');
     let cungLQ = vongTS.find(c => c.cung_truong_sinh === 'Lâm Quan');
@@ -2255,20 +2267,20 @@
         'Khảm': 'Thìn', 'Khôn': 'Mão', 'Chấn': 'Thân', 'Tốn': 'Dậu',
         'Càn': 'Ngọ', 'Đoài': 'Tỵ', 'Cấn': 'Dần', 'Ly': 'Hợi'
       };
-      const bsChi = batSatChiMap[thuyPhap.huong_nha.cung_bat_quai];
+      const bsChi = batSatChiMap[toaInfo.cung_bat_quai] || batSatChiMap[thuyPhap.huong_nha.cung_bat_quai];
       if (bsChi) {
         const bsDeg = getSonCenterDeg(bsChi);
         svgHtml += createSvgTamHopBadge({
           deg: bsDeg,
           radius: 450,
-          width: 185,
+          width: 195,
           height: 52,
           bgColor: 'rgba(15, 23, 42, 0.95)',
           borderColor: '#dc2626',
           icon: '🚫',
           title: 'BÁT SÁT TIÊU VONG',
-          subtitle: `Sơn ${bsChi} (${thuyPhap.huong_nha.cung_bat_quai} Quái)`,
-          hint: 'Kỵ lai thủy & mở cổng cửa',
+          subtitle: `Sơn ${bsChi} (Tọa ${toaSon} / ${toaInfo.cung_bat_quai})`,
+          hint: 'Đại kỵ Cửa Cổng & Lai thủy',
           hintColor: '#fca5a5'
         });
       }
@@ -2325,13 +2337,23 @@
     const hudSinh = document.getElementById('tamhop-hud-sinh');
     const hudHT = document.getElementById('tamhop-hud-hoangtuyen');
     const hudBS = document.getElementById('tamhop-hud-batsat');
+    const hudTS = document.getElementById('tamhop-hud-tamsat');
     const hudTC = document.getElementById('tamhop-hud-tamcat');
 
     if (hudKhau) hudKhau.innerHTML = `<span style="color:#06b6d4;">${thuyPhap.thuy_khau.son_name} (${thuyKhauDeg.toFixed(1)}°)</span> • <strong>${cucName}</strong> (${thuyPhap.the_cuc})`;
     if (hudSinh) hudSinh.innerHTML = `Sinh: <b style="color:#4ade80;">${tsSon}</b> • Vượng: <b style="color:#facc15;">${dvSon}</b> • Quan: <b style="color:#38bdf8;">${lqSon}</b> • Mộ: <b style="color:#c084fc;">${mkSon}</b>`;
-    if (hudHT) hudHT.innerHTML = `${hoangTuyen.loai_sat} (${hoangTuyen.pham_sat ? 'Cảnh báo' : 'An toàn'})`;
-    const batSatRes = global.TamHopEngine.kiem_tra_bat_sat_cung(thuyPhap.huong_nha.son_name, thuyPhap.thuy_khau.son_name);
-    if (hudBS) hudBS.innerHTML = `${batSatRes.danh_gia}`;
+    if (hudHT) {
+      const htCacSon = (htChiTiet && htChiTiet.danh_sach_son.length > 0) ? htChiTiet.danh_sach_son.map(s => `Sơn ${s.son} (${s.deg_range})`).join(', ') : 'Không có';
+      hudHT.innerHTML = `${hoangTuyen.loai_sat} • Kỵ khứ thủy & cấm mở cổng tại: <b style="color:#fca5a5;">${htCacSon}</b>`;
+    }
+    if (hudBS) {
+      const bsInfoStr = bsChiTiet ? `Sơn <b style="color:#f87171;">${bsChiTiet.chi_sat} (${bsChiTiet.deg_range})</b> (Cung ${bsChiTiet.cung_sat} - ${bsChiTiet.con_vat})` : 'Không xác định';
+      hudBS.innerHTML = `Đại kỵ Cửa Cổng & Lai thủy tại: ${bsInfoStr}`;
+    }
+    if (hudTS) {
+      const tsInfoStr = tsChiTiet ? `Phương <b style="color:#fde047;">${tsChiTiet.phuong_tam_sat} (${tsChiTiet.dai_do_so})</b>` : 'Không xác định';
+      hudTS.innerHTML = `${tamSat.danh_gia.includes('ĐẠI HUNG') ? '⚠️ Hướng phạm Tam Sát' : '✅ An Toàn'} • Cấm động thổ & kỵ mở cửa nhìn về: ${tsInfoStr}`;
+    }
     if (hudTC) hudTC.innerHTML = `Quý: <b>${tamCat.duong_quy_nhan}/${tamCat.am_quy_nhan}</b> • Lộc: <b>${tamCat.thien_loc}</b> • Mã: <b>${tamCat.dich_ma}</b>`;
   }
 
@@ -6360,6 +6382,9 @@ function updateQmdjStrategicLayer() {
       const thaiTue = global.TamHopEngine.kiem_tra_thai_tue_tue_pha(curNamChi, huongSon);
       const hoangTuyen = global.TamHopEngine.kiem_tra_hoang_tuyen(huongSon, thuyPhap.thuy_khau.son_name);
       const batSat = global.TamHopEngine.kiem_tra_bat_sat_cung(toaSon, thuyPhap.thuy_khau.son_name);
+      const hoangTuyenChiTiet = global.TamHopEngine.get_chi_tiet_hoang_tuyen(huongSon);
+      const batSatChiTiet = global.TamHopEngine.get_chi_tiet_bat_sat(toaSon);
+      const tamSatChiTiet = global.TamHopEngine.get_chi_tiet_tam_sat(curNamChi);
       const pk120 = global.TamHopEngine.get_120_phan_kim(curHuongDeg);
       const tamCat = global.TamHopEngine.get_quy_nhan_loc_ma(curCanChu, curChiChu);
       const maHinhThe = global.TamHopEngine.phan_tich_hinh_the_ma(curChiChu, tamCat.dich_ma, curMoTaSa || 'ngọn đồi hình yên ngựa');
@@ -6567,57 +6592,126 @@ function updateQmdjStrategicLayer() {
               </div>
             </div>
 
-            <!-- PHẦN 3: HOÀNG TUYỀN & BÁT SÁT -->
-            <div class="tamhop-section-title">
+            <!-- PHẦN 3: BÁT LỘ HOÀNG TUYỀN & BÁT SÁT TIÊU VONG -->
+            <div class="tamhop-section-title" style="display: flex; justify-content: space-between; align-items: center;">
               <span>⚠️ 3. Bát Lộ Hoàng Tuyền & Bát Sát Tiêu Vong</span>
+              <span style="font-size: 0.65rem; color: #f87171; font-weight: 700;">Đại kỵ Cửa Cổng & Thoát Nước</span>
             </div>
             <div class="tamhop-field-group">
-              <!-- Hoàng Tuyền -->
-              <div style="margin-bottom: 6px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
-                  <span style="color: #94a3b8;">Hoàng Tuyền Sát:</span>
+              <!-- A. Hoàng Tuyền Sát -->
+              <div style="margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem;">
+                  <span style="color: #facc15; font-weight: 700;">🌊 Hoàng Tuyền Sát Khí:</span>
                   <span class="tamhop-badge ${hoangTuyen.loai_sat.includes('CỨU BẦN') ? 'green' : (hoangTuyen.pham_sat ? 'red' : 'green')}">
                     ${hoangTuyen.loai_sat}
                   </span>
                 </div>
-                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 3px; line-height: 1.4;">
                   ${hoangTuyen.mo_ta}
+                </div>
+
+                <!-- Bảng chỉ dẫn phương vị Hoàng Tuyền cần tránh cho trạch này -->
+                <div style="margin-top: 6px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 8px; padding: 6px 8px;">
+                  <div style="font-size: 0.70rem; color: #fca5a5; font-weight: 700; margin-bottom: 4px;">
+                    🚫 CÁC HƯỚNG PHẠM HOÀNG TUYỀN CỦA HƯỚNG ${huongSon}:
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
+                    ${hoangTuyenChiTiet && hoangTuyenChiTiet.danh_sach_son.length > 0 
+                      ? hoangTuyenChiTiet.danh_sach_son.map(item => `
+                        <span style="background: rgba(239, 68, 68, 0.28); border: 1px solid #ef4444; color: #ffffff; padding: 2px 7px; border-radius: 6px; font-size: 0.68rem; font-weight: 700;">
+                          Sơn ${item.son} (${item.deg_range} • Cung ${item.cung})
+                        </span>
+                      `).join('') 
+                      : '<span style="color: #4ade80; font-size: 0.68rem;">Hướng này không có phương vị Hoàng Tuyền trực tiếp</span>'
+                    }
+                  </div>
+                  <div style="font-size: 0.68rem; color: #cbd5e1; line-height: 1.45;">
+                    • <strong style="color: #f87171;">Thoát Nước (Khứ Thủy):</strong> CẤM đào cống ngầm, rãnh xả nước, hố ga chảy thoát qua các phương vị trên (tránh phạm <em>Sát Nhân Hoàng Tuyền</em> gây hao tài tổn đinh).<br>
+                    • <strong style="color: #facc15;">Cửa & Cổng:</strong> Tránh mở cổng ngõ hoặc cửa phụ đón lối đi tại các phương này nếu phía trước có dòng nước xiết.
+                  </div>
                 </div>
               </div>
 
-              <!-- Bát Sát -->
-              <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
-                  <span style="color: #94a3b8;">Bát Sát Tiêu Vong:</span>
+              <!-- B. Bát Sát Tiêu Vong -->
+              <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem;">
+                  <span style="color: #f87171; font-weight: 700;">☠️ Bát Sát Tiêu Vong (Long Thượng Bát Sát):</span>
                   <span class="tamhop-badge ${batSat.pham_bat_sat ? 'red' : 'green'}">
                     ${batSat.pham_bat_sat ? 'ĐẠI HUNG (Phạm Bát Sát)' : 'BÌNH AN (Không Phạm)'}
                   </span>
                 </div>
-                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 3px; line-height: 1.4;">
                   ${batSat.mo_ta}
+                </div>
+
+                <!-- Bảng chỉ dẫn phương vị Bát Sát cần tránh tuyệt đối -->
+                <div style="margin-top: 6px; background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.45); border-radius: 8px; padding: 6px 8px;">
+                  <div style="font-size: 0.70rem; color: #fca5a5; font-weight: 700; margin-bottom: 4px;">
+                    🚫 PHƯƠNG VỊ BÁT SÁT ĐẠI KỴ CỦA TRẠCH NÀY (TỌA ${toaSon} • CUNG ${toaInfo.cung_bat_quai}):
+                  </div>
+                  ${batSatChiTiet ? `
+                    <div style="margin-bottom: 5px;">
+                      <span style="background: rgba(220, 38, 38, 0.4); border: 1.5px solid #dc2626; color: #ffffff; padding: 2.5px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+                        <span>🚫 Sơn ${batSatChiTiet.chi_sat} (${batSatChiTiet.deg_range})</span>
+                        <span style="color: #fecaca;">• Cung ${batSatChiTiet.cung_sat} (${batSatChiTiet.con_vat})</span>
+                      </span>
+                    </div>
+                    <div style="font-size: 0.68rem; color: #e2e8f0; line-height: 1.45;">
+                      • <strong style="color: #f87171;">Cửa Chính, Cửa Phụ, Cổng Ngõ:</strong> ${batSatChiTiet.canh_bao_cua_cong}.<br>
+                      • <strong style="color: #38bdf8;">Nguồn Nước (Lai Thủy) & Bể Phốt:</strong> ${batSatChiTiet.canh_bao_thuy}.<br>
+                      • <strong style="color: #fbbf24;">Ngoại Khí Xung Chiếu:</strong> ${batSatChiTiet.canh_bao_ngoai_canh}
+                    </div>
+                  ` : ''}
                 </div>
               </div>
             </div>
 
             <!-- PHẦN 4: TAM SÁT & THÁI TUẾ -->
-            <div class="tamhop-section-title">
+            <div class="tamhop-section-title" style="display: flex; justify-content: space-between; align-items: center;">
               <span>🛡️ 4. Tam Sát & Thái Tuế Trong Năm ${curNamChi}</span>
+              <span style="font-size: 0.65rem; color: #facc15; font-weight: 700;">Kiêng Động Thổ & Xoay Hướng</span>
             </div>
             <div class="tamhop-field-group">
-              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
-                <span style="color: #94a3b8;">Tam Sát Năm ${curNamChi}:</span>
-                <strong style="color: ${tamSat.pham_tam_sat ? '#f87171' : '#4ade80'};">
-                  Phương ${tamSat.tam_sat_phuong} (${tamSat.cac_son_sat.join(', ')}) • ${tamSat.pham_tam_sat ? 'PHẠM TAM SÁT' : 'An Toàn'}
-                </strong>
+              <!-- Tam Sát -->
+              <div style="margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; margin-bottom: 3px;">
+                  <span style="color: #94a3b8;">Tam Sát Năm ${curNamChi}:</span>
+                  <strong style="color: ${tamSat.pham_tam_sat ? '#f87171' : '#4ade80'};">
+                    Phương ${tamSat.tam_sat_phuong} (${tamSat.cac_son_sat.join(', ')}) • ${tamSat.pham_tam_sat ? '⚠️ HƯỚNG NHÀ ĐANG PHẠM' : '✅ Hướng Nhà An Toàn'}
+                  </strong>
+                </div>
+
+                <!-- Bảng 3 Sơn Tam Sát cụ thể để gia chủ biết hướng tránh -->
+                <div style="margin-top: 5px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; padding: 6px 8px;">
+                  <div style="font-size: 0.70rem; color: #fde047; font-weight: 700; margin-bottom: 4px;">
+                    🛡️ DẢI PHƯƠNG VỊ PHẠM TAM SÁT NĂM ${curNamChi} (${tamSatChiTiet ? tamSatChiTiet.dai_do_so : ''}):
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px;">
+                    ${tamSatChiTiet ? tamSatChiTiet.cac_son.map(item => `
+                      <div style="background: rgba(245, 158, 11, 0.25); border: 1px solid #f59e0b; padding: 2.5px 6px; border-radius: 6px; font-size: 0.67rem;">
+                        <b style="color: #fde047;">${item.loai_sat}:</b> Sơn ${item.son} (${item.deg_range})
+                      </div>
+                    `).join('') : ''}
+                  </div>
+                  <div style="font-size: 0.68rem; color: #cbd5e1; line-height: 1.45;">
+                    • <strong style="color: #f87171;">Quy Tắc Cửa & Cổng:</strong> ${tamSatChiTiet ? tamSatChiTiet.canh_bao_huong_nha_cua : ''}.<br>
+                    • <strong style="color: #fbbf24;">Động Thổ & Sửa Chữa:</strong> ${tamSatChiTiet ? tamSatChiTiet.canh_bao_dong_tho : ''}.<br>
+                    • <em style="color: #94a3b8;">${tamSatChiTiet ? tamSatChiTiet.khuyen_nghi : ''}</em>
+                  </div>
+                </div>
               </div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
-                <span style="color: #94a3b8;">Thái Tuế & Tuế Phá:</span>
-                <strong style="color: ${thaiTue.pham_tue_pha ? '#f87171' : (thaiTue.pham_thai_tue ? '#facc15' : '#4ade80')};">
-                  ${thaiTue.danh_gia}
-                </strong>
-              </div>
-              <div style="font-size: 0.7rem; color: #94a3b8; font-style: italic;">
-                Nguyên lý kinh điển: "Tam Sát khả tọa bất khả hướng", Thái Tuế khả tọa bất khả hướng, Tuế Phá nghiêm cấm cả tọa lẫn hướng.
+
+              <!-- Thái Tuế & Tuế Phá -->
+              <div style="border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 6px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 3px;">
+                  <span style="color: #94a3b8;">Thái Tuế & Tuế Phá:</span>
+                  <strong style="color: ${thaiTue.pham_tue_pha ? '#f87171' : (thaiTue.pham_thai_tue ? '#facc15' : '#4ade80')};">
+                    ${thaiTue.danh_gia}
+                  </strong>
+                </div>
+                <div style="font-size: 0.68rem; color: #94a3b8; line-height: 1.4; font-style: italic;">
+                  Thái Tuế tại Sơn ${curNamChi} (khả tọa bất khả hướng), Tuế Phá tại Sơn đối xung 180° (nghiêm cấm cả tọa lẫn hướng).
+                </div>
               </div>
             </div>
 
