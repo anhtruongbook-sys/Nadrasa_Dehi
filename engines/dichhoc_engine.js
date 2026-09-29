@@ -840,4 +840,4 @@
 
   global.NetaDichHocEngine = NetaDichHocEngine;
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

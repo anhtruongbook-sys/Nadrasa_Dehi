@@ -16,6 +16,9 @@
     method: 'luchao', // 'luchao' | 'maihoa'
     selectedDate: new Date(),
     purpose: '', // Việc cần xem
+    selectedTopic: 'cautai', // Chủ đề Dụng thần mặc định
+    interpretation: null, // Báo cáo luận giải chuyên sâu (Quy tắc & Gemini)
+    isInterpretingAI: false, // Trạng thái đang gọi Gemini AI
     
     // 1. Phân hệ Lục Hào Nạp Giáp
     lucHao: {
@@ -241,6 +244,42 @@
     return html;
   }
 
+  // Render thanh chọn chủ đề Dụng thần cho Lục Hào
+  function renderTopicSelector() {
+    if (state.method !== 'luchao') return '';
+    const presets = global.NetaLucHaoInterpreter?.TOPIC_PRESETS || [
+      { key: 'cautai', label: '💰 Cầu Tài & Đầu Tư', dungThan: 'Thê Tài' },
+      { key: 'congdanh', label: '🏆 Công Danh & Thăng Chức', dungThan: 'Quan Quỷ' },
+      { key: 'thicu', label: '📚 Thi Cử & Học Hành', dungThan: 'Phụ Mẫu' },
+      { key: 'honnhan_nam', label: '💍 Hôn Nhân (Nam hỏi)', dungThan: 'Thê Tài' },
+      { key: 'honnhan_nu', label: '💍 Hôn Nhân (Nữ hỏi)', dungThan: 'Quan Quỷ' },
+      { key: 'concai', label: '👶 Con Cái & Thai Sản', dungThan: 'Tử Tôn' },
+      { key: 'giatrach', label: '🏡 Gia Trạch & Nhà Đất', dungThan: 'Phụ Mẫu' },
+      { key: 'suckhoe', label: '🩺 Sức Khỏe & Bệnh Tật', dungThan: 'Tử Tôn' },
+      { key: 'kientung', label: '⚖️ Kiện Tụng & Tranh Chấp', dungThan: 'Quan Quỷ' },
+      { key: 'khac', label: '❓ Việc Chung & Động Tâm', dungThan: 'Thế Hào' }
+    ];
+    const curPreset = presets.find(p => p.key === state.selectedTopic) || presets[0];
+
+    return `
+      <div class="dh-topic-selector-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem;">
+          <span class="m-lbl">Chủ đề Dụng thần:</span>
+          <span style="font-size:0.68rem; color:#f5b041; font-weight:700;">
+            ${curPreset ? `${curPreset.label} ➔ ${curPreset.dungThan}` : ''}
+          </span>
+        </div>
+        <div class="dh-topic-chips-scroll">
+          ${presets.map(p => `
+            <button type="button" class="dh-topic-chip ${state.selectedTopic === p.key ? 'active' : ''}" data-topic-key="${p.key}">
+              ${p.label}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
   // Khởi tạo và render toàn bộ giao diện
   function render() {
     const container = document.getElementById('view-dichhoc');
@@ -312,6 +351,7 @@
             <span class="m-lbl">Việc cần xem:</span>
             <input type="text" id="dh-purpose-input" class="dh-purpose-input" value="${state.purpose}" placeholder="Nhập sự vụ muốn chiêm (ví dụ: Hợp tác làm ăn, Tài lộc, Gia sự)...">
           </div>
+          ${renderTopicSelector()}
         </div>
 
         <!-- 3. Khu Vực Tương Tác Theo Tab (Lục Hào: Gieo Xu Ống Quẻ / Mai Hoa: Khởi Quẻ Thời Gian & Số) -->
@@ -699,12 +739,13 @@
             <table class="dh-spec-table">
               <thead>
                 <tr class="th-group-row">
-                  <th colspan="7" class="th-group-left">QUẺ ${goc.name.toUpperCase()}</th>
+                  <th colspan="8" class="th-group-left">QUẺ ${goc.name.toUpperCase()}</th>
                   <th colspan="6" class="th-group-right">${bien ? `QUẺ ${bien.name.toUpperCase()}` : 'BẤT BIẾN (THUẦN TĨNH)'}</th>
                 </tr>
                 <tr class="th-cols-row">
                   <th>Hào</th>
                   <th style="width: 38px;">V-S</th>
+                  <th style="width: 44px;">Cân Lực</th>
                   <th style="width: 48px;">Quái thần</th>
                   <th style="width: 32px;">Lộc</th>
                   <th style="width: 32px;">Mã</th>
@@ -725,10 +766,21 @@
                   if (!hGoc) return '';
                   const isDong = hGoc.isDong;
 
+                  let canLucBadge = '-';
+                  if (state.interpretation?.evaluation?.haosEnriched) {
+                    const enrichedHao = state.interpretation.evaluation.haosEnriched[i];
+                    if (enrichedHao && enrichedHao.canLuc) {
+                      const sc = enrichedHao.canLuc.score;
+                      const cls = sc >= 1.5 ? 'vuong' : (sc <= -1.5 ? 'suy' : 'binh');
+                      canLucBadge = `<span class="badge-canluc ${cls}" title="${enrichedHao.canLuc.status}: ${enrichedHao.canLuc.notes.join('; ')}">${sc > 0 ? '+' : ''}${sc}</span>`;
+                    }
+                  }
+
                   return `
                     <tr class="dh-row ${isDong ? 'row-dong' : ''}">
                       <td class="td-bold ${isDong ? 'text-red' : ''}">${hGoc.can} ${hGoc.chi}</td>
                       <td class="td-center ${hGoc.vuongSuy === 'Vượng' ? 'text-green' : (hGoc.vuongSuy === 'Tướng' ? 'text-cyan' : '')}">${hGoc.vuongSuy}</td>
+                      <td class="td-center">${canLucBadge}</td>
                       <td class="td-center">${hGoc.isQuaiThan ? '<strong class="badge-ts qt">QT</strong>' : '-'}</td>
                       <td class="td-center">${hGoc.isLoc ? '<strong class="badge-ts loc">L</strong>' : '-'}</td>
                       <td class="td-center">${hGoc.isMa ? '<strong class="badge-ts ma">M</strong>' : '-'}</td>
@@ -774,6 +826,97 @@
           <div class="thoan-title">Kinh Dịch Thoán Từ & Ý Nghĩa:</div>
           <div class="thoan-text"><strong>${goc.name}:</strong> "${goc.tho || 'Cương nhu ứng hội, đạo trời tuần hoàn, giữ lòng trung chính ắt được hanh thông.'}"</div>
         </div>
+
+        <!-- F. BẢNG LUẬN GIẢI KINH DỊCH LỤC HÀO CHUYÊN SÂU (NTC V2 & GEMINI AI) -->
+        ${renderInterpretationBlock(isLucHao)}
+      </div>
+    `;
+  }
+
+  // Render khối luận giải chuyên sâu Lục Hào (Quy tắc & Gemini AI có rào chắn)
+  function renderInterpretationBlock(isLucHao) {
+    if (!isLucHao || !state.interpretation || !state.interpretation.evaluation) return '';
+
+    const interp = state.interpretation;
+    const ev = interp.evaluation;
+    const jm = ev.judgment;
+
+    return `
+      <div class="dh-interp-container" id="dh-interp-section">
+        <div class="dh-interp-head">
+          <div class="dh-interp-title-box">
+            <h3 class="dh-interp-title">📜 BẢN LUẬN GIẢI LỤC HÀO CHUYÊN SÂU</h3>
+            ${interp.aiUsed ? `
+              <span class="dh-guardrail-badge" title="Đã qua kiểm toán độc lập 6 tiêu chí chống ảo giác">
+                🛡️ KIỂM TOÁN CHỐNG ẢO GIÁC: ĐẠT CHUẨN
+              </span>
+            ` : `
+              <span class="dh-guardrail-badge" style="background:rgba(245,176,65,0.15); color:#f5b041; border-color:rgba(245,176,65,0.35);" title="Tính toán thuần quy tắc 100% xác định">
+                📐 HỆ CHUYÊN GIA QUY TẮC (OFFLINE)
+              </span>
+            `}
+          </div>
+          <div class="dh-interp-actions">
+            <button type="button" class="dh-btn-interp ${!interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-rule" title="Luận giải thuần quy tắc Dịch học (Offline 0ms)">
+              📜 Quy Tắc
+            </button>
+            <button type="button" class="dh-btn-interp ${interp.aiUsed ? 'primary' : ''}" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Luận giải bằng Gemini AI có rào chắn chống ảo giác">
+              ${state.isInterpretingAI ? '<span class="dh-spinner"></span> Đang suy luận...' : '🤖 Gemini AI'}
+            </button>
+            <button type="button" class="dh-btn-interp" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
+              📋 Sao Chép
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner Phán Quyết Cát / Hung -->
+        <div class="dh-judgment-banner" style="background: ${jm.judgmentColor}22; color: ${jm.judgmentColor}; border: 1px solid ${jm.judgmentColor}55;">
+          <span>⚖️ PHÁN ĐOÁN: ${jm.judgment}</span>
+          <span>Điểm khí số: ${jm.totalScore > 0 ? '+' : ''}${jm.totalScore}</span>
+        </div>
+
+        <div class="dh-interp-cards-grid">
+          <!-- 1. Dụng Thần & Tứ Thần Khảo Sát -->
+          <div class="dh-eval-card highlight">
+            <div class="dh-card-title">🎯 Dụng Thần & Tứ Thần Vận Động:</div>
+            <div>• <strong>Chủ đề:</strong> ${ev.topic.label} ➔ Dụng Thần: <strong style="color:#f5b041;">[${ev.targetLucThan}]</strong> ngự Hào ${ev.dungThan.pos} (${ev.dungThan.hao.chi || ''}) • Điểm: <strong>${ev.dungThan.hao.canLuc.score > 0 ? '+' : ''}${ev.dungThan.hao.canLuc.score} (${ev.dungThan.hao.canLuc.status})</strong></div>
+            <div>• <strong>Nguyên Thần:</strong> [${ev.tuThan.nguyenThan.name}] (Sinh trợ Dụng Thần) ${ev.tuThan.nguyenThan.haos.length ? `• Ngự Hào ${ev.tuThan.nguyenThan.haos.map(h => h.pos).join(', ')}` : '• Ẩn phục'}</div>
+            <div>• <strong>Kỵ Thần:</strong> [${ev.tuThan.kyThan.name}] (Khắc phạt Dụng Thần) ${ev.tuThan.kyThan.haos.length ? `• Ngự Hào ${ev.tuThan.kyThan.haos.map(h => h.pos).join(', ')}` : '• An tĩnh'}</div>
+          </div>
+
+          <!-- 2. Hào Thế & Thiên Cơ Biến Hóa -->
+          <div class="dh-eval-card">
+            <div class="dh-card-title">⚖️ Cục Diện Hào Thế & Biến Hóa:</div>
+            <div>• <strong>Hào Thế (Bản thân đương số):</strong> Hào ${ev.theHao.pos} (${ev.theHao.lucThan} ${ev.theHao.chi}) • Điểm: <strong>${ev.theHao.canLuc.score > 0 ? '+' : ''}${ev.theHao.canLuc.score} (${ev.theHao.canLuc.status})</strong></div>
+            <div>• <strong>Tương quan Thế - Dụng:</strong> <strong style="color:#f5b041;">[${ev.theDung.status}]</strong> ➔ ${ev.theDung.desc}</div>
+            ${ev.dongEffects.length ? `
+              <div style="margin-top:3px;">• <strong>Động thái phát động:</strong></div>
+              ${ev.dongEffects.map(e => `<div style="padding-left:10px; color:#cbd5e1;">- ${e}</div>`).join('')}
+            ` : '<div>• <strong>Động thái:</strong> Sáu hào an tĩnh, vạn sự quay về cội nguồn.</div>'}
+          </div>
+
+          <!-- 3. Định Thời Điểm Ứng Kỳ -->
+          <div class="dh-eval-card highlight">
+            <div class="dh-card-title">⏳ Định Thời Điểm Ứng Kỳ (Thời Gian Xảy Ra):</div>
+            ${ev.ungKy.map(uk => `<div>• ${uk}</div>`).join('')}
+          </div>
+
+          <!-- 4. Chẩn Đoán Phong Thủy Gia Trạch (Nếu có) -->
+          ${ev.fengshui.length ? `
+            <div class="dh-eval-card">
+              <div class="dh-card-title">🏡 Chẩn Đoán Phong Thủy Gia Trạch (6 Hào):</div>
+              ${ev.fengshui.map(fs => `<div>• <strong>Hào ${fs.pos} (${fs.area}):</strong> ${fs.issue} ➔ <span style="color:#f87171;">[${fs.risk}]</span></div>`).join('')}
+            </div>
+          ` : ''}
+
+          <!-- 5. Toàn Văn Luận Giải Chi Tiết -->
+          <div class="dh-eval-card">
+            <div class="dh-card-title">
+              <span>📖 Toàn Văn Luận Giải ${interp.aiUsed ? `(Gemini AI - Mô hình: ${interp.model || 'gemini-3.5-flash'})` : '(Phương Pháp Nguyễn Tuấn Cường V2)'}:</span>
+            </div>
+            <div class="dh-interp-raw-box" id="dh-interp-text-content">${interp.reportText}</div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -811,6 +954,23 @@
     if (!eng || !eng.LucHaoEngine) return;
     const cal = getCalendarInfo(state.selectedDate);
     state.lucHao.result = eng.LucHaoEngine.lapQue(state.lucHao.coins, cal);
+
+    // Tự động phân tích luận giải nghiệp vụ ngay lập tức (Chế độ Thuần Quy Tắc 100% Offline)
+    if (global.NetaLucHaoInterpreter) {
+      const evalData = global.NetaLucHaoInterpreter.evaluate8Steps(
+        state.lucHao.result,
+        state.selectedTopic,
+        state.purpose
+      );
+      state.interpretation = {
+        source: 'deterministic',
+        verified: true,
+        aiUsed: false,
+        reportText: global.NetaLucHaoInterpreter.generateDeterministicReport(evalData, state.lucHao.result),
+        evaluation: evalData,
+        factSheet: global.NetaLucHaoInterpreter.createGroundTruthFactSheet(evalData, state.lucHao.result)
+      };
+    }
   }
 
   function chayLapQueMaiHoa() {
@@ -898,6 +1058,8 @@
   function resetCastingLucHao() {
     state.lucHao.coins = [];
     state.lucHao.result = null;
+    state.interpretation = null;
+    state.isInterpretingAI = false;
     state.lucHao.coinStates = [3, 2, 3];
     playCoinAudio('clink');
     render();
@@ -996,7 +1158,106 @@
     // Input mục đích chiêm quẻ
     const inpPurpose = document.getElementById('dh-purpose-input');
     if (inpPurpose) {
-      inpPurpose.oninput = (e) => { state.purpose = e.target.value; };
+      inpPurpose.oninput = (e) => { 
+        state.purpose = e.target.value; 
+      };
+    }
+
+    // Chọn nhanh chủ đề Dụng thần
+    document.querySelectorAll('.dh-topic-chip').forEach(btn => {
+      btn.onclick = () => {
+        const tKey = btn.getAttribute('data-topic-key');
+        if (tKey && state.selectedTopic !== tKey) {
+          state.selectedTopic = tKey;
+          if (state.lucHao.result && global.NetaLucHaoInterpreter) {
+            const evalData = global.NetaLucHaoInterpreter.evaluate8Steps(
+              state.lucHao.result,
+              state.selectedTopic,
+              state.purpose
+            );
+            state.interpretation = {
+              source: 'deterministic',
+              verified: true,
+              aiUsed: false,
+              reportText: global.NetaLucHaoInterpreter.generateDeterministicReport(evalData, state.lucHao.result),
+              evaluation: evalData,
+              factSheet: global.NetaLucHaoInterpreter.createGroundTruthFactSheet(evalData, state.lucHao.result)
+            };
+          }
+          render();
+        }
+      };
+    });
+
+    // Nút chạy luận giải quy tắc (Offline)
+    const btnRunRule = document.getElementById('dh-btn-run-rule');
+    if (btnRunRule) {
+      btnRunRule.onclick = () => {
+        if (global.NetaLucHaoInterpreter && state.lucHao.result) {
+          const evalData = global.NetaLucHaoInterpreter.evaluate8Steps(
+            state.lucHao.result,
+            state.selectedTopic,
+            state.purpose
+          );
+          state.interpretation = {
+            source: 'deterministic',
+            verified: true,
+            aiUsed: false,
+            reportText: global.NetaLucHaoInterpreter.generateDeterministicReport(evalData, state.lucHao.result),
+            evaluation: evalData,
+            factSheet: global.NetaLucHaoInterpreter.createGroundTruthFactSheet(evalData, state.lucHao.result)
+          };
+          render();
+          if (global.showToast) global.showToast('📜 Đã xuất bản luận giải quy tắc xác định!');
+        }
+      };
+    }
+
+    // Nút chạy luận giải Gemini AI (có rào chắn chống ảo giác)
+    const btnRunAI = document.getElementById('dh-btn-run-ai');
+    if (btnRunAI) {
+      btnRunAI.onclick = async () => {
+        if (state.isInterpretingAI) return;
+        if (!state.lucHao.result || !global.NetaLucHaoInterpreter) return;
+        state.isInterpretingAI = true;
+        render();
+        try {
+          const aiRes = await global.NetaLucHaoInterpreter.interpretHexagram(state.lucHao.result, {
+            topicKey: state.selectedTopic,
+            customQuestion: state.purpose,
+            useAI: true
+          });
+          state.interpretation = aiRes;
+          if (global.showToast) {
+            if (aiRes.aiUsed) {
+              global.showToast('🤖 Luận giải Gemini thành công & đã qua kiểm toán chống ảo giác!');
+            } else if (aiRes.hallucinationDetected) {
+              global.showToast('⚠️ Phát hiện ảo giác AI, đã kích hoạt Bản Quy Tắc an toàn!');
+            } else {
+              global.showToast(aiRes.warning || 'Đã xuất bản luận giải quy tắc!');
+            }
+          }
+        } catch (e) {
+          if (global.showToast) global.showToast('Lỗi: ' + e.message);
+        } finally {
+          state.isInterpretingAI = false;
+          render();
+        }
+      };
+    }
+
+    // Nút sao chép bài luận giải
+    const btnCopyReport = document.getElementById('dh-btn-copy-report');
+    if (btnCopyReport) {
+      btnCopyReport.onclick = () => {
+        if (state.interpretation && state.interpretation.reportText) {
+          navigator.clipboard.writeText(state.interpretation.reportText).then(() => {
+            if (global.showToast) global.showToast('📋 Đã sao chép toàn văn bài luận giải vào Clipboard!');
+          }).catch(() => {
+            if (global.showToast) global.showToast('Không thể sao chép tự động, hãy bôi đen để copy.');
+          });
+        }
+      };
     }
 
     // Nút thời gian hiện tại

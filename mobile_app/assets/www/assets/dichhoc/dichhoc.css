@@ -1279,3 +1279,303 @@ body.theme-light .thoan-title {
 body.theme-light .thoan-text {
   color: #334155;
 }
+
+/* ==========================================================================
+   F. PHÂN HỆ LUẬN GIẢI CHUYÊN SÂU NGUYỄN TUẤN CƯỜNG V2 & GEMINI AI GUARDRAIL
+   ========================================================================== */
+
+/* 1. Thanh Chọn Nhanh Chủ Đề Dụng Thần */
+.dh-topic-selector-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(245, 176, 65, 0.2);
+}
+
+.dh-topic-chips-scroll {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding-bottom: 3px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dh-topic-chips-scroll::-webkit-scrollbar {
+  height: 3px;
+}
+.dh-topic-chips-scroll::-webkit-scrollbar-thumb {
+  background: rgba(245, 176, 65, 0.4);
+  border-radius: 2px;
+}
+
+.dh-topic-chip {
+  flex-shrink: 0;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  color: #94a3b8;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+body.theme-light .dh-topic-chip {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.dh-topic-chip:hover {
+  border-color: #f5b041;
+  color: #fbbf24;
+}
+
+.dh-topic-chip.active {
+  background: linear-gradient(135deg, rgba(245, 176, 65, 0.25), rgba(217, 119, 6, 0.35));
+  border-color: #f5b041;
+  color: #fbbf24;
+  box-shadow: 0 0 8px rgba(245, 176, 65, 0.25);
+}
+
+body.theme-light .dh-topic-chip.active {
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #b45309;
+}
+
+/* 2. Điểm Cân Lực Hào Trong Bảng II */
+.badge-canluc {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.badge-canluc.vuong {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.badge-canluc.suy {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+.badge-canluc.binh {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* 3. Khối Báo Cáo Luận Giải Chuyên Sâu */
+.dh-interp-container {
+  margin-top: 14px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+body.theme-light .dh-interp-container {
+  background: #ffffff;
+  border-color: rgba(180, 83, 9, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.dh-interp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid rgba(245, 176, 65, 0.3);
+  padding-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dh-interp-title-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dh-interp-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f5b041;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+body.theme-light .dh-interp-title {
+  color: #b45309;
+}
+
+.dh-guardrail-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.dh-interp-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dh-btn-interp {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #f5b041;
+  color: #f5b041;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+body.theme-light .dh-btn-interp {
+  background: #fffbeb;
+  border-color: #d97706;
+  color: #b45309;
+}
+
+.dh-btn-interp:hover {
+  background: #f5b041;
+  color: #0f172a;
+}
+
+body.theme-light .dh-btn-interp:hover {
+  background: #d97706;
+  color: #ffffff;
+}
+
+.dh-btn-interp.primary {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: #ffffff;
+  border-color: #f59e0b;
+}
+
+.dh-btn-interp.primary:hover {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.dh-btn-interp:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Các thẻ nội dung phân tích */
+.dh-interp-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dh-eval-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+
+body.theme-light .dh-eval-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #1e293b !important;
+}
+
+.dh-eval-card.highlight {
+  background: rgba(245, 176, 65, 0.06);
+  border-color: rgba(245, 176, 65, 0.25);
+  color: #e2e8f0;
+}
+
+body.theme-light .dh-eval-card.highlight {
+  background: #fefce8;
+  border-color: #fef08a;
+  color: #1e293b !important;
+}
+
+.dh-card-title {
+  font-weight: 800;
+  color: #f5b041;
+  font-size: 0.76rem;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+body.theme-light .dh-card-title {
+  color: #a16207;
+}
+
+.dh-judgment-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.dh-interp-raw-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 420px;
+  overflow-y: auto;
+  color: #e2e8f0;
+}
+
+body.theme-light .dh-interp-raw-box {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.dh-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
