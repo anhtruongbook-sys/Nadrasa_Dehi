@@ -76,28 +76,29 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.4
-          name: "Neta Light v2.5.4 (Khắc Phục Toàn Diện Kết Nối Gemini API & Dự Phòng Tự Động)"
+          tag_name: v2.5.5
+          name: "Neta Light v2.5.5 (Chuẩn Hóa Luận Giải Lục Hào, Khóa Ngũ Hành & Độ Tương Phản WCAG AAA)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.4
-            Bản phát hành tối ưu hóa và khắc phục triệt để lỗi kết nối Google Gemini API:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.5
+            Bản phát hành chuẩn hóa toàn diện động cơ Luận Giải Kinh Dịch Lục Hào Chuyên Sâu:
             
-            - **Khắc Phục Triệt Để Lỗi 401/403 Sai Khi Kiểm Tra & Gọi Gemini API**:
-              + Loại bỏ hoàn toàn header `Authorization: Bearer` không tương thích với Google AI Studio API.
-              + Chuẩn hóa 100% việc truyền khóa xác thực qua tham số `?key=` và header `x-goog-api-key`.
-              + Sửa lỗi xác thực độ dài phản hồi trong hàm kiểm tra kết nối (`testConnection`).
+            - **Khóa Chặt Ngũ Hành Dụng Thần 100% Động Từ Quẻ Gieo Được**:
+              + Tự động trích xuất Can Chi và Ngũ Hành của Dụng Thần trực tiếp từ bàn quẻ gieo được (theo quy luật Ngã khắc giả vi Thê Tài của từng Cung Bát Quái).
+              + Loại bỏ hoàn toàn ảo giác AI: Ngăn chặn triệt để tình trạng AI tự ý suy đoán sai ngũ hành của Dụng Thần.
+              + Khóa cứng tương quan Nguyệt Lệnh (sinh, khắc, xung, Nguyệt Phá) và Nhật Thần (sinh, khắc, hợp, tiết khí, Nhật Phá).
             
-            - **Chuỗi Dự Phòng Tự Động Thông Minh (Resilient Cascade)**:
-              + Tự động định tuyến ưu tiên `gemini-3.5-flash` và dự phòng tức thì sang `gemini-2.5-flash`, `gemini-3.5-flash-lite`, `gemini-2.5-flash-lite`.
-              + Tự động chuyển mô hình mượt mà khi gặp tình trạng quá tải cục bộ từ máy chủ Google (HTTP 503 / 429), bảo đảm trải nghiệm luận giải Tarot và dự đoán luôn thông suốt.
+            - **Chuẩn Hóa Khảo Luận Hào Tàng Phục (Phục Thần)**:
+              + Phân định minh bạch trường hợp Dụng Thần Hiện Diện Trực Tiếp trên quẻ vs Dụng Thần Lâm Phục Thần.
+              + Khảo sát quan hệ Phi - Phục chuẩn mực 5 thể thức cổ thư *Bốc Phệ Chính Tông*: Trường sinh đắc dưỡng, Phá kén xuất đầu, Vi thương khắc bạt, Tiết khí, Tỉ hòa.
+              + Định thời Ứng Kỳ Xuất Phục: Ngày xung phá Phi Thần hoặc ngày trực Phục Thần.
             
-            - **Nâng Cấp Động Cơ Gemini Tarot & Dò Tìm Model Khả Dụng (Auto-Discovery)**:
-              + Cơ chế tự động dò tìm model qua Google AI Studio API (`/v1beta/models`) và xếp hạng thông minh.
-              + Bổ sung nút kiểm tra model `🔍 Kiểm Tra Model` ngay trên màn hình thiết lập khóa.
+            - **Khắc Phục Toàn Diện Lỗi Tương Phản Màu Sắc (WCAG AAA)**:
+              + Loại bỏ triệt để các mã màu chữ mờ trên nền sáng (Light Theme).
+              + Tinh chỉnh màu chữ đen sẫm `#0f172a`, font-weight 500 cho các dòng động thái phát động.
+              + Chuẩn hóa banner phán quyết Cát / Hung và các huy hiệu trạng thái sắc nét, trang nhã trên cả Light và Dark Theme.
             
-            - **Chuẩn Hóa Giao Diện & Loại Bỏ Hoàn Toàn Thông Tin Rác**:
-              + Xóa sạch toàn bộ nhãn và thông tin branding không phù hợp ("Joey Yap", "Compendium") trên toàn bộ hệ thống.
-              + Trả lại các thuật ngữ phong thủy - kỹ thuật học thuật chuẩn mực, trong sáng.
+            - **Bảo Đảm Tuyệt Đối Bất Biến Zero-Fabrication**:
+              + Toàn bộ dữ liệu 6 hào, thần sát, hào động và hào tàng phục đều được lấy 100% từ quẻ gieo được, nghiêm cấm tự bịa.
             
             - **Khắc Phục Triệt Để Lỗi Thuật Toán Cầm Nhuế Đồng Cung trong Kỳ Môn Bản Mệnh**:
               + Bổ sung xử lý cặp song tinh Cầm Nhuế Đồng Cung (`Thiên Nhuế & Thiên Cầm`).
