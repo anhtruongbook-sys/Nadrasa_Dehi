@@ -76,11 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.5
-          name: "Neta Light v2.5.5 (Chuẩn Hóa Luận Giải Lục Hào, Khóa Ngũ Hành & Độ Tương Phản WCAG AAA)"
+          tag_name: v2.5.6
+          name: "Neta Light v2.5.6 (Nâng Tầm Luận Giải Lục Hào Chuyên Sâu, Loại Bỏ Mã Thô & Triệt Tiêu Ảo Giác)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.5
-            Bản phát hành chuẩn hóa toàn diện động cơ Luận Giải Kinh Dịch Lục Hào Chuyên Sâu:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.6
+            Bản nâng cấp toàn diện chất lượng Luận Giải Kinh Dịch Lục Hào Chuyên Sâu:
+            
+            - **Loại Bỏ Triệt Để Khối Code Block & Bảng ASCII Thô**:
+              + Không còn hiện tượng AI lặp lại bảng 6 hào nạp giáp trong khối monospace text.
+              + Toàn văn luận giải được bóc tách và trình bày dưới dạng văn bản biện chứng Dịch lý giàu thẩm mỹ, thanh lịch, chuẩn mực.
+            
+            - **Nâng Cao Chiều Sâu & Độ Dài Luận Giải (1.500 - 2.200 từ)**:
+              + Bắt buộc mỗi đề mục trong 7 đề mục phải có từ 2 đến 3 đoạn văn xuôi phân tích tỉ mỉ nguyên lý ngũ hành, sinh khắc chế hóa, vượng suy hưu tù và tâm thái xử thế.
+              + Tăng cường sức mạnh phân tích biện chứng chuyên sâu, loại bỏ hoàn toàn các câu tóm tắt sơ sài.
             
             - **Khóa Chặt Ngũ Hành Dụng Thần 100% Động Từ Quẻ Gieo Được**:
               + Tự động trích xuất Can Chi và Ngũ Hành của Dụng Thần trực tiếp từ bàn quẻ gieo được (theo quy luật Ngã khắc giả vi Thê Tài của từng Cung Bát Quái).

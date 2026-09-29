@@ -943,6 +943,20 @@
     if (!rawText) return '';
     let text = rawText.trim();
 
+    // 0. Làm sạch triệt để các khối code block thừa ```text ... ``` hoặc đường kẻ ====
+    text = text.replace(/```[a-zA-Z]*\n?([\s\S]*?)```/g, (match, p1) => {
+      return p1.split('\n').filter(line => {
+        const tr = line.trim();
+        if (tr.startsWith('===') || tr.startsWith('---')) return false;
+        if (tr.match(/^QUẺ CHÍNH:.*QUẺ BIẾN:/i)) return false;
+        if (tr.match(/^Hào\s+\d+:\s+\[.*\]\s+.*\|\s+Hào\s+\d+:/i)) return false;
+        return true;
+      }).join('\n');
+    });
+    text = text.replace(/```[a-zA-Z]*/g, '');
+    text = text.replace(/```/g, '');
+    text = text.replace(/^[=\-~_]{3,}\s*$/gm, '');
+
     // 1. Tách và chuẩn hóa biểu ngữ tiêu đề nếu có
     let bannerHtml = '';
     const headerMatch = text.match(/═+\s*\n\s*BẢN LUẬN GIẢI[^\n]*\n\s*Sự Vụ Chiêm Đoán:\s*"([^"]*)"\s*\n\s*Chủ Đề Dụng Thần:\s*\[([^\]]*)\]\s*➔\s*Thủ Ngôi:\s*([^\n]*)\n\s*═+/);
@@ -996,6 +1010,12 @@
       const rawLine = lines[i];
       const line = rawLine.trim();
       if (!line) continue;
+
+      // Bỏ qua triệt để các dòng rác code block, bảng thô hay đường kẻ sót lại
+      if (line.startsWith('```') || line.match(/^[=\-~_]{3,}$/)) continue;
+      if (line.match(/^QUẺ CHÍNH:.*QUẺ BIẾN:/i)) continue;
+      if (line.match(/^Hào\s+[1-6]:\s*\[/i) && (line.includes('(') || line.includes('|'))) continue;
+      if (line.match(/\|\s*Hào\s+[1-6]:/i)) continue;
 
       // Nhận diện tiêu đề chuyên mục: "I. ...", "II. ...", "## I. ...", "## 1. ..."
       const match = line.match(secHeaderRegex);
