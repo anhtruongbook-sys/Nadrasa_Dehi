@@ -1433,6 +1433,24 @@ body.theme-light .dh-interp-title {
   gap: 3px;
 }
 
+body.theme-light .dh-guardrail-badge {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.dh-guardrail-badge.standard {
+  background: rgba(245, 176, 65, 0.15);
+  color: #f5b041;
+  border-color: rgba(245, 176, 65, 0.35);
+}
+
+body.theme-light .dh-guardrail-badge.standard {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
 .dh-interp-actions {
   display: flex;
   gap: 6px;
@@ -1504,9 +1522,10 @@ body.theme-light .dh-btn-interp:hover {
 }
 
 body.theme-light .dh-eval-card {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  color: #1e293b !important;
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .dh-eval-card.highlight {
@@ -1516,9 +1535,9 @@ body.theme-light .dh-eval-card {
 }
 
 body.theme-light .dh-eval-card.highlight {
-  background: #fefce8;
-  border-color: #fef08a;
-  color: #1e293b !important;
+  background: #fffdf5;
+  border-color: #fde68a;
+  color: #0f172a !important;
 }
 
 .dh-card-title {
@@ -1532,9 +1551,10 @@ body.theme-light .dh-eval-card.highlight {
 }
 
 body.theme-light .dh-card-title {
-  color: #a16207;
+  color: #92400e;
 }
 
+/* Biểu ngữ phán quyết chuẩn độ tương phản cao */
 .dh-judgment-banner {
   display: flex;
   align-items: center;
@@ -1544,6 +1564,117 @@ body.theme-light .dh-card-title {
   margin-bottom: 4px;
   font-weight: 800;
   font-size: 0.82rem;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dh-judgment-banner.banner-cat {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+body.theme-light .dh-judgment-banner.banner-cat {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.dh-judgment-banner.banner-hung {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+body.theme-light .dh-judgment-banner.banner-hung {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.dh-judgment-banner.banner-binh {
+  background: rgba(245, 176, 65, 0.15);
+  color: #f5b041;
+  border: 1px solid rgba(245, 176, 65, 0.35);
+}
+
+body.theme-light .dh-judgment-banner.banner-binh {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+/* Các class định dạng màu sắc tương phản cao */
+.dh-text-gold {
+  color: #f5b041;
+  font-weight: 700;
+}
+
+body.theme-light .dh-text-gold {
+  color: #92400e;
+}
+
+.dh-text-risk {
+  color: #f87171;
+  font-weight: 700;
+}
+
+body.theme-light .dh-text-risk {
+  color: #b91c1c;
+}
+
+.dh-text-cat {
+  color: #10b981;
+  font-weight: 700;
+}
+
+body.theme-light .dh-text-cat {
+  color: #065f46;
+}
+
+.dh-dong-item {
+  padding-left: 10px;
+  color: #cbd5e1;
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
+body.theme-light .dh-dong-item {
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.dh-phuc-status-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  margin-left: 4px;
+}
+
+.dh-phuc-status-tag.hien-dien {
+  background: rgba(16, 185, 129, 0.16);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+body.theme-light .dh-phuc-status-tag.hien-dien {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.dh-phuc-status-tag.tang-phuc {
+  background: rgba(245, 176, 65, 0.16);
+  color: #f5b041;
+  border: 1px solid rgba(245, 176, 65, 0.35);
+}
+
+body.theme-light .dh-phuc-status-tag.tang-phuc {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
 }
 
 .dh-interp-raw-box {

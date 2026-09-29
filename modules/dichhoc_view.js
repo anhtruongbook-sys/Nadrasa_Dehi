@@ -841,6 +841,15 @@
     const ev = interp.evaluation;
     const jm = ev.judgment;
 
+    let bannerClass = 'banner-binh';
+    if (jm.isSuccess === true) bannerClass = 'banner-cat';
+    else if (jm.isSuccess === false) bannerClass = 'banner-hung';
+
+    const dtHao = ev.dungThan.hao;
+    const dtPhucTag = ev.dungThan.isPhuc 
+      ? '<span class="dh-phuc-status-tag tang-phuc">LÂM PHỤC THẦN</span>'
+      : '<span class="dh-phuc-status-tag hien-dien">HIỆN DIỆN MINH BẠCH</span>';
+
     return `
       <div class="dh-interp-container" id="dh-interp-section">
         <div class="dh-interp-head">
@@ -851,7 +860,7 @@
                 📖 LUẬN GIẢI CHUYÊN SÂU
               </span>
             ` : `
-              <span class="dh-guardrail-badge" style="background:rgba(245,176,65,0.15); color:#f5b041; border-color:rgba(245,176,65,0.35);" title="Luận giải tiêu chuẩn theo quy tắc Dịch học cổ thư">
+              <span class="dh-guardrail-badge standard" title="Luận giải tiêu chuẩn theo quy tắc Dịch học cổ thư">
                 📜 LUẬN GIẢI TIÊU CHUẨN
               </span>
             `}
@@ -869,9 +878,9 @@
           </div>
         </div>
 
-        <!-- Banner Phán Quyết Cát / Hung -->
-        <div class="dh-judgment-banner" style="background: ${jm.judgmentColor}22; color: ${jm.judgmentColor}; border: 1px solid ${jm.judgmentColor}55;">
-          <span>⚖️ PHÁN ĐOÁN: ${jm.judgment}</span>
+        <!-- Banner Phán Quyết Cát / Hung Chuẩn Tương Phản -->
+        <div class="dh-judgment-banner ${bannerClass}">
+          <span>⚖️ PHÁN ĐOÁN: ${escapeReportHtml(jm.judgment)}</span>
           <span>Điểm khí số: ${jm.totalScore > 0 ? '+' : ''}${jm.totalScore}</span>
         </div>
 
@@ -879,33 +888,39 @@
           <!-- 1. Dụng Thần & Tứ Thần Khảo Sát -->
           <div class="dh-eval-card highlight">
             <div class="dh-card-title">🎯 Dụng Thần & Tứ Thần Vận Động:</div>
-            <div>• <strong>Chủ đề:</strong> ${ev.topic.label} ➔ Dụng Thần: <strong style="color:#f5b041;">[${ev.targetLucThan}]</strong> ngự Hào ${ev.dungThan.pos} (${ev.dungThan.hao.chi || ''}) • Điểm: <strong>${ev.dungThan.hao.canLuc.score > 0 ? '+' : ''}${ev.dungThan.hao.canLuc.score} (${ev.dungThan.hao.canLuc.status})</strong></div>
-            <div>• <strong>Nguyên Thần:</strong> [${ev.tuThan.nguyenThan.name}] (Sinh trợ Dụng Thần) ${ev.tuThan.nguyenThan.haos.length ? `• Ngự Hào ${ev.tuThan.nguyenThan.haos.map(h => h.pos).join(', ')}` : '• Ẩn phục'}</div>
-            <div>• <strong>Kỵ Thần:</strong> [${ev.tuThan.kyThan.name}] (Khắc phạt Dụng Thần) ${ev.tuThan.kyThan.haos.length ? `• Ngự Hào ${ev.tuThan.kyThan.haos.map(h => h.pos).join(', ')}` : '• An tĩnh'}</div>
+            <div>• <strong>Chủ đề:</strong> ${escapeReportHtml(ev.topic.label)} ➔ Dụng Thần: <span class="dh-text-gold">[${escapeReportHtml(ev.targetLucThan)}]</span> ${dtPhucTag} ngự Hào ${ev.dungThan.pos} (${dtHao.can || ''}-${dtHao.chi} • Hành <span class="dh-text-gold">${dtHao.chiElement}</span>) • Điểm: <strong>${dtHao.canLuc.score > 0 ? '+' : ''}${dtHao.canLuc.score} (${dtHao.canLuc.status})</strong></div>
+            ${ev.dungThan.isPhuc && ev.dungThan.phiPhucRelation ? `
+              <div>• <strong>Quan hệ Phi - Phục:</strong> Phục dưới Hào Phi ${ev.dungThan.phucInfo?.pos} (${ev.dungThan.phucInfo?.phiThan?.lucThan} ${ev.dungThan.phucInfo?.phiThan?.chi} • Hành ${ev.dungThan.phucInfo?.phiThan?.chiElement}) ➔ <span class="dh-text-gold">[${ev.dungThan.phiPhucRelation.relation}]</span></div>
+            ` : ''}
+            <div>• <strong>Nguyên Thần:</strong> <span class="dh-text-cat">[${ev.tuThan.nguyenThan.name}]</span> (Sinh trợ Dụng Thần) ${ev.tuThan.nguyenThan.haos.length ? `• Ngự Hào ${ev.tuThan.nguyenThan.haos.map(h => h.pos).join(', ')}` : '• Ẩn phục'}</div>
+            <div>• <strong>Kỵ Thần:</strong> <span class="dh-text-risk">[${ev.tuThan.kyThan.name}]</span> (Khắc phạt Dụng Thần) ${ev.tuThan.kyThan.haos.length ? `• Ngự Hào ${ev.tuThan.kyThan.haos.map(h => h.pos).join(', ')}` : '• An tĩnh'}</div>
+            ${ev.allPhucThan && ev.allPhucThan.length > 0 && !ev.dungThan.isPhuc ? `
+              <div style="font-size:0.7rem; opacity:0.85; margin-top:2px;">• <strong>Hào Phục Thần trong quẻ:</strong> ${ev.allPhucThan.map(p => `[${p.lucThan} ${p.can}-${p.chi} • ${p.chiElement} phục Hào ${p.pos}]`).join(', ')}</div>
+            ` : ''}
           </div>
 
           <!-- 2. Hào Thế & Thiên Cơ Biến Hóa -->
           <div class="dh-eval-card">
             <div class="dh-card-title">⚖️ Cục Diện Hào Thế & Biến Hóa:</div>
-            <div>• <strong>Hào Thế (Bản thân đương số):</strong> Hào ${ev.theHao.pos} (${ev.theHao.lucThan} ${ev.theHao.chi}) • Điểm: <strong>${ev.theHao.canLuc.score > 0 ? '+' : ''}${ev.theHao.canLuc.score} (${ev.theHao.canLuc.status})</strong></div>
-            <div>• <strong>Tương quan Thế - Dụng:</strong> <strong style="color:#f5b041;">[${ev.theDung.status}]</strong> ➔ ${ev.theDung.desc}</div>
+            <div>• <strong>Hào Thế (Bản thân đương số):</strong> Hào ${ev.theHao.pos} (${ev.theHao.lucThan} ${ev.theHao.can || ''}-${ev.theHao.chi} • Hành ${ev.theHao.chiElement}) • Điểm: <strong>${ev.theHao.canLuc.score > 0 ? '+' : ''}${ev.theHao.canLuc.score} (${ev.theHao.canLuc.status})</strong></div>
+            <div>• <strong>Tương quan Thế - Dụng:</strong> <span class="dh-text-gold">[${ev.theDung.status}]</span> ➔ ${escapeReportHtml(ev.theDung.desc)}</div>
             ${ev.dongEffects.length ? `
               <div style="margin-top:3px;">• <strong>Động thái phát động:</strong></div>
-              ${ev.dongEffects.map(e => `<div style="padding-left:10px; color:#cbd5e1;">- ${e}</div>`).join('')}
+              ${ev.dongEffects.map(e => `<div class="dh-dong-item">• ${escapeReportHtml(e)}</div>`).join('')}
             ` : '<div>• <strong>Động thái:</strong> Sáu hào an tĩnh, vạn sự quay về cội nguồn.</div>'}
           </div>
 
           <!-- 3. Định Thời Điểm Ứng Kỳ -->
           <div class="dh-eval-card highlight">
             <div class="dh-card-title">⏳ Định Thời Điểm Ứng Kỳ (Thời Gian Xảy Ra):</div>
-            ${ev.ungKy.map(uk => `<div>• ${uk}</div>`).join('')}
+            ${ev.ungKy.map(uk => `<div>• ${escapeReportHtml(uk)}</div>`).join('')}
           </div>
 
           <!-- 4. Chẩn Đoán Phong Thủy Gia Trạch (Nếu có) -->
           ${ev.fengshui.length ? `
             <div class="dh-eval-card">
               <div class="dh-card-title">🏡 Chẩn Đoán Phong Thủy Gia Trạch (6 Hào):</div>
-              ${ev.fengshui.map(fs => `<div>• <strong>Hào ${fs.pos} (${fs.area}):</strong> ${fs.issue} ➔ <span style="color:#f87171;">[${fs.risk}]</span></div>`).join('')}
+              ${ev.fengshui.map(fs => `<div>• <strong>Hào ${fs.pos} (${escapeReportHtml(fs.area)}):</strong> ${escapeReportHtml(fs.issue)} ➔ <span class="dh-text-risk">[${escapeReportHtml(fs.risk)}]</span></div>`).join('')}
             </div>
           ` : ''}
 

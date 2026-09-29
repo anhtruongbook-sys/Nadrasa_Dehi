@@ -64,6 +64,16 @@
     'Hỏa': 'Tuất'
   };
 
+  const NGU_HANH_SINH = { 'Mộc': 'Hỏa', 'Hỏa': 'Thổ', 'Thổ': 'Kim', 'Kim': 'Thủy', 'Thủy': 'Mộc' };
+  const NGU_HANH_KHAC = { 'Mộc': 'Thổ', 'Thổ': 'Thủy', 'Thủy': 'Hỏa', 'Hỏa': 'Kim', 'Kim': 'Mộc' };
+  const DIA_CHI_NGU_HANH = {
+    'Tý': 'Thủy', 'Hợi': 'Thủy',
+    'Dần': 'Mộc', 'Mão': 'Mộc',
+    'Tỵ': 'Hỏa', 'Ngọ': 'Hỏa',
+    'Thân': 'Kim', 'Dậu': 'Kim',
+    'Thìn': 'Thổ', 'Tuất': 'Thổ', 'Sửu': 'Thổ', 'Mùi': 'Thổ'
+  };
+
   const FENGSHUI_LEVELS = [
     { pos: 1, area: 'Đất đai, móng nhà, nền móng, cống rãnh', defaultDesc: 'Gốc rễ vững bền' },
     { pos: 2, area: 'Bếp núc, phòng ngủ, nhà ở, gian giữa', defaultDesc: 'Nơi sinh hoạt ấm cúng' },
@@ -213,6 +223,46 @@
     };
   }
 
+  // Đánh giá quan hệ Phi - Phục chuẩn mực cổ thư Dịch học (Bốc Phệ Chính Tông & Tăng San Bốc Dịch)
+  function evaluatePhiPhucRelation(phucHao, phiHao, eng) {
+    if (!phucHao || !phiHao) return null;
+    const phucElm = phucHao.chiElement;
+    const phiElm = phiHao.chiElement;
+    let relation = '';
+    let relationType = ''; // 'phi_sinh_phuc' | 'phuc_khac_phi' | 'phi_khac_phuc' | 'phuc_sinh_phi' | 'ti_hoa'
+    let scoreImpact = 0;
+    let desc = '';
+
+    if (NGU_HANH_SINH[phiElm] === phucElm) {
+      relationType = 'phi_sinh_phuc';
+      relation = 'Phi Sinh Phục vi Trường Sinh (Đắc Dưỡng - Rất Cát)';
+      scoreImpact = 2.0;
+      desc = `Hào Phi [${phiHao.lucThan} ${phiHao.chi} • ${phiElm}] tương sinh hào Phục [${phucHao.lucThan} ${phucHao.chi} • ${phucElm}]. Dụng Thần được dưỡng khí che chở, khi đắc thời xuất đầu sẽ phát huy công lực cát lành tối đa.`;
+    } else if (NGU_HANH_KHAC[phucElm] === phiElm) {
+      relationType = 'phuc_khac_phi';
+      relation = 'Phục Khắc Phi vi Xuất Đầu (Phá Kén Nắm Quyền - Cát)';
+      scoreImpact = 1.0;
+      desc = `Dụng Thần Phục [${phucHao.lucThan} ${phucHao.chi} • ${phucElm}] dũng mãnh khắc chế hào Phi [${phiHao.lucThan} ${phiHao.chi} • ${phiElm}]. Có khí thế đạp đổ chướng ngại, chủ động phá kén trồi lên nắm quyền.`;
+    } else if (NGU_HANH_KHAC[phiElm] === phucElm) {
+      relationType = 'phi_khac_phuc';
+      relation = 'Phi Khắc Phục vi Thương Hại (Khắc Bạt Kìm Kẹp - Hung)';
+      scoreImpact = -3.0;
+      desc = `Hào Phi [${phiHao.lucThan} ${phiHao.chi} • ${phiElm}] khắc phạt đè nén hào Phục [${phucHao.lucThan} ${phucHao.chi} • ${phucElm}]. Dụng Thần bị kìm kẹp nghiêm trọng, khó lòng phát lộ nếu không có Nhật Nguyệt hoặc hào động xung phá Phi Thần.`;
+    } else if (NGU_HANH_SINH[phucElm] === phiElm) {
+      relationType = 'phuc_sinh_phi';
+      relation = 'Phục Sinh Phi vi Tiết Khí (Hao Tổn Tâm Lực)';
+      scoreImpact = -1.5;
+      desc = `Dụng Thần Phục sinh xuất cho hào Phi, rơi vào thế tiết khí hao tổn, mưu sự nhọc nhằn, vì người khác mà hao tốn tài lực.`;
+    } else {
+      relationType = 'ti_hoa';
+      relation = 'Phi Phục Tỉ Hòa (Đồng Hành Tương Trợ)';
+      scoreImpact = 0.5;
+      desc = `Hào Phi [${phiHao.chi} • ${phiElm}] và hào Phục [${phucHao.chi} • ${phucElm}] đồng hành, trường khí tương đồng, dễ dàng hiệp lực khi có thời cơ.`;
+    }
+
+    return { relationType, relation, scoreImpact, desc };
+  }
+
   // =========================================================================
   // 3. ĐỘNG CƠ PHÂN TÍCH SUY LUẬN 8 BƯỚC CỔ PHÁP CHUYÊN SÂU
   // =========================================================================
@@ -223,6 +273,7 @@
     const chiNgay = thoiGian.chiNgay;
     const chiThang = thoiGian.thangChi;
     const tuanKhong = thoiGian.tuanKhong || [];
+    const eng = global.NetaDichHocEngine;
 
     // Tìm preset chủ đề
     const preset = TOPIC_PRESETS.find(p => p.key === topicKey) || TOPIC_PRESETS[0];
@@ -244,15 +295,17 @@
     let dungThanPos = -1;
     let isPhucThan = false;
     let phucThanInfo = null;
+    let phiPhucRel = null;
 
     // Tìm trong 6 hào quẻ gốc (ưu tiên hào Thế, hào phát động hoặc hào vượng)
     const dtCandidates = haosEnriched.filter(h => h.lucThan === targetLucThan);
     if (dtCandidates.length === 1) {
-      dungThanHao = dtCandidates[0];
+      dungThanHao = { ...dtCandidates[0], isPhuc: false };
       dungThanPos = dungThanHao.pos;
     } else if (dtCandidates.length > 1) {
       // Ưu tiên hào động hoặc hào Thế
-      dungThanHao = dtCandidates.find(h => h.isDong) || dtCandidates.find(h => h.isThe) || dtCandidates[0];
+      const chosen = dtCandidates.find(h => h.isDong) || dtCandidates.find(h => h.isThe) || dtCandidates[0];
+      dungThanHao = { ...chosen, isPhuc: false };
       dungThanPos = dungThanHao.pos;
     } else {
       // Dụng Thần không hiện -> Tìm Phục Thần
@@ -262,6 +315,22 @@
         phucThanInfo = phucItem;
         dungThanPos = phucItem.pos;
         const phiHao = haosEnriched[phucItem.pos - 1];
+        phiPhucRel = evaluatePhiPhucRelation(phucItem, phiHao, eng);
+        const baseCanLuc = tinhCanLucHao({ chi: phucItem.chi, chiElement: phucItem.chiElement, isDong: false }, chiNgay, chiThang, tuanKhong);
+        
+        // Điều chỉnh điểm cân lực theo tương quan Phi - Phục
+        const adjustedScore = parseFloat((baseCanLuc.score + (phiPhucRel?.scoreImpact || 0)).toFixed(1));
+        let adjustedStatus = baseCanLuc.status;
+        if (adjustedScore >= 4.0) adjustedStatus = 'Cực Vượng';
+        else if (adjustedScore >= 1.5) adjustedStatus = 'Vượng';
+        else if (adjustedScore >= 0.0) adjustedStatus = 'Tướng / Bình';
+        else if (adjustedScore >= -2.5) adjustedStatus = 'Suy / Hưu';
+        else adjustedStatus = 'Tử Tuyệt / Cực Suy';
+
+        baseCanLuc.score = adjustedScore;
+        baseCanLuc.status = adjustedStatus;
+        if (phiPhucRel) baseCanLuc.notes.push(phiPhucRel.relation);
+
         dungThanHao = {
           pos: phucItem.pos,
           can: phucItem.can,
@@ -269,15 +338,32 @@
           chiElement: phucItem.chiElement,
           lucThan: phucItem.lucThan,
           isPhuc: true,
+          presenceType: 'PHỤC THẦN (Tàng phục dưới Phi Thần)',
           phiThan: phiHao,
-          canLuc: tinhCanLucHao({ chi: phucItem.chi, chiElement: phucItem.chiElement, isDong: false }, chiNgay, chiThang, tuanKhong)
+          phiPhucRelation: phiPhucRel,
+          canLuc: baseCanLuc
         };
       } else {
         // Fallback về hào Thế
-        dungThanHao = haosEnriched[goc.thePos - 1];
+        dungThanHao = { ...haosEnriched[goc.thePos - 1], isPhuc: false, presenceType: 'HIỆN DIỆN MINH BẠCH TRÊN QUẺ' };
         dungThanPos = goc.thePos;
       }
     }
+
+    if (dungThanHao && !dungThanHao.presenceType) {
+      dungThanHao.presenceType = 'HIỆN DIỆN MINH BẠCH TRÊN QUẺ';
+    }
+
+    // 2b. Khảo sát toàn bộ Phục Thần của Quẻ (kể cả khi Dụng Thần không phải là Phục Thần)
+    const allPhucThanEvaluated = (queResult.phuc_than || []).map(pItem => {
+      const phiHao = haosEnriched[pItem.pos - 1];
+      const rel = evaluatePhiPhucRelation(pItem, phiHao, eng);
+      return {
+        ...pItem,
+        phiThan: phiHao,
+        phiPhucRelation: rel
+      };
+    });
 
     // 3. Bước 1b: Khảo sát Tứ Thần
     const rels = LUC_THAN_RELATIONS[targetLucThan] || {};
@@ -405,8 +491,10 @@
         hao: dungThanHao,
         pos: dungThanPos,
         isPhuc: isPhucThan,
-        phucInfo: phucThanInfo
+        phucInfo: phucThanInfo,
+        phiPhucRelation: dungThanHao.phiPhucRelation
       },
+      allPhucThan: allPhucThanEvaluated,
       tuThan: {
         nguyenThan: { name: nguyenThanName, haos: nguyenThanHaos },
         kyThan: { name: kyThanName, haos: kyThanHaos },
@@ -444,12 +532,13 @@
     const tuThan = evalData.tuThan;
     const td = evalData.theDung;
     const jm = evalData.judgment;
+    const eng = global.NetaDichHocEngine;
 
     const lines = [];
     lines.push('═══════════════════════════════════════════════════════════════════════════════');
     lines.push('               BẢN LUẬN GIẢI KINH DỊCH LỤC HÀO CHUYÊN SÂU');
     lines.push(`  Sự Vụ Chiêm Đoán: "${evalData.customQuestion}"`);
-    lines.push(`  Chủ Đề Dụng Thần: [${evalData.topic.label}] ➔ Thủ Ngôi: ${evalData.targetLucThan}`);
+    lines.push(`  Chủ Đề Dụng Thần: [${evalData.topic.label}] ➔ Thủ Ngôi: ${evalData.targetLucThan} (${dt.can || ''}-${dt.chi} • Hành ${dt.chiElement})`);
     lines.push('═══════════════════════════════════════════════════════════════════════════════\n');
 
     lines.push('I. THÔNG SỐ TỌA ĐỘ BÀN QUẺ:');
@@ -459,7 +548,9 @@
     } else {
       lines.push('- Quẻ Tĩnh: Sáu hào an tĩnh, vạn sự quy về nội lực gốc.');
     }
-    lines.push(`- Trục Thời Gian: Ngày ${tg.canNgay} ${tg.chiNgay}, Tháng ${tg.thangChi} (Tiết: ${tg.solarTerm || 'Thu Phân'})`);
+    const elmNgay = tg.ngayElement || eng?.DIA_CHI_NGU_HANH?.[tg.chiNgay] || '';
+    const elmThang = tg.thangElement || eng?.DIA_CHI_NGU_HANH?.[tg.thangChi] || '';
+    lines.push(`- Trục Thời Gian: Ngày ${tg.canNgay} ${tg.chiNgay} (Hành ${elmNgay}), Tháng ${tg.thangChi} (Hành ${elmThang}, Tiết: ${tg.solarTerm || 'Thu Phân'})`);
     lines.push(`- Tuần Không: [${(tg.tuanKhong || []).join(', ')}] ngộ Không.\n`);
 
     lines.push('II. KẾT LUẬN & PHÁN QUYẾT TỔNG HÒA:');
@@ -476,9 +567,15 @@
     lines.push('III. PHÂN TÍCH DỤNG THẦN & TỨ THẦN LUẬN:');
     lines.push(`1. Dụng Thần [${evalData.targetLucThan}]:`);
     if (evalData.dungThan.isPhuc) {
-      lines.push(`   - Tình trạng: [PHỤC THẦN] ẩn dưới Hào Phi ${evalData.dungThan.phucInfo.pos} (${evalData.dungThan.phucInfo.phiThan.lucThan}). Cần cơ hội xung phá Phi Thần để phát lộ tài năng.`);
+      const pInfo = evalData.dungThan.phucInfo;
+      lines.push(`   - Tình trạng: [HÀO TÀNG PHỤC (Phục Thần)] ẩn dưới Hào Phi ${pInfo.pos} (${pInfo.phiThan?.lucThan} ${pInfo.phiThan?.chi} • Hành ${pInfo.phiThan?.chiElement}).`);
+      if (evalData.dungThan.phiPhucRelation) {
+        lines.push(`   - Quan hệ Phi - Phục: [${evalData.dungThan.phiPhucRelation.relation}]. ${evalData.dungThan.phiPhucRelation.desc}`);
+      }
+      lines.push(`   - Cân Lực: [${dt.canLuc.score > 0 ? '+' : ''}${dt.canLuc.score}] -> Đạt mức [${dt.canLuc.status.toUpperCase()}].`);
     } else {
-      lines.push(`   - Ngự tại Hào ${dt.pos} (${dt.can}-${dt.chi} • ${dt.chiElement}). Cân Lực: [${dt.canLuc.score > 0 ? '+' : ''}${dt.canLuc.score}] -> Đạt mức [${dt.canLuc.status.toUpperCase()}].`);
+      lines.push(`   - Tình trạng: [HIỆN DIỆN MINH BẠCH TRÊN QUẺ (Chính Thần)] ngự tại Hào ${dt.pos} (${dt.can}-${dt.chi} • Hành ${dt.chiElement}).`);
+      lines.push(`   - Cân Lực: [${dt.canLuc.score > 0 ? '+' : ''}${dt.canLuc.score}] -> Đạt mức [${dt.canLuc.status.toUpperCase()}].`);
       if (dt.canLuc.notes.length) lines.push(`   - Căn cứ khí số: ${dt.canLuc.notes.join('; ')}.`);
     }
 
@@ -487,7 +584,25 @@
     lines.push(`   - Kỵ Thần (${tuThan.kyThan.name}): ${tuThan.kyThan.haos.length ? `Ngự Hào ${tuThan.kyThan.haos.map(h => h.pos).join(', ')} (Mầm mống rủi ro, trở lực cần phòng bị)` : 'An tĩnh không gây hại'}.`);
     lines.push('');
 
-    lines.push('IV. TƯƠNG QUAN HÀO THẾ & THIÊN CƠ BIẾN HÓA:');
+    lines.push('IV. CHUYÊN ĐỀ HÀO TÀNG PHỤC (PHỤC THẦN KHẢO LUẬN):');
+    if (evalData.dungThan.isPhuc) {
+      lines.push(`- Dụng Thần [${evalData.targetLucThan}] là Hào Tàng Phục: Mang Can Chi [${dt.can}-${dt.chi} • Hành ${dt.chiElement}].`);
+      lines.push(`- Khảo sát Phi Thần che đậy: Hào Phi ${dt.phiThan?.pos} (${dt.phiThan?.lucThan} ${dt.phiThan?.chi} • ${dt.phiThan?.chiElement}).`);
+      lines.push(`- Cơ chế xuất phục: Cần chờ ngày xung Phi Thần [${DIA_CHI_XUNG[dt.phiThan?.chi] || ''}] để phá kén hoặc ngày trực Phục Thần [${dt.chi}] để nắm quyền.`);
+    } else {
+      lines.push(`- Dụng Thần [${evalData.targetLucThan} ${dt.can || ''}-${dt.chi} • Hành ${dt.chiElement}]: Hiện diện minh bạch tại Hào ${dt.pos} của Quẻ Chính, khí trường phát lộ trực tiếp, không bị che đậy hay tàng phục.`);
+    }
+    if (evalData.allPhucThan && evalData.allPhucThan.length > 0) {
+      lines.push('- Khảo sát các Lục Thân tàng phục khác trong quẻ:');
+      evalData.allPhucThan.forEach(p => {
+        lines.push(`   * Phục Thần [${p.lucThan} ${p.can}-${p.chi} • ${p.chiElement}] phục dưới Hào Phi ${p.pos} (${p.phiThan?.lucThan} ${p.phiThan?.chi} • ${p.phiThan?.chiElement}) -> [${p.phiPhucRelation?.relation || 'Tương giao'}]`);
+      });
+    } else {
+      lines.push('- Quẻ có đầy đủ cả 5 Lục Thân, không có hào nào bị khuyết hay tàng phục.');
+    }
+    lines.push('');
+
+    lines.push('V. TƯƠNG QUAN HÀO THẾ & THIÊN CƠ BIẾN HÓA:');
     lines.push(`- Hào Thế ngự Hào ${evalData.theHao.pos} (${evalData.theHao.lucThan} ${evalData.theHao.chi}): Cân Lực [${evalData.theHao.canLuc.score > 0 ? '+' : ''}${evalData.theHao.canLuc.score}] -> [${evalData.theHao.canLuc.status.toUpperCase()}].`);
     lines.push(`- Cục Diện Thế - Dụng: [${td.status}] -> ${td.desc}`);
     if (evalData.dongEffects.length) {
@@ -496,19 +611,19 @@
     }
     lines.push('');
 
-    lines.push('V. ĐỊNH THỜI ĐIỂM ỨNG KỲ (KHI NÀO SỰ VIỆC XẢY RA):');
+    lines.push('VI. ĐỊNH THỜI ĐIỂM ỨNG KỲ (KHI NÀO SỰ VIỆC XẢY RA):');
     evalData.ungKy.forEach(uk => lines.push(`- ${uk}`));
     lines.push('');
 
     if (evalData.fengshui.length) {
-      lines.push('VI. CHẨN ĐOÁN PHONG THỦY GIA TRẠCH 6 HÀO:');
+      lines.push('VII. CHẨN ĐOÁN PHONG THỦY GIA TRẠCH 6 HÀO:');
       evalData.fengshui.forEach(fs => {
         lines.push(`- Hào ${fs.pos} (${fs.area}): ${fs.issue} ➔ [Cảnh báo: ${fs.risk}]`);
       });
       lines.push('');
     }
 
-    lines.push('VII. LỜI KHUYÊN DỊCH LÝ THỰC CHIẾN:');
+    lines.push('VIII. LỜI KHUYÊN DỊCH LÝ THỰC CHIẾN:');
     lines.push('> Ranh giới học thuật: Lục Hào chiêm sự vụ theo động tâm, không đoán định số mệnh trọn đời. Hóa giải là điều chỉnh hành vi, thời điểm và bố trí vật lý không gian; tuyệt đối không dùng bùa chú, tỳ hưu hay vật phẩm mê tín dị đoan.');
     const theThu = evalData.theHao.lucThu;
     if (theThu === 'Thanh Long') lines.push('- Tâm pháp Lục Thú: Hành xử đàng hoàng, chính đại quang minh, dựa trên pháp lý hợp đồng rõ ràng ắt được quý nhân tương trợ.');
@@ -526,55 +641,149 @@
 
   // Lớp 1: Khóa Chân Lý (Ground-Truth Fact Sheet)
   function createGroundTruthFactSheet(evalData, queResult) {
+    const goc = queResult.que_goc;
+    const bien = queResult.que_bien;
+    const tg = queResult.thoi_gian;
+    const dt = evalData.dungThan.hao;
+    const eng = global.NetaDichHocEngine;
+
+    const elmNgay = tg.ngayElement || eng?.DIA_CHI_NGU_HANH?.[tg.chiNgay] || '';
+    const elmThang = tg.thangElement || eng?.DIA_CHI_NGU_HANH?.[tg.thangChi] || '';
+
+    // Bảng chi tiết 6 hào
+    const haosOverview = goc.haos.map(h => {
+      const enriched = evalData.haosEnriched.find(e => e.pos === h.pos) || h;
+      return `Hào ${h.pos}: [${h.lucThan}] ${h.can}-${h.chi} (Hành ${h.chiElement}) | Lục Thú: ${h.lucThu} | Cân lực: ${enriched.canLuc?.score > 0 ? '+' : ''}${enriched.canLuc?.score} (${enriched.canLuc?.status}) ${h.isDong ? `[ĐỘNG -> Biến ${enriched.bienLucThan || ''} ${enriched.bienChi || ''}]` : '[TĨNH]'}${h.isThe ? ' [HÀO THẾ]' : ''}${h.isUng ? ' [HÀO ỨNG]' : ''}`;
+    });
+
+    // Toàn bộ phục thần
+    const allPhucThanList = (evalData.allPhucThan || []).map(p => {
+      return `Phục Thần [${p.lucThan} ${p.can}-${p.chi} • Hành ${p.chiElement}] phục dưới Hào Phi ${p.pos} [${p.phiThan?.lucThan} ${p.phiThan?.chi} • Hành ${p.phiThan?.chiElement}] -> ${p.phiPhucRelation?.relation || ''}`;
+    });
+
+    // Phân tích quan hệ Nhật/Nguyệt với Dụng Thần
+    const dtChi = dt.chi;
+    const dtElm = dt.chiElement;
+    const chiThang = tg.thangChi;
+    const chiNgay = tg.chiNgay;
+
+    let nguyetRel = `Tháng ${chiThang} (${elmThang}): `;
+    if (chiThang === dtChi) nguyetRel += `Lâm Nguyệt Kiến (Đại vượng khí)`;
+    else if (DIA_CHI_XUNG[chiThang] === dtChi) nguyetRel += `Phạm Nguyệt Phá (${dtChi}-${chiThang} tương xung, cực suy)`;
+    else if (NGU_HANH_SINH[elmThang] === dtElm) nguyetRel += `Được Tháng sinh`;
+    else if (NGU_HANH_KHAC[elmThang] === dtElm) nguyetRel += `Bị Tháng khắc (${elmThang} khắc ${dtElm}: Hưu tù)`;
+    else if (elmThang === dtElm) nguyetRel += `Đồng hành với Tháng (Vượng)`;
+    else nguyetRel += `Bình hòa`;
+
+    let nhatRel = `Ngày ${chiNgay} (${elmNgay}): `;
+    if (chiNgay === dtChi) nhatRel += `Lâm Nhật Kiến (Cương kiện)`;
+    else if (DIA_CHI_XUNG[chiNgay] === dtChi) nhatRel += dt.canLuc?.isAmDong ? `Đắc Ám Động` : `Phạm Nhật Phá`;
+    else if (DIA_CHI_NHI_HOP[chiNgay] === dtChi) nhatRel += `Nhật Hợp (Được che chở)`;
+    else if (NGU_HANH_SINH[elmNgay] === dtElm) nhatRel += `Được Ngày sinh`;
+    else if (NGU_HANH_KHAC[elmNgay] === dtElm) nhatRel += `Bị Ngày khắc`;
+    else if (NGU_HANH_SINH[dtElm] === elmNgay) nhatRel += `Sinh xuất cho Ngày (${dtElm} sinh ${elmNgay}: Tiết khí)`;
+    else nhatRel += `Bình hòa`;
+
     return {
-      hexName: queResult.que_goc.name,
-      bienHexName: queResult.que_bien ? queResult.que_bien.name : 'Thuần Tĩnh',
-      palace: queResult.que_goc.cung,
-      palaceElement: queResult.que_goc.cungElement,
-      time: `Ngày ${queResult.thoi_gian.canNgay} ${queResult.thoi_gian.chiNgay}, Tháng ${queResult.thoi_gian.thangChi}`,
-      tuanKhong: queResult.thoi_gian.tuanKhong || [],
+      hexName: goc.name,
+      bienHexName: bien ? bien.name : 'Thuần Tĩnh',
+      palace: goc.cung,
+      palaceElement: goc.cungElement,
+      time: `Ngày ${tg.canNgay} ${tg.chiNgay} (Hành ${elmNgay}), Tháng ${tg.thangChi} (Hành ${elmThang})`,
+      chiNgay,
+      chiThang,
+      elmNgay,
+      elmThang,
+      tuanKhong: tg.tuanKhong || [],
       question: evalData.customQuestion,
       topic: evalData.topic.label,
       targetLucThan: evalData.targetLucThan,
-      dungThanPos: evalData.dungThan.pos,
-      dungThanScore: evalData.dungThan.hao.canLuc.score,
-      dungThanStatus: evalData.dungThan.hao.canLuc.status,
+      dungThan: {
+        lucThan: evalData.targetLucThan,
+        pos: evalData.dungThan.pos,
+        can: dt.can || '',
+        chi: dt.chi || '',
+        element: dt.chiElement || '', // Khóa cứng: ví dụ 'Mộc'
+        isPhuc: evalData.dungThan.isPhuc,
+        presenceType: evalData.dungThan.isPhuc ? 'PHỤC THẦN (Tàng phục dưới Phi Thần)' : 'HIỆN DIỆN MINH BẠCH TRÊN QUẺ (Chính Thần)',
+        score: dt.canLuc.score,
+        status: dt.canLuc.status,
+        notes: dt.canLuc.notes,
+        nguyetRel,
+        nhatRel,
+        phiThanInfo: evalData.dungThan.isPhuc ? {
+          pos: evalData.dungThan.phucInfo?.pos,
+          lucThan: evalData.dungThan.phucInfo?.phiThan?.lucThan,
+          can: evalData.dungThan.phucInfo?.phiThan?.can,
+          chi: evalData.dungThan.phucInfo?.phiThan?.chi,
+          element: evalData.dungThan.phucInfo?.phiThan?.chiElement,
+          relation: evalData.dungThan.phiPhucRelation?.relation,
+          relationDesc: evalData.dungThan.phiPhucRelation?.desc
+        } : null
+      },
       thePos: evalData.theHao.pos,
       theLucThan: evalData.theHao.lucThan,
+      theCanChi: `${evalData.theHao.can || ''}-${evalData.theHao.chi}`,
+      theElement: evalData.theHao.chiElement,
       theScore: evalData.theHao.canLuc.score,
+      theStatus: evalData.theHao.canLuc.status,
       theDungStatus: evalData.theDung.status,
+      theDungDesc: evalData.theDung.desc,
       judgment: evalData.judgment.judgment,
       totalScore: evalData.judgment.totalScore,
       isSuccess: evalData.judgment.isSuccess,
-      dongHaos: queResult.que_goc.haos.filter(h => h.isDong).map(h => h.pos),
-      ungKy: evalData.ungKy
+      dongHaos: goc.haos.filter(h => h.isDong).map(h => h.pos),
+      dongEffects: evalData.dongEffects,
+      ungKy: evalData.ungKy,
+      haosOverview,
+      allPhucThanList,
+      allPhucThanSummary: allPhucThanList.length > 0 ? allPhucThanList.join('; ') : 'Quẻ có đầy đủ cả 5 Lục Thân, không có hào tàng phục.'
     };
   }
 
-  // Lớp 2: Prompt Ép Khung Chống Ảo Giác
+  // Lớp 2: Prompt Ép Khung Chống Ảo Giác Tuyệt Đối
   function buildAntiHallucinationPrompt(factSheet) {
+    const dt = factSheet.dungThan;
     return `
 BẠN LÀ MỘT BẬC THẦY DỊCH HỌC KINH DỊCH LỤC HÀO UYÊN BÁC THEO CHUẨN MỰC CỔ THƯ KINH ĐIỂN (BỐC PHỆ CHÍNH TÔNG & TĂNG SAN BỐC DỊCH).
-DƯỚI ĐÂY LÀ "BẢN KHÓA CHÂN LÝ TOÁN HỌC" ĐÃ ĐƯỢC TÍNH TOÁN XÁC ĐỊNH 100%. BẠN BẮT BUỘC PHẢI TUÂN THỦ TUYỆT ĐỐI CÁC SỰ THỰC NÀY:
+DƯỚI ĐÂY LÀ "BẢN KHÓA CHÂN LÝ TOÁN HỌC DỊCH LÝ" ĐÃ ĐƯỢC TÍNH TOÁN XÁC ĐỊNH 100%. BẠN BẮT BUỘC PHẢI TUÂN THỦ TUYỆT ĐỐI CÁC SỰ THỰC NÀY:
 
-[KHÓA CHÂN LÝ DỊCH HỌC - GROUND-TRUTH FACT SHEET]:
+[KHÓA CHÂN LÝ DỊCH HỌC BẤT BIẾN - GROUND-TRUTH FACT SHEET]:
 - Câu hỏi chiêm đoán: "${factSheet.question}"
 - Quẻ Chính: ${factSheet.hexName} (Cung ${factSheet.palace} - Hành ${factSheet.palaceElement})
 - Quẻ Biến: ${factSheet.bienHexName} (Hào động: [${factSheet.dongHaos.join(', ') || 'Không có - Quẻ Tĩnh'}])
 - Thời gian: ${factSheet.time} | Tuần Không: [${factSheet.tuanKhong.join(', ')}]
-- Chủ đề: ${factSheet.topic} -> Dụng Thần BẮT BUỘC là: [${factSheet.targetLucThan}] ngự Hào ${factSheet.dungThanPos}
-- Cân Lực Dụng Thần: ${factSheet.dungThanScore > 0 ? '+' : ''}${factSheet.dungThanScore} (${factSheet.dungThanStatus})
-- Hào Thế (Bản thân đương số): Hào ${factSheet.thePos} (${factSheet.theLucThan}) - Cân Lực: ${factSheet.theScore > 0 ? '+' : ''}${factSheet.theScore}
-- Ma trận Thế - Dụng: [${factSheet.theDungStatus}]
+- BẢNG 6 HÀO QUẺ CHÍNH:
+${factSheet.haosOverview.map(h => `  * ${h}`).join('\n')}
+- KHẢO SÁT HÀO TÀNG PHỤC (PHỤC THẦN TOÀN QUẺ):
+  ${factSheet.allPhucThanSummary}
+
+[BẤT BIẾN KHÓA BẢO MẬT DỤNG THẦN XÁC ĐỊNH 100% - TUYỆT ĐỐI KHÔNG ĐƯỢC ẢO GIÁC]:
+- Dụng Thần Lục Thân: [${dt.lucThan}]
+- Can Chi Dụng Thần: [${dt.can}-${dt.chi}]
+- NGŨ HÀNH DỤNG THẦN: BẮT BUỘC LÀ HÀNH [${dt.element.toUpperCase()}]
+  (Quy chuẩn: Cung ${factSheet.palace} hành ${factSheet.palaceElement} -> Chi ${dt.chi} mang ngũ hành ${dt.element.toUpperCase()}).
+- TÌNH TRẠNG HIỆN DIỆN: [${dt.presenceType}]
+  ${dt.isPhuc ? `* DỤNG THẦN LÀ HÀO TÀNG PHỤC: Ngự dưới Hào Phi ${dt.phiThanInfo?.pos} (${dt.phiThanInfo?.lucThan} ${dt.phiThanInfo?.chi} • Hành ${dt.phiThanInfo?.element}). Quan hệ Phi - Phục: [${dt.phiThanInfo?.relation}]. ${dt.phiThanInfo?.relationDesc}` : `* DỤNG THẦN LÀ CHÍNH THẦN HIỆN DIỆN MINH BẠCH: Đang ngự trực tiếp tại Hào ${dt.pos} (${dt.can}-${dt.chi} • Hành ${dt.element}), KHÔNG PHẢI hào tàng phục.`}
+- Tương quan Nguyệt Lệnh: ${dt.nguyetRel}
+- Tương quan Nhật Thần: ${dt.nhatRel}
+- Cân Lực Dụng Thần: ${dt.score > 0 ? '+' : ''}${dt.score} (${dt.status})
+- Căn cứ khí số: ${dt.notes.join('; ')}
+
+- Hào Thế (Bản thân đương số): Hào ${factSheet.thePos} (${factSheet.theLucThan} ${factSheet.theCanChi} • Hành ${factSheet.theElement}) - Cân Lực: ${factSheet.theScore > 0 ? '+' : ''}${factSheet.theScore} (${factSheet.theStatus})
+- Ma trận Thế - Dụng: [${factSheet.theDungStatus}] ➔ ${factSheet.theDungDesc}
 - KẾT LUẬN TOÁN HỌC: [${factSheet.judgment}] (Điểm số: ${factSheet.totalScore})
 - ỨNG KỲ ĐỊNH THỜI: ${factSheet.ungKy.join('; ')}
 
 [CÁC RÀO CHẮN NGHIÊM CẤM TUYỆT ĐỐI (ANTI-HALLUCINATION RULES)]:
-1. CẤM BỊA ĐẶT HOẶC ĐỔI TÊN QUẺ: Quẻ chính phải là "${factSheet.hexName}", quẻ biến là "${factSheet.bienHexName}".
-2. CẤM ĐỔI DỤNG THẦN: Dụng thần phải là Lục Thân "${factSheet.targetLucThan}".
-3. CẤM ĐẢO NGƯỢC KẾT LUẬN: Nếu Kết luận là Bất Lợi/Hung thì TUYỆT ĐỐI CẤM khen "đại cát", "thành công rực rỡ". Nếu Kết luận là Cát Lợi thì TUYỆT ĐỐI CẤM dọa nạt hung hiểm.
-4. CẤM TỰ Ý BỊA HÀO ĐỘNG: Chỉ được phân tích các hào phát động trong danh sách [${factSheet.dongHaos.join(', ') || 'Quẻ Tĩnh'}].
-5. VĂN PHONG CHUẨN MỰC: Hành chính - kỹ thuật, triết lý Kinh Dịch trong sáng, không dùng từ ngữ mê tín bùa chú, không phán xét số phận trọn đời.
+1. CẤM BỊA ĐẶT HOẶC ĐỔI NGŨ HÀNH DỤNG THẦN: Dụng Thần ${dt.lucThan} (${dt.chi}) THUỘC HÀNH [${dt.element.toUpperCase()}]. TUYỆT ĐỐI CẤM gọi Dụng Thần là bất kỳ hành nào khác! (Ví dụ: Thê Tài Mão là hành MỘC, cấm tuyệt đối không được viết Thê Tài thuộc hành Kim hay Thổ).
+2. CẤM BỊA ĐẶT VỀ HÀO TÀNG PHỤC:
+   ${dt.isPhuc ? `Dụng Thần là hào tàng phục, bắt buộc phân tích quan hệ Phi - Phục và điều kiện xuất phục.` : `Dụng Thần hiện diện minh bạch tại Hào ${dt.pos}, BẮT BUỘC khẳng định rõ ràng là Hiện Diện Minh Bạch trên quẻ, KHÔNG ĐƯỢC nhầm lẫn thành hào tàng phục.`}
+3. CẤM BỊA ĐẶT HOẶC ĐỔI TÊN QUẺ: Quẻ chính phải là "${factSheet.hexName}", quẻ biến là "${factSheet.bienHexName}".
+4. CẤM ĐỔI DỤNG THẦN: Dụng thần phải là Lục Thân "${factSheet.targetLucThan}".
+5. CẤM ĐẢO NGƯỢC KẾT LUẬN: Nếu Kết luận là Bất Lợi/Hung thì TUYỆT ĐỐI CẤM khen "đại cát", "thành công rực rỡ". Nếu Kết luận là Cát Lợi thì TUYỆT ĐỐI CẤM dọa nạt hung hiểm.
+6. CẤM TỰ Ý BỊA HÀO ĐỘNG: Chỉ được phân tích các hào phát động trong danh sách [${factSheet.dongHaos.join(', ') || 'Quẻ Tĩnh'}].
+7. VĂN PHONG CHUẨN MỰC: Hành chính - kỹ thuật, triết lý Kinh Dịch trong sáng, không dùng từ ngữ mê tín bùa chú, không phán xét số phận trọn đời.
 
 YÊU CẦU ĐỘ DÀI & ĐỘ SÂU (BÀI LUẬN GIẢI CHUYÊN SÂU 1000 - 1500 TỪ):
 Hãy viết một bài phân tích chuyên sâu toàn diện, uyên bác và mạch lạc (độ dài khoảng 1.000 đến 1.500 từ). Đào sâu phân tích từng nguyên lý ngũ hành, sinh khắc chế hóa, vượng suy hưu tù, bóc tách tiến trình nhân quả. TUYỆT ĐỐI KHÔNG viết tóm tắt hay kết luận sơ sài.
@@ -586,17 +795,19 @@ BÀI VIẾT BẮT BUỘC TRÌNH BÀY THEO CẤU TRÚC 7 ĐỀ MỤC SAU:
 - Phán đoán xác quyết: [${factSheet.judgment}] (Điểm khí số: ${factSheet.totalScore > 0 ? '+' : ''}${factSheet.totalScore}). Luận giải lý do cốt tủy dẫn đến phán quyết này.
 
 ## II. DỤNG THẦN CHUYÊN KHẢO & KHÍ SỐ CÂN LỰC
-- Bóc tách chi tiết Dụng Thần [${factSheet.targetLucThan}] tại Hào ${factSheet.dungThanPos}.
-- Phân tích điểm cân lực (${factSheet.dungThanScore > 0 ? '+' : ''}${factSheet.dungThanScore} - ${factSheet.dungThanStatus}): Tương quan với Nguyệt Lệnh (Tháng) và Nhật Thần (Ngày).
-- Trạng thái Không Vong, Mộ Tuyệt, Sinh Vượng, suy thoái của Dụng Thần.
+- Bóc tách chi tiết Dụng Thần [${dt.lucThan} ${dt.can}-${dt.chi} • Hành ${dt.element.toUpperCase()}] ngự Hào ${dt.pos}.
+- Tình trạng hiện diện: [${dt.presenceType}].
+${dt.isPhuc ? `- Luận giải chuyên sâu Phục Thần: Ngự dưới Hào Phi ${dt.phiThanInfo?.pos}, quan hệ [${dt.phiThanInfo?.relation}], điều kiện phá kén xuất đầu.` : `- Khẳng định sự hiện diện minh bạch của Dụng Thần trên quẻ. Khảo sát các hào tàng phục khác trong quẻ: ${factSheet.allPhucThanSummary}.`}
+- Phân tích tương quan Nhật Thần (${dt.nhatRel}) và Nguyệt Lệnh (${dt.nguyetRel}).
+- Trạng thái Không Vong, Mộ Tuyệt, Sinh Vượng, Cân Lực: [${dt.score > 0 ? '+' : ''}${dt.score} - ${dt.status}].
 
 ## III. HỆ THỐNG TỨ THẦN TRỢ KHÍ (NGUYÊN, KỴ, CỪU, TIẾT)
 - Phân tích vai trò của Nguyên Thần (nguồn sinh trợ), Kỵ Thần (nguồn xung khắc), Cừu Thần và Tiết Thần.
 - Cân bằng lực lượng giữa các bên: Nguyên Thần có đắc lực để cứu Dụng Thần hay Kỵ Thần đang chiếm ưu thế áp đảo.
 
 ## IV. TÂM PHÁP HÀO THẾ & TƯƠNG QUAN CHỦ - KHÁCH
-- Phân tích Hào Thế (tâm thế, năng lực nội tại của người hỏi) tại Hào ${factSheet.thePos} (${factSheet.theLucThan} - Cân lực: ${factSheet.theScore > 0 ? '+' : ''}${factSheet.theScore}).
-- Ma trận Thế - Dụng [${factSheet.theDungStatus}]: Phân tích sự tương tác giữa nội lực người hỏi và sự việc mong cầu (đắc địa, tương sinh, hay hao tổn, xung khắc).
+- Phân tích Hào Thế (tâm thế, năng lực nội tại của người hỏi) tại Hào ${factSheet.thePos} (${factSheet.theLucThan} ${factSheet.theCanChi} • Hành ${factSheet.theElement} - Cân lực: ${factSheet.theScore > 0 ? '+' : ''}${factSheet.theScore} - ${factSheet.theStatus}).
+- Ma trận Thế - Dụng [${factSheet.theDungStatus}]: Phân tích sự tương tác giữa nội lực người hỏi và sự việc mong cầu.
 - Đối chiếu Hào Ứng (đối tác, khách hàng hoặc hoàn cảnh bên ngoài).
 
 ## V. TIẾN TRÌNH NHÂN QUẢ HÀO BIẾN HÓA
@@ -612,10 +823,12 @@ BÀI VIẾT BẮT BUỘC TRÌNH BÀY THEO CẤU TRÚC 7 ĐỀ MỤC SAU:
 `.trim();
   }
 
-  // Lớp 4: Bộ Kiểm Toán Độc Lập 6 Tiêu Chí (Factual Consistency Verifier)
+  // Lớp 4: Bộ Kiểm Toán Độc Lập Chống Ảo Giác (Factual Consistency Verifier)
   function verifyFactualConsistency(factSheet, generatedText) {
     const errors = [];
     const textLower = generatedText.toLowerCase();
+    const dt = factSheet.dungThan;
+    const dtClean = factSheet.targetLucThan.toLowerCase();
 
     // 1. Kiểm tra Tên Quẻ Chính
     const hexClean = factSheet.hexName.toLowerCase().replace('bát thuần ', '').trim();
@@ -624,12 +837,33 @@ BÀI VIẾT BẮT BUỘC TRÌNH BÀY THEO CẤU TRÚC 7 ĐỀ MỤC SAU:
     }
 
     // 2. Kiểm tra Dụng Thần
-    const dtClean = factSheet.targetLucThan.toLowerCase();
     if (!textLower.includes(dtClean)) {
       errors.push(`Văn bản không phân tích đúng Dụng Thần (${factSheet.targetLucThan})`);
     }
 
-    // 3. Kiểm tra Đảo Ngược Phán Quyết (Polarity Inversion)
+    // 3. KIỂM TRA KHÓA NGŨ HÀNH DỤNG THẦN (CHỐNG ẢO GIÁC NGŨ HÀNH)
+    const dtElm = (dt.element || '').toLowerCase();
+    if (dtElm) {
+      const otherElms = ['kim', 'mộc', 'thủy', 'hỏa', 'thổ'].filter(e => e !== dtElm);
+      for (const badElm of otherElms) {
+        // Bắt lỗi nếu gán ngũ hành sai: ví dụ "thê tài.*(thuộc hành|là hành|hành|mạng)\\s*kim" khi dtElm là 'mộc'
+        const reg = new RegExp(`(${dtClean})[^.!?\\n]{0,60}(thuộc\\s*hành|là\\s*hành|hành|mạng|mệnh)\\s*${badElm}`, 'i');
+        if (reg.test(textLower)) {
+          errors.push(`AI gán sai ngũ hành cho Dụng Thần (Dụng Thần [${factSheet.targetLucThan}] mang ngũ hành [${dt.element.toUpperCase()}], nhưng văn bản lại viết là hành [${badElm.toUpperCase()}])`);
+          break;
+        }
+      }
+    }
+
+    // 4. KIỂM TRA TÌNH TRẠNG PHỤC THẦN
+    if (!dt.isPhuc) {
+      // Nếu Dụng thần hiện diện minh bạch nhưng AI lại nói là tàng phục
+      if (textLower.includes(`${dtClean} là hào tàng phục`) || textLower.includes(`${dtClean} tàng phục dưới`) || textLower.includes(`dụng thần tàng phục dưới`)) {
+        errors.push(`Dụng Thần hiện diện minh bạch tại Hào ${dt.pos} nhưng AI lại nhầm lẫn là hào tàng phục`);
+      }
+    }
+
+    // 5. Kiểm tra Đảo Ngược Phán Quyết (Polarity Inversion)
     if (factSheet.isSuccess === false) {
       const positiveWords = ['đại cát đại lợi', 'chắc chắn thành công', 'vô cùng thuận lợi', 'tiền tài bội thu', 'thắng lợi trọn vẹn'];
       for (const pw of positiveWords) {
@@ -648,7 +882,7 @@ BÀI VIẾT BẮT BUỘC TRÌNH BÀY THEO CẤU TRÚC 7 ĐỀ MỤC SAU:
       }
     }
 
-    // 4. Kiểm tra Hào Động Bịa Đặt
+    // 6. Kiểm tra Hào Động Bịa Đặt
     if (factSheet.dongHaos.length === 0) {
       if (textLower.includes('hào phát động') || textLower.includes('hào động biến')) {
         errors.push('Quẻ Tĩnh nhưng AI bịa đặt có hào phát động');
