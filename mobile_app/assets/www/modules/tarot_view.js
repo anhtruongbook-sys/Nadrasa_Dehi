@@ -870,56 +870,62 @@
           </div>
         </div>
 
-        <!-- Khung Kết Quả Trau Chuốt Văn Phong AI Chuẩn Hóa Neta -->
-        ${report.showDeepAiBox ? `
-          <div class="neta-ai-editorial-card ${report.isExpanded ? 'expanded' : ''}" id="tarot-ai-box">
-            <div class="neta-ai-card-header">
-              <div class="neta-ai-card-title-group">
+        <!-- Thanh Chuyển Đổi Chế Độ Báo Cáo Trong Lòng Trang -->
+        <div class="tarot-report-header-wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(245, 176, 65, 0.25);">
+          <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
+            <span>🔮</span> TOÀN VĂN LUẬN GIẢI TRẢI BÀI CHUYÊN SÂU
+          </div>
+          <div class="neta-report-mode-toggle">
+            <button type="button" class="neta-mode-pill ${(!report.currentReportMode || report.currentReportMode === 'standard') ? 'active' : ''}" id="btn-tarot-mode-standard">
+              📜 Bản Tiêu Chuẩn (6 Mục)
+            </button>
+            <button type="button" class="neta-mode-pill ${report.currentReportMode === 'ai' ? 'active' : ''}" id="btn-tarot-mode-ai">
+              ${report.isDeepLoading ? '⏳ Đang Trau Chuốt...' : '✨ Bản Trau Chuốt (AI)'}
+            </button>
+          </div>
+        </div>
+
+        ${report.currentReportMode === 'ai' ? `
+          <!-- Chế độ Trau Chuốt AI (Hiển thị ngay trong lòng báo cáo, không bật ô to đùng) -->
+          ${report.isDeepLoading ? `
+            <div class="neta-inline-ai-loading">
+              <div class="neta-ai-loading-step">
                 <span class="neta-ai-sparkle-icon">✨</span>
-                <span class="neta-ai-title-text">BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG AI</span>
-                <span class="neta-ai-engine-chip">⚡ GEMINI AI • 6 MỤC HỌC THUẬT</span>
+                <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...</span>
               </div>
-              <div class="neta-ai-card-controls">
-                ${report.deepSynthesis ? `
-                  <button class="neta-btn-icon" id="btn-copy-tarot-ai" title="Sao chép văn bản">
-                    📋 Sao Chép
-                  </button>
-                  <button class="neta-btn-icon" id="btn-expand-tarot-ai" title="Mở rộng / Thu gọn">
-                    ${report.isExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng'}
-                  </button>
-                ` : ''}
-                <button class="neta-btn-icon neta-btn-close" id="btn-close-tarot-ai-box" title="Đóng khung AI">
-                  ✕ Đóng
+              <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
+            </div>
+          ` : ''}
+
+          ${report.deepError ? `
+            <div style="color: #e74c3c; font-weight: 600; font-size: 0.85rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3); margin: 16px 0;">
+              <div>⚠️ ${escapeHTML(report.deepError)}</div>
+              <div style="margin-top: 10px;">
+                <button type="button" class="neta-btn-action" id="btn-tarot-err-open-key" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                  ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
                 </button>
               </div>
             </div>
-            <div class="neta-ai-card-body">
-              ${report.isDeepLoading ? `
-                <div class="neta-ai-loading-wrap">
-                  <div class="neta-ai-loading-step">
-                    <span class="neta-ai-sparkle-icon">✨</span>
-                    <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...</span>
-                  </div>
-                  <div class="neta-ai-shimmer-track">
-                    <div class="neta-ai-shimmer-thumb"></div>
-                  </div>
-                </div>
-              ` : ''}
-              ${report.deepError ? `
-                <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
-                  <div>⚠️ ${escapeHTML(report.deepError)}</div>
-                  <div style="margin-top: 10px;">
-                    <button type="button" class="neta-btn-action" id="btn-tarot-err-open-key" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
-                      ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
-                    </button>
-                  </div>
-                </div>
-              ` : ''}
-              ${report.deepSynthesis ? `<div class="neta-drop-cap">${formatMarkdownDeep(report.deepSynthesis)}</div>` : ''}
-            </div>
-          </div>
-        ` : ''}
+          ` : ''}
 
+          ${report.deepSynthesis ? `
+            <div class="neta-polished-status-bar">
+              <span>✨ Bản Luận Giải 6 Mục Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
+              <button type="button" class="neta-btn-inline-back" id="btn-tarot-back-standard">↩️ Xem Bản Tiêu Chuẩn</button>
+            </div>
+            <div class="tarot-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); margin-top: 16px;">
+              ${formatMarkdownDeep(report.deepSynthesis)}
+            </div>
+          ` : (!report.isDeepLoading && !report.deepError ? `
+            <div style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+              <p style="margin-bottom: 12px;">Chưa kích hoạt trau chuốt văn phong cho trải bài này.</p>
+              <button type="button" class="neta-btn-polish-ai" id="btn-tarot-inline-trigger-ai">
+                ✨ Bắt Đầu Trau Chuốt Văn Phong
+              </button>
+            </div>
+          ` : '')}
+        ` : `
+          <!-- Chế độ Tiêu Chuẩn (Offline 100% 6 Mục) -->
         <!-- PHẦN I: LÁ BÀI CỐT TỦY & BÀI HỌC LINH HỒN (THE QUINTESSENCE) -->
         ${report.quintessence ? `
           <div class="tarot-section-box tarot-quintessence-box">
@@ -1088,6 +1094,7 @@
             <blockquote>${formatMarkdownInline(report.finalAdvice)}</blockquote>
           </div>
         </div>
+        `}
 
         <!-- Report Footer Actions: Direct 1-Click Zero-Popup (3-Button Layout) -->
         <div class="tarot-report-actions">
@@ -1399,18 +1406,16 @@
     if (!global.NetaGeminiService.isDeepSynthesisEnabled()) {
       global.NetaGeminiService.setDeepSynthesisEnabled(true);
     }
+    report.currentReportMode = 'ai';
     if (!global.NetaGeminiService.hasActiveKey()) {
       report.deepError = 'Chưa cài đặt Google Gemini API Key. Bạn có thể bấm nút "Cài Đặt Khóa" bên dưới để nhập khóa dùng chung cho toàn bộ ứng dụng.';
-      report.showDeepAiBox = true;
       report.isDeepLoading = false;
-      report.userClosedAiBox = false;
       renderTarot();
       return;
     }
 
     report.isDeepLoading = true;
-    report.showDeepAiBox = true;
-    report.userClosedAiBox = false;
+    report.deepError = null;
     renderTarot();
 
     try {
@@ -1433,9 +1438,6 @@
       report.deepError = 'Không thể kết nối dịch vụ trực tuyến. Vui lòng kiểm tra mạng.';
     }
 
-    if (!report.userClosedAiBox) {
-      report.showDeepAiBox = true;
-    }
     renderTarot();
   }
 
@@ -1834,55 +1836,47 @@
     const btnPolishAi = container.querySelector('#btn-tarot-polish-ai');
     if (btnPolishAi && currentReadingReport) {
       btnPolishAi.addEventListener('click', () => {
-        if (!currentReadingReport.showDeepAiBox && currentReadingReport.deepSynthesis) {
-          currentReadingReport.showDeepAiBox = true;
-          currentReadingReport.userClosedAiBox = false;
+        currentReadingReport.currentReportMode = 'ai';
+        if (!currentReadingReport.deepSynthesis && !currentReadingReport.isDeepLoading) {
+          fetchDeepInterpretation(currentReadingReport);
+        } else {
           renderTarot();
-          return;
         }
-        currentReadingReport.showDeepAiBox = true;
-        currentReadingReport.userClosedAiBox = false;
-        fetchDeepInterpretation(currentReadingReport);
       });
     }
 
-    const btnCloseTarotAi = container.querySelector('#btn-close-tarot-ai-box');
-    if (btnCloseTarotAi) {
-      btnCloseTarotAi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        if (currentReadingReport) {
-          currentReadingReport.showDeepAiBox = false;
-          currentReadingReport.userClosedAiBox = true;
-        }
-        const box = document.getElementById('tarot-ai-box');
-        if (box) box.style.display = 'none';
+    // Toggle chế độ Báo cáo Tiêu Chuẩn vs Trau Chuốt AI (Nhúng mượt mà trong báo cáo)
+    const btnModeStandard = container.querySelector('#btn-tarot-mode-standard');
+    const btnBackStandard = container.querySelector('#btn-tarot-back-standard');
+    const btnModeAi = container.querySelector('#btn-tarot-mode-ai');
+    const btnInlineTriggerAi = container.querySelector('#btn-tarot-inline-trigger-ai');
+
+    if (btnModeStandard && currentReadingReport) {
+      btnModeStandard.addEventListener('click', () => {
+        currentReadingReport.currentReportMode = 'standard';
         renderTarot();
-      };
+      });
     }
-
-    const btnCopyTarotAi = container.querySelector('#btn-copy-tarot-ai');
-    if (btnCopyTarotAi && currentReadingReport && currentReadingReport.deepSynthesis) {
-      btnCopyTarotAi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(currentReadingReport.deepSynthesis).then(() => {
-            showTarotToast('✅ Đã sao chép toàn bộ bản trau chuốt AI 6 mục!');
-          });
-        }
-      };
+    if (btnBackStandard && currentReadingReport) {
+      btnBackStandard.addEventListener('click', () => {
+        currentReadingReport.currentReportMode = 'standard';
+        renderTarot();
+      });
     }
-
-    const btnExpandTarotAi = container.querySelector('#btn-expand-tarot-ai');
-    if (btnExpandTarotAi && currentReadingReport) {
-      btnExpandTarotAi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        currentReadingReport.isExpanded = !currentReadingReport.isExpanded;
-        const box = document.getElementById('tarot-ai-box');
-        if (box) {
-          box.classList.toggle('expanded', currentReadingReport.isExpanded);
-          btnExpandTarotAi.textContent = currentReadingReport.isExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng';
+    if (btnModeAi && currentReadingReport) {
+      btnModeAi.addEventListener('click', () => {
+        currentReadingReport.currentReportMode = 'ai';
+        if (!currentReadingReport.deepSynthesis && !currentReadingReport.isDeepLoading) {
+          fetchDeepInterpretation(currentReadingReport);
+        } else {
+          renderTarot();
         }
-      };
+      });
+    }
+    if (btnInlineTriggerAi && currentReadingReport) {
+      btnInlineTriggerAi.addEventListener('click', () => {
+        fetchDeepInterpretation(currentReadingReport);
+      });
     }
 
     const btnErrKey = container.querySelector('#btn-tarot-err-open-key');

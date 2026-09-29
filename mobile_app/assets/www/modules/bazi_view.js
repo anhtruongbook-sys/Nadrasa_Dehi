@@ -22,9 +22,15 @@
   let isAiPolishing = false;
   let aiPolishedText = null;
   let aiErrorMessage = null;
-  let showAiBox = false;
-  let userClosedAiBox = false;
-  let isAiExpanded = false;
+  let currentReportMode = 'standard'; // 'standard' | 'ai'
+
+  function resetBaziAiState() {
+    aiPolishedText = null;
+    isAiPolishing = false;
+    aiErrorMessage = null;
+    currentReportMode = 'standard';
+    currentAnalysisCache = null;
+  }
 
   function initBaziView() {
     const container = document.getElementById('view-bazi');
@@ -35,9 +41,7 @@
   function setDateAndRender(date, isMale = currentIsMale) {
     currentBaziDate = new Date(date);
     currentIsMale = isMale;
-    currentAnalysisCache = null;
-    aiPolishedText = null;
-    showAiBox = false;
+    resetBaziAiState();
     currentViewMode = 'chart';
     renderBazi();
   }
@@ -237,7 +241,7 @@
     const geminiService = global.NetaGeminiService;
     if (!geminiService) {
       aiErrorMessage = 'Dịch vụ AI chưa được khởi tạo. Vui lòng tải lại ứng dụng.';
-      showAiBox = true;
+      currentReportMode = 'ai';
       renderBazi();
       return;
     }
@@ -245,15 +249,15 @@
     const apiKey = (geminiService.getActiveKey && geminiService.getActiveKey()) || '';
     if (!apiKey) {
       aiErrorMessage = 'Chưa cài đặt Google Gemini API Key. Bạn có thể cài đặt khóa tại mục Cài Đặt hoặc trong Trải Bài Tarot để sử dụng chung cho toàn bộ ứng dụng.';
-      showAiBox = true;
+      currentReportMode = 'ai';
       renderBazi();
       return;
     }
 
     isAiPolishing = true;
-    showAiBox = true;
+    currentReportMode = 'ai';
+    currentAnalysisSubTab = 'report';
     aiErrorMessage = null;
-    aiPolishedText = null;
     renderBazi();
 
     const prompt = `Bạn là Tổng Biên Tập cao cấp chuyên ngành Bát Tự Tử Bình & Manh Phái học thuật.
@@ -300,22 +304,15 @@ Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn
       throw new Error('Dịch vụ Gemini AI chưa sẵn sàng trên trình duyệt.');
     };
 
-    userClosedAiBox = false;
     callAI()
       .then(res => {
         isAiPolishing = false;
         aiPolishedText = res;
-        if (!userClosedAiBox) {
-          showAiBox = true;
-        }
         renderBazi();
       })
       .catch(err => {
         isAiPolishing = false;
         aiErrorMessage = 'Lỗi kết nối khi trau chuốt văn bản: ' + (err.message || err);
-        if (!userClosedAiBox) {
-          showAiBox = true;
-        }
         renderBazi();
       });
   }
@@ -834,56 +831,6 @@ Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn
               </button>
             </div>
 
-            <!-- Khung Kết Quả Trau Chuốt Văn Phong AI Chuẩn Hóa Neta -->
-            ${showAiBox ? `
-              <div class="neta-ai-editorial-card ${isAiExpanded ? 'expanded' : ''}" id="bazi-ai-box">
-                <div class="neta-ai-card-header">
-                  <div class="neta-ai-card-title-group">
-                    <span class="neta-ai-sparkle-icon">✨</span>
-                    <span class="neta-ai-title-text">BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG AI</span>
-                    <span class="neta-ai-engine-chip">⚡ GEMINI AI • BÁT TỰ HỌC THUẬT</span>
-                  </div>
-                  <div class="neta-ai-card-controls">
-                    ${aiPolishedText ? `
-                      <button class="neta-btn-icon" id="btn-copy-ai-polished" title="Sao chép văn bản">
-                        📋 Sao Chép
-                      </button>
-                      <button class="neta-btn-icon" id="btn-expand-bazi-ai" title="Mở rộng / Thu gọn">
-                        ${isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng'}
-                      </button>
-                    ` : ''}
-                    <button class="neta-btn-icon neta-btn-close" id="btn-close-ai-box" title="Đóng khung AI">
-                      ✕ Đóng
-                    </button>
-                  </div>
-                </div>
-                <div class="neta-ai-card-body">
-                  ${isAiPolishing ? `
-                    <div class="neta-ai-loading-wrap">
-                      <div class="neta-ai-loading-step">
-                        <span class="neta-ai-sparkle-icon">✨</span>
-                        <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tứ Trụ...</span>
-                      </div>
-                      <div class="neta-ai-shimmer-track">
-                        <div class="neta-ai-shimmer-thumb"></div>
-                      </div>
-                    </div>
-                  ` : ''}
-                  ${aiErrorMessage ? `
-                    <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
-                      <div>⚠️ ${aiErrorMessage}</div>
-                      <div style="margin-top: 10px;">
-                        <button type="button" class="neta-btn-action" id="btn-bazi-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
-                          ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
-                        </button>
-                      </div>
-                    </div>
-                  ` : ''}
-                  ${aiPolishedText ? `<div class="neta-drop-cap">${renderMarkdownToHTML(aiPolishedText)}</div>` : ''}
-                </div>
-              </div>
-            ` : ''}
-
             <!-- 3. Nội dung hiển thị theo Sub-Tab -->
             ${currentAnalysisSubTab === 'dashboard' ? `
               <!-- SUBTAB 1: 7 CARD DASHBOARD TỔNG HỢP -->
@@ -895,28 +842,79 @@ Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn
                   <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
                     <span>📜</span> BẢN TOÀN VĂN LUẬN GIẢI BÁT TỰ TOÀN THƯ
                   </div>
-                  <div class="bazi-report-stats-badge">
-                    📄 ${lineCount} Dòng • ${charCount.toLocaleString('vi-VN')} Ký Tự • Năm Khảo Sát ${targetYear}
+                  <div class="neta-report-mode-toggle">
+                    <button type="button" class="neta-mode-pill ${currentReportMode === 'standard' ? 'active' : ''}" id="btn-bazi-mode-standard">
+                      📜 Bản Tiêu Chuẩn
+                    </button>
+                    <button type="button" class="neta-mode-pill ${currentReportMode === 'ai' ? 'active' : ''}" id="btn-bazi-mode-ai">
+                      ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Bản Trau Chuốt (AI)'}
+                    </button>
                   </div>
                 </div>
 
-                <!-- Table of Contents -->
-                <div class="bazi-report-toc">
-                  <span style="font-weight: 700; font-size: 0.72rem; color: var(--gold-primary); align-self: center; margin-right: 4px;">Mục lục nhanh:</span>
-                  <a class="bazi-report-toc-pill" href="#sec-I">I. Tứ Trụ</a>
-                  <a class="bazi-report-toc-pill" href="#sec-II">II. Ngũ Hành & Cách Cục</a>
-                  <a class="bazi-report-toc-pill" href="#sec-III">III. Manh Phái Khách Chủ</a>
-                  <a class="bazi-report-toc-pill" href="#sec-IV">IV. 12 Cung Manh Phái</a>
-                  <a class="bazi-report-toc-pill" href="#sec-V">V. 6 Trụ Cột Đời Người</a>
-                  <a class="bazi-report-toc-pill" href="#sec-VI">VI. 10 Đại Vận & Lưu Niên</a>
-                  <a class="bazi-report-toc-pill" href="#sec-VII">VII. Niên Vận ${targetYear} & 12 Lưu Nguyệt</a>
-                  <a class="bazi-report-toc-pill" href="#sec-VIII">VIII. Mốc Biến Cố Trọng Đại</a>
-                  <a class="bazi-report-toc-pill" href="#sec-IX">IX. Dưỡng Mệnh Đạo</a>
-                </div>
+                ${currentReportMode === 'ai' ? `
+                  <!-- Chế độ Trau Chuốt AI (Hiển thị ngay trong lòng báo cáo, không bật ô to đùng) -->
+                  ${isAiPolishing ? `
+                    <div class="neta-inline-ai-loading">
+                      <div class="neta-ai-loading-step">
+                        <span class="neta-ai-sparkle-icon">✨</span>
+                        <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tứ Trụ...</span>
+                      </div>
+                      <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
+                    </div>
+                  ` : ''}
 
-                <div class="bazi-full-report-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
-                  ${renderMarkdownToHTML(reportMarkdown)}
-                </div>
+                  ${aiErrorMessage ? `
+                    <div style="color: #e74c3c; font-weight: 600; font-size: 0.85rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3); margin: 16px 0;">
+                      <div>⚠️ ${aiErrorMessage}</div>
+                      <div style="margin-top: 10px;">
+                        <button type="button" class="neta-btn-action" id="btn-bazi-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                          ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
+                        </button>
+                      </div>
+                    </div>
+                  ` : ''}
+
+                  ${aiPolishedText ? `
+                    <div class="neta-polished-status-bar">
+                      <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
+                      <button type="button" class="neta-btn-inline-back" id="btn-bazi-back-standard">↩️ Xem Bản Tiêu Chuẩn</button>
+                    </div>
+                    <div class="bazi-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color);">
+                      ${renderMarkdownToHTML(aiPolishedText)}
+                    </div>
+                  ` : (!isAiPolishing && !aiErrorMessage ? `
+                    <div style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+                      <p style="margin-bottom: 12px;">Chưa kích hoạt trau chuốt văn phong cho lá số này.</p>
+                      <button type="button" class="neta-btn-polish-ai" id="btn-bazi-inline-trigger-ai">
+                        ✨ Bắt Đầu Trau Chuốt Văn Phong
+                      </button>
+                    </div>
+                  ` : '')}
+                ` : `
+                  <!-- Chế độ Tiêu Chuẩn (Offline 100%) -->
+                  <div class="bazi-report-stats-badge" style="margin-bottom: 12px; display: inline-block;">
+                    📄 ${lineCount} Dòng • ${charCount.toLocaleString('vi-VN')} Ký Tự • Năm Khảo Sát ${targetYear}
+                  </div>
+
+                  <!-- Table of Contents -->
+                  <div class="bazi-report-toc">
+                    <span style="font-weight: 700; font-size: 0.72rem; color: var(--gold-primary); align-self: center; margin-right: 4px;">Mục lục nhanh:</span>
+                    <a class="bazi-report-toc-pill" href="#sec-I">I. Tứ Trụ</a>
+                    <a class="bazi-report-toc-pill" href="#sec-II">II. Ngũ Hành & Cách Cục</a>
+                    <a class="bazi-report-toc-pill" href="#sec-III">III. Manh Phái Khách Chủ</a>
+                    <a class="bazi-report-toc-pill" href="#sec-IV">IV. 12 Cung Manh Phái</a>
+                    <a class="bazi-report-toc-pill" href="#sec-V">V. 6 Trụ Cột Đời Người</a>
+                    <a class="bazi-report-toc-pill" href="#sec-VI">VI. 10 Đại Vận & Lưu Niên</a>
+                    <a class="bazi-report-toc-pill" href="#sec-VII">VII. Niên Vận ${targetYear} & 12 Lưu Nguyệt</a>
+                    <a class="bazi-report-toc-pill" href="#sec-VIII">VIII. Mốc Biến Cố Trọng Đại</a>
+                    <a class="bazi-report-toc-pill" href="#sec-IX">IX. Dưỡng Mệnh Đạo</a>
+                  </div>
+
+                  <div class="bazi-full-report-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
+                    ${renderMarkdownToHTML(reportMarkdown)}
+                  </div>
+                `}
 
                 <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid rgba(245, 176, 65, 0.3); display: flex; justify-content: flex-end; gap: 8px;">
                   <button class="bazi-btn-action-sm" id="btn-bazi-copy-report-bottom">
@@ -1483,37 +1481,50 @@ Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn
 
     if (btnPolishAi) {
       btnPolishAi.onclick = () => {
-        if (!showAiBox && aiPolishedText) {
-          showAiBox = true;
-          renderBazi();
-          return;
-        }
+        currentAnalysisSubTab = 'report';
+        currentReportMode = 'ai';
         const analysisObj = getOrRunBaziAnalysis(chart, 2026);
-        triggerAiPolish(analysisObj);
+        if (analysisObj && !aiPolishedText && !isAiPolishing) {
+          triggerAiPolish(analysisObj);
+        } else {
+          renderBazi();
+        }
       };
     }
 
-    if (btnCloseAiBox) {
-      btnCloseAiBox.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        showAiBox = false;
-        userClosedAiBox = true;
-        const box = document.getElementById('bazi-ai-box');
-        if (box) box.style.display = 'none';
+    // Toggle chế độ Báo cáo Tiêu Chuẩn vs Trau Chuốt AI (Nhúng mượt mà trong báo cáo)
+    const btnModeStandard = document.getElementById('btn-bazi-mode-standard');
+    const btnBackStandard = document.getElementById('btn-bazi-back-standard');
+    const btnModeAi = document.getElementById('btn-bazi-mode-ai');
+    const btnInlineTriggerAi = document.getElementById('btn-bazi-inline-trigger-ai');
+
+    if (btnModeStandard) {
+      btnModeStandard.onclick = () => {
+        currentReportMode = 'standard';
         renderBazi();
       };
     }
-
-    const btnExpandBazi = document.getElementById('btn-expand-bazi-ai');
-    if (btnExpandBazi) {
-      btnExpandBazi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        isAiExpanded = !isAiExpanded;
-        const box = document.getElementById('bazi-ai-box');
-        if (box) {
-          box.classList.toggle('expanded', isAiExpanded);
-          btnExpandBazi.textContent = isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng';
+    if (btnBackStandard) {
+      btnBackStandard.onclick = () => {
+        currentReportMode = 'standard';
+        renderBazi();
+      };
+    }
+    if (btnModeAi) {
+      btnModeAi.onclick = () => {
+        currentReportMode = 'ai';
+        const analysisObj = getOrRunBaziAnalysis(chart, 2026);
+        if (analysisObj && !aiPolishedText && !isAiPolishing) {
+          triggerAiPolish(analysisObj);
+        } else {
+          renderBazi();
         }
+      };
+    }
+    if (btnInlineTriggerAi) {
+      btnInlineTriggerAi.onclick = () => {
+        const analysisObj = getOrRunBaziAnalysis(chart, 2026);
+        if (analysisObj) triggerAiPolish(analysisObj);
       };
     }
 

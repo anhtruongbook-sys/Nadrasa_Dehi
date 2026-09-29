@@ -21,10 +21,17 @@
   let aiPolishedText = '';
   let isAiPolishing = false;
   let aiErrorMessage = '';
-  let showAiBox = false;
-  let userClosedAiBox = false;
-  let isAiExpanded = false;
+  let currentReportMode = 'standard'; // 'standard' | 'ai'
   let currentAnalysisSubTab = 'dashboard'; // 'dashboard' or 'full-report'
+
+  function resetTuViAiState() {
+    aiPolishedText = '';
+    isAiPolishing = false;
+    aiErrorMessage = '';
+    currentReportMode = 'standard';
+    cachedAnalysisResult = null;
+    cachedAnalysisKey = '';
+  }
   let currentPalaceFilter = 'ALL'; // 'ALL' or specific palace name
 
   function showTuViToast(msg) {
@@ -78,6 +85,7 @@
     currentTuViDate = new Date(date);
     currentIsMale = isMale;
     currentViewYear = viewYear;
+    resetTuViAiState();
     renderTuVi();
   }
 
@@ -510,8 +518,8 @@
     if (!analysisResult) return;
     if (isAiPolishing) return;
 
-    showAiBox = true;
-    userClosedAiBox = false;
+    currentReportMode = 'ai';
+    currentAnalysisSubTab = 'full-report';
     isAiPolishing = true;
     aiErrorMessage = '';
     renderTuVi();
@@ -570,9 +578,6 @@
       aiErrorMessage = err.message || 'Có lỗi xảy ra trong quá trình kết nối với Gemini AI.';
     } finally {
       isAiPolishing = false;
-      if (!userClosedAiBox) {
-        showAiBox = true;
-      }
       renderTuVi();
     }
   }
@@ -782,43 +787,38 @@
           </button>
         </div>
 
-        <!-- Khung Kết Quả Trau Chuốt Văn Phong AI Chuẩn Hóa Neta -->
-        ${showAiBox ? `
-          <div class="neta-ai-editorial-card ${isAiExpanded ? 'expanded' : ''}" id="tuvi-ai-box">
-            <div class="neta-ai-card-header">
-              <div class="neta-ai-card-title-group">
-                <span class="neta-ai-sparkle-icon">✨</span>
-                <span class="neta-ai-title-text">BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG AI</span>
-                <span class="neta-ai-engine-chip">⚡ GEMINI AI • TỬ VI HỌC THUẬT</span>
+        <!-- 3. Nội dung hiển thị theo Sub-Tab -->
+        ${currentAnalysisSubTab === 'full-report' ? `
+          <!-- Full Report Reader Container -->
+          <div class="tuvi-full-report-wrap">
+            <div class="tuvi-report-meta-bar">
+              <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
+                <span>📜</span> BẢN TOÀN VĂN LUẬN GIẢI TỬ VI ĐẨU SỐ
               </div>
-              <div class="neta-ai-card-controls">
-                ${aiPolishedText ? `
-                  <button class="neta-btn-icon" id="btn-copy-ai-polished" title="Sao chép văn bản">
-                    📋 Sao Chép
-                  </button>
-                  <button class="neta-btn-icon" id="btn-expand-tuvi-ai" title="Mở rộng / Thu gọn">
-                    ${isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng'}
-                  </button>
-                ` : ''}
-                <button class="neta-btn-icon neta-btn-close" id="btn-close-ai-box" title="Đóng khung AI">
-                  ✕ Đóng
+              <div class="neta-report-mode-toggle">
+                <button type="button" class="neta-mode-pill ${currentReportMode === 'standard' ? 'active' : ''}" id="btn-tuvi-mode-standard">
+                  📜 Bản Tiêu Chuẩn
+                </button>
+                <button type="button" class="neta-mode-pill ${currentReportMode === 'ai' ? 'active' : ''}" id="btn-tuvi-mode-ai">
+                  ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Bản Trau Chuốt (AI)'}
                 </button>
               </div>
             </div>
-            <div class="neta-ai-card-body">
+
+            ${currentReportMode === 'ai' ? `
+              <!-- Chế độ Trau Chuốt AI (Hiển thị ngay trong lòng báo cáo, không bật ô to đùng) -->
               ${isAiPolishing ? `
-                <div class="neta-ai-loading-wrap">
+                <div class="neta-inline-ai-loading">
                   <div class="neta-ai-loading-step">
                     <span class="neta-ai-sparkle-icon">✨</span>
                     <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tử Vi...</span>
                   </div>
-                  <div class="neta-ai-shimmer-track">
-                    <div class="neta-ai-shimmer-thumb"></div>
-                  </div>
+                  <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
                 </div>
               ` : ''}
+
               ${aiErrorMessage ? `
-                <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
+                <div style="color: #e74c3c; font-weight: 600; font-size: 0.85rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3); margin: 16px 0;">
                   <div>⚠️ ${escapeHTML(aiErrorMessage)}</div>
                   <div style="margin-top: 10px;">
                     <button type="button" class="neta-btn-action" id="btn-tuvi-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
@@ -827,41 +827,47 @@
                   </div>
                 </div>
               ` : ''}
-              ${aiPolishedText ? `<div class="neta-drop-cap">${renderMarkdownToHTML(aiPolishedText)}</div>` : ''}
-            </div>
-          </div>
-        ` : ''}
 
-        <!-- 3. Nội dung hiển thị theo Sub-Tab -->
-        ${currentAnalysisSubTab === 'full-report' ? `
-          <!-- Full Report Reader Container -->
-          <div class="tuvi-full-report-wrap">
-            <div class="tuvi-report-meta-bar">
-              <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
-                <span>📜</span> BẢN TOÀN VĂN LUẬN GIẢI TỬ VI ĐẨU SỐ CHUYÊN SÂU
-              </div>
-              <div class="tuvi-report-stats-badge">
+              ${aiPolishedText ? `
+                <div class="neta-polished-status-bar">
+                  <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
+                  <button type="button" class="neta-btn-inline-back" id="btn-tuvi-back-standard">↩️ Xem Bản Tiêu Chuẩn</button>
+                </div>
+                <div class="tuvi-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color);">
+                  ${renderMarkdownToHTML(aiPolishedText)}
+                </div>
+              ` : (!isAiPolishing && !aiErrorMessage ? `
+                <div style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+                  <p style="margin-bottom: 12px;">Chưa kích hoạt trau chuốt văn phong cho lá số này.</p>
+                  <button type="button" class="neta-btn-polish-ai" id="btn-tuvi-inline-trigger-ai">
+                    ✨ Bắt Đầu Trau Chuốt Văn Phong
+                  </button>
+                </div>
+              ` : '')}
+            ` : `
+              <!-- Chế độ Tiêu Chuẩn (Offline 100%) -->
+              <div class="tuvi-report-stats-badge" style="margin-bottom: 12px; display: inline-block;">
                 📄 ${lineCount} Dòng • ${charCount.toLocaleString('vi-VN')} Ký Tự • Năm Khảo Sát ${targetYear}
               </div>
-            </div>
 
-            <!-- Table of Contents -->
-            <div class="tuvi-report-toc">
-              <span style="font-weight: 700; font-size: 0.72rem; color: var(--gold-primary); align-self: center; margin-right: 4px;">Mục lục nhanh:</span>
-              <a class="tuvi-report-toc-pill" href="#sec-I">I. Tổng Quan</a>
-              <a class="tuvi-report-toc-pill" href="#sec-II">II. Cách Cục</a>
-              <a class="tuvi-report-toc-pill" href="#sec-III">III. 6 Trụ Cột</a>
-              <a class="tuvi-report-toc-pill" href="#sec-IV">IV. 12 Cung Chức Năng</a>
-              <a class="tuvi-report-toc-pill" href="#sec-V">V. Tứ Hóa Khâm Thiên</a>
-              <a class="tuvi-report-toc-pill" href="#sec-VI">VI. Đại Vận 80 Năm</a>
-              <a class="tuvi-report-toc-pill" href="#sec-VII">VII. Niên Vận ${targetYear}</a>
-              <a class="tuvi-report-toc-pill" href="#sec-VIII">VIII. Đa Năm</a>
-              <a class="tuvi-report-toc-pill" href="#sec-IX">IX. Đạo Hóa Giải</a>
-            </div>
+              <!-- Table of Contents -->
+              <div class="tuvi-report-toc">
+                <span style="font-weight: 700; font-size: 0.72rem; color: var(--gold-primary); align-self: center; margin-right: 4px;">Mục lục nhanh:</span>
+                <a class="tuvi-report-toc-pill" href="#sec-I">I. Tổng Quan</a>
+                <a class="tuvi-report-toc-pill" href="#sec-II">II. Cách Cục</a>
+                <a class="tuvi-report-toc-pill" href="#sec-III">III. 6 Trụ Cột</a>
+                <a class="tuvi-report-toc-pill" href="#sec-IV">IV. 12 Cung Chức Năng</a>
+                <a class="tuvi-report-toc-pill" href="#sec-V">V. Tứ Hóa Khâm Thiên</a>
+                <a class="tuvi-report-toc-pill" href="#sec-VI">VI. Đại Vận 80 Năm</a>
+                <a class="tuvi-report-toc-pill" href="#sec-VII">VII. Niên Vận ${targetYear}</a>
+                <a class="tuvi-report-toc-pill" href="#sec-VIII">VIII. Đa Năm</a>
+                <a class="tuvi-report-toc-pill" href="#sec-IX">IX. Đạo Hóa Giải</a>
+              </div>
 
-            <div class="tuvi-full-report-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
-              ${renderMarkdownToHTML(reportMarkdown)}
-            </div>
+              <div class="tuvi-full-report-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
+                ${renderMarkdownToHTML(reportMarkdown)}
+              </div>
+            `}
 
             <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid rgba(245, 176, 65, 0.3); display: flex; justify-content: flex-end; gap: 8px;">
               <button class="tuvi-btn-action-sm" id="btn-tuvi-copy-report-bottom">
@@ -1297,40 +1303,50 @@
     const btnPolishAi = document.getElementById('btn-tuvi-polish-ai');
     if (btnPolishAi) {
       btnPolishAi.onclick = () => {
-        if (!showAiBox && aiPolishedText) {
-          showAiBox = true;
-          renderTuVi();
-          return;
-        }
+        currentAnalysisSubTab = 'full-report';
+        currentReportMode = 'ai';
         const analysis = getOrRunAnalysis(chart);
-        if (analysis) {
+        if (analysis && !aiPolishedText && !isAiPolishing) {
           triggerAiPolish(analysis);
+        } else {
+          renderTuVi();
         }
       };
     }
 
-    const btnCloseAiBox = document.getElementById('btn-close-ai-box');
-    if (btnCloseAiBox) {
-      btnCloseAiBox.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        showAiBox = false;
-        userClosedAiBox = true;
-        const box = document.getElementById('tuvi-ai-box');
-        if (box) box.style.display = 'none';
+    // Toggle chế độ Báo cáo Tiêu Chuẩn vs Trau Chuốt AI (Nhúng mượt mà trong báo cáo)
+    const btnModeStandard = document.getElementById('btn-tuvi-mode-standard');
+    const btnBackStandard = document.getElementById('btn-tuvi-back-standard');
+    const btnModeAi = document.getElementById('btn-tuvi-mode-ai');
+    const btnInlineTriggerAi = document.getElementById('btn-tuvi-inline-trigger-ai');
+
+    if (btnModeStandard) {
+      btnModeStandard.onclick = () => {
+        currentReportMode = 'standard';
         renderTuVi();
       };
     }
-
-    const btnExpandTuvi = document.getElementById('btn-expand-tuvi-ai');
-    if (btnExpandTuvi) {
-      btnExpandTuvi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        isAiExpanded = !isAiExpanded;
-        const box = document.getElementById('tuvi-ai-box');
-        if (box) {
-          box.classList.toggle('expanded', isAiExpanded);
-          btnExpandTuvi.textContent = isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng';
+    if (btnBackStandard) {
+      btnBackStandard.onclick = () => {
+        currentReportMode = 'standard';
+        renderTuVi();
+      };
+    }
+    if (btnModeAi) {
+      btnModeAi.onclick = () => {
+        currentReportMode = 'ai';
+        const analysis = getOrRunAnalysis(chart);
+        if (analysis && !aiPolishedText && !isAiPolishing) {
+          triggerAiPolish(analysis);
+        } else {
+          renderTuVi();
         }
+      };
+    }
+    if (btnInlineTriggerAi) {
+      btnInlineTriggerAi.onclick = () => {
+        const analysis = getOrRunAnalysis(chart);
+        if (analysis) triggerAiPolish(analysis);
       };
     }
 
@@ -1341,17 +1357,6 @@
           global.NetaGeminiService.openConfigModal();
         } else if (global.NetaTarotView && typeof global.NetaTarotView.openKeyConfigModal === 'function') {
           global.NetaTarotView.openKeyConfigModal();
-        }
-      };
-    }
-
-    const btnCopyAiPolished = document.getElementById('btn-copy-ai-polished');
-    if (btnCopyAiPolished && aiPolishedText) {
-      btnCopyAiPolished.onclick = () => {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(aiPolishedText).then(() => {
-            showTuViToast('Đã sao chép bản luận giải trau chuốt vào bộ nhớ tạm!');
-          });
         }
       };
     }
@@ -1486,6 +1491,7 @@
           }
 
           currentTuViDate = new Date(y, m - 1, d, h, min, 0);
+          resetTuViAiState();
           renderTuVi();
         });
 
@@ -1546,18 +1552,21 @@
     if (btnYearPrev) {
       btnYearPrev.onclick = () => {
         currentViewYear--;
+        resetTuViAiState();
         renderTuVi();
       };
     }
     if (btnYearNext) {
       btnYearNext.onclick = () => {
         currentViewYear++;
+        resetTuViAiState();
         renderTuVi();
       };
     }
     if (btnYearNow) {
       btnYearNow.onclick = () => {
         currentViewYear = new Date().getFullYear();
+        resetTuViAiState();
         renderTuVi();
       };
     }
@@ -1566,6 +1575,7 @@
         const vy = parseInt(inputViewYear.value, 10);
         if (!isNaN(vy) && vy >= 1900 && vy <= 2100) {
           currentViewYear = vy;
+          resetTuViAiState();
           renderTuVi();
         }
       };
@@ -1583,6 +1593,7 @@
       btnMale.onclick = () => {
         if (!currentIsMale) {
           currentIsMale = true;
+          resetTuViAiState();
           renderTuVi();
         }
       };
@@ -1591,6 +1602,7 @@
       btnFemale.onclick = () => {
         if (currentIsMale) {
           currentIsMale = false;
+          resetTuViAiState();
           renderTuVi();
         }
       };
@@ -1603,6 +1615,7 @@
         isLunarMode = false;
         currentTuViDate = new Date();
         currentViewYear = new Date().getFullYear();
+        resetTuViAiState();
         renderTuVi();
       };
     }

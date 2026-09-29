@@ -19,11 +19,9 @@
     selectedTopic: 'cautai', // Chủ đề Dụng thần mặc định
     interpretation: null, // Báo cáo luận giải chuyên sâu (Quy tắc & Gemini)
     isInterpretingAI: false, // Trạng thái đang gọi Gemini AI
-    showAiBox: false,
-    userClosedAiBox: false,
+    currentReportMode: 'standard', // 'standard' | 'ai'
     aiErrorMessage: null,
     aiPolishedText: null,
-    isAiExpanded: false,
     
     // 1. Phân hệ Lục Hào Nạp Giáp
     lucHao: {
@@ -42,6 +40,13 @@
       result: null // Kết quả lập quẻ Mai Hoa
     }
   };
+
+    function resetDichHocAiState() {
+    state.aiPolishedText = null;
+    state.isInterpretingAI = false;
+    state.aiErrorMessage = null;
+    state.currentReportMode = 'standard';
+  }
 
   // Web Audio API mô phỏng tiếng kim loại tiền đồng cổ va chạm leng keng & lắc ống tre
   function playCoinAudio(type = 'clink') {
@@ -885,56 +890,62 @@
           </div>
         </div>
 
-        <!-- Khung Kết Quả Trau Chuốt Văn Phong AI Chuẩn Hóa Neta -->
-        ${state.showAiBox ? `
-          <div class="neta-ai-editorial-card ${state.isAiExpanded ? 'expanded' : ''}" id="dh-ai-box">
-            <div class="neta-ai-card-header">
-              <div class="neta-ai-card-title-group">
+        <!-- Thanh Chuyển Đổi Chế Độ Báo Cáo Trong Lòng Trang -->
+        <div class="dh-report-header-wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(245, 176, 65, 0.25);">
+          <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
+            <span>📜</span> BẢNG LUẬN GIẢI KINH DỊCH LỤC HÀO CHUYÊN SÂU
+          </div>
+          <div class="neta-report-mode-toggle">
+            <button type="button" class="neta-mode-pill ${state.currentReportMode === 'standard' ? 'active' : ''}" id="btn-dh-mode-standard">
+              📜 Bản Tiêu Chuẩn (5 Thẻ)
+            </button>
+            <button type="button" class="neta-mode-pill ${state.currentReportMode === 'ai' ? 'active' : ''}" id="btn-dh-mode-ai">
+              ${state.isInterpretingAI ? '⏳ Đang Trau Chuốt...' : '✨ Bản Trau Chuốt (AI)'}
+            </button>
+          </div>
+        </div>
+
+        ${state.currentReportMode === 'ai' ? `
+          <!-- Chế độ Trau Chuốt AI (Hiển thị ngay trong lòng báo cáo, không bật ô to đùng) -->
+          ${state.isInterpretingAI ? `
+            <div class="neta-inline-ai-loading">
+              <div class="neta-ai-loading-step">
                 <span class="neta-ai-sparkle-icon">✨</span>
-                <span class="neta-ai-title-text">BẢN LUẬN GIẢI TRAU CHUỐT VĂN PHONG AI</span>
-                <span class="neta-ai-engine-chip">⚡ GEMINI AI • LỤC HÀO HỌC THUẬT</span>
+                <span>Đang tiến hành biên tập, trau chuốt ngôn từ Dịch lý và phân tích khí số...</span>
               </div>
-              <div class="neta-ai-card-controls">
-                ${state.aiPolishedText ? `
-                  <button class="neta-btn-icon" id="btn-copy-dh-ai" title="Sao chép văn bản">
-                    📋 Sao Chép
-                  </button>
-                  <button class="neta-btn-icon" id="btn-expand-dh-ai" title="Mở rộng / Thu gọn">
-                    ${state.isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng'}
-                  </button>
-                ` : ''}
-                <button class="neta-btn-icon neta-btn-close" id="btn-close-dh-ai-box" title="Đóng khung AI">
-                  ✕ Đóng
+              <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
+            </div>
+          ` : ''}
+
+          ${state.aiErrorMessage ? `
+            <div style="color: #e74c3c; font-weight: 600; font-size: 0.85rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3); margin: 16px 0;">
+              <div>⚠️ ${escapeReportHtml(state.aiErrorMessage)}</div>
+              <div style="margin-top: 10px;">
+                <button type="button" class="neta-btn-action" id="btn-dh-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
+                  ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
                 </button>
               </div>
             </div>
-            <div class="neta-ai-card-body">
-              ${state.isInterpretingAI ? `
-                <div class="neta-ai-loading-wrap">
-                  <div class="neta-ai-loading-step">
-                    <span class="neta-ai-sparkle-icon">✨</span>
-                    <span>Đang tiến hành biên tập, trau chuốt ngôn từ Dịch lý và phân tích khí số...</span>
-                  </div>
-                  <div class="neta-ai-shimmer-track">
-                    <div class="neta-ai-shimmer-thumb"></div>
-                  </div>
-                </div>
-              ` : ''}
-              ${state.aiErrorMessage ? `
-                <div style="color: #e74c3c; font-weight: 600; font-size: 0.82rem; line-height: 1.6; background: rgba(231,76,60,0.12); padding: 14px; border-radius: 8px; border: 1px solid rgba(231,76,60,0.3);">
-                  <div>⚠️ ${escapeReportHtml(state.aiErrorMessage)}</div>
-                  <div style="margin-top: 10px;">
-                    <button type="button" class="neta-btn-action" id="btn-dh-open-key-modal" style="background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-glow);">
-                      ⚙️ Cài Đặt Khóa Gemini API Dùng Chung
-                    </button>
-                  </div>
-                </div>
-              ` : ''}
-              ${state.aiPolishedText ? `<div class="neta-drop-cap">${formatReportToRichHtml(state.aiPolishedText)}</div>` : ''}
-            </div>
-          </div>
-        ` : ''}
+          ` : ''}
 
+          ${state.aiPolishedText ? `
+            <div class="neta-polished-status-bar">
+              <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
+              <button type="button" class="neta-btn-inline-back" id="btn-dh-back-standard">↩️ Xem Bản Tiêu Chuẩn</button>
+            </div>
+            <div class="dh-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); margin-top: 16px;">
+              ${formatReportToRichHtml(state.aiPolishedText)}
+            </div>
+          ` : (!state.isInterpretingAI && !state.aiErrorMessage ? `
+            <div style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+              <p style="margin-bottom: 12px;">Chưa kích hoạt trau chuốt văn phong cho quẻ Dịch này.</p>
+              <button type="button" class="neta-btn-polish-ai" id="btn-dh-inline-trigger-ai">
+                ✨ Bắt Đầu Trau Chuốt Văn Phong
+              </button>
+            </div>
+          ` : '')}
+        ` : `
+          <!-- Chế độ Tiêu Chuẩn (Offline 100%) -->
         <!-- Banner Phán Quyết Cát / Hung Chuẩn Tương Phản -->
         <div class="dh-judgment-banner ${bannerClass}">
           <span>⚖️ PHÁN ĐOÁN: ${escapeReportHtml(jm.judgment)}</span>
@@ -991,6 +1002,7 @@
             </div>
           </div>
         </div>
+        `}
       </div>
     `;
   }
@@ -1293,6 +1305,9 @@
   // Gieo 1 hào ngẫu nhiên
   function gieoMotHao() {
     if (state.lucHao.isFlipping) return;
+    if (state.lucHao.coins.length === 0) {
+      resetDichHocAiState();
+    }
     if (state.lucHao.coins.length >= 6) {
       if (global.showToast) global.showToast('✅ Đã gieo đủ 6 hào. Bấm "Gieo Lại Từ Đầu" nếu muốn bốc quẻ mới.');
       return;
@@ -1332,6 +1347,7 @@
 
   // Gieo nhanh 6 hào
   function gieoTuDong6Hao() {
+    resetDichHocAiState();
     state.lucHao.coins = [];
     for (let i = 0; i < 6; i++) {
       const c1 = Math.random() < 0.5 ? 2 : 3;
@@ -1355,7 +1371,7 @@
     state.lucHao.coins = [];
     state.lucHao.result = null;
     state.interpretation = null;
-    state.isInterpretingAI = false;
+    resetDichHocAiState();
     state.lucHao.coinStates = [3, 2, 3];
     playCoinAudio('clink');
     render();
@@ -1515,11 +1531,9 @@
       btnRunAI.onclick = async () => {
         if (state.isInterpretingAI) return;
         if (!state.lucHao.result || !global.NetaLucHaoInterpreter) return;
-        state.showAiBox = true;
-        state.userClosedAiBox = false;
+        state.currentReportMode = 'ai';
         state.isInterpretingAI = true;
         state.aiErrorMessage = null;
-        state.aiPolishedText = null;
         render();
         try {
           const aiRes = await global.NetaLucHaoInterpreter.interpretHexagram(state.lucHao.result, {
@@ -1542,47 +1556,42 @@
           if (global.showToast) global.showToast('Lỗi: ' + e.message);
         } finally {
           state.isInterpretingAI = false;
-          if (!state.userClosedAiBox) state.showAiBox = true;
           render();
         }
       };
     }
 
-    const btnCloseDhAi = document.getElementById('btn-close-dh-ai-box');
-    if (btnCloseDhAi) {
-      btnCloseDhAi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        state.showAiBox = false;
-        state.userClosedAiBox = true;
-        const box = document.getElementById('dh-ai-box');
-        if (box) box.style.display = 'none';
+    // Toggle chế độ Báo cáo Tiêu Chuẩn vs Trau Chuốt AI (Nhúng mượt mà trong báo cáo)
+    const btnModeStandard = document.getElementById('btn-dh-mode-standard');
+    const btnBackStandard = document.getElementById('btn-dh-back-standard');
+    const btnModeAi = document.getElementById('btn-dh-mode-ai');
+    const btnInlineTriggerAi = document.getElementById('btn-dh-inline-trigger-ai');
+
+    if (btnModeStandard) {
+      btnModeStandard.onclick = () => {
+        state.currentReportMode = 'standard';
         render();
       };
     }
-
-    const btnCopyDhAi = document.getElementById('btn-copy-dh-ai');
-    if (btnCopyDhAi) {
-      btnCopyDhAi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        const textToCopy = state.aiPolishedText || (state.interpretation && state.interpretation.reportText);
-        if (textToCopy && navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(textToCopy).then(() => {
-            if (global.showToast) global.showToast('📋 Đã sao chép bản trau chuốt AI!');
-          });
+    if (btnBackStandard) {
+      btnBackStandard.onclick = () => {
+        state.currentReportMode = 'standard';
+        render();
+      };
+    }
+    if (btnModeAi) {
+      btnModeAi.onclick = () => {
+        state.currentReportMode = 'ai';
+        if (!state.aiPolishedText && !state.isInterpretingAI) {
+          if (btnRunAI) btnRunAI.click();
+        } else {
+          render();
         }
       };
     }
-
-    const btnExpandDhAi = document.getElementById('btn-expand-dh-ai');
-    if (btnExpandDhAi) {
-      btnExpandDhAi.onclick = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        state.isAiExpanded = !state.isAiExpanded;
-        const box = document.getElementById('dh-ai-box');
-        if (box) {
-          box.classList.toggle('expanded', state.isAiExpanded);
-          btnExpandDhAi.textContent = state.isAiExpanded ? '🗗 Thu Gọn' : '🗖 Mở Rộng';
-        }
+    if (btnInlineTriggerAi) {
+      btnInlineTriggerAi.onclick = () => {
+        if (btnRunAI) btnRunAI.click();
       };
     }
 
