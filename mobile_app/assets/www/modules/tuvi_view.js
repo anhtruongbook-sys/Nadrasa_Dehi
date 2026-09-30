@@ -1192,7 +1192,7 @@
             ${patternData.favorable && patternData.favorable.length > 0 ? `
               <div style="margin-bottom: 12px;">
                 <div style="font-size: 0.75rem; color: #2ecc71; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">
-                  🌟 Cát Cách Thượng Đẳng Nhận Diện Được:
+                  🌟 Cát Cách Thuận Lợi Nhận Diện Được:
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                   ${patternData.favorable.map(pat => `

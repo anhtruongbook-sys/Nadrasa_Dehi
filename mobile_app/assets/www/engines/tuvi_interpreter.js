@@ -165,10 +165,10 @@
       {
         code: "TU_PHU_VU_TUONG",
         name: "Tử Phủ Vũ Tướng Cách",
-        level: "Đại Cách (Thượng Đẳng)",
+        level: "Đại Cách (Cát Lợi Vững Vàng)",
         required_main_stars: ["Tử Vi", "Thiên Phủ", "Vũ Khúc", "Thiên Tướng"],
-        description: "Bộ sao đế vương và tài khố hội tụ tại Tam phương Tứ chính của Mệnh Thân. Chủ về uy quyền, tài năng quản trị, lãnh đạo xuất chúng, tính cách đĩnh đạc, công danh phú quý song toàn.",
-        career: "Thích hợp làm chính khách, lãnh đạo doanh nghiệp lớn, quản lý tài chính ngân hàng, cơ quan công quyền.",
+        description: "Bộ sao đế vương và tài khố hội tụ tại Tam phương Tứ chính của Mệnh Thân. Chủ về năng lực quản trị, tư duy tổ chức, tính cách đĩnh đạc, công danh sự nghiệp phát triển thuận lợi.",
+        career: "Thích hợp công tác quản lý, điều hành doanh nghiệp, hoạch định tài chính ngân hàng, cơ quan hành chính.",
         score_bonus: 25
       },
       {
@@ -176,8 +176,8 @@
         name: "Sát Phá Tham Cách",
         level: "Đại Cách (Biến Động & Khai Phá)",
         required_main_stars: ["Thất Sát", "Phá Quân", "Tham Lang"],
-        description: "Bộ ba dũng tướng mang tính chất đột phá, cải cách và mạo hiểm. Cuộc đời nhiều thăng trầm nhưng khi có thời cơ sẽ tạo nên kỳ tích phi thường, khai sơn phá thạch.",
-        career: "Thích hợp làm khởi nghiệp công nghệ, kinh doanh thương trường mạo hiểm, lực lượng vũ trang, đổi mới sáng tạo.",
+        description: "Bộ ba sao mang tính chất chủ động, cải cách và dám nghĩ dám làm. Cuộc đời trải qua nhiều môi trường rèn luyện, khi gặp thời cơ sẽ tạo nên bước chuyển biến tích cực, khai phá hướng đi mới.",
+        career: "Thích hợp làm khởi nghiệp công nghệ, thương mại, kỹ thuật thực địa, đổi mới sáng tạo.",
         score_bonus: 20
       },
       {
@@ -201,10 +201,10 @@
       {
         code: "NHAT_NGUYET_TINH_MINH",
         name: "Nhật Nguyệt Tịnh Minh (Đan Trì Quế Trì)",
-        level: "Thượng Đẳng Cách",
+        level: "Cát Cách Thuận Lợi",
         conditions: "Thái Dương miếu tại Mão/Thìn, Thái Âm miếu tại Hợi/Dậu/Tuất chiếu về Mệnh.",
-        description: "Vầng trăng và mặt trời cùng sáng rực rỡ, ví như rồng bay phượng múa. Chủ về người thông minh đĩnh ngộ, xuất thân thanh cao, sớm đỗ đạt hiển vinh, phúc trọn vẹn.",
-        career: "Học giả, chính trị gia, nhà văn hóa, nghệ thuật, danh gia vọng tộc.",
+        description: "Vầng trăng và mặt trời cùng sáng tỏ, hỗ trợ khí số hanh thông. Chủ về người tư duy sáng suốt, xuất thân nền nếp, học tập thuận lợi, gia đạo an hòa.",
+        career: "Học giả, nghiên cứu, quản lý văn hóa, giáo dục, tài chính.",
         score_bonus: 22
       },
       {
@@ -212,17 +212,17 @@
         name: "Tham Vũ Đồng Hành Cách",
         level: "Đại Cách (Tiền Bần Hậu Phú)",
         conditions: "Vũ Khúc và Tham Lang đồng cung tại Sửu hoặc Mùi.",
-        description: "Thời trẻ gian nan thử thách, bôn ba vất vả lập thân. Từ sau 30 tuổi trở đi công thành danh toại, tài sản tích lũy dồi dào, hậu vận phú quý vững bền.",
-        career: "Kinh doanh buôn bán quy mô lớn, đầu tư công nghiệp, kỹ thuật cơ khí, tài chính doanh nghiệp.",
+        description: "Thời trẻ cần nhiều thời gian tích lũy và rèn luyện kinh nghiệm thực tế. Từ sau 30 tuổi trở đi công việc dần ổn định, tài sản tích lũy vững chắc.",
+        career: "Kinh doanh thương mại, quản trị sản xuất, cơ khí kỹ thuật, tài chính doanh nghiệp.",
         score_bonus: 16
       },
       {
         code: "HOA_THAM_LINH_THAM",
         name: "Hỏa Tham / Linh Tham Kỳ Cách",
-        level: "Kỳ Cách (Bạo Phát Tài Danh)",
+        level: "Kỳ Cách (Cơ Hội Phát Triển Nhanh)",
         conditions: "Tham Lang miếu vượng gặp Hỏa Tinh hoặc Linh Tinh đồng cung/tam chiếu.",
-        description: "Anh hùng lập nghiệp thời loạn, thời thế tạo anh hùng. Có cơ hội đột phá tài chính cực lớn (hoạch phát), thu được thành công chấn động trong thời gian ngắn.",
-        career: "Đầu tư tài chính, chứng khoán, bất động sản đột phá, thầu dự án lớn, thương trường quy mô quốc tế.",
+        description: "Có cơ hội nắm bắt thời cơ thị trường nhanh nhạy, tạo ra sự gia tăng tài chính rõ rệt trong những giai đoạn biến động.",
+        career: "Đầu tư tài chính, bất động sản, thầu dự án, kinh doanh thương mại quy mô rộng.",
         score_bonus: 20
       },
       {
@@ -230,8 +230,8 @@
         name: "Thạch Trung Ẩn Ngọc Cách",
         level: "Kỳ Cách (Ngọc Giấu Trong Đá)",
         conditions: "Cự Môn tọa thủ tại Tý hoặc Ngọ gặp Hóa Lộc, Hóa Quyền hoặc Hóa Khoa.",
-        description: "Viên ngọc quý ẩn trong đá tảng, cần thời gian mài giũa tôi luyện. Vượt qua gian khổ ban đầu sẽ bộc lộ tài năng phi thường, danh tiếng lẫy lừng.",
-        career: "Chuyên gia chuyên môn sâu, nhà phát minh, luật sư tranh tụng, nhà lý luận phê bình.",
+        description: "Cần thời gian mài giũa tôi luyện kinh nghiệm. Vượt qua giai đoạn tích lũy ban đầu sẽ phát huy năng lực thực tiễn vững vàng, xây dựng uy tín chuyên môn sâu sắc.",
+        career: "Chuyên gia chuyên môn sâu, nghiên cứu khoa học, luật sư, phân tích chính sách.",
         score_bonus: 18
       },
       {
@@ -239,8 +239,8 @@
         name: "Lộc Mã Giao Trì Cách",
         level: "Cát Cách (Lưu Thông & Phú Tài)",
         conditions: "Lộc Tồn hoặc Hóa Lộc hội ngộ cùng Thiên Mã tại Mệnh hoặc Tài/Quan/Di.",
-        description: "Ngựa chở tiền tài chạy khắp bốn phương. Chủ về người năng động, càng đi xa càng kiếm được nhiều tiền, thông thương mậu dịch phát đạt.",
-        career: "Xuất nhập khẩu, logistic vận tải quốc tế, du lịch, công tác nước ngoài, đầu tư đa quốc gia.",
+        description: "Chủ về tính năng động, khả năng thích ứng môi trường mới tốt, phù hợp phát triển công việc có tính lưu chuyển hoặc giao thương xa.",
+        career: "Xuất nhập khẩu, logistics vận tải, du lịch, hợp tác đối ngoại, đầu tư đa vùng.",
         score_bonus: 17
       },
       {
@@ -248,17 +248,17 @@
         name: "Mã Đầu Đới Kiếm Cách (Đắc cách)",
         level: "Kỳ Cách",
         conditions: "Kình Dương độc tọa tại cung Ngọ đắc địa ngộ Cát tinh.",
-        description: "Thanh kiếm sắc bén nơi đầu ngựa, chủ về người có chí khí phi phàm, xông pha trận mạc, nắm trọng quyền quân cơ hoặc tạo nghiệp lớn nơi hiểm địa.",
-        career: "Tướng lĩnh quân đội, cảnh sát, phẫu thuật ngoại khoa, doanh nhân mạo hiểm đầu tư dự án gai góc.",
+        description: "Chủ về người có ý chí quyết đoán, tính cách kiên nghị, dám nhận lãnh nhiệm vụ khó khăn nơi thử thách cao.",
+        career: "Chỉ huy quản lý, thanh tra giám sát, phẫu thuật y khoa, giải quyết khủng hoảng.",
         score_bonus: 15
       },
       {
         code: "QUAN_THAN_KHANH_HOI",
         name: "Quân Thần Khánh Hội Cách",
-        level: "Thượng Đẳng Cách",
+        level: "Cát Cách Thuận Lợi",
         conditions: "Tử Vi ngộ Tả Phụ, Hữu Bật, Văn Xương, Văn Khúc, Thiên Khôi, Thiên Việt đồng triều.",
-        description: "Vua tôi tụ họp chúc mừng, thiên thời địa lợi nhân hòa. Làm bất cứ việc gì cũng có đoàn đội hùng mạnh ủng hộ, nhân duyên tột bậc.",
-        career: "Lãnh đạo quốc gia, CEO tập đoàn, thủ lĩnh phong trào xã hội lớn.",
+        description: "Hội tụ đội ngũ hỗ trợ đắc lực, được tập thể tín nhiệm và quý nhân tương trợ, công việc thuận buồm xuôi gió.",
+        career: "Lãnh đạo cơ quan, quản lý tổ chức, điều phối dự án quy mô lớn.",
         score_bonus: 24
       }
     ],
@@ -421,15 +421,15 @@
       },
       "Thất Sát": {
         element: "Kim", yin_yang: "Dương", group: "Nam Đẩu Tinh", role: "Tướng Tinh - Chủ sát phạt, uy dũng, khai phá, độc lập và mạo hiểm",
-        nature: "Cương nghị, can đảm phi thường, dám nghĩ dám làm, không chịu khuất phục, tính khí nóng nảy, thích hành động độc lập.",
-        mieu_vuong_desc: "Vạn người nể sợ, lập công lớn nơi chiến trường hoặc thương trường, nắm giữ đại quyền.",
+        nature: "Cương nghị, bản lĩnh vững vàng, dám nghĩ dám làm, không chịu khuất phục, tính khí nóng nảy, thích hành động độc lập.",
+        mieu_vuong_desc: "Tạo lập uy tín lớn nơi công trường hoặc thương trường, nắm giữ trọng trách quản trị.",
         dac_dia_desc: "Ý chí kiên cường, dũng cảm đối mặt nghịch cảnh, tự tay gầy dựng sự nghiệp.",
         ham_binh_desc: "Đời nhiều thăng trầm sóng gió, dễ gặp tai nạn thương tật, tính tình bốc đồng cô độc."
       },
       "Phá Quân": {
         element: "Thủy", yin_yang: "Âm", group: "Bắc Đẩu Tinh", role: "Hao Tinh - Chủ phá cũ lập mới, tiên phong, biến động triệt để và hao tán",
-        nature: "Dũng mãnh, sáng tạo mang tính phá cách, thích cải cách triệt để, không bằng lòng thực tại, cảm xúc mãnh liệt.",
-        mieu_vuong_desc: "Khai thiên lập địa, đổi mới thời cuộc, kinh doanh tạo dựng đế chế mới từ đống tro tàn.",
+        nature: "Dũng mãnh, sáng tạo mang tính phá cách, thích cải tiến đổi mới, không bằng lòng thực tại, cảm xúc mãnh liệt.",
+        mieu_vuong_desc: "Tiên phong khai mở, đổi mới thời cuộc, kinh doanh tạo dựng cơ sở mới từ hoàn cảnh khó khăn.",
         dac_dia_desc: "Năng động tiên phong, vượt qua thử thách để đạt thành tựu.",
         ham_binh_desc: "Phá tán tổ nghiệp, cuộc đời chìm nổi bấp bênh, gia đạo lục đục nếu không biết tự kiềm chế."
       }
@@ -495,12 +495,12 @@
         "Liêm Trinh": "Cương liệt thẳng thắn, trọng nguyên tắc đạo đức, ý chí kiên định, giàu cảm xúc nhưng nội tâm phòng thủ cẩn mật.",
         "Thiên Phủ": "Điềm đạm bao dung, thâm trầm kín đáo, có tài quản lý quy mô lớn, tính cách thận trọng giữ gìn cơ nghiệp bền vững.",
         "Thái Âm": "Trực giác nhạy bén, tâm tư kín đáo tinh tế, chu đáo mẫu mực, giàu năng khiếu thẩm mỹ và tình cảm gia đình.",
-        "Tham Lang": "Tham vọng khai phá, linh hoạt ứng biến, đa tài đa nghệ, năng lực giao thiệp thuyết phục phi thường.",
+        "Tham Lang": "Tham vọng khai phá, linh hoạt ứng biến, đa tài đa nghệ, năng lực giao thiệp và tính thuyết phục cao.",
         "Cự Môn": "Tư duy phản biện độc lập, nói năng đanh thép sắc sảo, năng lực bóc tách sự thật, cẩn trọng trong từng chi tiết.",
         "Thiên Tướng": "Chính trực trượng nghĩa, có trách nhiệm cao, chu toàn mẫu mực, là chỗ dựa tin cậy cho tập thể và tổ chức.",
         "Thiên Lương": "Đạo đức thanh cao, nhân từ độ lượng, phong thái mô phạm, thường được người đời tôn kính làm bậc thầy, cố vấn.",
-        "Thất Sát": "Dũng khí vô song, quyết đoán dứt khoát, không ngại hiểm nguy, có bản lĩnh độc lập tác chiến khai sơn phá thạch.",
-        "Phá Quân": "Tinh thần cách tân đột phá, dám đập bỏ cái cũ để xây dựng cái mới, kiên cường không chịu khuất phục trước số phận."
+        "Thất Sát": "Tính cách quyết đoán kiên nghị, dứt khoát, không ngại khó khăn, có bản lĩnh độc lập tác chiến mở rộng cơ hội.",
+        "Phá Quân": "Tinh thần cách tân đổi mới, dám thay đổi khuôn mẫu cũ để thiết lập quy trình mới, kiên cường vượt qua thử thách."
       }
     },
     "Quan Lộc": {
@@ -2544,8 +2544,8 @@
       const annualScore = Math.floor(Math.max(20, Math.min(95, annualRaw)));
 
       function getGrade(s) {
-        if (s >= 85) return "Thượng Thượng (Xuất sắc)";
-        if (s >= 75) return "Thượng Đẳng (Rất tốt)";
+        if (s >= 85) return "Thượng Cách (Thuận Lợi Toàn Diện)";
+        if (s >= 75) return "Cát Lợi (Thuận Lợi Cao)";
         if (s >= 65) return "Trung Thượng (Khá tốt)";
         if (s >= 50) return "Trung Bình (Ổn định)";
         if (s >= 40) return "Trung Hạ (Nhiều thử thách)";
@@ -2651,10 +2651,10 @@
       // 1. Master Overview
       const overallScore = scoresData?.overall_destiny?.score || 72;
       let gradeBadge = "Cát Cách Vững Vàng";
-      if (overallScore >= 85) gradeBadge = "Đại Cát Cách (Thượng Đẳng)";
-      else if (overallScore >= 75) gradeBadge = "Cát Cách Vững Vàng (Trung Thượng)";
+      if (overallScore >= 85) gradeBadge = "Cát Cách (Vận Số Thuận Chiều)";
+      else if (overallScore >= 75) gradeBadge = "Cát Cách Vững Vàng (Khí Số Thuận Lợi)";
       else if (overallScore >= 65) gradeBadge = "Khí Số Bình Ổn (Trung Bình Khá)";
-      else gradeBadge = "Cần Tôi Rèn Bản Lĩnh (Nghịch Cảnh Hóa Thắng)";
+      else gradeBadge = "Cần Tôi Rèn Bản Lĩnh (Vượt Khó Kiến Tạo)";
 
       const menhChinhTinh = (menhPalace.chinh_tinh || []).map(cleanStarName);
       const menhChinhTinhStr = menhChinhTinh.length > 0 ? menhChinhTinh.join(", ") : "Vô Chính Diệu";
@@ -2868,10 +2868,10 @@
       if (!goldenDaiVan && allDaiVans.length > 2) goldenDaiVan = allDaiVans[2];
       if (!defenseDaiVan && allDaiVans.length > 3) defenseDaiVan = allDaiVans[3];
 
-      const trungVanText = `Giai đoạn từ 30 đến 55 tuổi: Trọng tâm chuyển sang cung Thân cư ${meta.than_cu_cung} tại ${meta.than_chi}. Đây là giai đoạn hoàng kim kiến tạo cơ đồ, xác lập vị thế xã hội và gia tăng sản nghiệp.`;
+      const trungVanText = `Giai đoạn từ 30 đến 55 tuổi: Trọng tâm chuyển sang cung Thân cư ${meta.than_cu_cung} tại ${meta.than_chi}. Đây là giai đoạn trọng tâm kiến tạo cơ đồ, xác lập vị thế chuyên môn và tích lũy sản nghiệp.`;
       const goldenDecadeText = goldenDaiVan 
-        ? `Đại Vận ${goldenDaiVan.range} Tuổi (Tọa cung ${goldenDaiVan.palace_name} - ${goldenDaiVan.dia_chi}, Nạp âm ${goldenDaiVan.nap_am}): Vận hội hội tụ năng lượng tương sinh cát lợi, chính tinh và phụ tinh nâng đỡ. Đây là giai đoạn vàng để mở rộng quy mô sự nghiệp, đầu tư mang tính chiến lược và gặt hái thành quả tài chính đỉnh cao.`
-        : "Đại Vận 35-44 Tuổi: Giai đoạn chuyển mình bứt phá toàn diện.";
+        ? `Đại Vận ${goldenDaiVan.range} Tuổi (Tọa cung ${goldenDaiVan.palace_name} - ${goldenDaiVan.dia_chi}, Nạp âm ${goldenDaiVan.nap_am}): Vận hội hội tụ năng lượng tương sinh cát lợi, chính tinh và phụ tinh nâng đỡ. Đây là giai đoạn thuận lợi để mở rộng hoạt động chuyên môn, đầu tư bài bản và gia tăng hiệu quả tài chính bền vững.`
+        : "Đại Vận 35-44 Tuổi: Giai đoạn chuyển mình phát triển toàn diện.";
 
       const defenseDecadeText = defenseDaiVan && defenseDaiVan !== goldenDaiVan
         ? `Đại Vận ${defenseDaiVan.range} Tuổi (Tọa cung ${defenseDaiVan.palace_name} - ${defenseDaiVan.dia_chi}): Vận khí tiềm ẩn thử thách hoặc xung lực ngũ hành. Đương số cần duy trì chiến lược phòng ngự chủ động, bảo toàn tài sản, không vay mượn mạo hiểm và chú trọng sức khỏe.`
@@ -2888,10 +2888,10 @@
         },
         trungVan: {
           period: "Trung Vận (30 Đến 55 Tuổi)",
-          theme: "Giai Đoạn Kiến Tạo Cơ Đồ & Bứt Phá Đỉnh Cao",
+          theme: "Giai Đoạn Kiến Tạo Cơ Đồ & Mở Rộng Sự Nghiệp",
           content: trungVanText,
           goldenDecade: {
-            title: `Thập Niên Vàng Bứt Phá: Đại Vận ${goldenDaiVan?.range || '35-44'} Tuổi`,
+            title: `Thập Niên Thuận Lợi Trọng Điểm: Đại Vận ${goldenDaiVan?.range || '35-44'} Tuổi`,
             detail: goldenDecadeText
           },
           defenseDecade: {
@@ -2931,7 +2931,7 @@
         },
         mindfulness: {
           title: "Đạo Tu Dưỡng & Chuyển Hóa Khí Số",
-          advice: `Học thuyết Tử Vi khẳng định 'Đức năng thắng số'. Cung Phúc Đức là linh hồn chuyển hóa mọi hung sát. Giữ tâm thái tùy duyên, hướng thiện, đối đãi bao dung với mọi người và phụng dưỡng cha mẹ chu đáo chính là phương pháp hóa giải vận hạn màu nhiệm và bền vững nhất.`
+          advice: `Học thuyết Tử Vi khẳng định 'Đức năng thắng số'. Cung Phúc Đức là linh hồn chuyển hóa mọi hung sát. Giữ tâm thái tùy duyên, hướng thiện, đối đãi bao dung với mọi người và phụng dưỡng cha mẹ chu đáo chính là phương pháp hóa giải vận hạn hiệu quả và bền vững nhất.`
         }
       };
 
@@ -3049,7 +3049,7 @@
       const ufPats = patternData.unfavorable_patterns || [];
 
       if (fPats.length > 0) {
-        md.push(`### 1. Các Cát Cách Thượng Đẳng Đã Nhận Diện:`);
+        md.push(`### 1. Các Cát Cách Thuận Lợi Đã Nhận Diện:`);
         fPats.forEach(p => {
           md.push(`- **${p.name}** *(${p.level})*:`);
           md.push(`  + **Cơ sở cấu thành:** ${p.match_details}`);

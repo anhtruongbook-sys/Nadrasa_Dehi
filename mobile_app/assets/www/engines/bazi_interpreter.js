@@ -1487,7 +1487,280 @@
     return results;
   }
 
-  function buildMarkdownReport(chart, quant, mangPai, shenSha, decisions, timingData, targetYear = 2026) {
+  // ==========================================
+  // VII-B. ĐỘNG CƠ TỔNG HỢP CỐT CÁCH & BẢN ĐỒ CHIẾN LƯỢC VẬN TRÌNH (BAZI MASTER SYNTHESIZER)
+  // ==========================================
+
+  const BaziMasterSynthesizer = {
+    synthesizeMasterAssessment: function (chart, quant, mangPai, shenSha, decisions, timingData, targetYear = 2026) {
+      const dm = chart.day_gan;
+      const dmZhi = chart.day_zhi;
+      const dmWx = GAN_WU_XING[dm];
+      const napAm = NAP_AM_MAP[`${dm} ${dmZhi}`] || '';
+      const baziYear = chart.birth_year;
+      const isMale = chart.is_male;
+      const body = quant.body_strength || {};
+      const gods = quant.gods_selection || { primary_use: [], favorable: [], unfavorable: [] };
+      const geju = evaluateGeJu(chart, quant);
+      const scores = quant.element_scores || {};
+
+      // 1. Điểm cốt cách định lượng khách quan (overallScore 50-96)
+      let overallScore = 68;
+      if (body.strength === 'Thân Vượng' || body.strength === 'Trung Hòa') overallScore += 7;
+      if (geju.status && geju.status.includes('Thành Cách')) overallScore += 6;
+      if (mangPai.work_mechanisms && mangPai.work_mechanisms.length >= 2) overallScore += 5;
+
+      const goodShenSha = (shenSha || []).filter(s =>
+        s.type.includes('Cát') || s.type.includes('Quý Nhân') || s.name.includes('Quý Nhân') || s.name.includes('Lộc') || s.name.includes('Tướng')
+      );
+      const badShenSha = (shenSha || []).filter(s =>
+        s.type.includes('Hung') || s.name.includes('Dương') || s.name.includes('Sát') || s.name.includes('Đà') || s.name.includes('Cô') || s.name.includes('Quả')
+      );
+      overallScore += Math.min(10, goodShenSha.length * 2);
+      overallScore -= Math.min(8, badShenSha.length * 2);
+
+      // Cân đối điểm
+      overallScore = Math.max(48, Math.min(94, overallScore));
+
+      let gradeBadge = "Cát Cách Vững Vàng";
+      if (overallScore >= 85) gradeBadge = "Cát Cách (Vận Số Thuận Chiều)";
+      else if (overallScore >= 75) gradeBadge = "Cát Cách Vững Vàng (Khí Số Thuận Lợi)";
+      else if (overallScore >= 65) gradeBadge = "Khí Số Bình Ổn (Trung Bình Khá)";
+      else gradeBadge = "Cần Tôi Rèn Bản Lĩnh (Vượt Khó Kiến Tạo)";
+
+      const primaryUseStr = (gods.primary_use || []).join(', ') || 'Đang định';
+      const favorableStr = (gods.favorable || []).join(', ') || 'Đang định';
+      const unfavorableStr = (gods.unfavorable || []).join(', ') || 'Không đáng kể';
+      const climateUseStr = gods.climate_use || '';
+
+      const executiveSummary = `Lá số Bát Tự sở hữu phẩm cách ${gradeBadge} (Điểm định lượng cốt cách: ${overallScore}/100). Bản mệnh Nhật Chủ ${dm} (${dmWx}), nạp âm ${napAm || 'Chính vị'}, thế cục ${body.strength || 'Trung Hòa'} (${body.pattern || 'Chính Cách'}), phối hợp cách cục ${geju.name}. Hệ thống Hỷ Dụng Thần xác định ngũ hành ưu tiên là ${primaryUseStr} (Dụng Thần) và ${favorableStr} (Hỷ Thần); cần tiết chế tác động của ${unfavorableStr} (Kỵ Thần). Cơ cấu Khách - Chủ vận hành theo định hướng tự lập, có khả năng quản trị chuyên môn và thích ứng linh hoạt trước biến chuyển của thời vận.`;
+
+      const masterOverview = {
+        gradeBadge,
+        overallScore,
+        dayMaster: `${dm} ${dmZhi}`,
+        dayMasterWx: dmWx,
+        napAm,
+        bodyStrength: body.strength,
+        pattern: body.pattern,
+        gejuName: geju.name,
+        gejuStatus: geju.status,
+        primaryUse: primaryUseStr,
+        favorable: favorableStr,
+        unfavorable: unfavorableStr,
+        climateUse: climateUseStr,
+        climateReason: gods.climate_reason || '',
+        hostGuestSummary: mangPai.host_guest?.summary || 'Tương quan Khách - Chủ vận hành hài hòa',
+        executiveSummary
+      };
+
+      // 2. Danh Mục Điểm Sáng & Ưu Thế Thiên Phú (brightSpots)
+      const brightSpots = [];
+
+      brightSpots.push({
+        type: "cach_cuc",
+        title: `Cách Cục: ${geju.name} (${geju.status})`,
+        detail: `${geju.description} Lợi thế phát huy khi vận hành đúng Dụng Thần ${primaryUseStr}. ${geju.advice}`
+      });
+
+      brightSpots.push({
+        type: "dung_than",
+        title: `Hỷ Dụng Thần Khai Thông: Hành ${primaryUseStr} & ${favorableStr}`,
+        detail: `Dụng Thần đóng vai trò trục then chốt điều hòa sinh thái ngũ hành, giúp giải tỏa áp lực và khai phóng năng lực của Nhật Chủ. Khi gặp vận hội tương sinh, hiệu quả công việc và tài chính được củng cố rõ rệt.`
+      });
+
+      if (goodShenSha.length > 0) {
+        const starSummary = goodShenSha.slice(0, 4).map(s => `${s.name} (ngự trụ ${s.pillar} - chi ${s.zhi})`).join('; ');
+        brightSpots.push({
+          type: "quy_nhan",
+          title: "Cát Tinh & Quý Nhân Chiếu Mệnh",
+          detail: `Hiện diện các quý tinh: ${starSummary}. Mang lại sự nâng đỡ của quý nhân bề trên, tăng cường sự minh mẫn trong học vấn, tư duy và khả năng hóa giải nguy nan.`
+        });
+      }
+
+      if (mangPai.work_mechanisms && mangPai.work_mechanisms.length > 0) {
+        const primaryMech = mangPai.work_mechanisms[0];
+        brightSpots.push({
+          type: "to_cong",
+          title: `Cơ Chế Tố Công Manh Phái: ${primaryMech.type} (${primaryMech.scope})`,
+          detail: `${primaryMech.detail} — ${primaryMech.meaning}`
+        });
+      }
+
+      if (decisions.wealth && decisions.wealth.treasury_analysis && !decisions.wealth.treasury_analysis[0]?.includes('không tọa')) {
+        brightSpots.push({
+          type: "tai_kho",
+          title: "Trạng Thái Tài Khố & Tụ Tài",
+          detail: decisions.wealth.treasury_analysis.join('; ')
+        });
+      }
+
+      // 3. Danh Mục Điểm Cần Lưu Ý & Hóa Giải (hazardSpots)
+      const hazardSpots = [];
+
+      if (badShenSha.length > 0) {
+        const badSummary = badShenSha.slice(0, 3).map(s => `${s.name} (trụ ${s.pillar} - chi ${s.zhi})`).join('; ');
+        hazardSpots.push({
+          type: "hung_sat",
+          title: `Hung Sát Cần Tiết Chế: ${badShenSha.map(s => s.name).slice(0, 2).join(', ')}`,
+          detail: `Sự hiện diện của ${badSummary} nhắc nhở đương số cần giữ sự điềm tĩnh trong giao tiếp, kiểm soát cảm xúc, cẩn trọng vấn đề pháp lý và tránh đầu tư mạo hiểm.`
+        });
+      }
+
+      if (gods.unfavorable && gods.unfavorable.length > 0) {
+        hazardSpots.push({
+          type: "ky_than",
+          title: `Cảnh Báo Kỵ Thần: Ngũ Hành ${unfavorableStr}`,
+          detail: `Hành ${unfavorableStr} làm gia tăng áp lực hoặc gây mất cân đối cấu trúc ngũ hành. Trong các năm hoặc tháng có hành này vượng, cần chủ động phòng thủ và tránh mở rộng quy mô quá mức.`
+        });
+      }
+
+      for (const elem in scores) {
+        const val = scores[elem];
+        if (val >= 42.0) {
+          hazardSpots.push({
+            type: "ngu_hanh_lech",
+            title: `Ngũ Hành Thái Vượng: Hành ${elem} (${val} điểm)`,
+            detail: `Khí thế hành ${elem} chiếm tỷ trọng quá lớn, dễ gây áp lực lên cơ quan tạng phủ tương ứng và tạo xu hướng hành vi thiên lệch. Cần ứng dụng màu sắc và phương vị để tiết chế.`
+          });
+          break;
+        } else if (val <= 6.0) {
+          hazardSpots.push({
+            type: "ngu_hanh_lech",
+            title: `Ngũ Hành Khuyết Hãm: Hành ${elem} (${val} điểm)`,
+            detail: `Nguồn năng lượng hành ${elem} suy vi, cần được bổ khuyết thông qua môi trường sống, chế độ dinh dưỡng và lối sống lành mạnh.`
+          });
+          break;
+        }
+      }
+
+      if (decisions.marriage && decisions.marriage.spouse_interactions && decisions.marriage.spouse_interactions.some(s => s.includes('Xuyên') || s.includes('Xung'))) {
+        hazardSpots.push({
+          type: "gia_dao",
+          title: "Khuyết Hãm Trục Tương Tác Cung Phu Thê",
+          detail: decisions.marriage.marriage_status
+        });
+      }
+
+      // 4. Bản Đồ Hướng Đi Vận Trình Đời Người (lifeTrajectory)
+      const deepLps = timingData.deepLuckPillars || [];
+      const dv1 = deepLps[0] || {};
+      const dv2 = deepLps[1] || {};
+
+      const tienVanText = `Giai đoạn từ sơ sinh đến trước 30 tuổi (khởi vận qua các Đại Vận ${dv1.canChi || ''} [${dv1.ageRange || ''}], ${dv2.canChi || ''} [${dv2.ageRange || ''}]): Chặng đường học vấn, định hình nhân cách và tôi rèn ý chí tự lập. Chịu ảnh hưởng chính từ Trụ Năm (${chart.year_gan} ${chart.year_zhi}) và Trụ Tháng (${chart.month_gan} ${chart.month_zhi}). Đây là nền móng tích lũy tri thức và kinh nghiệm thực tiễn.`;
+
+      let goldenLp = null;
+      let defenseLp = null;
+      let maxLpScore = -999;
+      let minLpScore = 999;
+
+      deepLps.forEach((lp, idx) => {
+        if (idx >= 1 && idx <= 6) {
+          let sc = 50;
+          if (lp.summaryGrade?.includes('Đại Cát')) sc += 25;
+          else if (lp.summaryGrade?.includes('Tiền Cát') || lp.summaryGrade?.includes('Hậu Cát')) sc += 12;
+          else if (lp.summaryGrade?.includes('Gian Nan')) sc -= 20;
+
+          if (lp.treasuryInfo) sc += 10;
+          if (lp.pillarInteractions && lp.pillarInteractions.some(p => p.includes('XUNG') || p.includes('XUYÊN'))) sc -= 15;
+          if (lp.pillarInteractions && lp.pillarInteractions.some(p => p.includes('LỤC HỢP') || p.includes('BÁN HỢP'))) sc += 10;
+
+          if (sc > maxLpScore) {
+            maxLpScore = sc;
+            goldenLp = lp;
+          }
+          if (sc < minLpScore) {
+            minLpScore = sc;
+            defenseLp = lp;
+          }
+        }
+      });
+
+      if (!goldenLp && deepLps.length > 2) goldenLp = deepLps[2];
+      if (!defenseLp && deepLps.length > 3) defenseLp = deepLps[3];
+
+      const trungVanText = `Giai đoạn từ 30 đến 55 tuổi: Trọng tâm chuyển sang Trụ Ngày (${chart.day_gan} ${chart.day_zhi}). Đây là thời kỳ trọng tâm kiến tạo sự nghiệp, xác lập uy tín chuyên môn và xây dựng nền tảng tài chính gia đình vững chắc.`;
+
+      const goldenDecadeText = goldenLp
+        ? `Đại Vận ${goldenLp.canChi} (${goldenLp.ageRange} • Năm ${goldenLp.yearRange}): Năng lượng thiên can và địa chi tương hợp với Hỷ Dụng Thần, ${goldenLp.summaryGrade}. Đây là giai đoạn thuận lợi để tập trung phát triển công việc, mở rộng mạng lưới đối tác và tích lũy giá trị tài sản dài hạn.`
+        : "Các đại vận trung niên cần kiên trì phát huy năng lực chuyên môn để gặt hái thành quả.";
+
+      const defenseDecadeText = defenseLp && defenseLp !== goldenLp
+        ? `Đại Vận ${defenseLp.canChi} (${defenseLp.ageRange} • Năm ${defenseLp.yearRange}): Khí số chịu áp lực từ Kỵ Thần hoặc tương tác xung hình, ${defenseLp.summaryGrade}. Đương số cần duy trì chiến lược phòng ngự chủ động, kiểm soát rủi ro tài chính, tránh vay mượn mạo hiểm và chú trọng gìn giữ sức khỏe gia đình.`
+        : "Cần chú trọng tính kỷ luật và quản trị rủi ro trong các giai đoạn chuyển giao thời vận.";
+
+      const dvHau = deepLps.slice(5);
+      const hauVanText = `Giai đoạn sau 55 tuổi (các Đại Vận từ ${dvHau[0]?.ageRange || '55 tuổi'} trở đi): Khí số quy về Trụ Giờ (${chart.hour_gan} ${chart.hour_zhi}). Đương số bước vào giai đoạn đúc kết thành quả cuộc đời, an dưỡng tinh thần, phát huy đạo lý dưỡng tâm bồi đức và truyền thừa kinh nghiệm cho thế hệ sau.`;
+
+      const lifeTrajectory = {
+        tienVan: {
+          period: "Tiền Vận (Dưới 30 Tuổi)",
+          theme: "Giai Đoạn Ươm Mầm & Rèn Giũa Bản Lĩnh",
+          content: tienVanText
+        },
+        trungVan: {
+          period: "Trung Vận (30 Đến 55 Tuổi)",
+          theme: "Giai Đoạn Kiến Tạo Cơ Đồ & Mở Rộng Sự Nghiệp",
+          content: trungVanText,
+          goldenDecade: {
+            title: `Thập Niên Thuận Lợi Trọng Điểm: Đại Vận ${goldenLp?.canChi || 'Trung Niên'} (${goldenLp?.ageRange || ''})`,
+            detail: goldenDecadeText
+          },
+          defenseDecade: {
+            title: `Thập Niên Cần Phòng Thủ Cẩn Trọng: Đại Vận ${defenseLp?.canChi || 'Thử Thách'} (${defenseLp?.ageRange || ''})`,
+            detail: defenseDecadeText
+          }
+        },
+        hauVan: {
+          period: "Hậu Vận (Sau 55 Tuổi)",
+          theme: "Giai Đoạn An Hưởng & Truyền Thừa Phúc Đức",
+          content: hauVanText
+        }
+      };
+
+      // 5. Lời Khuyên Hành Động Thiết Thực Theo 5 Trụ Cột (strategicPillars)
+      const strategicPillars = {
+        career: {
+          title: "Công Việc & Phát Triển Sự Nghiệp",
+          advice: decisions.career?.career_path
+            ? `${decisions.career.career_path} Ngành nghề khuyên dùng: ${(decisions.career.industry_tags || []).join(', ')}. Ưu tiên môi trường coi trọng năng lực chuyên môn, quy chế minh bạch và tính ổn định bền vững.`
+            : `Phát huy năng lực chuyên môn sâu, làm việc có kế hoạch và phương pháp rõ ràng, lấy uy tín nghề nghiệp làm gốc rễ thăng tiến.`
+        },
+        wealth: {
+          title: "Tiền Tài & Quản Trị Tài Sản Bền Vững",
+          advice: decisions.wealth?.wealth_advice
+            ? `${decisions.wealth.wealth_level} ${decisions.wealth.wealth_advice} Tích lũy tài sản qua các kênh an toàn, ưu tiên gia tăng giá trị nội tại thay vì chạy theo đầu cơ ngắn hạn.`
+            : `Quản trị dòng tiền có kỷ luật, trích lập quỹ dự phòng và chuyển hóa thặng dư thành tài sản tích lũy thực tế.`
+        },
+        marriage: {
+          title: "Hôn Nhân & Vun Đắp Gia Đạo",
+          advice: decisions.marriage?.marriage_advice
+            ? `${decisions.marriage.marriage_status} ${decisions.marriage.marriage_advice} Xây dựng hạnh phúc gia đình trên sự tôn trọng, thấu hiểu và chia sẻ trách nhiệm bình đẳng.`
+            : `Tôn trọng khoảng trời riêng của bạn đời, chủ động lắng nghe và giải quyết bất đồng bằng sự chân thành, hòa ái.`
+        },
+        health: {
+          title: "Sức Khỏe & Phòng Ngừa Thể Chất",
+          advice: decisions.health?.lifestyle_preventions && decisions.health.lifestyle_preventions.length > 0
+            ? `${decisions.health.lifestyle_preventions[0]} Duy trì chế độ dinh dưỡng cân bằng ngũ hành, vận động thể chất đều đặn và thăm khám sức khỏe định kỳ.`
+            : `Sinh hoạt điều độ, tránh làm việc quá sức kéo dài, chú trọng giấc ngủ và dưỡng sinh ngũ tạng.`
+        },
+        mindfulness: {
+          title: "Đạo Tu Dưỡng & Phong Thủy Cải Vận",
+          advice: `Mệnh do thiên định nhưng vận do nhân tạo. Ứng dụng màu sắc và phương vị thuộc hành ${primaryUseStr} (${favorableStr}) để gia tăng sinh khí; duy trì tâm thế khiêm tốn, tích cực bồi đức hành thiện để chuyển hóa các xung sát của thời vận thành phúc lành bền lâu.`
+        }
+      };
+
+      return {
+        masterOverview,
+        brightSpots,
+        hazardSpots,
+        lifeTrajectory,
+        strategicPillars
+      };
+    }
+  };
+
+  function buildMarkdownReport(chart, quant, mangPai, shenSha, decisions, timingData, targetYear = 2026, masterAssessment = null) {
     const dm = chart.day_gan;
     const genderStr = chart.is_male ? 'Nam' : 'Nữ';
     const baziYear = chart.birth_year;
@@ -1505,14 +1778,16 @@
     // Mục Lục Báo Cáo
     md.push('### 📑 CẤU TRÚC NỘI DUNG KHẢO LUẬN TOÀN THƯ:');
     md.push('- [I. Bảng Thiết Lập Tứ Trụ & Năng Lượng Nền Tảng](#sec-I)');
-    md.push('- [II. Định Lượng Khí Số Ngũ Hành (QEE) & Tử Bình Cách Cục Luận](#sec-II)');
-    md.push('- [III. Phân Tích Cấu Trúc Manh Phái (Tố Công & Khách - Chủ)](#sec-III)');
-    md.push('- [IV. Hệ Thống Thần Sát Kinh Điển & Khảo Luận 12 Cung Manh Phái](#sec-IV)');
-    md.push('- [V. Luận Giải Chuyên Đề 6 Trụ Cột Đời Người](#sec-V)');
-    md.push('- [VI. Lộ Trình Toàn Diện 10 Đại Vận Cuộc Đời (Kèm Lưu Niên Chi Tiết)](#sec-VI)');
-    md.push(`- [VII. Luận Giải Chi Tiết Niên Vận Năm ${targetYear} & 12 Lưu Nguyệt](#sec-VII)`);
-    md.push('- [VIII. Các Mốc Biến Cố Trọng Đại & Lưu Niên Độc Đáo](#sec-VIII)');
-    md.push('- [IX. Tổng Kết Triết Lý Dưỡng Mệnh & Kích Hoạt Hỷ Dụng Thần](#sec-IX)');
+    md.push('- [II. Tổng Luận Cốt Cách & Bản Đồ Chiến Lược Vận Trình Đời Người](#sec-II)');
+    md.push('- [III. Định Lượng Khí Số Ngũ Hành (QEE) & Tử Bình Cách Cục Luận](#sec-III)');
+    md.push('- [IV. Phân Tích Cấu Trúc Manh Phái (Tố Công & Khách - Chủ)](#sec-IV)');
+    md.push('- [V. Hệ Thống Thần Sát Kinh Điển & Khảo Luận 12 Cung Manh Phái](#sec-V)');
+    md.push('- [VI. Luận Giải Chuyên Đề 6 Trụ Cột Đời Người](#sec-V)');
+    md.push('- [VII. Lộ Trình Toàn Diện 10 Đại Vận Cuộc Đời (Kèm Lưu Niên Chi Tiết)](#sec-VII)');
+    md.push(`- [VIII. Luận Giải Chi Tiết Niên Vận Năm ${targetYear} & 12 Lưu Nguyệt](#sec-VIII)`);
+    md.push('- [IX. Các Mốc Biến Cố Trọng Đại & Lưu Niên Độc Đáo](#sec-IX)');
+    md.push('- [X. Tổng Kết Triết Lý Dưỡng Mệnh & Kích Hoạt Hỷ Dụng Thần](#sec-X)');
+    md.push('\n---\n');
     md.push('\n---\n');
 
     // PHẦN 1: BẢNG LẬP MỆNH TỨ TRỤ
@@ -1609,11 +1884,66 @@
     } else {
       md.push('- Các cột mệnh trong Tứ Trụ ngự ở thế độc lập, trường khí phân bố ôn hòa, không xảy ra xung đột hay câu thúc quá mức.');
     }
+    // PHẦN 2: TỔNG LUẬN CỐT CÁCH & BẢN ĐỒ CHIẾN LƯỢC VẬN TRÌNH ĐỜI NGƯỜI
+    md.push('<a id="sec-II"></a>');
+    md.push('## II. TỔNG LUẬN CỐT CÁCH & BẢN ĐỒ CHIẾN LƯỢC VẬN TRÌNH ĐỜI NGƯỜI\n');
+    const ma = masterAssessment || BaziMasterSynthesizer.synthesizeMasterAssessment(chart, quant, mangPai, shenSha, decisions, timingData, targetYear);
+    const mo = ma.masterOverview;
+
+    md.push('### 1. Khảo Luận Cốt Cách Tổng Thể & Trực Giác Mệnh Cục:');
+    md.push(`- **Phẩm cách lá số**: **${mo.gradeBadge}** (Điểm định lượng cốt cách: **${mo.overallScore}/100**).`);
+    md.push(`- **Nhật Chủ & Nạp Âm**: **${chart.day_gan} ${chart.day_zhi}** (${GAN_WU_XING[chart.day_gan]} - *${mo.napAm}*).`);
+    md.push(`- **Thế Cục & Cách Cục**: **${mo.bodyStrength}** (${mo.pattern}) • **${mo.gejuName}** (${mo.gejuStatus}).`);
+    md.push(`- **Hệ Thống Hỷ Dụng Thần**: Dụng Thần: \`${mo.primaryUse}\` | Hỷ Thần: \`${mo.favorable}\` | Kỵ Thần: \`${mo.unfavorable}\`${mo.climateUse ? ` | Điều Hầu: \`${mo.climateUse}\`` : ''}.`);
+    md.push(`- **Định vị Khách - Chủ**: ${mo.hostGuestSummary}.`);
+    md.push(`- **Nhận định cốt cách tổng quát**: ${mo.executiveSummary}\n`);
+
+    md.push('### 2. Danh Mục Điểm Sáng & Ưu Thế Thiên Phú (Thế Mạnh Cốt Lõi):');
+    (ma.brightSpots || []).forEach(b => {
+      md.push(`- **✨ ${b.title}**: ${b.detail}`);
+    });
+    md.push('\n');
+
+    md.push('### 3. Danh Mục Điểm Cần Lưu Ý & Phương Pháp Hóa Giải (Thử Thách Vận Trình):');
+    if ((ma.hazardSpots || []).length > 0) {
+      ma.hazardSpots.forEach(h => {
+        md.push(`- **⚠️ ${h.title}**: ${h.detail}`);
+      });
+    } else {
+      md.push('- Lá số ngũ hành phân bố cân hòa, các cung vị không bị xung hại hoặc hung sát áp chế trực diện.');
+    }
+    md.push('\n');
+
+    md.push('### 4. Bản Đồ Hướng Đi Vận Trình Đời Người (3 Chặng Cuộc Đời):');
+    const traj = ma.lifeTrajectory;
+    md.push(`#### 4.1. ${traj.tienVan.period}: ${traj.tienVan.theme}`);
+    md.push(`- ${traj.tienVan.content}\n`);
+
+    md.push(`#### 4.2. ${traj.trungVan.period}: ${traj.trungVan.theme}`);
+    md.push(`- ${traj.trungVan.content}`);
+    if (traj.trungVan.goldenDecade) {
+      md.push(`- **🌟 ${traj.trungVan.goldenDecade.title}**: ${traj.trungVan.goldenDecade.detail}`);
+    }
+    if (traj.trungVan.defenseDecade) {
+      md.push(`- **🛡️ ${traj.trungVan.defenseDecade.title}**: ${traj.trungVan.defenseDecade.detail}`);
+    }
+    md.push('\n');
+
+    md.push(`#### 4.3. ${traj.hauVan.period}: ${traj.hauVan.theme}`);
+    md.push(`- ${traj.hauVan.content}\n`);
+
+    md.push('### 5. Lời Khuyên Hành Động Thiết Thực Theo 5 Trụ Cột Chiến Lược:');
+    const sp = ma.strategicPillars;
+    md.push(`- **💼 ${sp.career.title}**: ${sp.career.advice}`);
+    md.push(`- **💰 ${sp.wealth.title}**: ${sp.wealth.advice}`);
+    md.push(`- **🏡 ${sp.marriage.title}**: ${sp.marriage.advice}`);
+    md.push(`- **🌿 ${sp.health.title}**: ${sp.health.advice}`);
+    md.push(`- **🕊️ ${sp.mindfulness.title}**: ${sp.mindfulness.advice}`);
     md.push('\n---\n');
 
-    // PHẦN 2: ĐỊNH LƯỢNG KHÍ SỐ NGŨ HÀNH & CÁCH CỤC
-    md.push('<a id="sec-II"></a>');
-    md.push('## II. ĐỊNH LƯỢNG KHÍ SỐ NGŨ HÀNH (THUẬT TOÁN QEE - 100 ĐIỂM) & CÁCH CỤC TỬ BÌNH\n');
+    // PHẦN 3: ĐỊNH LƯỢNG KHÍ SỐ NGŨ HÀNH & CÁCH CỤC
+    md.push('<a id="sec-III"></a>');
+    md.push('## III. ĐỊNH LƯỢNG KHÍ SỐ NGŨ HÀNH (THUẬT TOÁN QEE - 100 ĐIỂM) & CÁCH CỤC TỬ BÌNH\n');
     const scores = quant.element_scores;
     const body = quant.body_strength;
     const gods = quant.gods_selection;
@@ -1664,9 +1994,9 @@
     }
     md.push('\n---\n');
 
-    // PHẦN 3: CẤU TRÚC MANH PHÁI
-    md.push('<a id="sec-III"></a>');
-    md.push('## III. PHÂN TÍCH CẤU TRÚC MANH PHÁI (TỐ CÔNG & KHÁCH - CHỦ)\n');
+    // PHẦN 4: CẤU TRÚC MANH PHÁI
+    md.push('<a id="sec-IV"></a>');
+    md.push('## IV. PHÂN TÍCH CẤU TRÚC MANH PHÁI (TỐ CÔNG & KHÁCH - CHỦ)\n');
     const hg = mangPai.host_guest;
     const party = mangPai.yin_yang_party;
     const works = mangPai.work_mechanisms;
@@ -1696,9 +2026,9 @@
     }
     md.push('\n---\n');
 
-    // PHẦN 4: HỆ THỐNG THẦN SÁT KINH ĐIỂN & 12 CUNG MANH PHÁI
-    md.push('<a id="sec-IV"></a>');
-    md.push('## IV. HỆ THỐNG THẦN SÁT KINH ĐIỂN & 12 CUNG MANH PHÁI\n');
+    // PHẦN 5: HỆ THỐNG THẦN SÁT KINH ĐIỂN & 12 CUNG MANH PHÁI
+    md.push('<a id="sec-V"></a>');
+    md.push('## V. HỆ THỐNG THẦN SÁT KINH ĐIỂN & 12 CUNG MANH PHÁI\n');
     md.push('### 1. Bảng Thần Sát Chiếu Mệnh Từ Tam Mệnh Thông Hội:');
     if (shenSha.length > 0) {
       shenSha.forEach(s => {
@@ -1777,7 +2107,7 @@
     palaces12.forEach((p, idx) => {
       const pWx = ZHI_WU_XING[p.zhi];
       const spDesc = spiritDetailedDescriptions[p.spirit] || 'Vận hành khí số theo quy luật luân chuyển tự nhiên.';
-      md.push(`#### 🏛️ 4.2.${idx + 1}. Cung ${p.cung} (Tọa tại Chi ${p.zhi} - Ngũ Hành: ${pWx})`);
+      md.push(`#### 🏛️ 5.2.${idx + 1}. Cung ${p.cung} (Tọa tại Chi ${p.zhi} - Ngũ Hành: ${pWx})`);
       md.push(`- **Thần Sát Trấn Ngự**: \`${p.spirit}\` — ${spDesc}`);
       md.push(`- **Mối tương quan với Bản Thể Nhật Chủ (${dm} ${GAN_WU_XING[dm]})**: Ngũ hành Cung là ${pWx}, đóng vai trò quan trọng trong việc cân bằng hoặc kích hoạt lực lượng của bản mệnh.`);
       md.push(`- **Luận đoán chuyên biệt**: Cung ${p.cung} phản ánh trọn vẹn ${palaceMeanings[p.cung]}. Khi tọa tại ${p.zhi}, trường năng lượng này đòi hỏi đương số phải chủ động phát huy điểm mạnh của \`${p.spirit}\`, đồng thời kiểm soát các yếu tố tiêu cực để giữ gìn sự hanh thông bền vững.`);
@@ -1785,9 +2115,9 @@
     });
     md.push('---\n');
 
-    // PHẦN 5: LUẬN GIẢI CHUYÊN ĐỀ 6 TRỤ CỘT ĐỜI NGƯỜI
-    md.push('<a id="sec-V"></a>');
-    md.push('## V. LUẬN GIẢI CHUYÊN ĐỀ TỪ CÂY QUYẾT ĐỊNH XÁC ĐỊNH\n');
+    // PHẦN 6: LUẬN GIẢI CHUYÊN ĐỀ 6 TRỤ CỘT ĐỜI NGƯỜI
+    md.push('<a id="sec-VI"></a>');
+    md.push('## VI. LUẬN GIẢI CHUYÊN ĐỀ TỪ CÂY QUYẾT ĐỊNH XÁC ĐỊNH\n');
 
     // 1. Bản tính
     const p = decisions.personality;
@@ -1841,9 +2171,9 @@
     tm.year_interactions.forEach(yi => md.push(`  + ${yi}`));
     md.push('- **Phương châm hành động trong năm**: Chủ động nắm bắt cơ hội liên quan đến Hỷ Dụng Thần, giữ gìn tài sản cẩn trọng ở những tháng xung khắc, tăng cường kết nối đối tác uy tín.\n---\n');
 
-    // PHẦN 6: LỘ TRÌNH 8-10 ĐẠI VẬN CUỘC ĐỜI & LƯU NIÊN CHI TIẾT
-    md.push('<a id="sec-VI"></a>');
-    md.push('## VI. LỘ TRÌNH 10 ĐẠI VẬN CUỘC ĐỜI (TOÀN DIỆN 100 NĂM KHÍ SỐ)\n');
+    // PHẦN 7: LỘ TRÌNH 8-10 ĐẠI VẬN CUỘC ĐỜI & LƯU NIÊN CHI TIẾT
+    md.push('<a id="sec-VII"></a>');
+    md.push('## VII. LỘ TRÌNH 10 ĐẠI VẬN CUỘC ĐỜI (TOÀN DIỆN 100 NĂM KHÍ SỐ)\n');
     md.push('Khảo sát chi tiết 10 bước chuyển dịch đại vận và diễn biến từng năm:\n');
 
     const deepLps = timingData.deepLuckPillars || [];
@@ -1887,9 +2217,9 @@
     });
     md.push('---\n');
 
-    // PHẦN 7: LUẬN GIẢI CHI TIẾT NIÊN VẬN & 12 LƯU NGUYỆT
-    md.push('<a id="sec-VII"></a>');
-    md.push(`## VII. LUẬN GIẢI CHI TIẾT NIÊN VẬN NĂM ${targetYear} & 12 LƯU NGUYỆT\n`);
+    // PHẦN 8: LUẬN GIẢI CHI TIẾT NIÊN VẬN & 12 LƯU NGUYỆT
+    md.push('<a id="sec-VIII"></a>');
+    md.push(`## VIII. LUẬN GIẢI CHI TIẾT NIÊN VẬN NĂM ${targetYear} & 12 LƯU NGUYỆT\n`);
     const monthsData = calculate12Months(targetYear, dm);
 
     md.push(`### 1. Tổng Quan Khí Vận Năm ${targetYear} (${tm.year_can_chi} - ${tm.year_nap_am}):`);
@@ -1931,9 +2261,9 @@
     });
     md.push('---\n');
 
-    // PHẦN 8: CÁC MỐC SỰ KIỆN TRỌNG ĐẠI TRONG ĐỜI (MILESTONES)
-    md.push('<a id="sec-VIII"></a>');
-    md.push('## VIII. CÁC MỐC BIẾN CỐ TRỌNG ĐẠI & LƯU NIÊN ĐỘC ĐÁO\n');
+    // PHẦN 9: CÁC MỐC SỰ KIỆN TRỌNG ĐẠI TRONG ĐỜI (MILESTONES)
+    md.push('<a id="sec-IX"></a>');
+    md.push('## IX. CÁC MỐC BIẾN CỐ TRỌNG ĐẠI & LƯU NIÊN ĐỘC ĐÁO\n');
     const milestoneYears = [2000, 2007, 2013, 2019, 2021, 2023, 2025, 2026, 2028, 2030, 2032, 2035];
     let milestoneCount = 0;
 
@@ -1959,9 +2289,9 @@
       md.push('- Vận trình cuộc đời tương đối êm đềm, không gặp phải các xung đột hay biến cố mang tính đảo lộn dữ dội.\n');
     }
 
-    // PHẦN 9: TỔNG KẾT TRIẾT LÝ DƯỠNG MỆNH
-    md.push('<a id="sec-IX"></a>');
-    md.push('---\n## IX. TỔNG KẾT TRIẾT LÝ DƯỠNG MỆNH & PHƯƠNG PHÁP ỨNG DỤNG\n');
+    // PHẦN 10: TỔNG KẾT TRIẾT LÝ DƯỠNG MỆNH
+    md.push('<a id="sec-X"></a>');
+    md.push('---\n## X. TỔNG KẾT TRIẾT LÝ DƯỠNG MỆNH & PHƯƠNG PHÁP ỨNG DỤNG\n');
     md.push('> *\"Mệnh do thiên định, Vận do nhân tạo, Hạnh do tự cầu.\"* Bát tự là bản đồ địa hình năng lượng bẩm sinh; sự tu dưỡng đạo đức, kỷ luật làm việc và lựa chọn môi trường sống phù hợp với Hỷ Dụng Thần sẽ giúp tối ưu hóa tiềm năng và chuyển nguy thành an.\n');
 
     md.push('### Hướng Dẫn Kích Hoạt Hỷ Dụng Thần Toàn Diện:');
@@ -2121,8 +2451,11 @@
       targetAnnualMilestones
     };
 
+    // 5.5. Động cơ Tổng Hợp Cốt Cách & Bản Đồ Chiến Lược Vận Trình
+    const masterAssessment = BaziMasterSynthesizer.synthesizeMasterAssessment(chart, quantData, mangPaiData, shenShaList, decisions, timingData, targetYear);
+
     // 6. Báo Cáo Markdown Toàn Văn
-    const markdownReport = buildMarkdownReport(chart, quantData, mangPaiData, shenShaList, decisions, timingData, targetYear);
+    const markdownReport = buildMarkdownReport(chart, quantData, mangPaiData, shenShaList, decisions, timingData, targetYear, masterAssessment);
 
     return {
       status: 'success',
@@ -2132,6 +2465,7 @@
       shen_sha: shenShaList,
       decisions,
       timing_data: timingData,
+      master_assessment: masterAssessment,
       markdown_report: markdownReport
     };
   }
@@ -2140,6 +2474,7 @@
   global.NetaBaziInterpreter = {
     analyzeFromBaziChart,
     analyzeFromExistingChart,
+    synthesizeMasterAssessment: BaziMasterSynthesizer.synthesizeMasterAssessment,
     evaluateQuantitative,
     evaluateMangPai,
     findAllShenSha,

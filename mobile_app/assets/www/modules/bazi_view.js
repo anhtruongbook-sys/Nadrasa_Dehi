@@ -373,6 +373,7 @@
     if (!analysisObj || !analysisObj.analysis) return '<div class="annual-empty">Đang cập nhật bảng phân tích tổng hợp...</div>';
 
     const analysis = analysisObj.analysis;
+    const ma = analysis.master_assessment;
     const quant = analysis.quantitative_data || {};
     const mangPai = analysis.mang_pai_data || {};
     const shenSha = analysis.shen_sha || [];
@@ -485,6 +486,149 @@
 
     return `
       <div class="bazi-dashboard-container">
+        <!-- CARD 0: TỔNG QUAN CỐT CÁCH & BẢN ĐỒ CHIẾN LƯỢC VẬN TRÌNH -->
+        ${ma ? `
+        <div class="bazi-analysis-card" id="bazi-card-master-assessment" style="margin-bottom: 14px;">
+          <div class="bazi-card-header-styled">
+            <div class="bazi-card-title-main">
+              <span>🧭</span> TỔNG QUAN CỐT CÁCH &amp; BẢN ĐỒ CHIẾN LƯỢC VẬN TRÌNH
+            </div>
+            <span class="bazi-card-tag" style="font-size: 0.74rem;">${escapeHTML(ma.masterOverview?.gradeBadge || 'Cát Cách Vững Vàng')}</span>
+          </div>
+
+          <!-- 1. Executive Overview -->
+          <div class="tuvi-master-meta-box">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+              <span class="tuvi-master-pill-tag">
+                🧬 <strong>Nhật Chủ:</strong>&nbsp;${escapeHTML(ma.masterOverview?.dayMaster)} (${escapeHTML(ma.masterOverview?.dayMasterWx)}) • ${escapeHTML(ma.masterOverview?.napAm)}
+              </span>
+              <span class="tuvi-master-pill-tag">
+                🏛️ <strong>Cách Cục:</strong>&nbsp;${escapeHTML(ma.masterOverview?.gejuName)} (${escapeHTML(ma.masterOverview?.bodyStrength)})
+              </span>
+              <span class="tuvi-master-pill-tag" style="color: #2ecc71;">
+                ⭐ Dụng Thần: ${escapeHTML(ma.masterOverview?.primaryUse)}
+              </span>
+              <span class="tuvi-master-pill-tag" style="color: #3498db;">
+                ✨ Hỷ Thần: ${escapeHTML(ma.masterOverview?.favorable)}
+              </span>
+              ${ma.masterOverview?.climateUse ? `
+              <span class="tuvi-master-pill-tag" style="color: #e67e22;">
+                🌡️ Điều Hầu: ${escapeHTML(ma.masterOverview?.climateUse)}
+              </span>
+              ` : ''}
+            </div>
+            <div style="font-size: 0.84rem; line-height: 1.6; color: var(--text-color); margin-bottom: 8px;">
+              ${escapeHTML(ma.masterOverview?.executiveSummary)}
+            </div>
+            <div style="font-size: 0.79rem; line-height: 1.5; color: var(--text-color); border-top: 1px dashed rgba(245, 176, 65, 0.25); padding-top: 6px;">
+              🌐 <strong>Cấu Trúc Khách - Chủ:</strong> ${escapeHTML(ma.masterOverview?.hostGuestSummary)}
+            </div>
+          </div>
+
+          <!-- 2. Bảng Tổng Hợp: Điểm Sáng vs Điểm Cần Lưu Ý -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 14px;">
+            <!-- Cột Điểm Sáng -->
+            <div class="tuvi-master-bright-col">
+              <div style="font-size: 0.82rem; font-weight: 700; color: #2ecc71; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; text-transform: uppercase;">
+                <span>✨</span> Danh Mục Điểm Sáng &amp; Ưu Thế Thiên Phú
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${(ma.brightSpots || []).map(b => `
+                  <div class="tuvi-master-spot-item bright">
+                    <div style="font-weight: 700; color: #27ae60; margin-bottom: 2px;">${escapeHTML(b.title)}</div>
+                    <div>${escapeHTML(b.detail)}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Cột Điểm Cần Lưu Ý -->
+            <div class="tuvi-master-hazard-col">
+              <div style="font-size: 0.82rem; font-weight: 700; color: #e74c3c; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; text-transform: uppercase;">
+                <span>⚠️</span> Danh Mục Điểm Cần Lưu Ý &amp; Hóa Giải
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${(ma.hazardSpots || []).length > 0 ? (ma.hazardSpots || []).map(h => `
+                  <div class="tuvi-master-spot-item hazard">
+                    <div style="font-weight: 700; color: #c0392b; margin-bottom: 2px;">${escapeHTML(h.title)}</div>
+                    <div>${escapeHTML(h.detail)}</div>
+                  </div>
+                `).join('') : `
+                  <div style="font-size: 0.78rem; color: var(--text-muted); padding: 8px;">
+                    Lá số ngũ hành phân bố cân hòa, không bị xung hại hoặc hung sát áp chế trực diện.
+                  </div>
+                `}
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Hướng Đi Vận Trình Đời Người (Tiền Vận, Trung Vận, Hậu Vận) -->
+          <div class="tuvi-master-trajectory-box">
+            <div style="font-size: 0.84rem; font-weight: 700; color: var(--gold-glow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <span>🗺️</span> BẢN ĐỒ HƯỚNG ĐI VẬN TRÌNH ĐỜI NGƯỜI
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; line-height: 1.55;">
+              <!-- Tiền vận -->
+              <div class="tuvi-master-trajectory-step">
+                <div style="font-weight: 700; color: var(--gold-primary);">🌱 ${escapeHTML(ma.lifeTrajectory?.tienVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.tienVan?.theme)}</div>
+                <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.tienVan?.content)}</div>
+              </div>
+              <!-- Trung vận -->
+              <div class="tuvi-master-trajectory-step">
+                <div style="font-weight: 700; color: var(--gold-primary);">⚡ ${escapeHTML(ma.lifeTrajectory?.trungVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.trungVan?.theme)}</div>
+                <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.trungVan?.content)}</div>
+                ${ma.lifeTrajectory?.trungVan?.goldenDecade ? `
+                  <div class="tuvi-master-golden-banner">
+                    <span style="font-weight: 700; color: var(--gold-glow);">🌟 ${escapeHTML(ma.lifeTrajectory?.trungVan?.goldenDecade?.title)}:</span>
+                    <span style="color: var(--text-color);"> ${escapeHTML(ma.lifeTrajectory?.trungVan?.goldenDecade?.detail)}</span>
+                  </div>
+                ` : ''}
+                ${ma.lifeTrajectory?.trungVan?.defenseDecade ? `
+                  <div class="tuvi-master-defense-banner">
+                    <span style="font-weight: 700; color: #e67e22;">🛡️ ${escapeHTML(ma.lifeTrajectory?.trungVan?.defenseDecade?.title)}:</span>
+                    <span style="color: var(--text-color);"> ${escapeHTML(ma.lifeTrajectory?.trungVan?.defenseDecade?.detail)}</span>
+                  </div>
+                ` : ''}
+              </div>
+              <!-- Hậu vận -->
+              <div class="tuvi-master-trajectory-step">
+                <div style="font-weight: 700; color: var(--gold-primary);">🌾 ${escapeHTML(ma.lifeTrajectory?.hauVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.hauVan?.theme)}</div>
+                <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.hauVan?.content)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Lời Khuyên Hành Động Thiết Thực Theo 5 Trụ Cột -->
+          <div>
+            <div style="font-size: 0.84rem; font-weight: 700; color: var(--gold-glow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <span>💡</span> 5 TRỤ CỘT LỜI KHUYÊN HÀNH ĐỘNG CHIẾN LƯỢC
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+              <div class="tuvi-master-pillar-card">
+                <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">💼 Công Việc &amp; Sự Nghiệp</div>
+                <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.career?.advice)}</div>
+              </div>
+              <div class="tuvi-master-pillar-card">
+                <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">💰 Tiền Tài &amp; Quản Trị Tài Sản</div>
+                <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.wealth?.advice)}</div>
+              </div>
+              <div class="tuvi-master-pillar-card">
+                <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🏡 Gia Đạo &amp; Hôn Nhân</div>
+                <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.marriage?.advice)}</div>
+              </div>
+              <div class="tuvi-master-pillar-card">
+                <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🌿 Sức Khỏe &amp; Phòng Ngừa</div>
+                <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.health?.advice)}</div>
+              </div>
+              <div class="tuvi-master-pillar-card">
+                <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🕊️ Đạo Tu Dưỡng Cải Vận</div>
+                <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.mindfulness?.advice)}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        ` : ''}
+
         <!-- CARD 1: CÂN LỰC NGŨ HÀNH QEE & ĐẮC LỆNH NGUYỆT LỆNH -->
         <div class="bazi-analysis-card">
           <div class="bazi-card-header-styled">
@@ -875,7 +1019,7 @@
             <!-- Sub-Tab Navigation (Giai đoạn 3: Dual Subnav) -->
             <div class="bazi-analysis-subnav">
               <button class="bazi-subnav-btn ${currentAnalysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-bazi-tab-dashboard">
-                📊 Bảng Phân Tích Tổng Hợp (7 Card Dashboard)
+                📊 Bảng Phân Tích Tổng Hợp (Dashboard)
               </button>
               <button class="bazi-subnav-btn ${currentAnalysisSubTab === 'report' ? 'active' : ''}" id="btn-bazi-tab-full-report">
                 📜 Toàn Văn Báo Cáo Chuyên Sâu
@@ -952,14 +1096,15 @@
                   <div class="bazi-report-toc">
                     <span style="font-weight: 700; font-size: 0.72rem; color: var(--gold-primary); align-self: center; margin-right: 4px;">Mục lục nhanh:</span>
                     <a class="bazi-report-toc-pill" href="#sec-I">I. Tứ Trụ</a>
-                    <a class="bazi-report-toc-pill" href="#sec-II">II. Ngũ Hành & Cách Cục</a>
-                    <a class="bazi-report-toc-pill" href="#sec-III">III. Manh Phái Khách Chủ</a>
-                    <a class="bazi-report-toc-pill" href="#sec-IV">IV. 12 Cung Manh Phái</a>
-                    <a class="bazi-report-toc-pill" href="#sec-V">V. 6 Trụ Cột Đời Người</a>
-                    <a class="bazi-report-toc-pill" href="#sec-VI">VI. 10 Đại Vận & Lưu Niên</a>
-                    <a class="bazi-report-toc-pill" href="#sec-VII">VII. Niên Vận ${targetYear} & 12 Lưu Nguyệt</a>
-                    <a class="bazi-report-toc-pill" href="#sec-VIII">VIII. Mốc Biến Cố Trọng Đại</a>
-                    <a class="bazi-report-toc-pill" href="#sec-IX">IX. Dưỡng Mệnh Đạo</a>
+                    <a class="bazi-report-toc-pill" href="#sec-II">II. Tổng Luận Cốt Cách & Vận Trình</a>
+                    <a class="bazi-report-toc-pill" href="#sec-III">III. Ngũ Hành & Cách Cục</a>
+                    <a class="bazi-report-toc-pill" href="#sec-IV">IV. Manh Phái Khách Chủ</a>
+                    <a class="bazi-report-toc-pill" href="#sec-V">V. 12 Cung Manh Phái</a>
+                    <a class="bazi-report-toc-pill" href="#sec-VI">VI. 6 Trụ Cột Đời Người</a>
+                    <a class="bazi-report-toc-pill" href="#sec-VII">VII. 10 Đại Vận</a>
+                    <a class="bazi-report-toc-pill" href="#sec-VIII">VIII. Niên Vận & 12 Tháng</a>
+                    <a class="bazi-report-toc-pill" href="#sec-IX">IX. Mốc Biến Cố</a>
+                    <a class="bazi-report-toc-pill" href="#sec-X">X. Dưỡng Mệnh Đạo</a>
                   </div>
 
                   <div class="bazi-full-report-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
