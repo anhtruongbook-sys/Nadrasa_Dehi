@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v11.9
-const CACHE_NAME = 'neta-poker-v11.9';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v12.0
+const CACHE_NAME = 'neta-poker-v12.0';
 
 const CORE_ASSETS = [
   './',
@@ -50,7 +50,7 @@ const CORE_ASSETS = [
   'modules/lakinh_view.js',
   'assets/dichhoc/dichhoc.css',
   'engines/dichhoc_engine.js',
-  'engines/luc_hao_interpreter.js',
+  'engines/luc_hao_2_engine.js',
   'modules/dichhoc_view.js'
 ];
 

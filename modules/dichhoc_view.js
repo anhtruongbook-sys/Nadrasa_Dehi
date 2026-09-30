@@ -1393,27 +1393,30 @@
     });
     text = text.replace(/```[a-zA-Z]*/g, '');
     text = text.replace(/```/g, '');
-    text = text.replace(/^[=\-~_]{3,}\s*$/gm, '');
-
-    // 1. Tách và chuẩn hóa biểu ngữ tiêu đề nếu có
+    // 1. Tách và chuẩn hóa biểu ngữ tiêu đề Lục Hào 2.0 (Lý Kế Trung)
     let bannerHtml = '';
-    const headerMatch = text.match(/═+\s*\n\s*BẢN LUẬN GIẢI[^\n]*\n\s*Sự Vụ Chiêm Đoán:\s*"([^"]*)"\s*\n\s*Chủ Đề Dụng Thần:\s*\[([^\]]*)\]\s*➔\s*Thủ Ngôi:\s*([^\n]*)\n\s*═+/);
-    if (headerMatch) {
-      const q = headerMatch[1];
-      const topic = headerMatch[2];
-      const target = headerMatch[3];
+    const headerMatch2 = text.match(/(?:^[=\-~_━═─]{3,}\s*\n)?\s*BÁO CÁO DỰ ĐOÁN LỤC HÀO[^\n]*\n[^\n]*\n(?:[=\-~_━═─]{3,}\s*\n)?-\s*Câu hỏi\s*:\s*"([^"]*)"\s*\n-\s*Quẻ Chính\s*:\s*([^\n]+)\s*\n-\s*Quẻ Biến\s*:\s*([^\n]+)\s*\n-\s*Thời gian gieo quẻ\s*:\s*([^\n]+)(?:\s*\n[=\-~_━═─]{3,})?/m);
+    if (headerMatch2) {
+      const q = headerMatch2[1];
+      const queChinh = headerMatch2[2];
+      const queBien = headerMatch2[3];
+      const thoiGian = headerMatch2[4];
       bannerHtml = `
         <div class="dh-formatted-banner">
-          <div class="dh-fb-tag">KINH DỊCH LỤC HÀO CỔ THƯ</div>
-          <div class="dh-fb-title">BẢN LUẬN GIẢI CHUYÊN SÂU</div>
+          <div class="dh-fb-tag">KINH DỊCH LỤC HÀO 2.0 • NHẤT QUÁI ĐA ĐOÁN (LÝ KẾ TRUNG)</div>
+          <div class="dh-fb-title">BÁO CÁO DỰ ĐOÁN HỌC THUẬT CHUYÊN SÂU</div>
           <div class="dh-fb-meta">
             <div class="dh-fb-meta-item"><strong>Sự Vụ:</strong> <span>${escapeReportHtml(q || 'Chiêm đoán việc')}</span></div>
-            <div class="dh-fb-meta-item"><strong>Dụng Thần:</strong> <span class="dh-badge-gold">${escapeReportHtml(target || topic)}</span></div>
+            <div class="dh-fb-meta-item"><strong>Quẻ:</strong> <span class="dh-badge-gold">${escapeReportHtml(queChinh)} ➔ ${escapeReportHtml(queBien)}</span></div>
+            <div class="dh-fb-meta-item"><strong>Thời Gian:</strong> <span style="color:var(--text-muted);">${escapeReportHtml(thoiGian)}</span></div>
           </div>
         </div>
       `;
-      text = text.replace(headerMatch[0], '').trim();
+      text = text.replace(headerMatch2[0], '').trim();
     }
+
+    text = text.replace(/^[=\-~_━═─]{3,}\s*$/gm, '');
+    text = text.replace(/^[=\-~_━═─]{3,}\s*\n\s*\[HẾT BÁO CÁO DỰ ĐOÁN LỤC HÀO 2\.0\]\s*\n[=\-~_━═─]{3,}\s*$/gm, '');
 
     // 2. Phân tách theo từng chuyên mục (Section)
     const lines = text.split('\n');
@@ -1450,7 +1453,8 @@
       if (!line) continue;
 
       // Bỏ qua triệt để các dòng rác code block, bảng thô hay đường kẻ sót lại
-      if (line.startsWith('```') || line.match(/^[=\-~_]{3,}$/)) continue;
+      if (line.startsWith('```') || line.match(/^[=\-~_━═─]{3,}$/)) continue;
+      if (line.includes('[HẾT BÁO CÁO DỰ ĐOÁN LỤC HÀO 2.0]')) continue;
       if (line.match(/^QUẺ CHÍNH:.*QUẺ BIẾN:/i)) continue;
       if (line.match(/^Hào\s+[1-6]:\s*\[/i) && (line.includes('(') || line.includes('|'))) continue;
       if (line.match(/\|\s*Hào\s+[1-6]:/i)) continue;
@@ -1686,20 +1690,6 @@
         reportText: reportMarkdown,
         evaluation: global.NetaLucHao2Engine.evaluate8Steps(state.lucHao.result, state.selectedTopic, state.purpose),
         pipelineResult: pipelineResult
-      };
-    } else if (global.NetaLucHaoInterpreter) {
-      const evalData = global.NetaLucHaoInterpreter.evaluate8Steps(
-        state.lucHao.result,
-        state.selectedTopic,
-        state.purpose
-      );
-      state.interpretation = {
-        source: 'deterministic',
-        verified: true,
-        aiUsed: false,
-        reportText: global.NetaLucHaoInterpreter.generateDeterministicReport(evalData, state.lucHao.result),
-        evaluation: evalData,
-        factSheet: global.NetaLucHaoInterpreter.createGroundTruthFactSheet(evalData, state.lucHao.result)
       };
     }
   }
