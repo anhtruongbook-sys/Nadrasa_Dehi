@@ -1019,10 +1019,10 @@
             <!-- Sub-Tab Navigation (Giai đoạn 3: Dual Subnav) -->
             <div class="bazi-analysis-subnav">
               <button class="bazi-subnav-btn ${currentAnalysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-bazi-tab-dashboard">
-                📊 Bảng Phân Tích Tổng Hợp (Dashboard)
+                📊 Bảng Tổng Hợp
               </button>
               <button class="bazi-subnav-btn ${currentAnalysisSubTab === 'report' ? 'active' : ''}" id="btn-bazi-tab-full-report">
-                📜 Toàn Văn Báo Cáo Chuyên Sâu
+                📜 Toàn Văn
               </button>
             </div>
 

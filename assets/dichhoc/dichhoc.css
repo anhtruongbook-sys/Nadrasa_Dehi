@@ -2111,38 +2111,64 @@ body.theme-light .dh-badge-gold {
   gap: 8px;
   border-bottom: 2px solid rgba(245, 176, 65, 0.2);
   padding-bottom: 8px;
-  margin: 14px 0 16px;
-  overflow-x: auto;
+  margin: 12px 0 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dh-subnav-btn {
-  background: transparent;
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(245, 176, 65, 0.06);
   border: 1px solid rgba(245, 176, 65, 0.3);
   color: var(--text-muted, #94a3b8);
   font-size: 0.8rem;
   font-weight: 700;
-  padding: 6px 16px;
-  border-radius: 6px;
+  padding: 8px 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .dh-subnav-btn.active, .dh-subnav-btn:hover {
   background: var(--gold-primary, #f5b041);
   border-color: var(--gold-glow, #f9e79f);
   color: #000000;
+  box-shadow: 0 2px 8px rgba(245, 176, 65, 0.25);
 }
 
 body.theme-light .dh-subnav-btn {
-  color: #64748b;
-  border-color: rgba(180, 83, 9, 0.25);
+  background: #f8fafc;
+  color: #475569;
+  border-color: #cbd5e1;
 }
 
 body.theme-light .dh-subnav-btn.active, body.theme-light .dh-subnav-btn:hover {
   background: #d97706;
   border-color: #b45309;
   color: #ffffff;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+}
+
+@media (max-width: 480px) {
+  .dh-analysis-subnav {
+    gap: 6px;
+    margin: 10px 0 14px;
+  }
+  .dh-subnav-btn {
+    font-size: 0.74rem;
+    padding: 7px 4px;
+    gap: 4px;
+  }
 }
 
 .dh-full-report-wrap {

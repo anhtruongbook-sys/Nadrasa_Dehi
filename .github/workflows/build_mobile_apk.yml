@@ -76,19 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.7.0
-          name: "Neta Light v2.7.0 (Động Cơ Lục Hào 2.0 Lan Truyền Đồ Thị & Nhất Quái Đa Đoán)"
+          tag_name: v2.7.1
+          name: "Neta Light v2.7.1 (Tối Giản Hóa Thanh Chuyển Hướng Kép & Chống Tràn Nút Di Động)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.0
-            - **Động cơ Kinh Dịch Lục Hào 2.0 Chuyên Sâu Toàn Diện**:
-              + Tích hợp đầy đủ mô hình lan truyền năng lượng ma trận đồ thị động rời rạc (Discrete Dynamic Graph Diffusion).
-              + Giải thuật giải quyết ý định đa mục tiêu & hàm hữu dụng kỳ vọng E[U] định lượng chính xác độ thành bại.
-              + Động cơ định thời điểm ứng kỳ hài hòa (Harmonic Timing Engine) dựa trên góc pha hoàng đạo & chu kỳ năng lượng.
-              + 6 Lăng Kính Nhất Quái Đa Đoán Lý Kế Trung (Sự vụ trọng tâm, Tài vận, Sự nghiệp, Nhân duyên, Thân thể, Phong thủy không gian).
-              + Mỏ neo kiểm chứng hiện trạng ngoại câu hỏi (Ground-Truth Verification) & Radar cảnh báo nguy cơ tiềm ẩn (Hidden Hazards Radar).
-            - **Giao Diện Action Toolbar & Dual Subnav Đồng Nhất**:
-              + Thanh công cụ tác vụ: `[ 📋 Sao Chép Luận Giải ] [ 💾 Tải (.MD) ] [ ✨ Trau Chuốt Văn Phong ]`.
-              + Bộ chuyển đổi giao diện kép: `[ 📊 Bảng Phân Tích Khí Số & 6 Lăng Kính (Dashboard) ]  [ 📜 Toàn Văn Báo Cáo Chuyên Sâu ]`.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.1
+            - **Tối giản hóa toàn bộ các nút chuyển hướng kép (Dual Subnav)**:
+              + Rút gọn nhãn nút trên Dịch Học thành `[ 📊 Đồ Hình & Khí Số ]` và `[ 📜 Toàn Văn ]`.
+              + Rút gọn nhãn nút trên Bát Tự & Tử Vi thành `[ 📊 Bảng Tổng Hợp ]` và `[ 📜 Toàn Văn ]`.
+              + Cấu trúc CSS `flex: 1 1 0` chia đều 50% - 50% diện tích màn hình, loại bỏ triệt để hiện tượng tràn mép hoặc đẩy mất nút trên mọi màn hình di động.
+            - **Thu gọn thanh tác vụ Action Toolbar**:
+              + Rút ngắn nhãn tác vụ thành `[ 📋 Sao Chép ] [ 💾 Tải (.MD) ] [ ✨ Trau Chuốt ]`.
+              + Vừa vặn trên một dòng, giao diện sang trọng, tinh tế và mỹ cảm cao cấp.
               + Trình đọc báo cáo 7 phần drop-cap, hỗ trợ thanh chuyên mục nhanh (TOC Pills) và chế độ chuyển đổi linh hoạt `[ 📜 Bản Tiêu Chuẩn ]  [ ✨ Bản Trau Chuốt (AI) ]`.
             - **Biên Tập Phân Đoạn Tuần Tự Gemini AI Dùng Chung**:
               + Tự động tách đoạn tại Mục V để chống tràn token, hiển thị thanh tiến trình Shimmer ánh vàng trực quan.

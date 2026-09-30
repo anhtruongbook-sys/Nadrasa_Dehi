@@ -877,7 +877,7 @@
         <!-- Cụm nút cuối trang tinh tế, không tràn chữ -->
         <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid rgba(245, 176, 65, 0.3); display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
           <button type="button" class="neta-btn-action" id="dh-btn-copy-report-bottom" title="Sao chép toàn bộ bài luận giải">
-            📋 Sao Chép Luận Giải
+            📋 Sao Chép
           </button>
           <button type="button" class="neta-btn-action" id="dh-btn-download-report-bottom" title="Tải xuống bài luận giải (.MD)">
             💾 Tải (.MD)
@@ -1162,13 +1162,13 @@
             </div>
             <div class="neta-toolbar-actions">
               <button type="button" class="neta-btn-action" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
-                📋 Sao Chép Luận Giải
+                📋 Sao Chép
               </button>
               <button type="button" class="neta-btn-action" id="dh-btn-download-report" title="Tải xuống bài luận giải (.MD)">
                 💾 Tải (.MD)
               </button>
               <button type="button" class="neta-btn-polish-ai" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Trau chuốt văn phong toàn diện bằng AI">
-                ${state.isInterpretingAI ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
+                ${state.isInterpretingAI ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt'}
               </button>
             </div>
           </div>
@@ -1176,10 +1176,10 @@
           <!-- 2. Sub-Tab Navigation (Dual Subnav) -->
           <div class="dh-analysis-subnav">
             <button type="button" class="dh-subnav-btn ${state.analysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-dh-tab-dashboard">
-              📊 Bảng Phân Tích Khí Số & 6 Lăng Kính (Dashboard)
+              📊 Đồ Hình & Khí Số
             </button>
             <button type="button" class="dh-subnav-btn ${state.analysisSubTab === 'report' ? 'active' : ''}" id="btn-dh-tab-full-report">
-              📜 Toàn Văn Báo Cáo Chuyên Sâu
+              📜 Toàn Văn
             </button>
           </div>
 

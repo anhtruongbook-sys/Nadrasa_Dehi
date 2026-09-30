@@ -839,10 +839,10 @@
         <!-- Sub-Tab Navigation -->
         <div class="tuvi-analysis-subnav">
           <button class="tuvi-subnav-btn ${currentAnalysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-tuvi-tab-dashboard">
-            📊 Bảng Phân Tích Tổng Hợp (7 Cột Trụ & 12 Cung)
+            📊 Bảng Tổng Hợp
           </button>
           <button class="tuvi-subnav-btn ${currentAnalysisSubTab === 'full-report' ? 'active' : ''}" id="btn-tuvi-tab-full-report">
-            📜 Toàn Văn Báo Cáo Chuyên Sâu
+            📜 Toàn Văn
           </button>
         </div>
 

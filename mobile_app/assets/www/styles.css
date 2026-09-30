@@ -14913,21 +14913,31 @@ body.theme-light .bm-sc-desc {
   margin-top: 4px;
   border-bottom: 1.5px solid rgba(245, 176, 65, 0.3);
   padding-bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tuvi-subnav-btn {
+  flex: 1 1 0;
+  min-width: 0;
   background: rgba(245, 176, 65, 0.08);
   border: 1px solid var(--border-gold);
   color: var(--text-color);
   font-weight: 700;
-  font-size: 0.82rem;
-  padding: 8px 16px;
+  font-size: 0.8rem;
+  padding: 8px 6px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .tuvi-subnav-btn:hover {
@@ -15369,18 +15379,31 @@ body.theme-light .tuvi-report-table tr:nth-child(even) {
   border-bottom: 2px solid rgba(245, 176, 65, 0.2);
   padding-bottom: 8px;
   margin-top: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .bazi-subnav-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: transparent;
   border: 1px solid rgba(245, 176, 65, 0.3);
   color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 700;
-  padding: 6px 16px;
-  border-radius: 6px;
+  padding: 8px 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .bazi-subnav-btn.active, .bazi-subnav-btn:hover {
