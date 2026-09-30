@@ -17,7 +17,6 @@
     selectedDate: new Date(),
     purpose: '', // Việc cần xem
     selectedTopic: 'cautai', // Chủ đề Dụng thần mặc định
-    analysisSubTab: 'dashboard', // 'dashboard' | 'report' (Dual Subnav)
     lucHao2Result: null, // Kết quả toàn diện từ LucHao2Pipeline
     interpretation: null, // Báo cáo luận giải chuyên sâu (Quy tắc & Gemini)
     isInterpretingAI: false, // Trạng thái đang gọi Gemini AI
@@ -762,7 +761,7 @@
     `;
   }
 
-  // Sự vụ trọng tâm & tương quan Thế - Ứng
+  // Tương quan Hào Thế & Hào Ứng
   function renderMultiObjectiveCard(intentUtility, hexDetails) {
     if (!intentUtility) return '';
     const objs = intentUtility.objectives || {};
@@ -770,14 +769,14 @@
     const ungHao = hexDetails?.haos ? hexDetails.haos[hexDetails.ung_position - 1] : null;
 
     return `
-      <div class="dh-eval-card highlight" style="margin-bottom:12px;">
-        <div class="dh-card-title">🎯 Sự Vụ Trọng Tâm & Tương Quan Thế - Ứng:</div>
+      <div class="dh-eval-card highlight" style="margin-bottom:14px;">
+        <div class="dh-card-title">🎯 Tương Quan Hào Thế & Hào Ứng (Bản Thân & Đối Phương):</div>
         <div style="font-size:0.78rem; line-height:1.6; margin-bottom:8px;">
           • <strong>Hào Thế (Bản thân / Phía mình):</strong> Hào ${hexDetails?.the_position} (${theHao ? `${theHao.luc_than} ${theHao.can}-${theHao.branch} • Hành ${theHao.element}` : '-'}) • Khí vận: <strong>${theHao?.spectrum || 'Bình hòa'}</strong>
           <br>• <strong>Hào Ứng (Đối tác / Hoàn cảnh):</strong> Hào ${hexDetails?.ung_position} (${ungHao ? `${ungHao.luc_than} ${ungHao.can}-${ungHao.branch} • Hành ${ungHao.element}` : '-'}) • Khí vận: <strong>${ungHao?.spectrum || 'Bình hòa'}</strong>
         </div>
         <div style="font-size:0.75rem; font-weight:700; color:var(--gold-glow); margin-bottom:4px;">
-          📊 Đánh Giá Đa Chiều Các Mặt Sự Vụ (Theo Lục Thân Bát Quái):
+          📊 Đánh Giá Các Chiều Hướng Sự Vụ (Theo Lục Thân Bát Quái):
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:6px;">
           ${Object.keys(objs).map(k => {
@@ -801,17 +800,37 @@
   }
 
   // Toàn văn báo cáo chuyên sâu 7 phần (Full Report Reader)
-  function renderFullReportReader() {
+  function renderReportReader() {
     const interp = state.interpretation;
     const rawText = (state.currentReportMode === 'ai' && state.aiPolishedText) 
       ? state.aiPolishedText 
       : (interp ? interp.reportText : '');
 
     return `
-      <div class="dh-full-report-wrap">
+      <div class="dh-full-report-wrap" style="margin-top: 18px;">
+        <!-- 1. Thanh Công Cụ Chuẩn Hóa Neta -->
+        <div class="neta-action-toolbar">
+          <div class="neta-module-badge">
+            <span>📜</span>
+            <span>Kinh Dịch Lục Hào 2.0 • Bốc Phệ Cổ Thư</span>
+          </div>
+          <div class="neta-toolbar-actions">
+            <button type="button" class="neta-btn-action" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
+              📋 Sao Chép
+            </button>
+            <button type="button" class="neta-btn-action" id="dh-btn-download-report" title="Tải xuống bài luận giải (.MD)">
+              💾 Tải (.MD)
+            </button>
+            <button type="button" class="neta-btn-polish-ai" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Trau chuốt văn phong toàn diện bằng AI">
+              ${state.isInterpretingAI ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt'}
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Header Báo Cáo & Mode Toggle -->
         <div class="dh-report-header-wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(245, 176, 65, 0.25);">
           <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
-            <span>📜</span> BẢN TOÀN VĂN LUẬN GIẢI KINH DỊCH LỤC HÀO 2.0
+            <span>📜</span> BẢN TOÀN VĂN LUẬN GIẢI KINH DỊCH LỤC HÀO
           </div>
           <div class="neta-report-mode-toggle">
             <button type="button" class="neta-mode-pill ${state.currentReportMode === 'standard' ? 'active' : ''}" id="btn-dh-mode-standard">
@@ -822,6 +841,9 @@
             </button>
           </div>
         </div>
+
+        <!-- Tương quan Hào Thế & Hào Ứng (Bản Thân & Đối Phương) -->
+        ${state.lucHao2Result ? renderMultiObjectiveCard(state.lucHao2Result.intent_utility, state.lucHao2Result.hexagram_details) : ''}
 
         ${state.currentReportMode === 'ai' ? `
           ${state.isInterpretingAI ? `
@@ -892,82 +914,50 @@
     `;
   }
 
-  // Dashboard tổng hợp khí số & 6 lăng kính Lục Hào 2.0
-  function renderLucHao2Dashboard(res, pipelineResult, goc, ho, bien, phuc) {
-    const iu = pipelineResult ? pipelineResult.intent_utility : null;
-    let bannerClass = 'banner-binh';
-    let decisionText = iu ? iu.decision : 'BÌNH HÒA';
-    let probText = iu ? Math.round((iu.success_probability || 0.5) * 100) + '%' : '50%';
-    let expectedUtilityText = iu ? (iu.total_utility || 0).toFixed(2) : '0.50';
-    let primaryDomain = iu ? iu.primary_domain : 'Chiêm đoán sự vụ';
-
-    if (iu) {
-      if (iu.success_probability >= 0.6) bannerClass = 'banner-cat';
-      else if (iu.success_probability <= 0.4) bannerClass = 'banner-hung';
+  // =========================================================================
+  // 5. RENDER BẢN QUẺ & PHÂN TÍCH LỤC HÀO NẠP GIÁP TOÀN DIỆN (THEO ĐÚNG TAB)
+  // =========================================================================
+  function renderResultSection() {
+    const isLucHao = (state.method === 'luchao');
+    
+    // Nếu là Lục Hào mà chưa đủ 6 hào thì chưa hiển thị bảng phân tích (đang trong quá trình gieo)
+    if (isLucHao && (!state.lucHao.result || state.lucHao.coins.length < 6)) {
+      return '';
     }
 
-    return `
-      <!-- A. ĐỒ HÌNH 3 QUẺ TRỰC QUAN -->
-      <div class="dh-hex-arena triple">
-        <div class="dh-hex-item">
-          <div class="hex-badge chu">Quẻ Chính</div>
-          <div class="hex-name">${goc.name}</div>
-          <div class="hex-bars">
-            ${renderBarsSlim(goc.bits, goc.haos ? goc.haos.map(h => h.isDong) : [])}
-          </div>
-          <div class="hex-cung">Họ ${goc.cung}${goc.cungSpecial ? ` (${goc.cungSpecial})` : ''}</div>
-        </div>
+    // Nếu là Mai Hoa mà chưa có kết quả thì tính ngay
+    if (!isLucHao && !state.maiHoa.result) {
+      chayLapQueMaiHoa();
+    }
 
-        <div class="dh-hex-item">
-          <div class="hex-badge ho">Quẻ Hỗ</div>
-          <div class="hex-name">${ho ? ho.name : '-'}</div>
-          <div class="hex-bars">
-            ${ho ? renderBarsSlim(ho.bits, []) : ''}
-          </div>
-          <div class="hex-cung">${ho ? `Họ ${ho.cung}${ho.cungSpecial ? ` (${ho.cungSpecial})` : ''}` : '-'}</div>
-        </div>
+    const curResult = isLucHao ? state.lucHao.result : state.maiHoa.result;
+    if (!curResult) return '';
 
-        <div class="dh-hex-item">
-          <div class="hex-badge bien">Quẻ Biến</div>
-          <div class="hex-name">${bien ? bien.name : 'Thuần Tĩnh'}</div>
-          <div class="hex-bars">
-            ${bien ? renderBarsSlim(bien.bits, []) : '<div style="font-size:0.7rem; color:#64748b; padding:18px 0;">Không động</div>'}
-          </div>
-          <div class="hex-cung">${bien ? `Họ ${bien.cung}${bien.cungSpecial ? ` (${bien.cungSpecial})` : ''}` : 'Bất biến'}</div>
-        </div>
-      </div>
+    const res = isLucHao ? curResult : (curResult.luc_hao || curResult);
+    const goc = isLucHao ? res.que_goc : {
+      name: curResult.que_chu.name,
+      tuong: curResult.que_chu.tuong,
+      tho: curResult.que_chu.tho,
+      cung: curResult.que_chu.cung,
+      cungSpecial: curResult.que_chu.cungSpecial,
+      bits: curResult.que_chu.bits,
+      haos: (res && res.que_goc) ? res.que_goc.haos : []
+    };
+    const ho = isLucHao ? (res.que_ho || null) : curResult.que_ho;
+    const bien = isLucHao ? res.que_bien : (res ? res.que_bien : {
+      name: curResult.que_bien.name,
+      tuong: curResult.que_bien.tuong,
+      tho: curResult.que_bien.tho,
+      cung: curResult.que_bien.cung,
+      cungSpecial: curResult.que_bien.cungSpecial,
+      bits: curResult.que_bien.bits,
+      haos: (res && res.que_bien) ? res.que_bien.haos : []
+    });
 
-      <!-- B. BANNER PHÁN ĐOÁN TỔNG THỂ KHÍ SỐ & XÁC SUẤT KHẢ THI -->
-      <div class="dh-judgment-banner ${bannerClass}" style="margin-bottom: 12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <div>
-            <span style="font-size:0.92rem; font-weight:800;">⚖️ PHÁN QUYẾT: ${escapeReportHtml(decisionText)}</span>
-            <div style="font-size:0.75rem; opacity:0.92; margin-top:3px;">
-              Trọng tâm: <strong>${escapeReportHtml(primaryDomain)}</strong> • Khí số: <strong>${escapeReportHtml(decisionText)}</strong> • Khả năng thành tựu: <strong>${probText}</strong>
-            </div>
-          </div>
-          <div style="font-size:0.76rem; text-align:right;">
-            <span class="dh-badge-gold">Quẻ ${escapeReportHtml(goc.name)} ${bien ? '➔ ' + escapeReportHtml(bien.name) : ''}</span>
-          </div>
-        </div>
-      </div>
+    const phuc = res ? (res.phuc_than || []) : [];
 
-      <!-- C. SỰ VỤ TRỌNG TÂM & TƯƠNG QUAN THẾ - ỨNG -->
-      ${pipelineResult ? renderMultiObjectiveCard(pipelineResult.intent_utility, pipelineResult.hexagram_details) : ''}
-
-      <!-- D. MỎ NEO KIỂM CHỨNG HIỆN TRẠNG NGOẠI CÂU HỎI -->
-      ${pipelineResult ? renderGroundTruthCard(pipelineResult.ground_truth) : ''}
-
-      <!-- E. RADAR CẢNH BÁO NGUY CƠ TIỀM ẨN -->
-      ${pipelineResult ? renderHazardRadarCard(pipelineResult.nhat_quai_da_doan?.hidden_hazards_radar) : ''}
-
-      <!-- F. ĐỊNH THỜI ĐIỂM ỨNG KỲ -->
-      ${pipelineResult ? renderHarmonicTimingCard(pipelineResult.harmonic_timing) : ''}
-
-      <!-- G. 6 LĂNG KÍNH CHUYÊN SÂU NHẤT QUÁI ĐA ĐOÁN -->
-      ${pipelineResult ? renderMultiLensGrid(pipelineResult.nhat_quai_da_doan) : ''}
-
-      <!-- H. BẢNG I: PHÂN TÍCH LỤC HÀO NẠP GIÁP & LỤC THÚ -->
+    // Helper render Bảng I
+    const renderTableI = () => `
       <div class="dh-table-container">
         <div class="dh-table-title">
           <span>📋 BẢNG I: PHÂN TÍCH LỤC HÀO NẠP GIÁP & LỤC THÚ</span>
@@ -1025,8 +1015,10 @@
           </table>
         </div>
       </div>
+    `;
 
-      <!-- I. BẢNG II: VƯỢNG SUY & THẦN SÁT TỪNG HÀO -->
+    // Helper render Bảng II
+    const renderTableII = () => `
       <div class="dh-table-container">
         <div class="dh-table-title">
           <span>🌟 BẢNG II: VƯỢNG SUY & THẦN SÁT TỪNG HÀO</span>
@@ -1063,8 +1055,8 @@
                 const isDong = hGoc.isDong;
 
                 let canLucBadge = '-';
-                if (pipelineResult?.hexagram_details?.haos) {
-                  const hao2 = pipelineResult.hexagram_details.haos[i];
+                if (state.lucHao2Result?.hexagram_details?.haos) {
+                  const hao2 = state.lucHao2Result.hexagram_details.haos[i];
                   if (hao2) {
                     const sc = Math.round(hao2.energy * 10) / 10;
                     const cls = sc >= 1.5 ? 'vuong' : (sc <= -1.5 ? 'suy' : 'binh');
@@ -1104,96 +1096,31 @@
           </table>
         </div>
       </div>
+    `;
 
-      <!-- J. THOÁN TỪ KINH DỊCH CHUẨN XÁC -->
+    // Helper render Thoán từ
+    const renderThoanTu = () => `
       <div class="dh-thoan-card">
         <div class="thoan-title">Kinh Dịch Thoán Từ & Ý Nghĩa:</div>
         <div class="thoan-text"><strong>${goc.name}:</strong> "${goc.tho || 'Cương nhu ứng hội, đạo trời tuần hoàn, giữ lòng trung chính ắt được hanh thông.'}"</div>
       </div>
     `;
-  }
 
-  // =========================================================================
-  // 5. RENDER BẢN QUẺ & PHÂN TÍCH LỤC HÀO NẠP GIÁP TOÀN DIỆN (THEO ĐÚNG TAB)
-  // =========================================================================
-  function renderResultSection() {
-    const isLucHao = (state.method === 'luchao');
-    
-    // Nếu là Lục Hào mà chưa đủ 6 hào thì chưa hiển thị bảng phân tích (đang trong quá trình gieo)
-    if (isLucHao && (!state.lucHao.result || state.lucHao.coins.length < 6)) {
-      return '';
-    }
-
-    // Nếu là Mai Hoa mà chưa có kết quả thì tính ngay
-    if (!isLucHao && !state.maiHoa.result) {
-      chayLapQueMaiHoa();
-    }
-
-    const curResult = isLucHao ? state.lucHao.result : state.maiHoa.result;
-    if (!curResult) return '';
-
-    const res = isLucHao ? curResult : (curResult.luc_hao || curResult);
-    const goc = isLucHao ? res.que_goc : {
-      name: curResult.que_chu.name,
-      tuong: curResult.que_chu.tuong,
-      tho: curResult.que_chu.tho,
-      cung: curResult.que_chu.cung,
-      cungSpecial: curResult.que_chu.cungSpecial,
-      bits: curResult.que_chu.bits,
-      haos: (res && res.que_goc) ? res.que_goc.haos : []
-    };
-    const ho = isLucHao ? (res.que_ho || null) : curResult.que_ho;
-    const bien = isLucHao ? res.que_bien : (res ? res.que_bien : {
-      name: curResult.que_bien.name,
-      tuong: curResult.que_bien.tuong,
-      tho: curResult.que_bien.tho,
-      cung: curResult.que_bien.cung,
-      cungSpecial: curResult.que_bien.cungSpecial,
-      bits: curResult.que_bien.bits,
-      haos: (res && res.que_bien) ? res.que_bien.haos : []
-    });
-
-    const phuc = res ? (res.phuc_than || []) : [];
-
-    // Nếu là Lục Hào: Hiển thị Action Toolbar & Dual Subnav
+    // Nếu là Lục Hào: Liền mạch từ trên xuống (Bảng I -> Bảng II -> Thoán từ -> Toàn văn luận giải)
     if (isLucHao) {
       return `
         <div class="dh-main-result-card" id="dh-capture-target">
-          <!-- 1. Thanh Công Cụ Chuẩn Hóa Neta -->
-          <div class="neta-action-toolbar">
-            <div class="neta-module-badge">
-              <span>📜</span>
-              <span>Kinh Dịch Lục Hào 2.0 • Nhất Quái Đa Đoán</span>
-            </div>
-            <div class="neta-toolbar-actions">
-              <button type="button" class="neta-btn-action" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
-                📋 Sao Chép
-              </button>
-              <button type="button" class="neta-btn-action" id="dh-btn-download-report" title="Tải xuống bài luận giải (.MD)">
-                💾 Tải (.MD)
-              </button>
-              <button type="button" class="neta-btn-polish-ai" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Trau chuốt văn phong toàn diện bằng AI">
-                ${state.isInterpretingAI ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt'}
-              </button>
-            </div>
-          </div>
+          <!-- A. BẢNG I: PHÂN TÍCH LỤC HÀO NẠP GIÁP & LỤC THÚ (LIỀN MẠCH NGAY DƯỚI ỐNG QUẺ) -->
+          ${renderTableI()}
 
-          <!-- 2. Sub-Tab Navigation (Dual Subnav) -->
-          <div class="dh-analysis-subnav">
-            <button type="button" class="dh-subnav-btn ${state.analysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-dh-tab-dashboard">
-              📊 Đồ Hình & Khí Số
-            </button>
-            <button type="button" class="dh-subnav-btn ${state.analysisSubTab === 'report' ? 'active' : ''}" id="btn-dh-tab-full-report">
-              📜 Toàn Văn
-            </button>
-          </div>
+          <!-- B. BẢNG II: VƯỢNG SUY & THẦN SÁT TỪNG HÀO -->
+          ${renderTableII()}
 
-          <!-- 3. Nội dung theo Sub-Tab -->
-          ${state.analysisSubTab === 'dashboard' ? `
-            ${renderLucHao2Dashboard(res, state.lucHao2Result, goc, ho, bien, phuc)}
-          ` : `
-            ${renderFullReportReader()}
-          `}
+          <!-- C. THOÁN TỪ KINH DỊCH CHUẨN XÁC -->
+          ${renderThoanTu()}
+
+          <!-- D. BẢN TOÀN VĂN LUẬN GIẢI KINH DỊCH LỤC HÀO -->
+          ${renderReportReader()}
         </div>
       `;
     }
@@ -1591,19 +1518,19 @@
         continue;
       }
 
-      // 1. Phán đoán cốt lõi: ">>> PHÁN ĐOÁN: [...] (...)"
-      if (l.startsWith('>>> PHÁN ĐOÁN:') || l.includes('PHÁN ĐOÁN: [')) {
-        const matchPd = l.match(/PHÁN ĐOÁN:\s*\[([^\]]+)\](?:\s*\(([^\)]+)\))?/i);
+      // 1. Phán đoán / Đánh giá cốt lõi: ">>> ĐÁNH GIÁ CÁT HUNG: [...] (...)" hoặc ">>> PHÁN ĐOÁN: [...] (...)"
+      if (l.startsWith('>>> ĐÁNH GIÁ CÁT HUNG:') || l.startsWith('>>> PHÁN ĐOÁN:') || l.includes('ĐÁNH GIÁ CÁT HUNG: [') || l.includes('PHÁN ĐOÁN: [')) {
+        const matchPd = l.match(/(?:ĐÁNH GIÁ CÁT HUNG|PHÁN ĐOÁN):\s*\[([^\]]+)\](?:\s*\(([^\)]+)\))?/i);
         if (matchPd) {
           const textPd = matchPd[1];
           const scorePd = matchPd[2] || '';
           const upperText = textPd.toUpperCase();
-          const isCat = upperText.includes('CÁT') || upperText.includes('THUẬN') || upperText.includes('THÀNH CÔNG') || upperText.includes('TỐI ƯU') || upperText.includes('KHẢ THI');
-          const isHung = upperText.includes('HUNG') || upperText.includes('BẤT LỢI') || upperText.includes('THẤT BẠI') || upperText.includes('TRIỆT TIÊU') || upperText.includes('ĐỔ VỠ') || upperText.includes('ĐÌNH CHỈ');
+          const isCat = upperText.includes('CÁT') || upperText.includes('THUẬN') || upperText.includes('THÀNH CÔNG') || upperText.includes('KHẢ THI');
+          const isHung = upperText.includes('HUNG') || upperText.includes('BẤT LỢI') || upperText.includes('THẤT BẠI');
           const cls = isCat ? 'verdict-cat' : (isHung ? 'verdict-hung' : 'verdict-binh');
           out += `
             <div class="dh-verdict-box ${cls}">
-              <div class="dh-verdict-top">KẾT LUẬN & PHÁN QUYẾT CỐT LÕI</div>
+              <div class="dh-verdict-top">KẾT QUẢ ĐÁNH GIÁ CÁT HUNG</div>
               <div class="dh-verdict-title">${escapeReportHtml(textPd)}</div>
               ${scorePd ? `<div class="dh-verdict-score"><strong>${escapeReportHtml(scorePd)}</strong></div>` : ''}
             </div>
@@ -2066,27 +1993,6 @@
       };
     });
 
-    // Subnav tabs: Dashboard vs Full Report
-    const btnDhTabDashboard = document.getElementById('btn-dh-tab-dashboard');
-    if (btnDhTabDashboard) {
-      btnDhTabDashboard.onclick = () => {
-        if (state.analysisSubTab !== 'dashboard') {
-          state.analysisSubTab = 'dashboard';
-          render();
-        }
-      };
-    }
-
-    const btnDhTabFullReport = document.getElementById('btn-dh-tab-full-report');
-    if (btnDhTabFullReport) {
-      btnDhTabFullReport.onclick = () => {
-        if (state.analysisSubTab !== 'report') {
-          state.analysisSubTab = 'report';
-          render();
-        }
-      };
-    }
-
     // Nút Trau Chuốt Văn Phong AI Chuẩn Hóa
     const runAiHandler = async () => {
       if (state.isInterpretingAI) return;
@@ -2095,14 +2001,12 @@
       const geminiService = global.NetaGeminiService;
       const apiKey = geminiService && typeof geminiService.getActiveKey === 'function' ? geminiService.getActiveKey() : null;
       if (!apiKey) {
-        state.analysisSubTab = 'report';
         state.currentReportMode = 'ai';
         state.aiErrorMessage = 'Chưa cài đặt Google Gemini API Key. Bạn có thể cài đặt khóa dùng chung tại mục Cài Đặt hoặc trong Trải Bài Tarot để sử dụng cho toàn bộ ứng dụng.';
         render();
         return;
       }
 
-      state.analysisSubTab = 'report';
       state.currentReportMode = 'ai';
       state.isInterpretingAI = true;
       state.aiErrorMessage = null;

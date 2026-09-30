@@ -590,19 +590,19 @@
       let probSuccess = 0.5;
 
       if (totalUtility >= 2.5) {
-        decision = "TỐI ƯU CỰC ĐẠI / TOÀN NĂNG THẮNG LỢI";
+        decision = "ĐẠI CÁT (Rất Thuận Lợi)";
         probSuccess = 0.92;
       } else if (totalUtility >= 0.8) {
-        decision = "KHẢ THI TÍCH CỰC / ĐẠT KẾT QUẢ KỲ VỌNG";
+        decision = "CÁT (Thuận Lợi)";
         probSuccess = 0.75;
       } else if (totalUtility >= -0.8) {
-        decision = "TRẠNG THÁI GIẰNG CO / NỖ LỰC CÂN BẰNG NGUỒN LỰC";
+        decision = "BÌNH HÒA (Nên Cân Nhắc Kỹ)";
         probSuccess = 0.50;
       } else if (totalUtility >= -2.5) {
-        decision = "BẤT LỢI SUY HAO / RỦI RO TIỀM ẨN CAO";
+        decision = "TIỂU HUNG (Nhiều Trở Ngại)";
         probSuccess = 0.28;
       } else {
-        decision = "TRIỆT TIÊU ĐỔ VỠ / ĐÌNH CHỈ KHẨN CẤP";
+        decision = "ĐẠI HUNG (Bất Lợi, Nên Tạm Dừng)";
         probSuccess = 0.08;
       }
 
@@ -1365,7 +1365,7 @@
         : "đối phương hoặc hoàn cảnh khách quan bên ngoài đang chi phối lấn lướt";
 
       return {
-        domain_title: "Chiêm Đoán Sự Vụ Trọng Tâm (Câu hỏi đương số)",
+        domain_title: "Chiêm Đoán Sự Vụ (Theo Câu Hỏi Của Bạn)",
         decision: u.decision,
         the_vs_ung_stance: theUngEval,
         summary: `Về sự việc người hỏi đang quan tâm: Bàn quẻ xác lập trạng thái '${u.decision}'. Khí vận tổng thể cho thấy ${prospect}. Tương quan Thế - Ứng phản ánh ${theUngEval}.`
@@ -2803,11 +2803,11 @@
       lines.push(`- Thời gian gieo quẻ : Ngày ${tm.day_can} ${tm.day_chi}, Tháng ${tm.month_chi} | Tuần Không: [${(tm.tuan_khong || []).join(', ')}]`);
       lines.push("=".repeat(90));
 
-      // I. ĐÁNH GIÁ TỔNG QUAN & KẾT LUẬN CHIÊM ĐOÁN
+      // I. ĐÁNH GIÁ TỔNG QUAN & KẾT QUẢ CHIÊM ĐOÁN
       lines.push("\n" + "━".repeat(90));
-      lines.push("I. ĐÁNH GIÁ TỔNG QUAN & KẾT LUẬN CHIÊM ĐOÁN");
+      lines.push("I. ĐÁNH GIÁ TỔNG QUAN & KẾT QUẢ CHIÊM ĐOÁN");
       lines.push("━".repeat(90));
-      lines.push(`>>> PHÁN ĐOÁN: [${u.decision}] (Khả năng thành tựu: ${Math.round((u.success_probability || 0.5) * 100)}% • Khí số: ${u.decision === 'ĐẠI CÁT' || u.decision === 'TRUNG CÁT' ? 'Thuận Lợi' : (u.decision === 'TIỂU CÁT' ? 'Bình Ổn' : 'Nhiều Trắc Trở')})`);
+      lines.push(`>>> ĐÁNH GIÁ CÁT HUNG: [${u.decision}] (Khả năng thành tựu: ${Math.round((u.success_probability || 0.5) * 100)}% • Khí số: ${u.decision.includes('CÁT') ? 'Thuận Lợi' : (u.decision.includes('BÌNH') ? 'Bình Ổn' : 'Nhiều Trắc Trở')})`);
       const grad = u.the_vs_ung_gradient || 0.0;
       let viTheStr = "";
       if (grad > 2.0) viTheStr = "Đương số giữ thế chủ động, nắm quyền quyết định";
