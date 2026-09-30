@@ -76,26 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.7.2
-          name: "Neta Light v2.7.2 (Báo Cáo Lục Hào: Khối Phán Đoán Trực Diện & 5 Trụ Cột Hành Động)"
+          tag_name: v2.7.3
+          name: "Neta Light v2.7.3 (Chuẩn Hóa Typography: Căn Lề Đều Justify & Xóa Bỏ Chữ In Hoa Đậm Cả Khối)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.2
-            - **Chuẩn hóa Báo cáo Dự đoán Lục Hào 2.0 theo mô hình Bát Tự & Tử Vi**:
-              + **Khối Phán Đoán Cốt Lõi (Executive Verdict Card)**: Hiển thị nổi bật ngay đầu Phần I với nhận định quyết định dứt khoát, xác suất thành công (%) và điểm hữu dụng kỳ vọng E[U].
-              + **Vị thế bàn quẻ (Stance Banner)**: Đánh giá tương quan lực lượng Thế - Ứng (chủ động / cân bằng / bị động).
-              + **Mục 1 - Trực Diện Trả Lời Câu Hỏi Chiêm Đoán**: Bóc tách chính xác ý định câu hỏi theo 12 lĩnh vực nghiệp vụ, trả lời trực diện không vòng vo, đi kèm cơ chế khí số chứng minh (Dụng Thần, Hào Động, Biến Hóa).
-              + **Mục 2 - Định Hướng & Lời Khuyên Hành Động Thiết Thực**: 5 trụ cột chiến lược hành động:
-                * 🎯 Quyết định then chốt
-                * ⏳ Thời điểm vàng hành động (Ứng kỳ cát)
-                * ⚠️ Thời điểm rủi ro cần phòng tránh (Ứng kỳ hung)
-                * 🛡️ Biện pháp quản trị rủi ro & Hóa giải
-                * 🌿 Tâm thái xử thế theo Đạo Dịch
-            - **Đồ họa giao diện thẩm mỹ cao**: Hiển thị subhead phân cấp rõ ràng, icon bullet sinh động, đồng bộ chuẩn mực trên cả Web và Android App 100% Offline.
-            - **Biên Tập Phân Đoạn Tuần Tự Gemini AI Dùng Chung**:
-              + Tự động tách đoạn tại Mục V để chống tràn token, hiển thị thanh tiến trình Shimmer ánh vàng trực quan.
-              + Sử dụng khóa API Gemini dùng chung của toàn ứng dụng với cơ chế chuyển hướng cài đặt tức thì.
-            - **Đóng Gói 100% Offline Độc Lập**:
-              + Vận hành trơn tru không cần kết nối mạng Internet. Hỗ trợ đầy đủ âm thanh reo xu, xúc giác rung Haptic và đồng bộ thời gian thực.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.3
+            - **Chuẩn hóa Toàn Diện Mỹ Cảm & Bố Cục Báo Cáo Lục Hào 2.0**:
+              + **Căn lề hai bên (Justify Alignment 100%)**: Toàn bộ các đoạn văn xuôi, các mục danh sách gạch đầu dòng, khối trích dẫn và thuyết minh lăng kính đều được căn lề đều hai bên (`text-align: justify; text-justify: inter-word;`) mang lại trải nghiệm đọc phẳng phiu, sang trọng và chuẩn mực như trang sách in.
+              + **Sửa triệt để lỗi phân tách thẻ Section (Regex Bug Fix)**: Chuẩn hóa bộ nhận diện chuyên mục chỉ nhận diện chữ số La Mã (`I.`, `II.`, `III.`... đến `X.`), loại bỏ hoàn toàn tình trạng các dòng đánh số `1.`, `2.`, `3.` bị biến nhầm thành tiêu đề thẻ.
+              + **Xóa bỏ chữ in hoa đậm cả khối**: Chuyển đổi toàn bộ các đề mục và nội dung kiểm chứng, điểm sáng, nguy cơ và lời khuyên chiến lược sang định dạng danh sách có icon biểu cảm (`👤`, `🏡`, `⚡`, `✨`, `⚠️`, `🌟`), giữ nguyên chữ thường tự nhiên cho phần nội dung chi tiết.
+              + **Xóa bỏ thuộc tính ép chữ in hoa (`text-transform: none`)** tại tiêu đề chuyên mục, trả lại sự trang nhã và chuẩn xác chính tả tiếng Việt.
 
             
             - **Nâng Cao Chiều Sâu & Độ Dài Luận Giải (1.500 - 2.200 từ)**:

@@ -2583,40 +2583,40 @@
 
       if (uScore >= 1.5) {
         adviceList.push({
-          category: "TÂM THẾ HÀNH SỰ: CHỦ ĐỘNG TRIỂN KHAI, DUY TRÌ KỶ LUẬT",
+          category: "Tâm thế hành sự: Chủ động triển khai, duy trì kỷ luật",
           content: "Thời vận tương đối thuận lợi. Cần chủ động nắm bắt cơ hội và triển khai công việc theo đúng kế hoạch. Song song đó, duy trì việc kiểm soát chất lượng và quy trình quản trị để bảo đảm kết quả bền vững."
         });
       } else if (uScore >= -0.5) {
         adviceList.push({
-          category: "TÂM THẾ HÀNH SỰ: CỦNG CỐ NỘI BỘ, CHỜ THỜI CƠ PHÙ HỢP",
+          category: "Tâm thế hành sự: Củng cố nội bộ, chờ thời cơ phù hợp",
           content: "Cục diện đang ở trạng thái cân bằng giằng co. Nên giữ ổn định vị trí hiện tại, kiện toàn quy trình nội bộ, tối ưu hóa chi phí và tránh mở rộng quy mô khi chưa đủ điều kiện."
         });
       } else {
         adviceList.push({
-          category: "TÂM THẾ HÀNH SỰ: PHÒNG THỦ THẬN TRỌNG, BẢO TOÀN NGUỒN LỰC",
+          category: "Tâm thế hành sự: Phòng thủ thận trọng, bảo toàn nguồn lực",
           content: "Trường khí bất lợi và tiềm ẩn rủi ro phát sinh. Nên tạm hoãn các quyết định đầu tư lớn hoặc chuyển đổi công việc quan trọng, lập kế hoạch dự phòng và tham vấn kỹ ý kiến chuyên môn."
         });
       }
 
       adviceList.push({
-        category: `THỜI ĐIỂM THUẬN LỢI ĐỂ TRIỂN KHAI (CHI ${posTiming.branch.toUpperCase()})`,
+        category: `Thời điểm thuận lợi để triển khai (Địa Chi ${posTiming.branch})`,
         content: `${posTiming.meaning} Đây là thời điểm tương tác năng lượng đạt trạng thái thuận lợi nhất. Nên bố trí các công việc trọng yếu như ký kết, thương thảo hoặc khởi động vào ngày/tháng mang Địa Chi ${posTiming.branch}.`
       });
 
       adviceList.push({
-        category: `THỜI ĐIỂM CẦN THẬN TRỌNG (CHI ${negTiming.branch.toUpperCase()})`,
+        category: `Thời điểm cần thận trọng phòng ngừa (Địa Chi ${negTiming.branch})`,
         content: `${negTiming.meaning} Vào các ngày/tháng mang Địa Chi ${negTiming.branch}, trường năng lượng có xung đột ngược pha. Cần thận trọng trong giao tiếp, hạn chế quyết định vội vàng và đề phòng các chi phí phát sinh.`
       });
 
       const hw = multiLens.hidden_warnings || [];
       if (hw.length > 0 && !hw[0].includes("không ghi nhận xung sát")) {
         adviceList.push({
-          category: "LƯU Ý VỀ MÔI TRƯỜNG & KHÔNG GIAN SỐNG",
+          category: "Lưu ý về môi trường & Không gian sống",
           content: `Theo thông tin từ quẻ: '${hw[0]}'. Đương số nên kiểm tra lại khu vực liên quan trong nhà, sắp xếp đồ đạc gọn gàng, chú ý an toàn khi đi lại và theo dõi sức khỏe người lớn tuổi.`
         });
       } else {
         adviceList.push({
-          category: "LƯU Ý VỀ MÔI TRƯỜNG & KHÔNG GIAN SỐNG",
+          category: "Lưu ý về môi trường & Không gian sống",
           content: "Giữ gìn không gian sinh hoạt thông thoáng, đủ ánh sáng tự nhiên; các khu vực cửa ra vào và bếp cần duy trì sự ngăn nắp, sạch sẽ để tạo môi trường sống thuận lợi."
         });
       }
@@ -2751,26 +2751,24 @@
       lines.push("II. ĐỐI CHIẾU KIỂM CHỨNG HIỆN TRẠNG (GROUND-TRUTH VERIFICATION)");
       lines.push("━".repeat(90));
       const vt = dn.section_2_verification || {};
-      lines.push(`  1. [BẢN THÂN & THỂ TRẠNG] : ${vt.personal_anchor || ''}\n`);
-      lines.push(`  2. [KHÔNG GIAN & GIA TRẠCH]: ${vt.spatial_anchor || ''}\n`);
-      lines.push(`  3. [BIẾN CỐ GẦN ĐÂY]       : ${vt.recent_past_anchor || ''}`);
+      lines.push(`- **👤 Bản thân & Thể trạng**: ${vt.personal_anchor || ''}\n`);
+      lines.push(`- **🏡 Không gian & Gia trạch**: ${vt.spatial_anchor || ''}\n`);
+      lines.push(`- **⚡ Biến cố gần đây**: ${vt.recent_past_anchor || ''}`);
 
       // III. ĐIỂM THUẬN LỢI
       lines.push("\n" + "━".repeat(90));
-      lines.push("III. ĐIỂM THUẬN LỢI");
+      lines.push("III. DANH MỤC ĐIỂM SÁNG & THỜI CƠ THUẬN LỢI");
       lines.push("━".repeat(90));
-      (dn.section_3_bright_points || []).forEach((bp, idx) => {
-        lines.push(`  ${idx + 1}. [+] ${bp.title.toUpperCase()}`);
-        lines.push(`     -> ${bp.detail}\n`);
+      (dn.section_3_bright_points || []).forEach(bp => {
+        lines.push(`- **✨ ${bp.title}**: ${bp.detail}\n`);
       });
 
       // IV. ĐIỂM BẤT LỢI & RỦI RO
       lines.push("━".repeat(90));
-      lines.push("IV. ĐIỂM BẤT LỢI & RỦI RO");
+      lines.push("IV. DANH MỤC ĐIỂM CẦN LƯU Ý & RỦI RO TIỀM ẨN");
       lines.push("━".repeat(90));
-      (dn.section_4_dark_points || []).forEach((dp, idx) => {
-        lines.push(`  ${idx + 1}. [-] ${dp.title.toUpperCase()}`);
-        lines.push(`     -> ${dp.detail}\n`);
+      (dn.section_4_dark_points || []).forEach(dp => {
+        lines.push(`- **⚠️ ${dp.title}**: ${dp.detail}\n`);
       });
 
       // V. PHÂN TÍCH TRỌNG TÂM
@@ -2779,17 +2777,16 @@
       lines.push(`V. PHÂN TÍCH TRỌNG TÂM: ${dd.field_name || ''}`);
       lines.push("━".repeat(90));
       (dd.analysis_blocks || []).forEach(ab => {
-        lines.push(`\n▶ ${ab.subtitle}`);
+        lines.push(`\n### ${ab.subtitle}`);
         lines.push(`${ab.content}`);
       });
 
       // VI. LỜI KHUYÊN & ĐỊNH HƯỚNG
       lines.push("\n" + "━".repeat(90));
-      lines.push("VI. LỜI KHUYÊN & ĐỊNH HƯỚNG");
+      lines.push("VI. LỜI KHUYÊN & ĐỊNH HƯỚNG HÀNH ĐỘNG CHIẾN LƯỢC");
       lines.push("━".repeat(90));
-      (dn.section_6_strategic_advice || []).forEach((sa, idx) => {
-        lines.push(`  ${idx + 1}. [★] ${sa.category}`);
-        lines.push(`     -> ${sa.content}\n`);
+      (dn.section_6_strategic_advice || []).forEach(sa => {
+        lines.push(`- **🌟 ${sa.category}**: ${sa.content}\n`);
       });
 
       // VII. BẢNG QUẺ & THÔNG SỐ CHI TIẾT

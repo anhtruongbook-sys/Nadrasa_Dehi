@@ -845,7 +845,7 @@
               <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
               <button type="button" class="neta-btn-inline-back" id="btn-dh-back-standard">↩️ Xem Bản Tiêu Chuẩn</button>
             </div>
-            <div class="dh-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); margin-top: 16px;">
+            <div class="dh-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); margin-top: 16px; text-align: justify; text-justify: inter-word;">
               ${formatReportToRichHtml(state.aiPolishedText)}
             </div>
           ` : (!state.isInterpretingAI && !state.aiErrorMessage ? `
@@ -869,7 +869,7 @@
             <span class="bazi-report-toc-pill">VII. Bảng Quẻ Kỹ Thuật</span>
           </div>
 
-          <div class="dh-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color);">
+          <div class="dh-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); text-align: justify; text-justify: inter-word;">
             ${formatReportToRichHtml(rawText)}
           </div>
         `}
@@ -1445,7 +1445,7 @@
       sectionLines = [];
     }
 
-    const secHeaderRegex = /^(?:##\s+)?([I|V|X|0-9]+)\.\s+(.*)$/;
+    const secHeaderRegex = /^(?:##\s+)?(?:PHẦN\s+)?(I{1,3}|IV|V|VI{1,3}|VII|VIII|IX|X)\.\s+(.*)$/i;
 
     for (let i = 0; i < lines.length; i++) {
       const rawLine = lines[i];

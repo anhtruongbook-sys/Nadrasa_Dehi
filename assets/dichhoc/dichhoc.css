@@ -1835,11 +1835,11 @@ body.theme-light .dh-sec-badge {
 }
 
 .dh-sec-name {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 800;
   color: #f5b041;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  text-transform: none;
+  letter-spacing: 0.02em;
 }
 
 body.theme-light .dh-sec-name {
@@ -1847,10 +1847,12 @@ body.theme-light .dh-sec-name {
 }
 
 .dh-report-card-body {
-  padding: 10px 12px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 /* 3. Dòng Nội Dung (List Items & Paragraphs) */
@@ -1858,8 +1860,10 @@ body.theme-light .dh-sec-name {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 0.76rem;
-  line-height: 1.6;
+  font-size: 0.78rem;
+  line-height: 1.65;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .dh-row-bullet {
@@ -1890,22 +1894,28 @@ body.theme-light .dh-row-bullet.sub {
 
 .dh-row-content {
   flex: 1;
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 1.65;
 }
 
 .dh-report-para {
-  margin: 2px 0;
-  font-size: 0.76rem;
-  line-height: 1.6;
+  margin: 4px 0;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .dh-report-subhead {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
-  margin: 6px 0 2px 0;
+  margin: 8px 0 3px 0;
   font-weight: 700;
   color: #fbbf24;
-  font-size: 0.77rem;
+  font-size: 0.8rem;
+  text-align: justify;
 }
 
 body.theme-light .dh-report-subhead {
@@ -2005,13 +2015,15 @@ body.theme-light .dh-verdict-score {
 .dh-report-callout {
   border-left: 3px solid #f5b041;
   background: rgba(245, 176, 65, 0.08);
-  padding: 8px 10px;
+  padding: 8px 12px;
   border-radius: 0 6px 6px 0;
-  margin: 4px 0;
-  font-size: 0.74rem;
-  line-height: 1.55;
+  margin: 6px 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
   font-style: italic;
   color: #e2e8f0;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 body.theme-light .dh-report-callout {
