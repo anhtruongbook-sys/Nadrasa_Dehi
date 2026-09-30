@@ -174,6 +174,61 @@ class MainActivity: FlutterActivity() {
                         result.error("ERROR", e.localizedMessage, null)
                     }
                 }
+                "saveImageFileToGallery" -> {
+                    val filePath = call.argument<String>("filePath")
+                    val filename = call.argument<String>("filename") ?: "NetaLight_${System.currentTimeMillis()}.png"
+
+                    if (filePath == null) {
+                        result.error("INVALID_DATA", "File path is null", null)
+                        return@setMethodCallHandler
+                    }
+                    val file = File(filePath)
+                    if (!file.exists()) {
+                        result.error("NOT_FOUND", "File does not exist", null)
+                        return@setMethodCallHandler
+                    }
+
+                    try {
+                        val saved = saveImageFileToPictures(file, filename)
+                        try { file.delete() } catch (e: Exception) {}
+                        if (saved) {
+                            result.success("OK")
+                        } else {
+                            result.error("SAVE_FAILED", "Failed to save image to Pictures", null)
+                        }
+                    } catch (e: Exception) {
+                        try { file.delete() } catch (ex: Exception) {}
+                        result.error("ERROR", e.localizedMessage, null)
+                    }
+                }
+                "saveFilePathToDownloads" -> {
+                    val filePath = call.argument<String>("filePath")
+                    val filename = call.argument<String>("filename") ?: "NetaLight_${System.currentTimeMillis()}.bin"
+                    val mimeType = call.argument<String>("mimeType") ?: "application/octet-stream"
+
+                    if (filePath == null) {
+                        result.error("INVALID_DATA", "File path is null", null)
+                        return@setMethodCallHandler
+                    }
+                    val file = File(filePath)
+                    if (!file.exists()) {
+                        result.error("NOT_FOUND", "File does not exist", null)
+                        return@setMethodCallHandler
+                    }
+
+                    try {
+                        val saved = saveFilePathToDownloadsFolder(file, filename, mimeType)
+                        try { file.delete() } catch (e: Exception) {}
+                        if (saved) {
+                            result.success("OK")
+                        } else {
+                            result.error("SAVE_FAILED", "Failed to save file to Downloads", null)
+                        }
+                    } catch (e: Exception) {
+                        try { file.delete() } catch (ex: Exception) {}
+                        result.error("ERROR", e.localizedMessage, null)
+                    }
+                }
                 "saveFileToDownloads" -> {
                     val bytes = call.argument<ByteArray>("bytes")
                     val filename = call.argument<String>("filename") ?: "NetaLight_${System.currentTimeMillis()}.bin"
@@ -612,6 +667,132 @@ class MainActivity: FlutterActivity() {
             return false
         } finally {
             outputStream?.close()
+        }
+        return false
+    }
+
+    private fun saveImageFileToPictures(file: File, filename: String): Boolean {
+        var outputStream: OutputStream? = null
+        var inputStream: FileInputStream? = null
+        try {
+            inputStream = FileInputStream(file)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/NetaLight")
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+
+                val uri: Uri? = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                if (uri != null) {
+                    outputStream = contentResolver.openOutputStream(uri)
+                    if (outputStream != null) {
+                        val buffer = ByteArray(65536)
+                        var read: Int
+                        while (inputStream.read(buffer).also { read = it } != -1) {
+                            outputStream.write(buffer, 0, read)
+                        }
+                        outputStream.flush()
+
+                        values.clear()
+                        values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                        contentResolver.update(uri, values, null, null)
+                        return true
+                    }
+                }
+            } else {
+                val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val appDir = File(picturesDir, "NetaLight")
+                if (!appDir.exists()) {
+                    appDir.mkdirs()
+                }
+                val imageFile = File(appDir, filename)
+                outputStream = FileOutputStream(imageFile)
+                val buffer = ByteArray(65536)
+                var read: Int
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    outputStream.write(buffer, 0, read)
+                }
+                outputStream.flush()
+
+                android.media.MediaScannerConnection.scanFile(
+                    this,
+                    arrayOf(imageFile.absolutePath),
+                    arrayOf("image/png"),
+                    null
+                )
+                return true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        } finally {
+            try { inputStream?.close() } catch (e: Exception) {}
+            try { outputStream?.close() } catch (e: Exception) {}
+        }
+        return false
+    }
+
+    private fun saveFilePathToDownloadsFolder(file: File, filename: String, mimeType: String): Boolean {
+        var outputStream: OutputStream? = null
+        var inputStream: FileInputStream? = null
+        try {
+            inputStream = FileInputStream(file)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = ContentValues().apply {
+                    put(MediaStore.Downloads.DISPLAY_NAME, filename)
+                    put(MediaStore.Downloads.MIME_TYPE, mimeType)
+                    put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/NetaLight")
+                    put(MediaStore.Downloads.IS_PENDING, 1)
+                }
+
+                val uri: Uri? = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                if (uri != null) {
+                    outputStream = contentResolver.openOutputStream(uri)
+                    if (outputStream != null) {
+                        val buffer = ByteArray(65536)
+                        var read: Int
+                        while (inputStream.read(buffer).also { read = it } != -1) {
+                            outputStream.write(buffer, 0, read)
+                        }
+                        outputStream.flush()
+
+                        values.clear()
+                        values.put(MediaStore.Downloads.IS_PENDING, 0)
+                        contentResolver.update(uri, values, null, null)
+                        return true
+                    }
+                }
+            } else {
+                val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val appDir = File(downloadsDir, "NetaLight")
+                if (!appDir.exists()) {
+                    appDir.mkdirs()
+                }
+                val destFile = File(appDir, filename)
+                outputStream = FileOutputStream(destFile)
+                val buffer = ByteArray(65536)
+                var read: Int
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    outputStream.write(buffer, 0, read)
+                }
+                outputStream.flush()
+
+                android.media.MediaScannerConnection.scanFile(
+                    this,
+                    arrayOf(destFile.absolutePath),
+                    arrayOf(mimeType),
+                    null
+                )
+                return true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        } finally {
+            try { inputStream?.close() } catch (e: Exception) {}
+            try { outputStream?.close() } catch (e: Exception) {}
         }
         return false
     }

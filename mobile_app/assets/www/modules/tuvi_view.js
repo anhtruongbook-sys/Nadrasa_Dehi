@@ -220,10 +220,10 @@
                 🏛️ 4x4
               </button>
               <button class="ucc-view-btn ${currentViewMode === 'list' ? 'active' : ''}" id="btn-tuvi-mode-list" title="Danh sách 12 cung">
-                📜 12 Cung
+                <span class="ucc-txt-long">📜 12 Cung</span><span class="ucc-txt-short">📜 Cung</span>
               </button>
               <button class="ucc-view-btn ${currentViewMode === 'analysis' ? 'active' : ''}" id="btn-tuvi-mode-analysis" title="Bản luận giải chuyên sâu hệ chuyên gia">
-                📖 Luận Giải
+                <span class="ucc-txt-long">📖 Luận Giải</span><span class="ucc-txt-short">📖 Luận</span>
               </button>
             </div>
             <button class="ucc-btn-submit" id="btn-tuvi-submit" title="Lập lại lá số">

@@ -3879,7 +3879,7 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.49rem;
+  font-size: 0.53rem;
   line-height: 1.35;
   white-space: nowrap;
   width: 100%;
@@ -3911,21 +3911,21 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   color: #94a3b8;
   font-weight: 600;
   flex-shrink: 0;
-  font-size: 0.47rem;
+  font-size: 0.51rem;
 }
 
 .tc-val {
   color: #f8fafc;
   font-weight: 800;
   text-align: right;
-  font-size: 0.49rem;
+  font-size: 0.53rem;
   white-space: nowrap;
 }
 
 .tc-val-gold {
   color: #fbbf24 !important;
   font-weight: 900;
-  font-size: 0.48rem;
+  font-size: 0.53rem;
   letter-spacing: 0.2px;
 }
 
@@ -3940,7 +3940,7 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.43rem;
+  font-size: 0.48rem;
   color: #94a3b8;
   line-height: 1.2;
   white-space: nowrap;
@@ -4000,7 +4000,7 @@ body.theme-light .bloc-term-strip .tk-exact-time {
 
 .tc-cung-name-royal,
 .tc-cung-name {
-  font-size: 0.48rem;
+  font-size: 0.56rem;
   font-weight: 900;
   color: #f8fafc;
   text-transform: uppercase;
@@ -4081,20 +4081,20 @@ body.theme-light .bloc-term-strip .tk-exact-time {
 }
 
 .star-name {
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 900;
   letter-spacing: -0.15px;
   white-space: nowrap;
 }
 
 .star-bright {
-  font-size: 0.40rem;
+  font-size: 0.45rem;
   font-weight: 700;
   opacity: 0.85;
 }
 
 .tc-vcd-tag {
-  font-size: 0.48rem;
+  font-size: 0.50rem;
   color: #94a3b8;
   font-style: italic;
   padding: 1px 0;
@@ -4106,11 +4106,11 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   display: flex;
   justify-content: space-between;
   gap: 1.5px;
-  font-size: 0.37rem;
+  font-size: 0.43rem;
   flex-grow: 1;
   min-height: 0;
   padding: 1px 0 0 0;
-  line-height: 1.08;
+  line-height: 1.12;
 }
 
 .tc-col-lucky {
@@ -4135,8 +4135,8 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   white-space: nowrap;
   letter-spacing: -0.3px;
   display: block;
-  font-size: 0.365rem;
-  line-height: 1.08;
+  font-size: 0.42rem;
+  line-height: 1.12;
 }
 
 .star-sec.lucky {
@@ -4150,7 +4150,7 @@ body.theme-light .bloc-term-strip .tk-exact-time {
 }
 
 .star-more {
-  font-size: 0.38rem;
+  font-size: 0.40rem;
   color: #94a3b8;
 }
 
@@ -4162,7 +4162,7 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   border-top: 1px solid #334155;
   padding-top: 1.5px;
   margin-top: auto;
-  font-size: 0.41rem;
+  font-size: 0.45rem;
   line-height: 1.1;
   flex-shrink: 0;
   gap: 1.5px;
@@ -4174,14 +4174,14 @@ body.theme-light .bloc-term-strip .tk-exact-time {
   font-weight: 800;
   color: #fbbf24;
   white-space: nowrap;
-  font-size: 0.41rem;
+  font-size: 0.45rem;
   letter-spacing: -0.25px;
   flex-shrink: 0;
 }
 
 .tc-trangsinh-val {
   color: #94a3b8;
-  font-size: 0.37rem;
+  font-size: 0.41rem;
   font-weight: 600;
   white-space: nowrap;
   letter-spacing: -0.2px;
@@ -4199,7 +4199,7 @@ body.theme-light .bloc-term-strip .tk-exact-time {
 .tc-daihan-val {
   font-weight: 900;
   color: #f8fafc;
-  font-size: 0.47rem;
+  font-size: 0.52rem;
   white-space: nowrap;
 }
 
@@ -5644,30 +5644,34 @@ body.theme-light .bazi-master-pill-tag {
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    gap: 4px;
+    gap: 3px;
   }
   .ucc-row-actions .ucc-btn-now {
     flex: 0 0 auto;
     font-size: 0.72rem;
-    padding: 5px 7px;
+    padding: 5px 6px;
     white-space: nowrap;
   }
   .ucc-row-actions .ucc-pill-view {
     order: 2;
-    flex: 1 1 auto;
+    flex: 1 1 0%;
     width: auto;
     margin-top: 0;
     height: 32px;
     display: flex;
     min-width: 0;
+    overflow: hidden;
   }
   .ucc-row-actions .ucc-view-btn {
-    flex: 1;
+    flex: 1 1 0%;
     height: 28px;
     font-size: 0.72rem;
-    padding: 0 4px;
+    padding: 0 3px;
     justify-content: center;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
   .ucc-row-actions .ucc-btn-submit {
     order: 3;
@@ -5675,9 +5679,21 @@ body.theme-light .bazi-master-pill-tag {
     justify-content: center;
     box-sizing: border-box;
     font-size: 0.74rem;
-    padding: 5px 10px;
+    padding: 5px 8px;
     white-space: nowrap;
   }
+}
+
+@media (max-width: 410px) {
+  .ucc-pill-view .ucc-txt-long { display: none !important; }
+  .ucc-pill-view .ucc-txt-short { display: inline !important; }
+  .ucc-row-actions .ucc-btn-now { padding: 5px 5px !important; font-size: 0.7rem !important; }
+  .ucc-row-actions .ucc-btn-submit { padding: 5px 6px !important; font-size: 0.72rem !important; }
+}
+
+@media (min-width: 411px) {
+  .ucc-pill-view .ucc-txt-long { display: inline !important; }
+  .ucc-pill-view .ucc-txt-short { display: none !important; }
 }
 
 /* Row 3: Năm Xem Vận Hạn & Sao Lưu */

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -44,6 +45,7 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
   static const MethodChannel _platform = MethodChannel('com.nadrasadehi.netalight/save_image');
   static const EventChannel _compassChannel = EventChannel('com.nadrasadehi.netalight/compass_stream');
   StreamSubscription? _compassSub;
+  final Map<String, List<String?>> _imageChunks = {};
 
   void _startCompass() {
     _compassSub?.cancel();
@@ -106,31 +108,88 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
     _platform.invokeMethod('requestLocationPermission');
   }
 
+  Future<void> _processAndSaveImage(String base64Str, String filename) async {
+    try {
+      final cleanBase64 = base64Str.contains(',')
+          ? base64Str.split(',')[1]
+          : base64Str;
+      final bytes = base64Decode(cleanBase64);
+
+      // Write bytes directly to temp file in system cache to avoid Flutter MethodChannel Binder IPC size limit (1MB)
+      final tempFile = File('${Directory.systemTemp.path}/$filename');
+      await tempFile.writeAsBytes(bytes, flush: true);
+
+      final result = await _platform.invokeMethod<String>('saveImageFileToGallery', {
+        'filePath': tempFile.path,
+        'filename': filename,
+      });
+
+      if (result == 'OK') {
+        _controller.runJavaScript("if (typeof showToast === 'function') showToast('✨ Đã lưu ảnh vào Thư viện ảnh (Bộ sưu tập) của máy!');");
+      } else {
+        _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu ảnh vào máy: $result');");
+      }
+    } catch (e) {
+      debugPrint('Error saving image: $e');
+      _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi lưu ảnh: $e');");
+    }
+  }
+
+  Future<void> _processAndSaveFile(String base64Str, String filename, String mimeType) async {
+    try {
+      final cleanBase64 = base64Str.contains(',')
+          ? base64Str.split(',')[1]
+          : base64Str;
+      final bytes = base64Decode(cleanBase64);
+
+      final tempFile = File('${Directory.systemTemp.path}/$filename');
+      await tempFile.writeAsBytes(bytes, flush: true);
+
+      final result = await _platform.invokeMethod<String>('saveFilePathToDownloads', {
+        'filePath': tempFile.path,
+        'filename': filename,
+        'mimeType': mimeType,
+      });
+
+      if (result == 'OK') {
+        _controller.runJavaScript("if (typeof showToast === 'function') showToast('✅ Đã lưu tệp vào thư mục Tải về (Download/NetaLight) của máy!');");
+      } else {
+        _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu tệp vào máy: $result');");
+      }
+    } catch (e) {
+      debugPrint('Error saving file: $e');
+      _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi lưu tệp: $e');");
+    }
+  }
+
   Future<void> _handleJavaScriptMessage(String messageText) async {
     try {
       final data = jsonDecode(messageText);
       if (data is Map) {
         final action = data['action'];
-        if (action == 'saveImage') {
+        if (action == 'saveImageChunk') {
+          final transferId = data['transferId'] as String? ?? 'default';
+          final index = data['index'] as int? ?? 0;
+          final total = data['total'] as int? ?? 1;
+          final chunk = data['chunk'] as String? ?? '';
+          final filename = data['filename'] as String? ?? 'NetaLight_${DateTime.now().millisecondsSinceEpoch}.png';
+
+          if (!_imageChunks.containsKey(transferId)) {
+            _imageChunks[transferId] = List.filled(total, null);
+          }
+          _imageChunks[transferId]![index] = chunk;
+
+          if (_imageChunks[transferId]!.every((c) => c != null)) {
+            final fullBase64 = _imageChunks[transferId]!.join('');
+            _imageChunks.remove(transferId);
+            await _processAndSaveImage(fullBase64, filename);
+          }
+        } else if (action == 'saveImage') {
           final String base64Str = data['base64'] ?? '';
           final String filename = data['filename'] ?? 'NetaLight_${DateTime.now().millisecondsSinceEpoch}.png';
 
           if (base64Str.isNotEmpty) {
-            final cleanBase64 = base64Str.contains(',')
-                ? base64Str.split(',')[1]
-                : base64Str;
-            final bytes = base64Decode(cleanBase64);
-
-            final result = await _platform.invokeMethod<String>('saveImageToGallery', {
-              'bytes': bytes,
-              'filename': filename,
-            });
-
-            if (result == 'OK') {
-              _controller.runJavaScript("if (typeof showToast === 'function') showToast('✨ Đã lưu ảnh vào Thư viện ảnh (Bộ sưu tập) của máy!');");
-            } else {
-              _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu ảnh vào máy: $result');");
-            }
+            await _processAndSaveImage(base64Str, filename);
           }
         } else if (action == 'saveFile') {
           final String base64Str = data['base64'] ?? '';
@@ -138,22 +197,7 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
           final String mimeType = data['mimeType'] ?? 'application/octet-stream';
 
           if (base64Str.isNotEmpty) {
-            final cleanBase64 = base64Str.contains(',')
-                ? base64Str.split(',')[1]
-                : base64Str;
-            final bytes = base64Decode(cleanBase64);
-
-            final result = await _platform.invokeMethod<String>('saveFileToDownloads', {
-              'bytes': bytes,
-              'filename': filename,
-              'mimeType': mimeType,
-            });
-
-            if (result == 'OK') {
-              _controller.runJavaScript("if (typeof showToast === 'function') showToast('✅ Đã lưu tệp vào thư mục Tải về (Download/NetaLight) của máy!');");
-            } else {
-              _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Không thể lưu tệp vào máy: $result');");
-            }
+            await _processAndSaveFile(base64Str, filename, mimeType);
           }
         } else if (action == 'pickImage' || action == 'takePhoto') {
           try {

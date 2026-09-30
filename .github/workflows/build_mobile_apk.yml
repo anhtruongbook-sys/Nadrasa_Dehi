@@ -76,10 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.9
-          name: "Neta Light v2.8.9 (Chụp Ảnh Toàn Bộ Bàn Quẻ & Luận Giải Lục Nhâm / Thái Ất, Nâng Cấp Kích Thước Chữ & Độ Tương Phản)"
+          tag_name: v2.8.10
+          name: "Neta Light v2.8.10 (Sửa Triệt Để Tràn Nút Luận Giải Tử Vi, Khắc Phục Lỗi Chụp Ảnh Màn Hình & Tối Ưu Cỡ Chữ Lá Số 4x4)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.9
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.10
+            - **Khắc Phục Hoàn Toàn Lỗi Tràn Nút Luận Giải Sang Phải (Tử Vi Đẩu Số)**:
+              + Bảng điều khiển UCC Hàng 4 trên màn hình di động hẹp (≤ 390px) tự động rút gọn nhãn hiển thị thông minh (`📜 Cung`, `📖 Luận`) thông qua `.ucc-txt-long` và `.ucc-txt-short`.
+              + Tối ưu thanh Pill `[🏛️ 4x4 | 📜 Cung | 📖 Luận]` với `flex: 1 1 0%`, triệt tiêu 100% hiện tượng tràn lề hoặc va chạm đè lên nút `🔮 Lập Lá Số`.
+            - **Sửa Triệt Để Lỗi Không Lưu Được Ảnh & Chụp Màn Hình (Canvas Clamping & Stream Engine)**:
+              + Sửa lỗi định danh DOM selector (`#view-tuvi`, `#view-bazi`, `#view-qmdj`, `#view-calendar` thay vì tên cũ), khắc phục lỗi chỉ chụp được 1 trang đầu hoặc tràn canvas.
+              + Bổ sung cơ chế Canvas Clamping phần cứng di động: Tự động điều chỉnh tỷ lệ `scale` và khống chế chiều cao an toàn tối đa 12.000px, chống tràn bộ nhớ GPU (Texture OOM) và lỗi trả về canvas rỗng (`data:,`).
+              + Kiến trúc truyền tệp NativeBridge Streaming chống sập bộ đệm Android Binder IPC (1MB limit): Tách gói dữ liệu ảnh theo block 250KB và ghi tệp tạm bộ nhớ đệm trước khi stream trực tiếp qua MediaStore buffer 64KB, đảm bảo lưu ảnh vào Bộ sưu tập máy 100% trơn tru không lỗi.
+            - **Nâng Cấp Kích Thước Chữ & Độ Nét Bàn Lá Số Tử Vi 4x4**:
+              + Tăng kích thước phông chữ Chính Tinh, Phụ Tinh, Can Chi, Tràng Sinh, Đại Hạn và các hàng thông tin Thiên Bàn thêm 15% - 25% giúp đọc rõ nét, dễ nhìn trên mọi dòng điện thoại.
             - **Sửa Lỗi Chụp Ảnh Màn Hình Chuyên Sâu (Full-Page Screenshot Capture)**:
               + Bổ sung phân hệ Lục Nhâm (`lucnham`) và Thái Ất (`thaiat`) vào hệ thống điều phối `captureArenaScreenshot` trong `app.js`.
               + Tự động tính toán chiều cao toàn phần `captureHeight` (2.500px - 20.000px+) cho cả tab Bàn Quẻ và Luận Giải.

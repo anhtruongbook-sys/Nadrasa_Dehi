@@ -1633,16 +1633,49 @@
           (targetElement ? targetElement.scrollHeight : 0)
         ) || null;
       } else if (currentDeckMode === 'tuvi') {
-        targetElement = document.querySelector('.tuvi-view-container') || document.getElementById('tuvi-view') || appContainer;
-        captureHeight = targetElement.scrollHeight || null;
+        const wrap = document.querySelector('.tuvi-view-container') || document.getElementById('view-tuvi');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#080811';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-tuvi');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
       } else if (currentDeckMode === 'bazi') {
-        targetElement = document.querySelector('.bazi-view-container') || document.getElementById('bazi-view') || appContainer;
-        captureHeight = targetElement.scrollHeight || null;
+        const wrap = document.querySelector('.bazi-view-container') || document.getElementById('view-bazi');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#0e0b16';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-bazi');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
       } else if (currentDeckMode === 'qmdj') {
-        targetElement = document.querySelector('.qmdj-view-container') || document.getElementById('qmdj-view') || appContainer;
-        captureHeight = targetElement.scrollHeight || null;
+        const wrap = document.querySelector('.qmdj-view-container') || document.getElementById('view-qmdj');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#070b19';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-qmdj');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
       } else if (currentDeckMode === 'calendar') {
-        targetElement = document.querySelector('.cal-body') || document.querySelector('.calendar-module-container') || document.getElementById('calendar-view') || appContainer;
+        const wrap = document.querySelector('.cal-body') || document.querySelector('.calendar-module-container') || document.getElementById('view-calendar');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#0f172a';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-calendar');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
       } else if (currentDeckMode === 'tarot') {
         targetElement = document.getElementById('view-tarot') || appContainer;
         bgColor = isLight ? '#fdfbf7' : '#0c0d14';
@@ -1937,7 +1970,7 @@
 
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, #app-container, #app-body'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #view-tuvi, #view-bazi, #view-qmdj, #view-calendar, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, .tuvi-analysis-container, .tuvi-full-report-wrap, .bazi-analysis-container, .bazi-full-report-wrap, #app-container, #app-body'
         );
         scrollViews.forEach(v => {
           v.style.setProperty('contain', 'none', 'important');
@@ -1972,7 +2005,17 @@
         }
       };
 
-      // 4. Chụp container với html2canvas
+      // 4. Safe hardware dimension clamping: Max safe canvas height across mobile GPUs is 12000px
+      const MAX_SAFE_CANVAS_HEIGHT = 12000;
+      let targetScrollHeight = captureHeight || (targetElement ? targetElement.scrollHeight : 1000);
+      if (targetScrollHeight * captureScale > MAX_SAFE_CANVAS_HEIGHT) {
+        captureScale = Math.max(1.0, Math.min(captureScale, MAX_SAFE_CANVAS_HEIGHT / targetScrollHeight));
+      }
+      if (captureHeight && captureHeight > MAX_SAFE_CANVAS_HEIGHT) {
+        captureHeight = MAX_SAFE_CANVAS_HEIGHT;
+      }
+
+      // 4b. Chụp container với html2canvas
       const html2canvasOptions = {
         scale: captureScale,
         backgroundColor: bgColor,
@@ -2066,11 +2109,28 @@
 
       // TRƯỜNG HỢP A: Đang chạy trong Ứng Dụng Di Động Android APK (Flutter Native Client)
       if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
-        window.NativeBridge.postMessage(JSON.stringify({
-          action: 'saveImage',
-          base64: dataUrl,
-          filename: filename
-        }));
+        const CHUNK_SIZE = 250000; // 250KB safe chunk size to avoid Android Binder IPC buffer limit
+        if (dataUrl.length <= CHUNK_SIZE) {
+          window.NativeBridge.postMessage(JSON.stringify({
+            action: 'saveImage',
+            base64: dataUrl,
+            filename: filename
+          }));
+        } else {
+          const totalChunks = Math.ceil(dataUrl.length / CHUNK_SIZE);
+          const transferId = 'img_' + Date.now();
+          for (let i = 0; i < totalChunks; i++) {
+            const chunk = dataUrl.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+            window.NativeBridge.postMessage(JSON.stringify({
+              action: 'saveImageChunk',
+              transferId: transferId,
+              index: i,
+              total: totalChunks,
+              chunk: chunk,
+              filename: filename
+            }));
+          }
+        }
         showToast('✨ Đang lưu ảnh vào Thư viện ảnh của điện thoại...');
         return;
       }
