@@ -974,7 +974,7 @@
             </div>
 
             <!-- 2. Bảng Tổng Hợp: Điểm Sáng vs Điểm Cần Lưu Ý -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 14px;">
+            <div class="tuvi-master-spots-grid">
               <!-- Cột Điểm Sáng -->
               <div class="tuvi-master-bright-col">
                 <div style="font-size: 0.82rem; font-weight: 700; color: #2ecc71; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; text-transform: uppercase;">
@@ -1012,18 +1012,18 @@
 
             <!-- 3. Hướng Đi Vận Trình Đời Người (Tiền Vận, Trung Vận, Hậu Vận) -->
             <div class="tuvi-master-trajectory-box">
-              <div style="font-size: 0.84rem; font-weight: 700; color: var(--gold-glow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <div class="tuvi-master-sec-title">
                 <span>🗺️</span> BẢN ĐỒ HƯỚNG ĐI VẬN TRÌNH ĐỜI NGƯỜI
               </div>
               <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; line-height: 1.55;">
                 <!-- Tiền vận -->
                 <div class="tuvi-master-trajectory-step">
-                  <div style="font-weight: 700; color: var(--gold-primary);">🌱 ${escapeHTML(ma.lifeTrajectory?.tienVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.tienVan?.theme)}</div>
+                  <div class="tuvi-master-step-title">🌱 ${escapeHTML(ma.lifeTrajectory?.tienVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.tienVan?.theme)}</div>
                   <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.tienVan?.content)}</div>
                 </div>
                 <!-- Trung vận -->
                 <div class="tuvi-master-trajectory-step">
-                  <div style="font-weight: 700; color: var(--gold-primary);">⚡ ${escapeHTML(ma.lifeTrajectory?.trungVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.trungVan?.theme)}</div>
+                  <div class="tuvi-master-step-title">⚡ ${escapeHTML(ma.lifeTrajectory?.trungVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.trungVan?.theme)}</div>
                   <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.trungVan?.content)}</div>
                   ${ma.lifeTrajectory?.trungVan?.goldenDecade ? `
                     <div class="tuvi-master-golden-banner">
@@ -1040,7 +1040,7 @@
                 </div>
                 <!-- Hậu vận -->
                 <div class="tuvi-master-trajectory-step">
-                  <div style="font-weight: 700; color: var(--gold-primary);">🌾 ${escapeHTML(ma.lifeTrajectory?.hauVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.hauVan?.theme)}</div>
+                  <div class="tuvi-master-step-title">🌾 ${escapeHTML(ma.lifeTrajectory?.hauVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.hauVan?.theme)}</div>
                   <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.hauVan?.content)}</div>
                 </div>
               </div>
@@ -1048,28 +1048,28 @@
 
             <!-- 4. Lời Khuyên Hành Động Thiết Thực Theo 5 Trụ Cột -->
             <div>
-              <div style="font-size: 0.84rem; font-weight: 700; color: var(--gold-glow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <div class="tuvi-master-sec-title">
                 <span>💡</span> 5 TRỤ CỘT LỜI KHUYÊN HÀNH ĐỘNG CHIẾN LƯỢC
               </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+              <div class="tuvi-master-pillars-grid">
                 <div class="tuvi-master-pillar-card">
-                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">💼 Công Việc & Sự Nghiệp</div>
+                  <div class="tuvi-master-pillar-title">💼 Công Việc & Sự Nghiệp</div>
                   <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.career?.advice)}</div>
                 </div>
                 <div class="tuvi-master-pillar-card">
-                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">💰 Tiền Tài & Quản Trị Tài Sản</div>
+                  <div class="tuvi-master-pillar-title">💰 Tiền Tài & Quản Trị Tài Sản</div>
                   <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.wealth?.advice)}</div>
                 </div>
                 <div class="tuvi-master-pillar-card">
-                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🏡 Gia Đạo & Hôn Nhân</div>
+                  <div class="tuvi-master-pillar-title">🏡 Gia Đạo & Hôn Nhân</div>
                   <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.marriage?.advice)}</div>
                 </div>
                 <div class="tuvi-master-pillar-card">
-                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🌿 Sức Khỏe & Phòng Ngừa</div>
+                  <div class="tuvi-master-pillar-title">🌿 Sức Khỏe & Phòng Ngừa</div>
                   <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.health?.advice)}</div>
                 </div>
                 <div class="tuvi-master-pillar-card">
-                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🕊️ Đạo Tu Dưỡng Hóa Giải</div>
+                  <div class="tuvi-master-pillar-title">🕊️ Đạo Tu Dưỡng Hóa Giải</div>
                   <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.mindfulness?.advice)}</div>
                 </div>
               </div>

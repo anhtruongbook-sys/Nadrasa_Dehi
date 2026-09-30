@@ -4969,16 +4969,40 @@ body.theme-light .neta-celestial-quote {
 .grade-warning { background: rgba(230, 126, 34, 0.2); color: #e67e22; border: 1px solid #e67e22; }
 .grade-danger { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
 
-/* Master Assessment Card Styles */
-.tuvi-master-meta-box {
+/* Master Assessment Card Styles (Tử Vi & Bát Tự Unified) */
+.tuvi-card-header,
+.bazi-card-header-styled {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.2);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 520px) {
+  .tuvi-card-header,
+  .bazi-card-header-styled {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+.tuvi-master-meta-box,
+.bazi-master-meta-box {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(245, 176, 65, 0.22);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
+  box-sizing: border-box;
 }
 
-.tuvi-master-pill-tag {
+.tuvi-master-pill-tag,
+.bazi-master-pill-tag {
   background: rgba(245, 176, 65, 0.15);
   color: var(--gold-glow);
   padding: 3px 8px;
@@ -4987,75 +5011,161 @@ body.theme-light .neta-celestial-quote {
   font-size: 0.78rem;
   display: inline-flex;
   align-items: center;
+  line-height: 1.3;
 }
 
-.tuvi-master-bright-col {
+.tuvi-master-sec-title,
+.bazi-master-sec-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--gold-glow);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.2px;
+}
+
+.tuvi-master-spots-grid,
+.bazi-master-spots-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 680px) {
+  .tuvi-master-spots-grid,
+  .bazi-master-spots-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.tuvi-master-bright-col,
+.bazi-master-bright-col {
   background: rgba(46, 204, 113, 0.08);
   border: 1px solid rgba(46, 204, 113, 0.3);
   border-radius: 8px;
   padding: 12px;
+  box-sizing: border-box;
 }
 
-.tuvi-master-hazard-col {
+.tuvi-master-hazard-col,
+.bazi-master-hazard-col {
   background: rgba(231, 76, 60, 0.08);
   border: 1px solid rgba(231, 76, 60, 0.3);
   border-radius: 8px;
   padding: 12px;
+  box-sizing: border-box;
 }
 
-.tuvi-master-spot-item {
+.tuvi-master-spot-item,
+.bazi-master-spot-item {
   font-size: 0.78rem;
   line-height: 1.5;
   background: rgba(0, 0, 0, 0.25);
-  padding: 8px;
+  padding: 8px 10px;
   border-radius: 6px;
   color: var(--text-color);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-.tuvi-master-spot-item.bright {
+.tuvi-master-spot-item.bright,
+.bazi-master-spot-item.bright {
   border-left: 3px solid #2ecc71;
 }
 
-.tuvi-master-spot-item.hazard {
+.tuvi-master-spot-item.hazard,
+.bazi-master-spot-item.hazard {
   border-left: 3px solid #e74c3c;
 }
 
-.tuvi-master-trajectory-box {
+.tuvi-master-trajectory-box,
+.bazi-master-trajectory-box {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(245, 176, 65, 0.2);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 14px;
+  box-sizing: border-box;
 }
 
-.tuvi-master-trajectory-step {
-  padding: 8px;
+.tuvi-master-step-title,
+.bazi-master-step-title {
+  font-weight: 700;
+  color: var(--gold-primary);
+  font-size: 0.82rem;
+  margin-bottom: 3px;
+}
+
+.tuvi-master-trajectory-step,
+.bazi-master-trajectory-step {
+  padding: 10px;
   background: rgba(255, 255, 255, 0.03);
   border-radius: 6px;
   margin-bottom: 8px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-.tuvi-master-golden-banner {
-  margin-top: 6px;
-  padding: 8px;
+.tuvi-master-golden-banner,
+.bazi-master-golden-banner {
+  margin-top: 8px;
+  padding: 8px 10px;
   background: rgba(245, 176, 65, 0.12);
   border-radius: 6px;
   border-left: 3px solid var(--gold-glow);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-.tuvi-master-defense-banner {
-  margin-top: 6px;
-  padding: 8px;
+.tuvi-master-defense-banner,
+.bazi-master-defense-banner {
+  margin-top: 8px;
+  padding: 8px 10px;
   background: rgba(230, 126, 34, 0.1);
   border-radius: 6px;
   border-left: 3px solid #e67e22;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-.tuvi-master-pillar-card {
+.tuvi-master-pillars-grid,
+.bazi-master-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .tuvi-master-pillars-grid,
+  .bazi-master-pillars-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tuvi-master-pillar-card,
+.bazi-master-pillar-card {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(245, 176, 65, 0.18);
   border-radius: 6px;
-  padding: 10px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.tuvi-master-pillar-title,
+.bazi-master-pillar-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--gold-primary);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .tuvi-patterns-grid {
@@ -5366,58 +5476,105 @@ body.theme-light .tuvi-timeline-table td {
   color: #2c3e50 !important;
 }
 
+body.theme-light .tuvi-card-title {
+  color: #8b6508 !important;
+}
+
 body.theme-light .tuvi-master-meta-box,
+body.theme-light .bazi-master-meta-box,
 body.theme-light .tuvi-master-trajectory-box,
-body.theme-light .tuvi-master-pillar-card {
+body.theme-light .bazi-master-trajectory-box,
+body.theme-light .tuvi-master-pillar-card,
+body.theme-light .bazi-master-pillar-card {
   background: #fdfaf3 !important;
   border: 1px solid #e0d0b8 !important;
 }
 
-body.theme-light .tuvi-master-spot-item {
+body.theme-light .tuvi-master-sec-title,
+body.theme-light .bazi-master-sec-title,
+body.theme-light .tuvi-master-pillar-title,
+body.theme-light .bazi-master-pillar-title,
+body.theme-light .tuvi-master-step-title,
+body.theme-light .bazi-master-step-title {
+  color: #8b6508 !important;
+}
+
+body.theme-light .tuvi-master-spot-item,
+body.theme-light .bazi-master-spot-item {
   background: #ffffff !important;
   border: 1px solid #e8dec8 !important;
   color: #2c3e50 !important;
 }
 
-body.theme-light .tuvi-master-spot-item.bright {
+body.theme-light .tuvi-master-spot-item.bright,
+body.theme-light .bazi-master-spot-item.bright {
   border-left: 3px solid #27ae60 !important;
 }
 
-body.theme-light .tuvi-master-spot-item.hazard {
+body.theme-light .tuvi-master-spot-item.hazard,
+body.theme-light .bazi-master-spot-item.hazard {
   border-left: 3px solid #c0392b !important;
 }
 
-body.theme-light .tuvi-master-bright-col {
+body.theme-light .tuvi-master-bright-col,
+body.theme-light .bazi-master-bright-col {
   background: #f4faf6 !important;
   border: 1px solid #a3e4d7 !important;
 }
 
-body.theme-light .tuvi-master-hazard-col {
+body.theme-light .tuvi-master-hazard-col,
+body.theme-light .bazi-master-hazard-col {
   background: #fdf6f5 !important;
   border: 1px solid #f5b7b1 !important;
 }
 
-body.theme-light .tuvi-master-trajectory-step {
+body.theme-light .tuvi-master-trajectory-step,
+body.theme-light .bazi-master-trajectory-step {
   background: #ffffff !important;
   border: 1px solid #ece4d4 !important;
+  color: #2c3e50 !important;
 }
 
-body.theme-light .tuvi-master-golden-banner {
-  background: #fef9e7 !important;
-  border: 1px solid #f9e79f !important;
-  border-left: 3px solid #d4af37 !important;
+body.theme-light .tuvi-master-golden-banner,
+body.theme-light .bazi-master-golden-banner {
+  background: #fdfbf2 !important;
+  border: 1px solid #e6d7b8 !important;
+  border-left: 4px solid #b8860b !important;
+  color: #2c3e50 !important;
+}
+body.theme-light .tuvi-master-golden-banner span:first-child,
+body.theme-light .bazi-master-golden-banner span:first-child {
+  color: #8b6508 !important;
 }
 
-body.theme-light .tuvi-master-defense-banner {
-  background: #fdf2e9 !important;
-  border: 1px solid #fadbd8 !important;
-  border-left: 3px solid #e67e22 !important;
+body.theme-light .tuvi-master-defense-banner,
+body.theme-light .bazi-master-defense-banner {
+  background: #fdf4ee !important;
+  border: 1px solid #f5cfb8 !important;
+  border-left: 4px solid #d35400 !important;
+  color: #2c3e50 !important;
+}
+body.theme-light .tuvi-master-defense-banner span:first-child,
+body.theme-light .bazi-master-defense-banner span:first-child {
+  color: #b94a00 !important;
 }
 
-body.theme-light .tuvi-master-pill-tag {
+body.theme-light .tuvi-master-pill-tag,
+body.theme-light .bazi-master-pill-tag {
   background: #fdf2d0 !important;
   color: #7d5a08 !important;
-  border: 1px solid #e0c878 !important;
+  border: 1px solid #d4af37 !important;
+  font-weight: 600 !important;
+}
+
+/* Smooth Anchor Scrolling & Sticky Header Safety Offset */
+.tuvi-full-report-wrap [id^="sec-"],
+.bazi-full-report-wrap [id^="sec-"],
+.tuvi-report-h1,
+.tuvi-report-h2,
+.bazi-report-h1,
+.bazi-report-h2 {
+  scroll-margin-top: 75px;
 }
 
 
