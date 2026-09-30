@@ -574,6 +574,14 @@
         day: dayCanChi,
         dayNapAm,
         hour: hourCanChi,
+        yearGan: CAN[yearGanIdx],
+        yearZhi: CHI[yearZhiIdx],
+        monthGan: CAN[monthGanIdx],
+        monthZhi: CHI[monthZhiIdx],
+        dayGan: CAN[dayGanIdx],
+        dayZhi: CHI[dayZhiIdx],
+        hourGan: CAN[hourGanIdx],
+        hourZhi: CHI[hourZhiIdx],
         solarTerm,
         solarTermDetails,
         solarTermStr: solarTermDetails.displayStr,
@@ -700,6 +708,8 @@
       const dayOfWeekNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
       const dayOfWeek = dayOfWeekNames[date.getDay()];
 
+      const solarTermCanChi = this.getSolarTermCanChi(d, m, y, hour, minute);
+
       return {
         solar: {
           day: d,
@@ -716,10 +726,13 @@
           dateStr: `Ngày ${lunar.day} tháng ${lunar.month}${lunar.isLeap ? ' (Nhuận)' : ''} năm ${canChi.year}`
         },
         canChi: canChi,
+        solarTermCanChi: solarTermCanChi,
         solarTerm: solarTerm,
         solarTermDetails: solarTermDetails,
         solarTermStr: solarTermDetails.displayStr,
         solarTermFullStr: solarTermDetails.fullDisplayStr,
+        monthStep: solarTermCanChi.monthStep,
+        baziYear: solarTermCanChi.baziYear,
         mansion: mansion,
         truc: truc,
         hoangDao: dayHD,
@@ -778,7 +791,11 @@
     }
   };
 
-  // Export to global window
+  // Export to global window & node.js
   global.NetaCalendarEngine = NetaCalendarEngine;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = NetaCalendarEngine;
+  }
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : globalThis);
+

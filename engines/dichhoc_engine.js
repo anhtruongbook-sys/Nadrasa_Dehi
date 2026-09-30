@@ -372,13 +372,32 @@
   // =========================================================================
   const MaiHoaEngine = {
     lapQueThoiGian(namZhiIndex, thangAm, ngayAm, gioZhiIndex, calendarContext = {}) {
+      const zhiNames = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+
+      // Hỗ trợ truyền thẳng calendarContext (lấy từ NetaCalendarEngine) làm đối số thứ 1
+      if (typeof namZhiIndex === 'object' && namZhiIndex !== null) {
+        calendarContext = namZhiIndex;
+        const canChi = calendarContext.canChi || {};
+        const namZhi = canChi.yearZhi || (canChi.year ? canChi.year.split(' ')[1] : 'Ngọ');
+        namZhiIndex = zhiNames.indexOf(namZhi) + 1;
+
+        // BẮT BUỘC: Tháng Mai Hoa lấy chuẩn xác theo 12 Tiết Lệnh từ NetaCalendarEngine
+        thangAm = (calendarContext.monthStep !== undefined)
+          ? (calendarContext.monthStep + 1)
+          : (canChi.monthZhi ? ((zhiNames.indexOf(canChi.monthZhi) - 2 + 12) % 12 + 1) : 8);
+
+        ngayAm = (calendarContext.lunar && calendarContext.lunar.day) ? calendarContext.lunar.day : 1;
+        const gioZhi = canChi.hourZhi || (canChi.hour ? canChi.hour.split(' ')[1] : 'Hợi');
+        gioZhiIndex = zhiNames.indexOf(gioZhi) + 1;
+      }
+
       // namZhiIndex: 1..12 (Tý=1, Sửu=2...)
       // gioZhiIndex: 1..12
-      let sumThuong = namZhiIndex + thangAm + ngayAm;
+      let sumThuong = Number(namZhiIndex) + Number(thangAm) + Number(ngayAm);
       let thuongNum = sumThuong % 8;
       if (thuongNum === 0) thuongNum = 8;
 
-      let sumHa = sumThuong + gioZhiIndex;
+      let sumHa = sumThuong + Number(gioZhiIndex);
       let haNum = sumHa % 8;
       if (haNum === 0) haNum = 8;
 
@@ -839,5 +858,8 @@
   };
 
   global.NetaDichHocEngine = NetaDichHocEngine;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = NetaDichHocEngine;
+  }
 
 })(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

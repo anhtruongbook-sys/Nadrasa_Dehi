@@ -172,6 +172,8 @@
       calInfo.solarTerm = stCanChi.solarTerm;
       calInfo.solarTermStr = stCanChi.solarTermStr;
       calInfo.solarTermFullStr = stCanChi.solarTermFullStr;
+      calInfo.monthStep = stCanChi.monthStep;
+      calInfo.baziYear = stCanChi.baziYear;
     }
     return calInfo;
   }
@@ -1578,16 +1580,7 @@
     const cal = getCalendarInfo(state.selectedDate);
 
     if (state.maiHoa.mode === 'time') {
-      const canChi = cal.canChi || {};
-      const zhiNames = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
-      const namZhi = canChi.yearZhi || 'Ngọ';
-      const namIdx = zhiNames.indexOf(namZhi) + 1;
-      const thangAm = cal.lunar ? cal.lunar.month : (state.selectedDate.getMonth() + 1);
-      const ngayAm = cal.lunar ? cal.lunar.day : state.selectedDate.getDate();
-      const gioZhi = canChi.hourZhi || 'Hợi';
-      const gioIdx = zhiNames.indexOf(gioZhi) + 1;
-
-      state.maiHoa.result = eng.MaiHoaEngine.lapQueThoiGian(namIdx, thangAm, ngayAm, gioIdx, cal);
+      state.maiHoa.result = eng.MaiHoaEngine.lapQueThoiGian(cal);
     } else {
       state.maiHoa.result = eng.MaiHoaEngine.lapQueTheoHaiSo(state.maiHoa.soA, state.maiHoa.soB, 0, cal);
     }

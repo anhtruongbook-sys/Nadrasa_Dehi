@@ -3908,5 +3908,8 @@
   global.NetaLucHao2Engine = NetaLucHao2Engine;
   // Gán đè vào NetaLucHaoInterpreter để nâng cấp lập tức toàn bộ hệ thống
   global.NetaLucHaoInterpreter = NetaLucHao2Engine;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = NetaLucHao2Engine;
+  }
 
 })(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));
