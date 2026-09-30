@@ -626,6 +626,7 @@
     let html = '';
     let inList = false;
     let inTable = false;
+    let tableHeaders = [];
 
     for (let i = 0; i < lines.length; i++) {
       let rawLine = lines[i];
@@ -633,7 +634,7 @@
 
       if (!line) {
         if (inList) { html += '</ul>'; inList = false; }
-        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; tableHeaders = []; }
         continue;
       }
 
@@ -691,6 +692,7 @@
         }
         if (!inTable) {
           inTable = true;
+          tableHeaders = cells.map(c => c.replace(/\*\*/g, '').replace(/\*/g, '').trim());
           html += '<div class="tuvi-table-wrap"><table class="tuvi-report-table"><thead><tr>';
           cells.forEach(cell => {
             html += `<th>${formatMarkdownInline(cell)}</th>`;
@@ -698,8 +700,9 @@
           html += '</tr></thead><tbody>';
         } else {
           html += '<tr>';
-          cells.forEach(cell => {
-            html += `<td>${formatMarkdownInline(cell)}</td>`;
+          cells.forEach((cell, colIdx) => {
+            const label = tableHeaders[colIdx] || '';
+            html += `<td data-label="${escapeHTML(label)}"><span class="table-cell-val">${formatMarkdownInline(cell)}</span></td>`;
           });
           html += '</tr>';
         }
@@ -707,6 +710,7 @@
       } else if (inTable) {
         html += '</tbody></table></div>';
         inTable = false;
+        tableHeaders = [];
       }
 
       if (line.startsWith('# ')) {

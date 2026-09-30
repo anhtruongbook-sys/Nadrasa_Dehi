@@ -108,19 +108,29 @@
       .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" class="bazi-report-toc-pill">$1</a>');
   }
 
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function renderMarkdownToHTML(str) {
     if (!str) return '';
     const lines = str.split('\n');
     let html = '';
     let inList = false;
     let inTable = false;
+    let tableHeaders = [];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
 
       if (!line) {
         if (inList) { html += '</ul>'; inList = false; }
-        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; tableHeaders = []; }
         continue;
       }
 
@@ -177,6 +187,7 @@
         }
         if (!inTable) {
           inTable = true;
+          tableHeaders = cells.map(c => c.replace(/\*\*/g, '').replace(/\*/g, '').trim());
           html += '<div class="bazi-table-wrap"><table class="bazi-report-table"><thead><tr>';
           cells.forEach(cell => {
             html += `<th>${formatMarkdownInline(cell)}</th>`;
@@ -184,8 +195,9 @@
           html += '</tr></thead><tbody>';
         } else {
           html += '<tr>';
-          cells.forEach(cell => {
-            html += `<td>${formatMarkdownInline(cell)}</td>`;
+          cells.forEach((cell, colIdx) => {
+            const label = tableHeaders[colIdx] || '';
+            html += `<td data-label="${escapeHTML(label)}"><span class="table-cell-val">${formatMarkdownInline(cell)}</span></td>`;
           });
           html += '</tr>';
         }
@@ -193,6 +205,7 @@
       } else if (inTable) {
         html += '</tbody></table></div>';
         inTable = false;
+        tableHeaders = [];
       }
 
       if (line.startsWith('# ')) {

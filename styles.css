@@ -15081,6 +15081,134 @@ body.theme-light .bazi-report-table th {
   color: #7a5806 !important;
 }
 
+/* ==========================================================================
+   RESPONSIVE DATA CARDS FOR REPORT TABLES ON MOBILE (CHỐNG VỠ BẢNG TRÊN ĐIỆN THOẠI)
+   ========================================================================== */
+@media (max-width: 680px) {
+  .tuvi-table-wrap,
+  .bazi-table-wrap {
+    overflow-x: visible !important;
+    border: none !important;
+    margin: 14px 0 !important;
+    background: transparent !important;
+  }
+
+  .tuvi-report-table,
+  .bazi-report-table {
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .tuvi-report-table thead,
+  .bazi-report-table thead {
+    display: none !important;
+  }
+
+  .tuvi-report-table tbody,
+  .bazi-report-table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .tuvi-report-table tr,
+  .bazi-report-table tr {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(245, 176, 65, 0.25) !important;
+    border-radius: 10px !important;
+    padding: 12px 14px !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  body.theme-light .tuvi-report-table tr,
+  body.theme-light .bazi-report-table tr {
+    background: #ffffff !important;
+    border: 1px solid #ebdcc7 !important;
+    box-shadow: 0 2px 8px rgba(180, 83, 9, 0.06) !important;
+  }
+
+  .tuvi-report-table td,
+  .bazi-report-table td {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    padding: 7px 0 !important;
+    border: none !important;
+    border-bottom: 1px dashed rgba(245, 176, 65, 0.15) !important;
+    font-size: 0.84rem !important;
+    line-height: 1.5 !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  body.theme-light .tuvi-report-table td,
+  body.theme-light .bazi-report-table td {
+    border-bottom: 1px dashed #ebdcc7 !important;
+  }
+
+  .tuvi-report-table td:last-child,
+  .bazi-report-table td:last-child {
+    border-bottom: none !important;
+  }
+
+  .tuvi-report-table td::before,
+  .bazi-report-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--gold-glow);
+    font-size: 0.78rem;
+    flex: 0 0 38%;
+    max-width: 38%;
+    text-align: left;
+    word-break: break-word;
+  }
+
+  body.theme-light .tuvi-report-table td::before,
+  body.theme-light .bazi-report-table td::before {
+    color: #8b6508 !important;
+  }
+
+  .tuvi-report-table td .table-cell-val,
+  .bazi-report-table td .table-cell-val {
+    flex: 1 1 62%;
+    text-align: right;
+    word-break: break-word;
+    color: var(--text-color);
+  }
+
+  /* Dòng đầu tiên nổi bật làm Header của Thẻ Card */
+  .tuvi-report-table td:first-child,
+  .bazi-report-table td:first-child {
+    padding-bottom: 9px !important;
+    border-bottom: 1px solid rgba(245, 176, 65, 0.35) !important;
+  }
+
+  body.theme-light .tuvi-report-table td:first-child,
+  body.theme-light .bazi-report-table td:first-child {
+    border-bottom: 1px solid #d4af37 !important;
+  }
+
+  .tuvi-report-table td:first-child .table-cell-val,
+  .bazi-report-table td:first-child .table-cell-val {
+    font-weight: 800;
+    color: var(--gold-glow);
+    font-size: 0.95rem;
+  }
+
+  body.theme-light .tuvi-report-table td:first-child .table-cell-val,
+  body.theme-light .bazi-report-table td:first-child .table-cell-val {
+    color: #b45309 !important;
+  }
+}
+
 .bazi-report-list {
   padding-left: 18px;
   margin: 6px 0 12px 0;
