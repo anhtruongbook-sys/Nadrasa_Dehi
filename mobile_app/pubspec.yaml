@@ -1,7 +1,7 @@
 name: neta_light_mobile
 description: Neta Light & Poker - Phap mon Nadrasa Dehi Mobile Client
 publish_to: 'none'
-version: 2.7.3+91
+version: 2.7.4+92
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

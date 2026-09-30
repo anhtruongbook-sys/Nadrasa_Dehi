@@ -76,10 +76,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.7.3
-          name: "Neta Light v2.7.3 (Chuẩn Hóa Typography: Căn Lề Đều Justify & Xóa Bỏ Chữ In Hoa Đậm Cả Khối)"
+          tag_name: v2.7.4
+          name: "Neta Light v2.7.4 (Hoàn Thiện Typography: Khắc Phục Lỗi Drop-Cap & Bố Cục Thẩm Mỹ)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.3
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.4
+            - **Khắc phục triệt để lỗi Drop-Cap bị tách chữ**: Đã loại bỏ class `neta-drop-cap` gây lỗi tách chữ "K INH DỊCH" trên banner luận giải, hiển thị toàn bộ văn bản liền mạch, trang trọng.
+            - **Hoàn thiện Căn lề Đều Hai Bên (Justify)**: Toàn bộ 7 chuyên mục luận giải Lục Hào 2.0 được căn lề chuẩn mực theo hàng lối, font chữ trang nhã, không còn hiện tượng in hoa đậm cả đoạn.
             - **Chuẩn hóa Toàn Diện Mỹ Cảm & Bố Cục Báo Cáo Lục Hào 2.0**:
               + **Căn lề hai bên (Justify Alignment 100%)**: Toàn bộ các đoạn văn xuôi, các mục danh sách gạch đầu dòng, khối trích dẫn và thuyết minh lăng kính đều được căn lề đều hai bên (`text-align: justify; text-justify: inter-word;`) mang lại trải nghiệm đọc phẳng phiu, sang trọng và chuẩn mực như trang sách in.
               + **Sửa triệt để lỗi phân tách thẻ Section (Regex Bug Fix)**: Chuẩn hóa bộ nhận diện chuyên mục chỉ nhận diện chữ số La Mã (`I.`, `II.`, `III.`... đến `X.`), loại bỏ hoàn toàn tình trạng các dòng đánh số `1.`, `2.`, `3.` bị biến nhầm thành tiêu đề thẻ.

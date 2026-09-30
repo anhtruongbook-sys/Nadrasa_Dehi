@@ -845,7 +845,7 @@
               <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
               <button type="button" class="neta-btn-inline-back" id="btn-dh-back-standard">↩️ Xem Bản Tiêu Chuẩn</button>
             </div>
-            <div class="dh-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); margin-top: 16px; text-align: justify; text-justify: inter-word;">
+            <div class="dh-full-report-content" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); margin-top: 16px; text-align: justify; text-justify: inter-word;">
               ${formatReportToRichHtml(state.aiPolishedText)}
             </div>
           ` : (!state.isInterpretingAI && !state.aiErrorMessage ? `
@@ -869,7 +869,7 @@
             <span class="bazi-report-toc-pill">VII. Bảng Quẻ Kỹ Thuật</span>
           </div>
 
-          <div class="dh-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); text-align: justify; text-justify: inter-word;">
+          <div class="dh-full-report-content" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color); text-align: justify; text-justify: inter-word;">
             ${formatReportToRichHtml(rawText)}
           </div>
         `}
