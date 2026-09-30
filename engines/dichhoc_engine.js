@@ -357,11 +357,11 @@
     return '-';
   }
 
-  const LUC_THU_ORDER = ['Thanh Long', 'Chu Tước', 'Câu Trận', 'Đằng Xà', 'Bạch Hổ', 'Huyền Vũ'];
+  const LUC_THU_ORDER = ['Thanh Long', 'Chu Tước', 'Câu Trần', 'Đằng Xà', 'Bạch Hổ', 'Huyền Vũ'];
   const CAN_NGAY_LUC_THU_START = {
     'Giáp': 'Thanh Long', 'Ất': 'Thanh Long',
     'Bính': 'Chu Tước', 'Đinh': 'Chu Tước',
-    'Mậu': 'Câu Trận',
+    'Mậu': 'Câu Trần',
     'Kỷ': 'Đằng Xà',
     'Canh': 'Bạch Hổ', 'Tân': 'Bạch Hổ',
     'Nhâm': 'Huyền Vũ', 'Quý': 'Huyền Vũ'

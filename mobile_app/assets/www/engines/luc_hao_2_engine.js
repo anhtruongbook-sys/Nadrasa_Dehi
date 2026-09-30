@@ -3576,14 +3576,7 @@
         if (h.is_nguyet_pha) statusFlags.push("Nguyệt Phá");
         if (h.is_am_dong) statusFlags.push("Ám Động");
 
-        const nodeState = g.nodes_state[pos - 1];
-        const eVal = nodeState ? nodeState.equilibrium_energy : 0;
-        let khiThe = "";
-        if (eVal >= 4.0) khiThe = "Vượng Tướng";
-        else if (eVal >= 1.5) khiThe = "Đắc Sinh";
-        else if (eVal >= -1.5) khiThe = "Bình Hòa";
-        else if (eVal >= -4.0) khiThe = "Hưu Tù";
-        else khiThe = "Bị Khắc";
+        let khiThe = h.vuong_suy || "Bình Hòa";
 
         if (statusFlags.length > 0) {
           khiThe += ` (${statusFlags.join(', ')})`;

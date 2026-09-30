@@ -126,21 +126,54 @@
     }
   }
 
-  // Helper lấy thông tin lịch & tiết khí từ NetaCalendarEngine
+  // Helper lấy thông tin lịch & tiết khí từ NetaCalendarEngine chuẩn xác theo Tiết Khí cho Dịch Học Lục Hào
   function getCalendarInfo(date = new Date()) {
-    if (global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
-      return global.NetaCalendarEngine.getFullDayInfo(date);
-    }
     const d = date.getDate();
     const m = date.getMonth() + 1;
     const y = date.getFullYear();
-    return {
-      solar: { day: d, month: m, year: y, dateStr: `${d}/${m}/${y}` },
-      lunar: { day: d, month: m, year: y, dateStr: `Ngày ${d} tháng ${m}` },
-      canChi: { year: 'Bính Ngọ', month: 'Đinh Dậu', day: 'Nhâm Dần', hour: 'Tân Hợi', dayGan: 'Nhâm', dayZhi: 'Dần', monthZhi: 'Dậu', yearZhi: 'Ngọ', hourZhi: 'Hợi' },
-      solarTerm: 'Thu Phân',
-      solarTermStr: 'Thu Phân (Chuyển: 23/09 07:05)'
-    };
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    let calInfo = {};
+    if (global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
+      calInfo = global.NetaCalendarEngine.getFullDayInfo(date);
+    } else {
+      calInfo = {
+        solar: { day: d, month: m, year: y, dateStr: `${d}/${m}/${y}` },
+        lunar: { day: d, month: m, year: y, dateStr: `Ngày ${d} tháng ${m}` },
+        canChi: { year: 'Bính Ngọ', month: 'Đinh Dậu', day: 'Nhâm Dần', hour: 'Tân Hợi' },
+        solarTerm: 'Thu Phân'
+      };
+    }
+
+    // BẮT BUỘC: Lấy Can Chi chuẩn theo TIẾT KHÍ (Nguyệt Kiến Tiết Lệnh) từ getSolarTermCanChi
+    if (global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getSolarTermCanChi === 'function') {
+      const stCanChi = global.NetaCalendarEngine.getSolarTermCanChi(d, m, y, hour, minute);
+      const stMonthParts = (stCanChi.month || '').split(' ');
+      const stDayParts = (stCanChi.day || '').split(' ');
+      const stYearParts = (stCanChi.year || '').split(' ');
+      const stHourParts = (stCanChi.hour || '').split(' ');
+
+      calInfo.canChi = {
+        ...(calInfo.canChi || {}),
+        year: stCanChi.year,
+        month: stCanChi.month,
+        day: stCanChi.day,
+        hour: stCanChi.hour,
+        yearGan: stYearParts[0] || (calInfo.canChi?.yearGan || ''),
+        yearZhi: stYearParts[1] || (calInfo.canChi?.yearZhi || ''),
+        monthGan: stMonthParts[0] || (calInfo.canChi?.monthGan || ''),
+        monthZhi: stMonthParts[1] || (calInfo.canChi?.monthZhi || ''),
+        dayGan: stDayParts[0] || (calInfo.canChi?.dayGan || ''),
+        dayZhi: stDayParts[1] || (calInfo.canChi?.dayZhi || ''),
+        hourGan: stHourParts[0] || (calInfo.canChi?.hourGan || ''),
+        hourZhi: stHourParts[1] || (calInfo.canChi?.hourZhi || '')
+      };
+      calInfo.solarTerm = stCanChi.solarTerm;
+      calInfo.solarTermStr = stCanChi.solarTermStr;
+      calInfo.solarTermFullStr = stCanChi.solarTermFullStr;
+    }
+    return calInfo;
   }
 
   // Render SVG đồng tiền Càn Long tinh xảo
