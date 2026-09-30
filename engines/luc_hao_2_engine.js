@@ -417,11 +417,11 @@
         const node = this.allNodes[idx];
         const finalEnergy = x[idx];
         let spectrum = "";
-        if (finalEnergy >= 5.0) spectrum = "CỰC DƯƠNG / SIÊU NĂNG LƯỢNG (Bùng nổ)";
-        else if (finalEnergy >= 2.0) spectrum = "DƯƠNG VƯỢNG (Ổn định, phát triển thuận lợi)";
-        else if (finalEnergy >= -1.0) spectrum = "BÌNH HÒA TRUNG TÍNH (Cân bằng giằng co)";
-        else if (finalEnergy >= -4.5) spectrum = "ÂM SUY (Hao tổn, thiếu trợ lực)";
-        else spectrum = "CỰC ÂM / BỊ TRIỆT TIÊU (Suy kiệt nặng nề)";
+        if (finalEnergy >= 4.0) spectrum = "ĐẮC LỆNH VƯỢNG TƯỚNG (Khí thế dồi dào, thuận lợi lớn)";
+        else if (finalEnergy >= 1.5) spectrum = "HƯU TÙ PHÙNG SINH (Có trợ lực, tiến triển tốt)";
+        else if (finalEnergy >= -1.5) spectrum = "BÌNH HÒA TRUNG HÒA (Khí vận cân bằng, ổn định)";
+        else if (finalEnergy >= -4.0) spectrum = "HƯU TÙ THIẾU KHÍ (Hao tổn nội lực, cần bổ trợ)";
+        else spectrum = "HƯU TÙ BỊ KHẮC (Suy thoái, chịu áp lực lớn)";
 
         resultsNodes.push({
           position: node.node_id,
@@ -618,66 +618,151 @@
   };
 
   // =========================================================================
-  // 5. ĐỘNG CƠ CỘNG HƯỞNG SÓNG LƯỢNG GIÁC TÍNH ỨNG KỲ (HARMONIC TIMING ENGINE)
+  // 5. ĐỘNG CƠ ĐỊNH THỜI ĐIỂM ỨNG KỲ CHUẨN LỤC HÀO CỔ TRUYỀN (DÃ HẠC THẦN KHÓA)
   // =========================================================================
   const HarmonicTimingEngine = {
     BRANCHES: ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"],
 
-    calculateResonanceCurve(equilibriumNodes, intentWeights) {
-      const branchPhases = {};
-      this.BRANCHES.forEach((b, idx) => {
-        branchPhases[b] = idx * (2.0 * Math.PI / 12.0);
-      });
+    BRANCH_META: {
+      "Tý": { element: "Thủy", lucHop: "Sửu", lucXung: "Ngọ", sinh: "Thân", mo: "Thìn", tuyet: "Tỵ" },
+      "Sửu": { element: "Thổ", lucHop: "Tý", lucXung: "Mùi", sinh: "Tỵ", mo: "Thìn", tuyet: "Hợi" },
+      "Dần": { element: "Mộc", lucHop: "Hợi", lucXung: "Thân", sinh: "Hợi", mo: "Mùi", tuyet: "Thân" },
+      "Mão": { element: "Mộc", lucHop: "Tuất", lucXung: "Dậu", sinh: "Hợi", mo: "Mùi", tuyet: "Thân" },
+      "Thìn": { element: "Thổ", lucHop: "Dậu", lucXung: "Tuất", sinh: "Ngọ", mo: "Thìn", tuyet: "Hợi" },
+      "Tỵ": { element: "Hỏa", lucHop: "Thân", lucXung: "Hợi", sinh: "Dần", mo: "Tuất", tuyet: "Hợi" },
+      "Ngọ": { element: "Hỏa", lucHop: "Mùi", lucXung: "Tý", sinh: "Dần", mo: "Tuất", tuyet: "Hợi" },
+      "Mùi": { element: "Thổ", lucHop: "Ngọ", lucXung: "Sửu", sinh: "Tỵ", mo: "Mùi", tuyet: "Tỵ" },
+      "Thân": { element: "Kim", lucHop: "Tỵ", lucXung: "Dần", sinh: "Thìn", mo: "Sửu", tuyet: "Dần" },
+      "Dậu": { element: "Kim", lucHop: "Thìn", lucXung: "Mão", sinh: "Sửu", mo: "Sửu", tuyet: "Dần" },
+      "Tuất": { element: "Thổ", lucHop: "Mão", lucXung: "Thìn", sinh: "Ngọ", mo: "Tuất", tuyet: "Tỵ" },
+      "Hợi": { element: "Thủy", lucHop: "Dần", lucXung: "Tỵ", sinh: "Dậu", mo: "Thìn", tuyet: "Tỵ" }
+    },
 
-      const nodeWeights = [];
-      const nodePhases = [];
-      const nodeEnergies = [];
+    ELEMENT_OVERCOMING: {
+      "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy", "Thủy": "Hỏa", "Hỏa": "Kim"
+    },
+
+    calculateResonanceCurve(equilibriumNodes, intentWeights, hexData, monthChi, dayChi) {
+      if (!equilibriumNodes || equilibriumNodes.length === 0) {
+        return {
+          optimal_positive_timing: {
+            branch: "Tý",
+            principle: "Đắc Trị Phùng Vượng",
+            time_window: "Giai đoạn ngày/tháng Tý",
+            meaning: "Thời điểm hanh thông, thích hợp để khởi sự.",
+            action: "Chủ động triển khai."
+          },
+          critical_risk_timing: {
+            branch: "Ngọ",
+            principle: "Lục Xung Cần Phòng Tránh",
+            time_window: "Giai đoạn ngày/tháng Ngọ",
+            meaning: "Thời điểm xung khắc, cần bảo toàn lực lượng.",
+            action: "Cẩn trọng duy trì ổn định."
+          }
+        };
+      }
+
+      // 1. Xác định Dụng Thần ưu tiên dựa trên trọng số câu hỏi
+      let targetNode = null;
+      let highestWeight = -1;
 
       for (const n of equilibriumNodes) {
         const lt = n.luc_than;
-        let w = intentWeights[lt] || 0.1;
-        if (n.is_the) w += (intentWeights["Hào Thế"] || 0.3);
-        if (n.is_moving) w *= 1.8;
-
-        const phase = branchPhases[n.branch] || 0.0;
-        nodeWeights.push(w);
-        nodePhases.push(phase);
-        nodeEnergies.push(n.equilibrium_energy);
-      }
-
-      const resonanceResults = [];
-      for (let idx = 0; idx < this.BRANCHES.length; idx++) {
-        const targetBranch = this.BRANCHES[idx];
-        const thetaTarget = branchPhases[targetBranch];
-        let totalWave = 0.0;
-
-        for (let i = 0; i < equilibriumNodes.length; i++) {
-          const phaseDiff = thetaTarget - nodePhases[i];
-          totalWave += nodeWeights[i] * nodeEnergies[i] * Math.cos(phaseDiff);
+        let w = intentWeights ? (intentWeights[lt] || 0.1) : 0.1;
+        if (n.is_moving) w += 0.5;
+        if (n.is_the) w += 0.3;
+        if (w > highestWeight) {
+          highestWeight = w;
+          targetNode = n;
         }
-
-        resonanceResults.push({
-          branch: targetBranch,
-          angle_degrees: Math.round(idx * 30.0 * 10) / 10,
-          resonance_amplitude: Math.round(totalWave * 1000) / 1000
-        });
       }
 
-      const sorted = [...resonanceResults].sort((a, b) => b.resonance_amplitude - a.resonance_amplitude);
-      const topPositive = sorted[0];
-      const topNegative = sorted[sorted.length - 1];
+      if (!targetNode) {
+        targetNode = equilibriumNodes.find(n => n.is_the) || equilibriumNodes[0];
+      }
+
+      const branch = targetNode.branch;
+      const bMeta = this.BRANCH_META[branch] || this.BRANCH_META["Tý"];
+      const isMoving = targetNode.is_moving;
+      const changedBranch = targetNode.changed_branch;
+
+      let isTK = false;
+      let isNP = false;
+      const theNode = equilibriumNodes.find(n => n.is_the) || targetNode;
+
+      if (hexData && hexData.haos) {
+        const found = hexData.haos.find(h => h.position === targetNode.position);
+        if (found) {
+          isTK = found.is_tuan_khong;
+          isNP = found.is_nguyet_pha;
+        }
+      }
+
+      // 2. Tính Thời Điểm Hanh Thông (Optimal Positive Timing) theo Dã Hạc Thần Khóa
+      let optBranch = "";
+      let optPrinciple = "";
+      let optMeaning = "";
+
+      if (isTK) {
+        optBranch = branch;
+        optPrinciple = "Tuần Không Phùng Trị / Xuất Không";
+        optMeaning = `Dụng Thần ${targetNode.luc_than} (${targetNode.branch}) lâm Tuần Không. Thời cơ hanh thông ứng vào ngày/tháng ${branch} (Xuất Không) hoặc ngày/tháng ${bMeta.lucXung} (Xung Không). Khi xuất Không, khí số được giải tỏa, mưu sự tiến triển thuận lợi.`;
+      } else if (isNP) {
+        optBranch = bMeta.lucHop;
+        optPrinciple = "Hợp Xứ Cứu Phá / Xuất Nguyệt Lâm Trị";
+        optMeaning = `Dụng Thần ${targetNode.luc_than} (${targetNode.branch}) bị Nguyệt Phá. Thời cơ hanh thông ứng vào ngày/tháng ${bMeta.lucHop} (Lục Hợp cứu phá), hoặc sau khi bước sang tháng mới đến ngày ${branch} phùng Trị để hồi phục trọn vẹn lực lượng.`;
+      } else if (isMoving) {
+        optBranch = bMeta.lucHop;
+        optPrinciple = "Hào Động Phùng Lục Hợp / Phùng Trị";
+        optMeaning = `Dụng Thần ${targetNode.luc_than} (${targetNode.branch}) phát động. Theo Dã Hạc Thần Khóa, hào động ứng vào ngày/tháng ${bMeta.lucHop} (Động phùng Hợp định cục) hoặc ngày/tháng ${branch} (phùng Trị phát tiết tinh hoa).`;
+      } else {
+        optBranch = bMeta.lucXung;
+        optPrinciple = "Tĩnh Phùng Lục Xung Khởi / Phùng Trị";
+        optMeaning = `Dụng Thần ${targetNode.luc_than} (${targetNode.branch}) tĩnh tại. Theo Dịch lý 'Tĩnh phùng Xung vi Khởi', thời cơ hành động hanh thông nhất ứng vào ngày/tháng ${bMeta.lucXung} (Xung khởi để phát tác) hoặc ngày ${branch} (Lâm Trị đắc lệnh).`;
+      }
+
+      // 3. Tính Thời Điểm Rủi Ro (Critical Risk Timing)
+      let riskBranch = "";
+      let riskPrinciple = "";
+      let riskMeaning = "";
+
+      const kyThanElement = Object.keys(this.ELEMENT_OVERCOMING).find(k => this.ELEMENT_OVERCOMING[k] === targetNode.element) || "Thủy";
+      const kyThanNode = equilibriumNodes.find(n => n.element === kyThanElement);
+
+      if (kyThanNode && kyThanNode.is_moving) {
+        riskBranch = kyThanNode.branch;
+        riskPrinciple = `Kỵ Thần ${kyThanNode.luc_than} (${kyThanNode.branch}) Phát Động Khắc Hại`;
+        riskMeaning = `Kỵ Thần hành ${kyThanElement} phát động gây tổn thương cho Dụng Thần. Giai đoạn ngày/tháng ${riskBranch} là lúc Kỵ Thần lâm Trị đắc lệnh, tiềm ẩn rủi ro tranh chấp hoặc đình trệ cao, cần kiên nhẫn phòng thủ.`;
+      } else if (targetNode.is_moving && changedBranch && this.BRANCH_META[changedBranch]) {
+        const changedEl = this.BRANCH_META[changedBranch].element;
+        if (this.ELEMENT_OVERCOMING[changedEl] === targetNode.element) {
+          riskBranch = changedBranch;
+          riskPrinciple = `Hào Động Biến Hồi Đầu Khắc (${changedBranch} ${changedEl} khắc ${targetNode.branch} ${targetNode.element})`;
+          riskMeaning = `Hào phát động biến thành chi khắc gốc. Giai đoạn ngày/tháng ${riskBranch} là thời điểm lực khắc phát tác mạnh nhất, tuyệt đối không nên vội vã manh động hay đầu tư mạo hiểm.`;
+        }
+      }
+
+      if (!riskBranch) {
+        const theMeta = this.BRANCH_META[theNode.branch] || bMeta;
+        riskBranch = theMeta.lucXung;
+        riskPrinciple = `Lục Xung Với Hào Thế (${theNode.branch} xung ${theMeta.lucXung})`;
+        riskMeaning = `Giai đoạn ngày/tháng ${riskBranch} đối xung với vị trí bản thân (Hào Thế ${theNode.branch}), tâm lý dễ xáo trộn bất an, hoàn cảnh phát sinh biến động ngoài dự kiến, cần giữ vững tâm thế.`;
+      }
 
       return {
-        timing_spectrum: resonanceResults,
         optimal_positive_timing: {
-          branch: topPositive.branch,
-          phase_amplitude: topPositive.resonance_amplitude,
-          meaning: `Giai đoạn địa chi ${topPositive.branch} (tương tác trực/hợp đạt mức thuận lợi cao, thích hợp để tiến hành công việc).`
+          branch: optBranch,
+          principle: optPrinciple,
+          time_window: `Giai đoạn ngày/tháng Chi ${optBranch} (hoặc giờ ${optBranch})`,
+          meaning: optMeaning,
+          action: "Thời cơ chín muồi, nên chủ động quyết đoán hành động, nắm bắt cơ hội."
         },
         critical_risk_timing: {
-          branch: topNegative.branch,
-          phase_amplitude: topNegative.resonance_amplitude,
-          meaning: `Giai đoạn địa chi ${topNegative.branch} (tương tác xung khắc đạt mức cao, cần thận trọng và duy trì ổn định).`
+          branch: riskBranch,
+          principle: riskPrinciple,
+          time_window: `Giai đoạn ngày/tháng Chi ${riskBranch} (hoặc giờ ${riskBranch})`,
+          meaning: riskMeaning,
+          action: "Nên án binh bất động, bảo toàn lực lượng, rà soát pháp lý hồ sơ, tránh đối đầu trực diện."
         }
       };
     }
@@ -2658,8 +2743,8 @@
       // 5. Đánh giá hàm hữu dụng U
       const utilityEval = MultiObjectiveIntentResolver.evaluateUtility(intentWeights, equilibriumNodes);
 
-      // 6. Tính Ứng kỳ giao thoa sóng điều hòa
-      const timingEval = HarmonicTimingEngine.calculateResonanceCurve(equilibriumNodes, intentWeights);
+      // 6. Tính Ứng kỳ Lục Hào cổ truyền (Dã Hạc Thần Khóa)
+      const timingEval = HarmonicTimingEngine.calculateResonanceCurve(equilibriumNodes, intentWeights, hexData, monthChi, dayChi);
 
       // 7. Nhất Quái Đa Đoán Lý Kế Trung
       const multiLensEngine = new NhatQuaiDaDoanEngine(hexData, diffusionResult, utilityEval);
@@ -2722,7 +2807,7 @@
       lines.push("\n" + "━".repeat(90));
       lines.push("I. ĐÁNH GIÁ TỔNG QUAN & KẾT LUẬN CHIÊM ĐOÁN");
       lines.push("━".repeat(90));
-      lines.push(`>>> PHÁN ĐOÁN: [${u.decision}] (Xác suất khả thi: ${Math.round((u.success_probability || 0.5) * 100)}% • Điểm hữu dụng E[U]: ${(u.total_utility !== undefined && u.total_utility > 0) ? '+' : ''}${(u.total_utility || 0).toFixed(2)})`);
+      lines.push(`>>> PHÁN ĐOÁN: [${u.decision}] (Khả năng thành tựu: ${Math.round((u.success_probability || 0.5) * 100)}% • Khí số: ${u.decision === 'ĐẠI CÁT' || u.decision === 'TRUNG CÁT' ? 'Thuận Lợi' : (u.decision === 'TIỂU CÁT' ? 'Bình Ổn' : 'Nhiều Trắc Trở')})`);
       const grad = u.the_vs_ung_gradient || 0.0;
       let viTheStr = "";
       if (grad > 2.0) viTheStr = "Đương số giữ thế chủ động, nắm quyền quyết định";
@@ -2789,15 +2874,37 @@
         lines.push(`- **🌟 ${sa.category}**: ${sa.content}\n`);
       });
 
-      // VII. BẢNG QUẺ & THÔNG SỐ CHI TIẾT
+      // VII. BẢNG QUẺ & THÔNG SỐ CHI TIẾT (BÀN QUẺ LỤC HÀO NẠP GIÁP)
       lines.push("━".repeat(90));
-      lines.push("VII. BẢNG QUẺ & THÔNG SỐ CHI TIẾT");
+      lines.push("VII. BẢNG QUẺ & THÔNG SỐ CHI TIẾT (BÀN QUẺ LỤC HÀO NẠP GIÁP)");
       lines.push("━".repeat(90));
+      lines.push(`- **Quẻ Gốc**: ${meta.hexagram_name.toUpperCase()} (Họ ${meta.palace})`);
+      lines.push(`- **Quẻ Biến**: ${meta.changed_hexagram_name ? meta.changed_hexagram_name.toUpperCase() : 'BẤT BIẾN (THUẦN TĨNH)'}`);
+      lines.push(`- **Nhật Nguyệt Can Chi**: Ngày ${tm.day_can} ${tm.day_chi}, Tháng ${tm.month_chi} | **Tuần Không**: [${(tm.tuan_khong || []).join(', ')}]`);
+      lines.push("");
+      lines.push("| Hào | Lục Thú | Phục Thần | Quẻ Gốc (Lục Thân & Can Chi) | Vạch Hào | Thế / Ứng | Động Biến | Quẻ Biến (Lục Thân & Can Chi) | Khí Vận Nhật Nguyệt | Thần Sát |");
+      lines.push("| :---: | :---: | :---: | :--- | :---: | :---: | :---: | :--- | :--- | :--- |");
+
       const reversedHaos = [...hd.haos].reverse();
       for (const h of reversedHaos) {
         const pos = h.position;
-        const theUng = h.is_the ? " [THẾ]" : (h.is_ung ? " [ỨNG]" : "");
-        let mov = "";
+        const theUng = h.is_the ? "**[THẾ]**" : (h.is_ung ? "**[ỨNG]**" : "-");
+
+        let yaoSymbol = "";
+        let yaoDongMark = "Tĩnh";
+        if (h.is_moving) {
+          if (h.bit === 1) {
+            yaoSymbol = "▅▅▅▅▅▅▅";
+            yaoDongMark = "○ Động hóa Âm";
+          } else {
+            yaoSymbol = "▅▅▅  ▅▅▅";
+            yaoDongMark = "✕ Động hóa Dương";
+          }
+        } else {
+          yaoSymbol = h.bit === 1 ? "▅▅▅▅▅▅▅" : "▅▅▅  ▅▅▅";
+        }
+
+        let bienStr = "-";
         if (h.is_moving) {
           const dyn = h.dynamics;
           const dynTags = [];
@@ -2811,30 +2918,40 @@
             if (dyn.hoa_khong) dynTags.push("Hóa Không");
             if (dyn.hoa_pha) dynTags.push("Hóa Phá");
           }
-          const dynStr = dynTags.length > 0 ? ` [${dynTags.join(', ')}]` : "";
-          mov = ` -> ĐỘNG hóa ${h.changed_branch} (${h.changed_luc_than})${dynStr}`;
+          const dynStr = dynTags.length > 0 ? ` (${dynTags.join(', ')})` : "";
+          bienStr = `${h.changed_luc_than} ${h.changed_branch}${dynStr}`;
+        }
+
+        let phucStr = "-";
+        const ptMatch = (m.phuc_than_analysis || []).find(p => p.position === pos);
+        if (ptMatch) {
+          phucStr = `${ptMatch.missing_luc_than} ${ptMatch.phi_branch}`;
         }
 
         const statusFlags = [];
         if (h.is_tuan_khong) statusFlags.push("Tuần Không");
         if (h.is_nguyet_pha) statusFlags.push("Nguyệt Phá");
         if (h.is_am_dong) statusFlags.push("Ám Động");
-        const flagsStr = statusFlags.length > 0 ? ` [${statusFlags.join(', ')}]` : "";
-
-        const starsList = h.stars || [];
-        const starsStr = starsList.length > 0 ? ` <${starsList.join(', ')}>` : "";
 
         const nodeState = g.nodes_state[pos - 1];
         const eVal = nodeState ? nodeState.equilibrium_energy : 0;
         let khiThe = "";
-        if (eVal >= 5.0) khiThe = "[CỰC VƯỢNG]";
-        else if (eVal >= 2.0) khiThe = "[VƯỢNG TƯỚNG]";
-        else if (eVal >= -1.0) khiThe = "[BÌNH HÒA]";
-        else if (eVal >= -4.5) khiThe = "[ÂM SUY]";
-        else khiThe = "[TRIỆT TIÊU]";
+        if (eVal >= 4.0) khiThe = "Vượng Tướng";
+        else if (eVal >= 1.5) khiThe = "Đắc Sinh";
+        else if (eVal >= -1.5) khiThe = "Bình Hòa";
+        else if (eVal >= -4.0) khiThe = "Hưu Tù";
+        else khiThe = "Bị Khắc";
 
-        lines.push(`Hào ${pos}: ${h.luc_thu.padEnd(10, ' ')} | ${h.luc_than.padEnd(8, ' ')} ${h.can}-${h.branch} (${h.element})${theUng}${starsStr}${flagsStr}${mov} | ${khiThe}`);
+        if (statusFlags.length > 0) {
+          khiThe += ` (${statusFlags.join(', ')})`;
+        }
+
+        const starsList = h.stars || [];
+        const starsStr = starsList.length > 0 ? starsList.join(', ') : "-";
+
+        lines.push(`| Hào ${pos} | ${h.luc_thu} | ${phucStr} | ${h.luc_than} ${h.can}-${h.branch} (${h.element}) | \`${yaoSymbol}\` | ${theUng} | ${yaoDongMark} | ${bienStr} | ${khiThe} | ${starsStr} |`);
       }
+      lines.push("");
 
       // Thông tin Phục Thần
       const actionablePhuc = m.phuc_than_analysis || [];

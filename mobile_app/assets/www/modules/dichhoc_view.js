@@ -678,7 +678,7 @@
     `;
   }
 
-  // Định thời điểm ứng kỳ (Harmonic Timing)
+  // Định thời điểm ứng kỳ chuẩn Lục Hào Dã Hạc
   function renderHarmonicTimingCard(timing) {
     if (!timing) return '';
     const opt = timing.optimal_positive_timing;
@@ -687,33 +687,37 @@
     return `
       <div class="dh-timing-card">
         <div class="dh-timing-title">
-          <span>⏳</span> ĐỊNH THỜI ĐIỂM ỨNG KỲ (HARMONIC TIMING ENGINE)
+          <span>⏳</span> ĐỊNH THỜI ĐIỂM ỨNG KỲ (THEO PHÉP ỨNG KỲ DÃ HẠC LỤC HÀO)
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:8px;">
           ${opt ? `
             <div class="dh-eval-card" style="background:rgba(16,185,129,0.07); border-color:rgba(16,185,129,0.3);">
-              <div style="font-weight:700; color:#10b981; margin-bottom:3px;">
+              <div style="font-weight:700; color:#10b981; margin-bottom:4px; font-size:0.82rem;">
                 🌟 Thời Điểm Hanh Thông / Đắc Lực Nhất:
               </div>
-              <div style="font-size:0.76rem; color:var(--text-color);">
-                Chi <strong>${opt.branch}</strong> • Góc pha: ${Math.round(opt.angle_deg)}° • Điểm cộng hưởng: <strong>+${(opt.resonance_score || 0).toFixed(1)}</strong>
+              <div style="font-size:0.78rem; color:var(--text-color); margin-bottom:3px;">
+                Địa Chi: <strong>${opt.branch}</strong> ${opt.principle ? `• Nguyên lý: <em>${opt.principle}</em>` : ''}
               </div>
-              <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
+              ${opt.time_window ? `<div style="font-size:0.74rem; color:var(--gold-primary); font-weight:600; margin-bottom:3px;">📅 ${opt.time_window}</div>` : ''}
+              <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.55; text-align:justify;">
                 ${escapeReportHtml(opt.meaning || '')}
               </div>
+              ${opt.action ? `<div style="font-size:0.73rem; color:#10b981; margin-top:4px; font-weight:600;">👉 ${opt.action}</div>` : ''}
             </div>
           ` : ''}
           ${risk ? `
             <div class="dh-eval-card" style="background:rgba(239,68,68,0.07); border-color:rgba(239,68,68,0.3);">
-              <div style="font-weight:700; color:#ef4444; margin-bottom:3px;">
+              <div style="font-weight:700; color:#ef4444; margin-bottom:4px; font-size:0.82rem;">
                 ⚠️ Thời Điểm Rủi Ro / Cần Phòng Tránh:
               </div>
-              <div style="font-size:0.76rem; color:var(--text-color);">
-                Chi <strong>${risk.branch}</strong> • Góc pha: ${Math.round(risk.angle_deg)}° • Điểm xung đột: <strong>-${(risk.risk_score || 0).toFixed(1)}</strong>
+              <div style="font-size:0.78rem; color:var(--text-color); margin-bottom:3px;">
+                Địa Chi: <strong>${risk.branch}</strong> ${risk.principle ? `• Nguyên lý: <em>${risk.principle}</em>` : ''}
               </div>
-              <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
+              ${risk.time_window ? `<div style="font-size:0.74rem; color:#f87171; font-weight:600; margin-bottom:3px;">📅 ${risk.time_window}</div>` : ''}
+              <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.55; text-align:justify;">
                 ${escapeReportHtml(risk.meaning || '')}
               </div>
+              ${risk.action ? `<div style="font-size:0.73rem; color:#ef4444; margin-top:4px; font-weight:600;">👉 ${risk.action}</div>` : ''}
             </div>
           ` : ''}
         </div>
@@ -758,7 +762,7 @@
     `;
   }
 
-  // Sự vụ trọng tâm & phân tích đa mục tiêu
+  // Sự vụ trọng tâm & tương quan Thế - Ứng
   function renderMultiObjectiveCard(intentUtility, hexDetails) {
     if (!intentUtility) return '';
     const objs = intentUtility.objectives || {};
@@ -769,24 +773,25 @@
       <div class="dh-eval-card highlight" style="margin-bottom:12px;">
         <div class="dh-card-title">🎯 Sự Vụ Trọng Tâm & Tương Quan Thế - Ứng:</div>
         <div style="font-size:0.78rem; line-height:1.6; margin-bottom:8px;">
-          • <strong>Hào Thế (Bản thân / Phía mình):</strong> Hào ${hexDetails?.the_position} (${theHao ? `${theHao.luc_than} ${theHao.can}-${theHao.branch} • Hành ${theHao.element}` : '-'}) • Điểm năng lượng: <strong>${theHao ? (theHao.energy > 0 ? '+' : '') + theHao.energy.toFixed(1) : '0'} (${theHao?.spectrum || 'Bình'})</strong>
-          <br>• <strong>Hào Ứng (Đối tác / Đối tượng):</strong> Hào ${hexDetails?.ung_position} (${ungHao ? `${ungHao.luc_than} ${ungHao.can}-${ungHao.branch} • Hành ${ungHao.element}` : '-'}) • Điểm năng lượng: <strong>${ungHao ? (ungHao.energy > 0 ? '+' : '') + ungHao.energy.toFixed(1) : '0'} (${ungHao?.spectrum || 'Bình'})</strong>
+          • <strong>Hào Thế (Bản thân / Phía mình):</strong> Hào ${hexDetails?.the_position} (${theHao ? `${theHao.luc_than} ${theHao.can}-${theHao.branch} • Hành ${theHao.element}` : '-'}) • Khí vận: <strong>${theHao?.spectrum || 'Bình hòa'}</strong>
+          <br>• <strong>Hào Ứng (Đối tác / Hoàn cảnh):</strong> Hào ${hexDetails?.ung_position} (${ungHao ? `${ungHao.luc_than} ${ungHao.can}-${ungHao.branch} • Hành ${ungHao.element}` : '-'}) • Khí vận: <strong>${ungHao?.spectrum || 'Bình hòa'}</strong>
         </div>
         <div style="font-size:0.75rem; font-weight:700; color:var(--gold-glow); margin-bottom:4px;">
-          📊 Phân Tích Đa Mục Tiêu & Kỳ Vọng Hữu Dụng E[U]:
+          📊 Đánh Giá Đa Chiều Các Mặt Sự Vụ (Theo Lục Thân Bát Quái):
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:6px;">
           ${Object.keys(objs).map(k => {
             const o = objs[k];
             const isCat = o.state === 'CAT_VUONG';
             const isHung = o.state === 'CANH_BAO_RUI_RO';
+            const stateLabel = isCat ? 'Cát Lợi / Thuận' : (isHung ? 'Cần Thận Trọng' : 'Bình Hòa');
             return `
               <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(245,176,65,0.18); border-radius:6px; padding:6px 8px; font-size:0.72rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
                   <strong>${escapeReportHtml(o.target_name || k)}</strong>
-                  <span class="dh-badge-pill ${isCat ? 'pill-cat' : (isHung ? 'pill-hung' : 'pill-neutral')}">${escapeReportHtml(o.state || '')}</span>
+                  <span class="dh-badge-pill ${isCat ? 'pill-cat' : (isHung ? 'pill-hung' : 'pill-neutral')}">${stateLabel}</span>
                 </div>
-                <div>Trọng số: ${Math.round((o.weight || 0) * 100)}% • Hữu dụng: <strong>${(o.weighted_utility || 0).toFixed(2)}</strong></div>
+                <div>Tầm quan trọng: ${Math.round((o.weight || 0) * 100)}% • Trạng thái: <strong>${escapeReportHtml(o.state || 'Bình')}</strong></div>
               </div>
             `;
           }).join('')}
@@ -938,7 +943,7 @@
           <div>
             <span style="font-size:0.92rem; font-weight:800;">⚖️ PHÁN QUYẾT: ${escapeReportHtml(decisionText)}</span>
             <div style="font-size:0.75rem; opacity:0.92; margin-top:3px;">
-              Trọng tâm: <strong>${escapeReportHtml(primaryDomain)}</strong> • Kỳ vọng hữu dụng: <strong>${expectedUtilityText}</strong> • Xác suất khả thi: <strong>${probText}</strong>
+              Trọng tâm: <strong>${escapeReportHtml(primaryDomain)}</strong> • Khí số: <strong>${escapeReportHtml(decisionText)}</strong> • Khả năng thành tựu: <strong>${probText}</strong>
             </div>
           </div>
           <div style="font-size:0.76rem; text-align:right;">
@@ -1452,12 +1457,10 @@
       const line = rawLine.trim();
       if (!line) continue;
 
-      // Bỏ qua triệt để các dòng rác code block, bảng thô hay đường kẻ sót lại
+      // Bỏ qua triệt để các dòng rác code block hay đường kẻ sót lại
       if (line.startsWith('```') || line.match(/^[=\-~_━═─]{3,}$/)) continue;
       if (line.includes('[HẾT BÁO CÁO DỰ ĐOÁN LỤC HÀO 2.0]')) continue;
       if (line.match(/^QUẺ CHÍNH:.*QUẺ BIẾN:/i)) continue;
-      if (line.match(/^Hào\s+[1-6]:\s*\[/i) && (line.includes('(') || line.includes('|'))) continue;
-      if (line.match(/\|\s*Hào\s+[1-6]:/i)) continue;
 
       // Nhận diện tiêu đề chuyên mục: "I. ...", "II. ...", "## I. ...", "## 1. ..."
       const match = line.match(secHeaderRegex);
@@ -1485,20 +1488,71 @@
   }
 
   // Render các dòng nội dung bên trong một chuyên mục
+  // Render các dòng nội dung bên trong một chuyên mục
   function renderReportSectionLines(lines) {
     let out = '';
-    for (let rawLine of lines) {
+    let i = 0;
+    while (i < lines.length) {
+      const rawLine = lines[i];
       const l = rawLine.trim();
-      if (!l) continue;
+      if (!l) {
+        i++;
+        continue;
+      }
 
       // Loại bỏ hoàn toàn các ký tự vẽ khung ASCII thô (+-----+ hoặc +====+)
       if (/^\+[=+\-\|]+\+$/.test(l)) {
+        i++;
         continue;
       }
 
       // Loại bỏ các dòng bảng rỗng (|   |   |)
       if (/^\|[\s\|]+$/.test(l)) {
+        i++;
         continue;
+      }
+
+      // 00. Nhận diện khối Bảng Markdown (| ... | ... |)
+      if (l.startsWith('|') && l.endsWith('|') && l.includes('|')) {
+        const tableLines = [];
+        while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+          tableLines.push(lines[i].trim());
+          i++;
+        }
+
+        if (tableLines.length >= 2) {
+          const headerCells = tableLines[0].split('|').slice(1, -1).map(c => c.trim());
+          let startRow = 1;
+          if (tableLines.length > 1 && tableLines[1].match(/^\|[\s:\-\|]+$/)) {
+            startRow = 2;
+          }
+
+          const bodyRows = [];
+          for (let r = startRow; r < tableLines.length; r++) {
+            const cells = tableLines[r].split('|').slice(1, -1).map(c => c.trim());
+            bodyRows.push(cells);
+          }
+
+          out += `
+            <div class="dh-table-scroll" style="margin: 14px 0; border: 1px solid rgba(245,176,65,0.25); border-radius: 8px; overflow-x: auto; background: rgba(0,0,0,0.25);">
+              <table class="dh-spec-table" style="width: 100%; border-collapse: collapse; min-width: 650px;">
+                <thead>
+                  <tr class="th-cols-row">
+                    ${headerCells.map(h => `<th style="padding: 9px 8px; font-size: 0.72rem; text-align: center; background: rgba(245,176,65,0.18); color: var(--gold-primary); font-weight: 700; white-space: nowrap;">${formatInlineMarkup(h)}</th>`).join('')}
+                  </tr>
+                </thead>
+                <tbody>
+                  ${bodyRows.map(row => `
+                    <tr class="dh-row" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                      ${row.map(cell => `<td style="padding: 8px 6px; font-size: 0.73rem; text-align: center; white-space: nowrap;">${formatInlineMarkup(cell)}</td>`).join('')}
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+          continue;
+        }
       }
 
       // Chuyển hóa thanh tiến trình ASCII dạng [Mục] ====> 52/100 thành badge chuẩn
@@ -1507,6 +1561,7 @@
         const name = mScore[1].replace(/[\[\]]/g, '').trim();
         const val = mScore[2].trim();
         out += `<div class="neta-score-bar-line"><span class="neta-score-name">${formatInlineMarkup(name)}</span><span class="neta-score-val">${formatInlineMarkup(val)}</span></div>`;
+        i++;
         continue;
       }
 
@@ -1519,6 +1574,7 @@
             <span class="subhead-text">${formatInlineMarkup(subTitle)}</span>
           </div>
         `;
+        i++;
         continue;
       }
 
@@ -1531,6 +1587,7 @@
             <span class="subhead-text">${formatInlineMarkup(subSubTitle)}</span>
           </div>
         `;
+        i++;
         continue;
       }
 
@@ -1551,6 +1608,7 @@
               ${scorePd ? `<div class="dh-verdict-score"><strong>${escapeReportHtml(scorePd)}</strong></div>` : ''}
             </div>
           `;
+          i++;
           continue;
         }
       }
@@ -1564,6 +1622,7 @@
             <span class="dh-stance-val">${escapeReportHtml(viTheText)}</span>
           </div>
         `;
+        i++;
         continue;
       }
 
@@ -1571,6 +1630,7 @@
       if (l.startsWith('>')) {
         const cleanQuote = l.replace(/^>\s*/, '');
         out += `<div class="dh-report-callout">${formatInlineMarkup(cleanQuote)}</div>`;
+        i++;
         continue;
       }
 
@@ -1583,6 +1643,7 @@
             <div class="dh-row-content">${formatInlineMarkup(cleanText)}</div>
           </div>
         `;
+        i++;
         continue;
       }
 
@@ -1595,6 +1656,7 @@
             <span class="dh-subhead-text">${formatInlineMarkup(numMatch[2])}</span>
           </div>
         `;
+        i++;
         continue;
       }
 
@@ -1613,11 +1675,13 @@
             <div class="dh-row-content">${formatInlineMarkup(cleanText)}</div>
           </div>
         `;
+        i++;
         continue;
       }
 
       // 6. Đoạn văn xuôi thông thường
       out += `<p class="dh-report-para">${formatInlineMarkup(l)}</p>`;
+      i++;
     }
     return out;
   }
@@ -1657,8 +1721,11 @@
       return `<span class="dh-badge-pill pill-neutral">[${p1}]</span>`;
     });
 
-    // Mũi tên chuyển hóa
-    s = s.replace(/(?:-&gt;|&gt;|&rarr;|➔|->)/g, '<span class="dh-arrow">➔</span>');
+    // Inline code `text`
+    s = s.replace(/`([^`]+)`/g, '<code style="font-family:monospace; font-size:0.92rem; font-weight:700; color:var(--gold-glow); padding:1px 4px; background:rgba(245,176,65,0.12); border-radius:3px;">$1</code>');
+
+    // Mũi tên chuyển hóa (loại bỏ &gt; đơn lẻ để tránh làm hỏng thẻ <...>)
+    s = s.replace(/(?:-&gt;|&rarr;|➔|->)/g, '<span class="dh-arrow">➔</span>');
 
     return s;
   }
@@ -1758,11 +1825,22 @@
     }
   }
 
-  // Gieo 1 hào ngẫu nhiên
+  // Bộ sinh số ngẫu nhiên phần cứng CSPRNG (Web Cryptography API)
+  function getSecureRandomCoin() {
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+      const buf = new Uint32Array(1);
+      window.crypto.getRandomValues(buf);
+      return (buf[0] % 2 === 0) ? 2 : 3;
+    }
+    return Math.random() < 0.5 ? 2 : 3;
+  }
+
+  // Gieo 1 hào ngẫu nhiên (bảo chứng độc lập CSPRNG)
   function gieoMotHao() {
     if (state.lucHao.isFlipping) return;
     if (state.lucHao.coins.length === 0) {
       resetDichHocAiState();
+      state.lucHao.coinHistory = [];
     }
     if (state.lucHao.coins.length >= 6) {
       if (global.showToast) global.showToast('✅ Đã gieo đủ 6 hào. Bấm "Gieo Lại Từ Đầu" nếu muốn bốc quẻ mới.');
@@ -1773,9 +1851,9 @@
     triggerHaptic(30);
     playCoinAudio('shake');
 
-    const c1 = Math.random() < 0.5 ? 2 : 3;
-    const c2 = Math.random() < 0.5 ? 2 : 3;
-    const c3 = Math.random() < 0.5 ? 2 : 3;
+    const c1 = getSecureRandomCoin();
+    const c2 = getSecureRandomCoin();
+    const c3 = getSecureRandomCoin();
 
     state.lucHao.coinStates = [c1, c2, c3];
     state.lucHao.coinAngles = [
@@ -1790,6 +1868,24 @@
       state.lucHao.isFlipping = false;
       const total = c1 + c2 + c3;
       state.lucHao.coins.push(total);
+
+      if (!state.lucHao.coinHistory) state.lucHao.coinHistory = [];
+      const curIdx = state.lucHao.coins.length;
+      let sym = '';
+      let lbl = '';
+      if (total === 6) { sym = '▅▅▅  ▅▅▅ ✕'; lbl = 'Lão Âm (Âm Động biến Dương)'; }
+      else if (total === 7) { sym = '▅▅▅▅▅▅▅'; lbl = 'Thiếu Dương (Dương Tĩnh)'; }
+      else if (total === 8) { sym = '▅▅▅  ▅▅▅'; lbl = 'Thiếu Âm (Âm Tĩnh)'; }
+      else { sym = '▅▅▅▅▅▅▅ ○'; lbl = 'Lão Dương (Dương Động biến Âm)'; }
+
+      state.lucHao.coinHistory.push({
+        haoIndex: curIdx,
+        coins: [c1, c2, c3],
+        total,
+        symbol: sym,
+        label: lbl
+      });
+
       triggerHaptic(20);
       playCoinAudio('clink');
 
@@ -1801,21 +1897,39 @@
     }, 550);
   }
 
-  // Gieo nhanh 6 hào
+  // Gieo nhanh 6 hào (CSPRNG độc lập 100%)
   function gieoTuDong6Hao() {
     resetDichHocAiState();
     state.lucHao.coins = [];
+    state.lucHao.coinHistory = [];
+
     for (let i = 0; i < 6; i++) {
-      const c1 = Math.random() < 0.5 ? 2 : 3;
-      const c2 = Math.random() < 0.5 ? 2 : 3;
-      const c3 = Math.random() < 0.5 ? 2 : 3;
-      state.lucHao.coins.push(c1 + c2 + c3);
+      const c1 = getSecureRandomCoin();
+      const c2 = getSecureRandomCoin();
+      const c3 = getSecureRandomCoin();
+      const total = c1 + c2 + c3;
+      state.lucHao.coins.push(total);
+
+      let sym = '';
+      let lbl = '';
+      if (total === 6) { sym = '▅▅▅  ▅▅▅ ✕'; lbl = 'Lão Âm (Âm Động biến Dương)'; }
+      else if (total === 7) { sym = '▅▅▅▅▅▅▅'; lbl = 'Thiếu Dương (Dương Tĩnh)'; }
+      else if (total === 8) { sym = '▅▅▅  ▅▅▅'; lbl = 'Thiếu Âm (Âm Tĩnh)'; }
+      else { sym = '▅▅▅▅▅▅▅ ○'; lbl = 'Lão Dương (Dương Động biến Âm)'; }
+
+      state.lucHao.coinHistory.push({
+        haoIndex: i + 1,
+        coins: [c1, c2, c3],
+        total,
+        symbol: sym,
+        label: lbl
+      });
     }
-    state.lucHao.coinStates = [
-      Math.random() < 0.5 ? 2 : 3,
-      Math.random() < 0.5 ? 2 : 3,
-      Math.random() < 0.5 ? 2 : 3
-    ];
+
+    if (state.lucHao.coinHistory.length > 0) {
+      const lastCoins = state.lucHao.coinHistory[5].coins;
+      state.lucHao.coinStates = [lastCoins[0], lastCoins[1], lastCoins[2]];
+    }
     chayLapQueLucHao();
     playCoinAudio('done');
     triggerHaptic(40);
@@ -1825,6 +1939,7 @@
   // Đặt lại Lục Hào
   function resetCastingLucHao() {
     state.lucHao.coins = [];
+    state.lucHao.coinHistory = [];
     state.lucHao.result = null;
     state.interpretation = null;
     resetDichHocAiState();
