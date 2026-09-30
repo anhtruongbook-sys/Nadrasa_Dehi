@@ -1785,7 +1785,9 @@
     synthesize(meta, hexData, intentEval, graphData, timingData, multiLens) {
       const question = (meta.question || "").trim();
       const domainType = MultiObjectiveIntentResolver.detectDomain(question);
+      intentEval.domain_type = domainType;
 
+      const directAnswer = this.buildDirectQuestionAnswer(meta, hexData, intentEval, graphData, multiLens, timingData);
       const overviewText = this.buildOverview(meta, hexData, intentEval, graphData);
       const groundTruth = GroundTruthVerificationEngine.verifyGroundTruth(hexData, graphData);
       const brightPoints = this.buildBrightPoints(hexData, graphData, multiLens);
@@ -1795,12 +1797,173 @@
 
       return {
         domain_type: domainType,
+        direct_answer: directAnswer,
         section_1_overview: overviewText,
         section_2_verification: groundTruth,
         section_3_bright_points: brightPoints,
         section_4_dark_points: darkPoints,
         section_5_domain_deep_dive: domainDeepDive,
         section_6_strategic_advice: strategicAdvice
+      };
+    },
+
+    buildDirectQuestionAnswer(meta, hexData, intentEval, graphData, multiLens, timingData) {
+      const q = (meta.question || "").trim();
+      const domainType = intentEval.domain_type || MultiObjectiveIntentResolver.detectDomain(q);
+      const prob = intentEval.success_probability !== undefined ? intentEval.success_probability : 0.5;
+      const uScore = intentEval.total_utility !== undefined ? intentEval.total_utility : 0.0;
+      const theHao = hexData.haos.find(h => h.is_the) || hexData.haos[0];
+      const ungHao = hexData.haos.find(h => h.is_ung) || hexData.haos[3];
+      const posTiming = timingData.optimal_positive_timing || { branch: "Thân", meaning: "Thời điểm thuận lợi" };
+      const negTiming = timingData.critical_risk_timing || { branch: "Dần", meaning: "Thời điểm rủi ro" };
+
+      // 1. Phán đoán trực diện câu hỏi chiêm đoán (Direct Answer)
+      let directVerdict = "";
+      switch (domainType) {
+        case "TAI_CHINH_DAU_TU":
+          if (prob >= 0.65) directVerdict = "Về việc đầu tư / cầu tài: **NÊN TRIỂN KHAI**. Bàn quẻ cho thấy dòng tiền có triển vọng sinh lời thực chất, nguồn vốn luân chuyển thông suốt và mục tiêu tài chính đạt được như kỳ vọng.";
+          else if (prob >= 0.40) directVerdict = "Về việc đầu tư / cầu tài: **NÊN THẬN TRỌNG, CHỈ NÊN THĂM DÒ TỪNG PHẦN**. Dòng tiền đang ở thế giằng co, chi phí phát sinh có thể làm suy giảm biên lợi nhuận, chưa phải thời điểm giải ngân ồ ạt.";
+          else directVerdict = "Về việc đầu tư / cầu tài: **KHÔNG NÊN ĐẦU TƯ LỚN HOẶC MỞ RỘNG QUY MÔ LÚC NÀY**. Nguy cơ hao tổn vốn liếng, dòng tiền dễ bị ứ đọng hoặc bị đối tác chiếm dụng; ưu tiên giữ tiền mặt và bảo toàn thanh khoản.";
+          break;
+
+        case "BAT_DONG_SAN_DAT_DAI":
+          if (prob >= 0.65) directVerdict = "Về giao dịch bất động sản / nhà đất: **GIAO DỊCH THUẬN LỢI, CÓ THỂ TIẾN HÀNH**. Đất đai / nhà ở trường khí ổn định, pháp lý minh bạch và giá trị giao dịch đạt được mức mong muốn.";
+          else if (prob >= 0.40) directVerdict = "Về giao dịch bất động sản / nhà đất: **TIẾN TRÌNH CÒN CHẬM, CẦN RÀ SOÁT KỸ HỒ SƠ PHÁP LÝ**. Có sự giằng co về giá cả hoặc thủ tục giấy tờ cần thời gian bổ sung, nên kiên nhẫn đàm phán thêm.";
+          else directVerdict = "Về giao dịch bất động sản / nhà đất: **CHƯA NÊN CHỐT GIAO DỊCH HOẶC XUẤT TIỀN ĐẶT CỌC**. Quẻ báo hiệu rủi ro về quy hoạch, tranh chấp ranh giới hoặc tính thanh khoản kém, dễ bị chôn vốn lâu dài.";
+          break;
+
+        case "CONG_DANH_SU_NGHIEP":
+          if (prob >= 0.65) directVerdict = "Về công việc / thăng chức / chuyển việc: **KẾT QUẢ RẤT KHẢ QUAN, NÊN TỰ TIN ỨNG TUYỂN HOẶC NHẬN NHIỆM VỤ MỚI**. Uy tín và năng lực chuyên môn được cấp trên ghi nhận, mở ra cơ hội phát triển bền vững.";
+          else if (prob >= 0.40) directVerdict = "Về công việc / cơ hội nghề nghiệp: **CƠ HỘI ĐANG TRONG GIAI ĐOẠN CÂN NHẮC, NÊN GIỮ VỊ TRÍ ỔN ĐỊNH VÀ BỒI ĐẮP NĂNG LỰC**. Tránh thay đổi vội vàng khi chưa nắm chắc điều khoản và môi trường mới.";
+          else directVerdict = "Về công việc / sự nghiệp: **CHƯA PHẢI THỜI ĐIỂM THÍCH HỢP ĐỂ CHUYỂN ĐỔI HOẶC ĐÒI HỎI QUYỀN LỢI**. Môi trường đang có áp lực lớn, có thể gặp đối thủ cạnh tranh hoặc bất đồng quan điểm với cấp trên, nên nhẫn nại phòng thủ.";
+          break;
+
+        case "THI_CU_HOC_VAN":
+          if (prob >= 0.65) directVerdict = "Về thi cử / học vấn / bảo vệ đề án: **KẾT QUẢ ĐẠT ĐƯỢC NHƯ Ý NGUYỆN, DỄ ĐẠT ĐIỂM CAO HOẶC TRÚNG TUYỂN**. Văn tinh trợ lực, kiến thức chuẩn bị chu đáo và nhận được sự đánh giá tích cực từ hội đồng.";
+          else if (prob >= 0.40) directVerdict = "Về thi cử / học vấn: **KẾT QUẢ Ở MỨC AN TOÀN, ĐẠT YÊU CẦU NHƯNG CẦN TẬP TRUNG CAO ĐỘ**. Đề phòng tâm lý chủ quan hoặc sai sót nhỏ do không rà soát kỹ yêu cầu của hội đồng/đề tài.";
+          else directVerdict = "Về thi cử / học vấn: **KẾT QUẢ CHƯA ĐẠT KỲ VỌNG HOẶC GẶP TRỞ LỰC VỀ THỦ TỤC**. Cần rà soát kỹ lưỡng kiến thức, chuẩn bị hồ sơ chỉn chu và chuẩn bị sẵn phương án thi lại/bảo vệ lại.";
+          break;
+
+        case "PHAP_LY_TRANH_CHAP":
+          if (prob >= 0.65) directVerdict = "Về tranh chấp / pháp lý: **CƠ SỞ PHÁP LÝ NGHIÊNG VỀ PHÍA ĐƯƠNG SỐ, KHẢ NĂNG THẮNG KIỆN HOẶC HÒA GIẢI CÓ LỢI RẤT CAO**. Chứng cứ rõ ràng, đối phương có xu hướng thoái lui.";
+          else if (prob >= 0.40) directVerdict = "Về tranh chấp / pháp lý: **NÊN ƯU TIÊN THƯƠNG LƯỢNG HÒA GIẢI NGOÀI TÒA ÁN**. Vụ việc có tính chất kéo dài, chi phí tốn kém và kết quả khó tạo ưu thế tuyệt đối cho bên nào.";
+          else directVerdict = "Về tranh chấp / pháp lý: **BẤT LỢI CHO ĐƯƠNG SỐ, NÊN TÌM CÁCH RÚT LUI HOẶC THỎA HIỆP ĐỂ TRÁNH THIỆT HẠI NẶNG HƠN**. Nguy cơ vướng vào rắc rối tố tụng dai dẳng hoặc bị xử phạt hành chính.";
+          break;
+
+        case "HON_NHAN_TINH_CAM":
+          if (prob >= 0.65) directVerdict = "Về tình duyên / hôn nhân: **MỐI QUAN HỆ HÒA HỢP, TIẾN TRIỂN TỐT ĐẸP VÀ CÓ HỶ TÍN**. Đôi bên thấu hiểu, tôn trọng và có sự gắn kết bền chặt, thích hợp cho việc bàn tính chuyện trăm năm.";
+          else if (prob >= 0.40) directVerdict = "Về tình duyên / hôn nhân: **CẦN SỰ CHIA SẺ VÀ LẮNG NGHE ĐỂ GIẢI TỎA HIỂU LẦM**. Mối quan hệ có sự so đo hoặc tác động từ bên ngoài, chớ nên nóng giận làm tổn thương nhau.";
+          else directVerdict = "Về tình duyên / hôn nhân: **CẢNH BÁO RẠN NỨT HOẶC MÂU THUẪN ĐỐI ĐẦU GAY GẮT**. Đôi bên thiếu sự tin tưởng, dễ có sự can thiệp từ người thứ ba hoặc khác biệt khó dung hòa, cần bình tĩnh xem xét lại.";
+          break;
+
+        case "THAI_SAN_SINH_NO":
+          if (prob >= 0.65) directVerdict = "Về thai sản / sinh nở: **MẸ TRÒN CON VUÔNG, THAI KHÍ VỮNG VÀNG AN LÀNH**. Con cái khỏe mạnh, sinh nở thuận buồm xuôi gió.";
+          else if (prob >= 0.40) directVerdict = "Về thai sản / sinh nở: **THAI KỲ CẦN CHÚ Ý NGHỈ NGƠI VÀ THEO DÕI ĐỊNH KỲ**. Đề phòng mệt mỏi thể chất, nên tuân thủ chỉ dẫn dinh dưỡng và khám thai đúng hẹn.";
+          else directVerdict = "Về thai sản / sinh nở: **CẦN ĐẶC BIỆT CẨN TRỌNG, TUÂN THỦ NGHIÊM NGẶT HƯỚNG DẪN CỦA BÁC SĨ SẢN KHOA**. Tránh vận động mạnh, theo dõi sát các dấu hiệu bất thường để xử lý kịp thời.";
+          break;
+
+        case "SUC_KHOE_BENH_TAT":
+          if (prob >= 0.65) directVerdict = "Về sức khỏe / điều trị bệnh: **BỆNH TÌNH CÓ CHUYỂN BIẾN RẤT TÍCH CỰC, NHANH CHÓNG PHỤC HỒI**. Gặp thầy gặp thuốc, thể trạng cải thiện rõ rệt từng ngày.";
+          else if (prob >= 0.40) directVerdict = "Về sức khỏe / bệnh tật: **BỆNH DẠNG MÃN TÍNH CẦN THỜI GIAN ĐIỀU DƯỠNG KIÊN TRÌ**. Không nên nôn nóng hoặc tự ý đổi thuốc, cần duy trì lối sống lành mạnh.";
+          else directVerdict = "Về sức khỏe / bệnh tật: **TÌNH TRẠNG CƠ THỂ ĐANG CẢNH BÁO, CẦN ĐI KHÁM CHUYÊN SÂU NGAY LẬP TỨC**. Tránh chủ quan với các triệu chứng đau nhức hoặc sốt kéo dài.";
+          break;
+
+        case "PHONG_THUY_GIA_TRACH":
+          if (prob >= 0.65) directVerdict = "Về phong thủy gia trạch / nơi ở: **ĐẤT LÀNH CHIM ĐẬU, TRƯỜNG KHÍ GIA ĐẠO AN KHANG TỤ KHÍ**. Môi trường sống hòa hợp giúp gia chủ an tâm làm ăn và giữ gìn hòa khí.";
+          else if (prob >= 0.40) directVerdict = "Về phong thủy nơi ở: **CÓ MỘT VÀI ĐIỂM BẤT CẬP NHỎ CẦN SẮP XẾP LẠI**. Nên dọn dẹp các khu vực bừa bộn hoặc tối tăm (bếp, chân cầu thang) để kích hoạt sinh khí.";
+          else directVerdict = "Về phong thủy nơi ở: **GIA TRẠCH BỊ XUNG SÁT HOẶC CÓ ĐIỂM NGHẼN KHÍ NẶNG NỀ**. Cần xem xét cải tạo lại hướng bếp, lối vào hoặc khắc phục hiện tượng thấm dột ẩm mốc.";
+          break;
+
+        case "XUAT_HANH_GIAO_THONG":
+          if (prob >= 0.65) directVerdict = "Về chuyến đi / xuất hành: **CHUYẾN ĐI HANH THÔNG, THƯỢNG LỘ BÌNH AN VÀ ĐẠT ĐƯỢC MỤC ĐÍCH**. Lịch trình suôn sẻ, nơi đến đón tiếp thuận lợi.";
+          else if (prob >= 0.40) directVerdict = "Về chuyến đi / di chuyển: **LỊCH TRÌNH CÓ THỂ PHÁT SINH THAY ĐỔI HOẶC CHẬM TRỄ NHẸ**. Cần kiểm tra kỹ giấy tờ, phương tiện và dự trù thời gian đi lại.";
+          else directVerdict = "Về chuyến đi / xuất hành: **NÊN CÂN NHẮC HOÃN LỊCH TRÌNH NẾU KHÔNG THẬT SỰ CẤP BÁCH**. Đề phòng thời tiết xấu, trục trặc xe cộ hoặc giấy tờ bị vướng mắc.";
+          break;
+
+        case "TIM_NGUOI_TIM_VAT":
+          if (prob >= 0.65) directVerdict = "Về việc tìm đồ / tìm người: **KHẢ NĂNG TÌM LẠI ĐƯỢC RẤT CAO, VẬT / NGƯỜI CHƯA ĐI XA**. Tập trung tìm kiếm theo hướng và vị trí hào Dụng Thần chỉ dẫn sẽ có kết quả.";
+          else if (prob >= 0.40) directVerdict = "Về việc tìm kiếm: **TÌM ĐƯỢC NHƯNG CẦN THỜI GIAN VÀ SỰ KIÊN TRÌ HỎI THĂM**. Có thể bị vật khác che khuất hoặc người cần tìm đang ở nơi kín đáo.";
+          else directVerdict = "Về việc tìm kiếm: **RẤT KHÓ TÌM LẠI HOẶC ĐÃ THẤT LẠC XA**. Cần nhờ cậy lực lượng chức năng hoặc mở rộng tối đa phạm vi tìm kiếm.";
+          break;
+
+        default: // CHIEM_VAN_TONG_QUAN
+          if (prob >= 0.65) directVerdict = "Về thời vận tổng quan: **VẬN THẾ ĐANG TRONG KỲ KHỞI SẮC, VẠN SỰ HANH THÔNG**. Thích hợp triển khai các dự định ấp ủ, nắm bắt thời cơ để bứt phá.";
+          else if (prob >= 0.40) directVerdict = "Về thời vận tổng quan: **CỤC DIỆN BÌNH HÒA, THUẬN LỢI ĐI KÈM THỬ THÁCH**. Nên lấy ổn định làm trọng, củng cố nền tảng và tích lũy nội lực chờ thời.";
+          else directVerdict = "Về thời vận tổng quan: **THỜI VẬN CHƯA THUẬN, NÊN THỦ THƯỜNG AN PHẬN**. Tránh mạo hiểm hoặc mở rộng việc lớn, tập trung giải quyết các tồn đọng nội bộ.";
+          break;
+      }
+
+      // 2. Cơ chế khí số then chốt (Core Rationale)
+      const rationaleParts = [];
+      const theEnergy = graphData.nodes_state[theHao.position - 1].equilibrium_energy;
+      const theTone = theEnergy >= 2.0 ? "nội lực vững vàng, khí số vượng tướng" : (theEnergy >= -1.0 ? "nội lực ở mức bình hòa" : "nội lực suy yếu, chịu nhiều sức ép");
+      rationaleParts.push(`Hào Thế (chủ thể đương số) ngự Hào ${theHao.position} mang ${theHao.luc_than} ${theHao.branch} lâm ${theHao.luc_thu} có ${theTone}.`);
+
+      const grad = intentEval.the_vs_ung_gradient || 0.0;
+      if (grad > 2.0) rationaleParts.push("Thế - Ứng cho thấy đương số nắm thế thượng phong chủ động, hoàn cảnh và đối phương hướng về mình.");
+      else if (grad < -2.0) rationaleParts.push("Thế - Ứng cho thấy hoàn cảnh hoặc đối tác ngoài cuộc đang chiếm thế lấn lướt, đương số cần tránh đối đầu trực diện.");
+      else rationaleParts.push("Thế và Ứng cân bằng tương đắc, đôi bên cùng thăm dò phối hợp.");
+
+      const movingHaos = hexData.haos.filter(h => h.is_moving);
+      if (movingHaos.length > 0) {
+        const movDetails = movingHaos.map(mh => {
+          const dyn = mh.dynamics;
+          let dynLabel = "";
+          if (dyn) {
+            if (dyn.hoi_dau) dynLabel = dyn.hoi_dau_desc;
+            else if (dyn.tien_thoai) dynLabel = dyn.tien_thoai_desc;
+            else if (dyn.hoa_mo) dynLabel = "động hóa Mộ (nguồn lực bị giữ lại)";
+            else if (dyn.hoa_tuyet) dynLabel = "động hóa Tuyệt (động lực suy giảm)";
+          }
+          return `Hào ${mh.position} (${mh.luc_than} ${mh.branch}) động biến sang ${mh.changed_branch} (${mh.changed_luc_than})${dynLabel ? `: ${dynLabel}` : ''}`;
+        });
+        rationaleParts.push(`Bàn quẻ phát động tại: ${movDetails.join('; ')}.`);
+      } else {
+        rationaleParts.push("Quẻ thuần tĩnh không có hào động, sự việc diễn tiến tuần tự theo trường khí ổn định, không có biến động bất ngờ.");
+      }
+
+      const coreRationale = rationaleParts.join(' ');
+
+      // 3. Quyết định then chốt
+      let keyAction = "";
+      if (uScore >= 1.5) {
+        keyAction = "Chủ động triển khai quyết liệt theo kế hoạch. Tận dụng tối đa nguồn lực và thời cơ để tiến hành các bước then chốt.";
+      } else if (uScore >= -0.5) {
+        keyAction = "Thận trọng thăm dò, đi từng bước nhỏ và kiện toàn các điều khoản / nguồn lực nội bộ trước khi cam kết chính thức.";
+      } else {
+        keyAction = "Tạm dừng hoặc hoãn lại các quyết định đầu tư, thay đổi quan trọng; ưu tiên phòng thủ, bảo toàn vốn và quản trị rủi ro.";
+      }
+
+      // 4. Thời điểm vàng (Ứng kỳ cát)
+      const goldenTiming = `Địa Chi ${posTiming.branch.toUpperCase()} (${posTiming.meaning}). Bố trí các công việc trọng yếu, ký kết, đàm phán hoặc khởi động vào ngày/tháng mang Chi ${posTiming.branch}.`;
+
+      // 5. Thời điểm rủi ro (Ứng kỳ hung)
+      const riskTiming = `Địa Chi ${negTiming.branch.toUpperCase()} (${negTiming.meaning}). Cần thận trọng trong giao tiếp, hạn chế quyết định vội vàng và đề phòng các chi phí phát sinh vào ngày/tháng mang Chi ${negTiming.branch}.`;
+
+      // 6. Biện pháp quản trị rủi ro & Hóa giải
+      const hw = multiLens.hidden_warnings || [];
+      let remedyAdvice = "";
+      if (hw.length > 0 && !hw[0].includes("không ghi nhận xung sát")) {
+        remedyAdvice = `Cần lưu ý: ${hw[0]}. Khuyến nghị rà soát kỹ tính pháp lý hợp đồng, minh bạch tài chính và kiểm tra an toàn không gian sống.`;
+      } else {
+        remedyAdvice = "Duy trì kỷ luật vận hành, chuẩn bị quỹ dự phòng tài chính từ 10-15%, và kiểm soát tiến độ định kỳ để tránh sơ suất nhỏ.";
+      }
+
+      // 7. Tâm thái xử thế theo Đạo Dịch
+      const hexName = meta.hexagram_name;
+      const coreMeaning = this.getHexagramCoreMeaning(hexName);
+      const iChingMindset = `Quẻ ${hexName} nhắc nhở: "${coreMeaning}". Người trí biết tùy thời ứng biến, thuận theo đạo trời mà hành xử chính trực thì vạn sự được hanh thông.`;
+
+      return {
+        question: q,
+        domain_title: MultiObjectiveIntentResolver.DOMAINS_MAP[domainType] || "Chiêm Đoán Toàn Cảnh",
+        direct_verdict: directVerdict,
+        core_rationale: coreRationale,
+        key_action: keyAction,
+        golden_timing: goldenTiming,
+        risk_timing: riskTiming,
+        remedy_advice: remedyAdvice,
+        i_ching_mindset: iChingMindset
       };
     },
 
@@ -2555,18 +2718,33 @@
       lines.push(`- Thời gian gieo quẻ : Ngày ${tm.day_can} ${tm.day_chi}, Tháng ${tm.month_chi} | Tuần Không: [${(tm.tuan_khong || []).join(', ')}]`);
       lines.push("=".repeat(90));
 
-      // I. ĐÁNH GIÁ TỔNG QUAN
+      // I. ĐÁNH GIÁ TỔNG QUAN & KẾT LUẬN CHIÊM ĐOÁN
       lines.push("\n" + "━".repeat(90));
-      lines.push("I. ĐÁNH GIÁ TỔNG QUAN");
+      lines.push("I. ĐÁNH GIÁ TỔNG QUAN & KẾT LUẬN CHIÊM ĐOÁN");
       lines.push("━".repeat(90));
-      lines.push(dn.section_1_overview);
-      lines.push(`\n>>> KẾT QUẢ TỔNG THỂ : ${u.decision}`);
+      lines.push(`>>> PHÁN ĐOÁN: [${u.decision}] (Xác suất khả thi: ${Math.round((u.success_probability || 0.5) * 100)}% • Điểm hữu dụng E[U]: ${(u.total_utility !== undefined && u.total_utility > 0) ? '+' : ''}${(u.total_utility || 0).toFixed(2)})`);
       const grad = u.the_vs_ung_gradient || 0.0;
       let viTheStr = "";
       if (grad > 2.0) viTheStr = "Đương số giữ thế chủ động, nắm quyền quyết định";
       else if (grad < -2.0) viTheStr = "Hoàn cảnh bên ngoài hoặc đối phương đang chi phối lấn lướt";
       else viTheStr = "Thế và Ứng cân bằng, đôi bên cùng phối hợp thăm dò";
-      lines.push(`>>> VỊ THẾ BÀN QUẺ   : ${viTheStr}`);
+      lines.push(`>>> VỊ THẾ BÀN QUẺ: ${viTheStr}`);
+      lines.push("\n" + dn.section_1_overview);
+
+      const da = dn.direct_answer;
+      if (da) {
+        lines.push("\n### 1. Trực Diện Trả Lời Câu Hỏi Chiêm Đoán:");
+        lines.push(`- **Sự vụ chiêm đoán**: "${meta.question}"`);
+        lines.push(`- **Kết luận trực diện**: ${da.direct_verdict}`);
+        lines.push(`- **Cơ chế khí số quyết định**: ${da.core_rationale}`);
+
+        lines.push("\n### 2. Định Hướng & Lời Khuyên Hành Động Thiết Thực:");
+        lines.push(`- 🎯 **Quyết định then chốt**: ${da.key_action}`);
+        lines.push(`- ⏳ **Thời điểm vàng hành động (Ứng kỳ cát)**: ${da.golden_timing}`);
+        lines.push(`- ⚠️ **Thời điểm rủi ro cần phòng tránh (Ứng kỳ hung)**: ${da.risk_timing}`);
+        lines.push(`- 🛡️ **Biện pháp quản trị rủi ro & Hóa giải**: ${da.remedy_advice}`);
+        lines.push(`- 🌿 **Tâm thái xử thế theo Đạo Dịch**: ${da.i_ching_mindset}`);
+      }
 
       // II. ĐỐI CHIẾU KIỂM CHỨNG HIỆN TRẠNG
       lines.push("\n" + "━".repeat(90));

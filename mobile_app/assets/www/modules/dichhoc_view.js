@@ -1468,8 +1468,8 @@
         continue;
       }
 
-      // Nhận diện tiêu đề markdown: "## ...", "### ..."
-      const mdMatch = line.match(/^#{2,3}\s+(.*)$/);
+      // Nhận diện tiêu đề markdown cấp 2: "## ..."
+      const mdMatch = line.match(/^##\s+(.*)$/);
       if (mdMatch) {
         flushCurrentSection();
         currentSecNum = '';
@@ -1510,24 +1510,61 @@
         continue;
       }
 
-      // 1. Phán đoán cốt lõi: ">>> PHÁN ĐOÁN: [...] (Điểm khí số: ...)"
+      // 0a. Tiêu đề mục phụ ###
+      if (l.match(/^###\s+(.*)$/)) {
+        const subTitle = l.replace(/^###\s*/, '').replace(/:$/, '').trim();
+        out += `
+          <div class="dh-report-section-subhead">
+            <span class="subhead-icon">📌</span>
+            <span class="subhead-text">${formatInlineMarkup(subTitle)}</span>
+          </div>
+        `;
+        continue;
+      }
+
+      // 0b. Tiêu đề mục phụ nhỏ ####
+      if (l.match(/^####\s+(.*)$/)) {
+        const subSubTitle = l.replace(/^####\s*/, '').replace(/:$/, '').trim();
+        out += `
+          <div class="dh-report-section-subhead level-4">
+            <span class="subhead-icon">🔹</span>
+            <span class="subhead-text">${formatInlineMarkup(subSubTitle)}</span>
+          </div>
+        `;
+        continue;
+      }
+
+      // 1. Phán đoán cốt lõi: ">>> PHÁN ĐOÁN: [...] (...)"
       if (l.startsWith('>>> PHÁN ĐOÁN:') || l.includes('PHÁN ĐOÁN: [')) {
-        const matchPd = l.match(/PHÁN ĐOÁN:\s*\[([^\]]+)\](?:\s*\(Điểm khí số:\s*([^\)]+)\))?/i);
+        const matchPd = l.match(/PHÁN ĐOÁN:\s*\[([^\]]+)\](?:\s*\(([^\)]+)\))?/i);
         if (matchPd) {
           const textPd = matchPd[1];
           const scorePd = matchPd[2] || '';
-          const isCat = textPd.includes('CÁT') || textPd.includes('THUẬN') || textPd.includes('THÀNH CÔNG');
-          const isHung = textPd.includes('HUNG') || textPd.includes('BẤT LỢI') || textPd.includes('THẤT BẠI');
+          const upperText = textPd.toUpperCase();
+          const isCat = upperText.includes('CÁT') || upperText.includes('THUẬN') || upperText.includes('THÀNH CÔNG') || upperText.includes('TỐI ƯU') || upperText.includes('KHẢ THI');
+          const isHung = upperText.includes('HUNG') || upperText.includes('BẤT LỢI') || upperText.includes('THẤT BẠI') || upperText.includes('TRIỆT TIÊU') || upperText.includes('ĐỔ VỠ') || upperText.includes('ĐÌNH CHỈ');
           const cls = isCat ? 'verdict-cat' : (isHung ? 'verdict-hung' : 'verdict-binh');
           out += `
             <div class="dh-verdict-box ${cls}">
               <div class="dh-verdict-top">KẾT LUẬN & PHÁN QUYẾT CỐT LÕI</div>
               <div class="dh-verdict-title">${escapeReportHtml(textPd)}</div>
-              ${scorePd ? `<div class="dh-verdict-score">Điểm khí số: <strong>${escapeReportHtml(scorePd)}</strong></div>` : ''}
+              ${scorePd ? `<div class="dh-verdict-score"><strong>${escapeReportHtml(scorePd)}</strong></div>` : ''}
             </div>
           `;
           continue;
         }
+      }
+
+      // 1b. Vị thế bàn quẻ
+      if (l.includes('VỊ THẾ BÀN QUẺ')) {
+        const viTheText = l.replace(/^.*?VỊ THẾ BÀN QUẺ\s*:\s*/i, '').trim();
+        out += `
+          <div class="dh-stance-banner">
+            <span class="dh-stance-label">🌐 VỊ THẾ BÀN QUẺ:</span>
+            <span class="dh-stance-val">${escapeReportHtml(viTheText)}</span>
+          </div>
+        `;
+        continue;
       }
 
       // 2. Trích dẫn / Callout: "> ..."
@@ -1563,10 +1600,16 @@
 
       // 5. Dòng danh sách chính: "- ..." hoặc "• ..."
       if (l.startsWith('- ') || l.startsWith('• ')) {
-        const cleanText = l.replace(/^[-•]\s*/, '');
+        let cleanText = l.replace(/^[-•]\s*/, '');
+        let bulletIcon = '•';
+        const emojiMatch = cleanText.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}★✨🎯⏳⚠️🛡️🌿💼💰🏡🕊️])\s*/u);
+        if (emojiMatch) {
+          bulletIcon = emojiMatch[1];
+          cleanText = cleanText.substring(emojiMatch[0].length);
+        }
         out += `
           <div class="dh-report-row">
-            <span class="dh-row-bullet">•</span>
+            <span class="dh-row-bullet ${bulletIcon !== '•' ? 'custom-icon' : ''}">${bulletIcon}</span>
             <div class="dh-row-content">${formatInlineMarkup(cleanText)}</div>
           </div>
         `;
@@ -2114,6 +2157,7 @@
   const DichHocView = {
     init: render,
     render: render,
+    formatReportToRichHtml: formatReportToRichHtml,
     destroy() {}
   };
 

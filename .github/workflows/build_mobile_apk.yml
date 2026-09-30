@@ -76,18 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.7.1
-          name: "Neta Light v2.7.1 (Tối Giản Hóa Thanh Chuyển Hướng Kép & Chống Tràn Nút Di Động)"
+          tag_name: v2.7.2
+          name: "Neta Light v2.7.2 (Báo Cáo Lục Hào: Khối Phán Đoán Trực Diện & 5 Trụ Cột Hành Động)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.1
-            - **Tối giản hóa toàn bộ các nút chuyển hướng kép (Dual Subnav)**:
-              + Rút gọn nhãn nút trên Dịch Học thành `[ 📊 Đồ Hình & Khí Số ]` và `[ 📜 Toàn Văn ]`.
-              + Rút gọn nhãn nút trên Bát Tự & Tử Vi thành `[ 📊 Bảng Tổng Hợp ]` và `[ 📜 Toàn Văn ]`.
-              + Cấu trúc CSS `flex: 1 1 0` chia đều 50% - 50% diện tích màn hình, loại bỏ triệt để hiện tượng tràn mép hoặc đẩy mất nút trên mọi màn hình di động.
-            - **Thu gọn thanh tác vụ Action Toolbar**:
-              + Rút ngắn nhãn tác vụ thành `[ 📋 Sao Chép ] [ 💾 Tải (.MD) ] [ ✨ Trau Chuốt ]`.
-              + Vừa vặn trên một dòng, giao diện sang trọng, tinh tế và mỹ cảm cao cấp.
-              + Trình đọc báo cáo 7 phần drop-cap, hỗ trợ thanh chuyên mục nhanh (TOC Pills) và chế độ chuyển đổi linh hoạt `[ 📜 Bản Tiêu Chuẩn ]  [ ✨ Bản Trau Chuốt (AI) ]`.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.2
+            - **Chuẩn hóa Báo cáo Dự đoán Lục Hào 2.0 theo mô hình Bát Tự & Tử Vi**:
+              + **Khối Phán Đoán Cốt Lõi (Executive Verdict Card)**: Hiển thị nổi bật ngay đầu Phần I với nhận định quyết định dứt khoát, xác suất thành công (%) và điểm hữu dụng kỳ vọng E[U].
+              + **Vị thế bàn quẻ (Stance Banner)**: Đánh giá tương quan lực lượng Thế - Ứng (chủ động / cân bằng / bị động).
+              + **Mục 1 - Trực Diện Trả Lời Câu Hỏi Chiêm Đoán**: Bóc tách chính xác ý định câu hỏi theo 12 lĩnh vực nghiệp vụ, trả lời trực diện không vòng vo, đi kèm cơ chế khí số chứng minh (Dụng Thần, Hào Động, Biến Hóa).
+              + **Mục 2 - Định Hướng & Lời Khuyên Hành Động Thiết Thực**: 5 trụ cột chiến lược hành động:
+                * 🎯 Quyết định then chốt
+                * ⏳ Thời điểm vàng hành động (Ứng kỳ cát)
+                * ⚠️ Thời điểm rủi ro cần phòng tránh (Ứng kỳ hung)
+                * 🛡️ Biện pháp quản trị rủi ro & Hóa giải
+                * 🌿 Tâm thái xử thế theo Đạo Dịch
+            - **Đồ họa giao diện thẩm mỹ cao**: Hiển thị subhead phân cấp rõ ràng, icon bullet sinh động, đồng bộ chuẩn mực trên cả Web và Android App 100% Offline.
             - **Biên Tập Phân Đoạn Tuần Tự Gemini AI Dùng Chung**:
               + Tự động tách đoạn tại Mục V để chống tràn token, hiển thị thanh tiến trình Shimmer ánh vàng trực quan.
               + Sử dụng khóa API Gemini dùng chung của toàn ứng dụng với cơ chế chuyển hướng cài đặt tức thì.

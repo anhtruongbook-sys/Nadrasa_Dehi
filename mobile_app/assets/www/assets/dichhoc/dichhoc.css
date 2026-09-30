@@ -2324,5 +2324,69 @@ body.theme-light .dh-lens-body {
   color: #334155;
 }
 
+/* 6. Tiêu đề mục phụ & Vị thế bàn quẻ chuẩn hóa */
+.dh-report-section-subhead {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f5b041;
+  margin: 14px 0 8px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px dashed rgba(245, 176, 65, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+body.theme-light .dh-report-section-subhead {
+  color: #b45309;
+  border-bottom-color: rgba(180, 83, 9, 0.3);
+}
+
+.dh-report-section-subhead.level-4 {
+  font-size: 0.82rem;
+  color: #38bdf8;
+  border-bottom: none;
+  margin: 10px 0 4px 0;
+}
+
+body.theme-light .dh-report-section-subhead.level-4 {
+  color: #0284c7;
+}
+
+.dh-stance-banner {
+  background: rgba(245, 176, 65, 0.08);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 6px 0 12px 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-color, #e0e0e0);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.theme-light .dh-stance-banner {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #1e293b;
+}
+
+.dh-stance-label {
+  font-weight: 700;
+  color: #f5b041;
+  flex-shrink: 0;
+}
+
+body.theme-light .dh-stance-label {
+  color: #b45309;
+}
+
+.dh-row-bullet.custom-icon {
+  font-size: 0.95rem;
+  margin-right: 4px;
+}
+
 
 
