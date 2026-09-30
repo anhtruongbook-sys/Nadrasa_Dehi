@@ -837,7 +837,7 @@
             📊 Bảng Phân Tích Tổng Hợp (7 Cột Trụ & 12 Cung)
           </button>
           <button class="tuvi-subnav-btn ${currentAnalysisSubTab === 'full-report' ? 'active' : ''}" id="btn-tuvi-tab-full-report">
-            📜 Toàn Văn Báo Cáo Học Thuật (>500 Dòng)
+            📜 Toàn Văn Báo Cáo Chuyên Sâu
           </button>
         </div>
 
@@ -901,7 +901,7 @@
             ` : `
               <!-- Chế độ Tiêu Chuẩn (Offline 100%) -->
               <div class="tuvi-report-stats-badge" style="margin-bottom: 12px; display: inline-block;">
-                📄 ${lineCount} Dòng • ${charCount.toLocaleString('vi-VN')} Ký Tự • Năm Khảo Sát ${targetYear}
+                📅 Niên Vận Khảo Sát: Năm ${targetYear}${meta.viewYearCanChi ? ` (${meta.viewYearCanChi})` : ''} • Toàn Bộ 12 Cung Vị
               </div>
 
               <!-- Table of Contents -->

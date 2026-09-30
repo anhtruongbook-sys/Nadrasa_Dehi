@@ -865,7 +865,7 @@
                 📊 Bảng Phân Tích Tổng Hợp (7 Card Dashboard)
               </button>
               <button class="bazi-subnav-btn ${currentAnalysisSubTab === 'report' ? 'active' : ''}" id="btn-bazi-tab-full-report">
-                📜 Toàn Văn Báo Cáo Học Thuật (>${lineCount} Dòng)
+                📜 Toàn Văn Báo Cáo Chuyên Sâu
               </button>
             </div>
 
@@ -932,7 +932,7 @@
                 ` : `
                   <!-- Chế độ Tiêu Chuẩn (Offline 100%) -->
                   <div class="bazi-report-stats-badge" style="margin-bottom: 12px; display: inline-block;">
-                    📄 ${lineCount} Dòng • ${charCount.toLocaleString('vi-VN')} Ký Tự • Năm Khảo Sát ${targetYear}
+                    📅 Niên Vận Khảo Sát: Năm ${targetYear} • Luận Giải Toàn Thư
                   </div>
 
                   <!-- Table of Contents -->
