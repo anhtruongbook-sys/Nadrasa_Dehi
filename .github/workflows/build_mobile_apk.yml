@@ -76,10 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.3
-          name: "Neta Light v2.8.3 (Tích Hợp Phân Hệ Luận Giải Chuyên Sâu Thái Ất Thần Kinh 15 Cấp Độ)"
+          tag_name: v2.8.4
+          name: "Neta Light v2.8.4 (Tích Hợp Phân Hệ Luận Giải Chuyên Sâu Lục Nhâm Đại Độn 7 Tầng Huyền Cơ)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.3
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.4
+            - **Tích Hợp Toàn Diện Động Cơ Luận Giải Chuyên Sâu Lục Nhâm Đại Độn (`NetaLucNhamInterpreter`)**:
+              + Chuẩn hóa (Adapter) 3 điểm kỹ thuật: Đồng bộ hoa/thường tên 12 Thiên Tướng, ánh xạ trường dữ liệu Tam Truyền & Cung 12, tự động tính Mùa tứ thời từ Tiết Khí thực.
+              + 7 Tầng Huyền Cơ Luận Giải kinh điển (Thể - Dụng, Tứ Thời, Tam Truyền, Tất Pháp Phú, 7 Chuyên Đề, Timeline 3 Giai Đoạn, Sách Lược Cổ Nhân).
+              + CSDL 100 Điệu Tất Pháp Phú của Thiệu Ngạn Hòa nguyên bản Hán tự & chỉ dẫn hành động.
+              + Cẩm nang 8 Sự Vụ Đời Sống Thực Tiễn Hàng Ngày (Nhà đất, Hợp đồng, Xin việc, Vay vốn, Giao tế, Khám bệnh, Tình cảm, Mất đồ, Xuất hành, Khiếu nại).
+              + Modal Drawer toàn màn hình với Dashboard 3 chỉ số định lượng (Điểm Rủi Ro 1-5 Sao, Trục Thể - Dụng, Sách Lược), 5 Filter Pills, tương tác Accordion và Theme Parity hoàn hảo Light/Dark Mode.
+              + Rào chắn kiểm định 4 lớp chống ảo giác và tích hợp AI Gemini biên tập luồng kép.
             - **Tích Hợp Toàn Diện Động Cơ Luận Giải Chuyên Sâu Thái Ất Thần Kinh (`NetaThaiAtInterpreter`)**:
               + Tự động tính toán và đối sánh 15 phân hệ luận giải Thái Ất chuẩn văn bản cổ điển 100% Offline.
               + Bảng chỉ số định lượng trực quan: Điểm Cát Khánh (0-100), Nguy cơ Xung Đột, Nguy cơ Môi Trường Thiên Tai, Tương Quan Lực Lượng Chủ - Khách.

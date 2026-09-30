@@ -16,6 +16,16 @@
   let customDaytime = null;        // null: auto, true: đán, false: mộ
   let customNguyetTuong = '';      // rỗng: auto theo tiết khí
 
+  // Trạng thái Phân hệ Luận Giải Chuyên Sâu Lục Nhâm 7 Tầng
+  let isLuanModalOpen = false;
+  let currentLuanFilter = 'all'; // 'all', 'tatphap', 'timeline', 'chuyende', 'suvu'
+  let currentLuanViewMode = 'offline'; // 'offline' | 'ai'
+  let isAiPolishing = false;
+  let aiPolishedText = null;
+  let aiErrorMessage = null;
+  let collapsedSections = {};
+
+
   // Thứ tự 12 vị trí trên ma trận 4x4 theo Địa Bàn cổ truyền (Khớp hoàn toàn với Excel)
   const DIAL_4x4_LAYOUT = [
     'Tỵ', 'Ngọ', 'Mùi', 'Thân',
@@ -264,6 +274,342 @@
       .lucnham-drawer.open {
         transform: translateY(0);
       }
+
+      /* Luận Giải Chuyên Sâu Lục Nhâm 7 Tầng */
+      .lucnham-luan-banner {
+        margin: 6px 0 8px;
+        width: 100%;
+      }
+      .lucnham-btn-luan-giai {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 9px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        border: 1px solid rgba(245, 176, 65, 0.4);
+        background: linear-gradient(135deg, rgba(245, 176, 65, 0.25), rgba(180, 83, 9, 0.35));
+        color: #fef08a;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+      }
+      body.theme-light .lucnham-btn-luan-giai {
+        background: linear-gradient(135deg, #fef3c7, #fed7aa) !important;
+        border-color: #d97706 !important;
+        color: #92400e !important;
+        box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15) !important;
+      }
+      .lucnham-btn-luan-giai:active { transform: scale(0.99); }
+      .lucnham-luan-btn-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .lucnham-luan-icon { font-size: 16px; }
+      .lucnham-luan-title-wrap { display: flex; flex-direction: column; text-align: left; }
+      .lucnham-luan-main-title { font-size: 12.5px; font-weight: 800; }
+      .lucnham-luan-sub-title { font-size: 9.5px; opacity: 0.85; font-weight: normal; }
+      .lucnham-luan-btn-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .lucnham-luan-badge {
+        font-size: 10px;
+        background: rgba(245, 176, 65, 0.2);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #fef08a;
+        font-weight: 700;
+      }
+      body.theme-light .lucnham-luan-badge {
+        background: #fde68a !important;
+        color: #78350f !important;
+      }
+      .lucnham-luan-arrow { font-size: 12px; opacity: 0.8; }
+
+      /* Full-Screen Luận Giải Modal Drawer */
+      .lucnham-luan-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+      }
+      .lucnham-luan-modal-sheet {
+        width: 100%;
+        max-width: 500px;
+        height: 94vh;
+        max-height: 94vh;
+        background: #120306;
+        border-top: 2px solid #f5b041;
+        border-radius: 16px 16px 0 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+      }
+      body.theme-light .lucnham-luan-modal-sheet {
+        background: #ffffff !important;
+        border-top-color: #d97706 !important;
+        color: #1e293b !important;
+        box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15) !important;
+      }
+      .lucnham-luan-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: rgba(26, 4, 8, 0.95);
+        border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+      }
+      body.theme-light .lucnham-luan-modal-header {
+        background: #fefce8 !important;
+        border-bottom-color: #e5e7eb !important;
+      }
+      .lucnham-luan-modal-title {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #f5b041;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      body.theme-light .lucnham-luan-modal-title { color: #92400e; }
+      .lucnham-luan-modal-actions {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .lucnham-act-btn {
+        background: rgba(245, 176, 65, 0.15);
+        color: #fef08a;
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      body.theme-light .lucnham-act-btn {
+        background: #fef3c7 !important;
+        color: #92400e !important;
+        border-color: #fcd34d !important;
+      }
+      .lucnham-act-btn.btn-close {
+        font-size: 14px;
+        padding: 3px 8px;
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.4);
+      }
+      body.theme-light .lucnham-act-btn.btn-close {
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        border-color: #fca5a5 !important;
+      }
+      .lucnham-luan-modal-body {
+        flex: 1;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y !important;
+        padding: 10px 12px calc(var(--safe-bottom, 20px) + 30px);
+      }
+      /* Dashboard Metrics */
+      .lucnham-dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .lucnham-metric-card {
+        background: rgba(26, 4, 8, 0.85);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 8px;
+        padding: 6px;
+        text-align: center;
+      }
+      body.theme-light .lucnham-metric-card {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+      }
+      .lucnham-metric-num {
+        font-size: 14px;
+        font-weight: 900;
+        margin-bottom: 2px;
+      }
+      .lucnham-metric-lbl {
+        font-size: 9.5px;
+        color: #94a3b8;
+      }
+      body.theme-light .lucnham-metric-lbl { color: #64748b; }
+
+      /* Subbar */
+      .lucnham-subbar {
+        background: rgba(20, 2, 5, 0.9);
+        border: 1px solid rgba(245, 176, 65, 0.2);
+        border-radius: 8px;
+        padding: 6px 8px;
+        font-size: 11px;
+        margin-bottom: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      body.theme-light .lucnham-subbar {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #334155 !important;
+      }
+
+      /* Filter Pills */
+      .lucnham-pill-tabs {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+        scrollbar-width: none;
+      }
+      .lucnham-pill-btn {
+        white-space: nowrap;
+        padding: 4px 9px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        background: rgba(26, 4, 8, 0.8);
+        border: 1px solid rgba(245, 176, 65, 0.2);
+        color: #94a3b8;
+        transition: all 0.15s ease;
+      }
+      body.theme-light .lucnham-pill-btn {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #475569 !important;
+      }
+      .lucnham-pill-btn.active {
+        background: #f5b041 !important;
+        color: #000000 !important;
+        border-color: #f5b041 !important;
+      }
+      body.theme-light .lucnham-pill-btn.active {
+        background: #d97706 !important;
+        color: #ffffff !important;
+        border-color: #d97706 !important;
+      }
+
+      /* Accordion Cards */
+      .lucnham-accordion-card {
+        background: rgba(20, 2, 5, 0.95);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 8px;
+        margin-bottom: 8px;
+        overflow: hidden;
+      }
+      body.theme-light .lucnham-accordion-card {
+        background: #ffffff !important;
+        border-color: #e2e8f0 !important;
+      }
+      .lucnham-accordion-hdr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #f5b041;
+        cursor: pointer;
+        background: rgba(26, 4, 8, 0.85);
+        border-bottom: 1px solid transparent;
+      }
+      body.theme-light .lucnham-accordion-hdr {
+        background: #f8fafc !important;
+        color: #b45309 !important;
+      }
+      .lucnham-accordion-card:not(.collapsed) .lucnham-accordion-hdr {
+        border-bottom-color: rgba(245, 176, 65, 0.2);
+      }
+      body.theme-light .lucnham-accordion-card:not(.collapsed) .lucnham-accordion-hdr {
+        border-bottom-color: #e2e8f0 !important;
+      }
+      .lucnham-accordion-body {
+        padding: 8px 10px;
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--text-primary, #f8fafc);
+      }
+      body.theme-light .lucnham-accordion-body {
+        color: #334155 !important;
+      }
+      .lucnham-accordion-card.collapsed .lucnham-accordion-body {
+        display: none;
+      }
+      .lucnham-accordion-hdr .hdr-arrow {
+        transition: transform 0.2s ease;
+        font-size: 10px;
+      }
+      .lucnham-accordion-card.collapsed .hdr-arrow {
+        transform: rotate(180deg);
+      }
+
+      /* Light Theme Content Overrides */
+      body.theme-light .lucnham-accordion-card [style*="rgba(26, 4, 8"],
+      body.theme-light .lucnham-accordion-card [style*="rgba(20, 2, 5"] {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #334155 !important;
+      }
+      body.theme-light .lucnham-accordion-card [style*="color: #cbd5e1"] {
+        color: #475569 !important;
+      }
+      body.theme-light .lucnham-accordion-card [style*="color: #e2e8f0"] {
+        color: #334155 !important;
+      }
+      body.theme-light .lucnham-accordion-card [style*="color: #fef08a"] {
+        color: #854d0e !important;
+      }
+      body.theme-light .lucnham-accordion-card [style*="rgba(245, 176, 65, 0.1"] {
+        background: #fef3c7 !important;
+        color: #92400e !important;
+      }
+      body.theme-light .lucnham-accordion-card em {
+        color: #64748b !important;
+      }
+
+      /* AI Box & Spin */
+      .lucnham-ai-box {
+        background: rgba(245, 176, 65, 0.08);
+        border: 1px solid rgba(245, 176, 65, 0.35);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 8px;
+        line-height: 1.6;
+        font-size: 11.5px;
+      }
+      body.theme-light .lucnham-ai-box {
+        background: #fffbeb !important;
+        border-color: #fde68a !important;
+        color: #1e293b !important;
+      }
+      .lucnham-spin {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+
     `;
     document.head.appendChild(styleEl);
   }
@@ -462,6 +808,24 @@
           <div><span>Quý nhân:</span> <strong>${c.quyNhanCung}</strong> (${c.quyNhanChieu})</div>
         </div>
 
+        
+        <!-- BANNER LUẬN GIẢI CHUYÊN SÂU 7 TẦNG -->
+        <div class="lucnham-luan-banner">
+          <div class="lucnham-btn-luan-giai" id="lucnham-btn-open-luan" title="Mở luận giải chuyên sâu Lục Nhâm 7 Tầng">
+            <div class="lucnham-luan-btn-left">
+              <span class="lucnham-luan-icon">🔮</span>
+              <div class="lucnham-luan-title-wrap">
+                <span class="lucnham-luan-main-title">Luận Giải Chuyên Sâu</span>
+                <span class="lucnham-luan-sub-title">7 Tầng Huyền Cơ · 100 Cục Tất Pháp · 8 Sự Vụ</span>
+              </div>
+            </div>
+            <div class="lucnham-luan-btn-right">
+              <span class="lucnham-luan-badge" id="lucnham-badge-risk-btn">${getRiskBadgeText(c)}</span>
+              <span class="lucnham-luan-arrow">&rsaquo;</span>
+            </div>
+          </div>
+        </div>
+
         <!-- 3. Tam Truyền Hero Card -->
         <div class="neta-custom-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -600,7 +964,9 @@
 
       <!-- Drawer Tra Cứu Chi Tiết 1 Cung -->
       <div id="lucnham-drawer-overlay" class="lucnham-drawer-overlay" onclick="window.LucNhamView.closeDrawer()"></div>
-      <div id="lucnham-drawer" class="lucnham-drawer">
+      ${isLuanModalOpen ? renderLuanModalHTML(c) : ''}
+
+        <div id="lucnham-drawer" class="lucnham-drawer">
         <div id="lucnham-drawer-content"></div>
       </div>
     `;
@@ -678,6 +1044,7 @@
   }
 
   function bindLucNhamEvents() {
+    bindLuanModalEvents();
     const pad = n => String(n).padStart(2, '0');
 
     // Mode Switches
@@ -958,6 +1325,503 @@
     if (overlay) overlay.classList.remove('open');
   }
 
+  
+  // =========================================================================
+  // PHÂN HỆ LUẬN GIẢI CHUYÊN SÂU LỤC NHÂM (RENDER MODAL & EVENTS)
+  // =========================================================================
+  function getRiskBadgeText(chart) {
+    try {
+      const interp = (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine)
+        ? (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine).interpretChart(chart)
+        : null;
+      if (!interp) return "7 Tầng Luận Giải";
+      if (interp.riskScore <= 2) return `Rủi ro: Thấp (${interp.riskScore}/5★)`;
+      if (interp.riskScore === 3) return `Rủi ro: Vừa (${interp.riskScore}/5★)`;
+      return `Rủi ro: Cao (${interp.riskScore}/5★)`;
+    } catch (e) {
+      return "7 Tầng Luận Giải";
+    }
+  }
+
+  function renderLuanModalHTML(chart) {
+    const interp = (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine)
+      ? (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine).interpretChart(chart)
+      : null;
+
+    if (!interp) {
+      return `
+        <div class="lucnham-luan-modal-overlay" id="lucnham-luan-modal-overlay">
+          <div class="lucnham-luan-modal-sheet" id="lucnham-luan-modal-sheet">
+            <div class="lucnham-luan-modal-header">
+              <span class="lucnham-luan-modal-title">🔮 LỤC NHÂM ĐẠI ĐỘN LUẬN GIẢI</span>
+              <button class="lucnham-act-btn btn-close" onclick="window.LucNhamView.closeLuanModal()">✕</button>
+            </div>
+            <div class="lucnham-luan-modal-body" style="padding: 20px; text-align: center;">
+              Chưa nạp được động cơ NetaLucNhamInterpreter.
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Dashboard metrics
+    const riskColor = interp.riskScore <= 2 ? '#22c55e' : (interp.riskScore === 3 ? '#f59e0b' : '#ef4444');
+    const riskLabel = interp.riskScore <= 2 ? 'Cát Lành / An Toàn' : (interp.riskScore === 3 ? 'Cân Bằng / Bình Hòa' : 'Cẩn Trọng Rủi Ro');
+    const theDungBrief = interp.theDung.canChiRel.split('(')[0].trim();
+    const strategyBrief = interp.riskScore >= 4 ? 'PHÒNG THỦ' : (interp.theDung.canChiRel.includes('sinh') ? 'TIẾN CÔNG' : 'TÙY CƠ');
+
+    // Filter logic
+    const f = currentLuanFilter;
+    const showTatPhap = (f === 'all' || f === 'tatphap');
+    const showTimeline = (f === 'all' || f === 'timeline');
+    const showChuyenDe = (f === 'all' || f === 'chuyende');
+    const showSuVu = (f === 'all' || f === 'suvu');
+
+    // Accordion helper
+    const isCol = key => (collapsedSections[key] ? 'collapsed' : '');
+
+    return `
+      <div class="lucnham-luan-modal-overlay" id="lucnham-luan-modal-overlay">
+        <div class="lucnham-luan-modal-sheet" id="lucnham-luan-modal-sheet">
+          <!-- Header -->
+          <div class="lucnham-luan-modal-header">
+            <div class="lucnham-luan-modal-title">
+              <span>🔮</span>
+              <span>LUẬN GIẢI LỤC NHÂM · ${interp.canNgay} ${interp.chiNgay}</span>
+            </div>
+            <div class="lucnham-luan-modal-actions">
+              <button class="lucnham-act-btn" id="lucnham-btn-copy-luan" title="Sao chép toàn văn báo cáo">
+                📋 Sao chép
+              </button>
+              <button class="lucnham-act-btn" id="lucnham-btn-ai-luan" title="AI Gemini chau chuốt">
+                ${isAiPolishing ? '<span class="lucnham-spin">⏳</span>' : '✨ AI'}
+              </button>
+              <button class="lucnham-act-btn btn-close" id="lucnham-btn-close-luan" title="Đóng">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="lucnham-luan-modal-body">
+            <!-- 1. Dashboard 3 chỉ số -->
+            <div class="lucnham-dashboard-grid">
+              <div class="lucnham-metric-card">
+                <div class="lucnham-metric-num" style="color: ${riskColor};">${interp.riskScore}/5 ★</div>
+                <div class="lucnham-metric-lbl">${riskLabel}</div>
+              </div>
+              <div class="lucnham-metric-card">
+                <div class="lucnham-metric-num" style="color: #38bdf8; font-size: 12px; margin-top: 2px;">${theDungBrief}</div>
+                <div class="lucnham-metric-lbl">Trục Thể - Dụng</div>
+              </div>
+              <div class="lucnham-metric-card">
+                <div class="lucnham-metric-num" style="color: #f5b041; font-size: 13px;">${strategyBrief}</div>
+                <div class="lucnham-metric-lbl">Sách Lược Hành Sự</div>
+              </div>
+            </div>
+
+            <!-- 2. Subbar Phương Vị & Ứng Kỳ -->
+            <div class="lucnham-subbar">
+              <div>🧭 <strong>Phương vị Cát Tường:</strong> <span style="color: #34d399;">${interp.sachLuoc.phuongViTot}</span></div>
+              <div>⏱️ <strong>Ứng kỳ:</strong> <span style="color: #f5b041;">${interp.sachLuoc.ungKy}</span></div>
+            </div>
+
+            <!-- 3. Filter Pills -->
+            <div class="lucnham-pill-tabs">
+              <button class="lucnham-pill-btn ${f === 'all' ? 'active' : ''}" data-filter="all">Tất cả (7 Tầng)</button>
+              <button class="lucnham-pill-btn ${f === 'tatphap' ? 'active' : ''}" data-filter="tatphap">Tất Pháp Phú (${interp.biFaFuDetected.length})</button>
+              <button class="lucnham-pill-btn ${f === 'timeline' ? 'active' : ''}" data-filter="timeline">Timeline 3 Giai Đoạn</button>
+              <button class="lucnham-pill-btn ${f === 'chuyende' ? 'active' : ''}" data-filter="chuyende">7 Chuyên Đề</button>
+              <button class="lucnham-pill-btn ${f === 'suvu' ? 'active' : ''}" data-filter="suvu">8 Sự Vụ Đời Sống</button>
+            </div>
+
+            <!-- Khối AI Gemini nếu có -->
+            ${aiErrorMessage ? `
+              <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 6px; padding: 8px; margin-bottom: 8px; font-size: 11px; color: #fca5a5;">
+                ⚠️ ${aiErrorMessage}
+              </div>
+            ` : ''}
+
+            ${aiPolishedText ? `
+              <div class="lucnham-ai-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid rgba(245, 176, 65, 0.2); padding-bottom: 4px;">
+                  <strong style="color: #f5b041;">✨ KẾT QUẢ BIÊN TẬP GEMINI AI (LUỒNG KÉP)</strong>
+                  <span style="font-size: 10px; color: #22c55e;">Đã kiểm định Zero-Hallucination</span>
+                </div>
+                <div style="white-space: pre-wrap;">${aiPolishedText}</div>
+              </div>
+            ` : ''}
+
+            <!-- ACCORDIONS -->
+
+            <!-- [I. TRỤC THỂ - DỤNG & NĂNG LƯỢNG TỨ THỜI] -->
+            <div class="lucnham-accordion-card ${isCol('sec_thedung')}" data-sec="sec_thedung">
+              <div class="lucnham-accordion-hdr">
+                <span>[I. TRỤC THỂ - DỤNG & NĂNG LƯỢNG TỨ THỜI]</span>
+                <span class="hdr-arrow">▲</span>
+              </div>
+              <div class="lucnham-accordion-body">
+                <div style="margin-bottom: 6px;">
+                  <strong style="color: #38bdf8;">• Quan hệ Thể - Dụng:</strong> ${interp.theDung.canChiRel}
+                </div>
+                <div style="background: rgba(245, 176, 65, 0.1); border-left: 3px solid #f5b041; padding: 4px 6px; border-radius: 0 4px 4px 0; margin-bottom: 8px;">
+                  ${interp.theDung.canChiAdvice}
+                </div>
+                <div>
+                  <strong style="color: #f5b041;">• Năng lượng Tứ Thời:</strong> Mùa <strong>${interp.tuThoi.season}</strong> (Khí của Can Ngày: <span style="color: #34d399;">${interp.tuThoi.canKhi}</span>).
+                </div>
+                <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">
+                  Trường sinh Can Ngày: Sơ truyền ở đất <strong>${interp.tamTruyenProcess.soTruyen.van}</strong>, Mạt truyền ở đất <strong>${interp.tamTruyenProcess.matTruyen.van}</strong>.
+                </div>
+              </div>
+            </div>
+
+            <!-- [II. TIẾN TRÌNH TAM TRUYỀN & ĐẮC HÃM QUÝ THẦN] -->
+            <div class="lucnham-accordion-card ${isCol('sec_tamtruyen')}" data-sec="sec_tamtruyen">
+              <div class="lucnham-accordion-hdr">
+                <span>[II. TIẾN TRÌNH TAM TRUYỀN & QUÝ THẦN]</span>
+                <span class="hdr-arrow">▲</span>
+              </div>
+              <div class="lucnham-accordion-body">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="background: rgba(26, 4, 8, 0.6); padding: 6px; border-radius: 6px; border: 1px solid rgba(244, 63, 94, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                      <strong style="color: #f43f5e;">1. Sơ Truyền: ${interp.tamTruyenProcess.soTruyen.chi} · ${interp.tamTruyenProcess.soTruyen.tuong}</strong>
+                      <span style="font-size: 10px; color: #94a3b8;">${interp.tamTruyenProcess.soTruyen.than}</span>
+                    </div>
+                    <div>${interp.tamTruyenProcess.soTruyen.phanTich}</div>
+                  </div>
+
+                  <div style="background: rgba(26, 4, 8, 0.6); padding: 6px; border-radius: 6px; border: 1px solid rgba(129, 140, 248, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                      <strong style="color: #818cf8;">2. Trung Truyền: ${interp.tamTruyenProcess.trungTruyen.chi} · ${interp.tamTruyenProcess.trungTruyen.tuong}</strong>
+                      <span style="font-size: 10px; color: #94a3b8;">${interp.tamTruyenProcess.trungTruyen.than}</span>
+                    </div>
+                    <div>${interp.tamTruyenProcess.trungTruyen.phanTich}</div>
+                  </div>
+
+                  <div style="background: rgba(26, 4, 8, 0.6); padding: 6px; border-radius: 6px; border: 1px solid rgba(52, 211, 153, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                      <strong style="color: #34d399;">3. Mạt Truyền: ${interp.tamTruyenProcess.matTruyen.chi} · ${interp.tamTruyenProcess.matTruyen.tuong}</strong>
+                      <span style="font-size: 10px; color: #94a3b8;">${interp.tamTruyenProcess.matTruyen.than}</span>
+                    </div>
+                    <div>${interp.tamTruyenProcess.matTruyen.phanTich}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- [III. CÁCH CỤC TẤT PHÁP PHÚ (THIỆU NGẠN HÒA)] -->
+            ${showTatPhap ? `
+            <div class="lucnham-accordion-card ${isCol('sec_tatphap')}" data-sec="sec_tatphap">
+              <div class="lucnham-accordion-hdr">
+                <span>[III. CÁCH CỤC TẤT PHÁP PHÚ (THIỆU NGẠN HÒA)]</span>
+                <span class="hdr-arrow">▲</span>
+              </div>
+              <div class="lucnham-accordion-body">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${interp.biFaFuDetected.map((bf, idx) => `
+                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.25); border-radius: 6px; padding: 6px 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                        <strong style="color: #f5b041;">${idx + 1}. ${bf.ten}</strong>
+                        <span style="font-family: serif; color: #cbd5e1; font-size: 11px;">${bf.han_tu || ''}</span>
+                      </div>
+                      <div style="color: #cbd5e1; margin-bottom: 3px;">• <em>Ý nghĩa:</em> ${bf.y_nghia}</div>
+                      <div style="background: rgba(245, 176, 65, 0.1); border-left: 2px solid #f5b041; padding: 3px 6px; color: #fef08a;">
+                        👉 <strong>Chỉ dẫn:</strong> ${bf.chi_dan}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+            ` : ''}
+
+            <!-- [IV. DÒNG THỜI GIAN 3 GIAI ĐOẠN (TIMELINE)] -->
+            ${showTimeline ? `
+            <div class="lucnham-accordion-card ${isCol('sec_timeline')}" data-sec="sec_timeline">
+              <div class="lucnham-accordion-hdr">
+                <span>[IV. DÒNG THỜI GIAN 3 GIAI ĐOẠN]</span>
+                <span class="hdr-arrow">▲</span>
+              </div>
+              <div class="lucnham-accordion-body">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="border-left: 3px solid #f59e0b; padding-left: 8px;">
+                    <strong style="color: #f59e0b;">${interp.timeline.giaiDoan1_KhoiDau.thoiGian}</strong>
+                    <div style="font-size: 10px; color: #94a3b8;">${interp.timeline.giaiDoan1_KhoiDau.trangThai}</div>
+                    <div>${interp.timeline.giaiDoan1_KhoiDau.trongTam}</div>
+                  </div>
+                  <div style="border-left: 3px solid #38bdf8; padding-left: 8px;">
+                    <strong style="color: #38bdf8;">${interp.timeline.giaiDoan2_BienChuyen.thoiGian}</strong>
+                    <div style="font-size: 10px; color: #94a3b8;">${interp.timeline.giaiDoan2_BienChuyen.trangThai}</div>
+                    <div>${interp.timeline.giaiDoan2_BienChuyen.trongTam}</div>
+                  </div>
+                  <div style="border-left: 3px solid #34d399; padding-left: 8px;">
+                    <strong style="color: #34d399;">${interp.timeline.giaiDoan3_KetCuc.thoiGian}</strong>
+                    <div style="font-size: 10px; color: #94a3b8;">${interp.timeline.giaiDoan3_KetCuc.trangThai}</div>
+                    <div>${interp.timeline.giaiDoan3_KetCuc.trongTam}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            ` : ''}
+
+            <!-- [V. MA TRẬN 7 CHUYÊN ĐỀ ĐỜI SỐNG & KINH DOANH] -->
+            ${showChuyenDe ? `
+            <div class="lucnham-accordion-card ${isCol('sec_chuyende')}" data-sec="sec_chuyende">
+              <div class="lucnham-accordion-hdr">
+                <span>[V. MA TRẬN 7 CHUYÊN ĐỀ SỰ VỤ]</span>
+                <span class="hdr-arrow">▲</span>
+              </div>
+              <div class="lucnham-accordion-body">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${Object.values(interp.chuyenDe7).map(cd => `
+                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.2); border-radius: 6px; padding: 6px 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                        <strong style="color: #f5b041;">${cd.tieu_de}</strong>
+                        <span style="font-size: 9.5px; background: rgba(245, 176, 65, 0.15); color: #fef08a; padding: 1px 5px; border-radius: 3px; font-weight: 700;">${cd.danh_gia}</span>
+                      </div>
+                      <div style="color: #cbd5e1; margin-bottom: 2px;">• <em>Hiện trạng:</em> ${cd.hien_trang || cd.noi_dung}</div>
+                      ${cd.dong_luc_bien_chuyen ? `<div style="color: #38bdf8; margin-bottom: 2px;">• <em>Xu thế:</em> ${cd.dong_luc_bien_chuyen}</div>` : ''}
+                      ${cd.canh_bao_rui_ro ? `<div style="color: #f87171; margin-bottom: 2px;">⚠️ <em>Cảnh báo:</em> ${cd.canh_bao_rui_ro}</div>` : ''}
+                      ${cd.sach_luoc_khuyen_nghi ? `<div style="color: #34d399;">👉 <em>Sách lược:</em> ${cd.sach_luoc_khuyen_nghi}</div>` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+            ` : ''}
+
+            <!-- [VI. CẨM NANG 8 SỰ VỤ THỰC TẾ HÀNG NGÀY] -->
+            ${showSuVu ? `
+            <div class="lucnham-accordion-card ${isCol('sec_suvu')}" data-sec="sec_suvu">
+              <div class="lucnham-accordion-hdr">
+                <span>[VI. CẨM NANG 8 SỰ VỤ ĐỜI SỐNG HÀNG NGÀY]</span>
+                <span class="hdr-arrow">▲</span>
+              </div>
+              <div class="lucnham-accordion-body">
+                <div style="display: flex; flex-direction: column; gap: 7px;">
+                  ${Object.values(interp.dailyLifeCases).map(dl => `
+                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.2); border-radius: 6px; padding: 6px 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                        <strong style="color: #38bdf8;">${dl.tieu_de}</strong>
+                        <span style="font-size: 9.5px; font-weight: 700; color: #f5b041;">${dl.danh_gia}</span>
+                      </div>
+                      ${dl.dung_than ? `<div style="font-size: 10px; color: #94a3b8; margin-bottom: 2px;">Dụng thần: ${dl.dung_than}</div>` : ''}
+                      ${dl.khau_quyet ? `<div style="font-size: 10px; font-style: italic; color: #e2e8f0; margin-bottom: 2px;">"${dl.khau_quyet}"</div>` : ''}
+                      <div style="color: #34d399;">👉 <strong>Lời khuyên:</strong> ${dl.loi_khuyen}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+            ` : ''}
+
+            <!-- [VII. SÁCH LƯỢC HÀNH ĐỘNG & ỨNG KỲ] -->
+            <div class="lucnham-accordion-card ${isCol('sec_sachluoc')}" data-sec="sec_sachluoc">
+              <div class="lucnham-accordion-hdr">
+                <span>[VII. SÁCH LƯỢC HÀNH ĐỘNG & ỨNG KỲ]</span>
+                <span class="hdr-arrow">▲</span>
+              </div>
+              <div class="lucnham-accordion-body">
+                <div style="background: rgba(245, 176, 65, 0.12); border-left: 3px solid #f5b041; padding: 6px 8px; border-radius: 0 4px 4px 0; margin-bottom: 6px;">
+                  <strong>Lời khuyên cốt lõi:</strong> ${interp.sachLuoc.loiKhuyen}
+                </div>
+                <div>🧭 <strong>Phương vị thuận lợi nhất:</strong> ${interp.sachLuoc.phuongViTot}</div>
+                <div>⏱️ <strong>Ứng kỳ chi tiết:</strong> ${interp.sachLuoc.ungKy}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindLuanModalEvents() {
+    const btnOpen = document.getElementById('lucnham-btn-open-luan');
+    if (btnOpen) {
+      btnOpen.onclick = (e) => {
+        e.preventDefault();
+        window.LucNhamView.openLuanModal();
+      };
+    }
+
+    const btnClose = document.getElementById('lucnham-btn-close-luan');
+    if (btnClose) {
+      btnClose.onclick = (e) => {
+        e.preventDefault();
+        window.LucNhamView.closeLuanModal();
+      };
+    }
+
+    const overlay = document.getElementById('lucnham-luan-modal-overlay');
+    if (overlay) {
+      overlay.onclick = (e) => {
+        if (e.target === overlay) {
+          window.LucNhamView.closeLuanModal();
+        }
+      };
+    }
+
+    const btnCopy = document.getElementById('lucnham-btn-copy-luan');
+    if (btnCopy) {
+      btnCopy.onclick = (e) => {
+        e.preventDefault();
+        window.LucNhamView.copyLuanReport();
+      };
+    }
+
+    const btnAi = document.getElementById('lucnham-btn-ai-luan');
+    if (btnAi) {
+      btnAi.onclick = (e) => {
+        e.preventDefault();
+        window.LucNhamView.triggerAiPolish();
+      };
+    }
+
+    // Filter pills
+    const pillBtns = document.querySelectorAll('.lucnham-pill-btn');
+    pillBtns.forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const filter = btn.getAttribute('data-filter') || 'all';
+        window.LucNhamView.setLuanFilter(filter);
+      };
+    });
+
+    // Accordions toggle
+    const hdrBtns = document.querySelectorAll('.lucnham-accordion-hdr');
+    hdrBtns.forEach(hdr => {
+      hdr.onclick = (e) => {
+        const card = hdr.closest('.lucnham-accordion-card');
+        if (card) {
+          const sec = card.getAttribute('data-sec');
+          window.LucNhamView.toggleSection(sec);
+        }
+      };
+    });
+  }
+
+  function openLuanModal() {
+    isLuanModalOpen = true;
+    renderLucNham();
+  }
+
+  function closeLuanModal() {
+    isLuanModalOpen = false;
+    renderLucNham();
+  }
+
+  function setLuanFilter(filter) {
+    currentLuanFilter = filter;
+    renderLucNham();
+  }
+
+  function toggleSection(secKey) {
+    if (!secKey) return;
+    collapsedSections[secKey] = !collapsedSections[secKey];
+    renderLucNham();
+  }
+
+  function copyLuanReport() {
+    if (!currentChart) return;
+    const interp = (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine)
+      ? (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine).interpretChart(currentChart)
+      : null;
+    if (!interp) return;
+
+    let textToCopy = "";
+    if (currentLuanViewMode === 'ai' && aiPolishedText) {
+      textToCopy = aiPolishedText;
+    } else if (global.NetaLucNhamInterpreter && global.NetaLucNhamInterpreter.formatTextReport) {
+      textToCopy = global.NetaLucNhamInterpreter.formatTextReport(interp);
+    } else {
+      textToCopy = `BÁO CÁO LUẬN GIẢI LỤC NHÂM\nNgày ${interp.canNgay} ${interp.chiNgay}\nĐiểm Rủi Ro: ${interp.riskScore}/5 Sao\nSách lược: ${interp.sachLuoc.loiKhuyen}`;
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast("Đã sao chép toàn văn Luận giải Lục Nhâm vào bộ nhớ tạm!");
+      }).catch(() => {
+        fallbackCopyText(textToCopy);
+      });
+    } else {
+      fallbackCopyText(textToCopy);
+    }
+  }
+
+  function fallbackCopyText(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+      showToast("Đã sao chép toàn văn Luận giải Lục Nhâm!");
+    } catch (e) {
+      alert("Không thể sao chép tự động. Vui lòng thử lại.");
+    }
+    document.body.removeChild(ta);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    if (!t) {
+      alert(msg);
+      return;
+    }
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => {
+      t.classList.remove("show");
+    }, 2800);
+  }
+
+  async function triggerAiPolish() {
+    if (isAiPolishing) return;
+    if (!currentChart) return;
+    const interp = (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine)
+      ? (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine).interpretChart(currentChart)
+      : null;
+    if (!interp) return;
+
+    isAiPolishing = true;
+    aiErrorMessage = null;
+    renderLucNham();
+
+    try {
+      const prompt = (global.NetaLucNhamInterpreter && global.NetaLucNhamInterpreter.buildAIPrompt)
+        ? global.NetaLucNhamInterpreter.buildAIPrompt(interp)
+        : `Hãy luận giải quẻ Lục Nhâm ngày ${interp.canNgay} ${interp.chiNgay}.`;
+
+      if (global.GeminiService && typeof global.GeminiService.generateContent === 'function') {
+        const result = await global.GeminiService.generateContent(prompt);
+        if (result && result.text) {
+          aiPolishedText = result.text;
+          currentLuanViewMode = 'ai';
+          showToast("Gemini AI biên tập luận giải thành công!");
+        } else {
+          throw new Error("Không nhận được văn bản từ Gemini AI.");
+        }
+      } else {
+        // Mô phỏng fallback offline khi chưa cấu hình API Key
+        aiPolishedText = (global.NetaLucNhamInterpreter && global.NetaLucNhamInterpreter.formatTextReport)
+          ? global.NetaLucNhamInterpreter.formatTextReport(interp)
+          : "Bản luận giải đã sẵn sàng ở chế độ Offline.";
+        currentLuanViewMode = 'ai';
+        showToast("Đã hiển thị bản phân tích chuyên sâu (Offline).");
+      }
+    } catch (err) {
+      console.error("Lỗi AI Polish:", err);
+      aiErrorMessage = "Không thể kết nối AI: " + (err.message || "Vui lòng kiểm tra API Key.");
+    } finally {
+      isAiPolishing = false;
+      renderLucNham();
+    }
+  }
+
   // Export API
   global.LucNhamView = {
     init: initLucNhamView,
@@ -974,7 +1838,13 @@
       renderLucNham();
     },
     selectPalace: selectPalace,
-    closeDrawer: closeDrawer
+    closeDrawer: closeDrawer,
+    openLuanModal: openLuanModal,
+    closeLuanModal: closeLuanModal,
+    setLuanFilter: setLuanFilter,
+    toggleSection: toggleSection,
+    copyLuanReport: copyLuanReport,
+    triggerAiPolish: triggerAiPolish
   };
   global.NetaLucNhamView = global.LucNhamView;
 
