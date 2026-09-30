@@ -146,6 +146,15 @@
     QUY_NHAN_DAN_MO,
     SOLAR_TERM_TO_NGUYET_TUONG,
 
+    getNguyetTuong(tietKhi) {
+      if (!tietKhi) return "Thìn";
+      const clean = tietKhi.trim().toLowerCase();
+      for (const [k, v] of Object.entries(SOLAR_TERM_TO_NGUYET_TUONG)) {
+        if (k.toLowerCase() === clean) return v;
+      }
+      return "Thìn";
+    },
+
     idxChi(chi) {
       return DIA_CHI.indexOf(chi);
     },
@@ -363,6 +372,11 @@
       const hanhNien = isMale
         ? this.chiAt(this.idxChi("Dần") + (tuoiAm - 1))
         : this.chiAt(this.idxChi("Thân") - (tuoiAm - 1));
+      const CHI_YEAR = ["Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi"];
+      const CAN_YEAR = ["Canh", "Tân", "Nhâm", "Quý", "Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ"];
+      const banMenh = CHI_YEAR[((birthYear % 12) + 12) % 12];
+      const canNamSinh = CAN_YEAR[((birthYear % 10) + 10) % 10];
+      const canChiNamSinh = `${canNamSinh} ${banMenh}`;
 
       const trachMo = TRACH_MO_MAP[chiNgay] || ["", ""];
       const canKy = CAN_KY_CUNG[canNgay] || "";
@@ -410,6 +424,7 @@
           lucThan: this.getLucThan(canNgay, tb),
           quanHe: this.getNguHanhRel(NGU_HANH_CHI[tb], NGU_HANH_CHI[d]),
           tagHanhNien: (d === hanhNien) ? `${tuoiAm} T` : "",
+          tagBanMenh: (d === banMenh) ? "Mệnh" : "",
           tagTrachMo: (d === trachMo[0]) ? "Trạch" : ((d === trachMo[1]) ? "Mộ" : ""),
           tagCanChiNgay: (d === canKy) ? canNgay : ((d === chiNgay) ? chiNgay : "")
         };
@@ -428,6 +443,8 @@
         tuoiAm,
         gioiTinh,
         birthYear,
+        banMenhChi: banMenh,
+        canChiNamSinh: canChiNamSinh,
         currentYear,
         hanhNienChi: hanhNien,
         trachThan: trachMo[0],

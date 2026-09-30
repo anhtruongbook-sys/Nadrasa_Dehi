@@ -906,20 +906,6 @@
             <div class="thaiat-strip-item"><span>Tiết khí:</span> <strong>${currentChart.tietKhi}</strong></div>
           </div>
 
-          <!-- Nút Kích Hoạt Luận Giải Chuyên Sâu 15 Phân Hệ -->
-          <div class="thaiat-luan-banner">
-            <button type="button" class="thaiat-btn-luan-giai" id="thaiat-btn-open-luan" title="Mở bảng Luận Giải 15 Phân Hệ">
-              <span class="luan-btn-left">
-                <span class="luan-btn-icon">📖</span>
-                <span class="luan-btn-text">Luận Giải Chuyên Sâu</span>
-              </span>
-              <span class="luan-btn-right">
-                <span class="luan-btn-badge">${luanQuickBadge}</span>
-                <span class="luan-btn-arrow">❯</span>
-              </span>
-            </button>
-          </div>
-
           <!-- 3. Bộ lọc 5 tầng thông tin (Grid 5 cột cân đối, không cuộn ngang) -->
           ${currentKeType !== 'menh' ? `
             <div class="thaiat-filters-bar">

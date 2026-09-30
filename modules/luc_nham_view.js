@@ -15,6 +15,7 @@
   let selectedBox = 'Tỵ';           // Địa bàn đang chọn
   let isLunarMode = false;
   let currentIsMale = true;
+  let currentQuerentBirthYear = 1990; // Năm sinh mặc định của đương số
   let customDaytime = null;        // null: auto, true: đán, false: mộ
   let customNguyetTuong = '';      // rỗng: auto theo tiết khí
 
@@ -165,6 +166,8 @@
         color: #0284c7 !important;
         font-weight: 800 !important;
       }
+      .tag-banmenh { color: #c084fc; font-weight: 800; }
+      body.theme-light .tag-banmenh { color: #7e22ce !important; font-weight: 800 !important; }
       .tag-hanhnien { color: #f59e0b; font-weight: 800; }
       body.theme-light .tag-hanhnien { color: #b45309 !important; font-weight: 800 !important; }
       .tag-trachmo { color: #34d399; font-weight: 800; }
@@ -315,6 +318,186 @@
       }
       .lucnham-drawer.open {
         transform: translateY(0);
+      }
+      .lucnham-btn-drawer-close {
+        background: rgba(245, 176, 65, 0.15);
+        border: 1px solid rgba(245, 176, 65, 0.35);
+        color: #f5b041;
+        font-size: 20px;
+        font-weight: 800;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        touch-action: manipulation;
+        transition: all 0.15s ease;
+        user-select: none;
+      }
+      .lucnham-btn-drawer-close:hover, .lucnham-btn-drawer-close:active {
+        background: rgba(245, 176, 65, 0.35);
+        transform: scale(0.95);
+      }
+      body.theme-light .lucnham-btn-drawer-close {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #334155 !important;
+      }
+
+      /* Light Theme High Contrast Overrides */
+      body.theme-light .lucnham-center-hud .hud-title { color: #b45309 !important; font-weight: 800 !important; }
+      body.theme-light .lucnham-center-hud .hud-main { color: #0f172a !important; font-weight: 900 !important; }
+      body.theme-light .lucnham-center-hud .hud-trachmo { color: #15803d !important; font-weight: 700 !important; }
+      body.theme-light .lucnham-center-hud .hud-hanhnien { color: #854d0e !important; font-weight: 700 !important; }
+
+      body.theme-light .lucnham-truyen-box [style*="color: var(--text-secondary"] {
+        color: #1e293b !important;
+        font-weight: 700 !important;
+      }
+      body.theme-light .lucnham-truyen-box [style*="opacity: 0.75"] {
+        opacity: 1 !important;
+        color: #475569 !important;
+        border-top-color: #cbd5e1 !important;
+      }
+
+      body.theme-light .lucnham-drawer strong[style*="color: var(--text-primary"] {
+        color: #0f172a !important;
+      }
+      body.theme-light .lucnham-drawer [style*="color: #fecdd3"] {
+        color: #991b1b !important;
+      }
+      body.theme-light .lucnham-drawer [style*="background: rgba(244, 63, 94"] {
+        background: #fee2e2 !important;
+        border-color: #fca5a5 !important;
+        color: #991b1b !important;
+      }
+      body.theme-light .lucnham-drawer [style*="background: rgba(34, 197, 94"] {
+        background: #dcfce7 !important;
+        border-color: #86efac !important;
+        color: #166534 !important;
+      }
+      body.theme-light .lucnham-drawer [style*="color: #38bdf8"] {
+        color: #0284c7 !important;
+      }
+      body.theme-light .lucnham-drawer [style*="color: #94a3b8"] {
+        color: #475569 !important;
+      }
+      body.theme-light .lucnham-drawer [style*="background: rgba(20, 2, 5"] {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #1e293b !important;
+      }
+      body.theme-light .lucnham-drawer [style*="color: #cbd5e1"] {
+        color: #1e293b !important;
+      }
+      body.theme-light .lucnham-drawer [style*="color: var(--gold-primary"] {
+        color: #b45309 !important;
+      }
+
+      /* Querent Row in UCC */
+      .ucc-row-querent {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .ucc-querent-box {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(26, 4, 8, 0.7);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 6px;
+        padding: 2px 8px;
+        flex: 1;
+        height: 28px;
+        box-sizing: border-box;
+      }
+      body.theme-light .ucc-querent-box {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+      }
+      .ucc-querent-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-secondary, #94a3b8);
+        white-space: nowrap;
+      }
+      body.theme-light .ucc-querent-label {
+        color: #475569 !important;
+      }
+      .num-birthyear {
+        width: 54px;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+        background: transparent;
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 4px;
+        color: var(--gold-primary, #f5b041);
+        padding: 1px 3px;
+        outline: none;
+      }
+      body.theme-light .num-birthyear {
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+        background: #f8fafc !important;
+      }
+      .ucc-querent-badge {
+        font-size: 11px;
+        font-weight: 800;
+        color: #38bdf8;
+        white-space: nowrap;
+        background: rgba(56, 189, 248, 0.12);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+      }
+      body.theme-light .ucc-querent-badge {
+        background: #e0f2fe !important;
+        color: #0369a1 !important;
+        border-color: #bae6fd !important;
+      }
+
+      /* Quý Nhân Đán / Mộ Toggle */
+      .ucc-pill-danmo {
+        display: flex;
+        background: rgba(26, 4, 8, 0.8);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 6px;
+        overflow: hidden;
+        height: 28px;
+      }
+      body.theme-light .ucc-pill-danmo {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+      .ucc-danmo-btn {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 0 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+      }
+      body.theme-light .ucc-danmo-btn {
+        color: #64748b;
+      }
+      .ucc-danmo-btn.active.dan {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #ffffff !important;
+      }
+      .ucc-danmo-btn.active.mo {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: #ffffff !important;
       }
 
       /* Luận Giải Chuyên Sâu Lục Nhâm 7 Tầng */
@@ -693,22 +876,18 @@
 
     let nguyetTuong = customNguyetTuong;
     if (!nguyetTuong && global.LucNhamEngine) {
-      const map = global.LucNhamEngine.SOLAR_TERM_TO_NGUYET_TUONG;
-      const tkClean = (tietKhi || "").trim();
-      nguyetTuong = map[tkClean] || map[tkClean.toLowerCase()] || map["Thu phân"] || "Thìn";
-      if (!nguyetTuong) {
-        for (const [k, v] of Object.entries(map)) {
-          if (k.toLowerCase() === tkClean.toLowerCase()) {
-            nguyetTuong = v;
-            break;
-          }
-        }
+      if (typeof global.LucNhamEngine.getNguyetTuong === 'function') {
+        nguyetTuong = global.LucNhamEngine.getNguyetTuong(tietKhi);
+      } else {
+        const map = global.LucNhamEngine.SOLAR_TERM_TO_NGUYET_TUONG;
+        const tkClean = (tietKhi || "").trim();
+        nguyetTuong = map[tkClean] || map[tkClean.toLowerCase()] || map["Thu phân"] || "Thìn";
       }
     }
     if (!nguyetTuong) nguyetTuong = "Thìn";
 
     const currentYear = currentDate.getFullYear();
-    const birthYear = currentYear - 45; // Mặc định hoặc tính theo đương số
+    const birthYear = currentQuerentBirthYear || (currentYear - 36);
 
     if (global.LucNhamEngine) {
       currentChart = global.LucNhamEngine.lapQue({
@@ -793,7 +972,7 @@
             </div>
           </div>
 
-          <!-- Row 2: Can Chi Giờ + Giờ : Phút + Giới Tính -->
+          <!-- Row 2: Can Chi Giờ + Giờ : Phút + Quý Nhân Đán / Mộ -->
           <div class="ucc-row ucc-row-time">
             <div class="ucc-time-box">
               <select id="lucnham-select-canchi" class="select-canchi">
@@ -814,13 +993,26 @@
               <span class="num-colon">:</span>
               <input type="number" id="lucnham-input-minute" class="num-box num-min" min="0" max="59" value="${pad(sMin)}" placeholder="Phút">
             </div>
+            <div class="ucc-pill-danmo" title="Chọn Quý Nhân Đán (ngày) hoặc Mộ (đêm)">
+              <button type="button" class="ucc-danmo-btn ${isDay ? 'active dan' : ''}" id="lucnham-btn-dan">☀️ Đán</button>
+              <button type="button" class="ucc-danmo-btn ${!isDay ? 'active mo' : ''}" id="lucnham-btn-mo">🌙 Mộ</button>
+            </div>
+          </div>
+
+          <!-- Row 3: Năm Sinh Đương Số + Can Chi / Tuổi Âm + Giới Tính -->
+          <div class="ucc-row ucc-row-querent">
+            <div class="ucc-querent-box" title="Nhập năm sinh đương số để tính Bản Mệnh & Hành Niên">
+              <span class="ucc-querent-label">👤 Đương số:</span>
+              <input type="number" id="lucnham-input-birthyear" class="num-birthyear" min="1900" max="2100" value="${currentQuerentBirthYear}" placeholder="Năm">
+              <span class="ucc-querent-badge" id="lucnham-badge-canchi-tuoi">${c.canChiNamSinh || ''} • ${c.tuoiAm}T</span>
+            </div>
             <div class="ucc-pill-gender">
               <button type="button" class="ucc-gender-btn ${currentIsMale ? 'active male' : ''}" id="lucnham-btn-male">♂ Nam</button>
               <button type="button" class="ucc-gender-btn ${!currentIsMale ? 'active female' : ''}" id="lucnham-btn-female">♀ Nữ</button>
             </div>
           </div>
 
-          <!-- Row 3: Actions + Switch View Bàn Quẻ vs Luận Giải (Bát Tự Uniform) -->
+          <!-- Row 4: Actions + Switch View Bàn Quẻ vs Luận Giải (Bát Tự Uniform) -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="lucnham-btn-now" title="Về thời điểm hiện tại">
               ⚡ Giờ thực
@@ -853,25 +1045,9 @@
             <div class="lucnham-strip-item"><span>Ngày:</span> <strong class="tms-val-gold">${c.canNgay} ${c.chiNgay}</strong></div>
             <div class="lucnham-strip-item"><span>Giờ:</span> <strong>${c.chiGio}</strong></div>
             <div class="lucnham-strip-item"><span>${isDay ? '☀️ Đán Quý' : '🌙 Mộ Quý'}</span></div>
-            <div class="lucnham-strip-item"><span>Tướng:</span> <strong>${c.nguyetTuong}</strong></div>
-            <div class="lucnham-strip-item"><span>Quý nhân:</span> <strong>${c.quyNhanCung} (${c.quyNhanChieu})</strong></div>
-          </div>
-
-          <!-- BANNER LUẬN GIẢI CHUYÊN SÂU 7 TẦNG (Chuyển sang tab Luận Giải) -->
-          <div class="lucnham-luan-banner">
-            <div class="lucnham-btn-luan-giai" id="lucnham-btn-open-luan" title="Mở luận giải chuyên sâu Lục Nhâm 7 Tầng">
-              <div class="lucnham-luan-btn-left">
-                <span class="lucnham-luan-icon">🔮</span>
-                <div class="lucnham-luan-title-wrap">
-                  <span class="lucnham-luan-main-title">Luận Giải Chuyên Sâu</span>
-                  <span class="lucnham-luan-sub-title">7 Tầng Huyền Cơ · 100 Cục Tất Pháp · 8 Sự Vụ</span>
-                </div>
-              </div>
-              <div class="lucnham-luan-btn-right">
-                <span class="lucnham-luan-badge" id="lucnham-badge-risk-btn">${getRiskBadgeText(c)}</span>
-                <span class="lucnham-luan-arrow">&rsaquo;</span>
-              </div>
-            </div>
+            <div class="lucnham-strip-item"><span>Tướng:</span> <strong>${c.nguyetTuong}</strong> (${c.tietKhi})</div>
+            <div class="lucnham-strip-item"><span>Mệnh:</span> <strong>${c.banMenhChi || '---'}</strong></div>
+            <div class="lucnham-strip-item"><span>H.Niên:</span> <strong>${c.hanhNienChi} (${c.tuoiAm}T)</strong></div>
           </div>
 
           <!-- 3. Tam Truyền Hero Card -->
@@ -986,7 +1162,7 @@
                       <span class="hud-title" style="font-size: 9px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">LỤC NHÂM ĐẠI ĐỘN</span>
                       <div class="hud-main" style="font-size: 13px; font-weight: 900; margin: 2px 0;">${c.canNgay} ${c.chiNgay}</div>
                       <div class="hud-trachmo" style="font-size: 9px; color: #34d399;">Trạch: ${c.trachThan} · Mộ: ${c.moThan}</div>
-                      <div class="hud-hanhnien" style="font-size: 9px; color: #fde047; margin-top: 1px;">Hành niên: ${c.hanhNienChi} (${c.tuoiAm}T)</div>
+                      <div class="hud-hanhnien" style="font-size: 9px; color: #fde047; margin-top: 1px;">Mệnh: ${c.banMenhChi || '---'} · H.Niên: ${c.hanhNienChi} (${c.tuoiAm}T)</div>
                     </div>
                     ${renderSingleCell(bDau, selectedBox === 'Dậu')}
                   `;
@@ -1032,6 +1208,7 @@
   function renderSingleCell(b, isActive) {
     if (!b) return '';
     const tags = [];
+    if (b.tagBanMenh) tags.push(`<span class="tag-banmenh">${b.tagBanMenh}</span>`);
     if (b.tagHanhNien) tags.push(`<span class="tag-hanhnien">${b.tagHanhNien}</span>`);
     if (b.tagTrachMo) tags.push(`<span class="tag-trachmo">${b.tagTrachMo}</span>`);
     if (b.tagCanChiNgay) tags.push(`<span class="tag-canchingay">${b.tagCanChiNgay}</span>`);
@@ -1154,6 +1331,22 @@
       };
     }
 
+    // Quý Nhân Đán / Mộ Toggle
+    const btnDan = document.getElementById('lucnham-btn-dan');
+    const btnMo = document.getElementById('lucnham-btn-mo');
+    if (btnDan) {
+      btnDan.onclick = () => {
+        customDaytime = true;
+        renderLucNham();
+      };
+    }
+    if (btnMo) {
+      btnMo.onclick = () => {
+        customDaytime = false;
+        renderLucNham();
+      };
+    }
+
     // Gender Toggle
     const btnMale = document.getElementById('lucnham-btn-male');
     const btnFemale = document.getElementById('lucnham-btn-female');
@@ -1174,11 +1367,51 @@
       };
     }
 
+    // Querent Birth Year Input & Live Tag Calculation
+    const inputBirthYear = document.getElementById('lucnham-input-birthyear');
+    if (inputBirthYear) {
+      inputBirthYear.addEventListener('input', () => {
+        const val = parseInt(inputBirthYear.value, 10);
+        if (!isNaN(val) && val >= 1900 && val <= 2100) {
+          currentQuerentBirthYear = val;
+          const CHI_YEAR = ["Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi"];
+          const CAN_YEAR = ["Canh", "Tân", "Nhâm", "Quý", "Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ"];
+          const bm = CHI_YEAR[((val % 12) + 12) % 12];
+          const cn = CAN_YEAR[((val % 10) + 10) % 10];
+          const curY = currentDate ? currentDate.getFullYear() : new Date().getFullYear();
+          const tuoi = curY - val + 1;
+          const badge = document.getElementById('lucnham-badge-canchi-tuoi');
+          if (badge) badge.textContent = `${cn} ${bm} • ${tuoi}T`;
+        }
+      });
+      inputBirthYear.addEventListener('change', () => {
+        const val = parseInt(inputBirthYear.value, 10);
+        if (!isNaN(val) && val >= 1900 && val <= 2100) {
+          currentQuerentBirthYear = val;
+          renderLucNham();
+        }
+      });
+    }
+
+    // Drawer Overlay Dismiss (Click & Touch)
+    const drawerOverlay = document.getElementById('lucnham-drawer-overlay');
+    if (drawerOverlay) {
+      drawerOverlay.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        closeDrawer();
+      };
+      drawerOverlay.ontouchend = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        closeDrawer();
+      };
+    }
+
     // Now button
     const btnNow = document.getElementById('lucnham-btn-now');
     if (btnNow) {
       btnNow.onclick = () => {
         isLunarMode = false;
+        customDaytime = null;
         currentDate = new Date();
         renderLucNham();
       };
@@ -1201,6 +1434,13 @@
         let y = parseInt(inputYear.value, 10);
         let h = parseInt(inputHour.value, 10);
         let min = parseInt(inputMin.value, 10);
+
+        if (inputBirthYear) {
+          const by = parseInt(inputBirthYear.value, 10);
+          if (!isNaN(by) && by >= 1900 && by <= 2100) {
+            currentQuerentBirthYear = by;
+          }
+        }
 
         if (isNaN(d) || d < 1 || d > 31) d = currentDate.getDate();
         if (isNaN(m) || m < 1 || m > 12) m = currentDate.getMonth() + 1;
@@ -1335,7 +1575,7 @@
     const satStr = (b.thanSatPhu && b.thanSatPhu.length) ? b.thanSatPhu.join(", ") : "Không có";
 
     content.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; border-bottom: 1px solid rgba(245, 176, 65, 0.25); padding-bottom: 6px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(245, 176, 65, 0.25); padding-bottom: 8px;">
         <div>
           <div style="font-size: 14px; font-weight: 800; color: var(--gold-primary, #f5b041);">
             CUNG [${b.diaBan}] · THIÊN BÀN [${b.thienBan}]
@@ -1344,7 +1584,7 @@
             Lục Thân: <strong style="color: var(--text-primary, #ffffff);">${b.lucThan || '---'}</strong> · Thần Cung: <strong style="color: #38bdf8;">${b.tenNguyetTuong || '---'}</strong>
           </div>
         </div>
-        <button onclick="window.LucNhamView.closeDrawer()" style="background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer;">✕</button>
+        <button type="button" id="lucnham-btn-drawer-close" class="lucnham-btn-drawer-close" title="Đóng bảng tra cứu">✕</button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; line-height: 1.4;">
@@ -1377,13 +1617,25 @@
           </div>
         ` : ''}
 
-        ${(b.tagHanhNien || b.tagTrachMo) ? `
+        ${(b.tagBanMenh || b.tagHanhNien || b.tagTrachMo) ? `
           <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); padding: 6px 8px; border-radius: 6px; color: #bbf7d0;">
-            🎯 <strong>Đặc Điểm Đương Số:</strong> ${b.tagHanhNien ? 'Hành niên (' + b.tagHanhNien + ') ' : ''} ${b.tagTrachMo ? '· ' + b.tagTrachMo : ''}
+            🎯 <strong>Đặc Điểm Đương Số:</strong> ${b.tagBanMenh ? 'Bản Mệnh (' + b.tagBanMenh + ') ' : ''}${b.tagHanhNien ? '· Hành niên (' + b.tagHanhNien + ') ' : ''}${b.tagTrachMo ? '· ' + b.tagTrachMo : ''}
           </div>
         ` : ''}
       </div>
     `;
+
+    const btnClose = document.getElementById('lucnham-btn-drawer-close');
+    if (btnClose) {
+      btnClose.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        closeDrawer();
+      };
+      btnClose.ontouchend = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        closeDrawer();
+      };
+    }
 
     drawer.classList.add('open');
     if (overlay) overlay.classList.add('open');
@@ -1951,7 +2203,17 @@
       currentIsMale = isMale;
       renderLucNham();
     },
+    setBirthYear: (y) => {
+      currentQuerentBirthYear = y;
+      renderLucNham();
+    },
+    setDaytime: (isDay) => {
+      customDaytime = isDay;
+      renderLucNham();
+    },
     selectPalace: selectPalace,
+    openDrawer: openDrawer,
+    closeDrawer: closeDrawer,
     openLuanModal: () => { currentMainTab = 'analysis'; renderLucNham(); },
     closeLuanModal: () => { currentMainTab = 'chart'; renderLucNham(); },
     setLuanFilter: setLuanFilter,

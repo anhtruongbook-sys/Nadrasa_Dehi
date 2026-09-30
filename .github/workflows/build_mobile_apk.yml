@@ -76,17 +76,25 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.7
-          name: "Neta Light v2.8.7 (Chuẩn Hóa Đồng Nhất Bát Tự: Thu Gọn Nút Lập Quẻ, Tab Luận Giải Inline & Chuyển Đổi Kép Bản Gốc / AI)"
+          tag_name: v2.8.8
+          name: "Neta Light v2.8.8 (Hoàn Thiện Lập Quẻ Lục Nhâm: Đương Số Năm Sinh/Hành Niên, Đán/Mộ, X Drawer & Tương Phản Ánh Sáng)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.7
-            - **Đồng Nhất 100% Cấu Trúc UI/UX Theo Chuẩn Phân Hệ Bát Tự**:
-              + **Thu gọn nút Lập Quẻ**: Hàng 3 UCC tích hợp bộ chuyển đổi tab `.ucc-pill-view` (`🏛️ Bàn Quẻ/Trận Đồ` | `📜 Luận Giải`). Nút `🔮 Lập Quẻ` được thu gọn tối ưu ở góc phải, chấm dứt hoàn toàn tình trạng nút to choán hết màn hình trên thiết bị di động.
-              + **Hiển thị Luận Giải Inline Trực Tiếp**: Loại bỏ hoàn toàn modal popup che khuất màn hình; toàn bộ nội dung luận giải hiển thị trực tiếp mượt mà, cuộn tự nhiên.
-              + **Cơ chế Chuyển đổi Kép Linh hoạt (Dual-Mode Toggle)**: Hỗ trợ chuyển đổi qua lại giữa `📜 Bản Gốc (Toán Học 100% Offline)` và `✨ Bản Trau Chuốt (AI Gemini)` không làm mất dữ liệu.
-            - **Chuẩn Hóa Độ Tương Phản Giao Diện Sáng (Light Mode)**:
-              + Tối ưu độ tương phản WCAG AA cho Lục Nhâm (Tam Truyền, Tứ Khóa, Bàn cờ 12 Cung) và Thái Ất. Loại bỏ triệt để màu vàng nhạt/neon chìm trên nền sáng.
-            - **Đồng Bộ Tiết Khí**: Khắc phục triệt để lịch pháp, lấy tiết khí chuẩn xác từ động cơ lịch pháp gốc của ứng dụng (Thu Phân).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.8
+            - **Loại Bỏ Hoàn Toàn Nút Luận Giải Trùng Lặp**:
+              + Gỡ bỏ banner card `.lucnham-luan-banner` và `.thaiat-luan-banner` choán diện tích giữa màn hình. Chức năng xem luận giải được tích hợp hoàn toàn vào tab `[ 🏛️ Bàn Quẻ | 📜 Luận Giải ]` ở Hàng 4 của Bảng điều khiển UCC.
+            - **Sửa Lỗi Triệt Để Nút ✕ Đóng Bảng Tra Cứu (Palace Drawer)**:
+              + Nâng kích thước touch target của nút ✕ lên chuẩn mực di động 44x44px.
+              + Bổ sung đầy đủ sự kiện `click` và `touchend` cho nút ✕ và lớp phủ overlay `#lucnham-drawer-overlay`.
+              + Export chính thức hàm `closeDrawer` và `openDrawer` trên `global.LucNhamView`.
+            - **Bổ Sung Đầy Đủ Thành Phần Lập Quẻ Lục Nhâm Cốt Lõi**:
+              + Ô nhập Năm Sinh đương số (`lucnham-input-birthyear`) kèm huy hiệu tính toán tự động Can Chi Năm sinh và Tuổi Âm (ví dụ: `Canh Ngọ • 37T`, `Ất Sửu • 42T`).
+              + Tính toán ĐỘNG Bản Mệnh (Địa Chi năm sinh) và Hành Niên (Nam khởi Dần thuận, Nữ khởi Thân nghịch).
+              + Hiển thị trực quan Bản Mệnh và Hành Niên trên Master Strip, Center HUD và đánh dấu trực tiếp tag `Mệnh`, `Niên` trên 12 cung Địa bàn.
+              + Bộ chuyển đổi Quý Nhân Đán / Mộ tương tác `[ ☀️ Đán | 🌙 Mộ ]` (tự động theo giờ hoặc chủ động chỉ định).
+            - **Đồng Bộ Lịch Pháp Chuẩn Xác 100% Theo NetaCalendarEngine**:
+              + Bắt buộc tính Can Chi Ngày, Giờ, Tháng, Năm, Tiết Khí (Thu Phân) trực tiếp từ động cơ lịch pháp gốc của app.
+            - **Tối Ưu Hóa Độ Tương Phản Giao Diện Sáng (Light Mode WCAG AA)**:
+              + Khắc phục hoàn toàn lỗi chữ trắng chìm trên nền sáng trong Drawer, thẻ Tam Truyền, Center HUD và các tag trạng thái.
             - **Chuẩn Hóa & Nâng Cấp Độ Tương Phản Giao Diện Sáng (Light Mode WCAG AA)**:
               + Tối ưu độ đậm nét và tương phản cho dải thông tin Ribbon (Độn, Cục, Nguyên, Kỷ Dư, Tiết khí), triệt tiêu hoàn toàn lỗi rớt chấm bullet lẻ hàng.
               + Cung cấp viền và màu số sắc nét cho trọng số 16 cung Thái Ất, tên cung Hoàng Gia hổ phách đậm `#78350f`, nút lọc 5 tầng dữ liệu và số Toán Chủ/Khách/Định.
