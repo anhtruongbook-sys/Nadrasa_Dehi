@@ -500,6 +500,9 @@
         background: #f8fafc !important;
         border-color: #cbd5e1 !important;
       }
+      body.theme-light .thaiat-report-meta-bar > div:first-child {
+        color: #92400e !important;
+      }
       .luan-loading-spinner {
         display: inline-block;
         width: 14px;
@@ -536,7 +539,8 @@
         line-height: 1.1;
       }
       .luan-metric-label {
-        font-size: 9px;
+        font-size: 12px;
+        font-weight: 700;
         color: #94a3b8;
         margin-top: 2px;
       }
@@ -546,7 +550,7 @@
         background: rgba(26, 4, 8, 0.85);
         border: 1px solid rgba(245, 176, 65, 0.25);
         border-radius: 8px;
-        padding: 6px 10px;
+        padding: 8px 12px;
         margin-bottom: 10px;
       }
       body.theme-light .luan-force-bar-wrap {
@@ -556,18 +560,18 @@
       .luan-force-labels {
         display: flex;
         justify-content: space-between;
-        font-size: 10.5px;
+        font-size: 13px;
         font-weight: 700;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
       }
       .force-lbl-chu { color: #38bdf8; }
       body.theme-light .force-lbl-chu { color: #0284c7; }
       .force-lbl-khach { color: #fb7185; }
       body.theme-light .force-lbl-khach { color: #e11d48; }
       .luan-force-bar-track {
-        height: 8px;
+        height: 10px;
         background: #be123c;
-        border-radius: 4px;
+        border-radius: 5px;
         overflow: hidden;
       }
       .luan-force-bar-fill {
@@ -578,7 +582,7 @@
       /* Pill Filter Tabs */
       .luan-pills-bar {
         display: flex;
-        gap: 4px;
+        gap: 6px;
         overflow-x: auto;
         padding-bottom: 6px;
         margin-bottom: 10px;
@@ -588,9 +592,9 @@
       .luan-pill-btn {
         background: rgba(26, 4, 8, 0.8);
         border: 1px solid rgba(245, 176, 65, 0.25);
-        border-radius: 14px;
-        padding: 4px 10px;
-        font-size: 10.5px;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12.5px;
         font-weight: 700;
         white-space: nowrap;
         color: #94a3b8;
@@ -625,13 +629,13 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       }
       .luan-section-header {
-        padding: 8px 10px;
+        padding: 10px 12px;
         background: rgba(30, 6, 12, 0.9);
         display: flex;
         justify-content: space-between;
         align-items: center;
         cursor: pointer;
-        font-size: 11.5px;
+        font-size: 14.5px;
         font-weight: 800;
         color: #f5b041;
         border-bottom: 1px solid rgba(245, 176, 65, 0.15);
@@ -641,51 +645,52 @@
         border-bottom-color: #f1f5f9 !important;
         color: #b45309 !important;
       }
-      .luan-section-toggle { font-size: 11px; opacity: 0.7; }
+      .luan-section-toggle { font-size: 12px; opacity: 0.7; }
       .luan-section-body {
-        padding: 8px 10px;
-        font-size: 11px;
-        line-height: 1.5;
+        padding: 10px 12px;
+        font-size: 13.5px;
+        line-height: 1.65;
         color: var(--text-primary, #f8fafc);
       }
       body.theme-light .luan-section-body {
         color: #1e293b !important;
       }
       .luan-sub-item {
-        margin-bottom: 6px;
+        margin-bottom: 8px;
       }
       .luan-sub-item:last-child { margin-bottom: 0; }
       .luan-sub-title {
-        font-weight: 700;
+        font-weight: 800;
+        font-size: 13.5px;
         color: #38bdf8;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
       }
       body.theme-light .luan-sub-title { color: #0284c7; }
       .luan-badge-hung {
         background: rgba(239, 68, 68, 0.2);
         color: #fca5a5;
         border: 1px solid #ef4444;
-        padding: 1px 4px;
-        border-radius: 3px;
-        font-size: 8.5px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11.5px;
         font-weight: 800;
       }
       .luan-badge-cat {
         background: rgba(16, 185, 129, 0.2);
         color: #6ee7b7;
         border: 1px solid #10b981;
-        padding: 1px 4px;
-        border-radius: 3px;
-        font-size: 8.5px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11.5px;
         font-weight: 800;
       }
       .luan-hours-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 10px;
+        font-size: 12.5px;
       }
       .luan-hours-table th, .luan-hours-table td {
-        padding: 4px 6px;
+        padding: 6px 8px;
         border: 1px solid rgba(245, 176, 65, 0.15);
       }
       body.theme-light .luan-hours-table th, body.theme-light .luan-hours-table td {
@@ -721,9 +726,9 @@
       .luan-mode-tab {
         background: rgba(26, 4, 8, 0.85);
         border: 1px solid rgba(245, 176, 65, 0.3);
-        border-radius: 6px;
-        padding: 4px 12px;
-        font-size: 11px;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: 12.5px;
         font-weight: 700;
         color: #94a3b8;
         cursor: pointer;

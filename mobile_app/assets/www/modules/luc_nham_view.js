@@ -99,7 +99,7 @@
         position: absolute;
         top: 3px;
         left: 6px;
-        font-size: 9px;
+        font-size: 11px;
         font-weight: 800;
         color: var(--gold-primary, #f5b041);
       }
@@ -131,7 +131,7 @@
         border-color: #e5e7eb !important;
       }
       .lucnham-khoa-thu {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 800;
         line-height: 1.3;
         color: var(--gold-primary, #f5b041);
@@ -176,7 +176,7 @@
       body.theme-light .tag-canchingay { color: #b91c1c !important; font-weight: 800 !important; }
 
       .lucnham-khoa-ha {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 800;
         line-height: 1.3;
         color: #ffffff;
@@ -198,9 +198,9 @@
         font-weight: 800 !important;
       }
       .lucnham-khoa-tag {
-        font-size: 8.5px;
-        padding: 1px 4px;
-        border-radius: 3px;
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 4px;
         display: inline-block;
         margin-top: 3px;
         font-weight: 700;
@@ -577,6 +577,9 @@
         background: #f8fafc !important;
         border-color: #cbd5e1 !important;
       }
+      body.theme-light .lucnham-report-meta-bar > div:first-child {
+        color: #92400e !important;
+      }
       .neta-report-mode-toggle {
         display: flex;
         align-items: center;
@@ -673,12 +676,13 @@
         border-color: #e2e8f0 !important;
       }
       .lucnham-metric-num {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 900;
         margin-bottom: 2px;
       }
       .lucnham-metric-lbl {
-        font-size: 9.5px;
+        font-size: 12px;
+        font-weight: 700;
         color: #94a3b8;
       }
       body.theme-light .lucnham-metric-lbl { color: #64748b; }
@@ -688,12 +692,13 @@
         background: rgba(20, 2, 5, 0.9);
         border: 1px solid rgba(245, 176, 65, 0.2);
         border-radius: 8px;
-        padding: 6px 8px;
-        font-size: 11px;
+        padding: 8px 12px;
+        font-size: 13px;
+        line-height: 1.6;
         margin-bottom: 8px;
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 4px;
       }
       body.theme-light .lucnham-subbar {
         background: #f8fafc !important;
@@ -704,7 +709,7 @@
       /* Filter Pills */
       .lucnham-pill-tabs {
         display: flex;
-        gap: 5px;
+        gap: 6px;
         overflow-x: auto;
         padding-bottom: 6px;
         margin-bottom: 8px;
@@ -712,9 +717,9 @@
       }
       .lucnham-pill-btn {
         white-space: nowrap;
-        padding: 4px 9px;
-        border-radius: 6px;
-        font-size: 11px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12.5px;
         font-weight: 700;
         cursor: pointer;
         background: rgba(26, 4, 8, 0.8);
@@ -754,8 +759,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 10px;
-        font-size: 11.5px;
+        padding: 10px 12px;
+        font-size: 14.5px;
         font-weight: 800;
         color: #f5b041;
         cursor: pointer;
@@ -773,9 +778,9 @@
         border-bottom-color: #e2e8f0 !important;
       }
       .lucnham-accordion-body {
-        padding: 8px 10px;
-        font-size: 11px;
-        line-height: 1.5;
+        padding: 10px 12px;
+        font-size: 13.5px;
+        line-height: 1.65;
         color: var(--text-primary, #f8fafc);
       }
       body.theme-light .lucnham-accordion-body {
@@ -786,7 +791,7 @@
       }
       .lucnham-accordion-hdr .hdr-arrow {
         transition: transform 0.2s ease;
-        font-size: 10px;
+        font-size: 12px;
       }
       .lucnham-accordion-card.collapsed .hdr-arrow {
         transform: rotate(180deg);
@@ -1806,7 +1811,7 @@
                 <div>
                   <strong style="color: #f5b041;">• Năng lượng Tứ Thời:</strong> Mùa <strong>${interp.tuThoi.season}</strong> (Khí của Can Ngày: <span style="color: #34d399;">${interp.tuThoi.canKhi}</span>).
                 </div>
-                <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">
+                <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">
                   Trường sinh Can Ngày: Sơ truyền ở đất <strong>${interp.tamTruyenProcess.soTruyen.van}</strong>, Mạt truyền ở đất <strong>${interp.tamTruyenProcess.matTruyen.van}</strong>.
                 </div>
               </div>
@@ -1819,27 +1824,27 @@
                 <span class="hdr-arrow">▲</span>
               </div>
               <div class="lucnham-accordion-body">
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                  <div style="background: rgba(26, 4, 8, 0.6); padding: 6px; border-radius: 6px; border: 1px solid rgba(244, 63, 94, 0.3);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                      <strong style="color: #f43f5e;">1. Sơ Truyền: ${interp.tamTruyenProcess.soTruyen.chi} · ${interp.tamTruyenProcess.soTruyen.tuong}</strong>
-                      <span style="font-size: 10px; color: #94a3b8;">${interp.tamTruyenProcess.soTruyen.than}</span>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="background: rgba(26, 4, 8, 0.6); padding: 8px; border-radius: 6px; border: 1px solid rgba(244, 63, 94, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                      <strong style="color: #f43f5e; font-size: 14px;">1. Sơ Truyền: ${interp.tamTruyenProcess.soTruyen.chi} · ${interp.tamTruyenProcess.soTruyen.tuong}</strong>
+                      <span style="font-size: 12px; color: #94a3b8;">${interp.tamTruyenProcess.soTruyen.than}</span>
                     </div>
                     <div>${interp.tamTruyenProcess.soTruyen.phanTich}</div>
                   </div>
 
-                  <div style="background: rgba(26, 4, 8, 0.6); padding: 6px; border-radius: 6px; border: 1px solid rgba(129, 140, 248, 0.3);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                      <strong style="color: #818cf8;">2. Trung Truyền: ${interp.tamTruyenProcess.trungTruyen.chi} · ${interp.tamTruyenProcess.trungTruyen.tuong}</strong>
-                      <span style="font-size: 10px; color: #94a3b8;">${interp.tamTruyenProcess.trungTruyen.than}</span>
+                  <div style="background: rgba(26, 4, 8, 0.6); padding: 8px; border-radius: 6px; border: 1px solid rgba(129, 140, 248, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                      <strong style="color: #818cf8; font-size: 14px;">2. Trung Truyền: ${interp.tamTruyenProcess.trungTruyen.chi} · ${interp.tamTruyenProcess.trungTruyen.tuong}</strong>
+                      <span style="font-size: 12px; color: #94a3b8;">${interp.tamTruyenProcess.trungTruyen.than}</span>
                     </div>
                     <div>${interp.tamTruyenProcess.trungTruyen.phanTich}</div>
                   </div>
 
-                  <div style="background: rgba(26, 4, 8, 0.6); padding: 6px; border-radius: 6px; border: 1px solid rgba(52, 211, 153, 0.3);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                      <strong style="color: #34d399;">3. Mạt Truyền: ${interp.tamTruyenProcess.matTruyen.chi} · ${interp.tamTruyenProcess.matTruyen.tuong}</strong>
-                      <span style="font-size: 10px; color: #94a3b8;">${interp.tamTruyenProcess.matTruyen.than}</span>
+                  <div style="background: rgba(26, 4, 8, 0.6); padding: 8px; border-radius: 6px; border: 1px solid rgba(52, 211, 153, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                      <strong style="color: #34d399; font-size: 14px;">3. Mạt Truyền: ${interp.tamTruyenProcess.matTruyen.chi} · ${interp.tamTruyenProcess.matTruyen.tuong}</strong>
+                      <span style="font-size: 12px; color: #94a3b8;">${interp.tamTruyenProcess.matTruyen.than}</span>
                     </div>
                     <div>${interp.tamTruyenProcess.matTruyen.phanTich}</div>
                   </div>
@@ -1857,13 +1862,13 @@
               <div class="lucnham-accordion-body">
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                   ${interp.biFaFuDetected.map((bf, idx) => `
-                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.25); border-radius: 6px; padding: 6px 8px;">
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                        <strong style="color: #f5b041;">${idx + 1}. ${bf.ten}</strong>
-                        <span style="font-family: serif; color: #cbd5e1; font-size: 11px;">${bf.han_tu || ''}</span>
+                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.25); border-radius: 6px; padding: 8px 10px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                        <strong style="color: #f5b041; font-size: 14px;">${idx + 1}. ${bf.ten}</strong>
+                        <span style="font-family: serif; color: #cbd5e1; font-size: 13px;">${bf.han_tu || ''}</span>
                       </div>
-                      <div style="color: #cbd5e1; margin-bottom: 3px;">• <em>Ý nghĩa:</em> ${bf.y_nghia}</div>
-                      <div style="background: rgba(245, 176, 65, 0.1); border-left: 2px solid #f5b041; padding: 3px 6px; color: #fef08a;">
+                      <div style="color: #cbd5e1; margin-bottom: 4px;">• <em>Ý nghĩa:</em> ${bf.y_nghia}</div>
+                      <div style="background: rgba(245, 176, 65, 0.1); border-left: 3px solid #f5b041; padding: 4px 8px; color: #fef08a;">
                         👉 <strong>Chỉ dẫn:</strong> ${bf.chi_dan}
                       </div>
                     </div>
@@ -1881,20 +1886,20 @@
                 <span class="hdr-arrow">▲</span>
               </div>
               <div class="lucnham-accordion-body">
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                  <div style="border-left: 3px solid #f59e0b; padding-left: 8px;">
-                    <strong style="color: #f59e0b;">${interp.timeline.giaiDoan1_KhoiDau.thoiGian}</strong>
-                    <div style="font-size: 10px; color: #94a3b8;">${interp.timeline.giaiDoan1_KhoiDau.trangThai}</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="border-left: 3px solid #f59e0b; padding-left: 10px;">
+                    <strong style="color: #f59e0b; font-size: 14px;">${interp.timeline.giaiDoan1_KhoiDau.thoiGian}</strong>
+                    <div style="font-size: 12px; color: #94a3b8;">${interp.timeline.giaiDoan1_KhoiDau.trangThai}</div>
                     <div>${interp.timeline.giaiDoan1_KhoiDau.trongTam}</div>
                   </div>
-                  <div style="border-left: 3px solid #38bdf8; padding-left: 8px;">
-                    <strong style="color: #38bdf8;">${interp.timeline.giaiDoan2_BienChuyen.thoiGian}</strong>
-                    <div style="font-size: 10px; color: #94a3b8;">${interp.timeline.giaiDoan2_BienChuyen.trangThai}</div>
+                  <div style="border-left: 3px solid #38bdf8; padding-left: 10px;">
+                    <strong style="color: #38bdf8; font-size: 14px;">${interp.timeline.giaiDoan2_BienChuyen.thoiGian}</strong>
+                    <div style="font-size: 12px; color: #94a3b8;">${interp.timeline.giaiDoan2_BienChuyen.trangThai}</div>
                     <div>${interp.timeline.giaiDoan2_BienChuyen.trongTam}</div>
                   </div>
-                  <div style="border-left: 3px solid #34d399; padding-left: 8px;">
-                    <strong style="color: #34d399;">${interp.timeline.giaiDoan3_KetCuc.thoiGian}</strong>
-                    <div style="font-size: 10px; color: #94a3b8;">${interp.timeline.giaiDoan3_KetCuc.trangThai}</div>
+                  <div style="border-left: 3px solid #34d399; padding-left: 10px;">
+                    <strong style="color: #34d399; font-size: 14px;">${interp.timeline.giaiDoan3_KetCuc.thoiGian}</strong>
+                    <div style="font-size: 12px; color: #94a3b8;">${interp.timeline.giaiDoan3_KetCuc.trangThai}</div>
                     <div>${interp.timeline.giaiDoan3_KetCuc.trongTam}</div>
                   </div>
                 </div>
@@ -1912,14 +1917,14 @@
               <div class="lucnham-accordion-body">
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                   ${Object.values(interp.chuyenDe7).map(cd => `
-                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.2); border-radius: 6px; padding: 6px 8px;">
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                        <strong style="color: #f5b041;">${cd.tieu_de}</strong>
-                        <span style="font-size: 9.5px; background: rgba(245, 176, 65, 0.15); color: #fef08a; padding: 1px 5px; border-radius: 3px; font-weight: 700;">${cd.danh_gia}</span>
+                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.2); border-radius: 6px; padding: 8px 10px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <strong style="color: #f5b041; font-size: 14px;">${cd.tieu_de}</strong>
+                        <span style="font-size: 11.5px; background: rgba(245, 176, 65, 0.15); color: #fef08a; padding: 2px 7px; border-radius: 4px; font-weight: 700;">${cd.danh_gia}</span>
                       </div>
-                      <div style="color: #cbd5e1; margin-bottom: 2px;">• <em>Hiện trạng:</em> ${cd.hien_trang || cd.noi_dung}</div>
-                      ${cd.dong_luc_bien_chuyen ? `<div style="color: #38bdf8; margin-bottom: 2px;">• <em>Xu thế:</em> ${cd.dong_luc_bien_chuyen}</div>` : ''}
-                      ${cd.canh_bao_rui_ro ? `<div style="color: #f87171; margin-bottom: 2px;">⚠️ <em>Cảnh báo:</em> ${cd.canh_bao_rui_ro}</div>` : ''}
+                      <div style="color: #cbd5e1; margin-bottom: 3px;">• <em>Hiện trạng:</em> ${cd.hien_trang || cd.noi_dung}</div>
+                      ${cd.dong_luc_bien_chuyen ? `<div style="color: #38bdf8; margin-bottom: 3px;">• <em>Xu thế:</em> ${cd.dong_luc_bien_chuyen}</div>` : ''}
+                      ${cd.canh_bao_rui_ro ? `<div style="color: #f87171; margin-bottom: 3px;">⚠️ <em>Cảnh báo:</em> ${cd.canh_bao_rui_ro}</div>` : ''}
                       ${cd.sach_luoc_khuyen_nghi ? `<div style="color: #34d399;">👉 <em>Sách lược:</em> ${cd.sach_luoc_khuyen_nghi}</div>` : ''}
                     </div>
                   `).join('')}
@@ -1936,15 +1941,15 @@
                 <span class="hdr-arrow">▲</span>
               </div>
               <div class="lucnham-accordion-body">
-                <div style="display: flex; flex-direction: column; gap: 7px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
                   ${Object.values(interp.dailyLifeCases).map(dl => `
-                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.2); border-radius: 6px; padding: 6px 8px;">
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                        <strong style="color: #38bdf8;">${dl.tieu_de}</strong>
-                        <span style="font-size: 9.5px; font-weight: 700; color: #f5b041;">${dl.danh_gia}</span>
+                    <div style="background: rgba(26, 4, 8, 0.65); border: 1px solid rgba(245, 176, 65, 0.2); border-radius: 6px; padding: 8px 10px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <strong style="color: #38bdf8; font-size: 14px;">${dl.tieu_de}</strong>
+                        <span style="font-size: 11.5px; font-weight: 700; color: #f5b041;">${dl.danh_gia}</span>
                       </div>
-                      ${dl.dung_than ? `<div style="font-size: 10px; color: #94a3b8; margin-bottom: 2px;">Dụng thần: ${dl.dung_than}</div>` : ''}
-                      ${dl.khau_quyet ? `<div style="font-size: 10px; font-style: italic; color: #e2e8f0; margin-bottom: 2px;">"${dl.khau_quyet}"</div>` : ''}
+                      ${dl.dung_than ? `<div style="font-size: 12px; color: #94a3b8; margin-bottom: 2px;">Dụng thần: ${dl.dung_than}</div>` : ''}
+                      ${dl.khau_quyet ? `<div style="font-size: 12.5px; font-style: italic; color: #e2e8f0; margin-bottom: 3px;">"${dl.khau_quyet}"</div>` : ''}
                       <div style="color: #34d399;">👉 <strong>Lời khuyên:</strong> ${dl.loi_khuyen}</div>
                     </div>
                   `).join('')}

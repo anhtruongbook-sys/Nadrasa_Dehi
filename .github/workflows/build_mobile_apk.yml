@@ -76,10 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.8
-          name: "Neta Light v2.8.8 (Hoàn Thiện Lập Quẻ Lục Nhâm: Đương Số Năm Sinh/Hành Niên, Đán/Mộ, X Drawer & Tương Phản Ánh Sáng)"
+          tag_name: v2.8.9
+          name: "Neta Light v2.8.9 (Chụp Ảnh Toàn Bộ Bàn Quẻ & Luận Giải Lục Nhâm / Thái Ất, Nâng Cấp Kích Thước Chữ & Độ Tương Phản)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.8
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.9
+            - **Sửa Lỗi Chụp Ảnh Màn Hình Chuyên Sâu (Full-Page Screenshot Capture)**:
+              + Bổ sung phân hệ Lục Nhâm (`lucnham`) và Thái Ất (`thaiat`) vào hệ thống điều phối `captureArenaScreenshot` trong `app.js`.
+              + Tự động tính toán chiều cao toàn phần `captureHeight` (2.500px - 20.000px+) cho cả tab Bàn Quẻ và Luận Giải.
+              + Khắc phục triệt để cơ chế CSS `height: 100% !important`, `overflow-y: auto !important` và `contain: content` trong `sanitizeClone`, cho phép `html2canvas` chụp trọn vẹn 100% nội dung từ đầu đến cuối không bị cắt cụt ở trang đầu tiên.
+            - **Nâng Cấp Kích Thước Chữ & Trải Nghiệm Đọc Trên Điện Thoại Di Động (Mobile Typography)**:
+              + Nâng kích thước tiêu đề đề mục Accordion lên 14.5px (font-weight 800) với khoảng đệm ngón tay 10x12px.
+              + Nâng kích thước nội dung Luận Giải lên 13.5px với chiều cao dòng thoáng đạt (line-height 1.65).
+              + Nâng kích thước nhãn chỉ số, thanh Subbar, nút lọc Pills và bảng toán Thái Ất lên 12px - 13px sắc nét.
+              + Nâng cấp độ tương phản cho tiêu đề Meta Bar trên nền sáng (#92400e) đảm bảo chuẩn tiếp cận WCAG AA.
             - **Loại Bỏ Hoàn Toàn Nút Luận Giải Trùng Lặp**:
               + Gỡ bỏ banner card `.lucnham-luan-banner` và `.thaiat-luan-banner` choán diện tích giữa màn hình. Chức năng xem luận giải được tích hợp hoàn toàn vào tab `[ 🏛️ Bàn Quẻ | 📜 Luận Giải ]` ở Hàng 4 của Bảng điều khiển UCC.
             - **Sửa Lỗi Triệt Để Nút ✕ Đóng Bảng Tra Cứu (Palace Drawer)**:

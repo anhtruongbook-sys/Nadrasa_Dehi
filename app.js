@@ -1610,12 +1610,37 @@
       let captureScale = 3;
       let captureHeight = null;
 
-      if (currentDeckMode === 'tuvi') {
+      if (currentDeckMode === 'lucnham') {
+        const wrap = document.querySelector('.lucnham-view-wrap') || document.getElementById('view-lucnham');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#140205';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-lucnham');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
+      } else if (currentDeckMode === 'thaiat') {
+        const wrap = document.querySelector('.thaiat-view-wrap') || document.getElementById('view-thaiat');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#140205';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-thaiat');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
+      } else if (currentDeckMode === 'tuvi') {
         targetElement = document.querySelector('.tuvi-view-container') || document.getElementById('tuvi-view') || appContainer;
+        captureHeight = targetElement.scrollHeight || null;
       } else if (currentDeckMode === 'bazi') {
         targetElement = document.querySelector('.bazi-view-container') || document.getElementById('bazi-view') || appContainer;
+        captureHeight = targetElement.scrollHeight || null;
       } else if (currentDeckMode === 'qmdj') {
         targetElement = document.querySelector('.qmdj-view-container') || document.getElementById('qmdj-view') || appContainer;
+        captureHeight = targetElement.scrollHeight || null;
       } else if (currentDeckMode === 'calendar') {
         targetElement = document.querySelector('.cal-body') || document.querySelector('.calendar-module-container') || document.getElementById('calendar-view') || appContainer;
       } else if (currentDeckMode === 'tarot') {
@@ -1912,14 +1937,17 @@
 
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #app-container'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, #app-container, #app-body'
         );
         scrollViews.forEach(v => {
-          v.style.height = 'auto';
-          v.style.maxHeight = 'none';
-          v.style.overflow = 'visible';
-          v.style.paddingBottom = '16px';
-          v.style.background = bgColor;
+          v.style.setProperty('contain', 'none', 'important');
+          v.style.setProperty('height', 'auto', 'important');
+          v.style.setProperty('max-height', 'none', 'important');
+          v.style.setProperty('overflow', 'visible', 'important');
+          v.style.setProperty('overflow-y', 'visible', 'important');
+          v.style.setProperty('overflow-x', 'visible', 'important');
+          v.style.setProperty('padding-bottom', '24px', 'important');
+          v.style.setProperty('background', bgColor, 'important');
         });
 
         // Ẩn thanh công cụ nhập liệu để ảnh chụp là một lá số/bảng số thuần túy, trang nhã, không rác giao diện
