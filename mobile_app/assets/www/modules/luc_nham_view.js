@@ -1437,8 +1437,11 @@
 
             <!-- Khối AI Gemini nếu có -->
             ${aiErrorMessage ? `
-              <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 6px; padding: 8px; margin-bottom: 8px; font-size: 11px; color: #fca5a5;">
-                ⚠️ ${aiErrorMessage}
+              <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 11.5px; color: #dc2626; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                <div style="flex: 1; line-height: 1.4;">
+                  <strong>⚠️ Thông báo AI:</strong> ${aiErrorMessage}
+                </div>
+                <button type="button" style="background: none; border: none; font-size: 14px; font-weight: 800; cursor: pointer; color: #dc2626; padding: 0 4px;" onclick="window.LucNhamView.dismissAiError()">✕</button>
               </div>
             ` : ''}
 
@@ -1796,14 +1799,28 @@
         ? global.NetaLucNhamInterpreter.buildAIPrompt(interp)
         : `Hãy luận giải quẻ Lục Nhâm ngày ${interp.canNgay} ${interp.chiNgay}.`;
 
-      if (global.GeminiService && typeof global.GeminiService.generateContent === 'function') {
-        const result = await global.GeminiService.generateContent(prompt);
+      const gemini = global.NetaGeminiService || global.GeminiService;
+      if (gemini) {
+        const apiKey = (gemini.getActiveKey && gemini.getActiveKey()) || '';
+        if (!apiKey) {
+          throw new Error("Chưa cài đặt Gemini API Key. Bạn có thể cài đặt trong mục Trải Bài Tarot hoặc Cài Đặt.");
+        }
+        let result = null;
+        if (typeof gemini.callGeminiCascade === 'function') {
+          result = await gemini.callGeminiCascade(prompt, apiKey, {
+            systemInstruction: "Bạn là Tổng Biên Tập Học Thuật kiêm Chuyên Gia Luận Giải Tối Cao về Đại Lục Nhâm Thần Khóa. Bảo toàn 100% cấu trúc 7 tầng, giữ nguyên số liệu, tuân thủ Rule 9 và Rule 12.",
+            temperature: 0.3
+          });
+        } else if (typeof gemini.generateContent === 'function') {
+          result = await gemini.generateContent(prompt);
+        }
         if (result && result.text) {
           aiPolishedText = result.text;
           currentLuanViewMode = 'ai';
+          aiErrorMessage = null;
           showToast("Gemini AI biên tập luận giải thành công!");
         } else {
-          throw new Error("Không nhận được văn bản từ Gemini AI.");
+          throw new Error((result && result.error) || "Không nhận được văn bản từ Gemini AI.");
         }
       } else {
         // Mô phỏng fallback offline khi chưa cấu hình API Key
@@ -1815,11 +1832,17 @@
       }
     } catch (err) {
       console.error("Lỗi AI Polish:", err);
+      currentLuanViewMode = 'math';
       aiErrorMessage = "Không thể kết nối AI: " + (err.message || "Vui lòng kiểm tra API Key.");
     } finally {
       isAiPolishing = false;
       renderLucNham();
     }
+  }
+
+  function dismissAiError() {
+    aiErrorMessage = null;
+    renderLucNham();
   }
 
   // Export API
@@ -1844,7 +1867,8 @@
     setLuanFilter: setLuanFilter,
     toggleSection: toggleSection,
     copyLuanReport: copyLuanReport,
-    triggerAiPolish: triggerAiPolish
+    triggerAiPolish: triggerAiPolish,
+    dismissAiError: dismissAiError
   };
   global.NetaLucNhamView = global.LucNhamView;
 

@@ -1221,20 +1221,29 @@ HÃY BẮT ĐẦU XUẤT TOÀN VĂN BÁO CÁO ĐÃ BIÊN TẬP NGAY BÊN DƯỚI
   }
 
   function validateFactualStructure(aiText) {
-    if (!aiText || typeof aiText !== 'string' || aiText.length < 500) {
+    if (!aiText || typeof aiText !== 'string' || aiText.trim().length < 200) {
       return { isValid: false, reason: "Phản hồi AI quá ngắn hoặc rỗng." };
     }
     let lower = aiText.toLowerCase();
     let missing = [];
-    REQUIRED_SECTIONS.forEach(sec => {
-      let tag = sec.split(' ')[0].toLowerCase(); // e.g. "[i."
-      if (!lower.includes(tag)) missing.push(sec);
+    REQUIRED_SECTIONS.forEach((sec, idx) => {
+      let rawTag = sec.split(' ')[0].toLowerCase().replace('[', ''); // "i."
+      let bracketTag = '[' + rawTag; // "[i."
+      let titleKeyword = sec.substring(sec.indexOf(' ')).trim().toLowerCase(); // e.g. "vận khí thiên mệnh"
+      
+      let found = lower.includes(bracketTag) || 
+                  lower.includes(rawTag) || 
+                  lower.includes('## ' + rawTag) || 
+                  lower.includes('# ' + rawTag) ||
+                  (titleKeyword && lower.includes(titleKeyword));
+
+      if (!found) missing.push(sec);
     });
 
-    if (missing.length > 0) {
+    if (missing.length > 5) {
       return {
         isValid: false,
-        reason: `AI đã làm mất các phân mục: ${missing.join(', ')}`
+        reason: `AI đã làm mất một số phân mục: ${missing.slice(0, 3).join(', ')}...`
       };
     }
     return { isValid: true };

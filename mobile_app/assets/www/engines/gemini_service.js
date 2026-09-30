@@ -215,6 +215,9 @@
       promptText = promptTextOrObj.prompt || promptTextOrObj.promptText || '';
       apiKey = promptTextOrObj.apiKey || apiKeyParam;
       options = Object.assign({}, promptTextOrObj, optionsParam);
+    } else if (typeof apiKeyParam === 'object' && apiKeyParam !== null) {
+      options = Object.assign({}, apiKeyParam, optionsParam);
+      apiKey = apiKeyParam.apiKey || getActiveKey();
     }
 
     if (!apiKey) {

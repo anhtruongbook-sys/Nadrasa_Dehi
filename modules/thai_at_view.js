@@ -1230,37 +1230,36 @@
 
     let modalContentHTML = '';
 
-    if (currentLuanViewMode === 'ai') {
-      if (isAiPolishing) {
-        modalContentHTML = `
-          <div style="text-align: center; padding: 40px 10px;">
-            <div class="luan-loading-spinner" style="width: 28px; height: 28px; border-width: 3px;"></div>
-            <div style="margin-top: 14px; font-weight: 700; color: #f5b041; font-size: 13px;">${aiLoadingStepText || 'Đang biên tập văn phong Thái Ất qua AI...'}</div>
-            <div style="margin-top: 6px; font-size: 11px; opacity: 0.75;">Áp dụng Rào chắn 4 lớp bảo toàn số liệu & cấu trúc 15 phân hệ.</div>
+    const errorBannerHTML = aiErrorMessage ? `
+      <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; color: #dc2626; font-size: 11.5px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+        <div style="flex: 1; line-height: 1.4;">
+          <strong>⚠️ Thông báo AI:</strong> ${aiErrorMessage}
+        </div>
+        <button type="button" style="background: none; border: none; font-size: 14px; font-weight: 800; cursor: pointer; color: #dc2626; padding: 0 4px;" onclick="window.NetaThaiAtView.dismissAiError()">✕</button>
+      </div>
+    ` : '';
+
+    if (currentLuanViewMode === 'ai' && isAiPolishing) {
+      modalContentHTML = `
+        <div style="text-align: center; padding: 40px 10px;">
+          <div class="luan-loading-spinner" style="width: 28px; height: 28px; border-width: 3px;"></div>
+          <div style="margin-top: 14px; font-weight: 700; color: #f5b041; font-size: 13px;">${aiLoadingStepText || 'Đang biên tập văn phong Thái Ất qua AI...'}</div>
+          <div style="margin-top: 6px; font-size: 11px; opacity: 0.75;">Áp dụng Rào chắn 4 lớp bảo toàn số liệu & cấu trúc 15 phân hệ.</div>
+        </div>
+      `;
+    } else if (currentLuanViewMode === 'ai' && aiPolishedText) {
+      modalContentHTML = `
+        ${errorBannerHTML}
+        <div class="luan-ai-result-wrap">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; color: #0284c7; font-weight: 800;">✨ Bản trau chuốt học thuật qua AI:</span>
+            <span class="luan-badge-cat">Đã kiểm toán đạt</span>
           </div>
-        `;
-      } else if (aiPolishedText) {
-        modalContentHTML = `
-          <div class="luan-ai-result-wrap">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-size: 11px; color: #38bdf8; font-weight: 700;">✨ Bản trau chuốt học thuật qua AI:</span>
-              <span class="luan-badge-cat">Đã kiểm toán đạt</span>
-            </div>
-            <div style="background: rgba(26,4,8,0.7); border: 1px solid rgba(245,176,65,0.25); border-radius: 8px; padding: 10px; font-size: 11.5px; line-height: 1.6;">
-              ${formatMarkdownToHTML(aiPolishedText)}
-            </div>
+          <div style="background: rgba(26,4,8,0.7); border: 1px solid rgba(245,176,65,0.25); border-radius: 8px; padding: 10px; font-size: 11.5px; line-height: 1.6;">
+            ${formatMarkdownToHTML(aiPolishedText)}
           </div>
-        `;
-      } else if (aiErrorMessage) {
-        modalContentHTML = `
-          <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 8px; padding: 12px; margin-bottom: 10px; color: #fca5a5; font-size: 11.5px;">
-            <strong>⚠️ Thông báo AI:</strong> ${aiErrorMessage}
-          </div>
-          <div style="text-align: center; margin-top: 10px;">
-            <button class="luan-pill-btn active" onclick="window.NetaThaiAtView.setLuanMode('math')">Quay lại Bản Toán Học Gốc</button>
-          </div>
-        `;
-      }
+        </div>
+      `;
     } else {
       let cards = '';
 
@@ -1663,7 +1662,7 @@
         `;
       }
 
-      modalContentHTML = cards;
+      modalContentHTML = errorBannerHTML + cards;
     }
 
     return `
@@ -1877,26 +1876,40 @@
     aiLoadingStepText = 'Đang gửi bản thảo sang Gemini AI biên tập...';
     renderThaiAt();
 
-    gemini.callGeminiCascade(prompt, {
+    gemini.callGeminiCascade(prompt, apiKey, {
       systemInstruction: "Bạn là Tổng Biên Tập Học Thuật kiêm Chuyên Gia Luận Giải Tối Cao về Thái Ất Thần Kinh. Bảo toàn 100% cấu trúc 15 phân mục [I.] đến [XV.], giữ nguyên số liệu, tuân thủ Rule 9 và Rule 12.",
       temperature: 0.3
     }).then(res => {
       isAiPolishing = false;
       const text = (res && res.text) ? res.text : (typeof res === 'string' ? res : '');
-      const audit = global.NetaThaiAtInterpreter.validateFactualStructure(text);
-      if (audit.isValid) {
-        aiPolishedText = text;
-        aiErrorMessage = null;
+      if (text) {
+        const audit = global.NetaThaiAtInterpreter.validateFactualStructure(text);
+        if (audit.isValid) {
+          aiPolishedText = text;
+          currentLuanViewMode = 'ai';
+          aiErrorMessage = null;
+        } else {
+          aiPolishedText = null;
+          currentLuanViewMode = 'math';
+          aiErrorMessage = `AI không đạt chuẩn kiểm toán cấu trúc: ${audit.reason}. Đã tự động giữ bản gốc để bảo toàn dữ liệu.`;
+        }
       } else {
         aiPolishedText = null;
-        aiErrorMessage = `AI không đạt chuẩn kiểm toán cấu trúc: ${audit.reason}. Đã tự động giữ bản gốc để tránh sai lệch dữ liệu.`;
+        currentLuanViewMode = 'math';
+        aiErrorMessage = (res && res.error) || 'Không nhận được văn bản phản hồi từ máy chủ Gemini.';
       }
       renderThaiAt();
     }).catch(err => {
       isAiPolishing = false;
+      currentLuanViewMode = 'math';
       aiErrorMessage = 'Lỗi kết nối AI: ' + (err.message || 'Không thể trau chuốt');
       renderThaiAt();
     });
+  }
+
+  function dismissAiError() {
+    aiErrorMessage = null;
+    renderThaiAt();
   }
 
   function bindThaiAtEvents() {
@@ -2150,7 +2163,8 @@
     setDate: setDateAndRender,
     inspectPalace: inspectPalace,
     toggleSection: toggleSection,
-    setLuanMode: setLuanMode
+    setLuanMode: setLuanMode,
+    dismissAiError: dismissAiError
   };
 
 })(typeof window !== 'undefined' ? window : this);

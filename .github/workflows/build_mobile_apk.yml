@@ -76,13 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.5
-          name: "Neta Light v2.8.5 (Chuẩn Hóa Tiết Khí Đồng Bộ Lịch Pháp & Tối Ưu Tương Phản Giao Diện Sáng)"
+          tag_name: v2.8.6
+          name: "Neta Light v2.8.6 (Khắc Phục Lỗi AI Luận Giải & Cơ Chế Phục Hồi Bản Gốc An Toàn)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.5
-            - **Đồng Bộ Hoàn Toàn Tiết Khí Với Module Lịch Pháp (`NetaCalendarEngine`)**:
-              + Loại bỏ cơ chế fallback tĩnh, kế thừa 100% Tiết khí thiên văn chính xác từ module Lịch pháp sẵn có trong app (ví dụ: ngày 01/10/2026 hiển thị đúng tiết Thu Phân, tuyệt đối không bị nhảy nhầm Bạch Lộ).
-              + Bổ sung hàm tiện ích `getSolarTermName` và `getCompleteDayInfo` trong Calendar Engine.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.6
+            - **Khắc Phục Triệt Để Lỗi Kết Nối & Kiểm Toán AI Luận Giải**:
+              + Chuẩn hóa chữ ký hàm `callGeminiCascade`: Tự động nhận diện và nạp API Key an toàn khi truyền tham số tùy chọn.
+              + Khắc phục sự cố truyền tham số trong Thái Ất & Lục Nhâm giúp yêu cầu gửi sang Gemini AI vận hành trơn tru.
+              + Nới lỏng kiểm toán cấu trúc tiêu đề (hỗ trợ cả định dạng Markdown `##`, số La Mã và tiêu đề danh mục), loại bỏ báo động giả.
+            - **Cơ Chế Bảo Vệ Trải Nghiệm & Chống Trắng Màn Hình Khi AI Gặp Sự Cố**:
+              + Khi AI quá tải hoặc gặp sự cố mạng, hệ thống **tuyệt đối không làm biến mất 15 phân hệ luận giải toán học gốc**.
+              + Banner thông báo lỗi được hiển thị gọn gàng ở đầu modal kèm nút đóng `✕`, toàn bộ 15 thẻ Accordion và báo cáo quẻ luôn luôn nguyên vẹn 100% bên dưới.
+            - **Đồng Bộ Tiết Khí Thu Phân & Tối Ưu Độ Tương Phản Giao Diện Sáng (Light Mode)**.
             - **Chuẩn Hóa & Nâng Cấp Độ Tương Phản Giao Diện Sáng (Light Mode WCAG AA)**:
               + Tối ưu độ đậm nét và tương phản cho dải thông tin Ribbon (Độn, Cục, Nguyên, Kỷ Dư, Tiết khí), triệt tiêu hoàn toàn lỗi rớt chấm bullet lẻ hàng.
               + Cung cấp viền và màu số sắc nét cho trọng số 16 cung Thái Ất, tên cung Hoàng Gia hổ phách đậm `#78350f`, nút lọc 5 tầng dữ liệu và số Toán Chủ/Khách/Định.
