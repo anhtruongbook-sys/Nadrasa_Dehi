@@ -11844,127 +11844,144 @@ body.theme-light .tarot-btn-pdf {
 }
 
 /* ==========================================================================
-   REFINED COMPACT TAROT REPORT FOOTER ACTIONS (3-BUTTON ELEGANT LAYOUT)
+   ELEGANT UNIFIED TAROT ACTION BAR (REFINED, COMPACT, LUXURY FINISH)
    ========================================================================== */
 .tarot-report-actions {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  margin: 16px auto 6px auto !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  margin: 18px auto 6px auto !important;
   width: 100% !important;
-  max-width: 520px !important;
+  max-width: 440px !important;
+  padding: 4px !important;
   box-sizing: border-box !important;
-  padding: 0 4px !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(8px) !important;
 }
 
-.tarot-report-actions button {
+body.theme-light .tarot-report-actions {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+.tarot-report-actions button,
+.tarot-report-actions .tarot-action-btn,
+.tarot-report-actions .tarot-btn-pdf,
+.tarot-report-actions .tarot-btn-primary,
+.tarot-report-actions .tarot-btn-secondary {
   flex: 1 1 0 !important;
   min-width: 0 !important;
-  width: auto !important;
-  height: 35px !important;
-  min-height: 35px !important;
-  max-height: 35px !important;
-  padding: 0 6px !important;
-  font-size: 0.78rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.01em !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding: 0 4px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 5px !important;
   border-radius: 8px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-family: inherit !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.015em !important;
   cursor: pointer !important;
+  outline: none !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #cbd5e1 !important;
+  white-space: nowrap !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
   box-shadow: none !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.tarot-report-actions button svg {
+  flex-shrink: 0 !important;
+  width: 13px !important;
+  height: 13px !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  opacity: 0.9 !important;
+  transition: transform 0.15s ease !important;
+}
+
+.tarot-report-actions button span {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .tarot-report-actions button:active {
   transform: scale(0.97) !important;
 }
 
-/* Nút 1: Tải PDF (Ngọc Lục Bảo thanh thoát) */
-.tarot-report-actions .tarot-btn-pdf {
-  grid-column: auto !important;
-  background: rgba(16, 185, 129, 0.12) !important;
-  border: 1px solid rgba(52, 211, 153, 0.35) !important;
+.tarot-report-actions button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.tarot-report-actions #btn-tarot-export-pdf:hover {
   color: #34d399 !important;
-  box-shadow: none !important;
+  border-color: rgba(52, 211, 153, 0.4) !important;
 }
 
-.tarot-report-actions .tarot-btn-pdf:hover {
-  background: rgba(16, 185, 129, 0.22) !important;
-  color: #6ee7b7 !important;
-  border-color: rgba(52, 211, 153, 0.6) !important;
-}
-
-/* Nút 2: Lưu Nhật Ký (Lam Tím trang nhã) */
-.tarot-report-actions .tarot-btn-primary {
-  background: rgba(99, 102, 241, 0.12) !important;
-  border: 1px solid rgba(129, 140, 248, 0.35) !important;
+.tarot-report-actions #btn-tarot-save-journal:hover {
   color: #a5b4fc !important;
-  box-shadow: none !important;
+  border-color: rgba(129, 140, 248, 0.4) !important;
 }
 
-.tarot-report-actions .tarot-btn-primary:hover {
-  background: rgba(99, 102, 241, 0.22) !important;
-  color: #c7d2fe !important;
-  border-color: rgba(129, 140, 248, 0.6) !important;
-}
-
-/* Nút 3: Sao Chép MD (Vàng Hổ Phách tinh tế) */
-.tarot-report-actions .tarot-btn-secondary {
-  background: rgba(245, 176, 65, 0.1) !important;
-  border: 1px solid rgba(245, 176, 65, 0.35) !important;
+.tarot-report-actions #btn-tarot-copy-markdown:hover {
   color: #f5b041 !important;
-  box-shadow: none !important;
+  border-color: rgba(245, 176, 65, 0.4) !important;
 }
 
-.tarot-report-actions .tarot-btn-secondary:hover {
-  background: rgba(245, 176, 65, 0.2) !important;
-  color: #fbd38d !important;
-  border-color: rgba(245, 176, 65, 0.6) !important;
-}
-
-/* Giao diện Sáng (Theme Light - Dịu Mắt, Sang Trọng, Tinh Tế) */
-body.theme-light .tarot-report-actions .tarot-btn-pdf {
-  background: #ecfdf5 !important;
-  border: 1px solid #a7f3d0 !important;
-  color: #047857 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
-}
-
-body.theme-light .tarot-report-actions .tarot-btn-pdf:hover {
-  background: #d1fae5 !important;
-  border-color: #6ee7b7 !important;
-}
-
-body.theme-light .tarot-report-actions .tarot-btn-primary {
-  background: #eef2ff !important;
-  border: 1px solid #c7d2fe !important;
-  color: #4338ca !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
-}
-
-body.theme-light .tarot-report-actions .tarot-btn-primary:hover {
-  background: #e0e7ff !important;
-  border-color: #a5b4fc !important;
-}
-
+/* Light Theme: Subtle tonal elevation on individual buttons */
+body.theme-light .tarot-report-actions button,
+body.theme-light .tarot-report-actions .tarot-action-btn,
+body.theme-light .tarot-report-actions .tarot-btn-pdf,
+body.theme-light .tarot-report-actions .tarot-btn-primary,
 body.theme-light .tarot-report-actions .tarot-btn-secondary {
-  background: #fffbeb !important;
-  border: 1px solid #fde68a !important;
-  color: #b45309 !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #334155 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
 }
 
-body.theme-light .tarot-report-actions .tarot-btn-secondary:hover {
-  background: #fef3c7 !important;
-  border-color: #fcd34d !important;
+body.theme-light .tarot-report-actions button:hover {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-light .tarot-report-actions button:active {
+  transform: scale(0.97) !important;
+  background: #f1f5f9 !important;
+}
+
+body.theme-light .tarot-report-actions #btn-tarot-export-pdf:hover {
+  color: #047857 !important;
+  border-color: #a7f3d0 !important;
+  background: #f0fdf4 !important;
+}
+
+body.theme-light .tarot-report-actions #btn-tarot-save-journal:hover {
+  color: #4338ca !important;
+  border-color: #c7d2fe !important;
+  background: #eef2ff !important;
+}
+
+body.theme-light .tarot-report-actions #btn-tarot-copy-markdown:hover {
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+  background: #fffbeb !important;
 }
 
 /* Hide popup elements completely */

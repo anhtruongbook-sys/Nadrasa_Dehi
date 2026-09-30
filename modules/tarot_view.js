@@ -1125,16 +1125,19 @@
         </div>
         `}
 
-        <!-- Report Footer Actions: Direct 1-Click Zero-Popup (3-Button Layout) -->
+        <!-- Report Footer Actions: Refined Unified Action Toolbar -->
         <div class="tarot-report-actions">
-          <button id="btn-tarot-export-pdf" class="tarot-btn-pdf" title="Tải trực tiếp tệp PDF đồ họa A4 có đầy đủ hình ảnh và lời giải">
-            📄 Tải PDF
+          <button id="btn-tarot-export-pdf" class="tarot-action-btn tarot-btn-pdf" title="Tải bài luận giải định dạng PDF">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Xuất PDF</span>
           </button>
-          <button id="btn-tarot-save-journal" class="tarot-btn-primary" title="Lưu kết quả trải bài vào sổ tay">
-            💾 Lưu Nhật Ký
+          <button id="btn-tarot-save-journal" class="tarot-action-btn tarot-btn-primary" title="Lưu kết quả trải bài vào sổ tay">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span>Lưu sổ</span>
           </button>
-          <button id="btn-tarot-copy-markdown" class="tarot-btn-secondary" title="Sao chép toàn bộ văn bản Markdown">
-            📋 Sao Chép MD
+          <button id="btn-tarot-copy-markdown" class="tarot-action-btn tarot-btn-secondary" title="Sao chép toàn bộ bài luận giải">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>Sao chép</span>
           </button>
         </div>
       </div>
