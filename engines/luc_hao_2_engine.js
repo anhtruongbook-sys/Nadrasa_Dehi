@@ -416,12 +416,23 @@
       for (let idx = 0; idx < 6; idx++) {
         const node = this.allNodes[idx];
         const finalEnergy = x[idx];
-        let spectrum = "";
-        if (finalEnergy >= 4.0) spectrum = "ĐẮC LỆNH VƯỢNG TƯỚNG (Khí thế dồi dào, thuận lợi lớn)";
-        else if (finalEnergy >= 1.5) spectrum = "HƯU TÙ PHÙNG SINH (Có trợ lực, tiến triển tốt)";
-        else if (finalEnergy >= -1.5) spectrum = "BÌNH HÒA TRUNG HÒA (Khí vận cân bằng, ổn định)";
-        else if (finalEnergy >= -4.0) spectrum = "HƯU TÙ THIẾU KHÍ (Hao tổn nội lực, cần bổ trợ)";
-        else spectrum = "HƯU TÙ BỊ KHẮC (Suy thoái, chịu áp lực lớn)";
+        const branchElemMap = {
+          "Tý": "Thủy", "Hợi": "Thủy", "Dần": "Mộc", "Mão": "Mộc",
+          "Tỵ": "Hỏa", "Ngọ": "Hỏa", "Thân": "Kim", "Dậu": "Kim",
+          "Thìn": "Thổ", "Tuất": "Thổ", "Sửu": "Thổ", "Mùi": "Thổ"
+        };
+        const sMap = { "Kim": "Thủy", "Thủy": "Mộc", "Mộc": "Hỏa", "Hỏa": "Thổ", "Thổ": "Kim" };
+        const kMap = { "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy", "Thủy": "Hỏa", "Hỏa": "Kim" };
+        const mElm = branchElemMap[this.monthBranch];
+        const hElm = branchElemMap[node.branch];
+        let spectrum = "Bình Hòa";
+        if (mElm && hElm) {
+          if (hElm === mElm) spectrum = "Vượng";
+          else if (sMap[mElm] === hElm) spectrum = "Tướng";
+          else if (sMap[hElm] === mElm) spectrum = "Hưu";
+          else if (kMap[hElm] === mElm) spectrum = "Tù";
+          else if (kMap[mElm] === hElm) spectrum = "Tử";
+        }
 
         resultsNodes.push({
           position: node.node_id,
@@ -434,7 +445,8 @@
           is_moving: node.is_moving,
           changed_branch: node.changed_branch,
           equilibrium_energy: finalEnergy,
-          energy_spectrum: spectrum
+          energy_spectrum: spectrum,
+          vuong_suy: spectrum
         });
       }
 
@@ -1242,6 +1254,23 @@
           dynamics = AdvancedDichRules.analyzeMovingLineDynamics(chi, elem, cBranch, cElem, tuanKhong, monthChi);
         }
 
+        const branchElemMap = {
+          "Tý": "Thủy", "Hợi": "Thủy", "Dần": "Mộc", "Mão": "Mộc",
+          "Tỵ": "Hỏa", "Ngọ": "Hỏa", "Thân": "Kim", "Dậu": "Kim",
+          "Thìn": "Thổ", "Tuất": "Thổ", "Sửu": "Thổ", "Mùi": "Thổ"
+        };
+        const sMap = { "Kim": "Thủy", "Thủy": "Mộc", "Mộc": "Hỏa", "Hỏa": "Thổ", "Thổ": "Kim" };
+        const kMap = { "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy", "Thủy": "Hỏa", "Hỏa": "Kim" };
+        const mElm = branchElemMap[monthChi];
+        let vs = "Bình Hòa";
+        if (mElm && elem) {
+          if (elem === mElm) vs = "Vượng";
+          else if (sMap[mElm] === elem) vs = "Tướng";
+          else if (sMap[elem] === mElm) vs = "Hưu";
+          else if (kMap[elem] === mElm) vs = "Tù";
+          else if (kMap[mElm] === elem) vs = "Tử";
+        }
+
         haos.push({
           position: pos,
           bit: mainBits[i],
@@ -1260,7 +1289,8 @@
           changed_element: cElem,
           changed_luc_than: cLucThan,
           stars,
-          dynamics
+          dynamics,
+          vuong_suy: vs
         });
       }
 
@@ -1403,30 +1433,39 @@
       const isNguyetPha = (this.OPPOSITE_BRANCH[monthChi] === hBranch);
       const isNguyetHop = (this.LUC_HOP_MAP[monthChi] === hBranch);
 
-      if (isLamNguyet) {
-        monthStatus = "Lâm Nguyệt Kiến (Đắc Lệnh Cực Vượng)";
-        monthScore = 3.5;
-      } else if (isNguyetPha) {
-        monthStatus = "Nguyệt Phá (Đại Suy Tổn, Bị Xung Phá)";
-        monthScore = -3.5;
-      } else if (isNguyetHop) {
-        monthStatus = "Nguyệt Hợp (Được Nguyệt Lệnh Che Chở)";
-        monthScore = 2.0;
-      } else if (hElem === mElem) {
-        monthStatus = "Vượng Tướng Theo Mùa (Cùng Ngũ Hành)";
+      let basicVS = "Bình Hòa";
+      if (hElem === mElem) {
+        basicVS = "Vượng";
         monthScore = 3.0;
       } else if (this.SINH_MAP[mElem] === hElem) {
-        monthStatus = "Được Nguyệt Lệnh Sinh Trợ (Tướng Khí)";
+        basicVS = "Tướng";
         monthScore = 2.5;
       } else if (this.SINH_MAP[hElem] === mElem) {
-        monthStatus = "Hưu Khí (Sinh Ra Mùa, Tiêu Hao Khí Lực)";
+        basicVS = "Hưu";
         monthScore = -1.0;
       } else if (this.KHAC_MAP[hElem] === mElem) {
-        monthStatus = "Tù Khí (Khắc Mùa, Bị Kìm Hãm)";
+        basicVS = "Tù";
         monthScore = -1.5;
       } else if (this.KHAC_MAP[mElem] === hElem) {
-        monthStatus = "Tử Khí (Bị Nguyệt Lệnh Khắc Phạt Nặng)";
+        basicVS = "Tử";
         monthScore = -2.5;
+      }
+
+      if (isLamNguyet) {
+        monthStatus = "Vượng (Lâm Nguyệt Kiến - Đắc Lệnh)";
+        monthScore = 3.5;
+      } else if (isNguyetPha) {
+        monthStatus = `${basicVS} (Nguyệt Phá - Bị Tháng Đối Xung)`;
+        monthScore -= 3.0;
+      } else if (isNguyetHop) {
+        monthStatus = `${basicVS} (Nguyệt Hợp - Được Nguyệt Lệnh Che Chở)`;
+        monthScore += 1.5;
+      } else {
+        if (basicVS === "Vượng") monthStatus = "Vượng (Đồng khí với Nguyệt Lệnh)";
+        else if (basicVS === "Tướng") monthStatus = "Tướng (Được Nguyệt Lệnh sinh trợ)";
+        else if (basicVS === "Hưu") monthStatus = "Hưu (Hào sinh Nguyệt Lệnh, hưu tức tiết khí)";
+        else if (basicVS === "Tù") monthStatus = "Tù (Hào khắc Nguyệt Lệnh, bị kiềm tỏa)";
+        else monthStatus = "Tử (Bị Nguyệt Lệnh khắc phạt)";
       }
 
       // 2. Với Nhật Thần (Ngày)

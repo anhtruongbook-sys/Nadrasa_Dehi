@@ -650,154 +650,7 @@
     `;
   }
 
-  // Radar cảnh báo nguy cơ tiềm ẩn & điểm nghẽn
-  function renderHazardRadarCard(hazards) {
-    if (!hazards || hazards.length === 0) return '';
-    return `
-      <div class="dh-hazard-card">
-        <div class="dh-hazard-title">
-          <span>⚠️</span> RADAR CẢNH BÁO NGUY CƠ TIỀM ẨN & ĐIỂM NGHẼN NĂNG LƯỢNG
-        </div>
-        <div style="display:flex; flex-direction:column; gap:6px;">
-          ${hazards.map(hz => {
-            const isHigh = hz.level && (hz.level.includes('Cao') || hz.level.includes('Trọng') || hz.level.includes('CỰC'));
-            return `
-              <div class="dh-eval-card" style="background:${isHigh ? 'rgba(239,68,68,0.08)' : 'rgba(245,158,11,0.08)'}; border-color:${isHigh ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'};">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-                  <strong style="color:${isHigh ? '#ef4444' : '#f59e0b'};">${escapeReportHtml(hz.title)}</strong>
-                  <span class="dh-badge-pill ${isHigh ? 'pill-hung' : 'pill-warn'}">${escapeReportHtml(hz.level || 'Cần lưu ý')}</span>
-                </div>
-                <div style="color:var(--text-color); margin-bottom:4px;">${escapeReportHtml(hz.detail)}</div>
-                ${hz.remedy ? `<div style="font-size:0.72rem; color:var(--gold-glow);">🛡️ <strong>Hóa giải:</strong> ${escapeReportHtml(hz.remedy)}</div>` : ''}
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
-    `;
-  }
 
-  // Định thời điểm ứng kỳ chuẩn Lục Hào Dã Hạc
-  function renderHarmonicTimingCard(timing) {
-    if (!timing) return '';
-    const opt = timing.optimal_positive_timing;
-    const risk = timing.critical_risk_timing;
-
-    return `
-      <div class="dh-timing-card">
-        <div class="dh-timing-title">
-          <span>⏳</span> ĐỊNH THỜI ĐIỂM ỨNG KỲ (THEO PHÉP ỨNG KỲ DÃ HẠC LỤC HÀO)
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:8px;">
-          ${opt ? `
-            <div class="dh-eval-card" style="background:rgba(16,185,129,0.07); border-color:rgba(16,185,129,0.3);">
-              <div style="font-weight:700; color:#10b981; margin-bottom:4px; font-size:0.82rem;">
-                🌟 Thời Điểm Hanh Thông / Đắc Lực Nhất:
-              </div>
-              <div style="font-size:0.78rem; color:var(--text-color); margin-bottom:3px;">
-                Địa Chi: <strong>${opt.branch}</strong> ${opt.principle ? `• Nguyên lý: <em>${opt.principle}</em>` : ''}
-              </div>
-              ${opt.time_window ? `<div style="font-size:0.74rem; color:var(--gold-primary); font-weight:600; margin-bottom:3px;">📅 ${opt.time_window}</div>` : ''}
-              <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.55; text-align:justify;">
-                ${escapeReportHtml(opt.meaning || '')}
-              </div>
-              ${opt.action ? `<div style="font-size:0.73rem; color:#10b981; margin-top:4px; font-weight:600;">👉 ${opt.action}</div>` : ''}
-            </div>
-          ` : ''}
-          ${risk ? `
-            <div class="dh-eval-card" style="background:rgba(239,68,68,0.07); border-color:rgba(239,68,68,0.3);">
-              <div style="font-weight:700; color:#ef4444; margin-bottom:4px; font-size:0.82rem;">
-                ⚠️ Thời Điểm Rủi Ro / Cần Phòng Tránh:
-              </div>
-              <div style="font-size:0.78rem; color:var(--text-color); margin-bottom:3px;">
-                Địa Chi: <strong>${risk.branch}</strong> ${risk.principle ? `• Nguyên lý: <em>${risk.principle}</em>` : ''}
-              </div>
-              ${risk.time_window ? `<div style="font-size:0.74rem; color:#f87171; font-weight:600; margin-bottom:3px;">📅 ${risk.time_window}</div>` : ''}
-              <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.55; text-align:justify;">
-                ${escapeReportHtml(risk.meaning || '')}
-              </div>
-              ${risk.action ? `<div style="font-size:0.73rem; color:#ef4444; margin-top:4px; font-weight:600;">👉 ${risk.action}</div>` : ''}
-            </div>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }
-
-  // 6 Lăng kính chuyên sâu Nhất Quái Đa Đoán (Lý Kế Trung)
-  function renderMultiLensGrid(daDoan) {
-    if (!daDoan) return '';
-    const lenses = [
-      { key: 'lens_1_primary_intent', icon: '🎯', title: '1. Sự Vụ Trọng Tâm', data: daDoan.lens_1_primary_intent },
-      { key: 'lens_2_wealth', icon: '💰', title: '2. Tài Vận & Dòng Tiền', data: daDoan.lens_2_wealth },
-      { key: 'lens_3_career', icon: '💼', title: '3. Công Danh & Sự Nghiệp', data: daDoan.lens_3_career },
-      { key: 'lens_4_relationship', icon: '❤️', title: '4. Tình Cảm & Nhân Duyên', data: daDoan.lens_4_relationship },
-      { key: 'lens_5_health', icon: '🩺', title: '5. Thân Thể & Tật Bệnh', data: daDoan.lens_5_health },
-      { key: 'lens_6_spatial_fengshui', icon: '🏡', title: '6. Phong Thủy & Không Gian', data: daDoan.lens_6_spatial_fengshui }
-    ];
-
-    return `
-      <div style="margin-bottom:12px;">
-        <div style="font-size:0.84rem; font-weight:800; color:var(--gold-primary); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-          <span>🌌</span> 6 LĂNG KÍNH CHUYÊN SÂU (NHẤT QUÁI ĐA ĐOÁN - LÝ KẾ TRUNG)
-        </div>
-        <div class="dh-multilens-grid">
-          ${lenses.map(l => {
-            if (!l.data) return '';
-            return `
-              <div class="dh-lens-card">
-                <div class="dh-lens-head">
-                  <span class="dh-lens-title"><span>${l.icon}</span> ${escapeReportHtml(l.title)}</span>
-                  <span class="dh-lens-badge">${l.data.key_haos ? l.data.key_haos.join(', ') : 'Lục Hào'}</span>
-                </div>
-                <div class="dh-lens-body">
-                  ${escapeReportHtml(l.data.summary || '')}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
-    `;
-  }
-
-  // Tương quan Hào Thế & Hào Ứng
-  function renderMultiObjectiveCard(intentUtility, hexDetails) {
-    if (!intentUtility) return '';
-    const objs = intentUtility.objectives || {};
-    const theHao = hexDetails?.haos ? hexDetails.haos[hexDetails.the_position - 1] : null;
-    const ungHao = hexDetails?.haos ? hexDetails.haos[hexDetails.ung_position - 1] : null;
-
-    return `
-      <div class="dh-eval-card highlight" style="margin-bottom:14px;">
-        <div class="dh-card-title">🎯 Tương Quan Hào Thế & Hào Ứng (Bản Thân & Đối Phương):</div>
-        <div style="font-size:0.78rem; line-height:1.6; margin-bottom:8px;">
-          • <strong>Hào Thế (Bản thân / Phía mình):</strong> Hào ${hexDetails?.the_position} (${theHao ? `${theHao.luc_than} ${theHao.can}-${theHao.branch} • Hành ${theHao.element}` : '-'}) • Khí vận: <strong>${theHao?.spectrum || 'Bình hòa'}</strong>
-          <br>• <strong>Hào Ứng (Đối tác / Hoàn cảnh):</strong> Hào ${hexDetails?.ung_position} (${ungHao ? `${ungHao.luc_than} ${ungHao.can}-${ungHao.branch} • Hành ${ungHao.element}` : '-'}) • Khí vận: <strong>${ungHao?.spectrum || 'Bình hòa'}</strong>
-        </div>
-        <div style="font-size:0.75rem; font-weight:700; color:var(--gold-glow); margin-bottom:4px;">
-          📊 Đánh Giá Các Chiều Hướng Sự Vụ (Theo Lục Thân Bát Quái):
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:6px;">
-          ${Object.keys(objs).map(k => {
-            const o = objs[k];
-            const isCat = o.state === 'CAT_VUONG';
-            const isHung = o.state === 'CANH_BAO_RUI_RO';
-            const stateLabel = isCat ? 'Cát Lợi / Thuận' : (isHung ? 'Cần Thận Trọng' : 'Bình Hòa');
-            return `
-              <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(245,176,65,0.18); border-radius:6px; padding:6px 8px; font-size:0.72rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-                  <strong>${escapeReportHtml(o.target_name || k)}</strong>
-                  <span class="dh-badge-pill ${isCat ? 'pill-cat' : (isHung ? 'pill-hung' : 'pill-neutral')}">${stateLabel}</span>
-                </div>
-                <div>Tầm quan trọng: ${Math.round((o.weight || 0) * 100)}% • Trạng thái: <strong>${escapeReportHtml(o.state || 'Bình')}</strong></div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
-    `;
-  }
 
   // Toàn văn báo cáo chuyên sâu 7 phần (Full Report Reader)
   function renderReportReader() {
@@ -823,8 +676,7 @@
           </div>
         </div>
 
-        <!-- Tương quan Hào Thế & Hào Ứng (Bản Thân & Đối Phương) -->
-        ${state.lucHao2Result ? renderMultiObjectiveCard(state.lucHao2Result.intent_utility, state.lucHao2Result.hexagram_details) : ''}
+
 
         ${state.currentReportMode === 'ai' ? `
           ${state.isInterpretingAI ? `
@@ -1008,24 +860,23 @@
           <table class="dh-spec-table">
             <thead>
               <tr class="th-group-row">
-                <th colspan="8" class="th-group-left">QUẺ ${goc.name.toUpperCase()}</th>
+                <th colspan="7" class="th-group-left">QUẺ ${goc.name.toUpperCase()}</th>
                 <th colspan="6" class="th-group-right">${bien ? `QUẺ ${bien.name.toUpperCase()}` : 'BẤT BIẾN (THUẦN TĨNH)'}</th>
               </tr>
               <tr class="th-cols-row">
                 <th>Hào</th>
-                <th style="width: 38px;">V-S</th>
-                <th style="width: 44px;">Cân Lực</th>
-                <th style="width: 48px;">Quái thần</th>
-                <th style="width: 32px;">Lộc</th>
-                <th style="width: 32px;">Mã</th>
-                <th style="width: 32px;">Quý</th>
-                <th style="width: 32px;">Đào</th>
+                <th style="width: 44px;">V-S</th>
+                <th style="width: 50px;">Quái thần</th>
+                <th style="width: 36px;">Lộc</th>
+                <th style="width: 36px;">Mã</th>
+                <th style="width: 36px;">Quý</th>
+                <th style="width: 36px;">Đào</th>
                 <th>Hào</th>
-                <th style="width: 38px;">V-S</th>
-                <th style="width: 32px;">Lộc</th>
-                <th style="width: 32px;">Mã</th>
-                <th style="width: 32px;">Quý</th>
-                <th style="width: 32px;">Đào</th>
+                <th style="width: 44px;">V-S</th>
+                <th style="width: 36px;">Lộc</th>
+                <th style="width: 36px;">Mã</th>
+                <th style="width: 36px;">Quý</th>
+                <th style="width: 36px;">Đào</th>
               </tr>
             </thead>
             <tbody>
@@ -1035,29 +886,10 @@
                 if (!hGoc) return '';
                 const isDong = hGoc.isDong;
 
-                let canLucBadge = '-';
-                if (state.lucHao2Result?.hexagram_details?.haos) {
-                  const hao2 = state.lucHao2Result.hexagram_details.haos[i];
-                  if (hao2) {
-                    const sc = Math.round(hao2.energy * 10) / 10;
-                    const cls = sc >= 1.5 ? 'vuong' : (sc <= -1.5 ? 'suy' : 'binh');
-                    const starsList = (hao2.stars || []).join('; ');
-                    canLucBadge = `<span class="badge-canluc ${cls}" title="${hao2.spectrum || ''}${starsList ? ': ' + starsList : ''}">${sc > 0 ? '+' : ''}${sc}</span>`;
-                  }
-                } else if (state.interpretation?.evaluation?.haosEnriched) {
-                  const enrichedHao = state.interpretation.evaluation.haosEnriched[i];
-                  if (enrichedHao && enrichedHao.canLuc) {
-                    const sc = enrichedHao.canLuc.score;
-                    const cls = sc >= 1.5 ? 'vuong' : (sc <= -1.5 ? 'suy' : 'binh');
-                    canLucBadge = `<span class="badge-canluc ${cls}" title="${enrichedHao.canLuc.status}: ${enrichedHao.canLuc.notes.join('; ')}">${sc > 0 ? '+' : ''}${sc}</span>`;
-                  }
-                }
-
                 return `
                   <tr class="dh-row ${isDong ? 'row-dong' : ''}">
                     <td class="td-bold ${isDong ? 'text-red' : ''}">${hGoc.can} ${hGoc.chi}</td>
                     <td class="td-center ${hGoc.vuongSuy === 'Vượng' ? 'text-green' : (hGoc.vuongSuy === 'Tướng' ? 'text-cyan' : '')}">${hGoc.vuongSuy}</td>
-                    <td class="td-center">${canLucBadge}</td>
                     <td class="td-center">${hGoc.isQuaiThan ? '<strong class="badge-ts qt">QT</strong>' : '-'}</td>
                     <td class="td-center">${hGoc.isLoc ? '<strong class="badge-ts loc">L</strong>' : '-'}</td>
                     <td class="td-center">${hGoc.isMa ? '<strong class="badge-ts ma">M</strong>' : '-'}</td>
