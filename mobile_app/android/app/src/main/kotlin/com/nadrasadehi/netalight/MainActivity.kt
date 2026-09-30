@@ -672,10 +672,7 @@ class MainActivity: FlutterActivity() {
     }
 
     private fun saveImageFileToPictures(file: File, filename: String): Boolean {
-        var outputStream: OutputStream? = null
-        var inputStream: FileInputStream? = null
         try {
-            inputStream = FileInputStream(file)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val values = ContentValues().apply {
                     put(MediaStore.Images.Media.DISPLAY_NAME, filename)
@@ -686,14 +683,13 @@ class MainActivity: FlutterActivity() {
 
                 val uri: Uri? = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
                 if (uri != null) {
-                    outputStream = contentResolver.openOutputStream(uri)
+                    val outputStream = contentResolver.openOutputStream(uri)
                     if (outputStream != null) {
-                        val buffer = ByteArray(65536)
-                        var read: Int
-                        while (inputStream.read(buffer).also { read = it } != -1) {
-                            outputStream.write(buffer, 0, read)
+                        file.inputStream().use { input ->
+                            outputStream.use { output ->
+                                input.copyTo(output)
+                            }
                         }
-                        outputStream.flush()
 
                         values.clear()
                         values.put(MediaStore.Images.Media.IS_PENDING, 0)
@@ -708,13 +704,11 @@ class MainActivity: FlutterActivity() {
                     appDir.mkdirs()
                 }
                 val imageFile = File(appDir, filename)
-                outputStream = FileOutputStream(imageFile)
-                val buffer = ByteArray(65536)
-                var read: Int
-                while (inputStream.read(buffer).also { read = it } != -1) {
-                    outputStream.write(buffer, 0, read)
+                file.inputStream().use { input ->
+                    FileOutputStream(imageFile).use { output ->
+                        input.copyTo(output)
+                    }
                 }
-                outputStream.flush()
 
                 android.media.MediaScannerConnection.scanFile(
                     this,
@@ -727,18 +721,12 @@ class MainActivity: FlutterActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
             return false
-        } finally {
-            try { inputStream?.close() } catch (e: Exception) {}
-            try { outputStream?.close() } catch (e: Exception) {}
         }
         return false
     }
 
     private fun saveFilePathToDownloadsFolder(file: File, filename: String, mimeType: String): Boolean {
-        var outputStream: OutputStream? = null
-        var inputStream: FileInputStream? = null
         try {
-            inputStream = FileInputStream(file)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val values = ContentValues().apply {
                     put(MediaStore.Downloads.DISPLAY_NAME, filename)
@@ -749,14 +737,13 @@ class MainActivity: FlutterActivity() {
 
                 val uri: Uri? = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
                 if (uri != null) {
-                    outputStream = contentResolver.openOutputStream(uri)
+                    val outputStream = contentResolver.openOutputStream(uri)
                     if (outputStream != null) {
-                        val buffer = ByteArray(65536)
-                        var read: Int
-                        while (inputStream.read(buffer).also { read = it } != -1) {
-                            outputStream.write(buffer, 0, read)
+                        file.inputStream().use { input ->
+                            outputStream.use { output ->
+                                input.copyTo(output)
+                            }
                         }
-                        outputStream.flush()
 
                         values.clear()
                         values.put(MediaStore.Downloads.IS_PENDING, 0)
@@ -771,13 +758,11 @@ class MainActivity: FlutterActivity() {
                     appDir.mkdirs()
                 }
                 val destFile = File(appDir, filename)
-                outputStream = FileOutputStream(destFile)
-                val buffer = ByteArray(65536)
-                var read: Int
-                while (inputStream.read(buffer).also { read = it } != -1) {
-                    outputStream.write(buffer, 0, read)
+                file.inputStream().use { input ->
+                    FileOutputStream(destFile).use { output ->
+                        input.copyTo(output)
+                    }
                 }
-                outputStream.flush()
 
                 android.media.MediaScannerConnection.scanFile(
                     this,
@@ -790,9 +775,6 @@ class MainActivity: FlutterActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
             return false
-        } finally {
-            try { inputStream?.close() } catch (e: Exception) {}
-            try { outputStream?.close() } catch (e: Exception) {}
         }
         return false
     }
