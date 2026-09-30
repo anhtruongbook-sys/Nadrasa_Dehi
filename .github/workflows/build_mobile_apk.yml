@@ -76,10 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.5.9
-          name: "Neta Light v2.5.9 (Giao Diện Báo Cáo Chuyển Đổi Trực Tiếp & Làm Mới State Tự Động)"
+          tag_name: v2.6.0
+          name: "Neta Light v2.6.0 (Thanh Điều Khiển Tác Vụ Tối Giản & Thanh Lọc 100% Nạp Âm Bát Tự)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.5.9
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.6.0
+            - **Thanh tác vụ cuối báo cáo Tarot tối giản & sang trọng**:
+              + Tinh chỉnh 3 nút thành thanh điều khiển hợp nhất (Segmented Action Bar) siêu nhỏ gọn cao 34px.
+              + Nhãn tác vụ súc tích không tràn chữ: `[ ⤓ Xuất PDF ] [ 🔖 Lưu sổ ] [ ❐ Sao chép ]`.
+              + Biểu tượng vector SVG đơn sắc hiện đại thay thế emoji hệ điều hành thô kệch.
+            - **Thanh lọc 100% Ngũ Hành Nạp Âm khỏi mô-đun Bát Tự**:
+              + Bát Tự Tử Bình & Manh Phái tuân thủ nghiêm ngặt nguyên lý kinh điển, không sử dụng Ngũ Hành Nạp Âm.
+              + Xóa sạch toàn bộ bảng hằng số Nạp Âm Hoa Giáp khỏi động cơ Bát Tự.
+              + Cung cấp luận đoán Tứ Trụ, Thập Thần, Vòng Trường Sinh và Dụng Thần chuẩn xác tuyệt đối.
             - **Giao diện chuyển đổi chế độ báo cáo trực tiếp (In-Place Segmented Pill)**:
               + Loại bỏ hoàn toàn các ô popup to đùng chèn ép nội dung trang trên cả 4 module (Tử Vi, Bát Tự, Tarot, Dịch Học).
               + Trải nghiệm đọc trực tiếp ngay trong lòng khu vực báo cáo: `[ 📜 Bản Tiêu Chuẩn ]  [ ✨ Bản Trau Chuốt (AI) ]`.
