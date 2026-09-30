@@ -76,18 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.6
-          name: "Neta Light v2.8.6 (Khắc Phục Lỗi AI Luận Giải & Cơ Chế Phục Hồi Bản Gốc An Toàn)"
+          tag_name: v2.8.7
+          name: "Neta Light v2.8.7 (Chuẩn Hóa Đồng Nhất Bát Tự: Thu Gọn Nút Lập Quẻ, Tab Luận Giải Inline & Chuyển Đổi Kép Bản Gốc / AI)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.6
-            - **Khắc Phục Triệt Để Lỗi Kết Nối & Kiểm Toán AI Luận Giải**:
-              + Chuẩn hóa chữ ký hàm `callGeminiCascade`: Tự động nhận diện và nạp API Key an toàn khi truyền tham số tùy chọn.
-              + Khắc phục sự cố truyền tham số trong Thái Ất & Lục Nhâm giúp yêu cầu gửi sang Gemini AI vận hành trơn tru.
-              + Nới lỏng kiểm toán cấu trúc tiêu đề (hỗ trợ cả định dạng Markdown `##`, số La Mã và tiêu đề danh mục), loại bỏ báo động giả.
-            - **Cơ Chế Bảo Vệ Trải Nghiệm & Chống Trắng Màn Hình Khi AI Gặp Sự Cố**:
-              + Khi AI quá tải hoặc gặp sự cố mạng, hệ thống **tuyệt đối không làm biến mất 15 phân hệ luận giải toán học gốc**.
-              + Banner thông báo lỗi được hiển thị gọn gàng ở đầu modal kèm nút đóng `✕`, toàn bộ 15 thẻ Accordion và báo cáo quẻ luôn luôn nguyên vẹn 100% bên dưới.
-            - **Đồng Bộ Tiết Khí Thu Phân & Tối Ưu Độ Tương Phản Giao Diện Sáng (Light Mode)**.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.7
+            - **Đồng Nhất 100% Cấu Trúc UI/UX Theo Chuẩn Phân Hệ Bát Tự**:
+              + **Thu gọn nút Lập Quẻ**: Hàng 3 UCC tích hợp bộ chuyển đổi tab `.ucc-pill-view` (`🏛️ Bàn Quẻ/Trận Đồ` | `📜 Luận Giải`). Nút `🔮 Lập Quẻ` được thu gọn tối ưu ở góc phải, chấm dứt hoàn toàn tình trạng nút to choán hết màn hình trên thiết bị di động.
+              + **Hiển thị Luận Giải Inline Trực Tiếp**: Loại bỏ hoàn toàn modal popup che khuất màn hình; toàn bộ nội dung luận giải hiển thị trực tiếp mượt mà, cuộn tự nhiên.
+              + **Cơ chế Chuyển đổi Kép Linh hoạt (Dual-Mode Toggle)**: Hỗ trợ chuyển đổi qua lại giữa `📜 Bản Gốc (Toán Học 100% Offline)` và `✨ Bản Trau Chuốt (AI Gemini)` không làm mất dữ liệu.
+            - **Chuẩn Hóa Độ Tương Phản Giao Diện Sáng (Light Mode)**:
+              + Tối ưu độ tương phản WCAG AA cho Lục Nhâm (Tam Truyền, Tứ Khóa, Bàn cờ 12 Cung) và Thái Ất. Loại bỏ triệt để màu vàng nhạt/neon chìm trên nền sáng.
+            - **Đồng Bộ Tiết Khí**: Khắc phục triệt để lịch pháp, lấy tiết khí chuẩn xác từ động cơ lịch pháp gốc của ứng dụng (Thu Phân).
             - **Chuẩn Hóa & Nâng Cấp Độ Tương Phản Giao Diện Sáng (Light Mode WCAG AA)**:
               + Tối ưu độ đậm nét và tương phản cho dải thông tin Ribbon (Độn, Cục, Nguyên, Kỷ Dư, Tiết khí), triệt tiêu hoàn toàn lỗi rớt chấm bullet lẻ hàng.
               + Cung cấp viền và màu số sắc nét cho trọng số 16 cung Thái Ất, tên cung Hoàng Gia hổ phách đậm `#78350f`, nút lọc 5 tầng dữ liệu và số Toán Chủ/Khách/Định.

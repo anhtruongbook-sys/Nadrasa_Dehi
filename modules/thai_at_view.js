@@ -16,9 +16,9 @@
   let currentIsMale = true;
 
   // Trạng thái Phân hệ Luận Giải Chuyên Sâu 15 Phân Hệ
-  let isLuanModalOpen = false;
+  let currentMainTab = 'chart'; // 'chart' (🏛️ Trận Đồ) | 'analysis' (📜 Luận Giải)
+  let currentReportMode = 'standard'; // 'standard' (📜 Bản Gốc) | 'ai' (✨ Bản AI)
   let currentLuanFilter = 'all'; // 'all' | 'daicuc' | 'cachcuc' | 'tacthien' | 'nhatdung' | 'canhgio'
-  let currentLuanViewMode = 'math'; // 'math' | 'ai'
   let isAiPolishing = false;
   let aiPolishedText = null;
   let aiErrorMessage = null;
@@ -479,101 +479,38 @@
       }
       .luan-btn-arrow { font-size: 11px; opacity: 0.8; }
 
-      /* Full-Screen Luận Giải Modal */
-      .thaiat-luan-modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(4px);
-        z-index: 10000;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-      }
-      .thaiat-luan-modal-sheet {
+      /* Inline Report Wrap & Meta Bar (Bát Tự Uniform) */
+      .thaiat-analysis-wrap {
         width: 100%;
-        max-width: 500px;
-        height: 94vh;
-        max-height: 94vh;
-        background: #120306;
-        border-top: 2px solid #f5b041;
-        border-radius: 16px 16px 0 0;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+        margin-top: 6px;
       }
-      body.theme-light .thaiat-luan-modal-sheet {
-        background: #ffffff !important;
-        border-top-color: #d97706 !important;
-        color: #1e293b !important;
-        box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15) !important;
-      }
-      .thaiat-luan-modal-header {
+      .thaiat-report-meta-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 14px;
-        background: rgba(26, 4, 8, 0.95);
-        border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 6px 0 10px;
+        padding: 8px 10px;
+        background: rgba(20, 2, 5, 0.85);
+        border-radius: 8px;
+        border: 1px solid rgba(245, 176, 65, 0.25);
       }
-      body.theme-light .thaiat-luan-modal-header {
-        background: #fefce8 !important;
-        border-bottom-color: #e5e7eb !important;
+      body.theme-light .thaiat-report-meta-bar {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
       }
-      .thaiat-luan-modal-title {
-        font-size: 12.5px;
-        font-weight: 800;
-        color: #f5b041;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+      .luan-loading-spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(245, 176, 65, 0.3);
+        border-radius: 50%;
+        border-top-color: #f5b041;
+        animation: thaiat-spin 0.8s linear infinite;
       }
-      body.theme-light .thaiat-luan-modal-title { color: #92400e; }
-      .thaiat-luan-modal-actions {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .luan-act-btn {
-        background: rgba(245, 176, 65, 0.15);
-        color: #fef08a;
-        border: 1px solid rgba(245, 176, 65, 0.3);
-        border-radius: 6px;
-        padding: 4px 8px;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      body.theme-light .luan-act-btn {
-        background: #fef3c7 !important;
-        color: #92400e !important;
-        border-color: #fcd34d !important;
-      }
-      .luan-act-btn.btn-close {
-        font-size: 14px;
-        padding: 3px 8px;
-        background: rgba(239, 68, 68, 0.2);
-        color: #fca5a5;
-        border-color: rgba(239, 68, 68, 0.4);
-      }
-      body.theme-light .luan-act-btn.btn-close {
-        background: #fee2e2 !important;
-        color: #dc2626 !important;
-        border-color: #fca5a5 !important;
-      }
-      .thaiat-luan-modal-body {
-        flex: 1;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y !important;
-        padding: 10px 12px calc(var(--safe-bottom, 20px) + 30px);
+      @keyframes thaiat-spin {
+        to { transform: rotate(360deg); }
       }
       /* Dashboard Metrics */
       .luan-dashboard-grid {
@@ -929,17 +866,18 @@
             </div>
           </div>
 
-          <!-- Row 3: Actions + Tứ Kể Mode Switch -->
+          <!-- Row 3: Actions + Switch View Trận Đồ vs Luận Giải (Bát Tự Uniform) -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="thaiat-btn-now" title="Về thời điểm hiện tại">
               ⚡ Giờ thực
             </button>
             <div class="ucc-pill-view">
-              <button class="ucc-view-btn ${currentKeType === 'gio' ? 'active' : ''}" data-ke="gio">Giờ</button>
-              <button class="ucc-view-btn ${currentKeType === 'ngay' ? 'active' : ''}" data-ke="ngay">Ngày</button>
-              <button class="ucc-view-btn ${currentKeType === 'thang' ? 'active' : ''}" data-ke="thang">Tháng</button>
-              <button class="ucc-view-btn ${currentKeType === 'nam' ? 'active' : ''}" data-ke="nam">Năm</button>
-              <button class="ucc-view-btn ${currentKeType === 'menh' ? 'active' : ''}" data-ke="menh">Mệnh</button>
+              <button type="button" class="ucc-view-btn ${currentMainTab === 'chart' ? 'active' : ''}" id="btn-thaiat-tab-chart" title="Trận Đồ Thái Ất">
+                🏛️ Trận Đồ
+              </button>
+              <button type="button" class="ucc-view-btn ${currentMainTab === 'analysis' ? 'active' : ''}" id="btn-thaiat-tab-analysis" title="Bản Luận Giải Chuyên Sâu">
+                📜 Luận Giải
+              </button>
             </div>
             <button class="ucc-btn-submit" id="thaiat-btn-submit" title="Lập quẻ Thái Ất">
               🔮 Lập Quẻ
@@ -947,66 +885,73 @@
           </div>
         </div>
 
-        <!-- 2. Master Overview Ribbon (Thái Ất Master Strip) -->
-        <div class="thaiat-master-strip">
-          <div class="thaiat-strip-item"><span>Độn:</span> <strong class="tms-val-gold">${keData.donType}</strong></div>
-          <div class="thaiat-strip-item"><span>Cục:</span> <strong>Cục ${keData.cuc}</strong></div>
-          <div class="thaiat-strip-item"><span>Nguyên:</span> <strong>Nguyên ${keData.nguyen}</strong></div>
-          <div class="thaiat-strip-item"><span>Kỷ Dư:</span> <strong>${keData.kyDu}</strong></div>
-          <div class="thaiat-strip-item"><span>Tiết khí:</span> <strong>${currentChart.tietKhi}</strong></div>
-        </div>
-
-        <!-- Nút Kích Hoạt Luận Giải Chuyên Sâu 15 Phân Hệ -->
-        <div class="thaiat-luan-banner">
-          <button type="button" class="thaiat-btn-luan-giai" id="thaiat-btn-open-luan" title="Mở bảng Luận Giải 15 Phân Hệ">
-            <span class="luan-btn-left">
-              <span class="luan-btn-icon">📖</span>
-              <span class="luan-btn-text">Luận Giải Chuyên Sâu</span>
-            </span>
-            <span class="luan-btn-right">
-              <span class="luan-btn-badge">${luanQuickBadge}</span>
-              <span class="luan-btn-arrow">❯</span>
-            </span>
-          </button>
-        </div>
-
-        <!-- 3. Bộ lọc 5 tầng thông tin (Grid 5 cột cân đối, không cuộn ngang) -->
-        ${currentKeType !== 'menh' ? `
-          <div class="thaiat-filters-bar">
-            <button class="thaiat-filter-btn ${currentLayer === 'all' ? 'active' : ''}" data-layer="all">Tất cả</button>
-            <button class="thaiat-filter-btn ${currentLayer === 'combat' ? 'active' : ''}" data-layer="combat">⚔️ Tướng</button>
-            <button class="thaiat-filter-btn ${currentLayer === 'cat' ? 'active' : ''}" data-layer="cat">✨ Cát</button>
-            <button class="thaiat-filter-btn ${currentLayer === 'weather' ? 'active' : ''}" data-layer="weather">🌪️ Khí</button>
-            <button class="thaiat-filter-btn ${currentLayer === 'stars9' ? 'active' : ''}" data-layer="stars9">🌌 Cửu Tinh</button>
+        ${currentMainTab === 'analysis' ? renderThaiAtAnalysisHTML(keData, currentChart, luanData) : `
+          <!-- Sub-bar Tứ Kể khi xem Trận Đồ -->
+          <div style="display: flex; justify-content: center; margin: 4px 0 6px;">
+            <div class="ucc-pill-view" style="max-width: 320px; width: 100%; height: 28px;">
+              <button class="ucc-view-btn ${currentKeType === 'gio' ? 'active' : ''}" data-ke="gio">Giờ</button>
+              <button class="ucc-view-btn ${currentKeType === 'ngay' ? 'active' : ''}" data-ke="ngay">Ngày</button>
+              <button class="ucc-view-btn ${currentKeType === 'thang' ? 'active' : ''}" data-ke="thang">Tháng</button>
+              <button class="ucc-view-btn ${currentKeType === 'nam' ? 'active' : ''}" data-ke="nam">Năm</button>
+              <button class="ucc-view-btn ${currentKeType === 'menh' ? 'active' : ''}" data-ke="menh">Mệnh</button>
+            </div>
           </div>
-        ` : ''}
 
-        <!-- 4. Vùng Trận Đồ Bát Quái 5x5 hoặc Lá Số Nhân Mệnh -->
-        ${currentKeType === 'menh' ? renderMenhViewHTML() : renderMatrix16ViewHTML(keData)}
+          <!-- 2. Master Overview Ribbon (Thái Ất Master Strip) -->
+          <div class="thaiat-master-strip">
+            <div class="thaiat-strip-item"><span>Độn:</span> <strong class="tms-val-gold">${keData.donType}</strong></div>
+            <div class="thaiat-strip-item"><span>Cục:</span> <strong>Cục ${keData.cuc}</strong></div>
+            <div class="thaiat-strip-item"><span>Nguyên:</span> <strong>Nguyên ${keData.nguyen}</strong></div>
+            <div class="thaiat-strip-item"><span>Kỷ Dư:</span> <strong>${keData.kyDu}</strong></div>
+            <div class="thaiat-strip-item"><span>Tiết khí:</span> <strong>${currentChart.tietKhi}</strong></div>
+          </div>
 
-        <!-- 5. Drawer Tra Cứu Tương Tác 16 Cung -->
-        <div class="thaiat-drawer" id="thaiat-drawer">
-          <div class="thaiat-drawer-title">
-            <span id="thaiat-drawer-name">CHI TIẾT CUNG [${selectedPalace.toUpperCase()}]</span>
-            <span id="thaiat-drawer-weight" style="font-size: 10px; opacity: 0.85;">Trọng số: ${(global.NetaThaiAtEngine && global.NetaThaiAtEngine.QUAI_WEIGHTS[selectedPalace]) || 0}</span>
+          <!-- Nút Kích Hoạt Luận Giải Chuyên Sâu 15 Phân Hệ -->
+          <div class="thaiat-luan-banner">
+            <button type="button" class="thaiat-btn-luan-giai" id="thaiat-btn-open-luan" title="Mở bảng Luận Giải 15 Phân Hệ">
+              <span class="luan-btn-left">
+                <span class="luan-btn-icon">📖</span>
+                <span class="luan-btn-text">Luận Giải Chuyên Sâu</span>
+              </span>
+              <span class="luan-btn-right">
+                <span class="luan-btn-badge">${luanQuickBadge}</span>
+                <span class="luan-btn-arrow">❯</span>
+              </span>
+            </button>
           </div>
-          <div class="thaiat-drawer-desc" id="thaiat-drawer-desc">
-            ${PALACE_DESCRIPTIONS[selectedPalace] || "Phương vị địa bàn Thái Ất."}
-          </div>
-          <div class="thaiat-drawer-advice" id="thaiat-drawer-advice">
-            ${getPalaceAdviceHTML(selectedPalace, keData)}
-          </div>
-        </div>
 
-        <!-- 6. Full-Screen Luận Giải Chuyên Sâu Modal -->
-        ${isLuanModalOpen ? renderLuanModalHTML(keData, currentChart, luanData) : ''}
+          <!-- 3. Bộ lọc 5 tầng thông tin (Grid 5 cột cân đối, không cuộn ngang) -->
+          ${currentKeType !== 'menh' ? `
+            <div class="thaiat-filters-bar">
+              <button class="thaiat-filter-btn ${currentLayer === 'all' ? 'active' : ''}" data-layer="all">Tất cả</button>
+              <button class="thaiat-filter-btn ${currentLayer === 'combat' ? 'active' : ''}" data-layer="combat">⚔️ Tướng</button>
+              <button class="thaiat-filter-btn ${currentLayer === 'cat' ? 'active' : ''}" data-layer="cat">✨ Cát</button>
+              <button class="thaiat-filter-btn ${currentLayer === 'weather' ? 'active' : ''}" data-layer="weather">🌪️ Khí</button>
+              <button class="thaiat-filter-btn ${currentLayer === 'stars9' ? 'active' : ''}" data-layer="stars9">🌌 Cửu Tinh</button>
+            </div>
+          ` : ''}
+
+          <!-- 4. Vùng Trận Đồ Bát Quái 5x5 hoặc Lá Số Nhân Mệnh -->
+          ${currentKeType === 'menh' ? renderMenhViewHTML() : renderMatrix16ViewHTML(keData)}
+
+          <!-- 5. Drawer Tra Cứu Tương Tác 16 Cung -->
+          <div class="thaiat-drawer" id="thaiat-drawer">
+            <div class="thaiat-drawer-title">
+              <span id="thaiat-drawer-name">CHI TIẾT CUNG [${selectedPalace.toUpperCase()}]</span>
+              <span id="thaiat-drawer-weight" style="font-size: 10px; opacity: 0.85;">Trọng số: ${(global.NetaThaiAtEngine && global.NetaThaiAtEngine.QUAI_WEIGHTS[selectedPalace]) || 0}</span>
+            </div>
+            <div class="thaiat-drawer-desc" id="thaiat-drawer-desc">
+              ${PALACE_DESCRIPTIONS[selectedPalace] || "Phương vị địa bàn Thái Ất."}
+            </div>
+            <div class="thaiat-drawer-advice" id="thaiat-drawer-advice">
+              ${getPalaceAdviceHTML(selectedPalace, keData)}
+            </div>
+          </div>
+        `}
       </div>
     `;
 
-    bindThaiAtEvents();
-    if (isLuanModalOpen) {
-      bindLuanModalEvents(keData, currentChart, luanData);
-    }
+    bindThaiAtEvents(keData, currentChart, luanData);
   }
 
   function shouldDisplayStar(starName, layer) {
@@ -1213,8 +1158,14 @@
     return html;
   }
 
-  function renderLuanModalHTML(keData, chart, luan) {
-    if (!luan) return '';
+  function renderThaiAtAnalysisHTML(keData, chart, luan) {
+    if (!luan) {
+      return `
+        <div class="thaiat-analysis-wrap" style="padding: 24px; text-align: center; color: var(--text-muted);">
+          <p>Đang chuẩn bị dữ liệu luận giải Thái Ất 15 Phân Hệ...</p>
+        </div>
+      `;
+    }
     const cungNature = (global.NetaThaiAtInterpreter && global.NetaThaiAtInterpreter.CUNG_NATURE) || {};
     const idx = luan.chi_so_dinh_luong || { diem_cat_khanh: 50, nguy_co_xung_dot: 30, nguy_co_thien_tai: 25, ty_le_chu: 50, ty_le_khach: 50 };
 
@@ -1228,40 +1179,7 @@
       return false;
     };
 
-    let modalContentHTML = '';
-
-    const errorBannerHTML = aiErrorMessage ? `
-      <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; color: #dc2626; font-size: 11.5px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-        <div style="flex: 1; line-height: 1.4;">
-          <strong>⚠️ Thông báo AI:</strong> ${aiErrorMessage}
-        </div>
-        <button type="button" style="background: none; border: none; font-size: 14px; font-weight: 800; cursor: pointer; color: #dc2626; padding: 0 4px;" onclick="window.NetaThaiAtView.dismissAiError()">✕</button>
-      </div>
-    ` : '';
-
-    if (currentLuanViewMode === 'ai' && isAiPolishing) {
-      modalContentHTML = `
-        <div style="text-align: center; padding: 40px 10px;">
-          <div class="luan-loading-spinner" style="width: 28px; height: 28px; border-width: 3px;"></div>
-          <div style="margin-top: 14px; font-weight: 700; color: #f5b041; font-size: 13px;">${aiLoadingStepText || 'Đang biên tập văn phong Thái Ất qua AI...'}</div>
-          <div style="margin-top: 6px; font-size: 11px; opacity: 0.75;">Áp dụng Rào chắn 4 lớp bảo toàn số liệu & cấu trúc 15 phân hệ.</div>
-        </div>
-      `;
-    } else if (currentLuanViewMode === 'ai' && aiPolishedText) {
-      modalContentHTML = `
-        ${errorBannerHTML}
-        <div class="luan-ai-result-wrap">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 11px; color: #0284c7; font-weight: 800;">✨ Bản trau chuốt học thuật qua AI:</span>
-            <span class="luan-badge-cat">Đã kiểm toán đạt</span>
-          </div>
-          <div style="background: rgba(26,4,8,0.7); border: 1px solid rgba(245,176,65,0.25); border-radius: 8px; padding: 10px; font-size: 11.5px; line-height: 1.6;">
-            ${formatMarkdownToHTML(aiPolishedText)}
-          </div>
-        </div>
-      `;
-    } else {
-      let cards = '';
+    let cards = '';
 
       // Card 1: [I. VẬN KHÍ THIÊN MỆNH - THÁI ẤT CHỦ TINH]
       if (shouldShow('daicuc')) {
@@ -1661,147 +1579,116 @@
           </div>
         `;
       }
-
-      modalContentHTML = errorBannerHTML + cards;
-    }
-
     return `
-      <div class="thaiat-luan-modal-overlay" id="thaiat-luan-modal-overlay">
-        <div class="thaiat-luan-modal-sheet" id="thaiat-luan-modal-sheet">
-          <!-- Header -->
-          <div class="thaiat-luan-modal-header">
-            <div class="thaiat-luan-modal-title">
-              <span>📖</span>
-              <span>LUẬN GIẢI THÁI ẤT • ${(keData.keName || '').toUpperCase()}</span>
-            </div>
-            <div class="thaiat-luan-modal-actions">
-              <button type="button" class="luan-act-btn" id="thaiat-btn-copy-luan" title="Sao chép toàn bộ văn bản">
-                📋 Sao chép
-              </button>
-              <button type="button" class="luan-act-btn" id="thaiat-btn-ai-luan" title="Trau chuốt văn phong qua Gemini AI">
-                ✨ AI
-              </button>
-              <button type="button" class="luan-act-btn btn-close" id="thaiat-btn-close-luan" title="Đóng bảng luận giải">
-                ✕
-              </button>
-            </div>
+      <div class="thaiat-analysis-wrap">
+        <!-- Header / Meta Bar (Bát Tự Uniform) -->
+        <div class="thaiat-report-meta-bar">
+          <div style="font-weight: 800; font-size: 0.92rem; color: var(--gold-glow, #f5b041); display: flex; align-items: center; gap: 6px;">
+            <span>📜</span> LUẬN GIẢI CHUYÊN SÂU THÁI ẤT · ${(keData?.keName || '').toUpperCase()}
           </div>
-
-          <!-- Body -->
-          <div class="thaiat-luan-modal-body">
-            <!-- Mode Switch (Math vs AI) -->
-            ${aiPolishedText ? `
-              <div class="luan-view-mode-bar">
-                <button class="luan-mode-tab ${currentLuanViewMode === 'math' ? 'active' : ''}" data-mode="math">📐 Bản Toán Học Gốc</button>
-                <button class="luan-mode-tab ${currentLuanViewMode === 'ai' ? 'active' : ''}" data-mode="ai">✨ Bản AI Biên Tập</button>
-              </div>
-            ` : ''}
-
-            <!-- 1. Quantitative Dashboard -->
-            <div class="luan-dashboard-grid">
-              <div class="luan-metric-card">
-                <div class="luan-metric-num" style="color: ${idx.diem_cat_khanh >= 70 ? '#10b981' : (idx.diem_cat_khanh >= 50 ? '#f5b041' : '#f43f5e')};">${idx.diem_cat_khanh}</div>
-                <div class="luan-metric-label">Điểm Cát Khánh</div>
-              </div>
-              <div class="luan-metric-card">
-                <div class="luan-metric-num" style="color: ${idx.nguy_co_xung_dot >= 70 ? '#ef4444' : '#38bdf8'};">${idx.nguy_co_xung_dot}</div>
-                <div class="luan-metric-label">Nguy Cơ Xung Đột</div>
-              </div>
-              <div class="luan-metric-card">
-                <div class="luan-metric-num" style="color: ${idx.nguy_co_thien_tai >= 70 ? '#ef4444' : '#c084fc'};">${idx.nguy_co_thien_tai}</div>
-                <div class="luan-metric-label">Nguy Cơ Môi Trường</div>
-              </div>
-            </div>
-
-            <!-- Force Balance Progress -->
-            <div class="luan-force-bar-wrap">
-              <div class="luan-force-labels">
-                <span class="force-lbl-chu">Bên Chủ: ${idx.ty_le_chu}%</span>
-                <span class="force-lbl-khach">Bên Khách: ${idx.ty_le_khach}%</span>
-              </div>
-              <div class="luan-force-bar-track">
-                <div class="luan-force-bar-fill" style="width: ${idx.ty_le_chu}%;"></div>
-              </div>
-            </div>
-
-            <!-- 2. Fast Filter Pills -->
-            <div class="luan-pills-bar">
-              <button class="luan-pill-btn ${currentLuanFilter === 'all' ? 'active' : ''}" data-filter="all">Tất cả (15)</button>
-              <button class="luan-pill-btn ${currentLuanFilter === 'daicuc' ? 'active' : ''}" data-filter="daicuc">Đại Cục & Toán</button>
-              <button class="luan-pill-btn ${currentLuanFilter === 'cachcuc' ? 'active' : ''}" data-filter="cachcuc">Cách Cục & Sao</button>
-              <button class="luan-pill-btn ${currentLuanFilter === 'tacthien' ? 'active' : ''}" data-filter="tacthien">6 Ngành Tác Chiến</button>
-              <button class="luan-pill-btn ${currentLuanFilter === 'nhatdung' ? 'active' : ''}" data-filter="nhatdung">7 Sự Vụ Đời Sống</button>
-              <button class="luan-pill-btn ${currentLuanFilter === 'canhgio' ? 'active' : ''}" data-filter="canhgio">12 Canh Giờ</button>
-            </div>
-
-            <!-- 3. Cards / Accordion Content -->
-            <div class="luan-content-cards">
-              ${modalContentHTML}
-            </div>
+          <div class="neta-report-mode-toggle">
+            <button type="button" class="neta-mode-pill ${currentReportMode === 'standard' ? 'active' : ''}" id="btn-thaiat-mode-standard" title="Bản tính toán toán học 100% offline">
+              📜 Bản Gốc
+            </button>
+            <button type="button" class="neta-mode-pill ${currentReportMode === 'ai' ? 'active' : ''}" id="btn-thaiat-mode-ai" title="Bản trau chuốt học thuật bởi Gemini AI">
+              ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Bản AI'}
+            </button>
+            <button type="button" class="neta-mode-pill" id="thaiat-btn-copy-luan" title="Sao chép toàn bộ văn bản">
+              📋 Sao chép
+            </button>
           </div>
         </div>
+
+        ${currentReportMode === 'ai' ? `
+          <!-- Chế độ Trau Chuốt AI -->
+          ${isAiPolishing ? `
+            <div class="neta-inline-ai-loading">
+              <div class="luan-loading-spinner" style="width: 28px; height: 28px; border-width: 3px; margin: 0 auto 12px;"></div>
+              <div style="font-weight: 700; color: var(--gold-primary, #f5b041); font-size: 13px;">
+                ${aiLoadingStepText || 'Đang tiến hành kết nối Gemini AI trau chuốt văn phong Thái Ất...'}
+              </div>
+              <div style="font-size: 11px; opacity: 0.75; margin-top: 4px;">
+                Áp dụng Rào chắn 4 lớp bảo toàn số liệu & cấu trúc 15 phân hệ.
+              </div>
+            </div>
+          ` : ''}
+
+          ${aiErrorMessage ? `
+            <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 8px; padding: 12px; margin: 12px 0; color: #dc2626; font-size: 12px; line-height: 1.5;">
+              <div><strong>⚠️ Lỗi kết nối AI:</strong> ${aiErrorMessage}</div>
+              <div style="margin-top: 8px; display: flex; gap: 8px;">
+                <button type="button" class="neta-mode-pill active" id="btn-thaiat-retry-ai">🔄 Thử Lại</button>
+                <button type="button" class="neta-mode-pill" id="btn-thaiat-back-standard-from-err">↩️ Về Bản Gốc</button>
+              </div>
+            </div>
+          ` : ''}
+
+          ${aiPolishedText ? `
+            <div class="neta-polished-status-bar">
+              <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
+              <button type="button" class="neta-btn-inline-back" id="btn-thaiat-back-standard">↩️ Xem Bản Gốc</button>
+            </div>
+            <div class="thaiat-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color, #f8fafc); background: rgba(20, 2, 5, 0.7); border: 1px solid rgba(245, 176, 65, 0.25); border-radius: 8px; padding: 14px; white-space: pre-wrap;">
+              ${formatMarkdownToHTML(aiPolishedText)}
+            </div>
+          ` : (!isAiPolishing && !aiErrorMessage ? `
+            <div style="text-align: center; padding: 36px 16px; color: var(--text-muted); background: rgba(20, 2, 5, 0.5); border-radius: 8px; border: 1px dashed rgba(245, 176, 65, 0.25); margin: 12px 0;">
+              <p style="margin-bottom: 12px; font-size: 13px;">Chưa kích hoạt trau chuốt văn phong AI cho quẻ Thái Ất này.</p>
+              <button type="button" class="neta-mode-pill active" id="btn-thaiat-trigger-ai" style="padding: 6px 16px; font-size: 12px;">
+                ✨ Bắt đầu Trau Chuốt Học Thuật (AI)
+              </button>
+            </div>
+          ` : '')}
+        ` : `
+          <!-- Chế độ Bản Gốc (Toán Học & Quy Chuẩn 15 Phân Hệ) -->
+          <!-- 1. Quantitative Dashboard -->
+          <div class="luan-dashboard-grid">
+            <div class="luan-metric-card">
+              <div class="luan-metric-num" style="color: ${idx.diem_cat_khanh >= 70 ? '#10b981' : (idx.diem_cat_khanh >= 50 ? '#f5b041' : '#f43f5e')};">${idx.diem_cat_khanh}</div>
+              <div class="luan-metric-label">Điểm Cát Khánh</div>
+            </div>
+            <div class="luan-metric-card">
+              <div class="luan-metric-num" style="color: ${idx.ty_le_chu >= idx.ty_le_khach ? '#10b981' : '#f43f5e'};">${idx.ty_le_chu}% : ${idx.ty_le_khach}%</div>
+              <div class="luan-metric-label">Tương Quan Lực Lượng</div>
+            </div>
+            <div class="luan-metric-card">
+              <div class="luan-metric-num" style="color: ${idx.nguy_co_xung_dot >= 70 ? '#ef4444' : '#38bdf8'};">${idx.nguy_co_xung_dot}</div>
+              <div class="luan-metric-label">Nguy Cơ Xung Đột</div>
+            </div>
+            <div class="luan-metric-card">
+              <div class="luan-metric-num" style="color: ${idx.nguy_co_thien_tai >= 70 ? '#ef4444' : '#c084fc'};">${idx.nguy_co_thien_tai}</div>
+              <div class="luan-metric-label">Nguy Cơ Môi Trường</div>
+            </div>
+          </div>
+
+          <!-- Force Balance Progress -->
+          <div class="luan-force-bar-wrap">
+            <div class="luan-force-labels">
+              <span class="force-lbl-chu">Bên Chủ: ${idx.ty_le_chu}%</span>
+              <span class="force-lbl-khach">Bên Khách: ${idx.ty_le_khach}%</span>
+            </div>
+            <div class="luan-force-bar-track">
+              <div class="luan-force-bar-fill" style="width: ${idx.ty_le_chu}%;"></div>
+            </div>
+          </div>
+
+          <!-- 2. Fast Filter Pills -->
+          <div class="luan-pills-bar">
+            <button type="button" class="luan-pill-btn ${currentLuanFilter === 'all' ? 'active' : ''}" data-filter="all">Tất cả (15)</button>
+            <button type="button" class="luan-pill-btn ${currentLuanFilter === 'daicuc' ? 'active' : ''}" data-filter="daicuc">Đại Cục & Toán</button>
+            <button type="button" class="luan-pill-btn ${currentLuanFilter === 'cachcuc' ? 'active' : ''}" data-filter="cachcuc">Cách Cục & Sao</button>
+            <button type="button" class="luan-pill-btn ${currentLuanFilter === 'tacthien' ? 'active' : ''}" data-filter="tacthien">6 Ngành Tác Chiến</button>
+            <button type="button" class="luan-pill-btn ${currentLuanFilter === 'nhatdung' ? 'active' : ''}" data-filter="nhatdung">7 Sự Vụ Đời Sống</button>
+            <button type="button" class="luan-pill-btn ${currentLuanFilter === 'canhgio' ? 'active' : ''}" data-filter="canhgio">12 Canh Giờ</button>
+          </div>
+
+          <!-- 3. Cards / Accordion Content -->
+          <div class="luan-content-cards">
+            ${cards}
+          </div>
+        `}
       </div>
     `;
-  }
-
-  function bindLuanModalEvents(keData, chart, luan) {
-    const overlay = document.getElementById('thaiat-luan-modal-overlay');
-    const btnClose = document.getElementById('thaiat-btn-close-luan');
-    const btnCopy = document.getElementById('thaiat-btn-copy-luan');
-    const btnAi = document.getElementById('thaiat-btn-ai-luan');
-
-    if (btnClose) {
-      btnClose.onclick = () => {
-        isLuanModalOpen = false;
-        renderThaiAt();
-      };
-    }
-    if (overlay) {
-      overlay.onclick = (e) => {
-        if (e.target === overlay) {
-          isLuanModalOpen = false;
-          renderThaiAt();
-        }
-      };
-    }
-
-    // Filter pills
-    document.querySelectorAll('.luan-pill-btn').forEach(btn => {
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        currentLuanFilter = btn.getAttribute('data-filter') || 'all';
-        currentLuanViewMode = 'math';
-        renderThaiAt();
-      };
-    });
-
-    // Mode tabs
-    document.querySelectorAll('.luan-mode-tab').forEach(tab => {
-      tab.onclick = (e) => {
-        e.stopPropagation();
-        currentLuanViewMode = tab.getAttribute('data-mode') || 'math';
-        renderThaiAt();
-      };
-    });
-
-    // Copy report
-    if (btnCopy) {
-      btnCopy.onclick = (e) => {
-        e.stopPropagation();
-        const textToCopy = (currentLuanViewMode === 'ai' && aiPolishedText)
-          ? aiPolishedText
-          : (global.NetaThaiAtInterpreter.generateFullReportText(chart, currentKeType));
-        copyLuanReport(textToCopy);
-      };
-    }
-
-    // AI Refiner
-    if (btnAi) {
-      btnAi.onclick = (e) => {
-        e.stopPropagation();
-        triggerAiPolish(chart, keData);
-      };
-    }
   }
 
   function toggleSection(secId) {
@@ -1810,7 +1697,7 @@
   }
 
   function setLuanMode(mode) {
-    currentLuanViewMode = mode;
+    currentReportMode = mode;
     renderThaiAt();
   }
 
@@ -1855,17 +1742,23 @@
   function triggerAiPolish(chart, keData) {
     const gemini = global.NetaGeminiService;
     if (!gemini) {
-      alert('Dịch vụ AI chưa sẵn sàng trên ứng dụng.');
+      isAiPolishing = false;
+      currentReportMode = 'ai';
+      aiErrorMessage = 'Dịch vụ AI chưa sẵn sàng trên ứng dụng.';
+      renderThaiAt();
       return;
     }
     const apiKey = (gemini.getActiveKey && gemini.getActiveKey()) || '';
     if (!apiKey) {
-      alert('Chưa cài đặt Google Gemini API Key. Bạn có thể cài đặt trong mục Trải Bài Tarot hoặc Cài Đặt.');
+      isAiPolishing = false;
+      currentReportMode = 'ai';
+      aiErrorMessage = 'Chưa cài đặt Gemini API Key. Bạn có thể cài đặt trong mục Trải Bài Tarot hoặc Cài Đặt.';
+      renderThaiAt();
       return;
     }
 
     isAiPolishing = true;
-    currentLuanViewMode = 'ai';
+    currentReportMode = 'ai';
     aiErrorMessage = null;
     aiLoadingStepText = 'Đang trích xuất toàn văn bản thảo 15 phân hệ...';
     renderThaiAt();
@@ -1886,22 +1779,22 @@
         const audit = global.NetaThaiAtInterpreter.validateFactualStructure(text);
         if (audit.isValid) {
           aiPolishedText = text;
-          currentLuanViewMode = 'ai';
+          currentReportMode = 'ai';
           aiErrorMessage = null;
         } else {
           aiPolishedText = null;
-          currentLuanViewMode = 'math';
+          currentReportMode = 'standard';
           aiErrorMessage = `AI không đạt chuẩn kiểm toán cấu trúc: ${audit.reason}. Đã tự động giữ bản gốc để bảo toàn dữ liệu.`;
         }
       } else {
         aiPolishedText = null;
-        currentLuanViewMode = 'math';
+        currentReportMode = 'standard';
         aiErrorMessage = (res && res.error) || 'Không nhận được văn bản phản hồi từ máy chủ Gemini.';
       }
       renderThaiAt();
     }).catch(err => {
       isAiPolishing = false;
-      currentLuanViewMode = 'math';
+      currentReportMode = 'standard';
       aiErrorMessage = 'Lỗi kết nối AI: ' + (err.message || 'Không thể trau chuốt');
       renderThaiAt();
     });
@@ -1912,17 +1805,97 @@
     renderThaiAt();
   }
 
-  function bindThaiAtEvents() {
+  function bindThaiAtEvents(keData, chart, luan) {
     const pad = n => String(n).padStart(2, '0');
 
-    // Nút mở Luận Giải Chuyên Sâu
+    // UCC View Switcher: Trận Đồ vs Luận Giải
+    const btnTabChart = document.getElementById('btn-thaiat-tab-chart');
+    const btnTabAnalysis = document.getElementById('btn-thaiat-tab-analysis');
     const btnOpenLuan = document.getElementById('thaiat-btn-open-luan');
-    if (btnOpenLuan) {
-      btnOpenLuan.onclick = () => {
-        isLuanModalOpen = true;
+
+    if (btnTabChart) {
+      btnTabChart.onclick = () => {
+        currentMainTab = 'chart';
         renderThaiAt();
       };
     }
+    if (btnTabAnalysis) {
+      btnTabAnalysis.onclick = () => {
+        currentMainTab = 'analysis';
+        renderThaiAt();
+      };
+    }
+    if (btnOpenLuan) {
+      btnOpenLuan.onclick = () => {
+        currentMainTab = 'analysis';
+        renderThaiAt();
+      };
+    }
+
+    // Report Mode Switcher: Bản Gốc vs Bản AI
+    const btnModeStandard = document.getElementById('btn-thaiat-mode-standard');
+    const btnModeAi = document.getElementById('btn-thaiat-mode-ai');
+    const btnBackStandard = document.getElementById('btn-thaiat-back-standard');
+    const btnBackStandardErr = document.getElementById('btn-thaiat-back-standard-from-err');
+    const btnRetryAi = document.getElementById('btn-thaiat-retry-ai');
+    const btnTriggerAi = document.getElementById('btn-thaiat-trigger-ai');
+    const btnCopyLuan = document.getElementById('thaiat-btn-copy-luan');
+
+    if (btnModeStandard) {
+      btnModeStandard.onclick = () => {
+        currentReportMode = 'standard';
+        renderThaiAt();
+      };
+    }
+    if (btnBackStandard) {
+      btnBackStandard.onclick = () => {
+        currentReportMode = 'standard';
+        renderThaiAt();
+      };
+    }
+    if (btnBackStandardErr) {
+      btnBackStandardErr.onclick = () => {
+        currentReportMode = 'standard';
+        renderThaiAt();
+      };
+    }
+    if (btnModeAi) {
+      btnModeAi.onclick = () => {
+        currentReportMode = 'ai';
+        if (!aiPolishedText && !isAiPolishing) {
+          triggerAiPolish(chart, keData);
+        } else {
+          renderThaiAt();
+        }
+      };
+    }
+    if (btnRetryAi) {
+      btnRetryAi.onclick = () => {
+        triggerAiPolish(chart, keData);
+      };
+    }
+    if (btnTriggerAi) {
+      btnTriggerAi.onclick = () => {
+        triggerAiPolish(chart, keData);
+      };
+    }
+    if (btnCopyLuan) {
+      btnCopyLuan.onclick = () => {
+        const textToCopy = (currentReportMode === 'ai' && aiPolishedText)
+          ? aiPolishedText
+          : (global.NetaThaiAtInterpreter.generateFullReportText(chart, currentKeType));
+        copyLuanReport(textToCopy);
+      };
+    }
+
+    // Filter pills
+    document.querySelectorAll('.luan-pill-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        currentLuanFilter = btn.getAttribute('data-filter') || 'all';
+        renderThaiAt();
+      };
+    });
 
     // Calendar Toggle
     const btnSolar = document.getElementById('thaiat-btn-solar');

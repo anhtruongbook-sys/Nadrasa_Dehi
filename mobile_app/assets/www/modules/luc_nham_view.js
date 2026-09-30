@@ -9,6 +9,8 @@
 
   let currentChart = null;
   let currentDate = new Date();
+  let currentMainTab = 'chart'; // 'chart' (🏛️ Bàn Quẻ) | 'analysis' (📜 Luận Giải)
+  let currentReportMode = 'standard'; // 'standard' (📜 Bản Gốc) | 'ai' (✨ Bản AI)
   let currentViewMode = 'classic'; // 'classic' (8 lớp) | 'touch' (1-chạm)
   let selectedBox = 'Tỵ';           // Địa bàn đang chọn
   let isLunarMode = false;
@@ -17,9 +19,7 @@
   let customNguyetTuong = '';      // rỗng: auto theo tiết khí
 
   // Trạng thái Phân hệ Luận Giải Chuyên Sâu Lục Nhâm 7 Tầng
-  let isLuanModalOpen = false;
   let currentLuanFilter = 'all'; // 'all', 'tatphap', 'timeline', 'chuyende', 'suvu'
-  let currentLuanViewMode = 'offline'; // 'offline' | 'ai'
   let isAiPolishing = false;
   let aiPolishedText = null;
   let aiErrorMessage = null;
@@ -133,7 +133,45 @@
         font-size: 14px;
         font-weight: 800;
         line-height: 1.3;
+        color: var(--gold-primary, #f5b041);
       }
+      body.theme-light .lucnham-khoa-thu {
+        color: #92400e !important;
+        font-weight: 800 !important;
+      }
+      .lucnham-truyen-chi.truyen-nguhanh-kim { color: #fde047; }
+      .lucnham-truyen-chi.truyen-nguhanh-moc { color: #4ade80; }
+      .lucnham-truyen-chi.truyen-nguhanh-thuy { color: #38bdf8; }
+      .lucnham-truyen-chi.truyen-nguhanh-hoa { color: #fb7185; }
+      .lucnham-truyen-chi.truyen-nguhanh-tho { color: #fbbf24; }
+
+      body.theme-light .lucnham-truyen-chi.truyen-nguhanh-kim { color: #854d0e !important; }
+      body.theme-light .lucnham-truyen-chi.truyen-nguhanh-moc { color: #15803d !important; }
+      body.theme-light .lucnham-truyen-chi.truyen-nguhanh-thuy { color: #0284c7 !important; }
+      body.theme-light .lucnham-truyen-chi.truyen-nguhanh-hoa { color: #b91c1c !important; }
+      body.theme-light .lucnham-truyen-chi.truyen-nguhanh-tho { color: #92400e !important; }
+
+      .lucnham-cell-thienban {
+        color: #fde047;
+      }
+      body.theme-light .lucnham-cell-thienban {
+        color: #0f172a !important;
+        font-weight: 900 !important;
+      }
+      .lucnham-cell-thientuong {
+        color: #38bdf8;
+      }
+      body.theme-light .lucnham-cell-thientuong {
+        color: #0284c7 !important;
+        font-weight: 800 !important;
+      }
+      .tag-hanhnien { color: #f59e0b; font-weight: 800; }
+      body.theme-light .tag-hanhnien { color: #b45309 !important; font-weight: 800 !important; }
+      .tag-trachmo { color: #34d399; font-weight: 800; }
+      body.theme-light .tag-trachmo { color: #15803d !important; font-weight: 800 !important; }
+      .tag-canchingay { color: #f43f5e; font-weight: 800; }
+      body.theme-light .tag-canchingay { color: #b91c1c !important; font-weight: 800 !important; }
+
       .lucnham-khoa-ha {
         font-size: 14px;
         font-weight: 800;
@@ -335,101 +373,103 @@
       }
       .lucnham-luan-arrow { font-size: 12px; opacity: 0.8; }
 
-      /* Full-Screen Luận Giải Modal Drawer */
-      .lucnham-luan-modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(4px);
-        z-index: 10000;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-      }
-      .lucnham-luan-modal-sheet {
+      /* Inline Report Wrap & Meta Bar (Bát Tự Uniform) */
+      .lucnham-analysis-wrap {
         width: 100%;
-        max-width: 500px;
-        height: 94vh;
-        max-height: 94vh;
-        background: #120306;
-        border-top: 2px solid #f5b041;
-        border-radius: 16px 16px 0 0;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+        margin-top: 6px;
       }
-      body.theme-light .lucnham-luan-modal-sheet {
-        background: #ffffff !important;
-        border-top-color: #d97706 !important;
-        color: #1e293b !important;
-        box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15) !important;
-      }
-      .lucnham-luan-modal-header {
+      .lucnham-report-meta-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 14px;
-        background: rgba(26, 4, 8, 0.95);
-        border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 6px 0 10px;
+        padding: 8px 10px;
+        background: rgba(20, 2, 5, 0.85);
+        border-radius: 8px;
+        border: 1px solid rgba(245, 176, 65, 0.25);
       }
-      body.theme-light .lucnham-luan-modal-header {
-        background: #fefce8 !important;
-        border-bottom-color: #e5e7eb !important;
+      body.theme-light .lucnham-report-meta-bar {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
       }
-      .lucnham-luan-modal-title {
-        font-size: 12.5px;
-        font-weight: 800;
-        color: #f5b041;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      body.theme-light .lucnham-luan-modal-title { color: #92400e; }
-      .lucnham-luan-modal-actions {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .lucnham-act-btn {
-        background: rgba(245, 176, 65, 0.15);
-        color: #fef08a;
-        border: 1px solid rgba(245, 176, 65, 0.3);
-        border-radius: 6px;
-        padding: 4px 8px;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
+      .neta-report-mode-toggle {
         display: flex;
         align-items: center;
         gap: 4px;
       }
-      body.theme-light .lucnham-act-btn {
-        background: #fef3c7 !important;
-        color: #92400e !important;
-        border-color: #fcd34d !important;
+      .neta-mode-pill {
+        background: rgba(26, 4, 8, 0.8);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 6px;
+        padding: 4px 9px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #94a3b8;
+        cursor: pointer;
+        transition: all 0.15s ease;
       }
-      .lucnham-act-btn.btn-close {
-        font-size: 14px;
+      body.theme-light .neta-mode-pill {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+      }
+      .neta-mode-pill.active {
+        background: #f5b041 !important;
+        border-color: #f5b041 !important;
+        color: #0f0205 !important;
+      }
+      body.theme-light .neta-mode-pill.active {
+        background: #d97706 !important;
+        border-color: #d97706 !important;
+        color: #ffffff !important;
+      }
+      .neta-polished-status-bar {
+        background: rgba(34, 197, 94, 0.12);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #22c55e;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      body.theme-light .neta-polished-status-bar {
+        background: #dcfce7;
+        border-color: #86efac;
+        color: #15803d;
+      }
+      .neta-btn-inline-back {
+        background: rgba(245, 176, 65, 0.15);
+        color: #f5b041;
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 4px;
         padding: 3px 8px;
-        background: rgba(239, 68, 68, 0.2);
-        color: #fca5a5;
-        border-color: rgba(239, 68, 68, 0.4);
+        font-size: 10.5px;
+        font-weight: 700;
+        cursor: pointer;
       }
-      body.theme-light .lucnham-act-btn.btn-close {
-        background: #fee2e2 !important;
-        color: #dc2626 !important;
-        border-color: #fca5a5 !important;
+      body.theme-light .neta-btn-inline-back {
+        background: #fef3c7;
+        color: #92400e;
+        border-color: #fde68a;
       }
-      .lucnham-luan-modal-body {
-        flex: 1;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y !important;
-        padding: 10px 12px calc(var(--safe-bottom, 20px) + 30px);
+      .neta-inline-ai-loading {
+        background: rgba(245, 176, 65, 0.08);
+        border: 1px dashed rgba(245, 176, 65, 0.35);
+        border-radius: 8px;
+        padding: 24px 16px;
+        text-align: center;
+        margin: 16px 0;
+      }
+      body.theme-light .neta-inline-ai-loading {
+        background: #fefce8;
+        border-color: #fcd34d;
       }
       /* Dashboard Metrics */
       .lucnham-dashboard-grid {
@@ -780,17 +820,17 @@
             </div>
           </div>
 
-          <!-- Row 3: Actions + Chế Độ Xem Bàn Cờ -->
+          <!-- Row 3: Actions + Switch View Bàn Quẻ vs Luận Giải (Bát Tự Uniform) -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="lucnham-btn-now" title="Về thời điểm hiện tại">
               ⚡ Giờ thực
             </button>
             <div class="ucc-pill-view">
-              <button class="ucc-view-btn ${currentViewMode === 'classic' ? 'active' : ''}" id="btn-lucnham-mode-classic" title="Bàn cờ 8 lớp đầy đủ">
-                🗂️ 8 Lớp
+              <button type="button" class="ucc-view-btn ${currentMainTab === 'chart' ? 'active' : ''}" id="btn-lucnham-tab-chart" title="Bàn Quẻ Lục Nhâm">
+                🏛️ Bàn Quẻ
               </button>
-              <button class="ucc-view-btn ${currentViewMode === 'touch' ? 'active' : ''}" id="btn-lucnham-mode-touch" title="Bàn cảm ứng tối giản 1-chạm">
-                📱 1 Chạm
+              <button type="button" class="ucc-view-btn ${currentMainTab === 'analysis' ? 'active' : ''}" id="btn-lucnham-tab-analysis" title="Bản Luận Giải Chuyên Sâu">
+                📜 Luận Giải
               </button>
             </div>
             <button class="ucc-btn-submit" id="lucnham-btn-submit" title="Lập quẻ Lục Nhâm">
@@ -799,174 +839,181 @@
           </div>
         </div>
 
-        <!-- 2. Master Overview Ribbon (Lục Nhâm Master Strip) -->
-        <div class="lucnham-master-strip">
-          <div class="lucnham-strip-item"><span>Ngày:</span> <strong class="tms-val-gold">${c.canNgay} ${c.chiNgay}</strong></div>
-          <div class="lucnham-strip-item"><span>Giờ:</span> <strong>${c.chiGio}</strong></div>
-          <div class="lucnham-strip-item"><span>${isDay ? '☀️ Đán Quý' : '🌙 Mộ Quý'}</span></div>
-          <div class="lucnham-strip-item"><span>Tướng:</span> <strong>${c.nguyetTuong}</strong></div>
-          <div class="lucnham-strip-item"><span>Quý nhân:</span> <strong>${c.quyNhanCung} (${c.quyNhanChieu})</strong></div>
-        </div>
-
-        
-        <!-- BANNER LUẬN GIẢI CHUYÊN SÂU 7 TẦNG -->
-        <div class="lucnham-luan-banner">
-          <div class="lucnham-btn-luan-giai" id="lucnham-btn-open-luan" title="Mở luận giải chuyên sâu Lục Nhâm 7 Tầng">
-            <div class="lucnham-luan-btn-left">
-              <span class="lucnham-luan-icon">🔮</span>
-              <div class="lucnham-luan-title-wrap">
-                <span class="lucnham-luan-main-title">Luận Giải Chuyên Sâu</span>
-                <span class="lucnham-luan-sub-title">7 Tầng Huyền Cơ · 100 Cục Tất Pháp · 8 Sự Vụ</span>
-              </div>
-            </div>
-            <div class="lucnham-luan-btn-right">
-              <span class="lucnham-luan-badge" id="lucnham-badge-risk-btn">${getRiskBadgeText(c)}</span>
-              <span class="lucnham-luan-arrow">&rsaquo;</span>
+        ${currentMainTab === 'analysis' ? renderLucNhamAnalysisHTML(c) : `
+          <!-- Sub-bar 8 Lớp vs 1 Chạm khi xem Bàn Quẻ -->
+          <div style="display: flex; justify-content: center; margin: 4px 0 6px;">
+            <div class="ucc-pill-view" style="max-width: 220px; width: 100%; height: 28px;">
+              <button class="ucc-view-btn ${currentViewMode === 'classic' ? 'active' : ''}" id="btn-lucnham-mode-classic" title="Bàn cờ 8 lớp đầy đủ">🗂️ 8 Lớp</button>
+              <button class="ucc-view-btn ${currentViewMode === 'touch' ? 'active' : ''}" id="btn-lucnham-mode-touch" title="Bàn cảm ứng tối giản 1-chạm">📱 1 Chạm</button>
             </div>
           </div>
-        </div>
 
-        <!-- 3. Tam Truyền Hero Card -->
-        <div class="neta-custom-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 11px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">Tam Truyền</span>
-            </div>
-            <span style="font-size: 10px; background: rgba(245, 176, 65, 0.15); color: var(--gold-primary, #f5b041); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(245, 176, 65, 0.3); font-weight: 700;">
-              ${c.tamTruyenTenTong}
-            </span>
+          <!-- 2. Master Overview Ribbon (Lục Nhâm Master Strip) -->
+          <div class="lucnham-master-strip">
+            <div class="lucnham-strip-item"><span>Ngày:</span> <strong class="tms-val-gold">${c.canNgay} ${c.chiNgay}</strong></div>
+            <div class="lucnham-strip-item"><span>Giờ:</span> <strong>${c.chiGio}</strong></div>
+            <div class="lucnham-strip-item"><span>${isDay ? '☀️ Đán Quý' : '🌙 Mộ Quý'}</span></div>
+            <div class="lucnham-strip-item"><span>Tướng:</span> <strong>${c.nguyetTuong}</strong></div>
+            <div class="lucnham-strip-item"><span>Quý nhân:</span> <strong>${c.quyNhanCung} (${c.quyNhanChieu})</strong></div>
           </div>
 
-          <div class="lucnham-hero-grid">
-            <!-- Sơ Truyền -->
-            <div class="lucnham-truyen-box" style="border-color: ${NGU_HANH_COLORS[c.soTruyen.nguHanh].border};">
-              <span class="lucnham-truyen-tag">SƠ</span>
-              <div style="font-size: 10px; font-weight: 700; color: #f43f5e; margin-top: 10px;">${c.soTruyen.thienTuong}</div>
-              <div class="lucnham-truyen-chi" style="color: ${NGU_HANH_COLORS[c.soTruyen.nguHanh].text};">${c.soTruyen.chi}</div>
-              <div style="font-size: 10px; font-weight: 600; color: var(--text-secondary, #cbd5e1);">${c.soTruyen.lucThan}</div>
-              <div style="font-size: 8.5px; opacity: 0.75; border-top: 1px solid rgba(245, 176, 65, 0.2); margin-top: 4px; padding-top: 2px;">
-                ${c.soTruyen.nguHanh} · Sơ phát
+          <!-- BANNER LUẬN GIẢI CHUYÊN SÂU 7 TẦNG (Chuyển sang tab Luận Giải) -->
+          <div class="lucnham-luan-banner">
+            <div class="lucnham-btn-luan-giai" id="lucnham-btn-open-luan" title="Mở luận giải chuyên sâu Lục Nhâm 7 Tầng">
+              <div class="lucnham-luan-btn-left">
+                <span class="lucnham-luan-icon">🔮</span>
+                <div class="lucnham-luan-title-wrap">
+                  <span class="lucnham-luan-main-title">Luận Giải Chuyên Sâu</span>
+                  <span class="lucnham-luan-sub-title">7 Tầng Huyền Cơ · 100 Cục Tất Pháp · 8 Sự Vụ</span>
+                </div>
               </div>
-            </div>
-
-            <!-- Trung Truyền -->
-            <div class="lucnham-truyen-box" style="border-color: ${NGU_HANH_COLORS[c.trungTruyen.nguHanh].border};">
-              <span class="lucnham-truyen-tag">TRUNG</span>
-              <div style="font-size: 10px; font-weight: 700; color: #818cf8; margin-top: 10px;">${c.trungTruyen.thienTuong}</div>
-              <div class="lucnham-truyen-chi" style="color: ${NGU_HANH_COLORS[c.trungTruyen.nguHanh].text};">${c.trungTruyen.chi}</div>
-              <div style="font-size: 10px; font-weight: 600; color: var(--text-secondary, #cbd5e1);">${c.trungTruyen.lucThan}</div>
-              <div style="font-size: 8.5px; opacity: 0.75; border-top: 1px solid rgba(245, 176, 65, 0.2); margin-top: 4px; padding-top: 2px;">
-                ${c.trungTruyen.nguHanh} · Trung di
-              </div>
-            </div>
-
-            <!-- Mạt Truyền -->
-            <div class="lucnham-truyen-box" style="border-color: ${NGU_HANH_COLORS[c.matTruyen.nguHanh].border};">
-              <span class="lucnham-truyen-tag">MẠT</span>
-              <div style="font-size: 10px; font-weight: 700; color: #34d399; margin-top: 10px;">${c.matTruyen.thienTuong}</div>
-              <div class="lucnham-truyen-chi" style="color: ${NGU_HANH_COLORS[c.matTruyen.nguHanh].text};">${c.matTruyen.chi}</div>
-              <div style="font-size: 10px; font-weight: 600; color: var(--text-secondary, #cbd5e1);">${c.matTruyen.lucThan}</div>
-              <div style="font-size: 8.5px; opacity: 0.75; border-top: 1px solid rgba(245, 176, 65, 0.2); margin-top: 4px; padding-top: 2px;">
-                ${c.matTruyen.nguHanh} · Mạt túc
+              <div class="lucnham-luan-btn-right">
+                <span class="lucnham-luan-badge" id="lucnham-badge-risk-btn">${getRiskBadgeText(c)}</span>
+                <span class="lucnham-luan-arrow">&rsaquo;</span>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 4. Tứ Khóa Card -->
-        <div class="neta-custom-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="font-size: 11px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">
-              Tứ Khóa (Can Chi Tương Phối)
-            </span>
-            <span style="font-size: 9px; color: #94a3b8;">IV ← III ← II ← I</span>
+          <!-- 3. Tam Truyền Hero Card -->
+          <div class="neta-custom-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 11px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">Tam Truyền</span>
+              </div>
+              <span style="font-size: 10px; background: rgba(245, 176, 65, 0.15); color: var(--gold-primary, #f5b041); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(245, 176, 65, 0.3); font-weight: 700;">
+                ${c.tamTruyenTenTong}
+              </span>
+            </div>
+
+            <div class="lucnham-hero-grid">
+              <!-- Sơ Truyền -->
+              <div class="lucnham-truyen-box" style="border-color: ${NGU_HANH_COLORS[c.soTruyen.nguHanh].border};">
+                <span class="lucnham-truyen-tag">SƠ</span>
+                <div style="font-size: 10px; font-weight: 700; color: #f43f5e; margin-top: 10px;">${c.soTruyen.thienTuong}</div>
+                <div class="lucnham-truyen-chi truyen-nguhanh-${c.soTruyen.nguHanh.toLowerCase()}">${c.soTruyen.chi}</div>
+                <div style="font-size: 10px; font-weight: 600; color: var(--text-secondary, #cbd5e1);">${c.soTruyen.lucThan}</div>
+                <div style="font-size: 8.5px; opacity: 0.75; border-top: 1px solid rgba(245, 176, 65, 0.2); margin-top: 4px; padding-top: 2px;">
+                  ${c.soTruyen.nguHanh} · Sơ phát
+                </div>
+              </div>
+
+              <!-- Trung Truyền -->
+              <div class="lucnham-truyen-box" style="border-color: ${NGU_HANH_COLORS[c.trungTruyen.nguHanh].border};">
+                <span class="lucnham-truyen-tag">TRUNG</span>
+                <div style="font-size: 10px; font-weight: 700; color: #818cf8; margin-top: 10px;">${c.trungTruyen.thienTuong}</div>
+                <div class="lucnham-truyen-chi truyen-nguhanh-${c.trungTruyen.nguHanh.toLowerCase()}">${c.trungTruyen.chi}</div>
+                <div style="font-size: 10px; font-weight: 600; color: var(--text-secondary, #cbd5e1);">${c.trungTruyen.lucThan}</div>
+                <div style="font-size: 8.5px; opacity: 0.75; border-top: 1px solid rgba(245, 176, 65, 0.2); margin-top: 4px; padding-top: 2px;">
+                  ${c.trungTruyen.nguHanh} · Trung di
+                </div>
+              </div>
+
+              <!-- Mạt Truyền -->
+              <div class="lucnham-truyen-box" style="border-color: ${NGU_HANH_COLORS[c.matTruyen.nguHanh].border};">
+                <span class="lucnham-truyen-tag">MẠT</span>
+                <div style="font-size: 10px; font-weight: 700; color: #34d399; margin-top: 10px;">${c.matTruyen.thienTuong}</div>
+                <div class="lucnham-truyen-chi truyen-nguhanh-${c.matTruyen.nguHanh.toLowerCase()}">${c.matTruyen.chi}</div>
+                <div style="font-size: 10px; font-weight: 600; color: var(--text-secondary, #cbd5e1);">${c.matTruyen.lucThan}</div>
+                <div style="font-size: 8.5px; opacity: 0.75; border-top: 1px solid rgba(245, 176, 65, 0.2); margin-top: 4px; padding-top: 2px;">
+                  ${c.matTruyen.nguHanh} · Mạt túc
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="lucnham-tukhoa-grid">
-            <!-- Khóa 4: Chi Âm -->
-            <div class="lucnham-khoa-col">
-              <div style="font-size: 8.5px; color: #94a3b8;">IV</div>
-              <div class="lucnham-khoa-thu" style="color: #fde047;">${c.tuKhoa[3]?.thuong || ''}</div>
-              <div class="lucnham-khoa-ha">${c.tuKhoa[3]?.ha || ''}</div>
-              <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[3]?.quanHe)}">${c.tuKhoa[3]?.quanHe || '---'}</div>
+          <!-- 4. Tứ Khóa Card -->
+          <div class="neta-custom-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">
+                Tứ Khóa (Can Chi Tương Phối)
+              </span>
+              <span style="font-size: 9px; color: #94a3b8;">IV ← III ← II ← I</span>
             </div>
 
-            <!-- Khóa 3: Chi Dương -->
-            <div class="lucnham-khoa-col">
-              <div style="font-size: 8.5px; color: #94a3b8;">III</div>
-              <div class="lucnham-khoa-thu" style="color: #fde047;">${c.tuKhoa[2]?.thuong || ''}</div>
-              <div class="lucnham-khoa-ha">${c.tuKhoa[2]?.ha || ''}</div>
-              <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[2]?.quanHe)}">${c.tuKhoa[2]?.quanHe || '---'}</div>
-            </div>
+            <div class="lucnham-tukhoa-grid">
+              <!-- Khóa 4: Chi Âm -->
+              <div class="lucnham-khoa-col">
+                <div style="font-size: 8.5px; color: #94a3b8;">IV</div>
+                <div class="lucnham-khoa-thu">${c.tuKhoa[3]?.thuong || ''}</div>
+                <div class="lucnham-khoa-ha">${c.tuKhoa[3]?.ha || ''}</div>
+                <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[3]?.quanHe)}">${c.tuKhoa[3]?.quanHe || '---'}</div>
+              </div>
 
-            <!-- Khóa 2: Can Âm -->
-            <div class="lucnham-khoa-col">
-              <div style="font-size: 8.5px; color: #94a3b8;">II</div>
-              <div class="lucnham-khoa-thu" style="color: #fde047;">${c.tuKhoa[1]?.thuong || ''}</div>
-              <div class="lucnham-khoa-ha">${c.tuKhoa[1]?.ha || ''}</div>
-              <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[1]?.quanHe)}">${c.tuKhoa[1]?.quanHe || '---'}</div>
-            </div>
+              <!-- Khóa 3: Chi Dương -->
+              <div class="lucnham-khoa-col">
+                <div style="font-size: 8.5px; color: #94a3b8;">III</div>
+                <div class="lucnham-khoa-thu">${c.tuKhoa[2]?.thuong || ''}</div>
+                <div class="lucnham-khoa-ha">${c.tuKhoa[2]?.ha || ''}</div>
+                <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[2]?.quanHe)}">${c.tuKhoa[2]?.quanHe || '---'}</div>
+              </div>
 
-            <!-- Khóa 1: Can Dương -->
-            <div class="lucnham-khoa-col">
-              <div style="font-size: 8.5px; color: #94a3b8;">I</div>
-              <div class="lucnham-khoa-thu" style="color: #fde047;">${c.tuKhoa[0]?.thuong || ''}</div>
-              <div class="lucnham-khoa-ha">${c.tuKhoa[0]?.ha || ''}</div>
-              <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[0]?.quanHe)}">${c.tuKhoa[0]?.quanHe || '---'}</div>
+              <!-- Khóa 2: Can Âm -->
+              <div class="lucnham-khoa-col">
+                <div style="font-size: 8.5px; color: #94a3b8;">II</div>
+                <div class="lucnham-khoa-thu">${c.tuKhoa[1]?.thuong || ''}</div>
+                <div class="lucnham-khoa-ha">${c.tuKhoa[1]?.ha || ''}</div>
+                <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[1]?.quanHe)}">${c.tuKhoa[1]?.quanHe || '---'}</div>
+              </div>
+
+              <!-- Khóa 1: Can Dương -->
+              <div class="lucnham-khoa-col">
+                <div style="font-size: 8.5px; color: #94a3b8;">I</div>
+                <div class="lucnham-khoa-thu">${c.tuKhoa[0]?.thuong || ''}</div>
+                <div class="lucnham-khoa-ha">${c.tuKhoa[0]?.ha || ''}</div>
+                <div class="lucnham-khoa-tag ${getTagClass(c.tuKhoa[0]?.quanHe)}">${c.tuKhoa[0]?.quanHe || '---'}</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- 5. Bàn Cờ 12 Cung 4x4 (Dial Matrix) -->
-        <div class="neta-custom-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="font-size: 11px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">
-              ${currentViewMode === 'classic' ? 'Bàn Cờ 8 Lớp Thông Tin' : 'Bàn Cảm Ứng 1-Chạm'}
-            </span>
-            <span style="font-size: 9px; color: #94a3b8;">Chạm cung để xem luận giải</span>
-          </div>
+          <!-- 5. Bàn Cờ 12 Cung 4x4 (Dial Matrix) -->
+          <div class="neta-custom-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">
+                ${currentViewMode === 'classic' ? 'Bàn Cờ 8 Lớp Thông Tin' : 'Bàn Cảm Ứng 1-Chạm'}
+              </span>
+              <span style="font-size: 9px; color: #94a3b8;">Chạm cung để xem luận giải</span>
+            </div>
 
-          <div class="lucnham-dial-grid">
-            ${DIAL_4x4_LAYOUT.map(d => {
-              if (!d) return '';
-              if (d === 'Thìn') {
-                const bThin = c.cung12['Thìn'];
-                const bDau = c.cung12['Dậu'];
-                return `
-                  ${renderSingleCell(bThin, selectedBox === 'Thìn')}
-                  <div class="lucnham-center-hud">
-                    <span style="font-size: 9px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">LỤC NHÂM ĐẠI ĐỘN</span>
-                    <div style="font-size: 13px; font-weight: 900; margin: 2px 0;">${c.canNgay} ${c.chiNgay}</div>
-                    <div style="font-size: 9px; color: #34d399;">Trạch: ${c.trachThan} · Mộ: ${c.moThan}</div>
-                    <div style="font-size: 9px; color: #fde047; margin-top: 1px;">Hành niên: ${c.hanhNienChi} (${c.tuoiAm}T)</div>
-                  </div>
-                  ${renderSingleCell(bDau, selectedBox === 'Dậu')}
-                `;
-              }
-              if (d === 'Dậu' || d === 'Mão' || d === 'Tuất') {
-                if (d === 'Dậu') return '';
-                if (d === 'Mão') {
-                  const bMao = c.cung12['Mão'];
-                  const bTuat = c.cung12['Tuất'];
+            <div class="lucnham-dial-grid">
+              ${DIAL_4x4_LAYOUT.map(d => {
+                if (!d) return '';
+                if (d === 'Thìn') {
+                  const bThin = c.cung12['Thìn'];
+                  const bDau = c.cung12['Dậu'];
                   return `
-                    ${renderSingleCell(bMao, selectedBox === 'Mão')}
-                    ${renderSingleCell(bTuat, selectedBox === 'Tuất')}
+                    ${renderSingleCell(bThin, selectedBox === 'Thìn')}
+                    <div class="lucnham-center-hud">
+                      <span class="hud-title" style="font-size: 9px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">LỤC NHÂM ĐẠI ĐỘN</span>
+                      <div class="hud-main" style="font-size: 13px; font-weight: 900; margin: 2px 0;">${c.canNgay} ${c.chiNgay}</div>
+                      <div class="hud-trachmo" style="font-size: 9px; color: #34d399;">Trạch: ${c.trachThan} · Mộ: ${c.moThan}</div>
+                      <div class="hud-hanhnien" style="font-size: 9px; color: #fde047; margin-top: 1px;">Hành niên: ${c.hanhNienChi} (${c.tuoiAm}T)</div>
+                    </div>
+                    ${renderSingleCell(bDau, selectedBox === 'Dậu')}
                   `;
                 }
-                if (d === 'Tuất') return '';
-              }
-              const b = c.cung12[d];
-              return renderSingleCell(b, selectedBox === d);
-            }).join('')}
+                if (d === 'Dậu' || d === 'Mão' || d === 'Tuất') {
+                  if (d === 'Dậu') return '';
+                  if (d === 'Mão') {
+                    const bMao = c.cung12['Mão'];
+                    const bTuat = c.cung12['Tuất'];
+                    return `
+                      ${renderSingleCell(bMao, selectedBox === 'Mão')}
+                      ${renderSingleCell(bTuat, selectedBox === 'Tuất')}
+                    `;
+                  }
+                  if (d === 'Tuất') return '';
+                }
+                const b = c.cung12[d];
+                return renderSingleCell(b, selectedBox === d);
+              }).join('')}
+            </div>
           </div>
-        </div>
+        `}
       </div>
 
       <!-- Drawer Tra Cứu Chi Tiết 1 Cung -->
       <div id="lucnham-drawer-overlay" class="lucnham-drawer-overlay" onclick="window.LucNhamView.closeDrawer()"></div>
-      ${isLuanModalOpen ? renderLuanModalHTML(c) : ''}
-
-        <div id="lucnham-drawer" class="lucnham-drawer">
+      <div id="lucnham-drawer" class="lucnham-drawer">
         <div id="lucnham-drawer-content"></div>
       </div>
     `;
@@ -985,9 +1032,9 @@
   function renderSingleCell(b, isActive) {
     if (!b) return '';
     const tags = [];
-    if (b.tagHanhNien) tags.push(`<span style="color: #f59e0b; font-weight: 800;">${b.tagHanhNien}</span>`);
-    if (b.tagTrachMo) tags.push(`<span style="color: #34d399; font-weight: 800;">${b.tagTrachMo}</span>`);
-    if (b.tagCanChiNgay) tags.push(`<span style="color: #f43f5e; font-weight: 800;">${b.tagCanChiNgay}</span>`);
+    if (b.tagHanhNien) tags.push(`<span class="tag-hanhnien">${b.tagHanhNien}</span>`);
+    if (b.tagTrachMo) tags.push(`<span class="tag-trachmo">${b.tagTrachMo}</span>`);
+    if (b.tagCanChiNgay) tags.push(`<span class="tag-canchingay">${b.tagCanChiNgay}</span>`);
     const tagHtml = tags.join(' ');
 
     if (currentViewMode === 'touch') {
@@ -995,11 +1042,11 @@
         <div class="lucnham-cung-cell ${isActive ? 'lucnham-cung-active' : ''}" onclick="window.LucNhamView.selectPalace('${b.diaBan}')">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; font-size: 9px;">
             <span style="font-weight: 800; color: #94a3b8;">${b.diaBan}</span>
-            <span style="font-size: 8px; font-weight: 700; color: #f59e0b; max-width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <span class="lucnham-cell-thientuong" style="font-size: 8px; font-weight: 700; max-width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
               ${b.thienTuong}
             </span>
           </div>
-          <div style="text-align: center; font-size: 15px; font-weight: 900; color: #fde047; margin: 2px 0;">
+          <div class="lucnham-cell-thienban" style="text-align: center; font-size: 15px; font-weight: 900; margin: 2px 0;">
             ${b.thienBan}
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 8px; color: #94a3b8;">
@@ -1015,11 +1062,11 @@
       <div class="lucnham-cung-cell ${isActive ? 'lucnham-cung-active' : ''}" onclick="window.LucNhamView.selectPalace('${b.diaBan}')">
         <!-- Dòng 1: Thiên bàn & Tags -->
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; border-bottom: 1px solid rgba(245, 176, 65, 0.2); padding-bottom: 1px;">
-          <span style="font-weight: 900; color: #fde047;">${b.thienBan}</span>
+          <span class="lucnham-cell-thienban" style="font-weight: 900;">${b.thienBan}</span>
           <div style="font-size: 8px; line-height: 1;">${tagHtml}</div>
         </div>
         <!-- Dòng 2: Thiên tướng -->
-        <div style="font-size: 8.5px; font-weight: 800; color: #38bdf8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        <div class="lucnham-cell-thientuong" style="font-size: 8.5px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
           ${b.thienTuong}
         </div>
         <!-- Dòng 3: Sao Thái Tuế -->
@@ -1044,10 +1091,34 @@
   }
 
   function bindLucNhamEvents() {
-    bindLuanModalEvents();
+    bindLuanAnalysisEvents();
     const pad = n => String(n).padStart(2, '0');
 
-    // Mode Switches
+    // UCC View Switcher: Bàn Quẻ vs Luận Giải
+    const btnTabChart = document.getElementById('btn-lucnham-tab-chart');
+    const btnTabAnalysis = document.getElementById('btn-lucnham-tab-analysis');
+    const btnOpenLuan = document.getElementById('lucnham-btn-open-luan');
+
+    if (btnTabChart) {
+      btnTabChart.onclick = () => {
+        currentMainTab = 'chart';
+        renderLucNham();
+      };
+    }
+    if (btnTabAnalysis) {
+      btnTabAnalysis.onclick = () => {
+        currentMainTab = 'analysis';
+        renderLucNham();
+      };
+    }
+    if (btnOpenLuan) {
+      btnOpenLuan.onclick = () => {
+        currentMainTab = 'analysis';
+        renderLucNham();
+      };
+    }
+
+    // Mode Switches (8 Lớp vs 1 Chạm)
     const btnClassic = document.getElementById('btn-lucnham-mode-classic');
     const btnTouch = document.getElementById('btn-lucnham-mode-touch');
     if (btnClassic) {
@@ -1343,23 +1414,15 @@
     }
   }
 
-  function renderLuanModalHTML(chart) {
+  function renderLucNhamAnalysisHTML(chart) {
     const interp = (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine)
       ? (global.NetaLucNhamInterpreter || global.LucNhamMobileEngine).interpretChart(chart)
       : null;
 
     if (!interp) {
       return `
-        <div class="lucnham-luan-modal-overlay" id="lucnham-luan-modal-overlay">
-          <div class="lucnham-luan-modal-sheet" id="lucnham-luan-modal-sheet">
-            <div class="lucnham-luan-modal-header">
-              <span class="lucnham-luan-modal-title">🔮 LỤC NHÂM ĐẠI ĐỘN LUẬN GIẢI</span>
-              <button class="lucnham-act-btn btn-close" onclick="window.LucNhamView.closeLuanModal()">✕</button>
-            </div>
-            <div class="lucnham-luan-modal-body" style="padding: 20px; text-align: center;">
-              Chưa nạp được động cơ NetaLucNhamInterpreter.
-            </div>
-          </div>
+        <div class="lucnham-analysis-wrap" style="padding: 24px; text-align: center; color: var(--text-muted);">
+          <p>Đang chuẩn bị dữ liệu luận giải Lục Nhâm 7 Tầng...</p>
         </div>
       `;
     }
@@ -1381,81 +1444,99 @@
     const isCol = key => (collapsedSections[key] ? 'collapsed' : '');
 
     return `
-      <div class="lucnham-luan-modal-overlay" id="lucnham-luan-modal-overlay">
-        <div class="lucnham-luan-modal-sheet" id="lucnham-luan-modal-sheet">
-          <!-- Header -->
-          <div class="lucnham-luan-modal-header">
-            <div class="lucnham-luan-modal-title">
-              <span>🔮</span>
-              <span>LUẬN GIẢI LỤC NHÂM · ${interp.canNgay} ${interp.chiNgay}</span>
+      <div class="lucnham-analysis-wrap">
+        <!-- Header / Meta Bar (Bát Tự Uniform) -->
+        <div class="lucnham-report-meta-bar">
+          <div style="font-weight: 800; font-size: 0.92rem; color: var(--gold-glow, #f5b041); display: flex; align-items: center; gap: 6px;">
+            <span>📜</span> LUẬN GIẢI CHUYÊN SÂU LỤC NHÂM · ${interp.canNgay} ${interp.chiNgay}
+          </div>
+          <div class="neta-report-mode-toggle">
+            <button type="button" class="neta-mode-pill ${currentReportMode === 'standard' ? 'active' : ''}" id="btn-lucnham-mode-standard" title="Bản tính toán toán học 100% offline">
+              📜 Bản Gốc
+            </button>
+            <button type="button" class="neta-mode-pill ${currentReportMode === 'ai' ? 'active' : ''}" id="btn-lucnham-mode-ai" title="Bản trau chuốt học thuật bởi Gemini AI">
+              ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Bản AI'}
+            </button>
+            <button type="button" class="neta-mode-pill" id="lucnham-btn-copy-luan" title="Sao chép toàn văn">
+              📋 Sao chép
+            </button>
+          </div>
+        </div>
+
+        ${currentReportMode === 'ai' ? `
+          <!-- Chế độ Trau Chuốt AI -->
+          ${isAiPolishing ? `
+            <div class="neta-inline-ai-loading">
+              <div style="font-size: 1.5rem; margin-bottom: 8px;">✨</div>
+              <div style="font-weight: 700; color: var(--gold-primary, #f5b041); font-size: 13px;">
+                Đang tiến hành kết nối Gemini AI trau chuốt cấu trúc câu và từ ngữ học thuật Lục Nhâm...
+              </div>
+              <div style="font-size: 11px; opacity: 0.75; margin-top: 4px;">
+                Bảo toàn 100% kết quả tính toán 7 Tầng Huyền Cơ và 100 Cục Tất Pháp.
+              </div>
             </div>
-            <div class="lucnham-luan-modal-actions">
-              <button class="lucnham-act-btn" id="lucnham-btn-copy-luan" title="Sao chép toàn văn báo cáo">
-                📋 Sao chép
+          ` : ''}
+
+          ${aiErrorMessage ? `
+            <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 8px; padding: 12px; margin: 12px 0; color: #dc2626; font-size: 12px; line-height: 1.5;">
+              <div><strong>⚠️ Lỗi kết nối AI:</strong> ${aiErrorMessage}</div>
+              <div style="margin-top: 8px; display: flex; gap: 8px;">
+                <button type="button" class="neta-mode-pill active" id="btn-lucnham-retry-ai">🔄 Thử Lại</button>
+                <button type="button" class="neta-mode-pill" id="btn-lucnham-back-standard-from-err">↩️ Về Bản Gốc</button>
+              </div>
+            </div>
+          ` : ''}
+
+          ${aiPolishedText ? `
+            <div class="neta-polished-status-bar">
+              <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
+              <button type="button" class="neta-btn-inline-back" id="btn-lucnham-back-standard">↩️ Xem Bản Gốc</button>
+            </div>
+            <div class="lucnham-full-report-content neta-drop-cap" style="font-size: 0.88rem; line-height: 1.75; color: var(--text-color, #f8fafc); background: rgba(20, 2, 5, 0.7); border: 1px solid rgba(245, 176, 65, 0.25); border-radius: 8px; padding: 14px; white-space: pre-wrap;">
+              ${aiPolishedText}
+            </div>
+          ` : (!isAiPolishing && !aiErrorMessage ? `
+            <div style="text-align: center; padding: 36px 16px; color: var(--text-muted); background: rgba(20, 2, 5, 0.5); border-radius: 8px; border: 1px dashed rgba(245, 176, 65, 0.25); margin: 12px 0;">
+              <p style="margin-bottom: 12px; font-size: 13px;">Chưa kích hoạt trau chuốt văn phong AI cho quẻ Lục Nhâm này.</p>
+              <button type="button" class="neta-mode-pill active" id="btn-lucnham-inline-trigger-ai" style="padding: 8px 16px; font-size: 13px; font-weight: 800;">
+                ✨ Bắt Đầu Trau Chuốt Văn Phong (AI)
               </button>
-              <button class="lucnham-act-btn" id="lucnham-btn-ai-luan" title="AI Gemini chau chuốt">
-                ${isAiPolishing ? '<span class="lucnham-spin">⏳</span>' : '✨ AI'}
-              </button>
-              <button class="lucnham-act-btn btn-close" id="lucnham-btn-close-luan" title="Đóng">
-                ✕
-              </button>
+            </div>
+          ` : '')}
+        ` : `
+          <!-- Chế độ Tiêu Chuẩn / Gốc (Offline 100%) -->
+          <!-- 1. Dashboard 3 chỉ số -->
+          <div class="lucnham-dashboard-grid">
+            <div class="lucnham-metric-card">
+              <div class="lucnham-metric-num" style="color: ${riskColor};">${interp.riskScore}/5 ★</div>
+              <div class="lucnham-metric-lbl">${riskLabel}</div>
+            </div>
+            <div class="lucnham-metric-card">
+              <div class="lucnham-metric-num" style="color: #38bdf8; font-size: 12px; margin-top: 2px;">${theDungBrief}</div>
+              <div class="lucnham-metric-lbl">Trục Thể - Dụng</div>
+            </div>
+            <div class="lucnham-metric-card">
+              <div class="lucnham-metric-num" style="color: #f5b041; font-size: 13px;">${strategyBrief}</div>
+              <div class="lucnham-metric-lbl">Sách Lược Hành Sự</div>
             </div>
           </div>
 
-          <!-- Body -->
-          <div class="lucnham-luan-modal-body">
-            <!-- 1. Dashboard 3 chỉ số -->
-            <div class="lucnham-dashboard-grid">
-              <div class="lucnham-metric-card">
-                <div class="lucnham-metric-num" style="color: ${riskColor};">${interp.riskScore}/5 ★</div>
-                <div class="lucnham-metric-lbl">${riskLabel}</div>
-              </div>
-              <div class="lucnham-metric-card">
-                <div class="lucnham-metric-num" style="color: #38bdf8; font-size: 12px; margin-top: 2px;">${theDungBrief}</div>
-                <div class="lucnham-metric-lbl">Trục Thể - Dụng</div>
-              </div>
-              <div class="lucnham-metric-card">
-                <div class="lucnham-metric-num" style="color: #f5b041; font-size: 13px;">${strategyBrief}</div>
-                <div class="lucnham-metric-lbl">Sách Lược Hành Sự</div>
-              </div>
-            </div>
+          <!-- 2. Subbar Phương Vị & Ứng Kỳ -->
+          <div class="lucnham-subbar">
+            <div>🧭 <strong>Phương vị Cát Tường:</strong> <span style="color: #34d399;">${interp.sachLuoc.phuongViTot}</span></div>
+            <div>⏱️ <strong>Ứng kỳ:</strong> <span style="color: #f5b041;">${interp.sachLuoc.ungKy}</span></div>
+          </div>
 
-            <!-- 2. Subbar Phương Vị & Ứng Kỳ -->
-            <div class="lucnham-subbar">
-              <div>🧭 <strong>Phương vị Cát Tường:</strong> <span style="color: #34d399;">${interp.sachLuoc.phuongViTot}</span></div>
-              <div>⏱️ <strong>Ứng kỳ:</strong> <span style="color: #f5b041;">${interp.sachLuoc.ungKy}</span></div>
-            </div>
+          <!-- 3. Filter Pills -->
+          <div class="lucnham-pill-tabs">
+            <button class="lucnham-pill-btn ${f === 'all' ? 'active' : ''}" data-filter="all">Tất cả (7 Tầng)</button>
+            <button class="lucnham-pill-btn ${f === 'tatphap' ? 'active' : ''}" data-filter="tatphap">Tất Pháp Phú (${interp.biFaFuDetected.length})</button>
+            <button class="lucnham-pill-btn ${f === 'timeline' ? 'active' : ''}" data-filter="timeline">Timeline 3 Giai Đoạn</button>
+            <button class="lucnham-pill-btn ${f === 'chuyende' ? 'active' : ''}" data-filter="chuyende">7 Chuyên Đề</button>
+            <button class="lucnham-pill-btn ${f === 'suvu' ? 'active' : ''}" data-filter="suvu">8 Sự Vụ Đời Sống</button>
+          </div>
 
-            <!-- 3. Filter Pills -->
-            <div class="lucnham-pill-tabs">
-              <button class="lucnham-pill-btn ${f === 'all' ? 'active' : ''}" data-filter="all">Tất cả (7 Tầng)</button>
-              <button class="lucnham-pill-btn ${f === 'tatphap' ? 'active' : ''}" data-filter="tatphap">Tất Pháp Phú (${interp.biFaFuDetected.length})</button>
-              <button class="lucnham-pill-btn ${f === 'timeline' ? 'active' : ''}" data-filter="timeline">Timeline 3 Giai Đoạn</button>
-              <button class="lucnham-pill-btn ${f === 'chuyende' ? 'active' : ''}" data-filter="chuyende">7 Chuyên Đề</button>
-              <button class="lucnham-pill-btn ${f === 'suvu' ? 'active' : ''}" data-filter="suvu">8 Sự Vụ Đời Sống</button>
-            </div>
-
-            <!-- Khối AI Gemini nếu có -->
-            ${aiErrorMessage ? `
-              <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 11.5px; color: #dc2626; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                <div style="flex: 1; line-height: 1.4;">
-                  <strong>⚠️ Thông báo AI:</strong> ${aiErrorMessage}
-                </div>
-                <button type="button" style="background: none; border: none; font-size: 14px; font-weight: 800; cursor: pointer; color: #dc2626; padding: 0 4px;" onclick="window.LucNhamView.dismissAiError()">✕</button>
-              </div>
-            ` : ''}
-
-            ${aiPolishedText ? `
-              <div class="lucnham-ai-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid rgba(245, 176, 65, 0.2); padding-bottom: 4px;">
-                  <strong style="color: #f5b041;">✨ KẾT QUẢ BIÊN TẬP GEMINI AI (LUỒNG KÉP)</strong>
-                  <span style="font-size: 10px; color: #22c55e;">Đã kiểm định Zero-Hallucination</span>
-                </div>
-                <div style="white-space: pre-wrap;">${aiPolishedText}</div>
-              </div>
-            ` : ''}
-
-            <!-- ACCORDIONS -->
+          <!-- ACCORDIONS -->
 
             <!-- [I. TRỤC THỂ - DỤNG & NĂNG LƯỢNG TỨ THỜI] -->
             <div class="lucnham-accordion-card ${isCol('sec_thedung')}" data-sec="sec_thedung">
@@ -1633,52 +1714,72 @@
                 <div>🧭 <strong>Phương vị thuận lợi nhất:</strong> ${interp.sachLuoc.phuongViTot}</div>
                 <div>⏱️ <strong>Ứng kỳ chi tiết:</strong> ${interp.sachLuoc.ungKy}</div>
               </div>
-            </div>
           </div>
-        </div>
+        `}
       </div>
     `;
   }
 
-  function bindLuanModalEvents() {
-    const btnOpen = document.getElementById('lucnham-btn-open-luan');
-    if (btnOpen) {
-      btnOpen.onclick = (e) => {
+  function bindLuanAnalysisEvents() {
+    // Mode toggles (Bát Tự Uniform)
+    const btnModeStandard = document.getElementById('btn-lucnham-mode-standard');
+    const btnModeAi = document.getElementById('btn-lucnham-mode-ai');
+    const btnBackStandard = document.getElementById('btn-lucnham-back-standard');
+    const btnBackStandardFromErr = document.getElementById('btn-lucnham-back-standard-from-err');
+    const btnTriggerAi = document.getElementById('btn-lucnham-inline-trigger-ai');
+    const btnRetryAi = document.getElementById('btn-lucnham-retry-ai');
+    const btnCopy = document.getElementById('lucnham-btn-copy-luan');
+
+    if (btnModeStandard) {
+      btnModeStandard.onclick = (e) => {
         e.preventDefault();
-        window.LucNhamView.openLuanModal();
+        currentReportMode = 'standard';
+        renderLucNham();
       };
     }
-
-    const btnClose = document.getElementById('lucnham-btn-close-luan');
-    if (btnClose) {
-      btnClose.onclick = (e) => {
+    if (btnModeAi) {
+      btnModeAi.onclick = (e) => {
         e.preventDefault();
-        window.LucNhamView.closeLuanModal();
-      };
-    }
-
-    const overlay = document.getElementById('lucnham-luan-modal-overlay');
-    if (overlay) {
-      overlay.onclick = (e) => {
-        if (e.target === overlay) {
-          window.LucNhamView.closeLuanModal();
+        currentReportMode = 'ai';
+        if (!aiPolishedText && !isAiPolishing) {
+          triggerAiPolish();
+        } else {
+          renderLucNham();
         }
       };
     }
-
-    const btnCopy = document.getElementById('lucnham-btn-copy-luan');
+    if (btnBackStandard) {
+      btnBackStandard.onclick = (e) => {
+        e.preventDefault();
+        currentReportMode = 'standard';
+        renderLucNham();
+      };
+    }
+    if (btnBackStandardFromErr) {
+      btnBackStandardFromErr.onclick = (e) => {
+        e.preventDefault();
+        currentReportMode = 'standard';
+        renderLucNham();
+      };
+    }
+    if (btnTriggerAi) {
+      btnTriggerAi.onclick = (e) => {
+        e.preventDefault();
+        currentReportMode = 'ai';
+        triggerAiPolish();
+      };
+    }
+    if (btnRetryAi) {
+      btnRetryAi.onclick = (e) => {
+        e.preventDefault();
+        currentReportMode = 'ai';
+        triggerAiPolish();
+      };
+    }
     if (btnCopy) {
       btnCopy.onclick = (e) => {
         e.preventDefault();
-        window.LucNhamView.copyLuanReport();
-      };
-    }
-
-    const btnAi = document.getElementById('lucnham-btn-ai-luan');
-    if (btnAi) {
-      btnAi.onclick = (e) => {
-        e.preventDefault();
-        window.LucNhamView.triggerAiPolish();
+        copyLuanReport();
       };
     }
 
@@ -1688,7 +1789,7 @@
       btn.onclick = (e) => {
         e.preventDefault();
         const filter = btn.getAttribute('data-filter') || 'all';
-        window.LucNhamView.setLuanFilter(filter);
+        setLuanFilter(filter);
       };
     });
 
@@ -1699,20 +1800,10 @@
         const card = hdr.closest('.lucnham-accordion-card');
         if (card) {
           const sec = card.getAttribute('data-sec');
-          window.LucNhamView.toggleSection(sec);
+          toggleSection(sec);
         }
       };
     });
-  }
-
-  function openLuanModal() {
-    isLuanModalOpen = true;
-    renderLucNham();
-  }
-
-  function closeLuanModal() {
-    isLuanModalOpen = false;
-    renderLucNham();
   }
 
   function setLuanFilter(filter) {
@@ -1734,7 +1825,7 @@
     if (!interp) return;
 
     let textToCopy = "";
-    if (currentLuanViewMode === 'ai' && aiPolishedText) {
+    if (currentReportMode === 'ai' && aiPolishedText) {
       textToCopy = aiPolishedText;
     } else if (global.NetaLucNhamInterpreter && global.NetaLucNhamInterpreter.formatTextReport) {
       textToCopy = global.NetaLucNhamInterpreter.formatTextReport(interp);
@@ -1803,7 +1894,7 @@
       if (gemini) {
         const apiKey = (gemini.getActiveKey && gemini.getActiveKey()) || '';
         if (!apiKey) {
-          throw new Error("Chưa cài đặt Gemini API Key. Bạn có thể cài đặt trong mục Trải Bài Tarot hoặc Cài Đặt.");
+          throw new Error("Chưa cài đặt Gemini API Key. Bạn có thể cài đặt trong mục Cài Đặt.");
         }
         let result = null;
         if (typeof gemini.callGeminiCascade === 'function') {
@@ -1816,7 +1907,7 @@
         }
         if (result && result.text) {
           aiPolishedText = result.text;
-          currentLuanViewMode = 'ai';
+          currentReportMode = 'ai';
           aiErrorMessage = null;
           showToast("Gemini AI biên tập luận giải thành công!");
         } else {
@@ -1827,12 +1918,12 @@
         aiPolishedText = (global.NetaLucNhamInterpreter && global.NetaLucNhamInterpreter.formatTextReport)
           ? global.NetaLucNhamInterpreter.formatTextReport(interp)
           : "Bản luận giải đã sẵn sàng ở chế độ Offline.";
-        currentLuanViewMode = 'ai';
+        currentReportMode = 'ai';
         showToast("Đã hiển thị bản phân tích chuyên sâu (Offline).");
       }
     } catch (err) {
       console.error("Lỗi AI Polish:", err);
-      currentLuanViewMode = 'math';
+      currentReportMode = 'ai';
       aiErrorMessage = "Không thể kết nối AI: " + (err.message || "Vui lòng kiểm tra API Key.");
     } finally {
       isAiPolishing = false;
@@ -1861,9 +1952,8 @@
       renderLucNham();
     },
     selectPalace: selectPalace,
-    closeDrawer: closeDrawer,
-    openLuanModal: openLuanModal,
-    closeLuanModal: closeLuanModal,
+    openLuanModal: () => { currentMainTab = 'analysis'; renderLucNham(); },
+    closeLuanModal: () => { currentMainTab = 'chart'; renderLucNham(); },
     setLuanFilter: setLuanFilter,
     toggleSection: toggleSection,
     copyLuanReport: copyLuanReport,
