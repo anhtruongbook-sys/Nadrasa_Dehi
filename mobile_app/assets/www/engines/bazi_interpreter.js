@@ -51,39 +51,6 @@
     'Thìn': 'Thổ', 'Tuất': 'Thổ', 'Sửu': 'Thổ', 'Mùi': 'Thổ'
   };
 
-  const NAP_AM_MAP = {
-    'Giáp Tý': 'Hải Trung Kim', 'Ất Sửu': 'Hải Trung Kim',
-    'Bính Dần': 'Lư Trung Hỏa', 'Đinh Mão': 'Lư Trung Hỏa',
-    'Mậu Thìn': 'Đại Lâm Mộc', 'Kỷ Tỵ': 'Đại Lâm Mộc',
-    'Canh Ngọ': 'Lộ Bàng Thổ', 'Tân Mùi': 'Lộ Bàng Thổ',
-    'Nhâm Thân': 'Kiếm Phong Kim', 'Quý Dậu': 'Kiếm Phong Kim',
-    'Giáp Tuất': 'Sơn Đầu Hỏa', 'Ất Hợi': 'Sơn Đầu Hỏa',
-    'Bính Tý': 'Giản Hạ Thủy', 'Đinh Sửu': 'Giản Hạ Thủy',
-    'Mậu Dần': 'Thành Đầu Thổ', 'Kỷ Mão': 'Thành Đầu Thổ',
-    'Canh Thìn': 'Bạch Lạp Kim', 'Tân Tỵ': 'Bạch Lạp Kim',
-    'Nhâm Ngọ': 'Dương Liễu Mộc', 'Quý Mùi': 'Dương Liễu Mộc',
-    'Giáp Thân': 'Tuyền Trung Thủy', 'Ất Dậu': 'Tuyền Trung Thủy',
-    'Bính Tuất': 'Ốc Thượng Thổ', 'Đinh Hợi': 'Ốc Thượng Thổ',
-    'Mậu Tý': 'Tích Lịch Hỏa', 'Kỷ Sửu': 'Tích Lịch Hỏa',
-    'Canh Dần': 'Tùng Bách Mộc', 'Tân Mão': 'Tùng Bách Mộc',
-    'Nhâm Thìn': 'Trường Lưu Thủy', 'Quý Tỵ': 'Trường Lưu Thủy',
-    'Giáp Ngọ': 'Sa Trung Kim', 'Ất Mùi': 'Sa Trung Kim',
-    'Bính Thân': 'Sơn Hạ Hỏa', 'Đinh Dậu': 'Sơn Hạ Hỏa',
-    'Mậu Tuất': 'Bình Địa Mộc', 'Kỷ Hợi': 'Bình Địa Mộc',
-    'Canh Tý': 'Bích Thượng Thổ', 'Tân Sửu': 'Bích Thượng Thổ',
-    'Nhâm Dần': 'Kim Bạch Kim', 'Quý Mão': 'Kim Bạch Kim',
-    'Giáp Thìn': 'Phú Đăng Hỏa', 'Ất Tỵ': 'Phú Đăng Hỏa',
-    'Bính Ngọ': 'Thiên Hà Thủy', 'Đinh Mùi': 'Thiên Hà Thủy',
-    'Mậu Thân': 'Đại Dịch Thổ', 'Kỷ Dậu': 'Đại Dịch Thổ',
-    'Canh Tuất': 'Thoa Xuyến Kim', 'Tân Hợi': 'Thoa Xuyến Kim',
-    'Nhâm Tý': 'Tang Đố Mộc', 'Quý Sửu': 'Tang Đố Mộc',
-    'Giáp Dần': 'Đại Khê Thủy', 'Ất Mão': 'Đại Khê Thủy',
-    'Bính Thìn': 'Sa Trung Thổ', 'Đinh Tỵ': 'Sa Trung Thổ',
-    'Mậu Ngọ': 'Thiên Thượng Hỏa', 'Kỷ Mùi': 'Thiên Thượng Hỏa',
-    'Canh Thân': 'Thạch Lựu Mộc', 'Tân Dậu': 'Thạch Lựu Mộc',
-    'Nhâm Tuất': 'Đại Hải Thủy', 'Quý Hợi': 'Đại Hải Thủy'
-  };
-
   const CHANG_SHENG = [
     'Trường Sinh', 'Mộc Dục', 'Quan Đới', 'Lâm Quan', 'Đế Vượng',
     'Suy', 'Bệnh', 'Tử', 'Mộ', 'Tuyệt', 'Thai', 'Dưỡng'
@@ -1131,7 +1098,6 @@
     const yZhi = DI_ZHI[zIdx];
     const yCanChi = `${yGan} ${yZhi}`;
     const yDeity = calculate10Deities(chart.day_gan, yGan);
-    const yNapAm = NAP_AM_MAP[yCanChi] || '';
 
     const yearInteractions = [];
     const zhis = [chart.year_zhi, chart.month_zhi, chart.day_zhi, chart.hour_zhi];
@@ -1165,7 +1131,6 @@
     return {
       target_year: targetYear,
       year_can_chi: yCanChi,
-      year_nap_am: yNapAm,
       year_deity: yDeity,
       active_luck_pillar: activeLuck ? `${activeLuck.canChi || activeLuck.can_chi} (${activeLuck.age_start || activeLuck.age}-${activeLuck.age_end || activeLuck.endAge} tuổi)` : 'N/A',
       forecast_grade: forecastGrade,
@@ -1211,7 +1176,6 @@
       const yearEnd = yearStart + 9;
       const deity = lp.deity || lp.ten_god;
       const changSheng = lp.changSheng || lp.chang_sheng;
-      const napAm = lp.napAm || lp.nap_am;
 
       const ganWx = GAN_WU_XING[gan];
       const zhiWx = ZHI_WU_XING[zhi];
@@ -1254,7 +1218,6 @@
         yearRange: `${yearStart} - ${yearEnd}`,
         deity,
         changSheng,
-        napAm,
         summaryGrade,
         first5Years: `${gan} (${ganWx}) quản 5 năm đầu (${yearStart} - ${yearStart + 4}): ${first5Favorable ? 'Hỷ Thần tương trợ' : (unfavorable.includes(ganWx) ? 'Kỵ Thần áp chế' : 'Khí số bình hòa')}`,
         last5Years: `${zhi} (${zhiWx}) quản 5 năm sau (${yearStart + 5} - ${yearEnd}): ${last5Favorable ? 'Hỷ Thần đắc địa' : (unfavorable.includes(zhiWx) ? 'Kỵ Thần quấy nhiễu' : 'Khí số bình hòa')}`,
@@ -1471,7 +1434,6 @@
       const gan = TIAN_GAN[(startGanIdx + m) % 10];
       const zhi = MONTH_ZHIS[m];
       const canChi = `${gan} ${zhi}`;
-      const napAm = NAP_AM_MAP[canChi] || '';
       const deity = calculate10Deities(dayGan, gan);
       results.push({
         monthNumber: m + 1,
@@ -1479,7 +1441,6 @@
         canChi,
         gan,
         zhi,
-        napAm,
         deity,
         wx: ZHI_WU_XING[zhi]
       });
@@ -2492,7 +2453,6 @@
     DI_ZHI,
     GAN_WU_XING,
     ZHI_WU_XING,
-    NAP_AM_MAP,
     SHEN_SHA_RULES,
     PILLAR_WEIGHTS
   };

@@ -68,40 +68,6 @@
     'Quan Phù', 'Tiểu Hao', 'Đại Hao', 'Chu Tước',
     'Bạch Hổ', 'Quý Nhân', 'Điếu Khách', 'Bệnh Phù'
   ];
-
-  const NAP_AM_MAP = {
-    'Giáp Tý': 'Hải Trung Kim', 'Ất Sửu': 'Hải Trung Kim',
-    'Bính Dần': 'Lư Trung Hỏa', 'Đinh Mão': 'Lư Trung Hỏa',
-    'Mậu Thìn': 'Đại Lâm Mộc', 'Kỷ Tỵ': 'Đại Lâm Mộc',
-    'Canh Ngọ': 'Lộ Bàng Thổ', 'Tân Mùi': 'Lộ Bàng Thổ',
-    'Nhâm Thân': 'Kiếm Phong Kim', 'Quý Dậu': 'Kiếm Phong Kim',
-    'Giáp Tuất': 'Sơn Đầu Hỏa', 'Ất Hợi': 'Sơn Đầu Hỏa',
-    'Bính Tý': 'Giản Hạ Thủy', 'Đinh Sửu': 'Giản Hạ Thủy',
-    'Mậu Dần': 'Thành Đầu Thổ', 'Kỷ Mão': 'Thành Đầu Thổ',
-    'Canh Thìn': 'Bạch Lạp Kim', 'Tân Tỵ': 'Bạch Lạp Kim',
-    'Nhâm Ngọ': 'Dương Liễu Mộc', 'Quý Mùi': 'Dương Liễu Mộc',
-    'Giáp Thân': 'Tuyền Trung Thủy', 'Ất Dậu': 'Tuyền Trung Thủy',
-    'Bính Tuất': 'Ốc Thượng Thổ', 'Đinh Hợi': 'Ốc Thượng Thổ',
-    'Mậu Tý': 'Tích Lịch Hỏa', 'Kỷ Sửu': 'Tích Lịch Hỏa',
-    'Canh Dần': 'Tùng Bách Mộc', 'Tân Mão': 'Tùng Bách Mộc',
-    'Nhâm Thìn': 'Trường Lưu Thủy', 'Quý Tỵ': 'Trường Lưu Thủy',
-    'Giáp Ngọ': 'Sa Trung Kim', 'Ất Mùi': 'Sa Trung Kim',
-    'Bính Thân': 'Sơn Hạ Hỏa', 'Đinh Dậu': 'Sơn Hạ Hỏa',
-    'Mậu Tuất': 'Bình Địa Mộc', 'Kỷ Hợi': 'Bình Địa Mộc',
-    'Canh Tý': 'Bích Thượng Thổ', 'Tân Sửu': 'Bích Thượng Thổ',
-    'Nhâm Dần': 'Kim Bạch Kim', 'Quý Mão': 'Kim Bạch Kim',
-    'Giáp Thìn': 'Phú Đăng Hỏa', 'Ất Tỵ': 'Phú Đăng Hỏa',
-    'Bính Ngọ': 'Thiên Hà Thủy', 'Đinh Mùi': 'Thiên Hà Thủy',
-    'Mậu Thân': 'Đại Dịch Thổ', 'Kỷ Dậu': 'Đại Dịch Thổ',
-    'Canh Tuất': 'Thoa Xuyến Kim', 'Tân Hợi': 'Thoa Xuyến Kim',
-    'Nhâm Tý': 'Tang Đố Mộc', 'Quý Sửu': 'Tang Đố Mộc',
-    'Giáp Dần': 'Đại Khê Thủy', 'Ất Mão': 'Đại Khê Thủy',
-    'Bính Thìn': 'Sa Trung Thổ', 'Đinh Tỵ': 'Sa Trung Thổ',
-    'Mậu Ngọ': 'Thiên Thượng Hỏa', 'Kỷ Mùi': 'Thiên Thượng Hỏa',
-    'Canh Thân': 'Thạch Lựu Mộc', 'Tân Dậu': 'Thạch Lựu Mộc',
-    'Nhâm Tuất': 'Đại Hải Thủy', 'Quý Hợi': 'Đại Hải Thủy'
-  };
-
   // Interactions
   const INTERACTIONS_CHUAN = {
     'Tý': 'Mùi', 'Mùi': 'Tý', 'Sửu': 'Ngọ', 'Ngọ': 'Sửu',
@@ -375,7 +341,6 @@
       const zhi = DI_ZHI[curZhiIdx];
       const deity = calculate10Deities(dayGan, gan);
       const canChi = `${gan} ${zhi}`;
-      const napAm = NAP_AM_MAP[canChi] || '';
       const changSheng = calculateChangSheng(dayGan, zhi);
 
       let rawHidden = calculateHiddenGans(zhi);
@@ -403,8 +368,7 @@
             gan: yGan,
             zhi: yZhi,
             canChi: yCanChi,
-            deity: yDeity,
-            napAm: NAP_AM_MAP[yCanChi] || ''
+            deity: yDeity
           });
         }
       }
@@ -421,7 +385,6 @@
         wxZhi: ZHI_WU_XING[zhi],
         deity,
         changSheng,
-        napAm,
         hidden: hiddenWithDeities,
         annualPillars
       });
@@ -556,8 +519,7 @@
         year: `${yG} ${yZ}`,
         month: 'Đinh Dậu',
         day: 'Tân Sửu',
-        hour: 'Giáp Ngọ',
-        yearNapAm: NAP_AM_MAP[`${yG} ${yZ}`] || ''
+        hour: 'Giáp Ngọ'
       };
     }
 
@@ -580,7 +542,6 @@
     const tuTru = ganArr.map((gan, idx) => {
       const zhi = zhiArr[idx];
       const canChiStr = `${gan} ${zhi}`;
-      const napAm = NAP_AM_MAP[canChiStr] || '';
       let rawHidden = calculateHiddenGans(zhi);
       if (rawHidden.length === 3) rawHidden = [rawHidden[1], rawHidden[0], rawHidden[2]];
       else if (rawHidden.length === 2) rawHidden = [rawHidden[1], rawHidden[0]];
@@ -601,7 +562,6 @@
         deity: idx === 2 ? 'Nhật Chủ' : calculate10Deities(dayGan, gan),
         changSheng: calculateChangSheng(gan, zhi),
         changShengDayMaster: calculateChangSheng(dayGan, zhi),
-        napAm,
         hidden: hiddenWithDeities
       };
     });
@@ -676,8 +636,7 @@
     TIAN_GAN,
     DI_ZHI,
     GAN_WU_XING,
-    ZHI_WU_XING,
-    NAP_AM_MAP
+    ZHI_WU_XING
   };
 
 })(typeof window !== 'undefined' ? window : this);
