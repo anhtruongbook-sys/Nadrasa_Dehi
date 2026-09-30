@@ -16312,9 +16312,9 @@ body.theme-light .neta-ai-step-progress {
 .lucnham-master-strip {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   flex-wrap: wrap;
-  gap: 4px 8px;
+  gap: 4px 12px;
   background: rgba(26, 3, 7, 0.95);
   border: 1px solid rgba(245, 176, 65, 0.35);
   border-radius: 8px;
@@ -16330,9 +16330,31 @@ body.theme-light .neta-ai-step-progress {
 body.theme-light .thaiat-master-strip,
 body.theme-light .lucnham-master-strip {
   background: #ffffff !important;
-  border: 1px solid #e0d5c1 !important;
-  box-shadow: 0 1px 4px rgba(160, 120, 60, 0.08) !important;
-  color: #4b5563 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+body.theme-light .thaiat-master-strip strong,
+body.theme-light .lucnham-master-strip strong {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+.thaiat-strip-item,
+.lucnham-strip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.thaiat-strip-item:not(:last-child)::after,
+.lucnham-strip-item:not(:last-child)::after {
+  content: "•";
+  margin-left: 8px;
+  opacity: 0.5;
+  color: currentColor;
 }
 
 .tms-val-gold {
@@ -16384,16 +16406,24 @@ body.theme-light .tms-val-gold {
 }
 
 body.theme-light .thaiat-filter-btn {
-  background: #f3f4f6 !important;
-  border: 1px solid #d1d5db !important;
-  color: #374151 !important;
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .thaiat-filter-btn:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
 }
 
 body.theme-light .thaiat-filter-btn.active {
   background: linear-gradient(135deg, #d97706, #b45309) !important;
   color: #ffffff !important;
-  border-color: #b45309 !important;
-  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.25);
+  border-color: #92400e !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.3) !important;
 }
 
 /* Cards & Layout for Thai At & Luc Nham */

@@ -138,18 +138,22 @@
         color: var(--gold-primary, #f5b041);
       }
       body.theme-light .thaiat-cell-name {
-        color: #8b6508;
+        color: #78350f !important;
+        font-weight: 900 !important;
       }
       .thaiat-cell-weight {
         font-size: 9px;
         color: #94a3b8;
         background: rgba(0, 0, 0, 0.4);
-        padding: 1px 3px;
+        padding: 1px 4px;
         border-radius: 3px;
+        font-weight: 800;
       }
       body.theme-light .thaiat-cell-weight {
-        background: #f3f4f6;
-        color: #6b7280;
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+        font-weight: 900 !important;
+        border: 1px solid #cbd5e1 !important;
       }
 
       .thaiat-star-list {
@@ -173,21 +177,23 @@
         background: rgba(245, 176, 65, 0.15);
       }
       body.theme-light .thaiat-star-tag {
-        color: #1e293b !important;
-        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        background: #e2e8f0 !important;
+        border: 1px solid #cbd5e1 !important;
+        font-weight: 700 !important;
       }
       .star-thaiat { background: rgba(234, 179, 8, 0.3); color: #fde047; }
-      body.theme-light .star-thaiat { background: #fef08a; color: #854d0e; }
+      body.theme-light .star-thaiat { background: #fef08a !important; color: #78350f !important; border: 1px solid #fde047 !important; font-weight: 800 !important; }
       .star-chu { background: rgba(56, 189, 248, 0.3); color: #7dd3fc; }
-      body.theme-light .star-chu { background: #bae6fd; color: #0369a1; }
+      body.theme-light .star-chu { background: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; font-weight: 800 !important; }
       .star-khach { background: rgba(244, 63, 94, 0.3); color: #fb7185; }
-      body.theme-light .star-khach { background: #fecdd3; color: #be123c; }
+      body.theme-light .star-khach { background: #fee2e2 !important; color: #9f1239 !important; border: 1px solid #fecdd3 !important; font-weight: 800 !important; }
       .star-dinh { background: rgba(192, 132, 252, 0.3); color: #d8b4fe; }
-      body.theme-light .star-dinh { background: #e9d5ff; color: #6b21a8; }
+      body.theme-light .star-dinh { background: #f3e8ff !important; color: #6b21a8 !important; border: 1px solid #e9d5ff !important; font-weight: 800 !important; }
       .star-cat { background: rgba(52, 211, 153, 0.3); color: #6ee7b7; }
-      body.theme-light .star-cat { background: #a7f3d0; color: #047857; }
+      body.theme-light .star-cat { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #bbf7d0 !important; font-weight: 800 !important; }
       .star-hung { background: rgba(251, 146, 60, 0.3); color: #fdba74; }
-      body.theme-light .star-hung { background: #fed7aa; color: #c2410c; }
+      body.theme-light .star-hung { background: #ffedd5 !important; color: #9a3412 !important; border: 1px solid #fed7aa !important; font-weight: 800 !important; }
 
       /* Trung Cung HUD 3x3 */
       .thaiat-hud-center {
@@ -203,7 +209,8 @@
       }
       body.theme-light .thaiat-hud-center {
         background: #ffffff !important;
-        border-color: #d1d5db !important;
+        border: 1.5px solid #cbd5e1 !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
       }
       .thaiat-hud-header {
         display: flex;
@@ -213,7 +220,9 @@
         padding-bottom: 3px;
       }
       body.theme-light .thaiat-hud-header {
-        border-color: #e5e7eb;
+        border-color: #e2e8f0 !important;
+        color: #0f172a !important;
+        font-weight: 700 !important;
       }
       .thaiat-badge-don {
         background: rgba(245, 176, 65, 0.15);
@@ -224,8 +233,10 @@
         border-radius: 4px;
       }
       body.theme-light .thaiat-badge-don {
-        background: #fef3c7;
-        color: #92400e;
+        background: #fef3c7 !important;
+        color: #92400e !important;
+        border: 1px solid #fde68a !important;
+        font-weight: 800 !important;
       }
       .thaiat-toan-grid {
         display: grid;
@@ -241,15 +252,18 @@
         border: 1px solid rgba(245, 176, 65, 0.2);
       }
       body.theme-light .thaiat-toan-box {
-        background: #f9fafb;
-        border-color: #e5e7eb;
+        background: #f8fafc !important;
+        border: 1.5px solid #cbd5e1 !important;
       }
       .thaiat-toan-title { font-size: 9px; color: #94a3b8; margin-bottom: 1px; }
-      body.theme-light .thaiat-toan-title { color: #6b7280; }
+      body.theme-light .thaiat-toan-title { color: #334155 !important; font-weight: 700 !important; }
       .thaiat-toan-num { font-size: 14px; font-weight: 800; line-height: 1; }
       .toan-c-chu { color: #38bdf8; }
+      body.theme-light .toan-c-chu { color: #0369a1 !important; font-weight: 900 !important; }
       .toan-c-khach { color: #f43f5e; }
+      body.theme-light .toan-c-khach { color: #be123c !important; font-weight: 900 !important; }
       .toan-c-dinh { color: #c084fc; }
+      body.theme-light .toan-c-dinh { color: #7e22ce !important; font-weight: 900 !important; }
 
       .thaiat-generals-box {
         font-size: 10px;
@@ -260,9 +274,16 @@
         margin: 2px 0;
       }
       body.theme-light .thaiat-generals-box {
-        background: #f3f4f6;
-        color: #374151;
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        border: 1px solid #cbd5e1 !important;
+        font-weight: 600 !important;
       }
+      .gen-chu-lbl { color: #38bdf8; font-weight: 800; }
+      .gen-khach-lbl { color: #fb7185; font-weight: 800; }
+      body.theme-light .gen-chu-lbl { color: #0284c7 !important; font-weight: 900 !important; }
+      body.theme-light .gen-khach-lbl { color: #e11d48 !important; font-weight: 900 !important; }
+
       .thaiat-the-tran {
         font-size: 10px;
         font-weight: 800;
@@ -273,8 +294,30 @@
         border-radius: 4px;
       }
       body.theme-light .thaiat-the-tran {
-        background: #e0f2fe;
-        color: #0369a1;
+        background: #e0f2fe !important;
+        color: #0369a1 !important;
+        border: 1.5px solid #7dd3fc !important;
+        font-weight: 800 !important;
+      }
+
+      /* Ribbon Strip Items with Clean Wrapping & Contrast */
+      .thaiat-strip-item,
+      .lucnham-strip-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+      }
+      .thaiat-strip-item:not(:last-child)::after,
+      .lucnham-strip-item:not(:last-child)::after {
+        content: "•";
+        margin-left: 8px;
+        opacity: 0.5;
+        color: currentColor;
+      }
+      body.theme-light .thaiat-master-strip strong {
+        color: #0f172a !important;
+        font-weight: 800 !important;
       }
       .thaiat-badges-anomalies {
         display: flex;
@@ -906,15 +949,11 @@
 
         <!-- 2. Master Overview Ribbon (Thái Ất Master Strip) -->
         <div class="thaiat-master-strip">
-          <div><span>Độn:</span> <strong class="tms-val-gold">${keData.donType}</strong></div>
-          <span>•</span>
-          <div><span>Cục:</span> <strong>Cục ${keData.cuc}</strong></div>
-          <span>•</span>
-          <div><span>Nguyên:</span> <strong>Nguyên ${keData.nguyen}</strong></div>
-          <span>•</span>
-          <div><span>Kỷ Dư:</span> <strong>${keData.kyDu}</strong></div>
-          <span>•</span>
-          <div><span>Tiết khí:</span> <strong>${currentChart.tietKhi}</strong></div>
+          <div class="thaiat-strip-item"><span>Độn:</span> <strong class="tms-val-gold">${keData.donType}</strong></div>
+          <div class="thaiat-strip-item"><span>Cục:</span> <strong>Cục ${keData.cuc}</strong></div>
+          <div class="thaiat-strip-item"><span>Nguyên:</span> <strong>Nguyên ${keData.nguyen}</strong></div>
+          <div class="thaiat-strip-item"><span>Kỷ Dư:</span> <strong>${keData.kyDu}</strong></div>
+          <div class="thaiat-strip-item"><span>Tiết khí:</span> <strong>${currentChart.tietKhi}</strong></div>
         </div>
 
         <!-- Nút Kích Hoạt Luận Giải Chuyên Sâu 15 Phân Hệ -->
@@ -1076,8 +1115,8 @@
         </div>
 
         <div class="thaiat-generals-box">
-          <div><strong style="color: #38bdf8;">Chủ Tướng:</strong> Đại [${keData.generals.daiChu}] - Tham [${keData.generals.thamChu}]</div>
-          <div><strong style="color: #f43f5e;">Khách Tướng:</strong> Đại [${keData.generals.daiKhach}] - Tham [${keData.generals.thamKhach}]</div>
+          <div><strong class="gen-chu-lbl">Chủ Tướng:</strong> Đại [${keData.generals.daiChu}] - Tham [${keData.generals.thamChu}]</div>
+          <div><strong class="gen-khach-lbl">Khách Tướng:</strong> Đại [${keData.generals.daiKhach}] - Tham [${keData.generals.thamKhach}]</div>
         </div>
 
         <div class="thaiat-the-tran">${keData.tinhThe}</div>

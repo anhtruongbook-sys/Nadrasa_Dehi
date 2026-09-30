@@ -141,16 +141,20 @@
         color: #ffffff;
       }
       body.theme-light .lucnham-khoa-ha {
-        color: #1e293b !important;
+        color: #0f172a !important;
+        font-weight: 800 !important;
       }
       body.theme-light .lucnham-cell-sub {
-        color: #4b5563 !important;
+        color: #1e293b !important;
+        font-weight: 700 !important;
       }
       body.theme-light .lucnham-cell-muted {
-        color: #6b7280 !important;
+        color: #334155 !important;
+        font-weight: 600 !important;
       }
       body.theme-light .lucnham-cell-diaban {
-        color: #1e293b !important;
+        color: #0f172a !important;
+        font-weight: 800 !important;
       }
       .lucnham-khoa-tag {
         font-size: 8.5px;
@@ -797,15 +801,11 @@
 
         <!-- 2. Master Overview Ribbon (Lục Nhâm Master Strip) -->
         <div class="lucnham-master-strip">
-          <div><span>Ngày:</span> <strong class="tms-val-gold">${c.canNgay} ${c.chiNgay}</strong></div>
-          <span>•</span>
-          <div><span>Giờ:</span> <strong>${c.chiGio}</strong></div>
-          <span>•</span>
-          <div><span>${isDay ? '☀️ Đán Quý' : '🌙 Mộ Quý'}</span></div>
-          <span>•</span>
-          <div><span>Tướng:</span> <strong>${c.nguyetTuong}</strong></div>
-          <span>•</span>
-          <div><span>Quý nhân:</span> <strong>${c.quyNhanCung}</strong> (${c.quyNhanChieu})</div>
+          <div class="lucnham-strip-item"><span>Ngày:</span> <strong class="tms-val-gold">${c.canNgay} ${c.chiNgay}</strong></div>
+          <div class="lucnham-strip-item"><span>Giờ:</span> <strong>${c.chiGio}</strong></div>
+          <div class="lucnham-strip-item"><span>${isDay ? '☀️ Đán Quý' : '🌙 Mộ Quý'}</span></div>
+          <div class="lucnham-strip-item"><span>Tướng:</span> <strong>${c.nguyetTuong}</strong></div>
+          <div class="lucnham-strip-item"><span>Quý nhân:</span> <strong>${c.quyNhanCung} (${c.quyNhanChieu})</strong></div>
         </div>
 
         

@@ -343,31 +343,50 @@
 
     let jd;
     let canChi = { nam: '', thang: '', ngay: '', gio: '' };
-    let tietKhiName = 'Bạch Lộ';
+    let tietKhiName = 'Thu Phân';
 
-    // Tích hợp dữ liệu từ NetaCalendarEngine nếu có sẵn
-    if (global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getSolarTermName === 'function') {
-      let calData = global.NetaCalendarEngine.getCompleteDayInfo(dd, mm, yy, hour);
-      jd = calData.jd;
-      canChi = {
-        nam: calData.canChiYear || '',
-        thang: calData.canChiMonth || '',
-        ngay: calData.canChiDay || '',
-        gio: calData.canChiHour || ''
-      };
-      tietKhiName = calData.solarTerm || 'Thu Phân';
-    } else {
+    // Tích hợp dữ liệu ngày giờ & tiết khí chuẩn xác từ NetaCalendarEngine
+    if (global.NetaCalendarEngine) {
+      if (typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
+        try {
+          const fullInfo = global.NetaCalendarEngine.getFullDayInfo(d);
+          if (fullInfo) {
+            if (fullInfo.solarTerm) tietKhiName = fullInfo.solarTerm;
+            if (fullInfo.canChi) {
+              canChi = {
+                nam: fullInfo.canChi.year || '',
+                thang: fullInfo.canChi.month || '',
+                ngay: fullInfo.canChi.day || '',
+                gio: fullInfo.canChi.hour || ''
+              };
+            }
+          }
+        } catch (e) {
+          console.warn('Thái Ất: Lỗi đọc getFullDayInfo từ Calendar Engine:', e);
+        }
+      } else if (typeof global.NetaCalendarEngine.getSolarTermName === 'function') {
+        tietKhiName = global.NetaCalendarEngine.getSolarTermName(dd, mm, yy, hour, minute);
+      }
+
+      if (typeof global.NetaCalendarEngine.getJulianDay === 'function') {
+        jd = global.NetaCalendarEngine.getJulianDay(dd, mm, yy);
+      }
+    }
+
+    if (!jd) {
       // Fallback tính Julian Day thuần
       let a = Math.floor((14 - mm) / 12);
       let y = yy + 4800 - a;
       let m = mm + 12 * a - 3;
       jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-      canChi = {
-        nam: `Năm ${yy}`,
-        thang: `Tháng ${mm}`,
-        ngay: `Ngày ${dd}`,
-        gio: `Giờ ${hour}h`
-      };
+      if (!canChi.nam) {
+        canChi = {
+          nam: `Năm ${yy}`,
+          thang: `Tháng ${mm}`,
+          ngay: `Ngày ${dd}`,
+          gio: `Giờ ${hour}h`
+        };
+      }
     }
 
     // Xác định Dương Độn / Âm Độn (Từ Hạ chí ~21/06 đến Đông chí ~22/12 là Âm Độn)

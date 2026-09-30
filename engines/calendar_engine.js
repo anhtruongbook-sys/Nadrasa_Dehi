@@ -740,6 +740,27 @@
       };
     },
 
+    // Alias helper lấy tên tiết khí nhanh
+    getSolarTermName(d, m, y, hour = 12, min = 0) {
+      const std = this.getSolarTermDetails(d, m, y, hour, min);
+      return std ? std.term : "Thu Phân";
+    },
+
+    // Alias helper lấy trọn vẹn thông tin ngày giờ cho các module Thái Ất & Lục Nhâm
+    getCompleteDayInfo(d, m, y, hour = 12, min = 0) {
+      const dt = new Date(y, m - 1, d, hour, min);
+      const full = this.getFullDayInfo(dt);
+      return {
+        ...full,
+        jd: this.getJulianDay(d, m, y),
+        canChiYear: full?.canChi?.year || '',
+        canChiMonth: full?.canChi?.month || '',
+        canChiDay: full?.canChi?.day || '',
+        canChiHour: full?.canChi?.hour || '',
+        solarTerm: full?.solarTerm || 'Thu Phân'
+      };
+    },
+
     // Lấy ma trận dữ liệu tháng (dành cho Lịch Tháng 7xN)
     getMonthMatrix(year, month) {
       // month is 1-indexed (1-12)

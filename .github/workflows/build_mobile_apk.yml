@@ -76,13 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.4
-          name: "Neta Light v2.8.4 (Tích Hợp Phân Hệ Luận Giải Chuyên Sâu Lục Nhâm Đại Độn 7 Tầng Huyền Cơ)"
+          tag_name: v2.8.5
+          name: "Neta Light v2.8.5 (Chuẩn Hóa Tiết Khí Đồng Bộ Lịch Pháp & Tối Ưu Tương Phản Giao Diện Sáng)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.4
-            - **Tích Hợp Toàn Diện Động Cơ Luận Giải Chuyên Sâu Lục Nhâm Đại Độn (`NetaLucNhamInterpreter`)**:
-              + Chuẩn hóa (Adapter) 3 điểm kỹ thuật: Đồng bộ hoa/thường tên 12 Thiên Tướng, ánh xạ trường dữ liệu Tam Truyền & Cung 12, tự động tính Mùa tứ thời từ Tiết Khí thực.
-              + 7 Tầng Huyền Cơ Luận Giải kinh điển (Thể - Dụng, Tứ Thời, Tam Truyền, Tất Pháp Phú, 7 Chuyên Đề, Timeline 3 Giai Đoạn, Sách Lược Cổ Nhân).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.5
+            - **Đồng Bộ Hoàn Toàn Tiết Khí Với Module Lịch Pháp (`NetaCalendarEngine`)**:
+              + Loại bỏ cơ chế fallback tĩnh, kế thừa 100% Tiết khí thiên văn chính xác từ module Lịch pháp sẵn có trong app (ví dụ: ngày 01/10/2026 hiển thị đúng tiết Thu Phân, tuyệt đối không bị nhảy nhầm Bạch Lộ).
+              + Bổ sung hàm tiện ích `getSolarTermName` và `getCompleteDayInfo` trong Calendar Engine.
+            - **Chuẩn Hóa & Nâng Cấp Độ Tương Phản Giao Diện Sáng (Light Mode WCAG AA)**:
+              + Tối ưu độ đậm nét và tương phản cho dải thông tin Ribbon (Độn, Cục, Nguyên, Kỷ Dư, Tiết khí), triệt tiêu hoàn toàn lỗi rớt chấm bullet lẻ hàng.
+              + Cung cấp viền và màu số sắc nét cho trọng số 16 cung Thái Ất, tên cung Hoàng Gia hổ phách đậm `#78350f`, nút lọc 5 tầng dữ liệu và số Toán Chủ/Khách/Định.
+              + Cải thiện độ tương phản cho 8 lớp thông tin Lục Nhâm Đại Độn.
               + CSDL 100 Điệu Tất Pháp Phú của Thiệu Ngạn Hòa nguyên bản Hán tự & chỉ dẫn hành động.
               + Cẩm nang 8 Sự Vụ Đời Sống Thực Tiễn Hàng Ngày (Nhà đất, Hợp đồng, Xin việc, Vay vốn, Giao tế, Khám bệnh, Tình cảm, Mất đồ, Xuất hành, Khiếu nại).
               + Modal Drawer toàn màn hình với Dashboard 3 chỉ số định lượng (Điểm Rủi Ro 1-5 Sao, Trục Thể - Dụng, Sách Lược), 5 Filter Pills, tương tác Accordion và Theme Parity hoàn hảo Light/Dark Mode.
