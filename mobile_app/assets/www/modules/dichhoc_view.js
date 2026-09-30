@@ -342,6 +342,11 @@
     const container = document.getElementById('view-dichhoc');
     if (!container) return;
 
+    // Tự động khởi tạo kết quả Mai Hoa nếu chưa có
+    if (!state.maiHoa.result) {
+      chayLapQueMaiHoa();
+    }
+
     const calInfo = getCalendarInfo(state.selectedDate);
     const canChi = calInfo.canChi || {};
     const solarTermStr = calInfo.solarTermStr || calInfo.solarTerm || 'Thu Phân';
@@ -819,15 +824,17 @@
       haos: (res && res.que_goc) ? res.que_goc.haos : []
     };
     const ho = isLucHao ? (res.que_ho || null) : curResult.que_ho;
-    const bien = isLucHao ? res.que_bien : (res ? res.que_bien : {
-      name: curResult.que_bien.name,
-      tuong: curResult.que_bien.tuong,
-      tho: curResult.que_bien.tho,
-      cung: curResult.que_bien.cung,
-      cungSpecial: curResult.que_bien.cungSpecial,
-      bits: curResult.que_bien.bits,
-      haos: (res && res.que_bien) ? res.que_bien.haos : []
-    });
+    const bien = isLucHao
+      ? res.que_bien
+      : (curResult.que_bien ? {
+          name: curResult.que_bien.name,
+          tuong: curResult.que_bien.tuong,
+          tho: curResult.que_bien.tho,
+          cung: curResult.que_bien.cung,
+          cungSpecial: curResult.que_bien.cungSpecial,
+          bits: curResult.que_bien.bits,
+          haos: (res && res.que_bien) ? res.que_bien.haos : []
+        } : (res && res.que_bien ? res.que_bien : null));
 
     const phuc = res ? (res.phuc_than || []) : [];
 
@@ -1802,9 +1809,15 @@
     }
 
     const inpA = document.getElementById('dh-inp-num-a');
-    if (inpA) inpA.onchange = (e) => { state.maiHoa.soA = parseInt(e.target.value, 10) || 1; };
+    if (inpA) {
+      inpA.oninput = (e) => { state.maiHoa.soA = parseInt(e.target.value, 10) || 1; };
+      inpA.onchange = (e) => { state.maiHoa.soA = parseInt(e.target.value, 10) || 1; };
+    }
     const inpB = document.getElementById('dh-inp-num-b');
-    if (inpB) inpB.onchange = (e) => { state.maiHoa.soB = parseInt(e.target.value, 10) || 1; };
+    if (inpB) {
+      inpB.oninput = (e) => { state.maiHoa.soB = parseInt(e.target.value, 10) || 1; };
+      inpB.onchange = (e) => { state.maiHoa.soB = parseInt(e.target.value, 10) || 1; };
+    }
 
     // Input mục đích chiêm quẻ
     const inpPurpose = document.getElementById('dh-purpose-input');
