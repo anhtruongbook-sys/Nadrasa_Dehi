@@ -997,25 +997,6 @@
           ${ctrlCardHTML}
 
           <div class="bazi-analysis-container">
-            <!-- Thanh Công Cụ Chuẩn Hóa Neta -->
-            <div class="neta-action-toolbar">
-              <div class="neta-module-badge">
-                <span>⚖️</span>
-                <span>Bát Tự Tứ Trụ • Tử Bình &amp; Manh Phái</span>
-              </div>
-              <div class="neta-toolbar-actions">
-                <button class="neta-btn-action" id="btn-bazi-copy-report" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
-                  📋 Sao Chép Luận Giải
-                </button>
-                <button class="neta-btn-action" id="btn-bazi-download-report" title="Tải xuống bài luận giải dạng Markdown">
-                  💾 Tải File (.MD)
-                </button>
-                <button class="neta-btn-polish-ai" id="btn-bazi-polish-ai" title="Trau chuốt văn phong toàn diện bằng AI">
-                  ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
-                </button>
-              </div>
-            </div>
-
             <!-- Sub-Tab Navigation (Giai đoạn 3: Dual Subnav) -->
             <div class="bazi-analysis-subnav">
               <button class="bazi-subnav-btn ${currentAnalysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-bazi-tab-dashboard">

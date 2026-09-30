@@ -817,25 +817,6 @@
 
     return `
       <div class="tuvi-analysis-container">
-        <!-- Thanh Công Cụ Chuẩn Hóa Neta -->
-        <div class="neta-action-toolbar">
-          <div class="neta-module-badge">
-            <span>🌌</span>
-            <span>Tử Vi Đẩu Số • Nam Phái Học Thuật</span>
-          </div>
-          <div class="neta-toolbar-actions">
-            <button class="neta-btn-action" id="btn-tuvi-copy-report" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
-              📋 Sao Chép Luận Giải
-            </button>
-            <button class="neta-btn-action" id="btn-tuvi-download-report" title="Tải xuống bài luận giải dạng Markdown">
-              💾 Tải File (.MD)
-            </button>
-            <button class="neta-btn-polish-ai" id="btn-tuvi-polish-ai" title="Trau chuốt văn phong toàn diện bằng AI">
-              ${isAiPolishing ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
-            </button>
-          </div>
-        </div>
-
         <!-- Sub-Tab Navigation -->
         <div class="tuvi-analysis-subnav">
           <button class="tuvi-subnav-btn ${currentAnalysisSubTab === 'dashboard' ? 'active' : ''}" id="btn-tuvi-tab-dashboard">

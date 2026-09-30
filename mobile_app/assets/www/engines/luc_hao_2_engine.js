@@ -2808,12 +2808,6 @@
       lines.push("I. ĐÁNH GIÁ TỔNG QUAN & KẾT QUẢ CHIÊM ĐOÁN");
       lines.push("━".repeat(90));
       lines.push(`>>> ĐÁNH GIÁ CÁT HUNG: [${u.decision}] (Khả năng thành tựu: ${Math.round((u.success_probability || 0.5) * 100)}% • Khí số: ${u.decision.includes('CÁT') ? 'Thuận Lợi' : (u.decision.includes('BÌNH') ? 'Bình Ổn' : 'Nhiều Trắc Trở')})`);
-      const grad = u.the_vs_ung_gradient || 0.0;
-      let viTheStr = "";
-      if (grad > 2.0) viTheStr = "Đương số giữ thế chủ động, nắm quyền quyết định";
-      else if (grad < -2.0) viTheStr = "Hoàn cảnh bên ngoài hoặc đối phương đang chi phối lấn lướt";
-      else viTheStr = "Thế và Ứng cân bằng, đôi bên cùng phối hợp thăm dò";
-      lines.push(`>>> VỊ THẾ BÀN QUẺ: ${viTheStr}`);
       lines.push("\n" + dn.section_1_overview);
 
       const da = dn.direct_answer;

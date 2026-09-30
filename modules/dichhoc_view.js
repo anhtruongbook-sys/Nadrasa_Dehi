@@ -808,26 +808,7 @@
 
     return `
       <div class="dh-full-report-wrap" style="margin-top: 18px;">
-        <!-- 1. Thanh Công Cụ Chuẩn Hóa Neta -->
-        <div class="neta-action-toolbar">
-          <div class="neta-module-badge">
-            <span>📜</span>
-            <span>Kinh Dịch Lục Hào 2.0 • Bốc Phệ Cổ Thư</span>
-          </div>
-          <div class="neta-toolbar-actions">
-            <button type="button" class="neta-btn-action" id="dh-btn-copy-report" title="Sao chép toàn bộ bài luận giải">
-              📋 Sao Chép
-            </button>
-            <button type="button" class="neta-btn-action" id="dh-btn-download-report" title="Tải xuống bài luận giải (.MD)">
-              💾 Tải (.MD)
-            </button>
-            <button type="button" class="neta-btn-polish-ai" id="dh-btn-run-ai" ${state.isInterpretingAI ? 'disabled' : ''} title="Trau chuốt văn phong toàn diện bằng AI">
-              ${state.isInterpretingAI ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt'}
-            </button>
-          </div>
-        </div>
-
-        <!-- 2. Header Báo Cáo & Mode Toggle -->
+        <!-- 1. Header Báo Cáo & Mode Toggle -->
         <div class="dh-report-header-wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(245, 176, 65, 0.25);">
           <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
             <span>📜</span> BẢN TOÀN VĂN LUẬN GIẢI KINH DỊCH LỤC HÀO
@@ -1540,15 +1521,8 @@
         }
       }
 
-      // 1b. Vị thế bàn quẻ
+      // 1b. Vị thế bàn quẻ (Bỏ qua hoàn toàn)
       if (l.includes('VỊ THẾ BÀN QUẺ')) {
-        const viTheText = l.replace(/^.*?VỊ THẾ BÀN QUẺ\s*:\s*/i, '').trim();
-        out += `
-          <div class="dh-stance-banner">
-            <span class="dh-stance-label">🌐 VỊ THẾ BÀN QUẺ:</span>
-            <span class="dh-stance-val">${escapeReportHtml(viTheText)}</span>
-          </div>
-        `;
         i++;
         continue;
       }

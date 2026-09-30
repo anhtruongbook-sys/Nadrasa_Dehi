@@ -880,25 +880,6 @@
           </div>
         </div>
 
-        <!-- Thanh Công Cụ Chuẩn Hóa Neta -->
-        <div class="neta-action-toolbar">
-          <div class="neta-module-badge">
-            <span>🔮</span>
-            <span>Tarot • Học Thuật &amp; Tâm Lý Chiều Sâu</span>
-          </div>
-          <div class="neta-toolbar-actions">
-            <button class="neta-btn-action" id="btn-tarot-top-copy" title="Sao chép toàn bộ bài luận giải vào bộ nhớ tạm">
-              📋 Sao Chép Luận Giải
-            </button>
-            <button class="neta-btn-action" id="btn-tarot-top-pdf" title="Tải xuống tệp PDF">
-              📄 Tải File PDF
-            </button>
-            <button class="neta-btn-polish-ai" id="btn-tarot-polish-ai" title="Trau chuốt văn phong toàn diện cả 6 mục bằng AI">
-              ${report.isDeepLoading ? '⏳ Đang Trau Chuốt...' : '✨ Trau Chuốt Văn Phong'}
-            </button>
-          </div>
-        </div>
-
         <!-- Thanh Chuyển Đổi Chế Độ Báo Cáo Trong Lòng Trang -->
         <div class="tarot-report-header-wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(245, 176, 65, 0.25);">
           <div style="font-weight: 800; font-size: 0.95rem; color: var(--gold-glow); display: flex; align-items: center; gap: 8px;">
