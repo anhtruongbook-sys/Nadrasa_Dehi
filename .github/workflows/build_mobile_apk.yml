@@ -76,15 +76,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.7.7
-          name: "Neta Light v2.7.7 (Đồng Bộ Lịch Tiết Khí 100% Cho Lục Hào & Mai Hoa - Chuẩn Hóa Tuần Không & Quẻ Biến)"
+          tag_name: v2.8.0
+          name: "Neta Light v2.8.0 (Hội Tụ Bộ Tam Thức Kinh Điển: Thái Ất Thần Kinh & Lục Nhâm Đại Độn)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.7
-            - **Đồng Bộ Lịch Pháp Tiết Khí 100%**: Khóa cứng việc trích xuất Nguyệt Lệnh, Tiết Khí, Can Chi từ NetaCalendarEngine cho cả Lục Hào và Mai Hoa Dịch Số.
-            - **Đồng Bộ Hoàn Toàn Tuần Không**: Tuần Không được tính nhất quán từ Nhật Thần (Can Chi Ngày), bảo đảm hai phân hệ Lục Hào và Mai Hoa luôn khớp nhau 100%.
-            - **Sửa Triệt Để Quẻ Biến Mai Hoa**: Khắc phục lỗi Quẻ Biến bị rơi vào 'Thuần Tĩnh / Không động', luôn thể hiện đầy đủ Quẻ Chủ, Quẻ Hỗ và Quẻ Biến cùng Thể Dụng.
-            - **Tối Ưu Giao Diện & Bảng Nạp Giáp**: Loại bỏ hoàn toàn các chuỗi fallback hardcode và bảng phụ thừa thãi, nâng cấp độ chính xác và tính thẩm mỹ cao cấp.
-            - **Chuẩn Hóa CSPRNG**: Thuật toán gieo quẻ 1 hào và 6 hào sử dụng bảo chứng ngẫu nhiên phần cứng Web Cryptography API, đảm bảo độ khách quan và ngẫu nhiên tuyệt đối.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.0 - Đại Bản Doanh Tam Thức
+            - **Tích Hợp Thái Ất Thần Kinh**:
+              + Tái hiện trọn vẹn Trận Đồ 16 Thần Vị (CSS Grid 5x5 viền 16 cung + Trung Cung HUD).
+              + Hỗ trợ đầy đủ Tứ Kể: Kể Giờ, Kể Ngày, Kể Tháng, Kể Năm.
+              + Khởi lập Lá Số Thái Ất Nhân Mệnh 12 Cung (Mệnh, Phụ, Tướng, Phúc...).
+              + Bộ lọc 5 tầng thông tin chuyên sâu và Drawer tương tác chi tiết.
+            - **Tích Hợp Đại Lục Nhâm (Lục Nhâm Thần Khóa)**:
+              + Phục dựng 100% giải thuật cổ học từ tệp số học Excel 2009.
+              + Tính toán ĐỘNG toàn diện 8 lớp thông tin: Thiên Địa Bàn, Tứ Khóa (Tặc, Khắc, Sinh, Tỷ), Tam Truyền (Cửu Tông Môn).
+              + An 12 Thiên Tướng chuẩn xác theo luật Đán Quý / Mộ Quý và quy luật Thuận/Nghịch hành.
+              + Bàn cờ 12 cung 4x4 Dial Matrix kết hợp 2 chế độ: 8 Lớp truyền thống & Cảm ứng 1 chạm.
+            - **Hoàn Tất Bộ Tam Thức Tối Thượng**: Thái Ất Thần Kinh (Thiên Đạo) - Kỳ Môn Độn Giáp (Địa Đạo) - Lục Nhâm Đại Độn (Nhân Đạo).
+            - **Đồng Bộ Lịch Pháp Tiết Khí 100%**: Trích xuất trực tiếp Can Chi, Nguyệt Lệnh, Tiết Khí và Nguyệt Tướng chuẩn thiên văn từ NetaCalendarEngine.
 
             
             - **Nâng Cao Chiều Sâu & Độ Dài Luận Giải (1.500 - 2.200 từ)**:

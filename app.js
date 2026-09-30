@@ -57,6 +57,18 @@
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
     },
+    thaiat: {
+      name: 'THÁI ẤT THẦN KINH',
+      subtitle: 'Trận Đồ 16 Thần Vị & Thái Ất Mệnh Pháp',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
+    },
+    lucnham: {
+      name: 'LỤC NHÂM ĐẠI ĐỘN',
+      subtitle: 'Lục Nhâm Thần Khóa 8 Lớp',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
+    },
     bazi: {
       name: 'BÁT TỰ',
       subtitle: 'Manh Phái Mệnh Lý',
@@ -108,7 +120,7 @@
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'qmdj', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'phaphanh', 'dichhoc'];
+  const ALL_MODES = ['neta', 'poker', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'phaphanh', 'dichhoc'];
 
 
   // DOM Elements
@@ -250,6 +262,8 @@
     // Toggle View Containers
     const viewCards = document.getElementById('view-cards');
     const viewQmdj = document.getElementById('view-qmdj');
+    const viewThaiAt = document.getElementById('view-thaiat');
+    const viewLucNham = document.getElementById('view-lucnham');
     const viewBazi = document.getElementById('view-bazi');
     const viewTuvi = document.getElementById('view-tuvi');
     const viewCalendar = document.getElementById('view-calendar');
@@ -263,6 +277,8 @@
       neta: viewCards,
       poker: viewCards,
       qmdj: viewQmdj,
+      thaiat: viewThaiAt,
+      lucnham: viewLucNham,
       bazi: viewBazi,
       tuvi: viewTuvi,
       calendar: viewCalendar,
@@ -309,6 +325,17 @@
       render(); setTimeout(render, 150);
     } else if (mode === 'qmdj') {
       const render = () => { if (window.NetaQMDJView) window.NetaQMDJView.render(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'thaiat') {
+      const render = () => { if (window.NetaThaiAtView) window.NetaThaiAtView.render(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'lucnham') {
+      const render = () => {
+        if (window.LucNhamView) {
+          const container = document.getElementById('view-lucnham');
+          window.LucNhamView.render(container);
+        }
+      };
       render(); setTimeout(render, 150);
     } else if (mode === 'bazi') {
       const render = () => { if (window.NetaBaziView) window.NetaBaziView.render(); };
@@ -1885,7 +1912,7 @@
 
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #view-dichhoc, .dichhoc-container, #app-container'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #tuvi-view, #bazi-view, #qmdj-view, #calendar-view, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #app-container'
         );
         scrollViews.forEach(v => {
           v.style.height = 'auto';
@@ -1984,6 +2011,8 @@
       let modeName = 'NetaLight';
       if (currentDeckMode === 'poker') modeName = 'Poker';
       else if (currentDeckMode === 'qmdj') modeName = 'KyMonDonGiap';
+      else if (currentDeckMode === 'thaiat') modeName = 'ThaiAtThanKinh';
+      else if (currentDeckMode === 'lucnham') modeName = 'LucNham_DaiDon';
       else if (currentDeckMode === 'bazi') modeName = 'BatTu_ManhPhai';
       else if (currentDeckMode === 'tuvi') modeName = 'TuVi_DauSo';
       else if (currentDeckMode === 'calendar') modeName = 'LichAmDuong';

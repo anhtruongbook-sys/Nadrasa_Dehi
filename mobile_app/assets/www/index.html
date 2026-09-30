@@ -59,11 +59,21 @@
         </div>
 
         <div class="dropdown-divider"></div>
-        <div class="dropdown-section-title">LẬP LÁ SỐ</div>
+        <div class="dropdown-section-title">TAM THỨC &amp; LẬP LÁ SỐ</div>
         <div class="deck-dropdown-item" id="tab-mode-qmdj" data-mode="qmdj">
           <span class="dropdown-icon">🔮</span>
           <span class="dropdown-name">Kỳ Môn Độn Giáp</span>
           <span class="dropdown-check" id="check-mode-qmdj" style="opacity: 0;">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-thaiat" data-mode="thaiat">
+          <span class="dropdown-icon">☀️</span>
+          <span class="dropdown-name">Thái Ất Thần Kinh</span>
+          <span class="dropdown-check" id="check-mode-thaiat" style="opacity: 0;">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-lucnham" data-mode="lucnham">
+          <span class="dropdown-icon">壬</span>
+          <span class="dropdown-name">Lục Nhâm Đại Độn</span>
+          <span class="dropdown-check" id="check-mode-lucnham" style="opacity: 0;">✓</span>
         </div>
         <div class="deck-dropdown-item" id="tab-mode-bazi" data-mode="bazi">
           <span class="dropdown-icon">📜</span>
@@ -233,6 +243,20 @@
         <h2 class="placeholder-title">KỲ MÔN ĐỘN GIÁP</h2>
         <p class="placeholder-desc">Hệ thống Lập Bàn 9 Cung & Tiết Khí Chân Thái Dương Thời</p>
       </div>
+    </div>
+
+    <!-- View Module: Thái Ất Thần Kinh -->
+    <div id="view-thaiat" class="app-module-view" style="display: none;">
+      <div class="module-placeholder">
+        <div class="placeholder-icon">☀️</div>
+        <h2 class="placeholder-title">THÁI ẤT THẦN KINH</h2>
+        <p class="placeholder-desc">Trận Đồ 16 Thần Vị, Tứ Kể & Thái Ất Mệnh Pháp</p>
+      </div>
+    </div>
+
+    <!-- View Module: Lục Nhâm Đại Độn -->
+    <div id="view-lucnham" class="app-module-view" style="display: none;">
+      <div id="lucnham-container" style="width: 100%;"></div>
     </div>
 
     <!-- View Module: Bát Tự Manh Phái -->
@@ -476,6 +500,10 @@
   <script src="engines/qmdj_engine.js?v=7.5"></script>
   <script src="engines/joey_yap_qmdj_engine.js?v=2.1"></script>
   <script src="modules/qmdj_view.js?v=9.1"></script>
+  <script src="engines/thai_at_engine.js?v=1.0"></script>
+  <script src="modules/thai_at_view.js?v=1.0"></script>
+  <script src="engines/luc_nham_engine.js?v=1.0"></script>
+  <script src="modules/luc_nham_view.js?v=1.0"></script>
   <script src="engines/gemini_service.js?v=3.6"></script>
   <script src="engines/bazi_engine.js?v=7.6"></script>
   <script src="engines/bazi_interpreter.js?v=1.1"></script>
