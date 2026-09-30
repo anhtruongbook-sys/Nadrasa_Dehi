@@ -872,7 +872,7 @@
             <span class="bazi-report-toc-pill">II. Kiểm Chứng Hiện Trạng</span>
             <span class="bazi-report-toc-pill">III. Điểm Thuận Lợi</span>
             <span class="bazi-report-toc-pill">IV. Nguy Cơ Tiềm Ẩn</span>
-            <span class="bazi-report-toc-pill">V. 6 Lăng Kính</span>
+            <span class="bazi-report-toc-pill">V. Phân Tích Trọng Tâm (Cổ Pháp)</span>
             <span class="bazi-report-toc-pill">VI. Lời Khuyên & Ứng Kỳ</span>
             <span class="bazi-report-toc-pill">VII. Bảng Quẻ Kỹ Thuật</span>
           </div>
@@ -1675,12 +1675,13 @@
     const cal = getCalendarInfo(state.selectedDate);
     state.lucHao.result = eng.LucHaoEngine.lapQue(state.lucHao.coins, cal);
 
-    // Tính toán chuyên sâu Luc Hao 2.0 Pipeline (Graph Diffusion, Multi-Objective Utility, Harmonic Timing, 6 Lenses)
+    // Tính toán chuyên sâu Luc Hao 2.0 Pipeline (Graph Diffusion, Multi-Objective Utility, Harmonic Timing, Dụng Thần & Động Hào)
     if (global.NetaLucHao2Engine && typeof global.NetaLucHao2Engine.executeFromCoins === 'function') {
-      const canChi = cal.canChi || {};
-      const dayCan = canChi.dayGan || (canChi.day ? canChi.day.split(' ')[0] : 'Giáp');
-      const dayChi = canChi.dayZhi || (canChi.day ? canChi.day.split(' ')[1] : 'Tý');
-      const monthChi = canChi.monthZhi || (canChi.month ? canChi.month.split(' ')[1] : 'Dần');
+      const tg = state.lucHao.result ? (state.lucHao.result.thoi_gian || {}) : {};
+      const canChi = tg.canChi || cal.canChi || {};
+      const dayCan = tg.canNgay || canChi.dayGan || (canChi.day ? canChi.day.split(' ')[0] : (canChi.canNgay || 'Giáp'));
+      const dayChi = tg.chiNgay || canChi.dayZhi || (canChi.day ? canChi.day.split(' ')[1] : (canChi.chiNgay || 'Tý'));
+      const monthChi = tg.thangChi || canChi.monthZhi || (canChi.month ? canChi.month.split(' ')[1] : (canChi.thangChi || 'Dần'));
       const question = state.purpose || (global.NetaLucHao2Engine.TOPIC_PRESETS?.find(t => t.key === state.selectedTopic)?.label || "Chiêm đoán cát hung sự vụ");
 
       const pipelineResult = global.NetaLucHao2Engine.executeFromCoins(
@@ -1688,7 +1689,8 @@
         dayCan,
         dayChi,
         monthChi,
-        question
+        question,
+        state.selectedTopic
       );
       state.lucHao2Result = pipelineResult;
 

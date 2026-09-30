@@ -551,7 +551,7 @@
       return res;
     },
 
-    evaluateUtility(weights, equilibriumNodes) {
+    evaluateUtility(weights, equilibriumNodes, dungThanInfo = null, dongHaoInfo = null) {
       const lucThanEnergy = { "Thê Tài": [], "Quan Quỷ": [], "Phụ Mẫu": [], "Tử Tôn": [], "Huynh Đệ": [] };
       let theEnergy = 0.0;
       let ungEnergy = 0.0;
@@ -584,21 +584,32 @@
         breakdown[lt] = { weight: w, energy: Math.round(eVal * 100) / 100, contribution: Math.round(score * 1000) / 1000 };
         totalUtility += score;
       }
+
+      // Tích hợp điểm số thực tế của Dụng Thần, Hào Thế và Hệ Sinh Thái Hào Động (Cổ Pháp)
+      if (dungThanInfo && dungThanInfo.dung_than_solar_lunar) {
+        const dtScore = dungThanInfo.dung_than_solar_lunar.total_score || 0.0;
+        const theScore = dungThanInfo.the_solar_lunar ? (dungThanInfo.the_solar_lunar.total_score || 0.0) : 0.0;
+        const tdRelScore = dungThanInfo.the_dung_score || 0.0;
+        const dongScore = dongHaoInfo ? (dongHaoInfo.total_moving_impact || 0.0) : 0.0;
+
+        totalUtility = (totalUtility * 0.4) + (dtScore * 0.3) + ((theScore + tdRelScore) * 0.15) + (dongScore * 0.15);
+      }
+
       totalUtility = Math.round(totalUtility * 1000) / 1000;
 
       let decision = "";
       let probSuccess = 0.5;
 
-      if (totalUtility >= 2.5) {
+      if (totalUtility >= 2.2) {
         decision = "ĐẠI CÁT (Rất Thuận Lợi)";
         probSuccess = 0.92;
-      } else if (totalUtility >= 0.8) {
+      } else if (totalUtility >= 0.6) {
         decision = "CÁT (Thuận Lợi)";
         probSuccess = 0.75;
-      } else if (totalUtility >= -0.8) {
+      } else if (totalUtility >= -0.6) {
         decision = "BÌNH HÒA (Nên Cân Nhắc Kỹ)";
         probSuccess = 0.50;
-      } else if (totalUtility >= -2.5) {
+      } else if (totalUtility >= -2.2) {
         decision = "TIỂU HUNG (Nhiều Trở Ngại)";
         probSuccess = 0.28;
       } else {
@@ -642,7 +653,7 @@
       "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy", "Thủy": "Hỏa", "Hỏa": "Kim"
     },
 
-    calculateResonanceCurve(equilibriumNodes, intentWeights, hexData, monthChi, dayChi) {
+    calculateResonanceCurve(equilibriumNodes, intentWeights, hexData, monthChi, dayChi, dungThanInfo = null) {
       if (!equilibriumNodes || equilibriumNodes.length === 0) {
         return {
           optimal_positive_timing: {
@@ -662,18 +673,22 @@
         };
       }
 
-      // 1. Xác định Dụng Thần ưu tiên dựa trên trọng số câu hỏi
+      // 1. Xác định Dụng Thần ưu tiên dựa trên dungThanInfo hoặc trọng số câu hỏi
       let targetNode = null;
-      let highestWeight = -1;
-
-      for (const n of equilibriumNodes) {
-        const lt = n.luc_than;
-        let w = intentWeights ? (intentWeights[lt] || 0.1) : 0.1;
-        if (n.is_moving) w += 0.5;
-        if (n.is_the) w += 0.3;
-        if (w > highestWeight) {
-          highestWeight = w;
-          targetNode = n;
+      if (dungThanInfo && dungThanInfo.selected_hao) {
+        const selHao = dungThanInfo.selected_hao;
+        targetNode = equilibriumNodes.find(n => n.position === selHao.position) || new HexagramNode(selHao.position, `Hào ${selHao.position}`, selHao.branch, selHao.luc_than, selHao.is_the, selHao.is_ung, selHao.is_moving, selHao.changed_branch);
+      } else {
+        let highestWeight = -1;
+        for (const n of equilibriumNodes) {
+          const lt = n.luc_than;
+          let w = intentWeights ? (intentWeights[lt] || 0.1) : 0.1;
+          if (n.is_moving) w += 0.5;
+          if (n.is_the) w += 0.3;
+          if (w > highestWeight) {
+            highestWeight = w;
+            targetNode = n;
+          }
         }
       }
 
@@ -1293,6 +1308,502 @@
   };
 
   // =========================================================================
+  // 7B. BỘ XÁC ĐỊNH DỤNG THẦN & TỨ THẦN CHUYÊN BIỆT (DUNG THAN RESOLVER)
+  // =========================================================================
+  const DungThanResolver = {
+    SINH_MAP: { "Thủy": "Mộc", "Mộc": "Hỏa", "Hỏa": "Thổ", "Thổ": "Kim", "Kim": "Thủy" },
+    KHAC_MAP: { "Thủy": "Hỏa", "Hỏa": "Kim", "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy" },
+    BRANCH_ELEM: {
+      "Tý": "Thủy", "Hợi": "Thủy",
+      "Dần": "Mộc", "Mão": "Mộc",
+      "Tỵ": "Hỏa", "Ngọ": "Hỏa",
+      "Thân": "Kim", "Dậu": "Kim",
+      "Thìn": "Thổ", "Tuất": "Thổ", "Sửu": "Thổ", "Mùi": "Thổ"
+    },
+    OPPOSITE_BRANCH: {
+      "Tý": "Ngọ", "Ngọ": "Tý", "Sửu": "Mùi", "Mùi": "Sửu",
+      "Dần": "Thân", "Thân": "Dần", "Mão": "Dậu", "Dậu": "Mão",
+      "Thìn": "Tuất", "Tuất": "Thìn", "Tỵ": "Hợi", "Hợi": "Tỵ"
+    },
+    LUC_HOP_MAP: {
+      "Tý": "Sửu", "Sửu": "Tý", "Dần": "Hợi", "Hợi": "Dần",
+      "Mão": "Tuất", "Tuất": "Mão", "Thìn": "Dậu", "Dậu": "Thìn",
+      "Tỵ": "Thân", "Thân": "Tỵ", "Ngọ": "Mùi", "Mùi": "Ngọ"
+    },
+
+    TOPIC_DUNG_THAN_MAP: {
+      "cautai": "Thê Tài",
+      "kinhdoanh": "Thê Tài",
+      "dautu": "Thê Tài",
+      "congdanh": "Quan Quỷ",
+      "thangtien": "Quan Quỷ",
+      "vieclam": "Quan Quỷ",
+      "phaply": "Quan Quỷ",
+      "kientung": "Quan Quỷ",
+      "thicu": "Phụ Mẫu",
+      "hocvan": "Phụ Mẫu",
+      "bangcap": "Phụ Mẫu",
+      "nhadat": "Phụ Mẫu",
+      "hopdong": "Phụ Mẫu",
+      "sinhcon": "Tử Tôn",
+      "thaisan": "Tử Tôn",
+      "suckhoe": "Hào Thế",
+      "benhtat": "Hào Thế",
+      "tinhduyen": "HON_NHAN",
+      "honnhan": "HON_NHAN",
+      "xuathanh": "Hào Thế",
+      "timdo": "Thê Tài",
+      "phongthuy": "Phụ Mẫu",
+      "tongquan": "Hào Thế"
+    },
+
+    detectDungThanFromQuestion(question, topicKey) {
+      if (topicKey && this.TOPIC_DUNG_THAN_MAP[topicKey]) {
+        return this.TOPIC_DUNG_THAN_MAP[topicKey];
+      }
+      if (!question || !question.trim()) return "Hào Thế";
+
+      const q = question.toLowerCase();
+      if (["tiền", "lãi", "lợi nhuận", "doanh thu", "vốn", "tài chính", "nợ", "đầu tư", "bán", "mua", "giá", "cổ phiếu", "lô đất"].some(w => q.includes(w))) {
+        return "Thê Tài";
+      }
+      if (["chức", "thăng", "việc", "công việc", "sếp", "bổ nhiệm", "phỏng vấn", "biên chế", "kiện", "tòa", "công an", "án"].some(w => q.includes(w))) {
+        return "Quan Quỷ";
+      }
+      if (["thi", "đỗ", "đậu", "điểm", "bằng", "học", "chứng chỉ", "luận án", "đề tài", "sổ đỏ", "nhà", "hợp đồng", "giấy tờ"].some(w => q.includes(w))) {
+        return "Phụ Mẫu";
+      }
+      if (["con", "bầu", "thai", "sinh", "thuốc", "bác sĩ", "chữa", "giải hạn", "thú cưng"].some(w => q.includes(w))) {
+        return "Tử Tôn";
+      }
+      if (["yêu", "cưới", "vợ", "chồng", "hôn nhân", "bạn gái", "bạn trai", "tình duyên"].some(w => q.includes(w))) {
+        return "HON_NHAN";
+      }
+      if (["bạn", "anh em", "đồng nghiệp", "đối tác", "chia sẻ", "cạnh tranh"].some(w => q.includes(w))) {
+        return "Huynh Đệ";
+      }
+      if (["xuất hành", "đi xa", "bình an", "sức khỏe", "bản thân", "chuyến đi", "tai nạn"].some(w => q.includes(w))) {
+        return "Hào Thế";
+      }
+      return "Hào Thế";
+    },
+
+    evaluateHaoSolarLunar(hao, monthChi, dayChi, tuanKhong) {
+      if (!hao) return { total_score: 0, power_grade: "Bình Hòa", month_status: "Bình thường", day_status: "Bình thường", tuan_khong_status: "Không lâm Tuần Không" };
+      const hBranch = hao.branch;
+      const hElem = hao.element;
+      const mElem = this.BRANCH_ELEM[monthChi] || "Thổ";
+      const dElem = this.BRANCH_ELEM[dayChi] || "Thủy";
+      const tkList = tuanKhong || [];
+
+      // 1. Với Nguyệt Lệnh (Tháng)
+      let monthStatus = "";
+      let monthScore = 0.0;
+      const isLamNguyet = (hBranch === monthChi);
+      const isNguyetPha = (this.OPPOSITE_BRANCH[monthChi] === hBranch);
+      const isNguyetHop = (this.LUC_HOP_MAP[monthChi] === hBranch);
+
+      if (isLamNguyet) {
+        monthStatus = "Lâm Nguyệt Kiến (Đắc Lệnh Cực Vượng)";
+        monthScore = 3.5;
+      } else if (isNguyetPha) {
+        monthStatus = "Nguyệt Phá (Đại Suy Tổn, Bị Xung Phá)";
+        monthScore = -3.5;
+      } else if (isNguyetHop) {
+        monthStatus = "Nguyệt Hợp (Được Nguyệt Lệnh Che Chở)";
+        monthScore = 2.0;
+      } else if (hElem === mElem) {
+        monthStatus = "Vượng Tướng Theo Mùa (Cùng Ngũ Hành)";
+        monthScore = 3.0;
+      } else if (this.SINH_MAP[mElem] === hElem) {
+        monthStatus = "Được Nguyệt Lệnh Sinh Trợ (Tướng Khí)";
+        monthScore = 2.5;
+      } else if (this.SINH_MAP[hElem] === mElem) {
+        monthStatus = "Hưu Khí (Sinh Ra Mùa, Tiêu Hao Khí Lực)";
+        monthScore = -1.0;
+      } else if (this.KHAC_MAP[hElem] === mElem) {
+        monthStatus = "Tù Khí (Khắc Mùa, Bị Kìm Hãm)";
+        monthScore = -1.5;
+      } else if (this.KHAC_MAP[mElem] === hElem) {
+        monthStatus = "Tử Khí (Bị Nguyệt Lệnh Khắc Phạt Nặng)";
+        monthScore = -2.5;
+      }
+
+      // 2. Với Nhật Thần (Ngày)
+      let dayStatus = "";
+      let dayScore = 0.0;
+      const isLamNhat = (hBranch === dayChi);
+      const isNhatHop = (this.LUC_HOP_MAP[dayChi] === hBranch);
+      const isNhatXung = (this.OPPOSITE_BRANCH[dayChi] === hBranch);
+
+      if (isLamNhat) {
+        dayStatus = "Lâm Nhật Thần (Đắc Quyền Trợ Lực Mạnh Mẽ)";
+        dayScore = 3.0;
+      } else if (isNhatHop) {
+        dayStatus = "Nhật Hợp (Được Ngày Lục Hợp Tương Trợ)";
+        dayScore = 1.5;
+      } else if (isNhatXung) {
+        if (monthScore >= 1.0) {
+          dayStatus = "Ám Động (Vượng Tướng Phùng Xung, Ngầm Phát Tác Năng Lực)";
+          dayScore = 2.0;
+        } else {
+          dayStatus = "Nhật Phá (Hưu Tù Phùng Xung, Suy Bại Tan Vỡ)";
+          dayScore = -3.0;
+        }
+      } else if (this.SINH_MAP[dElem] === hElem) {
+        dayStatus = "Được Nhật Thần Sinh Trợ";
+        dayScore = 2.5;
+      } else if (hElem === dElem) {
+        dayStatus = "Được Nhật Thần Tỷ Hòa Đồng Khí";
+        dayScore = 1.5;
+      } else if (this.KHAC_MAP[dElem] === hElem) {
+        dayStatus = "Bị Nhật Thần Khắc Phạt";
+        dayScore = -2.5;
+      } else {
+        dayStatus = "Bình Hòa Với Nhật Thần";
+        dayScore = 0.0;
+      }
+
+      // 3. Với Tuần Không
+      let tkStatus = "Không Lâm Tuần Không";
+      let tkScore = 0.0;
+      const isTK = tkList.includes(hBranch);
+      if (isTK) {
+        if (monthScore >= 1.0 || dayScore >= 1.5 || hao.is_moving) {
+          tkStatus = "Chân Không / Không Hữu Dụng (Vượng tướng hoặc động lâm Không, phùng xung/xuất Không tất phát)";
+          tkScore = 0.5;
+        } else {
+          tkStatus = "Tử Không (Hưu tù tĩnh lâm Không, hoàn toàn vô dụng)";
+          tkScore = -3.0;
+        }
+      }
+
+      const totalHaoScore = Math.round((monthScore + dayScore + tkScore) * 100) / 100;
+      let powerGrade = "";
+      if (totalHaoScore >= 4.0) powerGrade = "Cực Vượng (Đắc Thời Đắc Lệnh)";
+      else if (totalHaoScore >= 1.5) powerGrade = "Vượng Tướng (Khí Thế Vững Vàng)";
+      else if (totalHaoScore >= -1.0) powerGrade = "Bình Hòa (Khí Lực Trung Bình)";
+      else if (totalHaoScore >= -3.5) powerGrade = "Hưu Tù (Khí Lực Suy Nhược)";
+      else powerGrade = "Suy Phá Nặng (Tổn Thương Khí Số)";
+
+      return {
+        month_status: monthStatus,
+        month_score: monthScore,
+        day_status: dayStatus,
+        day_score: dayScore,
+        tuan_khong_status: tkStatus,
+        is_tuan_khong: isTK,
+        is_nguyet_pha: isNguyetPha,
+        is_am_dong: (isNhatXung && monthScore >= 1.0),
+        total_score: totalHaoScore,
+        power_grade: powerGrade
+      };
+    },
+
+    resolve(question, topicKey, hexData, monthChi, dayChi, tuanKhong) {
+      let dtTarget = this.detectDungThanFromQuestion(question, topicKey);
+      if (dtTarget === "HON_NHAN") {
+        dtTarget = "Thê Tài";
+      }
+
+      const haos = hexData.haos;
+      const theHao = haos.find(h => h.is_the) || haos[0];
+      const ungHao = haos.find(h => h.is_ung) || haos[3];
+
+      let targetLucThan = dtTarget;
+      if (dtTarget === "Hào Thế") {
+        targetLucThan = theHao.luc_than;
+      }
+
+      const tuThanMap = {
+        "Thê Tài": { nguyenThan: "Tử Tôn", kyThan: "Huynh Đệ", cuuThan: "Phụ Mẫu" },
+        "Quan Quỷ": { nguyenThan: "Thê Tài", kyThan: "Tử Tôn", cuuThan: "Huynh Đệ" },
+        "Phụ Mẫu": { nguyenThan: "Quan Quỷ", kyThan: "Thê Tài", cuuThan: "Tử Tôn" },
+        "Tử Tôn": { nguyenThan: "Huynh Đệ", kyThan: "Phụ Mẫu", cuuThan: "Quan Quỷ" },
+        "Huynh Đệ": { nguyenThan: "Phụ Mẫu", kyThan: "Quan Quỷ", cuuThan: "Thê Tài" }
+      };
+      const tuThan = tuThanMap[targetLucThan] || { nguyenThan: "Tử Tôn", kyThan: "Huynh Đệ", cuuThan: "Phụ Mẫu" };
+
+      let candidateHaos = haos.filter(h => h.luc_than === targetLucThan);
+      let isPhucThan = false;
+      let phucDetail = null;
+      let selectedHao = null;
+
+      if (candidateHaos.length === 1) {
+        selectedHao = candidateHaos[0];
+      } else if (candidateHaos.length > 1) {
+        candidateHaos.sort((a, b) => {
+          const aMov = a.is_moving ? 10 : 0;
+          const bMov = b.is_moving ? 10 : 0;
+          const aThe = a.is_the ? 5 : 0;
+          const bThe = b.is_the ? 5 : 0;
+          const aNN = (a.branch === monthChi || a.branch === dayChi) ? 4 : 0;
+          const bNN = (b.branch === monthChi || b.branch === dayChi) ? 4 : 0;
+          return (bMov + bThe + bNN) - (aMov + aThe + aNN);
+        });
+        selectedHao = candidateHaos[0];
+      } else {
+        isPhucThan = true;
+        const ptList = hexData.phuc_than_list || [];
+        const matchPt = ptList.find(p => p.missing_luc_than === targetLucThan);
+        if (matchPt) {
+          phucDetail = matchPt;
+          selectedHao = {
+            position: matchPt.position,
+            can: matchPt.phuc_can,
+            branch: matchPt.phuc_branch,
+            element: matchPt.phuc_element,
+            luc_than: matchPt.missing_luc_than,
+            luc_thu: "Phục Tàng",
+            is_the: matchPt.is_under_the,
+            is_ung: matchPt.is_under_ung,
+            is_moving: false,
+            is_phuc_than: true
+          };
+        } else {
+          selectedHao = theHao;
+        }
+      }
+
+      const dungThanSolarLunar = this.evaluateHaoSolarLunar(selectedHao, monthChi, dayChi, tuanKhong);
+      const theSolarLunar = this.evaluateHaoSolarLunar(theHao, monthChi, dayChi, tuanKhong);
+
+      let theDungRel = "";
+      let theDungScore = 0.0;
+      if (selectedHao.position === theHao.position) {
+        theDungRel = "Thế Trì Dụng Thần (Đương số trực tiếp nắm giữ bản thể sự việc, làm chủ tình thế)";
+        theDungScore = 2.5;
+      } else {
+        const theElem = theHao.element;
+        const dtElem = selectedHao.element;
+        if (this.SINH_MAP[dtElem] === theElem) {
+          theDungRel = `Dụng Sinh Thế (${selectedHao.luc_than} ${dtElem} sinh Hào Thế ${theElem}: Đại Cát, việc tự tìm đến thành tựu, lợi ích tự đến)`;
+          theDungScore = 3.0;
+        } else if (this.SINH_MAP[theElem] === dtElem) {
+          theDungRel = `Thế Sinh Dụng (Hào Thế ${theElem} sinh ${selectedHao.luc_than} ${dtElem}: Đương số phải lao tâm khổ tứ, cống hiến hao tổn mới mong đạt kết quả)`;
+          theDungScore = 0.5;
+        } else if (this.KHAC_MAP[theElem] === dtElem) {
+          theDungRel = `Thế Khắc Dụng (Hào Thế ${theElem} khắc ${selectedHao.luc_than} ${dtElem}: Đương số khống chế, chiếm lĩnh được hoàn cảnh nhưng phải qua tranh đấu)`;
+          theDungScore = 1.0;
+        } else if (this.KHAC_MAP[dtElem] === theElem) {
+          if (targetLucThan === "Quan Quỷ" && ["congdanh", "thicu"].includes(topicKey)) {
+            theDungRel = `Dụng Khắc Thế Trong Cầu Quan (Quan Quỷ khắc Thế vượng: Đắc chức, được cất nhắc bổ nhiệm)`;
+            theDungScore = 2.0;
+          } else {
+            theDungRel = `Dụng Khắc Thế (${selectedHao.luc_than} ${dtElem} khắc Hào Thế ${theElem}: Hung hiểm, sự việc gây sức ép đè nén tổn thương đương số)`;
+            theDungScore = -2.5;
+          }
+        } else {
+          theDungRel = `Thế Dụng Tỷ Hòa (Cùng ngũ hành ${theElem}: Bình hòa, đôi bên tương trợ hòa hợp)`;
+          theDungScore = 1.5;
+        }
+      }
+
+      const nguyenHaos = haos.filter(h => h.luc_than === tuThan.nguyenThan);
+      const kyHaos = haos.filter(h => h.luc_than === tuThan.kyThan);
+      const cuuHaos = haos.filter(h => h.luc_than === tuThan.cuuThan);
+
+      return {
+        target_name: targetLucThan,
+        is_phuc_than: isPhucThan,
+        phuc_detail: phucDetail,
+        selected_hao: selectedHao,
+        tu_than: tuThan,
+        nguyen_haos: nguyenHaos,
+        ky_haos: kyHaos,
+        cuu_haos: cuuHaos,
+        dung_than_solar_lunar: dungThanSolarLunar,
+        the_solar_lunar: theSolarLunar,
+        the_dung_relation: theDungRel,
+        the_dung_score: theDungScore
+      };
+    }
+  };
+
+  // =========================================================================
+  // 7C. HỆ THỐNG PHÂN TÍCH ĐA HÀO ĐỘNG & LIÊN HOÀN SINH KHẮC (DONG HAO ECOSYSTEM)
+  // =========================================================================
+  const DongHaoEcosystemAnalyzer = {
+    SINH_MAP: { "Thủy": "Mộc", "Mộc": "Hỏa", "Hỏa": "Thổ", "Thổ": "Kim", "Kim": "Thủy" },
+    KHAC_MAP: { "Thủy": "Hỏa", "Hỏa": "Kim", "Kim": "Mộc", "Mộc": "Thổ", "Thổ": "Thủy" },
+
+    analyze(haos, dungThanInfo, theHao, monthChi, dayChi, tuanKhong) {
+      const movingHaos = haos.filter(h => h.is_moving);
+      const movingCount = movingHaos.length;
+      const targetLucThan = dungThanInfo.target_name;
+      const dtHao = dungThanInfo.selected_hao;
+      const kyThanLucThan = dungThanInfo.tu_than.kyThan;
+      const nguyenThanLucThan = dungThanInfo.tu_than.nguyenThan;
+
+      let category = "";
+      let categoryDesc = "";
+      let keyMovingYao = null;
+      let thamSinhVongKhacChain = null;
+      let kyThanChePhuc = null;
+      let movingTotalImpact = 0.0;
+      const movingBreakdown = [];
+
+      if (movingCount === 0) {
+        category = "THUẦN_TĨNH";
+        categoryDesc = "Quẻ Thuần Tĩnh (6 Hào Bất Biến). Khí trường an định vững vàng, không có biến động bất ngờ từ bên ngoài. Thành bại hoàn toàn do sự suy vượng của Hào Thế và Hào Dụng Thần dưới sự chi phối của Nhật Nguyệt quyết định. Đương số cần kiên nhẫn duy trì kỷ luật, đi đúng lộ trình tự nhiên.";
+        movingTotalImpact = 0.0;
+      } else if (movingCount === 1) {
+        category = "ĐỘC_ĐỘNG";
+        const mh = movingHaos[0];
+        keyMovingYao = mh;
+        let role = "Hào Động Biến Khí";
+        if (mh.luc_than === targetLucThan) role = "Dụng Thần Độc Động";
+        else if (mh.luc_than === nguyenThanLucThan) role = "Nguyên Thần Độc Động (Trợ Khí)";
+        else if (mh.luc_than === kyThanLucThan) role = "Kỵ Thần Độc Động (Đe Dọa)";
+        else if (mh.is_the) role = "Hào Thế Độc Động (Chủ Thể Biến Động)";
+
+        categoryDesc = `Độc Động Chi Hào (${role}: Hào ${mh.position} ${mh.luc_than} ${mh.branch} Động Biến Sang ${mh.changed_branch} ${mh.changed_luc_than}). Theo Cổ pháp 'Độc động chi hào quan biến hóa', toàn bộ nguồn cơn, ngòi nổ và xu thế của sự việc đều hội tụ tại hào này. Biến hào của nó chỉ thị kết quả chung cuộc.`;
+      } else if (movingCount >= 2 && movingCount <= 4) {
+        category = "ĐA_HÀO_ĐỘNG";
+        categoryDesc = `Bàn quẻ xuất hiện ${movingCount} hào phát động cùng lúc, tạo thành mạng lưới tương tác sinh khắc phức tạp, các yếu tố đan xen nhiều tầng nấc. Cần phân định rõ phe Sinh Trợ vs phe Khắc Phá và kiểm tra liên hoàn sinh khắc.`;
+      } else if (movingCount === 5) {
+        category = "ĐỘC_TĨNH";
+        const staticHao = haos.find(h => !h.is_moving);
+        keyMovingYao = staticHao;
+        categoryDesc = `Độc Tĩnh Chi Hào (Động Cực Quy Tĩnh: 5 Hào Động, Duy Nhất Hào ${staticHao.position} ${staticHao.luc_than} ${staticHao.branch} Tĩnh). Tình thế đang ở tâm bão biến động dữ dội, mọi việc xoay vần nhanh chóng. Hào tĩnh duy nhất chính là điểm tựa cân bằng hoặc nút thắt sinh tử định đoạt toàn cuộc.`;
+      } else {
+        category = "LỤC_ĐỘNG";
+        categoryDesc = "Lục Hào Biến Động Toàn Phần (Càn Khôn Biến Sắc). Bàn quẻ biến đổi 180 độ, cục diện cũ hoàn toàn sụp đổ hoặc chuyển giao sang một quỹ đạo mới. Kết quả chiêm đoán phụ thuộc hoàn toàn vào Quẻ Biến và Hào Thế quẻ Biến.";
+      }
+
+      const pheTro = [];
+      const phePha = [];
+
+      for (const mh of movingHaos) {
+        const dyn = mh.dynamics || {};
+        let impactScore = 0.0;
+        let roleInEcosystem = "";
+
+        if (mh.luc_than === targetLucThan) {
+          roleInEcosystem = "Dụng Thần Phát Động";
+          impactScore += 2.0;
+        } else if (mh.luc_than === nguyenThanLucThan) {
+          roleInEcosystem = "Nguyên Thần Phát Động (Sinh Trợ Dụng Thần)";
+          impactScore += 2.5;
+        } else if (mh.luc_than === kyThanLucThan) {
+          roleInEcosystem = "Kỵ Thần Phát Động (Khắc Hại Dụng Thần)";
+          impactScore -= 3.0;
+        } else if (mh.is_the) {
+          roleInEcosystem = "Hào Thế Phát Động (Đương Số Chủ Động Biến Đổi)";
+          impactScore += 1.5;
+        } else {
+          roleInEcosystem = "Khí Số Trung Gian Phát Động";
+          impactScore += 0.5;
+        }
+
+        if (dyn.hoi_dau === "HOI_DAU_SINH") {
+          impactScore += 2.0;
+          roleInEcosystem += " -> Hồi Đầu Sinh (+ Cát Lực)";
+        } else if (dyn.hoi_dau === "HOI_DAU_KHAC") {
+          impactScore -= 2.0;
+          roleInEcosystem += " -> Hồi Đầu Khắc (- Hung Khí)";
+        }
+
+        if (dyn.tien_thoai === "TIEN_THAN") {
+          impactScore += 1.5;
+          roleInEcosystem += " -> Tiến Thần (Lực Lượng Tăng)";
+        } else if (dyn.tien_thoai === "THOAI_THAN") {
+          impactScore -= 1.5;
+          roleInEcosystem += " -> Thoái Thần (Khí Thế Giảm)";
+        }
+
+        if (dyn.hoa_mo) { impactScore -= 1.0; roleInEcosystem += " -> Hóa Mộ"; }
+        if (dyn.hoa_tuyet) { impactScore -= 1.5; roleInEcosystem += " -> Hóa Tuyệt"; }
+
+        if (impactScore > 0) pheTro.push(mh);
+        else if (impactScore < 0) phePha.push(mh);
+
+        movingTotalImpact += impactScore;
+        movingBreakdown.push({
+          position: mh.position,
+          luc_than: mh.luc_than,
+          branch: mh.branch,
+          element: mh.element,
+          changed_branch: mh.changed_branch,
+          changed_element: mh.changed_element,
+          changed_luc_than: mh.changed_luc_than,
+          role: roleInEcosystem,
+          impact_score: impactScore,
+          dynamics: dyn
+        });
+      }
+
+      const kyDongHaos = movingHaos.filter(h => h.luc_than === kyThanLucThan);
+      const nguyenDongHaos = movingHaos.filter(h => h.luc_than === nguyenThanLucThan);
+
+      if (kyDongHaos.length > 0) {
+        for (const kHao of kyDongHaos) {
+          for (const mHao of movingHaos) {
+            if (mHao.position === kHao.position) continue;
+            const kElem = kHao.element;
+            const mElem = mHao.element;
+            const dtElem = dtHao.element;
+
+            if (this.SINH_MAP[kElem] === mElem && this.SINH_MAP[mElem] === dtElem) {
+              thamSinhVongKhacChain = {
+                ky_hao: kHao,
+                intermediate_hao: mHao,
+                dung_hao: dtHao,
+                chain_desc: `Kỵ Thần Hào ${kHao.position} (${kHao.luc_than} ${kElem}) tham sinh cho Hào ${mHao.position} (${mHao.luc_than} ${mElem}), mà Hào ${mHao.position} lại phát động sinh cho Dụng Thần (${dtHao.luc_than} ${dtElem}). Hình thành chuỗi 'Tham Sinh Vong Khắc' liên hoàn tương sinh, chuyển hiểm họa thành đại phúc cát lành!`
+              };
+              movingTotalImpact += 4.0;
+              break;
+            }
+          }
+
+          for (const cHao of movingHaos) {
+            if (cHao.position === kHao.position) continue;
+            if (this.KHAC_MAP[cHao.element] === kHao.element) {
+              kyThanChePhuc = {
+                ky_hao: kHao,
+                subduing_hao: cHao,
+                desc: `Kỵ Thần Hào ${kHao.position} (${kHao.luc_than} ${kHao.element}) muốn phát động khắc Dụng Thần nhưng bị Hào ${cHao.position} (${cHao.luc_than} ${cHao.element}) cùng động khắc chế phục tùng. Kỵ Thần bị chế phục, không còn năng lực gây hại!`
+              };
+              movingTotalImpact += 3.0;
+              break;
+            }
+          }
+
+          if (kHao.dynamics && (kHao.dynamics.hoi_dau === "HOI_DAU_KHAC" || kHao.dynamics.hoa_tuyet)) {
+            movingTotalImpact += 2.5;
+          }
+        }
+      }
+
+      if (!keyMovingYao && movingHaos.length > 0) {
+        if (thamSinhVongKhacChain) {
+          keyMovingYao = thamSinhVongKhacChain.intermediate_hao;
+        } else if (kyDongHaos.length > 0 && !kyThanChePhuc) {
+          keyMovingYao = kyDongHaos[0];
+        } else if (nguyenDongHaos.length > 0) {
+          keyMovingYao = nguyenDongHaos[0];
+        } else {
+          movingBreakdown.sort((a, b) => Math.abs(b.impact_score) - Math.abs(a.impact_score));
+          keyMovingYao = haos[movingBreakdown[0].position - 1];
+        }
+      }
+
+      return {
+        category,
+        category_desc: categoryDesc,
+        moving_count: movingCount,
+        moving_haos: movingBreakdown,
+        phe_tro: pheTro,
+        phe_pha: phePha,
+        tham_sinh_vong_khac: thamSinhVongKhacChain,
+        ky_than_che_phuc: kyThanChePhuc,
+        key_moving_yao: keyMovingYao,
+        total_moving_impact: Math.round(movingTotalImpact * 100) / 100
+      };
+    }
+  };
+
+  // =========================================================================
   // 8. ĐỘNG CƠ "NHẤT QUÁI ĐA ĐOÁN" (NHAT QUAI DA DOAN ENGINE)
   // =========================================================================
   class NhatQuaiDaDoanEngine {
@@ -1867,17 +2378,17 @@
       return "Biến chuyển trạng thái khí vận theo quy luật âm dương tiêu trưởng";
     },
 
-    synthesize(meta, hexData, intentEval, graphData, timingData, multiLens) {
+    synthesize(meta, hexData, intentEval, graphData, timingData, multiLens, dungThanInfo = null, dongHaoInfo = null) {
       const question = (meta.question || "").trim();
       const domainType = MultiObjectiveIntentResolver.detectDomain(question);
       intentEval.domain_type = domainType;
 
-      const directAnswer = this.buildDirectQuestionAnswer(meta, hexData, intentEval, graphData, multiLens, timingData);
-      const overviewText = this.buildOverview(meta, hexData, intentEval, graphData);
+      const directAnswer = this.buildDirectQuestionAnswer(meta, hexData, intentEval, graphData, multiLens, timingData, dungThanInfo, dongHaoInfo);
+      const overviewText = this.buildOverview(meta, hexData, intentEval, graphData, dungThanInfo, dongHaoInfo);
       const groundTruth = GroundTruthVerificationEngine.verifyGroundTruth(hexData, graphData);
       const brightPoints = this.buildBrightPoints(hexData, graphData, multiLens);
       const darkPoints = this.buildDarkPoints(hexData, graphData, multiLens);
-      const domainDeepDive = this.buildDomainDeepDive(domainType, hexData, graphData, multiLens);
+      const domainDeepDive = this.buildDomainDeepDive(domainType, hexData, graphData, multiLens, dungThanInfo, dongHaoInfo);
       const strategicAdvice = this.buildStrategicAdvice(intentEval, timingData, multiLens, hexData);
 
       return {
@@ -1892,7 +2403,7 @@
       };
     },
 
-    buildDirectQuestionAnswer(meta, hexData, intentEval, graphData, multiLens, timingData) {
+    buildDirectQuestionAnswer(meta, hexData, intentEval, graphData, multiLens, timingData, dungThanInfo = null, dongHaoInfo = null) {
       const q = (meta.question || "").trim();
       const domainType = intentEval.domain_type || MultiObjectiveIntentResolver.detectDomain(q);
       const prob = intentEval.success_probability !== undefined ? intentEval.success_probability : 0.5;
@@ -1904,107 +2415,75 @@
 
       // 1. Phán đoán trực diện câu hỏi chiêm đoán (Direct Answer)
       let directVerdict = "";
-      switch (domainType) {
-        case "TAI_CHINH_DAU_TU":
-          if (prob >= 0.65) directVerdict = "Về việc đầu tư / cầu tài: **NÊN TRIỂN KHAI**. Bàn quẻ cho thấy dòng tiền có triển vọng sinh lời thực chất, nguồn vốn luân chuyển thông suốt và mục tiêu tài chính đạt được như kỳ vọng.";
-          else if (prob >= 0.40) directVerdict = "Về việc đầu tư / cầu tài: **NÊN THẬN TRỌNG, CHỈ NÊN THĂM DÒ TỪNG PHẦN**. Dòng tiền đang ở thế giằng co, chi phí phát sinh có thể làm suy giảm biên lợi nhuận, chưa phải thời điểm giải ngân ồ ạt.";
-          else directVerdict = "Về việc đầu tư / cầu tài: **KHÔNG NÊN ĐẦU TƯ LỚN HOẶC MỞ RỘNG QUY MÔ LÚC NÀY**. Nguy cơ hao tổn vốn liếng, dòng tiền dễ bị ứ đọng hoặc bị đối tác chiếm dụng; ưu tiên giữ tiền mặt và bảo toàn thanh khoản.";
-          break;
+      const dtTargetName = dungThanInfo ? dungThanInfo.target_name : "Dụng Thần";
+      const selHao = dungThanInfo ? dungThanInfo.selected_hao : theHao;
+      const dtSL = dungThanInfo ? dungThanInfo.dung_than_solar_lunar : null;
+      const tdRel = dungThanInfo ? dungThanInfo.the_dung_relation : "";
 
-        case "BAT_DONG_SAN_DAT_DAI":
-          if (prob >= 0.65) directVerdict = "Về giao dịch bất động sản / nhà đất: **GIAO DỊCH THUẬN LỢI, CÓ THỂ TIẾN HÀNH**. Đất đai / nhà ở trường khí ổn định, pháp lý minh bạch và giá trị giao dịch đạt được mức mong muốn.";
-          else if (prob >= 0.40) directVerdict = "Về giao dịch bất động sản / nhà đất: **TIẾN TRÌNH CÒN CHẬM, CẦN RÀ SOÁT KỸ HỒ SƠ PHÁP LÝ**. Có sự giằng co về giá cả hoặc thủ tục giấy tờ cần thời gian bổ sung, nên kiên nhẫn đàm phán thêm.";
-          else directVerdict = "Về giao dịch bất động sản / nhà đất: **CHƯA NÊN CHỐT GIAO DỊCH HOẶC XUẤT TIỀN ĐẶT CỌC**. Quẻ báo hiệu rủi ro về quy hoạch, tranh chấp ranh giới hoặc tính thanh khoản kém, dễ bị chôn vốn lâu dài.";
-          break;
-
-        case "CONG_DANH_SU_NGHIEP":
-          if (prob >= 0.65) directVerdict = "Về công việc / thăng chức / chuyển việc: **KẾT QUẢ RẤT KHẢ QUAN, NÊN TỰ TIN ỨNG TUYỂN HOẶC NHẬN NHIỆM VỤ MỚI**. Uy tín và năng lực chuyên môn được cấp trên ghi nhận, mở ra cơ hội phát triển bền vững.";
-          else if (prob >= 0.40) directVerdict = "Về công việc / cơ hội nghề nghiệp: **CƠ HỘI ĐANG TRONG GIAI ĐOẠN CÂN NHẮC, NÊN GIỮ VỊ TRÍ ỔN ĐỊNH VÀ BỒI ĐẮP NĂNG LỰC**. Tránh thay đổi vội vàng khi chưa nắm chắc điều khoản và môi trường mới.";
-          else directVerdict = "Về công việc / sự nghiệp: **CHƯA PHẢI THỜI ĐIỂM THÍCH HỢP ĐỂ CHUYỂN ĐỔI HOẶC ĐÒI HỎI QUYỀN LỢI**. Môi trường đang có áp lực lớn, có thể gặp đối thủ cạnh tranh hoặc bất đồng quan điểm với cấp trên, nên nhẫn nại phòng thủ.";
-          break;
-
-        case "THI_CU_HOC_VAN":
-          if (prob >= 0.65) directVerdict = "Về thi cử / học vấn / bảo vệ đề án: **KẾT QUẢ ĐẠT ĐƯỢC NHƯ Ý NGUYỆN, DỄ ĐẠT ĐIỂM CAO HOẶC TRÚNG TUYỂN**. Văn tinh trợ lực, kiến thức chuẩn bị chu đáo và nhận được sự đánh giá tích cực từ hội đồng.";
-          else if (prob >= 0.40) directVerdict = "Về thi cử / học vấn: **KẾT QUẢ Ở MỨC AN TOÀN, ĐẠT YÊU CẦU NHƯNG CẦN TẬP TRUNG CAO ĐỘ**. Đề phòng tâm lý chủ quan hoặc sai sót nhỏ do không rà soát kỹ yêu cầu của hội đồng/đề tài.";
-          else directVerdict = "Về thi cử / học vấn: **KẾT QUẢ CHƯA ĐẠT KỲ VỌNG HOẶC GẶP TRỞ LỰC VỀ THỦ TỤC**. Cần rà soát kỹ lưỡng kiến thức, chuẩn bị hồ sơ chỉn chu và chuẩn bị sẵn phương án thi lại/bảo vệ lại.";
-          break;
-
-        case "PHAP_LY_TRANH_CHAP":
-          if (prob >= 0.65) directVerdict = "Về tranh chấp / pháp lý: **CƠ SỞ PHÁP LÝ NGHIÊNG VỀ PHÍA ĐƯƠNG SỐ, KHẢ NĂNG THẮNG KIỆN HOẶC HÒA GIẢI CÓ LỢI RẤT CAO**. Chứng cứ rõ ràng, đối phương có xu hướng thoái lui.";
-          else if (prob >= 0.40) directVerdict = "Về tranh chấp / pháp lý: **NÊN ƯU TIÊN THƯƠNG LƯỢNG HÒA GIẢI NGOÀI TÒA ÁN**. Vụ việc có tính chất kéo dài, chi phí tốn kém và kết quả khó tạo ưu thế tuyệt đối cho bên nào.";
-          else directVerdict = "Về tranh chấp / pháp lý: **BẤT LỢI CHO ĐƯƠNG SỐ, NÊN TÌM CÁCH RÚT LUI HOẶC THỎA HIỆP ĐỂ TRÁNH THIỆT HẠI NẶNG HƠN**. Nguy cơ vướng vào rắc rối tố tụng dai dẳng hoặc bị xử phạt hành chính.";
-          break;
-
-        case "HON_NHAN_TINH_CAM":
-          if (prob >= 0.65) directVerdict = "Về tình duyên / hôn nhân: **MỐI QUAN HỆ HÒA HỢP, TIẾN TRIỂN TỐT ĐẸP VÀ CÓ HỶ TÍN**. Đôi bên thấu hiểu, tôn trọng và có sự gắn kết bền chặt, thích hợp cho việc bàn tính chuyện trăm năm.";
-          else if (prob >= 0.40) directVerdict = "Về tình duyên / hôn nhân: **CẦN SỰ CHIA SẺ VÀ LẮNG NGHE ĐỂ GIẢI TỎA HIỂU LẦM**. Mối quan hệ có sự so đo hoặc tác động từ bên ngoài, chớ nên nóng giận làm tổn thương nhau.";
-          else directVerdict = "Về tình duyên / hôn nhân: **CẢNH BÁO RẠN NỨT HOẶC MÂU THUẪN ĐỐI ĐẦU GAY GẮT**. Đôi bên thiếu sự tin tưởng, dễ có sự can thiệp từ người thứ ba hoặc khác biệt khó dung hòa, cần bình tĩnh xem xét lại.";
-          break;
-
-        case "THAI_SAN_SINH_NO":
-          if (prob >= 0.65) directVerdict = "Về thai sản / sinh nở: **MẸ TRÒN CON VUÔNG, THAI KHÍ VỮNG VÀNG AN LÀNH**. Con cái khỏe mạnh, sinh nở thuận buồm xuôi gió.";
-          else if (prob >= 0.40) directVerdict = "Về thai sản / sinh nở: **THAI KỲ CẦN CHÚ Ý NGHỈ NGƠI VÀ THEO DÕI ĐỊNH KỲ**. Đề phòng mệt mỏi thể chất, nên tuân thủ chỉ dẫn dinh dưỡng và khám thai đúng hẹn.";
-          else directVerdict = "Về thai sản / sinh nở: **CẦN ĐẶC BIỆT CẨN TRỌNG, TUÂN THỦ NGHIÊM NGẶT HƯỚNG DẪN CỦA BÁC SĨ SẢN KHOA**. Tránh vận động mạnh, theo dõi sát các dấu hiệu bất thường để xử lý kịp thời.";
-          break;
-
-        case "SUC_KHOE_BENH_TAT":
-          if (prob >= 0.65) directVerdict = "Về sức khỏe / điều trị bệnh: **BỆNH TÌNH CÓ CHUYỂN BIẾN RẤT TÍCH CỰC, NHANH CHÓNG PHỤC HỒI**. Gặp thầy gặp thuốc, thể trạng cải thiện rõ rệt từng ngày.";
-          else if (prob >= 0.40) directVerdict = "Về sức khỏe / bệnh tật: **BỆNH DẠNG MÃN TÍNH CẦN THỜI GIAN ĐIỀU DƯỠNG KIÊN TRÌ**. Không nên nôn nóng hoặc tự ý đổi thuốc, cần duy trì lối sống lành mạnh.";
-          else directVerdict = "Về sức khỏe / bệnh tật: **TÌNH TRẠNG CƠ THỂ ĐANG CẢNH BÁO, CẦN ĐI KHÁM CHUYÊN SÂU NGAY LẬP TỨC**. Tránh chủ quan với các triệu chứng đau nhức hoặc sốt kéo dài.";
-          break;
-
-        case "PHONG_THUY_GIA_TRACH":
-          if (prob >= 0.65) directVerdict = "Về phong thủy gia trạch / nơi ở: **ĐẤT LÀNH CHIM ĐẬU, TRƯỜNG KHÍ GIA ĐẠO AN KHANG TỤ KHÍ**. Môi trường sống hòa hợp giúp gia chủ an tâm làm ăn và giữ gìn hòa khí.";
-          else if (prob >= 0.40) directVerdict = "Về phong thủy nơi ở: **CÓ MỘT VÀI ĐIỂM BẤT CẬP NHỎ CẦN SẮP XẾP LẠI**. Nên dọn dẹp các khu vực bừa bộn hoặc tối tăm (bếp, chân cầu thang) để kích hoạt sinh khí.";
-          else directVerdict = "Về phong thủy nơi ở: **GIA TRẠCH BỊ XUNG SÁT HOẶC CÓ ĐIỂM NGHẼN KHÍ NẶNG NỀ**. Cần xem xét cải tạo lại hướng bếp, lối vào hoặc khắc phục hiện tượng thấm dột ẩm mốc.";
-          break;
-
-        case "XUAT_HANH_GIAO_THONG":
-          if (prob >= 0.65) directVerdict = "Về chuyến đi / xuất hành: **CHUYẾN ĐI HANH THÔNG, THƯỢNG LỘ BÌNH AN VÀ ĐẠT ĐƯỢC MỤC ĐÍCH**. Lịch trình suôn sẻ, nơi đến đón tiếp thuận lợi.";
-          else if (prob >= 0.40) directVerdict = "Về chuyến đi / di chuyển: **LỊCH TRÌNH CÓ THỂ PHÁT SINH THAY ĐỔI HOẶC CHẬM TRỄ NHẸ**. Cần kiểm tra kỹ giấy tờ, phương tiện và dự trù thời gian đi lại.";
-          else directVerdict = "Về chuyến đi / xuất hành: **NÊN CÂN NHẮC HOÃN LỊCH TRÌNH NẾU KHÔNG THẬT SỰ CẤP BÁCH**. Đề phòng thời tiết xấu, trục trặc xe cộ hoặc giấy tờ bị vướng mắc.";
-          break;
-
-        case "TIM_NGUOI_TIM_VAT":
-          if (prob >= 0.65) directVerdict = "Về việc tìm đồ / tìm người: **KHẢ NĂNG TÌM LẠI ĐƯỢC RẤT CAO, VẬT / NGƯỜI CHƯA ĐI XA**. Tập trung tìm kiếm theo hướng và vị trí hào Dụng Thần chỉ dẫn sẽ có kết quả.";
-          else if (prob >= 0.40) directVerdict = "Về việc tìm kiếm: **TÌM ĐƯỢC NHƯNG CẦN THỜI GIAN VÀ SỰ KIÊN TRÌ HỎI THĂM**. Có thể bị vật khác che khuất hoặc người cần tìm đang ở nơi kín đáo.";
-          else directVerdict = "Về việc tìm kiếm: **RẤT KHÓ TÌM LẠI HOẶC ĐÃ THẤT LẠC XA**. Cần nhờ cậy lực lượng chức năng hoặc mở rộng tối đa phạm vi tìm kiếm.";
-          break;
-
-        default: // CHIEM_VAN_TONG_QUAN
-          if (prob >= 0.65) directVerdict = "Về thời vận tổng quan: **VẬN THẾ ĐANG TRONG KỲ KHỞI SẮC, VẠN SỰ HANH THÔNG**. Thích hợp triển khai các dự định ấp ủ, nắm bắt thời cơ để bứt phá.";
-          else if (prob >= 0.40) directVerdict = "Về thời vận tổng quan: **CỤC DIỆN BÌNH HÒA, THUẬN LỢI ĐI KÈM THỬ THÁCH**. Nên lấy ổn định làm trọng, củng cố nền tảng và tích lũy nội lực chờ thời.";
-          else directVerdict = "Về thời vận tổng quan: **THỜI VẬN CHƯA THUẬN, NÊN THỦ THƯỜNG AN PHẬN**. Tránh mạo hiểm hoặc mở rộng việc lớn, tập trung giải quyết các tồn đọng nội bộ.";
-          break;
+      let actionRecommendation = "";
+      if (prob >= 0.65) {
+        actionRecommendation = "**Nên triển khai**. Khí số thuận lợi, các điều kiện then chốt đều có tính khả thi cao, mở ra triển vọng thành tựu như kỳ vọng.";
+      } else if (prob >= 0.40) {
+        actionRecommendation = "**Nên thận trọng thăm dò từng phần, chưa nên hành động vội vã**. Cục diện đang ở thế giằng co, cần củng cố thêm căn cứ pháp lý, nguồn lực hoặc hoàn thiện hồ sơ trước khi cam kết chính thức.";
+      } else {
+        actionRecommendation = "**Chưa nên triển khai hoặc nên tạm dừng kế hoạch lớn lúc này**. Bàn quẻ ghi nhận nhiều trở lực và nguy cơ tiêu hao nguồn lực, ưu tiên giải pháp phòng thủ và bảo toàn nội lực.";
       }
+
+      const domainPrefixes = {
+        "TAI_CHINH_DAU_TU": "Về việc đầu tư / tài chính / cầu tài: ",
+        "BAT_DONG_SAN_DAT_DAI": "Về giao dịch bất động sản / nhà đất: ",
+        "CONG_DANH_SU_NGHIEP": "Về công việc / thăng chức / sự nghiệp: ",
+        "THI_CU_HOC_VAN": "Về thi cử / học vấn / bảo vệ đề tài: ",
+        "PHAP_LY_TRANH_CHAP": "Về kiện tụng / tranh chấp / pháp lý: ",
+        "HON_NHAN_TINH_CAM": "Về tình duyên / hôn nhân / tình cảm: ",
+        "THAI_SAN_SINH_NO": "Về thai sản / sinh nở / con cái: ",
+        "SUC_KHOE_BENH_TAT": "Về sức khỏe / điều trị bệnh tật: ",
+        "PHONG_THUY_GIA_TRACH": "Về phong thủy gia trạch / nơi ở: ",
+        "XUAT_HANH_GIAO_THONG": "Về chuyến đi / xuất hành di chuyển: ",
+        "TIM_NGUOI_TIM_VAT": "Về việc tìm người / tìm đồ thất lạc: ",
+        "CHIEM_VAN_TONG_QUAN": "Về thời vận tổng quan sự vụ: "
+      };
+
+      const prefix = domainPrefixes[domainType] || `Về câu hỏi "${q}": `;
+      const dtSummary = (dungThanInfo && dtSL) ? ` Bàn quẻ xác lập Dụng Thần [${dtTargetName}] tại Hào ${selHao.position} (${selHao.branch} ${selHao.element}) đạt ${dtSL.power_grade} (${dtSL.month_status}, ${dtSL.day_status}).` : "";
+      directVerdict = `${prefix}${actionRecommendation}${dtSummary}`;
 
       // 2. Cơ chế khí số then chốt (Core Rationale)
       const rationaleParts = [];
-      const theEnergy = graphData.nodes_state[theHao.position - 1].equilibrium_energy;
-      const theTone = theEnergy >= 2.0 ? "nội lực vững vàng, khí số vượng tướng" : (theEnergy >= -1.0 ? "nội lực ở mức bình hòa" : "nội lực suy yếu, chịu nhiều sức ép");
-      rationaleParts.push(`Hào Thế (chủ thể đương số) ngự Hào ${theHao.position} mang ${theHao.luc_than} ${theHao.branch} lâm ${theHao.luc_thu} có ${theTone}.`);
+      if (dungThanInfo && dungThanInfo.selected_hao) {
+        const dt = dungThanInfo.selected_hao;
+        rationaleParts.push(`Dụng Thần định vị tại Hào ${dt.position} (${dt.luc_than} ${dt.can || ''}-${dt.branch}, hành ${dt.element}, lâm ${dt.luc_thu}): ${dtSL.power_grade}, ${dtSL.month_status}, ${dtSL.day_status}.`);
+        rationaleParts.push(`Hào Thế (chủ thể đương số) ngự Hào ${theHao.position} (${theHao.luc_than} ${theHao.branch}) đạt ${dungThanInfo.the_solar_lunar.power_grade}; quan hệ Thế - Dụng: ${dungThanInfo.the_dung_relation}.`);
+      } else {
+        const theEnergy = graphData.nodes_state[theHao.position - 1].equilibrium_energy;
+        const theTone = theEnergy >= 2.0 ? "nội lực vững vàng, khí số vượng tướng" : (theEnergy >= -1.0 ? "nội lực ở mức bình hòa" : "nội lực suy yếu, chịu nhiều sức ép");
+        rationaleParts.push(`Hào Thế (chủ thể đương số) ngự Hào ${theHao.position} mang ${theHao.luc_than} ${theHao.branch} lâm ${theHao.luc_thu} có ${theTone}.`);
+      }
 
       const grad = intentEval.the_vs_ung_gradient || 0.0;
       if (grad > 2.0) rationaleParts.push("Thế - Ứng cho thấy đương số nắm thế thượng phong chủ động, hoàn cảnh và đối phương hướng về mình.");
       else if (grad < -2.0) rationaleParts.push("Thế - Ứng cho thấy hoàn cảnh hoặc đối tác ngoài cuộc đang chiếm thế lấn lướt, đương số cần tránh đối đầu trực diện.");
       else rationaleParts.push("Thế và Ứng cân bằng tương đắc, đôi bên cùng thăm dò phối hợp.");
 
-      const movingHaos = hexData.haos.filter(h => h.is_moving);
-      if (movingHaos.length > 0) {
-        const movDetails = movingHaos.map(mh => {
-          const dyn = mh.dynamics;
-          let dynLabel = "";
-          if (dyn) {
-            if (dyn.hoi_dau) dynLabel = dyn.hoi_dau_desc;
-            else if (dyn.tien_thoai) dynLabel = dyn.tien_thoai_desc;
-            else if (dyn.hoa_mo) dynLabel = "động hóa Mộ (nguồn lực bị giữ lại)";
-            else if (dyn.hoa_tuyet) dynLabel = "động hóa Tuyệt (động lực suy giảm)";
-          }
-          return `Hào ${mh.position} (${mh.luc_than} ${mh.branch}) động biến sang ${mh.changed_branch} (${mh.changed_luc_than})${dynLabel ? `: ${dynLabel}` : ''}`;
-        });
-        rationaleParts.push(`Bàn quẻ phát động tại: ${movDetails.join('; ')}.`);
+      if (dongHaoInfo) {
+        rationaleParts.push(`Cục diện động hào: ${dongHaoInfo.category_desc}`);
+        if (dongHaoInfo.tham_sinh_vong_khac) {
+          rationaleParts.push(`Xuất hiện cơ chế Tham Sinh Vong Khắc: ${dongHaoInfo.tham_sinh_vong_khac.chain_desc}`);
+        } else if (dongHaoInfo.ky_than_che_phuc) {
+          rationaleParts.push(`Kỵ Thần bị chế phục: ${dongHaoInfo.ky_than_che_phuc.desc}`);
+        }
+        if (dongHaoInfo.key_moving_yao) {
+          const kmy = dongHaoInfo.key_moving_yao;
+          rationaleParts.push(`Hào Động then chốt là Hào ${kmy.position} (${kmy.luc_than} ${kmy.branch}), quyết định bước ngoặt phát tác.`);
+        }
       } else {
-        rationaleParts.push("Quẻ thuần tĩnh không có hào động, sự việc diễn tiến tuần tự theo trường khí ổn định, không có biến động bất ngờ.");
+        const movingHaos = hexData.haos.filter(h => h.is_moving);
+        if (movingHaos.length > 0) {
+          const movDetails = movingHaos.map(mh => `Hào ${mh.position} (${mh.luc_than} ${mh.branch}) động biến sang ${mh.changed_branch} (${mh.changed_luc_than})`);
+          rationaleParts.push(`Bàn quẻ phát động tại: ${movDetails.join('; ')}.`);
+        } else {
+          rationaleParts.push("Quẻ thuần tĩnh không có hào động, sự việc diễn tiến tuần tự theo trường khí ổn định, không có biến động bất ngờ.");
+        }
       }
 
       const coreRationale = rationaleParts.join(' ');
@@ -2052,7 +2531,7 @@
       };
     },
 
-    buildOverview(meta, hexData, intentEval, graphData) {
+    buildOverview(meta, hexData, intentEval, graphData, dungThanInfo = null, dongHaoInfo = null) {
       const hexName = meta.hexagram_name;
       const changedName = meta.changed_hexagram_name;
       const palace = meta.palace;
@@ -2068,11 +2547,11 @@
       const isGeneral = !questionText || ["chiêm đoán thời vận tổng quan", "xem vận hạn", "tổng quan"].includes(questionText.toLowerCase());
 
       if (!isGeneral) {
-        p.push(`Xét theo vấn đề đương số đang băn khoăn về *"${questionText}"*, bàn quẻ xác lập Quẻ Chính là **${hexName.toUpperCase()}** (${palace})` + 
-               (hasMoving ? `, phát sinh ${movingCount} hào động biến thành quẻ **${changedName.toUpperCase()}**.` : ", là một **Quẻ Tĩnh** thuần nhất không có hào động."));
+        p.push(`Xét theo vấn đề đương số đang băn khoăn về *"${questionText}"*, bàn quẻ xác lập Quẻ Chính là **${hexName}** (${palace})` + 
+               (hasMoving ? `, phát sinh ${movingCount} hào động biến thành quẻ **${changedName}**.` : ", là một **Quẻ Tĩnh** thuần nhất không có hào động."));
       } else {
-        p.push(`Xét theo ý niệm chiêm định **Khí vận toàn cảnh & Thời thế đời sống** của đương số, bàn quẻ xác lập Quẻ Chính là **${hexName.toUpperCase()}** (${palace})` + 
-               (hasMoving ? `, phát sinh ${movingCount} hào động biến thành quẻ **${changedName.toUpperCase()}**.` : ", là một **Quẻ Tĩnh** thuần nhất không có hào động."));
+        p.push(`Xét theo ý niệm chiêm định **Khí vận toàn cảnh & Thời thế đời sống** của đương số, bàn quẻ xác lập Quẻ Chính là **${hexName}** (${palace})` + 
+               (hasMoving ? `, phát sinh ${movingCount} hào động biến thành quẻ **${changedName}**.` : ", là một **Quẻ Tĩnh** thuần nhất không có hào động."));
       }
 
       const coreMeaning = this.getHexagramCoreMeaning(hexName);
@@ -2085,8 +2564,30 @@
         p.push("Bàn quẻ sáu hào an tĩnh phản ánh sự việc đang ở trạng thái tích tụ ổn định, chuyển biến theo đúng quy luật tự nhiên, không có biến cố xáo trộn đột ngột từ bên ngoài.");
       }
 
+      // Khối Dụng Thần & Tứ Thần Cốt Lõi
+      if (dungThanInfo && dungThanInfo.selected_hao) {
+        const dt = dungThanInfo.selected_hao;
+        const dtSL = dungThanInfo.dung_than_solar_lunar;
+        const theSL = dungThanInfo.the_solar_lunar;
+        p.push(`Về Dụng Thần: Sự việc quy tụ vào Dụng Thần **${dt.luc_than}** (ngự Hào ${dt.position} mang Chi ${dt.branch}, hành ${dt.element}, lâm ${dt.luc_thu}). Dưới sự điều phối của Nhật Nguyệt (Tháng ${meta.time_meta.month_chi}, Ngày ${meta.time_meta.day_can} ${meta.time_meta.day_chi}), Dụng Thần đạt trạng thái *${dtSL.power_grade}* (${dtSL.month_status}, ${dtSL.day_status}). Hào Thế (chủ thể đương số) mang ${theSL.power_grade}; quan hệ giữa đương số và sự việc là **${dungThanInfo.the_dung_relation}**.`);
+      }
+
+      // Khối Hệ Sinh Thái Đa Hào Động
+      if (dongHaoInfo) {
+        p.push(`Về động thái biến hóa: ${dongHaoInfo.category_desc}`);
+        if (dongHaoInfo.tham_sinh_vong_khac) {
+          p.push(`Đặc biệt, xuất hiện cơ chế **Tham Sinh Vong Khắc**: ${dongHaoInfo.tham_sinh_vong_khac.chain_desc}`);
+        } else if (dongHaoInfo.ky_than_che_phuc) {
+          p.push(`Về hóa giải nguy cơ: ${dongHaoInfo.ky_than_che_phuc.desc}`);
+        }
+        if (dongHaoInfo.key_moving_yao) {
+          const kmy = dongHaoInfo.key_moving_yao;
+          p.push(`Hào Động then chốt là **Hào ${kmy.position}** (${kmy.luc_than} ${kmy.branch}), đóng vai trò định hình bước ngoặt chuyển biến của sự việc.`);
+        }
+      }
+
       if (prob >= 0.75) {
-        p.push(`Tổng hòa năng lượng đồ thị đạt mức hữu dụng cao, khẳng định cục diện **${decision}** (xác suất khả thi đạt khoảng ${Math.round(prob * 100)}%).`);
+        p.push(`Tổng hòa năng lượng phản ánh cục diện **${decision}** (xác suất khả thi đạt khoảng ${Math.round(prob * 100)}%).`);
       } else if (prob >= 0.45) {
         p.push(`Tổng hòa năng lượng phản ánh trạng thái **${decision}** (khả năng cân bằng đạt khoảng ${Math.round(prob * 100)}%), thuận lợi hay khó khăn tùy thuộc vào sự chuẩn bị kỹ lưỡng và thái độ ứng xử.`);
       } else {
@@ -2316,7 +2817,84 @@
       return points;
     },
 
-    buildDomainDeepDive(domainType, hexData, graphData, multiLens) {
+    buildDomainDeepDive(domainType, hexData, graphData, multiLens, dungThanInfo = null, dongHaoInfo = null) {
+      if (dungThanInfo && dungThanInfo.selected_hao) {
+        const dt = dungThanInfo.selected_hao;
+        const dtSL = dungThanInfo.dung_than_solar_lunar;
+        const theHao = hexData.haos.find(h => h.is_the) || hexData.haos[0];
+        const theSL = dungThanInfo.the_solar_lunar;
+        const ungHao = hexData.haos.find(h => h.is_ung) || hexData.haos[3];
+        const tuThan = dungThanInfo.tu_than;
+        const tm = hexData.time_meta;
+
+        const nguyenStr = dungThanInfo.nguyen_haos.map(h => `Hào ${h.position} (${h.branch} ${h.element})`).join(', ') || 'Bất hiện trên quẻ (phục tàng)';
+        const kyStr = dungThanInfo.ky_haos.map(h => `Hào ${h.position} (${h.branch} ${h.element})`).join(', ') || 'Không xuất hiện trên quẻ';
+        const cuuStr = dungThanInfo.cuu_haos.map(h => `Hào ${h.position} (${h.branch} ${h.element})`).join(', ') || 'Không xuất hiện';
+
+        // Khối 1: Khảo Sát Chi Tiết Dụng Thần & Tứ Thần
+        const block1Content = [
+          `- **Dụng Thần (${dt.luc_than})**: Định vị tại Hào ${dt.position} (${dt.can || ''}-${dt.branch}, ngũ hành ${dt.element}, lâm Lục Thú ${dt.luc_thu}). Đây là linh hồn và bản thể đại diện cho sự vụ chiêm đoán. Trạng thái nội lực: **${dtSL.power_grade}**.`,
+          `- **Nguyên Thần (${tuThan.nguyenThan})**: Ngự tại ${nguyenStr}. Nguyên Thần sinh trợ cho Dụng Thần, là nguồn sinh khí, tài trợ và hậu thuẫn vững chắc cho sự việc.`,
+          `- **Kỵ Thần (${tuThan.kyThan})**: Ngự tại ${kyStr}. Kỵ Thần khắc phạt Dụng Thần, là nhân tố cản trở, rủi ro đe dọa hoặc đối thủ cạnh tranh trực tiếp.`,
+          `- **Cừu Thần (${tuThan.cuuThan})**: Ngự tại ${cuuStr}. Cừu Thần sinh trợ cho Kỵ Thần và khắc hại Nguyên Thần, biểu thị các yếu tố gián tiếp tiếp tay cho khó khăn.`
+        ].join('\n');
+
+        // Khối 2: Chi Phối Của Nhật Nguyệt (Đề Cương & Tể Tướng)
+        const block2Content = [
+          `- **Tác động của Nguyệt Lệnh (Tháng ${tm.month_chi})**: Nguyệt Kiến là Đề Cương, vạn quẻ chi chủ, chủ quản vượng suy của các hào. Đối với Dụng Thần ${dt.luc_than} (${dt.branch}): **${dtSL.month_status}** (Điểm Nguyệt: ${dtSL.month_score > 0 ? '+' : ''}${dtSL.month_score}).`,
+          `- **Tác động của Nhật Thần (Ngày ${tm.day_can} ${tm.day_chi})**: Nhật Thần là Tể Tướng, vạn sự chi chủ, chủ trì sinh khắc chế hóa và định thời khắc phát tác. Đối với Dụng Thần ${dt.luc_than}: **${dtSL.day_status}** (Điểm Nhật: ${dtSL.day_score > 0 ? '+' : ''}${dtSL.day_score}).`,
+          `- **Trạng thái Tuần Không & Nguyệt Phá**: ${dtSL.tuan_khong_status}. ${dtSL.is_nguyet_pha ? 'Cảnh báo Nguyệt Phá: Cần chờ ngày/tháng Lục Hợp để cứu phá hoặc chuyển sang tháng mới.' : 'Không bị Nguyệt Phá kiềm tỏa.'}`,
+          `- **Hào Thế (Đương số gieo quẻ)**: Hào ${theHao.position} (${theHao.luc_than} ${theHao.branch} ${theHao.element}) đạt **${theSL.power_grade}** (${theSL.month_status}, ${theSL.day_status}). Khẳng định nội lực và tâm thế của bản thân đương số trước sự vụ.`
+        ].join('\n');
+
+        // Khối 3: Hệ Sinh Thái Hào Động & Biến Hóa Khí Số
+        let block3Lines = [];
+        if (dongHaoInfo) {
+          block3Lines.push(`- **Hình thái động hào**: ${dongHaoInfo.category_desc}`);
+          if (dongHaoInfo.moving_haos.length > 0) {
+            block3Lines.push(`- **Danh mục các hào phát động**:`);
+            dongHaoInfo.moving_haos.forEach(mh => {
+              block3Lines.push(`  + Hào ${mh.position} (${mh.luc_than} ${mh.branch} ${mh.element}) động biến sang ${mh.changed_branch} (${mh.changed_luc_than} ${mh.changed_element}): ${mh.role}.`);
+            });
+          }
+          if (dongHaoInfo.tham_sinh_vong_khac) {
+            block3Lines.push(`- ⚡ **Kỳ tích Tham Sinh Vong Khắc**: ${dongHaoInfo.tham_sinh_vong_khac.chain_desc}`);
+          }
+          if (dongHaoInfo.ky_than_che_phuc) {
+            block3Lines.push(`- 🛡️ **Kỵ Thần Bị Chế Phục**: ${dongHaoInfo.ky_than_che_phuc.desc}`);
+          }
+          if (dongHaoInfo.key_moving_yao) {
+            const kmy = dongHaoInfo.key_moving_yao;
+            block3Lines.push(`- 🎯 **Hào Động Then Chốt (Key Driver)**: Hào ${kmy.position} (${kmy.luc_than} ${kmy.branch}) phát động chuyển hóa mang tính bước ngoặt, là ngòi nổ giải phóng hoặc xoay chuyển toàn bộ cục diện.`);
+          }
+        }
+        const block3Content = block3Lines.join('\n');
+
+        // Khối 4: Tương Quan Hào Thế & Hào Ứng
+        const theE = graphData.nodes_state[theHao.position - 1].equilibrium_energy;
+        const ungE = graphData.nodes_state[ungHao.position - 1].equilibrium_energy;
+        const diffE = Math.round((theE - ungE) * 100) / 100;
+        let diffDesc = "";
+        if (Math.abs(diffE) <= 1.0) diffDesc = "Đôi bên giữ thế cân bằng hòa hảo, hợp tác cùng có lợi.";
+        else if (diffE > 1.0) diffDesc = "Đương số giữ thế chủ động và có tầm ảnh hưởng lớn hơn.";
+        else diffDesc = "Hoàn cảnh bên ngoài chiếm thế lấn lướt, đương số cần linh hoạt ứng biến.";
+
+        const block4Content = [
+          `- **Tương quan Thế - Dụng**: ${dungThanInfo.the_dung_relation}. Điểm số kết nối: ${dungThanInfo.the_dung_score > 0 ? '+' : ''}${dungThanInfo.the_dung_score}.`,
+          `- **Tương quan Thế - Ứng**: Hào Thế ${theHao.position} (${theHao.luc_than} ${theHao.branch}) đại diện đương số, Hào Ứng ${ungHao.position} (${ungHao.luc_than} ${ungHao.branch}) đại diện đối tác / hoàn cảnh bên ngoài. Gradient năng lượng: ${diffE}. ${diffDesc}`
+        ].join('\n');
+
+        return {
+          field_name: "PHÂN TÍCH CHUYÊN SÂU DỤNG THẦN, NHẬT NGUYỆT & ĐỘNG HÀO (CỔ PHÁP LỤC HÀO)",
+          analysis_blocks: [
+            { subtitle: "1. Khảo Sát Chi Tiết Dụng Thần & Tứ Thần (Linh Hồn Bàn Quẻ)", content: block1Content },
+            { subtitle: "2. Chi Phối Của Nhật Nguyệt (Đề Cương & Tể Tướng - Vạn Quẻ Chi Chủ)", content: block2Content },
+            { subtitle: "3. Hệ Sinh Thái Hào Động & Biến Hóa Khí Số (Tham Sinh Vong Khắc & Hào Then Chốt)", content: block3Content },
+            { subtitle: "4. Tương Quan Hào Thế & Hào Ứng (Thế Đứng Đương Số & Hoàn Cảnh Khách Quan)", content: block4Content }
+          ]
+        };
+      }
+
       const l2 = multiLens.lens_2_wealth_finance;
       const l3 = multiLens.lens_3_career_status;
       const l4 = multiLens.lens_4_marriage_romance;
@@ -2714,7 +3292,7 @@
   // 11. MASTER PIPELINE ĐIỀU PHỐI (LUC HAO 2.0 PIPELINE)
   // =========================================================================
   const LucHao2Pipeline = {
-    executeFromCoins(coins, dayCan, dayChi, monthChi, question = null) {
+    executeFromCoins(coins, dayCan, dayChi, monthChi, question = null, topicKey = null) {
       const effectiveQuestion = (question && question.trim()) ? question.trim() : "Chiêm đoán thời vận tổng quan";
 
       // 1. Lập quẻ hoàn chỉnh
@@ -2732,25 +3310,32 @@
         h.changed_branch
       ));
 
-      // 3. Trọng số mục tiêu
+      // 3. Phân giải Dụng Thần & Tứ Thần chuyên sâu (Cổ Pháp Bát Cung)
+      const dungThanInfo = DungThanResolver.resolve(effectiveQuestion, topicKey, hexData, monthChi, dayChi, hexData.time_meta.tuan_khong);
+
+      // 4. Phân tích Hệ Sinh Thái Hào Động (Tham Sinh Vong Khắc, Kỵ Thần Chế Phục, Hào Then Chốt)
+      const theHaoNode = hexData.haos[hexData.the_position - 1];
+      const dongHaoInfo = DongHaoEcosystemAnalyzer.analyze(hexData.haos, dungThanInfo, theHaoNode, monthChi, dayChi, hexData.time_meta.tuan_khong);
+
+      // 5. Trọng số mục tiêu
       const intentWeights = MultiObjectiveIntentResolver.resolveIntentWeights(effectiveQuestion);
 
-      // 4. Lan truyền năng lượng đồ thị
+      // 6. Lan truyền năng lượng đồ thị
       const diffusionEngine = new GraphDiffusionEngine(nodesForGraph, monthChi, dayChi);
       const diffusionResult = diffusionEngine.runDiffusion();
       const equilibriumNodes = diffusionResult.nodes_state;
 
-      // 5. Đánh giá hàm hữu dụng U
-      const utilityEval = MultiObjectiveIntentResolver.evaluateUtility(intentWeights, equilibriumNodes);
+      // 7. Đánh giá hàm hữu dụng U (kết hợp 40% Graph + 30% Dụng Thần + 15% Hào Thế + 15% Đa Hào Động)
+      const utilityEval = MultiObjectiveIntentResolver.evaluateUtility(intentWeights, equilibriumNodes, dungThanInfo, dongHaoInfo);
 
-      // 6. Tính Ứng kỳ Lục Hào cổ truyền (Dã Hạc Thần Khóa)
-      const timingEval = HarmonicTimingEngine.calculateResonanceCurve(equilibriumNodes, intentWeights, hexData, monthChi, dayChi);
+      // 8. Tính Ứng kỳ Lục Hào cổ truyền chuẩn Dụng Thần (Dã Hạc Thần Khóa)
+      const timingEval = HarmonicTimingEngine.calculateResonanceCurve(equilibriumNodes, intentWeights, hexData, monthChi, dayChi, dungThanInfo);
 
-      // 7. Nhất Quái Đa Đoán Lý Kế Trung
+      // 9. Nhất Quái Đa Đoán Lý Kế Trung
       const multiLensEngine = new NhatQuaiDaDoanEngine(hexData, diffusionResult, utilityEval);
       const multiLensReport = multiLensEngine.analyzeAllDomains();
 
-      // 8. Báo cáo văn xuôi 7 phần
+      // 10. Báo cáo văn xuôi chuyên sâu
       const metaInfo = {
         algorithm: "Luc Hao 2.0 - Standalone Graph Diffusion & Deep Narrative Synthesis",
         question: effectiveQuestion,
@@ -2768,7 +3353,9 @@
         utilityEval,
         diffusionResult,
         timingEval,
-        multiLensReport
+        multiLensReport,
+        dungThanInfo,
+        dongHaoInfo
       );
 
       return {
@@ -2778,7 +3365,9 @@
         graph_diffusion: diffusionResult,
         harmonic_timing: timingEval,
         nhat_quai_da_doan: multiLensReport,
-        deep_narrative: deepNarrative
+        deep_narrative: deepNarrative,
+        dung_than_analysis: dungThanInfo,
+        dong_hao_ecosystem: dongHaoInfo
       };
     },
 
@@ -2808,6 +3397,27 @@
       lines.push("I. ĐÁNH GIÁ TỔNG QUAN & KẾT QUẢ CHIÊM ĐOÁN");
       lines.push("━".repeat(90));
       lines.push(`>>> ĐÁNH GIÁ CÁT HUNG: [${u.decision}] (Khả năng thành tựu: ${Math.round((u.success_probability || 0.5) * 100)}% • Khí số: ${u.decision.includes('CÁT') ? 'Thuận Lợi' : (u.decision.includes('BÌNH') ? 'Bình Ổn' : 'Nhiều Trắc Trở')})`);
+
+      const dta = result.dung_than_analysis;
+      const dhe = result.dong_hao_ecosystem;
+      if (dta && dta.selected_hao) {
+        lines.push("\n### Thông Số Cốt Lõi (Dụng Thần & Tứ Thần):");
+        lines.push(`- **Dụng Thần [${dta.target_name}]**: Hào ${dta.selected_hao.position} (${dta.selected_hao.luc_than} ${dta.selected_hao.can || ''}-${dta.selected_hao.branch} hành ${dta.selected_hao.element}, lâm ${dta.selected_hao.luc_thu}) • ${dta.dung_than_solar_lunar.power_grade} (${dta.dung_than_solar_lunar.month_status}, ${dta.dung_than_solar_lunar.day_status})`);
+        lines.push(`- **Tứ Thần Phối Chiếu**: Nguyên Thần: ${dta.tu_than.nguyenThan} | Kỵ Thần: ${dta.tu_than.kyThan} | Cừu Thần: ${dta.tu_than.cuuThan}`);
+        lines.push(`- **Hào Thế (Chủ thể đương số)**: Hào ${hd.the_position} (${hd.haos[hd.the_position-1].luc_than} ${hd.haos[hd.the_position-1].branch}) • ${dta.the_solar_lunar.power_grade} | Quan hệ Thế - Dụng: **${dta.the_dung_relation}**`);
+        if (dhe && dhe.category) {
+          lines.push(`- **Hình Thái Động Hào**: ${dhe.category_desc}`);
+          if (dhe.tham_sinh_vong_khac) {
+            lines.push(`  + ⚡ ${dhe.tham_sinh_vong_khac.chain_desc}`);
+          } else if (dhe.ky_than_che_phuc) {
+            lines.push(`  + 🛡️ ${dhe.ky_than_che_phuc.desc}`);
+          }
+          if (dhe.key_moving_yao) {
+            lines.push(`  + 🎯 Hào Động then chốt: Hào ${dhe.key_moving_yao.position} (${dhe.key_moving_yao.luc_than} ${dhe.key_moving_yao.branch})`);
+          }
+        }
+      }
+
       lines.push("\n" + dn.section_1_overview);
 
       const da = dn.direct_answer;
@@ -3014,15 +3624,20 @@
     }
     while (coins.length < 6) coins.push(7);
 
-    const canChi = hexResult.thoi_gian?.canChi || hexResult.canChi || {};
-    const dayCan = canChi.dayGan || (canChi.day ? canChi.day.split(' ')[0] : 'Giáp');
-    const dayChi = canChi.dayZhi || (canChi.day ? canChi.day.split(' ')[1] : 'Tý');
-    const monthChi = canChi.monthZhi || (canChi.month ? canChi.month.split(' ')[1] : 'Dần');
+    const tg = hexResult.thoi_gian || {};
+    const canChi = tg.canChi || hexResult.canChi || {};
+    const dayCan = tg.canNgay || canChi.dayGan || (canChi.day ? canChi.day.split(' ')[0] : (canChi.canNgay || 'Giáp'));
+    const dayChi = tg.chiNgay || canChi.dayZhi || (canChi.day ? canChi.day.split(' ')[1] : (canChi.chiNgay || 'Tý'));
+    const monthChi = tg.thangChi || canChi.monthZhi || (canChi.month ? canChi.month.split(' ')[1] : (canChi.thangChi || 'Dần'));
 
     const question = customQuestion || (TOPIC_PRESETS.find(t => t.key === topicKey)?.label || "");
 
-    const pipelineResult = LucHao2Pipeline.executeFromCoins(coins, dayCan, dayChi, monthChi, question);
+    const pipelineResult = LucHao2Pipeline.executeFromCoins(coins, dayCan, dayChi, monthChi, question, topicKey);
     const reportText = LucHao2Pipeline.formatFullReport(pipelineResult);
+
+    const dta = pipelineResult.dung_than_analysis;
+    const dhe = pipelineResult.dong_hao_ecosystem;
+    const selHao = dta ? dta.selected_hao : pipelineResult.hexagram_details.haos[pipelineResult.hexagram_details.the_position - 1];
 
     return {
       pipelineResult,
@@ -3034,21 +3649,30 @@
         totalScore: Math.round(pipelineResult.intent_utility.total_utility * 10)
       },
       dungThan: {
-        hao: pipelineResult.hexagram_details.haos[pipelineResult.hexagram_details.the_position - 1],
-        isPhuc: false,
-        pos: pipelineResult.hexagram_details.the_position
+        hao: selHao,
+        isPhuc: dta ? dta.is_phuc : false,
+        pos: selHao ? selHao.position : pipelineResult.hexagram_details.the_position,
+        name: dta ? dta.target_name : "Dụng Thần",
+        solarLunar: dta ? dta.dung_than_solar_lunar : null
       },
       theHao: pipelineResult.hexagram_details.haos[pipelineResult.hexagram_details.the_position - 1],
       ungHao: pipelineResult.hexagram_details.haos[pipelineResult.hexagram_details.ung_position - 1],
-      tuThan: {
+      tuThan: dta ? {
+        nguyenThan: { name: dta.tu_than.nguyenThan, haos: dta.nguyen_haos },
+        kyThan: { name: dta.tu_than.kyThan, haos: dta.ky_haos },
+        cuuThan: { name: dta.tu_than.cuuThan, haos: dta.cuu_haos }
+      } : {
         nguyenThan: { name: "Tử Tôn", haos: [] },
         kyThan: { name: "Huynh Đệ", haos: [] }
       },
       theDung: {
         status: pipelineResult.intent_utility.decision,
-        desc: pipelineResult.nhat_quai_da_doan.lens_1_primary_intent.summary
+        relation: dta ? dta.the_dung_relation : "",
+        score: dta ? dta.the_dung_score : 0,
+        desc: (dta ? `Quan hệ Thế - Dụng: ${dta.the_dung_relation}. ` : "") + (pipelineResult.nhat_quai_da_doan.lens_1_primary_intent ? pipelineResult.nhat_quai_da_doan.lens_1_primary_intent.summary : "")
       },
-      dongEffects: (hexResult.haos || []).filter(h => h.isDong).map(h => `Hào ${h.pos} phát động chuyển hóa khí số`),
+      dongEffects: dhe ? dhe.moving_haos.map(mh => `Hào ${mh.position} (${mh.luc_than} ${mh.branch}) động biến ${mh.changed_branch} (${mh.changed_luc_than}): ${mh.role}`) : (hexResult.haos || []).filter(h => h.isDong).map(h => `Hào ${h.pos} phát động chuyển hóa khí số`),
+      dongHaoEcosystem: dhe,
       ungKy: [
         pipelineResult.harmonic_timing.optimal_positive_timing.meaning,
         pipelineResult.harmonic_timing.critical_risk_timing.meaning
