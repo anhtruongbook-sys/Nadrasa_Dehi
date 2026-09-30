@@ -500,7 +500,7 @@
           <div class="tuvi-master-meta-box">
             <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
               <span class="tuvi-master-pill-tag">
-                🧬 <strong>Nhật Chủ:</strong>&nbsp;${escapeHTML(ma.masterOverview?.dayMaster)} (${escapeHTML(ma.masterOverview?.dayMasterWx)}) • ${escapeHTML(ma.masterOverview?.napAm)}
+                🧬 <strong>Nhật Chủ:</strong>&nbsp;${escapeHTML(ma.masterOverview?.dayMasterGan)} (${escapeHTML(ma.masterOverview?.dayMasterYinYang)} ${escapeHTML(ma.masterOverview?.dayMasterWx)}) tọa ${escapeHTML(ma.masterOverview?.dayMasterZhi)} [${escapeHTML(ma.masterOverview?.dayMasterChangSheng)}]
               </span>
               <span class="tuvi-master-pill-tag">
                 🏛️ <strong>Cách Cục:</strong>&nbsp;${escapeHTML(ma.masterOverview?.gejuName)} (${escapeHTML(ma.masterOverview?.bodyStrength)})

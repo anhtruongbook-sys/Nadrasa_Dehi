@@ -73,7 +73,7 @@
     'Canh Tý': 'Bích Thượng Thổ', 'Tân Sửu': 'Bích Thượng Thổ',
     'Nhâm Dần': 'Kim Bạch Kim', 'Quý Mão': 'Kim Bạch Kim',
     'Giáp Thìn': 'Phú Đăng Hỏa', 'Ất Tỵ': 'Phú Đăng Hỏa',
-    'Bính Ngọ': 'Thiên Thượng Hỏa', 'Đinh Mùi': 'Thiên Thượng Hỏa',
+    'Bính Ngọ': 'Thiên Hà Thủy', 'Đinh Mùi': 'Thiên Hà Thủy',
     'Mậu Thân': 'Đại Dịch Thổ', 'Kỷ Dậu': 'Đại Dịch Thổ',
     'Canh Tuất': 'Thoa Xuyến Kim', 'Tân Hợi': 'Thoa Xuyến Kim',
     'Nhâm Tý': 'Tang Đố Mộc', 'Quý Sửu': 'Tang Đố Mộc',
@@ -1496,7 +1496,8 @@
       const dm = chart.day_gan;
       const dmZhi = chart.day_zhi;
       const dmWx = GAN_WU_XING[dm];
-      const napAm = NAP_AM_MAP[`${dm} ${dmZhi}`] || '';
+      const dmYinYang = GAN_YIN_YANG[dm] === '+' ? 'Dương' : 'Âm';
+      const dmChangSheng = calculateChangSheng(dm, dmZhi);
       const baziYear = chart.birth_year;
       const isMale = chart.is_male;
       const body = quant.body_strength || {};
@@ -1533,14 +1534,17 @@
       const unfavorableStr = (gods.unfavorable || []).join(', ') || 'Không đáng kể';
       const climateUseStr = gods.climate_use || '';
 
-      const executiveSummary = `Lá số Bát Tự sở hữu phẩm cách ${gradeBadge} (Điểm định lượng cốt cách: ${overallScore}/100). Bản mệnh Nhật Chủ ${dm} (${dmWx}), nạp âm ${napAm || 'Chính vị'}, thế cục ${body.strength || 'Trung Hòa'} (${body.pattern || 'Chính Cách'}), phối hợp cách cục ${geju.name}. Hệ thống Hỷ Dụng Thần xác định ngũ hành ưu tiên là ${primaryUseStr} (Dụng Thần) và ${favorableStr} (Hỷ Thần); cần tiết chế tác động của ${unfavorableStr} (Kỵ Thần). Cơ cấu Khách - Chủ vận hành theo định hướng tự lập, có khả năng quản trị chuyên môn và thích ứng linh hoạt trước biến chuyển của thời vận.`;
+      const executiveSummary = `Lá số Bát Tự sở hữu phẩm cách ${gradeBadge} (Điểm định lượng cốt cách: ${overallScore}/100). Bản thể Nhật Chủ ${dm} (${dmYinYang} ${dmWx}) tọa Chi Ngày ${dmZhi} ở vị thế ${dmChangSheng}, thế cục ${body.strength || 'Trung Hòa'} (${body.pattern || 'Chính Cách'}), phối hợp cách cục ${geju.name}. Hệ thống Hỷ Dụng Thần xác định ngũ hành ưu tiên là ${primaryUseStr} (Dụng Thần) và ${favorableStr} (Hỷ Thần); cần tiết chế tác động của ${unfavorableStr} (Kỵ Thần). Cơ cấu Khách - Chủ vận hành theo định hướng tự lập, có khả năng quản trị chuyên môn và thích ứng linh hoạt trước biến chuyển của thời vận.`;
 
       const masterOverview = {
         gradeBadge,
         overallScore,
         dayMaster: `${dm} ${dmZhi}`,
+        dayMasterGan: dm,
+        dayMasterZhi: dmZhi,
         dayMasterWx: dmWx,
-        napAm,
+        dayMasterYinYang: dmYinYang,
+        dayMasterChangSheng: dmChangSheng,
         bodyStrength: body.strength,
         pattern: body.pattern,
         gejuName: geju.name,
@@ -1892,7 +1896,7 @@
 
     md.push('### 1. Khảo Luận Cốt Cách Tổng Thể & Trực Giác Mệnh Cục:');
     md.push(`- **Phẩm cách lá số**: **${mo.gradeBadge}** (Điểm định lượng cốt cách: **${mo.overallScore}/100**).`);
-    md.push(`- **Nhật Chủ & Nạp Âm**: **${chart.day_gan} ${chart.day_zhi}** (${GAN_WU_XING[chart.day_gan]} - *${mo.napAm}*).`);
+    md.push(`- **Nhật Chủ & Tọa Chi**: **${chart.day_gan} ${chart.day_zhi}** (${mo.dayMasterYinYang} ${mo.dayMasterWx} tọa Chi ${chart.day_zhi} - Vị thế Trường Sinh: *${mo.dayMasterChangSheng}*).`);
     md.push(`- **Thế Cục & Cách Cục**: **${mo.bodyStrength}** (${mo.pattern}) • **${mo.gejuName}** (${mo.gejuStatus}).`);
     md.push(`- **Hệ Thống Hỷ Dụng Thần**: Dụng Thần: \`${mo.primaryUse}\` | Hỷ Thần: \`${mo.favorable}\` | Kỵ Thần: \`${mo.unfavorable}\`${mo.climateUse ? ` | Điều Hầu: \`${mo.climateUse}\`` : ''}.`);
     md.push(`- **Định vị Khách - Chủ**: ${mo.hostGuestSummary}.`);
