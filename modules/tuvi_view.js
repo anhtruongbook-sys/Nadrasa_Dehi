@@ -776,7 +776,8 @@
       `;
     }
 
-    const { chartData, patternData, evaluatedPalaces, tuHoaData, timingData, scoresData, reportMarkdown } = analysis;
+    const { chartData, patternData, evaluatedPalaces, tuHoaData, timingData, scoresData, masterAssessment, reportMarkdown } = analysis;
+    const ma = masterAssessment || (global.NetaTuViInterpreter?.synthesizeMasterAssessment ? global.NetaTuViInterpreter.synthesizeMasterAssessment(chartData, patternData, evaluatedPalaces, tuHoaData, timingData, scoresData) : null);
     const meta = chartData.meta;
     const targetYear = meta.target_year;
 
@@ -911,15 +912,16 @@
               <!-- Table of Contents -->
               <div class="tuvi-report-toc">
                 <span style="font-weight: 700; font-size: 0.72rem; color: var(--gold-primary); align-self: center; margin-right: 4px;">Mục lục nhanh:</span>
-                <a class="tuvi-report-toc-pill" href="#sec-I">I. Tổng Quan</a>
-                <a class="tuvi-report-toc-pill" href="#sec-II">II. Cách Cục</a>
-                <a class="tuvi-report-toc-pill" href="#sec-III">III. 6 Trụ Cột</a>
-                <a class="tuvi-report-toc-pill" href="#sec-IV">IV. 12 Cung Chức Năng</a>
-                <a class="tuvi-report-toc-pill" href="#sec-V">V. Tứ Hóa Khâm Thiên</a>
-                <a class="tuvi-report-toc-pill" href="#sec-VI">VI. Đại Vận 80 Năm</a>
-                <a class="tuvi-report-toc-pill" href="#sec-VII">VII. Niên Vận ${targetYear}</a>
-                <a class="tuvi-report-toc-pill" href="#sec-VIII">VIII. Đa Năm</a>
-                <a class="tuvi-report-toc-pill" href="#sec-IX">IX. Đạo Hóa Giải</a>
+                <a class="tuvi-report-toc-pill" href="#sec-I">I. Cốt Lõi Tinh Bàn</a>
+                <a class="tuvi-report-toc-pill" href="#sec-II">II. Tổng Luận Vận Trình</a>
+                <a class="tuvi-report-toc-pill" href="#sec-III">III. Cách Cục</a>
+                <a class="tuvi-report-toc-pill" href="#sec-IV">IV. 6 Trụ Cột</a>
+                <a class="tuvi-report-toc-pill" href="#sec-V">V. 12 Cung Chức Năng</a>
+                <a class="tuvi-report-toc-pill" href="#sec-VI">VI. Tứ Hóa Khâm Thiên</a>
+                <a class="tuvi-report-toc-pill" href="#sec-VII">VII. Đại Vận 80 Năm</a>
+                <a class="tuvi-report-toc-pill" href="#sec-VIII">VIII. Niên Vận ${targetYear}</a>
+                <a class="tuvi-report-toc-pill" href="#sec-IX">IX. Đa Năm</a>
+                <a class="tuvi-report-toc-pill" href="#sec-X">X. Đạo Hóa Giải</a>
               </div>
 
               <div class="tuvi-full-report-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-color);">
@@ -937,6 +939,144 @@
             </div>
           </div>
         ` : `
+          <!-- Card 0: TỔNG QUAN CỐT CÁCH & BẢN ĐỒ CHIẾN LƯỢC VẬN TRÌNH ĐỜI NGƯỜI -->
+          ${ma ? `
+          <div class="tuvi-analysis-card" id="tuvi-card-master-assessment" style="margin-bottom: 14px;">
+            <div class="tuvi-card-header">
+              <div class="tuvi-card-title">
+                <span>🧭</span> TỔNG QUAN CỐT CÁCH & BẢN ĐỒ CHIẾN LƯỢC VẬN TRÌNH
+              </div>
+              <span class="tuvi-grade-badge grade-excellent" style="font-size: 0.74rem;">${escapeHTML(ma.masterOverview?.gradeBadge || 'Thượng Cách')}</span>
+            </div>
+
+            <!-- 1. Executive Overview -->
+            <div class="tuvi-master-meta-box">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                <span class="tuvi-master-pill-tag">
+                  🧬 <strong>Bản Mệnh:</strong>&nbsp;${escapeHTML(meta.nap_am)} (${escapeHTML(ma.masterOverview?.menhElement)})
+                </span>
+                <span class="tuvi-master-pill-tag">
+                  🏛️ <strong>Cục Số:</strong>&nbsp;${escapeHTML(meta.cuc_name)}
+                </span>
+                <span class="tuvi-master-pill-tag" style="color: #2ecc71;">
+                  ⚖️ ${escapeHTML(ma.masterOverview?.menhCucStatus)}
+                </span>
+                <span class="tuvi-master-pill-tag" style="color: #3498db;">
+                  👑 Vòng Thái Tuế: ${escapeHTML(ma.masterOverview?.thaiTueGroup)}
+                </span>
+              </div>
+              <div style="font-size: 0.84rem; line-height: 1.6; color: var(--text-color); margin-bottom: 8px;">
+                ${escapeHTML(ma.masterOverview?.executiveSummary)}
+              </div>
+              <div style="font-size: 0.79rem; line-height: 1.5; color: var(--text-color); border-top: 1px dashed rgba(245, 176, 65, 0.25); padding-top: 6px;">
+                🔄 <strong>Bước ngoặt Mệnh - Thân:</strong> ${escapeHTML(ma.masterOverview?.menhThanPivotText)}
+              </div>
+            </div>
+
+            <!-- 2. Bảng Tổng Hợp: Điểm Sáng vs Điểm Cần Lưu Ý -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 14px;">
+              <!-- Cột Điểm Sáng -->
+              <div class="tuvi-master-bright-col">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #2ecc71; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; text-transform: uppercase;">
+                  <span>✨</span> Danh Mục Điểm Sáng & Ưu Thế Thiên Phú
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${(ma.brightSpots || []).map(b => `
+                    <div class="tuvi-master-spot-item bright">
+                      <div style="font-weight: 700; color: #27ae60; margin-bottom: 2px;">${escapeHTML(b.title)}</div>
+                      <div>${escapeHTML(b.detail)}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Cột Điểm Cần Lưu Ý -->
+              <div class="tuvi-master-hazard-col">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #e74c3c; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; text-transform: uppercase;">
+                  <span>⚠️</span> Danh Mục Điểm Cần Lưu Ý & Hóa Giải
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${(ma.hazardSpots || []).length > 0 ? (ma.hazardSpots || []).map(h => `
+                    <div class="tuvi-master-spot-item hazard">
+                      <div style="font-weight: 700; color: #c0392b; margin-bottom: 2px;">${escapeHTML(h.title)}</div>
+                      <div>${escapeHTML(h.detail)}</div>
+                    </div>
+                  `).join('') : `
+                    <div style="font-size: 0.78rem; color: var(--text-muted); padding: 8px;">
+                      Tinh bàn không bị sát tinh hãm địa xâm phạm trực diện, giữ được trạng thái cân bằng.
+                    </div>
+                  `}
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Hướng Đi Vận Trình Đời Người (Tiền Vận, Trung Vận, Hậu Vận) -->
+            <div class="tuvi-master-trajectory-box">
+              <div style="font-size: 0.84rem; font-weight: 700; color: var(--gold-glow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>🗺️</span> BẢN ĐỒ HƯỚNG ĐI VẬN TRÌNH ĐỜI NGƯỜI
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; line-height: 1.55;">
+                <!-- Tiền vận -->
+                <div class="tuvi-master-trajectory-step">
+                  <div style="font-weight: 700; color: var(--gold-primary);">🌱 ${escapeHTML(ma.lifeTrajectory?.tienVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.tienVan?.theme)}</div>
+                  <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.tienVan?.content)}</div>
+                </div>
+                <!-- Trung vận -->
+                <div class="tuvi-master-trajectory-step">
+                  <div style="font-weight: 700; color: var(--gold-primary);">⚡ ${escapeHTML(ma.lifeTrajectory?.trungVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.trungVan?.theme)}</div>
+                  <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.trungVan?.content)}</div>
+                  ${ma.lifeTrajectory?.trungVan?.goldenDecade ? `
+                    <div class="tuvi-master-golden-banner">
+                      <span style="font-weight: 700; color: var(--gold-glow);">🌟 ${escapeHTML(ma.lifeTrajectory?.trungVan?.goldenDecade?.title)}:</span>
+                      <span style="color: var(--text-color);"> ${escapeHTML(ma.lifeTrajectory?.trungVan?.goldenDecade?.detail)}</span>
+                    </div>
+                  ` : ''}
+                  ${ma.lifeTrajectory?.trungVan?.defenseDecade ? `
+                    <div class="tuvi-master-defense-banner">
+                      <span style="font-weight: 700; color: #e67e22;">🛡️ ${escapeHTML(ma.lifeTrajectory?.trungVan?.defenseDecade?.title)}:</span>
+                      <span style="color: var(--text-color);"> ${escapeHTML(ma.lifeTrajectory?.trungVan?.defenseDecade?.detail)}</span>
+                    </div>
+                  ` : ''}
+                </div>
+                <!-- Hậu vận -->
+                <div class="tuvi-master-trajectory-step">
+                  <div style="font-weight: 700; color: var(--gold-primary);">🌾 ${escapeHTML(ma.lifeTrajectory?.hauVan?.period)}: ${escapeHTML(ma.lifeTrajectory?.hauVan?.theme)}</div>
+                  <div style="color: var(--text-color); margin-top: 3px;">${escapeHTML(ma.lifeTrajectory?.hauVan?.content)}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Lời Khuyên Hành Động Thiết Thực Theo 5 Trụ Cột -->
+            <div>
+              <div style="font-size: 0.84rem; font-weight: 700; color: var(--gold-glow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>💡</span> 5 TRỤ CỘT LỜI KHUYÊN HÀNH ĐỘNG CHIẾN LƯỢC
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+                <div class="tuvi-master-pillar-card">
+                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">💼 Công Việc & Sự Nghiệp</div>
+                  <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.career?.advice)}</div>
+                </div>
+                <div class="tuvi-master-pillar-card">
+                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">💰 Tiền Tài & Quản Trị Tài Sản</div>
+                  <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.wealth?.advice)}</div>
+                </div>
+                <div class="tuvi-master-pillar-card">
+                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🏡 Gia Đạo & Hôn Nhân</div>
+                  <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.marriage?.advice)}</div>
+                </div>
+                <div class="tuvi-master-pillar-card">
+                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🌿 Sức Khỏe & Phòng Ngừa</div>
+                  <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.health?.advice)}</div>
+                </div>
+                <div class="tuvi-master-pillar-card">
+                  <div style="font-weight: 700; font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 4px;">🕊️ Đạo Tu Dưỡng Hóa Giải</div>
+                  <div style="font-size: 0.76rem; line-height: 1.5; color: var(--text-color);">${escapeHTML(ma.strategicPillars?.mindfulness?.advice)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          ` : ''}
+
           <!-- 3. Card 1: BẢNG ĐIỂM ĐỊNH LƯỢNG 6 TRỤ CỘT CUỘC ĐỜI (1 - 100) -->
         <div class="tuvi-analysis-card">
           <div class="tuvi-card-header">
