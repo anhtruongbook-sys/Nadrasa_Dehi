@@ -2103,3 +2103,200 @@ body.theme-light .dh-badge-gold {
   color: #b45309;
 }
 
+/* ==========================================================================
+   LỤC HÀO 2.0 DUAL SUBNAV & DASHBOARD CARDS
+   ========================================================================== */
+.dh-analysis-subnav {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid rgba(245, 176, 65, 0.2);
+  padding-bottom: 8px;
+  margin: 14px 0 16px;
+  overflow-x: auto;
+}
+
+.dh-subnav-btn {
+  background: transparent;
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dh-subnav-btn.active, .dh-subnav-btn:hover {
+  background: var(--gold-primary, #f5b041);
+  border-color: var(--gold-glow, #f9e79f);
+  color: #000000;
+}
+
+body.theme-light .dh-subnav-btn {
+  color: #64748b;
+  border-color: rgba(180, 83, 9, 0.25);
+}
+
+body.theme-light .dh-subnav-btn.active, body.theme-light .dh-subnav-btn:hover {
+  background: #d97706;
+  border-color: #b45309;
+  color: #ffffff;
+}
+
+.dh-full-report-wrap {
+  background: rgba(18, 12, 8, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  margin-top: 14px;
+}
+
+body.theme-light .dh-full-report-wrap {
+  background: #ffffff;
+  border-color: rgba(180, 83, 9, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* Specialized Dashboard Cards */
+.dh-gt-card {
+  background: rgba(16, 185, 129, 0.07);
+  border: 1px solid rgba(16, 185, 129, 0.32);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+body.theme-light .dh-gt-card {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.dh-gt-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+body.theme-light .dh-gt-title {
+  color: #047857;
+}
+
+.dh-hazard-card {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+body.theme-light .dh-hazard-card {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.dh-hazard-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+body.theme-light .dh-hazard-title {
+  color: #b91c1c;
+}
+
+.dh-timing-card {
+  background: rgba(59, 130, 246, 0.07);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+body.theme-light .dh-timing-card {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.dh-timing-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+body.theme-light .dh-timing-title {
+  color: #1d4ed8;
+}
+
+.dh-multilens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.dh-lens-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(245, 176, 65, 0.22);
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border-color 0.2s;
+}
+body.theme-light .dh-lens-card {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+.dh-lens-card:hover {
+  border-color: rgba(245, 176, 65, 0.5);
+}
+
+.dh-lens-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed rgba(245, 176, 65, 0.18);
+  padding-bottom: 4px;
+}
+.dh-lens-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold-primary, #f5b041);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+body.theme-light .dh-lens-title {
+  color: #b45309;
+}
+.dh-lens-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(245, 176, 65, 0.15);
+  color: #fbbf24;
+}
+body.theme-light .dh-lens-badge {
+  background: #fef3c7;
+  color: #92400e;
+}
+.dh-lens-body {
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--text-color, #e2e8f0);
+}
+body.theme-light .dh-lens-body {
+  color: #334155;
+}
+
+
+
