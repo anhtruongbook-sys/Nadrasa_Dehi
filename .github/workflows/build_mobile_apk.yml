@@ -76,19 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.1
-          name: "Neta Light v2.8.1 (Chuẩn Hóa UX/UI Di Động: Vuốt Chạm, Unified Control Card & Theming Đồng Nhất Bộ Tam Thức)"
+          tag_name: v2.8.2
+          name: "Neta Light v2.8.2 (Khắc Phục Toàn Diện Undefined Trong Drawer & Hoàn Thiện Bàn Cờ Lục Nhâm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.1
-            - **Chuẩn Hóa Cách Chọn Ngày Giờ (Unified Control Card)**:
-              + Áp dụng thống nhất 100% bộ điều khiển thời gian chuẩn Tử Vi / Bát Tự cho cả Thái Ất Thần Kinh và Lục Nhâm Đại Độn.
-              + Hỗ trợ chuyển đổi mượt mà Dương Lịch <-> Âm Lịch, chọn năm siêu tốc và kết nối Date Picker mặc định của thiết bị.
-            - **Khắc Phục Toàn Diện Khả Năng Vuốt Chạm (Vertical Touch Scroll)**:
-              + Mở khóa cuộn dọc linh hoạt, loại bỏ hoàn toàn hiện tượng kẹt trang trên màn hình di động.
-            - **Xử Lý Triệt Để Tràn Nút & Màu Sắc Tương Phản (Light & Dark Theme Parity)**:
-              + Hàng nút Tứ Kể và Bộ lọc 5 tầng thông tin co dãn 100% vừa vặn khung hình, không còn tràn ngang hay che lấp nút.
-              + Màu sắc các nút bấm, nhãn Tứ Khóa và thông số 12 cung đạt chuẩn tương phản cao trên cả Light Mode và Dark Mode.
-            - **Bảo Mật & Hoàn Tất Trọn Bộ Tam Thức Kinh Điển (Thái Ất - Kỳ Môn - Lục Nhâm)**.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.2
+            - **Khắc Phục Triệt Để Lỗi Undefined trong Drawer Lục Nhâm**:
+              + Chuẩn hóa ánh xạ trường `b.saoKienTru` (Vòng Kiến Trừ) và `b.tenNguyetTuong` (Thần Cung Nguyệt Tướng), loại bỏ 100% các giá trị undefined khi chạm xem chi tiết 12 cung.
+            - **Chuẩn Hóa Bộ Chọn Ngày Giờ (Unified Control Card)**:
+              + Thống nhất bộ điều khiển thời gian chuẩn Tử Vi / Bát Tự cho cả Thái Ất Thần Kinh và Lục Nhâm Đại Độn.
+            - **Khắc Phục Toàn Diện Khả Năng Vuốt Chạm & Tràn Nút**:
+              + Cuộn dọc mượt mà, không bị kẹt trang trên điện thoại; nút bấm co dãn tự động không tràn ngang.
+            - **Đồng Nhất Giao Diện & Màu Sắc Chuẩn WCAG**:
+              + Tương phản cao trên cả Light Mode và Dark Mode.
 
             
             - **Nâng Cao Chiều Sâu & Độ Dài Luận Giải (1.500 - 2.200 từ)**:

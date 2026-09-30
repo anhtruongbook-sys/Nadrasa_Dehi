@@ -903,7 +903,7 @@
             CUNG [${b.diaBan}] · THIÊN BÀN [${b.thienBan}]
           </div>
           <div style="font-size: 10px; color: #94a3b8;">
-            Lục Thân: <strong style="color: #ffffff;">${b.lucThan}</strong> · Bát Môn: <strong style="color: #38bdf8;">${b.batMon}</strong>
+            Lục Thân: <strong style="color: var(--text-primary, #ffffff);">${b.lucThan || '---'}</strong> · Thần Cung: <strong style="color: #38bdf8;">${b.tenNguyetTuong || '---'}</strong>
           </div>
         </div>
         <button onclick="window.LucNhamView.closeDrawer()" style="background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer;">✕</button>
@@ -912,7 +912,7 @@
       <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; line-height: 1.4;">
         <div style="background: rgba(245, 176, 65, 0.1); border-left: 3px solid #f5b041; padding: 6px 8px; border-radius: 0 4px 4px 0;">
           <div style="font-weight: 800; color: var(--gold-primary, #f5b041); margin-bottom: 2px;">
-            Thần Tướng: ${b.thienTuong}
+            Thần Tướng: ${b.thienTuong || '---'}
           </div>
           <div>${tuongDesc}</div>
         </div>
@@ -920,11 +920,11 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
           <div style="background: rgba(20, 2, 5, 0.6); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(245, 176, 65, 0.15);">
             <div style="color: #94a3b8; font-size: 9px;">Vòng Thái Tuế (Thiên Bàn)</div>
-            <div style="font-weight: 700; color: #cbd5e1;">${b.saoThaiTue}</div>
+            <div style="font-weight: 700; color: #cbd5e1;">${b.saoThaiTue || '---'}</div>
           </div>
           <div style="background: rgba(20, 2, 5, 0.6); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(245, 176, 65, 0.15);">
             <div style="color: #94a3b8; font-size: 9px;">Vòng Kiến Trừ (Địa Bàn)</div>
-            <div style="font-weight: 700; color: #38bdf8;">${b.kienTru}</div>
+            <div style="font-weight: 700; color: #38bdf8;">${b.saoKienTru || '---'}</div>
           </div>
         </div>
 
