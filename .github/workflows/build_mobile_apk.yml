@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.10
-          name: "Neta Light v2.8.10 (Sửa Triệt Để Tràn Nút Luận Giải Tử Vi, Khắc Phục Lỗi Chụp Ảnh Màn Hình & Tối Ưu Cỡ Chữ Lá Số 4x4)"
+          tag_name: v2.8.11
+          name: "Neta Light v2.8.11 (Khắc Phục Lỗi Dropdown Bị Tràn & Không Bấm Được Module Dịch Học Cuối Bảng)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.10
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.11
+            - **Khắc Phục Hoàn Toàn Lỗi Module Bị Đẩy Xuống Dưới Không Dùng Được**:
+              + Bổ sung giới hạn chiều cao tối đa thích ứng màn hình `max-height: calc(100dvh - 65px)` cho menu danh mục phân hệ `.deck-dropdown-menu`.
+              + Kích hoạt cuộn mượt độc lập `overflow-y: auto`, `-webkit-overflow-scrolling: touch`, `overscroll-behavior: contain`.
+              + Bổ sung khoảng đệm an toàn `padding-bottom: calc(var(--safe-bottom, 12px) + 24px)` chống bị che khuất bởi thanh điều hướng Home của Android/iOS.
+              + Tinh chỉnh khoảng cách dọc giữa các danh mục giúp vừa vặn tầm mắt và chạm chọn dễ dàng 100% cho mọi phân hệ, đặc biệt là `Bốc Quẻ Dịch Lý (Lục Hào & Mai Hoa)`.
             - **Khắc Phục Hoàn Toàn Lỗi Tràn Nút Luận Giải Sang Phải (Tử Vi Đẩu Số)**:
               + Bảng điều khiển UCC Hàng 4 trên màn hình di động hẹp (≤ 390px) tự động rút gọn nhãn hiển thị thông minh (`📜 Cung`, `📖 Luận`) thông qua `.ucc-txt-long` và `.ucc-txt-short`.
               + Tối ưu thanh Pill `[🏛️ 4x4 | 📜 Cung | 📖 Luận]` với `flex: 1 1 0%`, triệt tiêu 100% hiện tượng tràn lề hoặc va chạm đè lên nút `🔮 Lập Lá Số`.

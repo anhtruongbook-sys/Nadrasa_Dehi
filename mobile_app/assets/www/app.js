@@ -1306,6 +1306,14 @@
         const isOpen = deckDropdown.style.display === 'block';
         deckDropdown.style.display = isOpen ? 'none' : 'block';
         deckSelectorTrigger.classList.toggle('open', !isOpen);
+        if (!isOpen) {
+          const activeItem = deckDropdown.querySelector('.deck-dropdown-item.active');
+          if (activeItem) {
+            setTimeout(() => {
+              activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }, 60);
+          }
+        }
       });
 
       document.addEventListener('click', (e) => {
