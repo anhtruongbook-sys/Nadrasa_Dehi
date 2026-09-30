@@ -1128,7 +1128,7 @@
         <!-- Report Footer Actions: Direct 1-Click Zero-Popup (3-Button Layout) -->
         <div class="tarot-report-actions">
           <button id="btn-tarot-export-pdf" class="tarot-btn-pdf" title="Tải trực tiếp tệp PDF đồ họa A4 có đầy đủ hình ảnh và lời giải">
-            📄 Tải File PDF
+            📄 Tải PDF
           </button>
           <button id="btn-tarot-save-journal" class="tarot-btn-primary" title="Lưu kết quả trải bài vào sổ tay">
             💾 Lưu Nhật Ký
