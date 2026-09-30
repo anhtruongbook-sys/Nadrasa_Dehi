@@ -21,6 +21,7 @@
   let aiPolishedText = '';
   let isAiPolishing = false;
   let aiErrorMessage = '';
+  let aiLoadingStepText = 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tử Vi...';
   let currentReportMode = 'standard'; // 'standard' | 'ai'
   let currentAnalysisSubTab = 'dashboard'; // 'dashboard' or 'full-report'
 
@@ -28,6 +29,7 @@
     aiPolishedText = '';
     isAiPolishing = false;
     aiErrorMessage = '';
+    aiLoadingStepText = 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tử Vi...';
     currentReportMode = 'standard';
     cachedAnalysisResult = null;
     cachedAnalysisKey = '';
@@ -514,6 +516,33 @@
     }
   }
 
+  function splitTuViReportIntoChunks(markdown) {
+    if (!markdown) return [];
+    
+    // Tách thành 3 phân đoạn độc lập để không bao giờ vượt ngưỡng token của LLM
+    const idxIV = markdown.search(/\n(?=##\s+IV\.)/i);
+    const idxV = markdown.search(/\n(?=##\s+V\.)/i);
+
+    if (idxIV !== -1 && idxV !== -1) {
+      return [
+        {
+          title: "Phần 1/3: Cốt Cách Bản Mệnh, Cấu Trúc Cách Cục & 6 Trụ Cột Đời Người",
+          content: markdown.substring(0, idxIV).trim()
+        },
+        {
+          title: "Phần 2/3: Luận Giải Chi Tiết Thập Nhị Cung Chức Năng (12 Cung)",
+          content: markdown.substring(idxIV, idxV).trim()
+        },
+        {
+          title: "Phần 3/3: Tứ Hóa Khâm Thiên Môn, 80 Năm Đại Vận, Niên Vận & Đạo Hóa Giải",
+          content: markdown.substring(idxV).trim()
+        }
+      ];
+    }
+
+    return [{ title: "Toàn Văn Luận Giải Tử Vi Đẩu Số", content: markdown }];
+  }
+
   async function triggerAiPolish(analysisResult) {
     if (!analysisResult) return;
     if (isAiPolishing) return;
@@ -522,6 +551,7 @@
     currentAnalysisSubTab = 'full-report';
     isAiPolishing = true;
     aiErrorMessage = '';
+    aiLoadingStepText = 'Đang chuẩn bị phân đoạn biên tập học thuật Tử Vi...';
     renderTuVi();
 
     try {
@@ -535,37 +565,26 @@
         throw new Error('Chưa cài đặt Google Gemini API Key. Bạn có thể cài đặt khóa tại mục Cài Đặt hoặc trong Trải Bài Tarot để sử dụng chung cho toàn bộ ứng dụng.');
       }
 
-      const prompt = analysisResult.buildEditorialPolishPrompt 
-        ? analysisResult.buildEditorialPolishPrompt()
-        : (global.NetaTuViInterpreter && global.NetaTuViInterpreter.buildEditorialPolishPrompt 
-            ? global.NetaTuViInterpreter.buildEditorialPolishPrompt(analysisResult.reportMarkdown) 
-            : `Bạn là Tổng Biên Tập cao cấp chuyên ngành Tử Vi Đẩu Số. Hãy biên tập trau chuốt văn phong cho toàn văn báo cáo sau mà không tóm tắt hay lược bỏ bất kỳ mục nào:\n\n${analysisResult.reportMarkdown}`);
+      const reportMarkdown = analysisResult.reportMarkdown || '';
+      const chunks = splitTuViReportIntoChunks(reportMarkdown);
 
-      const sysInstruction = "Bạn là Tổng Biên Tập học thuật Tử Vi Đẩu Số cao cấp. Nhiệm vụ duy nhất của bạn là trau chuốt, biên tập và hoàn thiện văn phong từ bản báo cáo offline 100% được cung cấp. TUYỆT ĐỐI NGHIÊM CẤM tóm tắt rút gọn, nghiêm cấm tự ý sáng tác thêm bớt dữ liệu ngoài báo cáo gốc. Độ dài bài xuất bản phải tương đương bản gốc (>500 dòng).";
+      const onProgress = (currentPart, totalParts, partTitle) => {
+        aiLoadingStepText = `Đang trau chuốt ${partTitle}...`;
+        renderTuVi();
+      };
 
-      let responseText = null;
-      if (typeof geminiService.polishReport === 'function') {
-        const response = await geminiService.polishReport(prompt, {
+      let responseText = '';
+      if (typeof geminiService.polishReportInChunks === 'function') {
+        responseText = await geminiService.polishReportInChunks(chunks, {
+          onProgress,
           temperature: 0.3,
-          maxOutputTokens: 8192,
-          timeoutMs: 90000,
-          systemInstruction: sysInstruction
+          maxOutputTokens: 8192
         });
-        responseText = typeof response === 'string' ? response : (response && response.text ? response.text : '');
-      } else if (typeof geminiService.callGeminiCascade === 'function') {
-        const response = await geminiService.callGeminiCascade(prompt, apiKey, {
+      } else if (typeof geminiService.polishReport === 'function') {
+        responseText = await geminiService.polishReport(reportMarkdown, {
           temperature: 0.3,
-          maxOutputTokens: 8192,
-          timeoutMs: 90000,
-          systemInstruction: sysInstruction
+          maxOutputTokens: 8192
         });
-        if (response && response.text) {
-          responseText = response.text.replace(/```(?:text|markdown)?[^\n]*\n?([\s\S]*?)```/g, '$1').replace(/```/g, '').trim();
-        } else if (response && response.error) {
-          throw new Error(response.error);
-        }
-      } else {
-        throw new Error('Dịch vụ Gemini AI chưa sẵn sàng trên trình duyệt.');
       }
 
       if (responseText) {
@@ -584,7 +603,18 @@
 
   function formatMarkdownInline(str) {
     if (!str) return '';
-    return str
+    let s = str;
+    // Tự động đóng thẻ in đậm nếu dở dang
+    const boldMatches = s.match(/\*\*/g);
+    if (boldMatches && boldMatches.length % 2 !== 0) {
+      s += '**';
+    }
+    // Tự động đóng thẻ in nghiêng nếu dở dang
+    const starMatches = s.replace(/\*\*/g, '').match(/\*/g);
+    if (starMatches && starMatches.length % 2 !== 0) {
+      s += '*';
+    }
+    return s
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>')
       .replace(/`([^`\n]+?)`/g, '<code class="tuvi-inline-code">$1</code>');
@@ -604,6 +634,27 @@
       if (!line) {
         if (inList) { html += '</ul>'; inList = false; }
         if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        continue;
+      }
+
+      // Loại bỏ hoàn toàn các ký tự vẽ khung ASCII thô (+-----+ hoặc +====+)
+      if (/^\+[=+\-\|]+\+$/.test(line)) {
+        continue;
+      }
+
+      // Loại bỏ các dòng bảng rỗng (|   |   |)
+      if (/^\|[\s\|]+$/.test(line)) {
+        continue;
+      }
+
+      // Chuyển hóa thanh tiến trình ASCII dạng [Mục] ====> 52/100 thành badge chuẩn
+      const mScore = line.match(/^(\[[^\]]+\]|[A-Za-z0-9\.\s&À-ỹ]+)\s*[-=]{3,}>\s*(.*)$/);
+      if (mScore) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        const name = mScore[1].replace(/[\[\]]/g, '').trim();
+        const val = mScore[2].trim();
+        html += `<div class="neta-score-bar-line"><span class="neta-score-name">${formatMarkdownInline(name)}</span><span class="neta-score-val">${formatMarkdownInline(val)}</span></div>`;
         continue;
       }
 
@@ -635,6 +686,9 @@
         }
 
         const cells = line.split('|').slice(1, -1).map(c => c.trim());
+        if (cells.every(c => !c)) {
+          continue;
+        }
         if (!inTable) {
           inTable = true;
           html += '<div class="tuvi-table-wrap"><table class="tuvi-report-table"><thead><tr>';
@@ -811,7 +865,7 @@
                 <div class="neta-inline-ai-loading">
                   <div class="neta-ai-loading-step">
                     <span class="neta-ai-sparkle-icon">✨</span>
-                    <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tử Vi...</span>
+                    <span>${aiLoadingStepText || 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tử Vi...'}</span>
                   </div>
                   <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
                 </div>

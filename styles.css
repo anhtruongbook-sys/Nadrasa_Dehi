@@ -15561,3 +15561,60 @@ body.theme-light .neta-inline-ai-loading {
   background: #fdfaf3;
   border-color: #e0d0b8;
 }
+
+/* Progress/Score Line Badge (thay thế cho thanh tiến trình vẽ bằng ASCII thô kệch) */
+.neta-score-bar-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(245, 176, 65, 0.1);
+  border: 1px solid rgba(245, 176, 65, 0.28);
+  padding: 6px 14px;
+  border-radius: 8px;
+  margin: 6px 0;
+  font-size: 0.84rem;
+  transition: all 0.2s;
+}
+
+body.theme-light .neta-score-bar-line {
+  background: #fdfaf3;
+  border-color: #d4af37;
+}
+
+.neta-score-name {
+  font-weight: 700;
+  color: var(--gold-glow, #f9e79f);
+}
+
+body.theme-light .neta-score-name {
+  color: #7d5a0c;
+}
+
+.neta-score-val {
+  font-weight: 800;
+  color: var(--gold-primary, #f5b041);
+  background: rgba(245, 176, 65, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+body.theme-light .neta-score-val {
+  color: #8b6508;
+  background: #f4ecd8;
+}
+
+/* Tiến trình phân đoạn trau chuốt AI (Multi-Step Progress Indicator) */
+.neta-ai-step-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold-glow, #f9e79f);
+  margin-bottom: 6px;
+}
+
+body.theme-light .neta-ai-step-progress {
+  color: #8b6508;
+}
+

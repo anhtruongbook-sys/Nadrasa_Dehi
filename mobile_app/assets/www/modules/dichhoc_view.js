@@ -911,7 +911,7 @@
             <div class="neta-inline-ai-loading">
               <div class="neta-ai-loading-step">
                 <span class="neta-ai-sparkle-icon">✨</span>
-                <span>Đang tiến hành biên tập, trau chuốt ngôn từ Dịch lý và phân tích khí số...</span>
+                <span>${state.aiLoadingStepText || 'Đang tiến hành biên tập, trau chuốt ngôn từ Dịch lý và phân tích khí số...'}</span>
               </div>
               <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
             </div>
@@ -1118,6 +1118,25 @@
       const l = rawLine.trim();
       if (!l) continue;
 
+      // Loại bỏ hoàn toàn các ký tự vẽ khung ASCII thô (+-----+ hoặc +====+)
+      if (/^\+[=+\-\|]+\+$/.test(l)) {
+        continue;
+      }
+
+      // Loại bỏ các dòng bảng rỗng (|   |   |)
+      if (/^\|[\s\|]+$/.test(l)) {
+        continue;
+      }
+
+      // Chuyển hóa thanh tiến trình ASCII dạng [Mục] ====> 52/100 thành badge chuẩn
+      const mScore = l.match(/^(\[[^\]]+\]|[A-Za-z0-9\.\s&À-ỹ]+)\s*[-=]{3,}>\s*(.*)$/);
+      if (mScore) {
+        const name = mScore[1].replace(/[\[\]]/g, '').trim();
+        const val = mScore[2].trim();
+        out += `<div class="neta-score-bar-line"><span class="neta-score-name">${formatInlineMarkup(name)}</span><span class="neta-score-val">${formatInlineMarkup(val)}</span></div>`;
+        continue;
+      }
+
       // 1. Phán đoán cốt lõi: ">>> PHÁN ĐOÁN: [...] (Điểm khí số: ...)"
       if (l.startsWith('>>> PHÁN ĐOÁN:') || l.includes('PHÁN ĐOÁN: [')) {
         const matchPd = l.match(/PHÁN ĐOÁN:\s*\[([^\]]+)\](?:\s*\(Điểm khí số:\s*([^\)]+)\))?/i);
@@ -1190,7 +1209,16 @@
   // Định dạng chữ in đậm, in nghiêng, các badge nhãn và mũi tên
   function formatInlineMarkup(str) {
     if (!str) return '';
-    let s = escapeReportHtml(str);
+    let s = str;
+    const boldMatches = s.match(/\*\*/g);
+    if (boldMatches && boldMatches.length % 2 !== 0) {
+      s += '**';
+    }
+    const starMatches = s.replace(/\*\*/g, '').match(/\*/g);
+    if (starMatches && starMatches.length % 2 !== 0) {
+      s += '*';
+    }
+    s = escapeReportHtml(s);
 
     // Chữ in đậm **text**
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
@@ -1534,12 +1562,18 @@
         state.currentReportMode = 'ai';
         state.isInterpretingAI = true;
         state.aiErrorMessage = null;
+        state.aiLoadingStepText = 'Đang chuẩn bị phân đoạn biên tập học thuật Lục Hào...';
         render();
         try {
+          const onProgress = (currentPart, totalParts, partTitle) => {
+            state.aiLoadingStepText = `Đang trau chuốt ${partTitle}...`;
+            render();
+          };
           const aiRes = await global.NetaLucHaoInterpreter.interpretHexagram(state.lucHao.result, {
             topicKey: state.selectedTopic,
             customQuestion: state.purpose,
-            useAI: true
+            useAI: true,
+            onProgress
           });
           if (aiRes.aiUsed && aiRes.reportText) {
             state.aiPolishedText = aiRes.reportText;

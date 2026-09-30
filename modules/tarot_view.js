@@ -192,7 +192,16 @@
 
   function formatMarkdownInline(str) {
     if (!str) return '';
-    return str
+    let s = str;
+    const boldMatches = s.match(/\*\*/g);
+    if (boldMatches && boldMatches.length % 2 !== 0) {
+      s += '**';
+    }
+    const starMatches = s.replace(/\*\*/g, '').match(/\*/g);
+    if (starMatches && starMatches.length % 2 !== 0) {
+      s += '*';
+    }
+    return s
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>')
       .replace(/`([^`\n]+?)`/g, '<code class="tarot-deep-inline-code">$1</code>');
@@ -234,6 +243,26 @@
 
       if (!line) {
         if (inList) { html += '</ul>'; inList = false; }
+        continue;
+      }
+
+      // Loại bỏ hoàn toàn các ký tự vẽ khung ASCII thô (+-----+ hoặc +====+)
+      if (/^\+[=+\-\|]+\+$/.test(line)) {
+        continue;
+      }
+
+      // Loại bỏ các dòng bảng rỗng (|   |   |)
+      if (/^\|[\s\|]+$/.test(line)) {
+        continue;
+      }
+
+      // Chuyển hóa thanh tiến trình ASCII dạng [Mục] ====> 52/100 thành badge chuẩn
+      const mScore = line.match(/^(\[[^\]]+\]|[A-Za-z0-9\.\s&À-ỹ]+)\s*[-=]{3,}>\s*(.*)$/);
+      if (mScore) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const name = mScore[1].replace(/[\[\]]/g, '').trim();
+        const val = mScore[2].trim();
+        html += `<div class="neta-score-bar-line"><span class="neta-score-name">${formatMarkdownInline(name)}</span><span class="neta-score-val">${formatMarkdownInline(val)}</span></div>`;
         continue;
       }
 
@@ -891,7 +920,7 @@
             <div class="neta-inline-ai-loading">
               <div class="neta-ai-loading-step">
                 <span class="neta-ai-sparkle-icon">✨</span>
-                <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...</span>
+                <span>${report.aiLoadingStepText || 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...'}</span>
               </div>
               <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
             </div>
@@ -1416,12 +1445,17 @@
 
     report.isDeepLoading = true;
     report.deepError = null;
+    report.aiLoadingStepText = 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và chiều sâu tâm lý cả 6 mục...';
     renderTarot();
 
     try {
       const qInput = document.getElementById('tarot-question-input');
       const question = qInput ? qInput.value.trim() : (report.question || '');
-      const res = await global.NetaGeminiService.interpretTarotReading(report, question);
+      const onProgress = (currentPart, totalParts, partTitle) => {
+        report.aiLoadingStepText = `Đang trau chuốt ${partTitle}...`;
+        renderTarot();
+      };
+      const res = await global.NetaGeminiService.interpretTarotReading(report, question, { onProgress });
       
       report.isDeepLoading = false;
       if (res && res.text) {

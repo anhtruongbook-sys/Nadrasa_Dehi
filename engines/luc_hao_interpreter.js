@@ -917,15 +917,67 @@ ${deterministicReportText}
         };
       }
 
-      const prompt = buildEditorialPolishPrompt(deterministicText, factSheet);
-      const aiResult = await global.NetaGeminiService.callGeminiCascade(prompt, apiKey, {
-        temperature: 0.5,
-        maxOutputTokens: 4096,
-        timeoutMs: 45000
-      });
+      const idxV = deterministicText.search(/\n(?=(?:##\s+)?V\.\s+)/i);
+      let rawAiText = '';
+      let usedModel = 'gemini-cascade';
 
-      if (aiResult && aiResult.text) {
-        let cleanedText = aiResult.text.trim();
+      if (idxV !== -1 && typeof global.NetaGeminiService.polishReportInChunks === 'function') {
+        const part1Text = deterministicText.substring(0, idxV).trim();
+        const part2Text = deterministicText.substring(idxV).trim();
+
+        const chunks = [
+          {
+            title: "Phần 1/2: Khí Vận Bàn Quẻ, Dụng Thần & Cân Lực Tứ Thần",
+            content: part1Text,
+            sysInstruction: `Bạn là Bậc Thầy Tổng Biên Tập Kinh Dịch Lục Hào & Triết học cổ điển uyên bác. Hãy trau chuốt, biên tập lại các Mục I, II, III, IV từ bản thuật toán gốc một cách sâu sắc, giàu chất văn học và truyền cảm hứng.
+BẮT BUỘC 100% GIỮ NGUYÊN TÊN GỌI VÀ SỐ THỨ TỰ CỦA CÁC MỤC:
+## I. TỔNG QUAN BÀN QUẺ & PHÁN QUYẾT CỐT LÕI
+## II. DỤNG THẦN CHUYÊN KHẢO & CÂN LỰC KHÍ SỐ
+## III. HỆ THỐNG TỨ THẦN TRỢ KHÍ (NGUYÊN, KỴ, CỪU, TIẾT)
+## IV. CHUYÊN ĐỀ HÀO TÀNG PHỤC (PHỤC THẦN KHẢO LUẬN)
+${factSheet.question ? `Ánh xạ sâu sắc với sự vụ người hỏi: "${factSheet.question}".` : ''}
+TUYỆT ĐỐI KHÔNG TỰ BỎ MỤC, KHÔNG TÓM TẮT RÚT GỌN, KHÔNG DÙNG TỪ NGỮ QUẢNG CÁO.`
+          },
+          {
+            title: "Phần 2/2: Hào Thế Biến Hóa, Ứng Kỳ & Lời Khuyên Thực Chiến",
+            content: part2Text,
+            sysInstruction: `Bạn là Bậc Thầy Tổng Biên Tập Kinh Dịch Lục Hào & Triết học cổ điển uyên bác. Hãy trau chuốt, biên tập lại các Mục V, VI, VII, VIII từ bản thuật toán gốc một cách sâu sắc, giàu chất văn học và truyền cảm hứng.
+BẮT BUỘC 100% GIỮ NGUYÊN TÊN GỌI VÀ SỐ THỨ TỰ CỦA CÁC MỤC:
+## V. TÂM PHÁP HÀO THẾ & TIẾN TRÌNH NHÂN QUẢ
+## VI. ĐỊNH THỜI ĐIỂM ỨNG KỲ
+## VII. PHONG THỦY GIA TRẠCH 6 HÀO
+## VIII. LỜI KHUYÊN DỊCH LÝ THỰC CHIẾN
+${factSheet.question ? `Ánh xạ sâu sắc với sự vụ người hỏi: "${factSheet.question}".` : ''}
+TUYỆT ĐỐI KHÔNG TỰ BỎ MỤC, KHÔNG TÓM TẮT RÚT GỌN, KHÔNG DÙNG TỪ NGỮ QUẢNG CÁO.`
+          }
+        ];
+
+        try {
+          rawAiText = await global.NetaGeminiService.polishReportInChunks(chunks, {
+            onProgress: options.onProgress,
+            temperature: 0.35,
+            maxOutputTokens: 8192,
+            apiKey
+          });
+          usedModel = (global.NetaGeminiService.getActiveModelName && global.NetaGeminiService.getActiveModelName()) || 'gemini-cascade';
+        } catch (err) {
+          console.warn('Luc Hao chunked polishing fallback to single call:', err);
+        }
+      }
+
+      if (!rawAiText) {
+        const prompt = buildEditorialPolishPrompt(deterministicText, factSheet);
+        const aiResult = await global.NetaGeminiService.callGeminiCascade(prompt, apiKey, {
+          temperature: 0.35,
+          maxOutputTokens: 8192,
+          timeoutMs: 60000
+        });
+        rawAiText = aiResult?.text || '';
+        usedModel = aiResult?.model || usedModel;
+      }
+
+      if (rawAiText) {
+        let cleanedText = rawAiText.trim();
 
         // 1. Loại bỏ các khối code block thừa ```text ... ``` và bảng thô
         cleanedText = cleanedText.replace(/```(?:text|markdown)?[^\n]*\n?([\s\S]*?)```/g, (match, p1) => {

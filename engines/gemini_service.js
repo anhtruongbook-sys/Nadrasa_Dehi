@@ -452,12 +452,65 @@ ${offlineReportText}`;
   }
 
   /**
-   * Hàm chính thực thi biên tập lại trải bài Tarot bằng AI
+   * Hàm chính thực thi biên tập lại trải bài Tarot bằng AI (Hỗ trợ Chunking chống ngắt giữa chừng)
    */
-  async function interpretTarotReading(report, customQuestion) {
-    const key = getActiveKey();
+  async function interpretTarotReading(report, customQuestion, options = {}) {
+    const key = (options && options.apiKey) || getActiveKey();
     if (!key) {
       return { text: null, error: 'Chưa cài đặt Khóa API cá nhân. Hãy mở hộp thoại bí mật để cài đặt.' };
+    }
+
+    const questionToUse = (customQuestion || (report && report.question) || '').trim();
+    let offlineReportText = '';
+    if (global.NetaTarotEngine && typeof global.NetaTarotEngine.formatMarkdownReport === 'function') {
+      offlineReportText = global.NetaTarotEngine.formatMarkdownReport(report);
+    }
+
+    // Kiểm tra xem có đủ dài để phân đoạn (từ 3 lá bài trở lên)
+    const idxV = offlineReportText ? offlineReportText.search(/\n(?=##\s+V\.)/i) : -1;
+    const hasManyCards = report && report.cardReadings && report.cardReadings.length >= 3;
+
+    if (idxV !== -1 && hasManyCards) {
+      const part1Text = offlineReportText.substring(0, idxV).trim();
+      const part2Text = offlineReportText.substring(idxV).trim();
+
+      const chunks = [
+        {
+          title: "Phần 1/2: Cốt Tủy, Mạch Truyện & Mẫu Hình Cổ Mẫu",
+          content: part1Text,
+          sysInstruction: `Bạn là Bậc Thầy Tổng Biên Tập Tarot & Tâm lý học Cổ mẫu Jungian uyên bác. Hãy trau chuốt, biên tập lại các Mục I, II, III, IV từ bản thuật toán gốc một cách sâu sắc, giàu chất văn học và truyền cảm hứng.
+BẮT BUỘC 100% GIỮ NGUYÊN TÊN GỌI VÀ SỐ THỨ TỰ CỦA CÁC MỤC:
+## I. LÁ BÀI CỐT TỦY (THE QUINTESSENCE CARD)
+## II. TỔNG LUẬN MẠCH TRUYỆN BIỆN CHỨNG (STORYLINE NARRATIVE)
+## III. MẪU HÌNH CỔ MẪU NỔI BẬT (ARCHETYPAL PATTERNS)
+## IV. PHÂN TÍCH ĐỊNH LƯỢNG VĨ MÔ (MACRO SCAN)
+${questionToUse ? `Ánh xạ sâu sắc với câu hỏi: "${questionToUse}".` : ''}
+TUYỆT ĐỐI KHÔNG TỰ BỎ MỤC, KHÔNG TÓM TẮT RÚT GỌN, KHÔNG DÙNG TỪ NGỮ QUẢNG CÁO.`
+        },
+        {
+          title: "Phần 2/2: Chi Tiết Từng Vị Trí & Lời Khuyên Hành Động",
+          content: part2Text,
+          sysInstruction: `Bạn là Bậc Thầy Tổng Biên Tập Tarot & Tâm lý học Cổ mẫu Jungian uyên bác. Hãy trau chuốt, biên tập lại các Mục V và VI từ bản thuật toán gốc một cách sâu sắc, giàu chất văn học và truyền cảm hứng.
+BẮT BUỘC 100% GIỮ NGUYÊN TÊN GỌI VÀ SỐ THỨ TỰ CỦA CÁC MỤC:
+## V. LUẬN GIẢI CHI TIẾT TỪNG VỊ TRÍ
+## VI. TỔNG KẾT & LỜI KHUYÊN HÀNH ĐỘNG (ACTIONABLE PRESCRIPTION)
+${questionToUse ? `Ánh xạ sâu sắc với câu hỏi: "${questionToUse}".` : ''}
+TUYỆT ĐỐI KHÔNG TỰ BỎ MỤC, KHÔNG TÓM TẮT RÚT GỌN, KHÔNG DÙNG TỪ NGỮ QUẢNG CÁO.`
+        }
+      ];
+
+      try {
+        const fullPolished = await polishReportInChunks(chunks, {
+          onProgress: options.onProgress,
+          temperature: 0.35,
+          maxOutputTokens: 8192,
+          timeoutMs: 90000,
+          apiKey: key
+        });
+        return { text: fullPolished, error: null };
+      } catch (err) {
+        console.warn('Tarot chunked polishing error, falling back to single call:', err);
+      }
     }
 
     const prompt = buildHermeticPrompt(report, customQuestion);
@@ -518,6 +571,61 @@ ${offlineReportText}`;
   }
 
   /**
+   * Biên tập báo cáo theo từng phân đoạn tuần tự (Chunked Sequential Polishing)
+   * Giúp văn bản dài (>500 dòng) không bao giờ bị cắt ngắt giữa chừng do giới hạn token của LLM.
+   * Cung cấp callback onProgress(currentPart, totalParts, partTitle) để cập nhật UI thời gian thực.
+   */
+  async function polishReportInChunks(chunks, options = {}) {
+    if (!Array.isArray(chunks) || chunks.length === 0) return '';
+    const onProgress = typeof options.onProgress === 'function' ? options.onProgress : () => {};
+    const totalParts = chunks.length;
+    const polishedParts = [];
+
+    for (let i = 0; i < totalParts; i++) {
+      const chunk = chunks[i];
+      const partNum = i + 1;
+      const partTitle = chunk.title || `Phần ${partNum}`;
+
+      onProgress(partNum, totalParts, partTitle);
+
+      const prompt = chunk.prompt || [
+        `BẠN LÀ TỔNG BIÊN TẬP CAO CẤP CHUYÊN NGÀNH HỌC THUẬT ĐÔNG PHƯƠNG.`,
+        `NHIỆM VỤ: BIÊN TẬP VÀ TRAU CHUỐT VĂN PHONG CHO ${partTitle.toUpperCase()} (PHẦN ${partNum}/${totalParts}) TỪ BẢN GỐC DƯỚI ĐÂY.`,
+        ``,
+        `[QUY TẮC ĐỊNH DẠNG TUYỆT ĐỐI - KHÔNG ĐƯỢC VI PHẠM]:`,
+        `1. TUYỆT ĐỐI KHÔNG DÙNG KÝ TỰ VẼ KHUNG ASCII (như +----+----+, |---|---|, ====>).`,
+        `2. TUYỆT ĐỐI KHÔNG VẼ THANH TIẾN TRÌNH BẰNG DẤU GẠCH HOẶC DẤU BẰNG (như [Mục] ========> 50/100).`,
+        `3. Mọi bảng biểu bắt buộc dùng cú pháp bảng chuẩn Markdown GitHub (| Cột 1 | Cột 2 | kèm | :--- | :--- |). Tuyệt đối không tạo dòng bảng rỗng (| | |).`,
+        `4. TUYỆT ĐỐI KHÔNG TỰ Ý TÓM TẮT, KHÔNG CẮT NGẮT GIỮA CHỪNG. Phải hoàn thiện toàn bộ nội dung của phần này đến câu cuối cùng.`,
+        `5. Giữ nguyên toàn bộ số liệu, tiêu đề chuyên mục, tên sao, hào quẻ, tổ hợp bài từ bản gốc.`,
+        ``,
+        `--- NỘI DUNG GỐC CỦA ${partTitle.toUpperCase()} ---`,
+        chunk.content || chunk.rawContent || '',
+        `--- HẾT NỘI DUNG GỐC ---`,
+        ``,
+        `Hãy xuất bản toàn văn phần đã được trau chuốt hoàn chỉnh ngay dưới đây:`
+      ].join('\n');
+
+      try {
+        const polished = await polishReport(prompt, {
+          temperature: options.temperature || 0.3,
+          maxOutputTokens: options.maxOutputTokens || 8192,
+          timeoutMs: options.timeoutMs || 90000,
+          systemInstruction: chunk.systemInstruction || options.systemInstruction || "Bạn là Tổng Biên Tập học thuật. Nhiệm vụ duy nhất là trau chuốt văn phong mượt mà, sâu sắc từ nội dung gốc được cung cấp. Tuyệt đối không vẽ khung ASCII (+---+), không cắt ngắt câu giữa chừng."
+        });
+        polishedParts.push(polished || chunk.content || chunk.rawContent || '');
+      } catch (err) {
+        console.warn(`[GeminiService] Error polishing chunk ${partNum}/${totalParts} ("${partTitle}"):`, err);
+        // Fallback: nếu 1 chunk gặp sự cố, giữ nguyên nội dung gốc của chunk đó để báo cáo không bị gián đoạn
+        polishedParts.push(chunk.content || chunk.rawContent || '');
+        if (options.throwOnError) throw err;
+      }
+    }
+
+    return polishedParts.join('\n\n---\n\n');
+  }
+
+  /**
    * Mở modal cấu hình khóa Gemini dùng chung
    */
   function openConfigModal() {
@@ -540,6 +648,7 @@ ${offlineReportText}`;
     setDeepSynthesisEnabled,
     interpretTarotReading,
     polishReport,
+    polishReportInChunks,
     openConfigModal,
     discoverAvailableModels,
     callGeminiCascade,

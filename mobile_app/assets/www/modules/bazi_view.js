@@ -23,11 +23,13 @@
   let aiPolishedText = null;
   let aiErrorMessage = null;
   let currentReportMode = 'standard'; // 'standard' | 'ai'
+  let aiLoadingStepText = 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tứ Trụ...';
 
   function resetBaziAiState() {
     aiPolishedText = null;
     isAiPolishing = false;
     aiErrorMessage = null;
+    aiLoadingStepText = 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tứ Trụ...';
     currentReportMode = 'standard';
     currentAnalysisCache = null;
   }
@@ -90,7 +92,16 @@
 
   function formatMarkdownInline(text) {
     if (!text) return '';
-    return text
+    let s = text;
+    const boldMatches = s.match(/\*\*/g);
+    if (boldMatches && boldMatches.length % 2 !== 0) {
+      s += '**';
+    }
+    const starMatches = s.replace(/\*\*/g, '').match(/\*/g);
+    if (starMatches && starMatches.length % 2 !== 0) {
+      s += '*';
+    }
+    return s
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
@@ -110,6 +121,27 @@
       if (!line) {
         if (inList) { html += '</ul>'; inList = false; }
         if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        continue;
+      }
+
+      // Loại bỏ hoàn toàn các ký tự vẽ khung ASCII thô (+-----+ hoặc +====+)
+      if (/^\+[=+\-\|]+\+$/.test(line)) {
+        continue;
+      }
+
+      // Loại bỏ các dòng bảng rỗng (|   |   |)
+      if (/^\|[\s\|]+$/.test(line)) {
+        continue;
+      }
+
+      // Chuyển hóa thanh tiến trình ASCII dạng [Mục] ====> 52/100 thành badge chuẩn
+      const mScore = line.match(/^(\[[^\]]+\]|[A-Za-z0-9\.\s&À-ỹ]+)\s*[-=]{3,}>\s*(.*)$/);
+      if (mScore) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        const name = mScore[1].replace(/[\[\]]/g, '').trim();
+        const val = mScore[2].trim();
+        html += `<div class="neta-score-bar-line"><span class="neta-score-name">${formatMarkdownInline(name)}</span><span class="neta-score-val">${formatMarkdownInline(val)}</span></div>`;
         continue;
       }
 
@@ -140,6 +172,9 @@
         }
 
         const cells = line.split('|').slice(1, -1).map(c => c.trim());
+        if (cells.every(c => !c)) {
+          continue;
+        }
         if (!inTable) {
           inTable = true;
           html += '<div class="bazi-table-wrap"><table class="bazi-report-table"><thead><tr>';
@@ -236,6 +271,28 @@
     }, 2800);
   }
 
+  function splitBaziReportIntoChunks(markdown) {
+    if (!markdown) return [];
+    
+    // Tách thành 2 phân đoạn độc lập để không bao giờ vượt ngưỡng token của LLM
+    const idxVI = markdown.search(/\n(?=##\s+VI\.)/i);
+
+    if (idxVI !== -1) {
+      return [
+        {
+          title: "Phần 1/2: Tứ Trụ, Ngũ Hành, Manh Phái Khách Chủ & 6 Trụ Cột Đời Người",
+          content: markdown.substring(0, idxVI).trim()
+        },
+        {
+          title: "Phần 2/2: 10 Đại Vận Cuộc Đời, Niên Vận 12 Lưu Nguyệt & Dưỡng Mệnh Đạo",
+          content: markdown.substring(idxVI).trim()
+        }
+      ];
+    }
+
+    return [{ title: "Toàn Văn Luận Giải Bát Tự Tử Bình", content: markdown }];
+  }
+
   function triggerAiPolish(analysisObj) {
     if (!analysisObj || !analysisObj.reportMarkdown) return;
     const geminiService = global.NetaGeminiService;
@@ -258,48 +315,29 @@
     currentReportMode = 'ai';
     currentAnalysisSubTab = 'report';
     aiErrorMessage = null;
+    aiLoadingStepText = 'Đang chuẩn bị phân đoạn biên tập học thuật Tứ Trụ...';
     renderBazi();
 
-    const prompt = `Bạn là Tổng Biên Tập cao cấp chuyên ngành Bát Tự Tử Bình & Manh Phái học thuật.
-Dưới đây là TOÀN VĂN BẢN LUẬN GIẢI BÁT TỰ ĐẦY ĐỦ (>650 dòng) do hệ thống thuật toán xác định tính toán độc lập.
+    const reportMarkdown = analysisObj.reportMarkdown || '';
+    const chunks = splitBaziReportIntoChunks(reportMarkdown);
 
-NHIỆM VỤ BẮT BUỘC (ZERO-TRUNCATION & ZERO-FABRICATION):
-1. Trau chuốt văn phong mượt mà, uyển chuyển, giàu tính triết lý nhân văn Đông phương và chuẩn mực học thuật.
-2. TUYỆT ĐỐI KHÔNG ĐƯỢC TÓM TẮT, KHÔNG RÚT GỌN NỘI DUNG: Phải giữ lại đầy đủ toàn bộ 9 phần chính (từ Phần I đến Phần IX) với dung lượng và độ sâu chi tiết tương đương bản gốc (>500 dòng).
-3. GIỮ NGUYÊN TOÀN BỘ CÁC BẢNG BIỂU DẠNG MARKDOWN (Tứ Trụ, Thần Sát, Cung Vị, Thập Thần, Trường Sinh...).
-4. GIỮ NGUYÊN TOÀN BỘ 10 ĐẠI VẬN, CÁC MỐC BIẾN CỐ ĐỜI NGƯỜI VÀ 12 LƯU NGUYỆT NĂM KHẢO SÁT.
-5. KHÔNG THAY ĐỔI CÁC SỐ LIỆU ĐỊNH LƯỢNG, ĐIỂM SỐ, DỤNG THẦN, HỶ THẦN, KỴ THẦN HOẶC KẾT LUẬN MỆNH LÝ.
-6. KHÔNG DÙNG TỪ NGỮ QUẢNG CÁO, GIẬT GÂN, THỔI PHỒNG.
-
---- BẢN BÁO CÁO BÁT TỰ THUẬT TOÁN GỐC CẦN BIÊN TẬP ---
-${analysisObj.reportMarkdown}
---- HẾT BẢN BÁO CÁO GỐC ---
-
-Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn chỉnh ngay dưới đây:`;
-
-    const sysInstruction = "Bạn là Tổng Biên Tập học thuật Bát Tự Tử Bình & Manh Phái cao cấp. Nhiệm vụ duy nhất của bạn là trau chuốt, biên tập và hoàn thiện văn phong từ bản luận giải offline 100% được cung cấp. TUYỆT ĐỐI NGHIÊM CẤM tóm tắt rút gọn, nghiêm cấm tự ý sáng tác thêm bớt dữ liệu ngoài bản gốc. Độ dài bài xuất bản phải tương đương bản gốc (>500 dòng).";
+    const onProgress = (currentPart, totalParts, partTitle) => {
+      aiLoadingStepText = `Đang trau chuốt ${partTitle}...`;
+      renderBazi();
+    };
 
     const callAI = async () => {
-      if (typeof geminiService.polishReport === 'function') {
-        const res = await geminiService.polishReport(prompt, {
+      if (typeof geminiService.polishReportInChunks === 'function') {
+        return await geminiService.polishReportInChunks(chunks, {
+          onProgress,
           temperature: 0.3,
-          maxOutputTokens: 8192,
-          timeoutMs: 90000,
-          systemInstruction: sysInstruction
+          maxOutputTokens: 8192
         });
-        return typeof res === 'string' ? res : (res && res.text ? res.text : '');
-      } else if (typeof geminiService.callGeminiCascade === 'function') {
-        const res = await geminiService.callGeminiCascade(prompt, apiKey, {
+      } else if (typeof geminiService.polishReport === 'function') {
+        return await geminiService.polishReport(reportMarkdown, {
           temperature: 0.3,
-          maxOutputTokens: 8192,
-          timeoutMs: 90000,
-          systemInstruction: sysInstruction
+          maxOutputTokens: 8192
         });
-        if (res && res.text) {
-          return res.text.replace(/```(?:text|markdown)?[^\n]*\n?([\s\S]*?)```/g, '$1').replace(/```/g, '').trim();
-        } else if (res && res.error) {
-          throw new Error(res.error);
-        }
       }
       throw new Error('Dịch vụ Gemini AI chưa sẵn sàng trên trình duyệt.');
     };
@@ -858,7 +896,7 @@ Hãy xuất bản toàn văn bài luận giải đã được trau chuốt hoàn
                     <div class="neta-inline-ai-loading">
                       <div class="neta-ai-loading-step">
                         <span class="neta-ai-sparkle-icon">✨</span>
-                        <span>Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tứ Trụ...</span>
+                        <span>${aiLoadingStepText || 'Đang tiến hành biên tập, trau chuốt cấu trúc câu và từ ngữ học thuật Tứ Trụ...'}</span>
                       </div>
                       <div class="neta-ai-shimmer-track"><div class="neta-ai-shimmer-thumb"></div></div>
                     </div>
