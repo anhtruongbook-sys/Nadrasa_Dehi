@@ -337,7 +337,9 @@ body {
 }
 
 #view-dichhoc,
-#view-trachcat {
+#view-trachcat,
+#view-thaiat,
+#view-lucnham {
   flex: 1 1 0% !important;
   min-height: 0 !important;
   width: 100% !important;
@@ -3580,7 +3582,9 @@ body.theme-light .bloc-term-strip .tk-exact-time {
 .bazi-view-container,
 .qmdj-view-container,
 .calendar-module-container,
-.tarot-module-wrapper {
+.tarot-module-wrapper,
+.thaiat-view-wrap,
+.lucnham-view-wrap {
   width: 100%;
   height: 100%;
   display: flex;
@@ -3598,7 +3602,9 @@ body.theme-light .bloc-term-strip .tk-exact-time {
 .tuvi-view-container > *,
 .bazi-view-container > *,
 .qmdj-view-container > *,
-.calendar-module-container > * {
+.calendar-module-container > *,
+.thaiat-view-wrap > *,
+.lucnham-view-wrap > * {
   flex-shrink: 0 !important;
 }
 
@@ -8235,7 +8241,9 @@ body.theme-light .pm-pattern-item {
 .bazi-view-container,
 .tuvi-view-container,
 .calendar-module-container,
-.tarot-module-wrapper {
+.tarot-module-wrapper,
+.thaiat-view-wrap,
+.lucnham-view-wrap {
   contain: content;
   -webkit-overflow-scrolling: touch;
 }
@@ -16293,4 +16301,118 @@ body.theme-light .neta-score-val {
 body.theme-light .neta-ai-step-progress {
   color: #8b6508;
 }
+
+/* ==========================================================================
+   NETA LIGHT - THÁI ẤT THẦN KINH & LỤC NHÂM ĐẠI ĐỘN UNIFIED THEME
+   Đồng nhất phong cách hoàng gia, chống tràn nút, tương phản cao Light/Dark
+   ========================================================================== */
+
+/* Master Strips */
+.thaiat-master-strip,
+.lucnham-master-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  background: rgba(26, 3, 7, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  font-size: 0.78rem;
+  color: var(--text-secondary, #cbd5e1);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+body.theme-light .thaiat-master-strip,
+body.theme-light .lucnham-master-strip {
+  background: #ffffff !important;
+  border: 1px solid #e0d5c1 !important;
+  box-shadow: 0 1px 4px rgba(160, 120, 60, 0.08) !important;
+  color: #4b5563 !important;
+}
+
+.tms-val-gold {
+  color: var(--gold-primary, #f5b041) !important;
+  font-weight: 800;
+}
+
+body.theme-light .tms-val-gold {
+  color: #b45309 !important;
+}
+
+/* Thai At Filters Bar (Grid 5 cột cân đối, không tràn ngang) */
+.thaiat-filters-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  width: 100%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.thaiat-filter-btn {
+  background: rgba(20, 2, 5, 0.85);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  color: #cbd5e1;
+  padding: 5px 2px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.thaiat-filter-btn:hover {
+  border-color: #f5b041;
+  color: #f5b041;
+}
+
+.thaiat-filter-btn.active {
+  background: linear-gradient(135deg, #f5b041, #d4ac0d) !important;
+  color: #090d16 !important;
+  border-color: #f5b041 !important;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(245, 176, 65, 0.35);
+}
+
+body.theme-light .thaiat-filter-btn {
+  background: #f3f4f6 !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
+}
+
+body.theme-light .thaiat-filter-btn.active {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.25);
+}
+
+/* Cards & Layout for Thai At & Luc Nham */
+.neta-custom-card {
+  background: rgba(20, 2, 5, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+body.theme-light .neta-custom-card {
+  background: #ffffff !important;
+  border: 1px solid #e0d5c1 !important;
+  box-shadow: 0 1px 5px rgba(160, 120, 60, 0.1) !important;
+  color: #1f2937 !important;
+}
+
 

@@ -76,22 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.0
-          name: "Neta Light v2.8.0 (Hội Tụ Bộ Tam Thức Kinh Điển: Thái Ất Thần Kinh & Lục Nhâm Đại Độn)"
+          tag_name: v2.8.1
+          name: "Neta Light v2.8.1 (Chuẩn Hóa UX/UI Di Động: Vuốt Chạm, Unified Control Card & Theming Đồng Nhất Bộ Tam Thức)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.0 - Đại Bản Doanh Tam Thức
-            - **Tích Hợp Thái Ất Thần Kinh**:
-              + Tái hiện trọn vẹn Trận Đồ 16 Thần Vị (CSS Grid 5x5 viền 16 cung + Trung Cung HUD).
-              + Hỗ trợ đầy đủ Tứ Kể: Kể Giờ, Kể Ngày, Kể Tháng, Kể Năm.
-              + Khởi lập Lá Số Thái Ất Nhân Mệnh 12 Cung (Mệnh, Phụ, Tướng, Phúc...).
-              + Bộ lọc 5 tầng thông tin chuyên sâu và Drawer tương tác chi tiết.
-            - **Tích Hợp Đại Lục Nhâm (Lục Nhâm Thần Khóa)**:
-              + Phục dựng 100% giải thuật cổ học từ tệp số học Excel 2009.
-              + Tính toán ĐỘNG toàn diện 8 lớp thông tin: Thiên Địa Bàn, Tứ Khóa (Tặc, Khắc, Sinh, Tỷ), Tam Truyền (Cửu Tông Môn).
-              + An 12 Thiên Tướng chuẩn xác theo luật Đán Quý / Mộ Quý và quy luật Thuận/Nghịch hành.
-              + Bàn cờ 12 cung 4x4 Dial Matrix kết hợp 2 chế độ: 8 Lớp truyền thống & Cảm ứng 1 chạm.
-            - **Hoàn Tất Bộ Tam Thức Tối Thượng**: Thái Ất Thần Kinh (Thiên Đạo) - Kỳ Môn Độn Giáp (Địa Đạo) - Lục Nhâm Đại Độn (Nhân Đạo).
-            - **Đồng Bộ Lịch Pháp Tiết Khí 100%**: Trích xuất trực tiếp Can Chi, Nguyệt Lệnh, Tiết Khí và Nguyệt Tướng chuẩn thiên văn từ NetaCalendarEngine.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.1
+            - **Chuẩn Hóa Cách Chọn Ngày Giờ (Unified Control Card)**:
+              + Áp dụng thống nhất 100% bộ điều khiển thời gian chuẩn Tử Vi / Bát Tự cho cả Thái Ất Thần Kinh và Lục Nhâm Đại Độn.
+              + Hỗ trợ chuyển đổi mượt mà Dương Lịch <-> Âm Lịch, chọn năm siêu tốc và kết nối Date Picker mặc định của thiết bị.
+            - **Khắc Phục Toàn Diện Khả Năng Vuốt Chạm (Vertical Touch Scroll)**:
+              + Mở khóa cuộn dọc linh hoạt, loại bỏ hoàn toàn hiện tượng kẹt trang trên màn hình di động.
+            - **Xử Lý Triệt Để Tràn Nút & Màu Sắc Tương Phản (Light & Dark Theme Parity)**:
+              + Hàng nút Tứ Kể và Bộ lọc 5 tầng thông tin co dãn 100% vừa vặn khung hình, không còn tràn ngang hay che lấp nút.
+              + Màu sắc các nút bấm, nhãn Tứ Khóa và thông số 12 cung đạt chuẩn tương phản cao trên cả Light Mode và Dark Mode.
+            - **Bảo Mật & Hoàn Tất Trọn Bộ Tam Thức Kinh Điển (Thái Ất - Kỳ Môn - Lục Nhâm)**.
 
             
             - **Nâng Cao Chiều Sâu & Độ Dài Luận Giải (1.500 - 2.200 từ)**:
