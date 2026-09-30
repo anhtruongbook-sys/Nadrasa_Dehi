@@ -1517,9 +1517,8 @@
 
     // PHẦN 1: BẢNG LẬP MỆNH TỨ TRỤ
     md.push('<a id="sec-I"></a>');
-    md.push('## I. BẢNG THIẾT LẬP TỨ TRỤ & NĂNG LƯỢNG NỀN TẢNG\n');
-    md.push('| Trụ | Can Chi | Nạp Âm | Thập Thần | Trường Sinh | Tàng Can & Tỷ Lệ Khí |');
-    md.push('| :--- | :--- | :--- | :--- | :--- | :--- |');
+    md.push('## I. THIẾT LẬP TỨ TRỤ & NĂNG LƯỢNG NỀN TẢNG TIÊN THIÊN\n');
+    md.push('### 🏛️ Cấu Trúc Bốn Cột Mệnh (Tứ Trụ):');
 
     const pillarsData = [
       { name: 'Năm', gan: chart.year_gan, zhi: chart.year_zhi, period: 'Thiếu niên (1 - 16 tuổi)', focus: 'Gốc rễ tổ tiên, phúc ấm gia đình' },
@@ -1531,10 +1530,10 @@
     pillarsData.forEach((p, idx) => {
       const canChi = `${p.gan} ${p.zhi}`;
       const napAm = NAP_AM_MAP[canChi] || '';
-      const deity = idx === 2 ? 'Nhật Chủ' : calculate10Deities(chart.day_gan, p.gan);
+      const deity = idx === 2 ? 'Nhật Chủ (Bản Thể)' : calculate10Deities(chart.day_gan, p.gan);
       const cs = calculateChangSheng(chart.day_gan, p.zhi);
-      const hidden = (HIDDEN_GANS_RATIO[p.zhi] || []).map(h => `${calculate10Deities(chart.day_gan, h.gan)} ${h.gan} (${Math.round(h.ratio * 100)}%)`).join(', ');
-      md.push(`| **Trụ ${p.name}** | **${canChi}** | ${napAm} | ${deity} | ${cs} | ${hidden} |`);
+      const hidden = (HIDDEN_GANS_RATIO[p.zhi] || []).map(h => `${h.gan} (${calculate10Deities(chart.day_gan, h.gan)})`).join(', ');
+      md.push(`* **Trụ ${p.name} (${canChi}):** ${napAm ? `*${napAm}* • ` : ''}Thập Thần: **${deity}** | Vòng Trường Sinh: \`${cs}\` | Tàng Can: ${hidden}`);
     });
     md.push('\n');
 
@@ -1626,9 +1625,7 @@
     md.push(`  + *Lực Dị Nguyên (Hành ta sinh Thực Thần/Thương Quan + Hành ta khắc Tài Tinh + Hành khắc ta Quan Sát)*: **${body.drain_score} điểm**`);
     md.push(`  + *Chi tiết thế cục*: ${body.detail}\n`);
 
-    md.push('### Bảng Đối Soát Trọng Số Ngũ Hành Chi Tiết:');
-    md.push('| Ngũ Hành | Điểm Số Tuyệt Đối | Tỷ Trọng / 100đ | Trạng Thái Năng Lượng | Vai Trò Trong Mệnh Cục |');
-    md.push('| :--- | :--- | :--- | :--- | :--- |');
+    md.push('### ⚖️ Đối Soát Trọng Số Ngũ Hành & Vai Trò Hỷ - Dụng Thần:');
     for (const elem in scores) {
       const val = scores[elem];
       let statusStr = '';
@@ -1645,7 +1642,7 @@
       else if (gods.climate_use === elem) roleStr = '🌡️ ĐIỀU HẦU DỤNG THẦN';
       else roleStr = 'Nhàn Thần (Bình hòa)';
 
-      md.push(`| **${elem}** | **${val} điểm** | ${val}% | ${statusStr} | ${roleStr} |`);
+      md.push(`* **Hành ${elem}:** **${val} điểm** (${val}%) — *${statusStr}* ➔ **${roleStr}**`);
     }
     md.push('\n');
 
@@ -1735,10 +1732,8 @@
       spirit: MANG_PAI_SPIRITS_LIST[i] || ''
     }));
 
-    md.push('### 2. Hệ Thống 12 Cung & 12 Thần Manh Phái (Bảng Tổng Hợp):');
+    md.push('### 2. Hệ Thống 12 Cung & 12 Thần Manh Phái (Tổng Hợp):');
     md.push(`- **Mệnh Cung An Tại**: Chi **${mengGongZhi}** (${ZHI_WU_XING[mengGongZhi]}) — Khởi đầu trục tọa độ vận hành nội tại của sinh mệnh.\n`);
-    md.push('| Thứ Tự | Tên Cung Chức Năng | Địa Chi Đóng | Ngũ Hành | Thần Sát Đồng Cung | Ý Nghĩa Chuyên Biệt |');
-    md.push('| :--- | :--- | :--- | :--- | :--- | :--- |');
 
     const palaceMeanings = {
       'Mệnh Cung': 'Cốt cách, bản lĩnh, ý chí tự thân và trục xoay số mệnh',
@@ -1758,7 +1753,7 @@
     palaces12.forEach((p, idx) => {
       const pWx = ZHI_WU_XING[p.zhi];
       const meaning = palaceMeanings[p.cung] || 'Cung chức năng vận hành';
-      md.push(`| **${idx + 1}** | **Cung ${p.cung}** | **${p.zhi}** | ${pWx} | \`${p.spirit}\` | ${meaning} |`);
+      md.push(`* **Cung ${p.cung} (Chi ${p.zhi} • Hành ${pWx}):** Thần Sát: \`${p.spirit}\` — ${meaning}`);
     });
     md.push('\n');
 
@@ -1849,35 +1844,25 @@
     // PHẦN 6: LỘ TRÌNH 8-10 ĐẠI VẬN CUỘC ĐỜI & LƯU NIÊN CHI TIẾT
     md.push('<a id="sec-VI"></a>');
     md.push('## VI. LỘ TRÌNH 10 ĐẠI VẬN CUỘC ĐỜI (TOÀN DIỆN 100 NĂM KHÍ SỐ)\n');
-    md.push('| Vận Thứ | Dải Tuổi | Dải Năm | Can Chi | Nạp Âm | Thập Thần | Đánh Giá Vận Thế |');
-    md.push('| :--- | :--- | :--- | :--- | :--- | :--- | :--- |');
+    md.push('Khảo sát chi tiết 10 bước chuyển dịch đại vận và diễn biến từng năm:\n');
 
     const deepLps = timingData.deepLuckPillars || [];
     deepLps.forEach(lp => {
-      md.push(`| **Vận ${lp.step}** | ${lp.ageRange} | ${lp.yearRange} | **${lp.canChi}** | ${lp.napAm} | ${lp.deity} | ${lp.summaryGrade} |`);
-    });
-    md.push('\n');
-
-    md.push('### Phân Tích Chuyên Sâu Từng Bước Đại Vận & Bảng 10 Năm Lưu Niên Con:');
-    deepLps.forEach(lp => {
-      md.push(`#### 📌 Đại Vận ${lp.step}: ${lp.canChi} (${lp.ageRange} • Giai đoạn ${lp.yearRange})`);
-      md.push(`- **Đặc trưng khí số**: ${lp.summaryGrade} • **Nạp Âm**: ${lp.napAm} • **Thập Thần**: ${lp.deity}.`);
-      md.push(`- **Nửa đầu đại vận (5 năm Can quản)**: ${lp.first5Years}. Trong 5 năm này, các sự kiện phát sinh chủ yếu thể hiện ở bề nổi, danh tiếng, cơ hội xã hội và những biến chuyển về chức vị.`);
-      md.push(`- **Nửa sau đại vận (5 năm Chi quản)**: ${lp.last5Years}. Trong 5 năm này, năng lượng đi vào thực chất, tác động sâu sắc đến tài sản thực tế, nội tâm gia đạo và nền tảng sức khỏe.`);
+      md.push(`### ⏳ Đại Vận ${lp.step} (${lp.ageRange} • Năm ${lp.yearRange}): ${lp.canChi}`);
+      md.push(`* **Nạp Âm & Thập Thần:** ${lp.napAm} • Thập Thần: **${lp.deity}** | Đánh giá: **${lp.summaryGrade}**`);
+      md.push(`* **5 Năm Đầu (Can Quản):** ${lp.first5Years}`);
+      md.push(`* **5 Năm Sau (Chi Quản):** ${lp.last5Years}`);
       if (lp.pillarInteractions.length > 0) {
-        md.push('- **Tương tác động chạm Tứ Trụ gốc**:');
-        lp.pillarInteractions.forEach(pi => md.push(`  + ${pi}`));
+        md.push('* **Tương tác Tứ Trụ:** ' + lp.pillarInteractions.join('; '));
       }
       if (lp.treasuryInfo) {
-        md.push(`- **Mộ Khố Kích Hoạt**: \`${lp.treasuryInfo.name}\` (${lp.treasuryInfo.role}) — Trạng thái: ${lp.treasuryInfo.status}.`);
+        md.push(`* **Mộ Khố Kích Hoạt:** \`${lp.treasuryInfo.name}\` (${lp.treasuryInfo.role}) — Trạng thái: ${lp.treasuryInfo.status}`);
       }
 
-      // Bảng 10 Lưu Niên của Đại Vận này
+      // 10 Lưu Niên của Đại Vận này
       const yStart = parseInt(lp.yearRange.split(' - ')[0], 10);
       if (!isNaN(yStart)) {
-        md.push('\n  *Bảng phân bố 10 Lưu Niên chi tiết trong Đại Vận này:*');
-        md.push('  | Năm | Tuổi Dương / Âm | Can Chi | Nạp Âm | Thập Thần | Tương Tác Sơ Bộ |');
-        md.push('  | :--- | :--- | :--- | :--- | :--- | :--- |');
+        md.push('\n*Diễn biến 10 Lưu Niên trong Đại Vận:*');
         for (let yOffset = 0; yOffset < 10; yOffset++) {
           const curYear = yStart + yOffset;
           const curAge = curYear - baziYear;
@@ -1895,12 +1880,10 @@
           else if (gods.primary_use.includes(GAN_WU_XING[yG]) || gods.primary_use.includes(ZHI_WU_XING[yZ])) note = '✨ Vận Hỷ Dụng Thần trợ lực';
           else if (gods.unfavorable.includes(GAN_WU_XING[yG]) && gods.unfavorable.includes(ZHI_WU_XING[yZ])) note = '⚠️ Vận Kỵ Thần, cẩn trọng hao tổn';
 
-          md.push(`  | ${curYear} | ${curAge}t / ${curAgeLunar}t | **${cChi}** | ${nAm} | ${dty} | ${note} |`);
+          md.push(`- **Năm ${curYear} (${cChi} • ${curAge}t / ${curAgeLunar}t ÂL):** Thập Thần: ${dty} • *${note}*`);
         }
       }
-
-      md.push('- **Lời khuyên định hướng**: Cần chú ý chuyển đổi tư duy chiến lược linh hoạt giữa 5 năm đầu và 5 năm sau để tối đa hóa lợi ích và bảo toàn thành quả.');
-      md.push('');
+      md.push('\n');
     });
     md.push('---\n');
 
@@ -1915,32 +1898,21 @@
     md.push('- **Tương tác năm với Tứ Trụ**: ' + (tm.year_interactions.join('; ') || 'Khí trường điều hòa ổn định.'));
     md.push('\n');
 
-    md.push(`### 2. Bảng Thiết Lập 12 Lưu Nguyệt Năm ${targetYear} (Ngũ Hổ Độn):`);
-    md.push('| Tháng Âm | Tiết Khí Chủ Quản | Can Chi | Nạp Âm | Thập Thần | Ngũ Hành | Đánh Giá Sơ Bộ |');
-    md.push('| :--- | :--- | :--- | :--- | :--- | :--- | :--- |');
-
+    md.push(`### 2. Diễn Biến Khí Số Chi Tiết 12 Lưu Nguyệt Năm ${targetYear} (Ngũ Hổ Độn):`);
     monthsData.forEach(m => {
       const isGood = gods.primary_use.includes(m.wx) || gods.favorable.includes(m.wx);
       const isBad = gods.unfavorable.includes(m.wx);
       const evalGrade = isGood ? '✨ Cát Lành' : (isBad ? '⚠️ Thận Trọng' : 'Bình Hòa');
-      md.push(`| **Tháng ${m.monthNumber}** | ${m.solarTerm} | **${m.canChi}** | ${m.napAm} | ${m.deity} | ${m.wx} | ${evalGrade} |`);
-    });
-    md.push('\n');
-
-    md.push(`### 3. Khảo Luận Chuyên Sâu Từng Tháng Trong Năm ${targetYear}:`);
-    monthsData.forEach(m => {
-      const isGood = gods.primary_use.includes(m.wx) || gods.favorable.includes(m.wx);
-      const isBad = gods.unfavorable.includes(m.wx);
       const mDeity = m.deity;
 
-      md.push(`#### 🗓️ Tháng ${m.monthNumber}: ${m.canChi} (${m.solarTerm})`);
-      md.push(`- **Nạp Âm**: ${m.napAm} • **Thập Thần**: \`${mDeity}\` • **Hành Khí**: ${m.wx}.`);
+      md.push(`#### 🗓️ Tháng ${m.monthNumber} (${m.canChi} • ${m.solarTerm}): ${evalGrade}`);
+      md.push(`* **Khí Số:** Nạp Âm: ${m.napAm} • Thập Thần: \`${mDeity}\` • Hành Khí: ${m.wx}`);
       if (isGood) {
-        md.push('- **Đánh giá trường khí**: Tháng đắc sinh khí của Hỷ Dụng Thần, tinh thần minh mẫn, công việc có nhiều thuận lợi, cơ hội tài lộc gia tăng.');
+        md.push('* **Đặc trưng trường khí:** Đắc sinh khí của Hỷ Dụng Thần, tinh thần minh mẫn, công việc có nhiều thuận lợi, cơ hội tài lộc gia tăng.');
       } else if (isBad) {
-        md.push('- **Đánh giá trường khí**: Tháng chịu áp lực từ Kỵ Thần, dễ có hao tổn nhỏ hoặc tiến độ bị chậm lại, cần giữ tâm thế thận trọng và bình tĩnh.');
+        md.push('* **Đặc trưng trường khí:** Chịu áp lực từ Kỵ Thần, dễ có hao tổn nhỏ hoặc tiến độ bị chậm lại, cần giữ tâm thế thận trọng và bình tĩnh.');
       } else {
-        md.push('- **Đánh giá trường khí**: Trường khí ổn định, thích hợp cho việc duy trì nhịp độ làm việc đều đặn, củng cố các nền tảng sẵn có.');
+        md.push('* **Đặc trưng trường khí:** Trường khí ổn định, thích hợp cho việc duy trì nhịp độ làm việc đều đặn, củng cố các nền tảng sẵn có.');
       }
 
       let monthAdvice = '';
@@ -1955,8 +1927,7 @@
       } else {
         monthAdvice = 'Tương tác với bạn bè, đồng sự gia tăng; cần chú ý phân định rõ ràng quyền lợi tài chính để tránh hiểu lầm không đáng có.';
       }
-      md.push(`- **Lời khuyên ứng biến**: ${monthAdvice}`);
-      md.push('');
+      md.push(`* **Lời khuyên ứng biến:** ${monthAdvice}\n`);
     });
     md.push('---\n');
 

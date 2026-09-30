@@ -15,6 +15,7 @@
   --text-primary: #fdfefe;
   --text-secondary: #f5cba7;
   --text-muted: #a6acaf;
+  --text-color: #fdfefe;
   --border-gold: rgba(245, 176, 65, 0.4);
   --border-gold-bright: rgba(247, 220, 111, 0.85);
   --shadow-gold: 0 0 20px rgba(245, 176, 65, 0.25);
@@ -1351,6 +1352,7 @@ body {
    Đảm bảo tỉ lệ tương phản WCAG AAA, sắc nét trên mọi màn hình
    ============================================================ */
 body.theme-light {
+  --text-color: #2c3e50;
   background: radial-gradient(circle at 50% 20%, #fdfbf7 0%, #f4ede1 55%, #e6d8c5 100%);
   color: #1a0e05;
 }
@@ -5045,15 +5047,91 @@ body.theme-light .neta-celestial-quote {
   color: var(--text-color);
 }
 
-.tuvi-banner-warning {
-  background: rgba(231, 76, 60, 0.12);
-  border: 1px solid #e74c3c;
+/* Lộ trình Đại Vận Timeline Step Cards (Hình 3 chuẩn mực) */
+.tuvi-daivan-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.tuvi-daivan-step {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(245, 176, 65, 0.2);
   border-radius: 10px;
-  padding: 10px 12px;
-  color: #f1948a;
-  font-size: 0.76rem;
-  line-height: 1.5;
-  margin-top: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tuvi-daivan-step.active {
+  background: rgba(46, 204, 113, 0.08);
+  border: 1.5px solid #2ecc71;
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.2);
+}
+
+.tuvi-dv-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tuvi-dv-range {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--gold-glow);
+}
+
+.tuvi-dv-cung {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-color);
+  background: rgba(245, 176, 65, 0.12);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.tuvi-dv-desc {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-color);
+}
+
+.tuvi-active-pill {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 4px;
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid #2ecc71;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+body.theme-light .tuvi-daivan-step {
+  background: #fdfaf3 !important;
+  border-color: #e0d0b8 !important;
+}
+
+body.theme-light .tuvi-daivan-step.active {
+  background: #f0fdf4 !important;
+  border-color: #16a34a !important;
+}
+
+body.theme-light .tuvi-dv-range {
+  color: #8b6508 !important;
+}
+
+body.theme-light .tuvi-dv-cung {
+  background: #f4ecd8 !important;
+  border-color: #d4af37 !important;
+  color: #5d4037 !important;
 }
 
 .tuvi-months-grid {
@@ -14642,36 +14720,56 @@ body.theme-light .tuvi-report-h2 {
 }
 
 .tuvi-report-h3 {
-  font-size: 0.92rem;
+  font-size: 0.96rem;
   font-weight: 700;
-  color: var(--text-color);
-  margin: 14px 0 6px 0;
+  color: var(--gold-glow);
+  margin: 18px 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+body.theme-light .tuvi-report-h3 {
+  color: #a07800 !important;
 }
 
 .tuvi-report-h4 {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: var(--text-muted);
-  margin: 10px 0 4px 0;
+  color: var(--gold-primary);
+  margin: 14px 0 6px 0;
+}
+
+body.theme-light .tuvi-report-h4 {
+  color: #b45309 !important;
 }
 
 .tuvi-report-p {
-  font-size: 0.82rem;
+  font-size: 0.83rem;
   line-height: 1.65;
   color: var(--text-color);
   margin: 0 0 8px 0;
 }
 
 .tuvi-report-list {
-  margin: 0 0 10px 0;
+  margin: 8px 0 14px 0;
   padding-left: 20px;
-  font-size: 0.82rem;
-  line-height: 1.6;
+  font-size: 0.83rem;
+  line-height: 1.65;
   color: var(--text-color);
 }
 
 .tuvi-report-list li {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.tuvi-report-list li strong {
+  color: var(--gold-glow);
+  font-weight: 700;
+}
+
+body.theme-light .tuvi-report-list li strong {
+  color: #8b6508 !important;
 }
 
 .tuvi-report-num-item {
@@ -15022,10 +15120,13 @@ body.theme-light .bazi-report-h2 {
 }
 
 .bazi-report-h3 {
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 700;
-  color: #f1c40f;
-  margin: 16px 0 6px 0;
+  color: var(--gold-glow);
+  margin: 18px 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 body.theme-light .bazi-report-h3 {
@@ -15035,8 +15136,12 @@ body.theme-light .bazi-report-h3 {
 .bazi-report-h4 {
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--text-color);
-  margin: 12px 0 4px 0;
+  color: var(--gold-primary);
+  margin: 14px 0 6px 0;
+}
+
+body.theme-light .bazi-report-h4 {
+  color: #b45309 !important;
 }
 
 .bazi-report-table {
@@ -15210,12 +15315,24 @@ body.theme-light .bazi-report-table th {
 }
 
 .bazi-report-list {
-  padding-left: 18px;
-  margin: 6px 0 12px 0;
+  margin: 8px 0 14px 0;
+  padding-left: 20px;
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: var(--text-color);
 }
 
 .bazi-report-list li {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.bazi-report-list li strong {
+  color: var(--gold-glow);
+  font-weight: 700;
+}
+
+body.theme-light .bazi-report-list li strong {
+  color: #8b6508 !important;
 }
 
 .bazi-report-quote {

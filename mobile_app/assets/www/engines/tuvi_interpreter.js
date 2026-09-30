@@ -2642,18 +2642,17 @@
 
       // I. TINH BÀN BẢN MỆNH
       md.push("## I. TINH BÀN BẢN MỆNH & CẤU TRÚC KHÍ SỐ TIÊN THIÊN\n");
-      md.push("| Thông Số Cơ Bản | Giá Trị Chi Tiết | Ý Nghĩa Chuyên Môn |");
-      md.push("| :--- | :--- | :--- |");
-      md.push(`| **Họ tên / Giới tính** | Đương số (${meta.gender}) | Âm Dương định hướng vận hành thuận/nghịch |`);
-      md.push(`| **Ngày giờ sinh (Âm lịch)** | Ngày ${meta.day}, Tháng ${meta.month}, Giờ ${meta.hour_zhi} | Cơ sở an 14 chính tinh và hệ thống bách tinh |`);
-      md.push(`| **Can Chi Năm Sinh** | **${meta.year_can_chi}** | Gốc rễ Tiên thiên & Tứ Hóa năm sinh |`);
-      md.push(`| **Bản Mệnh (Nạp Âm)** | **${napAm}** (Hành ${menhElement}) | Căn cốt ngũ hành chủ đạo suốt cuộc đời |`);
-      md.push(`| **Cục Số** | **${cucName}** | Môi trường xã hội & Mốc khởi Đại Vận |`);
-      md.push(`| **Âm Dương Lý Số** | ${meta.is_thuan_ly ? 'Âm Dương Thuận Lý' : 'Âm Dương Nghịch Lý'} | ${meta.is_thuan_ly ? 'Hoàn cảnh thuận lợi, dễ gặp thời vận' : 'Gian truân tiền vận, tôi luyện bản lĩnh để hậu vận phát đạt'} |`);
-      md.push(`| **Cung Mệnh Tọa Thủ** | Cung **${meta.menh_chi}** | Tâm điểm bản thể tiên thiên, nhân cách và tiềm năng |`);
-      md.push(`| **Thân Cư** | Cung **${meta.than_chi}** (${meta.than_cu_cung}) | Trọng tâm chuyển hóa hậu vận sau tuổi 30 |`);
-      md.push(`| **Tuần Không / Triệt Lộ** | Tuần tại: ${meta.tuan.join(', ') || 'Không'}; Triệt tại: ${meta.triet.join(', ') || 'Không'} | Điểm khóa và giải trừ chuyển hóa khí số |`);
-      md.push(`| **Năm Khảo Sát (Lưu Niên)** | Năm **${targetYear} (${meta.target_can_chi})** - Tuổi mụ: **${lunarAge}** | Trọng tâm luận giải niên vận và biến cố kích hoạt |`);
+      md.push(`### 🌟 Cấu Trúc Khí Số Cốt Lõi Tinh Bàn:`);
+      md.push(`* **Họ tên & Giới tính:** Đương số (${meta.gender}) — *Âm Dương định hướng vận hành thuận/nghịch*`);
+      md.push(`* **Ngày giờ sinh (Âm lịch):** Ngày ${meta.day}, Tháng ${meta.month}, Giờ ${meta.hour_zhi} — *Cơ sở an 14 chính tinh và hệ thống bách tinh*`);
+      md.push(`* **Can Chi Năm Sinh:** **${meta.year_can_chi}** — *Gốc rễ Tiên thiên & Tứ Hóa năm sinh*`);
+      md.push(`* **Bản Mệnh (Nạp Âm):** **${napAm}** (Hành ${menhElement}) — *Căn cốt ngũ hành chủ đạo suốt cuộc đời*`);
+      md.push(`* **Cục Số:** **${cucName}** — *Môi trường xã hội & Mốc khởi Đại Vận*`);
+      md.push(`* **Âm Dương Lý Số:** ${meta.is_thuan_ly ? 'Âm Dương Thuận Lý' : 'Âm Dương Nghịch Lý'} — *${meta.is_thuan_ly ? 'Hoàn cảnh thuận lợi, dễ gặp thời vận' : 'Gian truân tiền vận, tôi luyện bản lĩnh để hậu vận phát đạt'}*`);
+      md.push(`* **Cung Mệnh Tọa Thủ:** Cung **${meta.menh_chi}** — *Tâm điểm bản thể tiên thiên, nhân cách và tiềm năng*`);
+      md.push(`* **Thân Cư:** Cung **${meta.than_chi}** (${meta.than_cu_cung}) — *Trọng tâm chuyển hóa hậu vận sau tuổi 30*`);
+      md.push(`* **Tuần Không / Triệt Lộ:** Tuần tại: ${meta.tuan.join(', ') || 'Không'}; Triệt tại: ${meta.triet.join(', ') || 'Không'} — *Điểm khóa và giải trừ chuyển hóa khí số*`);
+      md.push(`* **Năm Khảo Sát (Lưu Niên):** Năm **${targetYear} (${meta.target_can_chi})** (Tuổi mụ: **${lunarAge}**) — *Trọng tâm luận giải niên vận và biến cố kích hoạt*`);
 
       md.push(`\n### Khảo Luận Căn Cốt Khí Số & Bản Thể Mệnh - Thân:`);
       md.push(`1. **Bản Mệnh ${napAm} & Cục Số ${cucName}:**\n` +
@@ -2699,9 +2698,8 @@
       md.push(`\n---\n`);
 
       // III. ĐỊNH LƯỢNG ĐIỂM SỐ
-      md.push(`## III. HỆ THỐNG ĐÁNH GIÁ ĐỊNH LƯỢNG CHỈ SỐ SINH MỆNH (1-100)\n`);
-      md.push(`| Trọng Điểm Đời Người | Điểm Số (1-100) | Phân Hạng Chất Lượng | Ý Nghĩa Định Lượng Chuyên Môn |`);
-      md.push(`| :--- | :---: | :--- | :--- |`);
+      md.push(`## III. HỆ THỐNG ĐÁNH GIÁ ĐỊNH LƯỢNG CHỈ SỐ SINH MỆNH (THANG ĐIỂM 100)\n`);
+      md.push(`### 📊 Định Lượng 6 Trọng Điểm Sinh Mệnh:`);
 
       const scoreRows = [
         ["overall_destiny", "1. Cốt Cách Bản Mệnh"],
@@ -2714,7 +2712,7 @@
 
       scoreRows.forEach(([key, name]) => {
         const item = scoresData[key] || {};
-        md.push(`| **${name}** | **${item.score || 50}/100** | ${item.grade || 'Trung bình'} | ${item.desc || ''} |`);
+        md.push(`* **${name}:** **${item.score || 50}/100 Điểm** [${item.grade || 'Trung bình'}] — ${item.desc || ''}`);
       });
       md.push(`\n---\n`);
 
@@ -2738,13 +2736,11 @@
       // V. TỨ HÓA KHÂM THIÊN MÔN
       md.push(`## V. BÓC TÁCH TỨ HÓA TIÊN THIÊN (KHÂM THIÊN MÔN & LỤC NỘI - LỤC NGOẠI CUNG)\n`);
       md.push(`Thiên Can năm sinh **${tuHoaData.year_gan}** khởi phát Tứ Hóa Tiên Thiên:\n`);
-      md.push(`| Tứ Hóa | Sao Quản Hạt | Cung Tọa Thủ | Phân Loại Cung | Nguyên Lý Luận Giải Khâm Thiên Môn |`);
-      md.push(`| :--- | :--- | :--- | :--- | :--- |`);
 
       ["Hóa Lộc", "Hóa Quyền", "Hóa Khoa", "Hóa Kỵ"].forEach(thName => {
         const thObj = tuHoaData.transformations?.[thName];
         if (thObj) {
-          md.push(`| **${thName}** | ${thObj.star_name} | Cung ${thObj.cung_name} (${thObj.dia_chi}) | ${thObj.palace_type} | ${thObj.kham_thien_doctrine} |`);
+          md.push(`* **${thName} (Sao ${thObj.star_name}):** Tọa Cung **${thObj.cung_name}** (${thObj.dia_chi} • *${thObj.palace_type}*) — ${thObj.kham_thien_doctrine}`);
         }
       });
 
@@ -2755,24 +2751,20 @@
 
       // VI. LỘ TRÌNH ĐẠI VẬN 80 NĂM
       md.push(`## VI. LỘ TRÌNH ĐẠI VẬN SUỐT CUỘC ĐỜI (80 NĂM KHÍ SỐ)\n`);
-      md.push(`| Giai Đoạn (Đại Vận) | Tuổi (Âm Lịch) | Cung Tọa Vận | Can Chi Cung | Ngũ Hành Tương Tác | Tình Trạng | Chính Tinh Chủ Vận |`);
-      md.push(`| :---: | :---: | :--- | :--- | :--- | :---: | :--- |`);
+      md.push(`Khảo sát chi tiết 8 bước chuyển dịch vận trình sinh mệnh:\n`);
 
       (timingData.all_life_dai_vans || []).forEach(dv => {
-        const activeMarker = dv.is_active ? " **[ĐANG DIỄN RA]**" : "";
-        const rel = dv.element_interaction;
-        md.push(`| **Đại Vận ${dv.step}**${activeMarker} | **${dv.range}** | ${dv.palace_name} (${dv.dia_chi}) | ${dv.thien_can} ${dv.dia_chi} (${dv.nap_am}) | ${rel.status} (${rel.desc.substring(0, 30)}...) | ${dv.is_active ? 'Hiệu Lực' : 'Tiền/Hậu Vận'} | ${dv.chinh_tinh} |`);
+        const activeMarker = dv.is_active ? " **[ĐẠI VẬN HIỆN TẠI - ĐANG VẬN HÀNH]**" : "";
+        const rel = dv.element_interaction || {};
+        md.push(`### ⏳ Đại Vận ${dv.step} (${dv.range} Tuổi): Cung ${dv.palace_name} (${dv.dia_chi})${activeMarker}`);
+        md.push(`* **Can Chi & Nạp Âm:** ${dv.thien_can} ${dv.dia_chi} • ${dv.nap_am}`);
+        if (rel.status) {
+          md.push(`* **Ngũ Hành Tương Tác:** ${rel.status} (${rel.desc})`);
+        }
+        md.push(`* **Chính Tinh Quản Hạt:** ${dv.chinh_tinh || 'Vô Chính Diệu'}`);
+        md.push(`* **Luận Giải Vận Trình:** ${dv.summary}\n`);
       });
-
-      md.push(`\n**Phân Tích Chi Tiết Từng Bước Ngoặt Đại Vận Cuộc Đời:**`);
-      (timingData.all_life_dai_vans || []).forEach(dv => {
-        const marker = dv.is_active ? "➡️ **[ĐẠI VẬN HIỆN TẠI]** " : "- ";
-        md.push(`${marker}**Đại Vận ${dv.range} tuổi (Cung ${dv.palace_name} tại ${dv.dia_chi}):**\n` +
-                `  + *Đặc trưng khí số:* ${dv.summary}\n` +
-                `  + *Tương quan ngũ hành:* ${dv.element_interaction.desc}\n` +
-                `  + *Chính tinh quản hạt:* ${dv.chinh_tinh}\n`);
-      });
-      md.push(`\n---\n`);
+      md.push(`---\n`);
 
       // VII. VẬN HẠN NĂM HIỆN TẠI
       md.push(`## VII. LUẬN GIẢI CHUYÊN SÂU NIÊN VẬN NĂM ${targetYear} (${meta.target_can_chi})\n`);
@@ -2804,31 +2796,33 @@
       const monthly = timingData.monthly_forecast || [];
       if (monthly.length > 0) {
         md.push(`\n### 4. Diễn Biến Khí Số Chi Tiết 12 Tháng Âm Lịch Năm ${targetYear}:`);
-        md.push(`| Tháng (Âm Lịch) | Cung Tọa Vận | Chính Tinh Chủ Quản | Luận Đoán & Định Hướng Hành Động Cụ Thể |`);
-        md.push(`| :--- | :--- | :--- | :--- |`);
         monthly.forEach(m => {
-          md.push(`| **${m.month_name}** | ${m.palace} (${m.chi}) | ${m.chinh_tinh} | ${m.note} |`);
+          md.push(`#### 🌙 ${m.month_name}: Cung ${m.palace} (${m.chi})`);
+          md.push(`* **Chính Tinh Quản Hạt:** ${m.chinh_tinh || 'Vô Chính Diệu'}`);
+          md.push(`* **Luận Đoán & Định Hướng:** ${m.note}\n`);
         });
       }
-      md.push(`\n---\n`);
+      md.push(`---\n`);
 
       // VIII. BẢN ĐỒ DỰ BÁO BIẾN ĐỘNG ĐA NĂM
       const multiYearEvents = timingData.multi_year_events || [];
       if (multiYearEvents.length > 0) {
         md.push(`## VIII. BẢN ĐỒ DỰ BÁO BIẾN ĐỘNG NIÊN VẬN ĐA NĂM (ĐỐI SOÁT CÁC MỐC TRỌNG ĐẠI CUỘC ĐỜI)\n`);
         md.push(`Hệ thống tự động quét dòng năng lượng Lưu Niên qua các năm để đối soát và cảnh báo các mốc biến động quan trọng về Gia đạo, Hôn nhân, Chỗ ở, Công việc và Tài chính:\n`);
-        md.push(`| Năm (Dương Lịch) | Can Chi & Tuổi Mụ | Biến Động Gia Đạo / Huynh Đệ / Hôn Nhân | Biến Động Chỗ Ở (Điền Trạch) | Biến Động Công Việc (Quan Lộc) | Trọng Tâm Tài Chính (Tài Bạch) |`);
-        md.push(`| :---: | :---: | :--- | :--- | :--- | :--- |`);
 
         multiYearEvents.forEach(mye => {
-          const fStr = mye.family_events.join(' ') || "Bình ổn";
-          const hStr = mye.housing_events.join(' ') || "An định gia trạch";
-          const cStr = mye.career_events.join(' ') || "Duy trì ổn định";
-          const wStr = mye.wealth_events.join(' ') || "Thu chi bình hòa";
-          const currentTag = mye.year === targetYear ? " **[NĂM KHẢO SÁT]**" : "";
-          md.push(`| **Năm ${mye.year}**${currentTag} | **${mye.can_chi}** (${mye.lunar_age}t) | ${fStr} | ${hStr} | ${cStr} | ${wStr} |`);
+          const fStr = mye.family_events.join('; ') || "Bình ổn";
+          const hStr = mye.housing_events.join('; ') || "An định gia trạch";
+          const cStr = mye.career_events.join('; ') || "Duy trì ổn định";
+          const wStr = mye.wealth_events.join('; ') || "Thu chi bình hòa";
+          const currentTag = mye.year === targetYear ? " **[NĂM KHẢO SÁT HIỆN TẠI]**" : "";
+          md.push(`### 📅 Năm ${mye.year} (${mye.can_chi} • ${mye.lunar_age} Tuổi)${currentTag}`);
+          md.push(`* **Gia Đạo & Tình Duyên:** ${fStr}`);
+          md.push(`* **Chỗ Ở (Điền Trạch):** ${hStr}`);
+          md.push(`* **Công Danh (Quan Lộc):** ${cStr}`);
+          md.push(`* **Tài Chính (Tài Bạch):** ${wStr}\n`);
         });
-        md.push(`\n---\n`);
+        md.push(`---\n`);
       }
 
       // IX. CHIẾN LƯỢC HÀNH ĐỘNG
