@@ -76,12 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.2
-          name: "Neta Light v2.8.2 (Khắc Phục Toàn Diện Undefined Trong Drawer & Hoàn Thiện Bàn Cờ Lục Nhâm)"
+          tag_name: v2.8.3
+          name: "Neta Light v2.8.3 (Tích Hợp Phân Hệ Luận Giải Chuyên Sâu Thái Ất Thần Kinh 15 Cấp Độ)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.2
-            - **Khắc Phục Triệt Để Lỗi Undefined trong Drawer Lục Nhâm**:
-              + Chuẩn hóa ánh xạ trường `b.saoKienTru` (Vòng Kiến Trừ) và `b.tenNguyetTuong` (Thần Cung Nguyệt Tướng), loại bỏ 100% các giá trị undefined khi chạm xem chi tiết 12 cung.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.3
+            - **Tích Hợp Toàn Diện Động Cơ Luận Giải Chuyên Sâu Thái Ất Thần Kinh (`NetaThaiAtInterpreter`)**:
+              + Tự động tính toán và đối sánh 15 phân hệ luận giải Thái Ất chuẩn văn bản cổ điển 100% Offline.
+              + Bảng chỉ số định lượng trực quan: Điểm Cát Khánh (0-100), Nguy cơ Xung Đột, Nguy cơ Môi Trường Thiên Tai, Tương Quan Lực Lượng Chủ - Khách.
+              + 10 Đại Cách Cục Thái Ất & Cửu Tinh Tuần Hành.
+              + Kiểm định Biến Dị Thiên Địa (Tam Vô Biến Trạng).
+              + 6 Phân Hệ Tác Chiến Chiến Lược (Thiên Cơ, Công Phòng, Thám Báo, Đột Kích, Tiếp Vận, Nhân Tâm).
+              + Hướng Dẫn 7 Sự Vụ Đời Sống Thực Tiễn (Hôn nhân, Thi cử, Cầu tài, Xuất hành, Kiện tụng, Y tế, Xây dựng).
+              + Bảng Dự Báo Cát Hung 12 Thời Thần (Canh Giờ) trong ngày.
+              + Bộ lọc Filter Pills 6 tab tiện lợi, tương tác Accordion trực quan, Theme Parity hoàn hảo Light/Dark Mode.
             - **Chuẩn Hóa Bộ Chọn Ngày Giờ (Unified Control Card)**:
               + Thống nhất bộ điều khiển thời gian chuẩn Tử Vi / Bát Tự cho cả Thái Ất Thần Kinh và Lục Nhâm Đại Độn.
             - **Khắc Phục Toàn Diện Khả Năng Vuốt Chạm & Tràn Nút**:
