@@ -408,13 +408,25 @@
     },
 
     lapQueTheoHaiSo(soA, soB, gioZhiIndex = 0, calendarContext = {}) {
-      let thuongNum = soA % 8;
+      const zhiNames = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+      if (typeof gioZhiIndex === 'object' && gioZhiIndex !== null) {
+        calendarContext = gioZhiIndex;
+        const canChi = calendarContext.canChi || {};
+        const gioZhi = canChi.hourZhi || (canChi.hour ? canChi.hour.split(' ')[1] : 'Hợi');
+        gioZhiIndex = zhiNames.indexOf(gioZhi) + 1;
+      }
+      if (gioZhiIndex === 0 && calendarContext.canChi) {
+        const gz = calendarContext.canChi.hourZhi || (calendarContext.canChi.hour ? calendarContext.canChi.hour.split(' ')[1] : 'Hợi');
+        gioZhiIndex = zhiNames.indexOf(gz) + 1;
+      }
+
+      let thuongNum = Number(soA) % 8;
       if (thuongNum === 0) thuongNum = 8;
 
-      let haNum = soB % 8;
+      let haNum = Number(soB) % 8;
       if (haNum === 0) haNum = 8;
 
-      let tong = soA + soB + gioZhiIndex;
+      let tong = Number(soA) + Number(soB) + Number(gioZhiIndex || 0);
       let dongNum = tong % 6;
       if (dongNum === 0) dongNum = 6;
 
@@ -562,6 +574,15 @@
           danh_gia: danhGia,
           muc_do: mucDo
         },
+        thoi_gian: (lucHaoResult && lucHaoResult.thoi_gian) ? lucHaoResult.thoi_gian : {
+          canNgay: calendarContext.canChi?.dayGan || 'Đinh',
+          chiNgay: calendarContext.canChi?.dayZhi || 'Mùi',
+          ngayHoaGiap: calendarContext.canChi?.day || `${calendarContext.canChi?.dayGan || 'Đinh'} ${calendarContext.canChi?.dayZhi || 'Mùi'}`,
+          thangChi: calendarContext.canChi?.monthZhi || 'Dậu',
+          tuanKhong: (calendarContext.canChi?.day && TUAN_KHONG_MAP[calendarContext.canChi.day]) ? TUAN_KHONG_MAP[calendarContext.canChi.day] : ['Dần', 'Mão'],
+          thanSat: tinhThanSat(calendarContext.canChi?.dayGan || 'Đinh', calendarContext.canChi?.dayZhi || 'Mùi'),
+          solarTerm: calendarContext.solarTerm || ''
+        },
         luc_hao: lucHaoResult
       };
     }
@@ -581,11 +602,20 @@
         throw new Error('Cần đúng 6 hào từ 1 đến 6');
       }
 
+      // Tự động đồng bộ từ NetaCalendarEngine nếu calendarContext chưa có Can Chi
+      if ((!calendarContext || !calendarContext.canChi) && global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
+        const fullDay = global.NetaCalendarEngine.getFullDayInfo();
+        calendarContext = { ...fullDay, ...(calendarContext || {}) };
+        if (calendarContext.solarTermCanChi) {
+          calendarContext.canChi = { ...(calendarContext.canChi || {}), ...calendarContext.solarTermCanChi };
+        }
+      }
+
       const canChi = calendarContext.canChi || {};
-      const canNgay = canChi.dayGan || (canChi.day ? canChi.day.split(' ')[0] : 'Giáp');
-      const chiNgay = canChi.dayZhi || (canChi.day ? canChi.day.split(' ')[1] : 'Tý');
+      const canNgay = canChi.dayGan || (canChi.day ? canChi.day.split(' ')[0] : 'Đinh');
+      const chiNgay = canChi.dayZhi || (canChi.day ? canChi.day.split(' ')[1] : 'Mùi');
       const ngayHoaGiap = canChi.day || `${canNgay} ${chiNgay}`;
-      const thangChi = canChi.monthZhi || (canChi.month ? canChi.month.split(' ')[1] : 'Dần');
+      const thangChi = canChi.monthZhi || (canChi.month ? canChi.month.split(' ')[1] : 'Dậu');
 
       // 1. Tách bit quẻ gốc và quẻ biến
       const gocBits = [];

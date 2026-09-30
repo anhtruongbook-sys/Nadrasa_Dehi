@@ -354,9 +354,16 @@
 
     // Xác định kết quả hiện tại theo tab
     const activeResult = (state.method === 'luchao') ? state.lucHao.result : state.maiHoa.result;
-    const tuanKhongStr = (activeResult && activeResult.thoi_gian && activeResult.thoi_gian.tuanKhong)
-      ? activeResult.thoi_gian.tuanKhong.join(', ')
-      : 'Thìn, Tỵ';
+    // BẮT BUỘC: Tuần Không luôn luôn tính chuẩn xác theo Nhật Thần (Can Chi Ngày) từ NetaCalendarEngine
+    const dayName = canChi.day || `${canChi.dayGan || 'Đinh'} ${canChi.dayZhi || 'Mùi'}`;
+    const tkList = (eng && eng.TUAN_KHONG_MAP && eng.TUAN_KHONG_MAP[dayName])
+      ? eng.TUAN_KHONG_MAP[dayName]
+      : (activeResult && activeResult.thoi_gian && activeResult.thoi_gian.tuanKhong
+          ? activeResult.thoi_gian.tuanKhong
+          : (activeResult && activeResult.luc_hao && activeResult.luc_hao.thoi_gian && activeResult.luc_hao.thoi_gian.tuanKhong
+              ? activeResult.luc_hao.thoi_gian.tuanKhong
+              : ['Dần', 'Mão']));
+    const tuanKhongStr = tkList.join(', ');
 
     container.innerHTML = `
       <div class="dichhoc-container">
