@@ -1203,9 +1203,9 @@
                     </div>
                   </div>
 
-                  <!-- Nạp Âm -->
-                  <div class="bp-napam">
-                    <span class="napam-text">${tru.napAm}</span>
+                  <!-- Cung Vị Thời Kỳ -->
+                  <div class="bp-period">
+                    <span class="period-text">${['Tiền vận (1-16t)', 'Thanh xuân (17-32t)', 'Trung niên (33-48t)', 'Hậu vận (từ 49t)'][idx]}</span>
                   </div>
                 </div>
               </div>
@@ -1278,7 +1278,6 @@
                 </div>
                 <div class="lp-deity">${lp.deity}</div>
                 <div class="lp-changsheng">${lp.changSheng}</div>
-                <div class="lp-napam">${lp.napAm}</div>
               </div>
             `).join('')}
           </div>
@@ -1329,7 +1328,6 @@
                 <span class="${getWxClass(ap.zhi)}">${ap.zhi}</span>
               </div>
               <div class="ac-deity">${ap.deity}</div>
-              <div class="ac-napam">${ap.napAm}</div>
             </div>
           `).join('')}
         </div>
@@ -1762,7 +1760,7 @@
     mBody.innerHTML = `
       <div class="bpm-banner">
         <div class="bpm-canchi ${getWxClass(pData.gan)}">${pData.gan} ${pData.zhi}</div>
-        <div class="bpm-napam">${pData.napAm}</div>
+        <div class="bpm-period">${['Cung Tiền Vận (1 - 16 tuổi)', 'Cung Thanh Xuân (17 - 32 tuổi)', 'Cung Trung Niên (33 - 48 tuổi)', 'Cung Hậu Vận (từ 49 tuổi)'][idx]}</div>
       </div>
 
       <div class="bpm-detail-grid">

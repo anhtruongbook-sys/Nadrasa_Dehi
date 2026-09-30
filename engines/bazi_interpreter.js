@@ -1808,29 +1808,27 @@
 
     pillarsData.forEach((p, idx) => {
       const canChi = `${p.gan} ${p.zhi}`;
-      const napAm = NAP_AM_MAP[canChi] || '';
       const deity = idx === 2 ? 'Nhật Chủ (Bản Thể)' : calculate10Deities(chart.day_gan, p.gan);
       const cs = calculateChangSheng(chart.day_gan, p.zhi);
       const hidden = (HIDDEN_GANS_RATIO[p.zhi] || []).map(h => `${h.gan} (${calculate10Deities(chart.day_gan, h.gan)})`).join(', ');
-      md.push(`* **Trụ ${p.name} (${canChi}):** ${napAm ? `*${napAm}* • ` : ''}Thập Thần: **${deity}** | Vòng Trường Sinh: \`${cs}\` | Tàng Can: ${hidden}`);
+      md.push(`* **Trụ ${p.name} (${canChi}):** Thập Thần: **${deity}** | Vòng Trường Sinh: \`${cs}\` | Tàng Can: ${hidden}`);
     });
     md.push('\n');
 
     md.push('### Phân Tích Ý Nghĩa Bốn Cột Mệnh (Tứ Trụ Chi Tiết):');
     pillarsData.forEach((p, idx) => {
       const canChi = `${p.gan} ${p.zhi}`;
-      const napAm = NAP_AM_MAP[canChi] || '';
       const deity = idx === 2 ? 'Nhật Chủ (Bản Thân)' : calculate10Deities(chart.day_gan, p.gan);
       const cs = calculateChangSheng(chart.day_gan, p.zhi);
       const hiddenStems = (HIDDEN_GANS_RATIO[p.zhi] || []);
       const hiddenDesc = hiddenStems.map(h => `${h.gan} (${calculate10Deities(chart.day_gan, h.gan)}, ${Math.round(h.ratio * 100)}% khí lực)`).join('; ');
 
-      md.push(`#### 🏛️ 1.${idx + 1}. Trụ ${p.name}: ${canChi} (${napAm})`);
+      md.push(`#### 🏛️ 1.${idx + 1}. Trụ ${p.name}: ${canChi} [${cs}]`);
       md.push(`- **Thời kỳ quản hạt**: ${p.period} • **Trọng tâm biểu hiện**: ${p.focus}.`);
       md.push(`- **Cấu trúc Thiên Can & Địa Chi**: Can ${p.gan} mang ${deity}, ngự trên Chi ${p.zhi} ở trạng thái Trường Sinh là \`${cs}\`.`);
       md.push(`- **Khí lực Tàng Can**: Nắm giữ các mầm mống ${hiddenDesc}.`);
       if (idx === 0) {
-        md.push('- **Luận giải**: Trụ Năm đại diện cho cây đại thụ gia tộc. Nạp Âm và Thập Thần ở Trụ Năm phản ánh nền tảng giáo dục sơ khởi, phúc ấm ông bà cha mẹ truyền lại. Khi bước vào đời, nền tảng đạo đức và văn hóa từ tổ tiên chính là điểm tựa ban đầu để đương số định hình nhân cách và sự tự tin.');
+        md.push('- **Luận giải**: Trụ Năm đại diện cho cây đại thụ gia tộc. Thiên Can và Thập Thần ở Trụ Năm phản ánh nền tảng giáo dục sơ khởi, phúc ấm gia đình truyền lại. Khi bước vào đời, nền tảng đạo đức và văn hóa từ tổ tiên chính là điểm tựa ban đầu để đương số định hình nhân cách và sự tự tin.');
       } else if (idx === 1) {
         md.push('- **Luận giải**: Trụ Tháng là Đề Cương Nguyệt Lệnh, đóng vai trò then chốt nhất trong việc định hình khí hậu, mùa sinh và đo lường độ vượng suy của ngũ hành. Năng lượng tại Trụ Tháng biểu thị năng lực thích ứng với môi trường làm việc xã hội, các cơ hội hợp tác và tính cạnh tranh trong giai đoạn thanh xuân lập nghiệp.');
       } else if (idx === 2) {
@@ -2166,7 +2164,7 @@
 
     // 6. Dự báo Lưu Niên
     const tm = decisions.timing;
-    md.push(`### 6. Dự Báo Niên Vận & Lưu Niên Năm ${tm.target_year} (${tm.year_can_chi} - ${tm.year_nap_am})`);
+    md.push(`### 6. Dự Báo Niên Vận & Lưu Niên Năm ${tm.target_year} (${tm.year_can_chi})`);
     md.push(`- **Đại Vận Đương Thời**: \`${tm.active_luck_pillar}\``);
     md.push(`- **Thập Thần Lưu Niên**: \`${tm.year_deity}\``);
     md.push(`- **Đánh giá Khí Vận**: **${tm.forecast_grade}**`);
@@ -2183,7 +2181,7 @@
     const deepLps = timingData.deepLuckPillars || [];
     deepLps.forEach(lp => {
       md.push(`### ⏳ Đại Vận ${lp.step} (${lp.ageRange} • Năm ${lp.yearRange}): ${lp.canChi}`);
-      md.push(`* **Nạp Âm & Thập Thần:** ${lp.napAm} • Thập Thần: **${lp.deity}** | Đánh giá: **${lp.summaryGrade}**`);
+      md.push(`* **Thập Thần & Vị Thế:** Thập Thần: **${lp.deity}** | Vòng Trường Sinh: \`${lp.changSheng}\` | Đánh giá: **${lp.summaryGrade}**`);
       md.push(`* **5 Năm Đầu (Can Quản):** ${lp.first5Years}`);
       md.push(`* **5 Năm Sau (Chi Quản):** ${lp.last5Years}`);
       if (lp.pillarInteractions.length > 0) {
@@ -2204,7 +2202,6 @@
           const yG = TIAN_GAN[((curYear - 4) % 10 + 10) % 10];
           const yZ = DI_ZHI[((curYear - 4) % 12 + 12) % 12];
           const cChi = `${yG} ${yZ}`;
-          const nAm = NAP_AM_MAP[cChi] || '';
           const dty = calculate10Deities(dm, yG);
 
           let note = 'Bình hòa phát triển';
@@ -2226,7 +2223,7 @@
     md.push(`## VIII. LUẬN GIẢI CHI TIẾT NIÊN VẬN NĂM ${targetYear} & 12 LƯU NGUYỆT\n`);
     const monthsData = calculate12Months(targetYear, dm);
 
-    md.push(`### 1. Tổng Quan Khí Vận Năm ${targetYear} (${tm.year_can_chi} - ${tm.year_nap_am}):`);
+    md.push(`### 1. Tổng Quan Khí Vận Năm ${targetYear} (${tm.year_can_chi}):`);
     md.push(`- **Thập Thần Chiếu Mệnh**: \`${tm.year_deity}\` | **Khí Vận Toàn Niên**: **${tm.forecast_grade}**.`);
     md.push(`- **Phân tích bối cảnh**: ${tm.forecast_desc}`);
     md.push('- **Tương tác năm với Tứ Trụ**: ' + (tm.year_interactions.join('; ') || 'Khí trường điều hòa ổn định.'));
@@ -2240,7 +2237,7 @@
       const mDeity = m.deity;
 
       md.push(`#### 🗓️ Tháng ${m.monthNumber} (${m.canChi} • ${m.solarTerm}): ${evalGrade}`);
-      md.push(`* **Khí Số:** Nạp Âm: ${m.napAm} • Thập Thần: \`${mDeity}\` • Hành Khí: ${m.wx}`);
+      md.push(`* **Khí Số:** Thập Thần: \`${mDeity}\` • Hành Khí Chi: ${m.wx}`);
       if (isGood) {
         md.push('* **Đặc trưng trường khí:** Đắc sinh khí của Hỷ Dụng Thần, tinh thần minh mẫn, công việc có nhiều thuận lợi, cơ hội tài lộc gia tăng.');
       } else if (isBad) {
