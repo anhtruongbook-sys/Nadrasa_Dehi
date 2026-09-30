@@ -76,17 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.7.6
-          name: "Neta Light v2.7.6 (Tinh Gọn Giao Diện: Loại Bỏ Hộp Công Cụ Thừa & Chuẩn Hóa Mỹ Cảm Toàn Diện)"
+          tag_name: v2.7.7
+          name: "Neta Light v2.7.7 (Đồng Bộ Lịch Tiết Khí 100% Cho Lục Hào & Mai Hoa - Chuẩn Hóa Tuần Không & Quẻ Biến)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.6
-            - **Loại bỏ hộp 'Vị thế bàn quẻ'**: Tinh gọn phần đầu báo cáo Lục Hào, loại bỏ ô vị thế bàn quẻ thô vụng gây chiếm diện tích và mất thẩm mỹ.
-            - **Loại bỏ 4 hộp công cụ thừa (Action Toolbars) trên cả 4 phân hệ**: Xóa bỏ hoàn toàn thanh công cụ thừa ở đầu báo cáo trên cả 4 phân hệ (Lục Hào, Bát Tự, Tarot, Tử Vi). Giao diện trở nên tinh gọn, liền mạch và sang trọng 100%.
-            - **Thao tác nhanh gọn tại chân trang & chế độ AI**: Toàn bộ tính năng Sao chép, Tải file và Trau chuốt AI vẫn hoạt động mượt mà qua các nút tinh tế tại chân trang và nút chuyển chế độ AI trên thanh đề mục.
-              + **Căn lề hai bên (Justify Alignment 100%)**: Toàn bộ các đoạn văn xuôi, các mục danh sách gạch đầu dòng, khối trích dẫn và thuyết minh lăng kính đều được căn lề đều hai bên (`text-align: justify; text-justify: inter-word;`) mang lại trải nghiệm đọc phẳng phiu, sang trọng và chuẩn mực như trang sách in.
-              + **Sửa triệt để lỗi phân tách thẻ Section (Regex Bug Fix)**: Chuẩn hóa bộ nhận diện chuyên mục chỉ nhận diện chữ số La Mã (`I.`, `II.`, `III.`... đến `X.`), loại bỏ hoàn toàn tình trạng các dòng đánh số `1.`, `2.`, `3.` bị biến nhầm thành tiêu đề thẻ.
-              + **Xóa bỏ chữ in hoa đậm cả khối**: Chuyển đổi toàn bộ các đề mục và nội dung kiểm chứng, điểm sáng, nguy cơ và lời khuyên chiến lược sang định dạng danh sách có icon biểu cảm (`👤`, `🏡`, `⚡`, `✨`, `⚠️`, `🌟`), giữ nguyên chữ thường tự nhiên cho phần nội dung chi tiết.
-              + **Xóa bỏ thuộc tính ép chữ in hoa (`text-transform: none`)** tại tiêu đề chuyên mục, trả lại sự trang nhã và chuẩn xác chính tả tiếng Việt.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.7.7
+            - **Đồng Bộ Lịch Pháp Tiết Khí 100%**: Khóa cứng việc trích xuất Nguyệt Lệnh, Tiết Khí, Can Chi từ NetaCalendarEngine cho cả Lục Hào và Mai Hoa Dịch Số.
+            - **Đồng Bộ Hoàn Toàn Tuần Không**: Tuần Không được tính nhất quán từ Nhật Thần (Can Chi Ngày), bảo đảm hai phân hệ Lục Hào và Mai Hoa luôn khớp nhau 100%.
+            - **Sửa Triệt Để Quẻ Biến Mai Hoa**: Khắc phục lỗi Quẻ Biến bị rơi vào 'Thuần Tĩnh / Không động', luôn thể hiện đầy đủ Quẻ Chủ, Quẻ Hỗ và Quẻ Biến cùng Thể Dụng.
+            - **Tối Ưu Giao Diện & Bảng Nạp Giáp**: Loại bỏ hoàn toàn các chuỗi fallback hardcode và bảng phụ thừa thãi, nâng cấp độ chính xác và tính thẩm mỹ cao cấp.
+            - **Chuẩn Hóa CSPRNG**: Thuật toán gieo quẻ 1 hào và 6 hào sử dụng bảo chứng ngẫu nhiên phần cứng Web Cryptography API, đảm bảo độ khách quan và ngẫu nhiên tuyệt đối.
 
             
             - **Nâng Cao Chiều Sâu & Độ Dài Luận Giải (1.500 - 2.200 từ)**:
