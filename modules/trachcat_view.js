@@ -425,9 +425,11 @@
     });
   }
 
-  function render() {
+  function render(preserveScroll = false) {
     const container = document.getElementById('view-trachcat');
     if (!container) return;
+    const scrollEl = container.querySelector('.tc-container');
+    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
 
     const eng = getEngine();
     if (!eng) {
@@ -688,6 +690,17 @@
     `;
 
     bindEvents();
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = container.querySelector('.tc-container');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+      });
+    }
   }
 
   function renderResultsHTML() {
@@ -1173,7 +1186,7 @@
     if (selTTDeathHour) {
       selTTDeathHour.onchange = (e) => {
         state.deathHourChi = e.target.value;
-        render();
+        render(true);
       };
     }
 
@@ -1184,7 +1197,7 @@
         if (!isNaN(m)) {
           state.selectedMonth = m;
           runEvaluation();
-          render();
+          render(true);
         }
       };
     });
@@ -1196,7 +1209,7 @@
         el.onchange = (e) => {
           state.schools[key] = e.target.checked;
           runEvaluation();
-          render();
+          render(true);
         };
       }
     };

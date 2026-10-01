@@ -881,6 +881,7 @@
         padding-bottom: 6px;
         margin-bottom: 8px;
         scrollbar-width: none;
+        scroll-margin-top: 65px;
       }
       .lucnham-pill-btn {
         white-space: nowrap;
@@ -917,6 +918,7 @@
         border-radius: 8px;
         margin-bottom: 8px;
         overflow: hidden;
+        scroll-margin-top: 65px;
       }
       body.theme-light .lucnham-accordion-card {
         background: #ffffff !important;
@@ -1085,9 +1087,11 @@
     renderLucNham(container);
   }
 
-  function renderLucNham(targetContainer) {
+  function renderLucNham(targetContainer, preserveScroll = false) {
     const container = targetContainer || document.getElementById('view-lucnham');
     if (!container) return;
+    const scrollEl = container.querySelector('.lucnham-view-wrap');
+    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
     ensureStyles();
     computeChart();
 
@@ -1394,6 +1398,17 @@
     `;
 
     bindLucNhamEvents();
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = container.querySelector('.lucnham-view-wrap');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+      });
+    }
   }
 
   function getTagClass(mq) {
@@ -1478,19 +1493,19 @@
     if (btnTabChart) {
       btnTabChart.onclick = () => {
         currentMainTab = 'chart';
-        renderLucNham();
+        renderLucNham(null, true);
       };
     }
     if (btnTabAnalysis) {
       btnTabAnalysis.onclick = () => {
         currentMainTab = 'analysis';
-        renderLucNham();
+        renderLucNham(null, true);
       };
     }
     if (btnOpenLuan) {
       btnOpenLuan.onclick = () => {
         currentMainTab = 'analysis';
-        renderLucNham();
+        renderLucNham(null, true);
       };
     }
 
@@ -1885,10 +1900,15 @@
 
     // Filter logic
     const f = currentLuanFilter;
-    const showTatPhap = (f === 'all' || f === 'tatphap');
-    const showTimeline = (f === 'all' || f === 'timeline');
-    const showChuyenDe = (f === 'all' || f === 'chuyende');
-    const showSuVu = (f === 'all' || f === 'suvu');
+    const isVisibleSec = (secKey) => {
+      if (f === 'all') return true;
+      if (f === 'tatphap') return secKey === 'sec_tatphap';
+      if (f === 'timeline') return secKey === 'sec_timeline';
+      if (f === 'chuyende') return secKey === 'sec_chuyende';
+      if (f === 'suvu') return secKey === 'sec_suvu';
+      return true;
+    };
+    const getSecStyle = (secKey) => isVisibleSec(secKey) ? '' : 'display: none;';
 
     // Accordion helper
     const isCol = key => (collapsedSections[key] ? 'collapsed' : '');
@@ -1989,7 +2009,7 @@
           <!-- ACCORDIONS -->
 
             <!-- [I. TRỤC THỂ - DỤNG & NĂNG LƯỢNG TỨ THỜI] -->
-            <div class="lucnham-accordion-card ${isCol('sec_thedung')}" data-sec="sec_thedung">
+            <div class="lucnham-accordion-card ${isCol('sec_thedung')}" data-sec="sec_thedung" id="lucnham-sec-sec_thedung" style="${getSecStyle('sec_thedung')}">
               <div class="lucnham-accordion-hdr">
                 <span>[I. TRỤC THỂ - DỤNG & NĂNG LƯỢNG TỨ THỜI]</span>
                 <span class="hdr-arrow">▲</span>
@@ -2011,7 +2031,7 @@
             </div>
 
             <!-- [II. TIẾN TRÌNH TAM TRUYỀN & ĐẮC HÃM QUÝ THẦN] -->
-            <div class="lucnham-accordion-card ${isCol('sec_tamtruyen')}" data-sec="sec_tamtruyen">
+            <div class="lucnham-accordion-card ${isCol('sec_tamtruyen')}" data-sec="sec_tamtruyen" id="lucnham-sec-sec_tamtruyen" style="${getSecStyle('sec_tamtruyen')}">
               <div class="lucnham-accordion-hdr">
                 <span>[II. TIẾN TRÌNH TAM TRUYỀN & QUÝ THẦN]</span>
                 <span class="hdr-arrow">▲</span>
@@ -2046,8 +2066,7 @@
             </div>
 
             <!-- [III. CÁCH CỤC TẤT PHÁP PHÚ (THIỆU NGẠN HÒA)] -->
-            ${showTatPhap ? `
-            <div class="lucnham-accordion-card ${isCol('sec_tatphap')}" data-sec="sec_tatphap">
+            <div class="lucnham-accordion-card ${isCol('sec_tatphap')}" data-sec="sec_tatphap" id="lucnham-sec-sec_tatphap" style="${getSecStyle('sec_tatphap')}">
               <div class="lucnham-accordion-hdr">
                 <span>[III. CÁCH CỤC TẤT PHÁP PHÚ (THIỆU NGẠN HÒA)]</span>
                 <span class="hdr-arrow">▲</span>
@@ -2069,11 +2088,9 @@
                 </div>
               </div>
             </div>
-            ` : ''}
 
             <!-- [IV. DÒNG THỜI GIAN 3 GIAI ĐOẠN (TIMELINE)] -->
-            ${showTimeline ? `
-            <div class="lucnham-accordion-card ${isCol('sec_timeline')}" data-sec="sec_timeline">
+            <div class="lucnham-accordion-card ${isCol('sec_timeline')}" data-sec="sec_timeline" id="lucnham-sec-sec_timeline" style="${getSecStyle('sec_timeline')}">
               <div class="lucnham-accordion-hdr">
                 <span>[IV. DÒNG THỜI GIAN 3 GIAI ĐOẠN]</span>
                 <span class="hdr-arrow">▲</span>
@@ -2098,11 +2115,9 @@
                 </div>
               </div>
             </div>
-            ` : ''}
 
             <!-- [V. MA TRẬN 7 CHUYÊN ĐỀ ĐỜI SỐNG & KINH DOANH] -->
-            ${showChuyenDe ? `
-            <div class="lucnham-accordion-card ${isCol('sec_chuyende')}" data-sec="sec_chuyende">
+            <div class="lucnham-accordion-card ${isCol('sec_chuyende')}" data-sec="sec_chuyende" id="lucnham-sec-sec_chuyende" style="${getSecStyle('sec_chuyende')}">
               <div class="lucnham-accordion-hdr">
                 <span>[V. MA TRẬN 7 CHUYÊN ĐỀ SỰ VỤ]</span>
                 <span class="hdr-arrow">▲</span>
@@ -2124,11 +2139,9 @@
                 </div>
               </div>
             </div>
-            ` : ''}
 
             <!-- [VI. CẨM NANG 8 SỰ VỤ THỰC TẾ HÀNG NGÀY] -->
-            ${showSuVu ? `
-            <div class="lucnham-accordion-card ${isCol('sec_suvu')}" data-sec="sec_suvu">
+            <div class="lucnham-accordion-card ${isCol('sec_suvu')}" data-sec="sec_suvu" id="lucnham-sec-sec_suvu" style="${getSecStyle('sec_suvu')}">
               <div class="lucnham-accordion-hdr">
                 <span>[VI. CẨM NANG 8 SỰ VỤ ĐỜI SỐNG HÀNG NGÀY]</span>
                 <span class="hdr-arrow">▲</span>
@@ -2149,10 +2162,9 @@
                 </div>
               </div>
             </div>
-            ` : ''}
 
             <!-- [VII. SÁCH LƯỢC HÀNH ĐỘNG & ỨNG KỲ] -->
-            <div class="lucnham-accordion-card ${isCol('sec_sachluoc')}" data-sec="sec_sachluoc">
+            <div class="lucnham-accordion-card ${isCol('sec_sachluoc')}" data-sec="sec_sachluoc" id="lucnham-sec-sec_sachluoc" style="${getSecStyle('sec_sachluoc')}">
               <div class="lucnham-accordion-hdr">
                 <span>[VII. SÁCH LƯỢC HÀNH ĐỘNG & ỨNG KỲ]</span>
                 <span class="hdr-arrow">▲</span>
@@ -2184,7 +2196,7 @@
       btnModeStandard.onclick = (e) => {
         e.preventDefault();
         currentReportMode = 'standard';
-        renderLucNham();
+        renderLucNham(null, true);
       };
     }
     if (btnModeAi) {
@@ -2194,7 +2206,7 @@
         if (!aiPolishedText && !isAiPolishing) {
           triggerAiPolish();
         } else {
-          renderLucNham();
+          renderLucNham(null, true);
         }
       };
     }
@@ -2202,14 +2214,14 @@
       btnBackStandard.onclick = (e) => {
         e.preventDefault();
         currentReportMode = 'standard';
-        renderLucNham();
+        renderLucNham(null, true);
       };
     }
     if (btnBackStandardFromErr) {
       btnBackStandardFromErr.onclick = (e) => {
         e.preventDefault();
         currentReportMode = 'standard';
-        renderLucNham();
+        renderLucNham(null, true);
       };
     }
     if (btnTriggerAi) {
@@ -2233,24 +2245,62 @@
       };
     }
 
-    // Filter pills
+    // Filter pills - In-Place DOM Toggle & Smooth Scroll (Zero Jump)
     const pillBtns = document.querySelectorAll('.lucnham-pill-btn');
     pillBtns.forEach(btn => {
       btn.onclick = (e) => {
         e.preventDefault();
         const filter = btn.getAttribute('data-filter') || 'all';
-        setLuanFilter(filter);
+        currentLuanFilter = filter;
+
+        // Toggle active class on pills
+        pillBtns.forEach(p => p.classList.toggle('active', (p.getAttribute('data-filter') || 'all') === filter));
+
+        // In-place toggle cards display
+        const cards = document.querySelectorAll('.lucnham-accordion-card[data-sec]');
+        const targetSecMap = {
+          'all': null,
+          'tatphap': 'sec_tatphap',
+          'timeline': 'sec_timeline',
+          'chuyende': 'sec_chuyende',
+          'suvu': 'sec_suvu'
+        };
+        const targetSec = targetSecMap[filter];
+
+        cards.forEach(card => {
+          const sec = card.getAttribute('data-sec');
+          if (filter === 'all') {
+            card.style.display = '';
+          } else {
+            card.style.display = (sec === targetSec) ? '' : 'none';
+          }
+        });
+
+        // Smooth scroll directly to target section or pills
+        const scrollTarget = targetSec
+          ? (document.querySelector(`.lucnham-accordion-card[data-sec="${targetSec}"]`) || btn.closest('.lucnham-pill-tabs'))
+          : btn.closest('.lucnham-pill-tabs');
+
+        if (scrollTarget) {
+          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       };
     });
 
-    // Accordions toggle
+    // Accordions toggle - In-Place DOM Toggle (Zero Jump)
     const hdrBtns = document.querySelectorAll('.lucnham-accordion-hdr');
     hdrBtns.forEach(hdr => {
       hdr.onclick = (e) => {
+        e.preventDefault();
         const card = hdr.closest('.lucnham-accordion-card');
         if (card) {
           const sec = card.getAttribute('data-sec');
-          toggleSection(sec);
+          if (sec) {
+            collapsedSections[sec] = !collapsedSections[sec];
+            card.classList.toggle('collapsed', !!collapsedSections[sec]);
+            const arrow = card.querySelector('.hdr-arrow');
+            if (arrow) arrow.textContent = collapsedSections[sec] ? '▼' : '▲';
+          }
         }
       };
     });
@@ -2258,13 +2308,18 @@
 
   function setLuanFilter(filter) {
     currentLuanFilter = filter;
-    renderLucNham();
+    renderLucNham(null, true);
   }
 
   function toggleSection(secKey) {
     if (!secKey) return;
     collapsedSections[secKey] = !collapsedSections[secKey];
-    renderLucNham();
+    const card = document.querySelector(`.lucnham-accordion-card[data-sec="${secKey}"]`);
+    if (card) {
+      card.classList.toggle('collapsed', !!collapsedSections[secKey]);
+      const arrow = card.querySelector('.hdr-arrow');
+      if (arrow) arrow.textContent = collapsedSections[secKey] ? '▼' : '▲';
+    }
   }
 
   function copyLuanReport() {

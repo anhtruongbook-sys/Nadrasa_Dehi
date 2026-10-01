@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.35
-          name: "Neta Light v2.8.35 (Khắc Phục Lọc Cung Tử Vi Bị Cuộn Lên Đầu Trang & Tối Ưu Smooth Scroll)"
+          tag_name: v2.8.36
+          name: "Neta Light v2.8.36 (Khắc Phục Cuộn Lên Đầu Trang & Tối Ưu In-Place Navigation Toàn Diện Đa Module)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.35
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.36
+            - **Khắc Phục Cuộn Lên Đầu Trang & Tối Ưu In-Place Navigation Toàn Diện (Bát Tự, Lục Nhâm, Thái Ất, Kỳ Môn, Dịch Học, Trạch Cát)**:
+              + **Bát Tự (Manh Phái Mệnh Lý)**: Chuyển đổi bộ lọc 6 Trụ Cột Đời Người sang In-Place DOM Display Toggle, cuộn mượt mà trực tiếp đến thẻ chủ đề tương ứng (`scroll-margin-top: 65px`), bảo toàn 100% vị trí cuộn trên `.bazi-view-container`.
+              + **Lục Nhâm Đại Độn**: Chuyển đổi bộ lọc phân loại (Tất Pháp Phú, Timeline 3 Giai Đoạn, 7 Chuyên Đề, 8 Sự Vụ Đời Sống) và đóng/mở Accordion sang cập nhật tại chỗ (In-Place DOM Class Toggle), không bao giờ bị giật hay cuộn ngược lên đỉnh trang.
+              + **Thái Ất Thần Kinh**: Tối ưu hóa đóng/mở thẻ luận giải và các pill phân loại theo vị trí cuộn thực tế, bảo lưu `scrollTop` trên `.thaiat-view-wrap`.
+              + **Kỳ Môn Độn Giáp, Dịch Học & Trạch Cát**: Đồng bộ cơ chế lưu và khôi phục `scrollTop` trên toàn bộ container cuộn nội bộ (`.qmdj-view-container`, `.dichhoc-container`, `.tc-container`), ngăn ngừa hoàn toàn hiện tượng reset thanh cuộn khi thao tác.
             - **Khắc Phục Lọc Cung Tử Vi Bị Cuộn Lên Đầu Trang & Tối Ưu Smooth Scroll**:
               + Chuyển đổi cơ chế lọc cung Tử Vi sang cập nhật tại chỗ (In-Place DOM Display Toggle), loại bỏ việc re-render toàn bộ DOM gây mất vị trí cuộn.
               + Tự động cuộn mượt mà (`smooth scrollIntoView`) trực tiếp đến thẻ luận giải cung đã chọn hoặc thanh lọc cung với `scroll-margin-top: 65px`.

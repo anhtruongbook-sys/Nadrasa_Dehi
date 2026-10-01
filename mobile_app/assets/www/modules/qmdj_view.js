@@ -161,7 +161,7 @@
         if (currentDeitySchool !== '10thần') {
           currentDeitySchool = '10thần';
           try { localStorage.setItem('qmdj_deity_school', '10thần'); } catch (e) {}
-          renderQmdj();
+          renderQmdj(true);
         }
       };
     }
@@ -170,7 +170,7 @@
         if (currentDeitySchool !== '8thần') {
           currentDeitySchool = '8thần';
           try { localStorage.setItem('qmdj_deity_school', '8thần'); } catch (e) {}
-          renderQmdj();
+          renderQmdj(true);
         }
       };
     }
@@ -179,7 +179,7 @@
         if (currentJuMethod !== 'chao_bu') {
           currentJuMethod = 'chao_bu';
           try { localStorage.setItem('qmdj_ju_method', 'chao_bu'); } catch (e) {}
-          renderQmdj();
+          renderQmdj(true);
         }
       };
     }
@@ -188,7 +188,7 @@
         if (currentJuMethod !== 'zhi_run') {
           currentJuMethod = 'zhi_run';
           try { localStorage.setItem('qmdj_ju_method', 'zhi_run'); } catch (e) {}
-          renderQmdj();
+          renderQmdj(true);
         }
       };
     }
@@ -725,9 +725,11 @@
     }
   }
 
-  function renderQmdj() {
+  function renderQmdj(preserveScroll = false) {
     const container = document.getElementById('view-qmdj');
     if (!container) return;
+    const scrollEl = container.querySelector('.qmdj-view-container');
+    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
 
     const data = computeQmdjChart(currentQmdjDate);
     if (!data || !data.chart) {
@@ -778,6 +780,17 @@
       renderBanMenhMode(container, modeTabsHtml, chart);
     } else {
       renderTimeMode(container, modeTabsHtml, chart, patterns);
+    }
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = container.querySelector('.qmdj-view-container');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+      });
     }
   }
 
@@ -3409,7 +3422,7 @@
     // Sự kiện chọn lĩnh vực Chiêm Đoán Vạn Sự
     document.getElementById('qmdj-select-omni-domain')?.addEventListener('change', (e) => {
       currentInquiryDomain = e.target.value;
-      renderQmdj();
+      renderQmdj(true);
     });
 
     // Sự kiện chuyển đổi chế độ Dụng Thần Người Hỏi (Can Giờ vs Can Năm Sinh)
@@ -3418,7 +3431,7 @@
         const qm = btn.getAttribute('data-qmode');
         if (qm) {
           currentQuerentMode = qm;
-          renderQmdj();
+          renderQmdj(true);
         }
       });
     });
@@ -3429,7 +3442,7 @@
       if (global.KetNoiVuTruEngine && global.KetNoiVuTruEngine.getStemChiFromYear) {
         currentQuerentStem = global.KetNoiVuTruEngine.getStemChiFromYear(currentQuerentYear).stem;
       }
-      renderQmdj();
+      renderQmdj(true);
     });
 
     // Sự kiện chọn trực tiếp Can năm sinh người hỏi

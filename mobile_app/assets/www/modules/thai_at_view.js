@@ -688,6 +688,7 @@
         padding-bottom: 6px;
         margin-bottom: 10px;
         scrollbar-width: none;
+        scroll-margin-top: 65px;
       }
       .luan-pills-bar::-webkit-scrollbar { display: none; }
       .luan-pill-btn {
@@ -723,6 +724,7 @@
         border-radius: 8px;
         margin-bottom: 8px;
         overflow: hidden;
+        scroll-margin-top: 65px;
       }
       body.theme-light .luan-section-card {
         background: #ffffff !important;
@@ -1193,9 +1195,11 @@
     renderThaiAt();
   }
 
-  function renderThaiAt() {
+  function renderThaiAt(preserveScroll = false) {
     const container = document.getElementById('view-thaiat');
     if (!container) return;
+    const scrollEl = container.querySelector('.thaiat-view-wrap');
+    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
     ensureStyles();
 
     if (global.NetaThaiAtEngine) {
@@ -1464,6 +1468,17 @@
     `;
 
     bindThaiAtEvents(keData, currentChart, luanData);
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = container.querySelector('.thaiat-view-wrap');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+      });
+    }
   }
 
   function shouldDisplayStar(starName, layer) {
@@ -2278,12 +2293,12 @@
 
   function toggleSection(secId) {
     collapsedSections[secId] = !collapsedSections[secId];
-    renderThaiAt();
+    renderThaiAt(true);
   }
 
   function setLuanMode(mode) {
     currentReportMode = mode;
-    renderThaiAt();
+    renderThaiAt(true);
   }
 
   function copyLuanReport(text) {
@@ -2401,19 +2416,19 @@
     if (btnTabChart) {
       btnTabChart.onclick = () => {
         currentMainTab = 'chart';
-        renderThaiAt();
+        renderThaiAt(true);
       };
     }
     if (btnTabAnalysis) {
       btnTabAnalysis.onclick = () => {
         currentMainTab = 'analysis';
-        renderThaiAt();
+        renderThaiAt(true);
       };
     }
     if (btnOpenLuan) {
       btnOpenLuan.onclick = () => {
         currentMainTab = 'analysis';
-        renderThaiAt();
+        renderThaiAt(true);
       };
     }
 
@@ -2429,19 +2444,19 @@
     if (btnModeStandard) {
       btnModeStandard.onclick = () => {
         currentReportMode = 'standard';
-        renderThaiAt();
+        renderThaiAt(true);
       };
     }
     if (btnBackStandard) {
       btnBackStandard.onclick = () => {
         currentReportMode = 'standard';
-        renderThaiAt();
+        renderThaiAt(true);
       };
     }
     if (btnBackStandardErr) {
       btnBackStandardErr.onclick = () => {
         currentReportMode = 'standard';
-        renderThaiAt();
+        renderThaiAt(true);
       };
     }
     if (btnModeAi) {
@@ -2450,7 +2465,7 @@
         if (!aiPolishedText && !isAiPolishing) {
           triggerAiPolish(chart, keData);
         } else {
-          renderThaiAt();
+          renderThaiAt(true);
         }
       };
     }
@@ -2486,7 +2501,7 @@
       btnRoleChu.onclick = () => {
         if (querentRole !== 'chu') {
           querentRole = 'chu';
-          renderThaiAt();
+          renderThaiAt(true);
         }
       };
     }
@@ -2494,7 +2509,7 @@
       btnRoleKhach.onclick = () => {
         if (querentRole !== 'khach') {
           querentRole = 'khach';
-          renderThaiAt();
+          renderThaiAt(true);
         }
       };
     }
@@ -2506,7 +2521,7 @@
         let y = parseInt(inputQYear.value, 10);
         if (!isNaN(y) && y >= 1920 && y <= 2040) {
           querentBirthYear = y;
-          renderThaiAt();
+          renderThaiAt(true);
         }
       });
       inputQYear.addEventListener('input', () => {
@@ -2525,7 +2540,7 @@
       btn.onclick = (e) => {
         e.stopPropagation();
         currentLuanFilter = btn.getAttribute('data-filter') || 'all';
-        renderThaiAt();
+        renderThaiAt(true);
       };
     });
 

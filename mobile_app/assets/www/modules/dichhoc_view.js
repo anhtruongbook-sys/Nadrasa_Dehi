@@ -338,9 +338,11 @@
   }
 
   // Khởi tạo và render toàn bộ giao diện
-  function render() {
+  function render(preserveScroll = false) {
     const container = document.getElementById('view-dichhoc');
     if (!container) return;
+    const scrollEl = container.querySelector('.dichhoc-container');
+    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
 
     // Tự động khởi tạo kết quả Mai Hoa nếu chưa có
     if (!state.maiHoa.result) {
@@ -434,6 +436,17 @@
     `;
 
     bindEvents();
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = container.querySelector('.dichhoc-container');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+      });
+    }
   }
 
   // Render khu vực tương tác theo tab được chọn
@@ -1842,7 +1855,7 @@
           if (state.lucHao.coins.length === 6) {
             chayLapQueLucHao();
           }
-          render();
+          render(true);
         }
       };
     });

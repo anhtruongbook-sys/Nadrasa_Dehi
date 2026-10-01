@@ -802,10 +802,12 @@
             <button class="bazi-topic-pill ${currentTopicFilter === 'fengshui' ? 'active' : ''}" data-topic="fengshui">🧭 Phong Thủy</button>
           </div>
 
-          <!-- Topics List -->
-          <div>
-            ${displayedTopics.map(t => `
-              <div class="bazi-topic-card" id="topic-card-${t.id}">
+          <!-- Topics List (In-place filtering) -->
+          <div class="bazi-topics-list-wrap">
+            ${topicsMap.map(t => {
+              const isMatch = currentTopicFilter === 'ALL' || currentTopicFilter === t.id;
+              return `
+              <div class="bazi-topic-card" id="topic-card-${t.id}" data-topic-id="${t.id}" style="${isMatch ? '' : 'display: none;'}">
                 <div class="bazi-topic-head">
                   <span>${t.name}</span>
                   <span class="bazi-card-tag" style="font-size: 0.7rem;">Phẩm cách: ${t.level}</span>
@@ -814,7 +816,8 @@
                   ${t.content}
                 </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         </div>
 
@@ -895,7 +898,9 @@
     `;
   }
 
-  function renderBazi() {
+  function renderBazi(preserveScroll = false) {
+    const scrollEl = document.querySelector('#view-bazi .bazi-view-container');
+    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
     const container = document.getElementById('view-bazi');
     if (!container) return;
 
@@ -1108,6 +1113,17 @@
       `;
 
       bindBaziEvents(chart);
+
+      if (prevScrollY !== null) {
+        requestAnimationFrame(() => {
+          const sc = document.querySelector('#view-bazi .bazi-view-container');
+          if (sc) {
+            sc.scrollTop = prevScrollY;
+          } else {
+            window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+          }
+        });
+      }
       return;
     }
 
@@ -1285,6 +1301,17 @@
     `;
 
     bindBaziEvents(chart);
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = document.querySelector('#view-bazi .bazi-view-container');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+      });
+    }
   }
 
   function renderAnnualPillarsHTML(luckStep) {
@@ -1561,23 +1588,43 @@
     if (btnTabDashboard) {
       btnTabDashboard.onclick = () => {
         currentAnalysisSubTab = 'dashboard';
-        renderBazi();
+        renderBazi(true);
       };
     }
     if (btnTabFullReport) {
       btnTabFullReport.onclick = () => {
         currentAnalysisSubTab = 'report';
-        renderBazi();
+        renderBazi(true);
       };
     }
 
-    // Topic Filter Pills (Giai đoạn 3: Card 5)
+    // Topic Filter Pills (Giai đoạn 3: Card 5) - In-Place DOM Toggle & Zero Scroll Jump
     const topicPills = document.querySelectorAll('.bazi-topic-pill[data-topic]');
     topicPills.forEach(pill => {
-      pill.onclick = () => {
+      pill.onclick = (e) => {
+        e.preventDefault();
         const topic = pill.getAttribute('data-topic');
         currentTopicFilter = topic;
-        renderBazi();
+
+        // Toggle active class on pills
+        topicPills.forEach(p => p.classList.toggle('active', p.getAttribute('data-topic') === topic));
+
+        // In-place toggle cards display
+        const cards = document.querySelectorAll('.bazi-topic-card[data-topic-id]');
+        cards.forEach(card => {
+          const tId = card.getAttribute('data-topic-id');
+          const isShow = (topic === 'ALL' || tId === topic);
+          card.style.display = isShow ? '' : 'none';
+        });
+
+        // Smooth scroll directly to selected card or filter bar
+        const scrollTarget = topic !== 'ALL'
+          ? (document.getElementById(`topic-card-${topic}`) || pill.closest('.bazi-topic-filter-bar'))
+          : pill.closest('.bazi-topic-filter-bar');
+
+        if (scrollTarget) {
+          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       };
     });
 

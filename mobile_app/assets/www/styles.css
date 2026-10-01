@@ -16260,6 +16260,7 @@ body.theme-light .bazi-wuxing-bar-bg {
   margin-bottom: 14px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(245, 176, 65, 0.2);
+  scroll-margin-top: 65px;
 }
 
 .bazi-topic-pill {
@@ -16286,6 +16287,7 @@ body.theme-light .bazi-wuxing-bar-bg {
   border: 1px solid rgba(245, 176, 65, 0.2);
   background: rgba(255, 255, 255, 0.02);
   margin-bottom: 10px;
+  scroll-margin-top: 65px;
 }
 
 .bazi-topic-head {
