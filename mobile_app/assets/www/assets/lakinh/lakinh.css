@@ -868,48 +868,7 @@ body.light-theme .lakinh-search-suggest-item:active {
   margin-bottom: 6px;
 }
 
-/* Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Siêu Gọn Chuẩn Map) */
-#lakinh-btn-my-location {
-  position: absolute;
-  bottom: 64px;
-  right: 12px;
-  z-index: 25;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  padding: 0;
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(56, 189, 248, 0.6);
-  color: #38bdf8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 10px rgba(56, 189, 248, 0.2);
-  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
-  pointer-events: auto;
-}
 
-#lakinh-btn-my-location:hover {
-  background: rgba(56, 189, 248, 0.25);
-  border-color: #38bdf8;
-  color: #ffffff;
-  transform: scale(1.08);
-  box-shadow: 0 6px 18px rgba(56, 189, 248, 0.4);
-}
-
-#lakinh-btn-my-location:active {
-  transform: scale(0.92);
-}
-
-body.light-theme #lakinh-btn-my-location {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(2, 132, 199, 0.6);
-  color: #0284c7;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
 
 
 /* ================= 2. THANH CÔNG CỤ NỔI BÊN DƯỚI (BOTTOM FLOATING DOCK) ================= */
@@ -1722,17 +1681,16 @@ body.light-theme .lakinh-gps-guide-box {
   border: 1.5px solid rgba(56, 189, 248, 0.65);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(56, 189, 248, 0.35);
   color: #38bdf8;
+  width: 40px;
   height: 40px;
-  padding: 0 14px 0 10px;
-  border-radius: 22px;
+  padding: 0;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 0.74rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   transition: all 0.2s ease;
   user-select: none;
 }
@@ -4328,8 +4286,8 @@ body.light-theme .tamhop-duongcuc-btn.active {
    ========================================================================== */
 #lakinh-btn-toggle-disc-fab {
   position: absolute;
-  right: 12px;
-  bottom: 122px;
+  left: 12px;
+  bottom: 74px;
   z-index: 25;
   width: 40px;
   height: 40px;
@@ -4346,6 +4304,19 @@ body.light-theme .tamhop-duongcuc-btn.active {
   justify-content: center;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+  user-select: none;
+}
+
+.lakinh-fab-svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+  pointer-events: none;
 }
 
 #lakinh-btn-toggle-disc-fab:hover,
@@ -4404,7 +4375,7 @@ body.light-theme #lakinh-top-panel .lakinh-float-btn#lakinh-btn-toggle-disc.disc
 /* Banner Thông Báo Khi Đang Ẩn La Kinh */
 .lakinh-disc-hidden-banner {
   position: absolute;
-  bottom: 68px;
+  bottom: 122px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 24;

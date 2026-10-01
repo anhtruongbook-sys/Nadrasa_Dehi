@@ -116,14 +116,33 @@
 
         <div id="lakinh-crosshair"></div>
 
-        <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Siêu Gọn) -->
-        <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn" aria-label="Về vị trí hiện tại">
-          <span style="font-size: 1.15rem; line-height: 1;">📍</span>
+        <!-- Nút Nổi Ẩn/Hiện Đĩa La Kinh (Bên Trái - Thẳng Hàng Nút GPS 74px) -->
+        <button id="lakinh-btn-toggle-disc-fab" class="lakinh-fab-map-btn ${state.isDiscVisible ? '' : 'disc-hidden'}" title="${state.isDiscVisible ? 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình' : 'Hiện Đĩa La Kinh 36 Tầng'}" aria-label="Ẩn hiện La Kinh">
+          <span id="lakinh-fab-disc-icon">
+            ${state.isDiscVisible ? `
+              <svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            ` : `
+              <svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            `}
+          </span>
         </button>
 
-        <!-- Nút Nổi Ẩn/Hiện Đĩa La Kinh (Xem Rõ Bản Đồ & Địa Hình Vệ Tinh) -->
-        <button id="lakinh-btn-toggle-disc-fab" class="lakinh-fab-map-btn ${state.isDiscVisible ? '' : 'disc-hidden'}" title="${state.isDiscVisible ? 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình' : 'Hiện Đĩa La Kinh 36 Tầng'}" aria-label="Ẩn hiện La Kinh">
-          <span id="lakinh-fab-disc-icon" style="font-size: 1.15rem; line-height: 1;">${state.isDiscVisible ? '👁️' : '🙈'}</span>
+        <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Bên Phải - Vector GPS Target Cao Cấp) -->
+        <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn" aria-label="Về vị trí hiện tại">
+          <svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8"></circle>
+            <line x1="12" y1="2" x2="12" y2="5"></line>
+            <line x1="12" y1="19" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="5" y1="12"></line>
+            <line x1="19" y1="12" x2="22" y1="12"></line>
+            <circle cx="12" cy="12" r="2.5" fill="currentColor"></circle>
+          </svg>
         </button>
 
         <!-- Banner thông báo khi đang ẩn đĩa La Kinh để soi bản đồ -->
@@ -4662,7 +4681,9 @@ function updateQmdjStrategicLayer() {
           fabBtn.classList.remove('disc-hidden');
           fabBtn.title = 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình';
         }
-        if (fabIcon) fabIcon.textContent = '👁️';
+        if (fabIcon) {
+          fabIcon.innerHTML = `<svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        }
         if (topBtn) {
           topBtn.classList.remove('disc-hidden');
           topBtn.title = 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình';
@@ -4679,7 +4700,9 @@ function updateQmdjStrategicLayer() {
           fabBtn.classList.add('disc-hidden');
           fabBtn.title = 'Đang ẩn La Kinh (Chạm để hiện lại)';
         }
-        if (fabIcon) fabIcon.textContent = '🙈';
+        if (fabIcon) {
+          fabIcon.innerHTML = `<svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+        }
         if (topBtn) {
           topBtn.classList.add('disc-hidden');
           topBtn.title = 'Đang ẩn La Kinh (Chạm để hiện lại)';
