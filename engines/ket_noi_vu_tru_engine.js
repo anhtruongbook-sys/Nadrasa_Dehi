@@ -618,7 +618,7 @@
     const deityDetail = `🔮 Thần Trợ [${pObj.deity || 'Chưa định'}]: ${deityInfo.nature}. ${deityInfo.desc}`;
     let stemPatternDetail = `⚡ Thập Can [${stemPair}]: Can Thiên ${pObj.heaven_stem} phối Can Địa ${pObj.earth_stem}.`;
     if (patternInfo) {
-      stemPatternDetail += ` Đắc Cách: **${patternInfo.name}** (${patternInfo.note})`;
+      stemPatternDetail += ` Đắc Cách: <strong>${patternInfo.name}</strong> (${patternInfo.note})`;
     } else {
       stemPatternDetail += ` Khí trường bình ổn, không xung sát nghiêm trọng.`;
     }
@@ -626,13 +626,13 @@
     // Tầng 3: Không Vong & Dịch Mã
     let specialText = "";
     if (objIsKW) {
-      specialText += `⚠️ Cung Dụng Thần lâm **TUẦN KHÔNG (Không Vong)**: Khí số suy giảm 70-80%, sự việc còn lơ lửng, lời hứa hẹn dễ thành "bánh vẽ", hợp đồng có nguy cơ bị hoãn hoặc hủy. Cần đợi tuần xung Không để mọi sự rõ ràng. `;
+      specialText += `⚠️ Cung Dụng Thần lâm <strong>TUẦN KHÔNG (Không Vong)</strong>: Khí số suy giảm 70-80%, sự việc còn lơ lửng, lời hứa hẹn dễ thành "bánh vẽ", hợp đồng có nguy cơ bị hoãn hoặc hủy. Cần đợi tuần xung Không để mọi sự rõ ràng. `;
     }
     if (subjIsKW) {
-      specialText += `⚠️ Cung Người Hỏi lâm **TUẦN KHÔNG**: Tâm lý người hỏi còn hoang mang, năng lực hoặc tài chính chưa chuẩn bị chu tất, chớ vội vàng quyết định lớn. `;
+      specialText += `⚠️ Cung Người Hỏi lâm <strong>TUẦN KHÔNG</strong>: Tâm lý người hỏi còn hoang mang, năng lực hoặc tài chính chưa chuẩn bị chu tất, chớ vội vàng quyết định lớn. `;
     }
     if (hasHorse) {
-      specialText += `🐎 Cung ngộ **DỊCH MÃ**: Biến chuyển cực kỳ mau lẹ! Có sự di chuyển vị trí, thay đổi nhân sự hoặc công tác xa, cần chớp thời cơ dứt khoát.`;
+      specialText += `🐎 Cung ngộ <strong>DỊCH MÃ</strong>: Biến chuyển cực kỳ mau lẹ! Có sự di chuyển vị trí, thay đổi nhân sự hoặc công tác xa, cần chớp thời cơ dứt khoát.`;
     }
     if (!specialText) {
       specialText = "Cung vị vững vàng, không ngộ Tuần Không, trường năng lượng tập trung ổn định.";
@@ -640,8 +640,8 @@
 
     // Tầng 4: Sách Lược Hành Động & Ứng Kỳ
     let strategyText = "";
-    let timingText = `Dự báo ứng nghiệm vào các ngày / tháng có Địa Chi: **${PALACE_DETAILS[objP]?.branches || 'Tùy Cung'}** hoặc khi Trực Sử lâm vị.`;
-    let directionText = `Phương vị đón Cát Khí hành động: **${PALACE_DETAILS[objP]?.direction || 'Xem bàn cờ'}** (Cung ${objP}) hoặc Cung có Trực Phù / Khai Môn.`;
+    let timingText = `Dự báo ứng nghiệm vào các ngày / tháng có Địa Chi: <strong>${PALACE_DETAILS[objP]?.branches || 'Tùy Cung'}</strong> hoặc khi Trực Sử lâm vị.`;
+    let directionText = `Phương vị đón Cát Khí hành động: <strong>${PALACE_DETAILS[objP]?.direction || 'Xem bàn cờ'}</strong> (Cung ${objP}) hoặc Cung có Trực Phù / Khai Môn.`;
 
     if (baseScore >= 70) {
       strategyText = `🎯 SÁCH LƯỢC TẤN CÔNG: Thời cơ chín muồi, nên chủ động ký kết, mở rộng đầu tư, xuất hành đàm phán. Tận dụng tối đa sự ủng hộ của quý nhân để chốt việc dứt khoát.`;

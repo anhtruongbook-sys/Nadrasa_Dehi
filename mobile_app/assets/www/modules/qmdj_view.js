@@ -214,7 +214,7 @@
     huongKey: 'TB1',   // 16 Hướng Nhà chuẩn (TB1: Tuất, TB2_3: Càn-Hợi, ...)
     huongPalace: 6,    // Càn 6 (Tây Bắc)
     sonCua: 'Thìn',    // 24 Sơn vị cửa (Thìn default)
-    degree: 315.0,     // Độ số thực tế từ La Kinh Vệ Tinh (0 - 360°)
+    degree: 300.0,     // Tọa độ hướng thực tế (TB1: Tuất 300.0°, TB2_3: Càn-Hợi 315.0°)
     rooms: {
       kitchen: 6,      // Bếp (Mặc định Càn 6 để kiểm tra Hỏa Thiêu Thiên Môn)
       toilet: 8,       // Nhà vệ sinh
@@ -857,6 +857,10 @@
     if (!res) return '';
 
     const qGenderStr = currentQuerentGender === 'nam' ? 'Nam ♂' : 'Nữ ♀';
+    const formatMdText = (str) => {
+      if (!str) return '';
+      return String(str).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    };
 
     return `
       <div class="qmdj-omni-card">
@@ -911,7 +915,7 @@
               <strong class="omni-val">${res.relationship}</strong>
             </div>
             <div class="omni-advice-line">
-              ${res.layers.hostGuest}
+              ${formatMdText(res.layers.hostGuest)}
             </div>
           </div>
         </div>
@@ -924,19 +928,19 @@
             <div class="omni-pillars-grid">
               <div class="omni-pillar-cell">
                 <span class="cell-label">🚪 Bát Môn:</span>
-                <span class="cell-val">${res.layers.doorDetail}</span>
+                <span class="cell-val">${formatMdText(res.layers.doorDetail)}</span>
               </div>
               <div class="omni-pillar-cell">
                 <span class="cell-label">⭐ Cửu Tinh:</span>
-                <span class="cell-val">${res.layers.starDetail}</span>
+                <span class="cell-val">${formatMdText(res.layers.starDetail)}</span>
               </div>
               <div class="omni-pillar-cell">
                 <span class="cell-label">🔮 Thần Trợ:</span>
-                <span class="cell-val">${res.layers.deityDetail}</span>
+                <span class="cell-val">${formatMdText(res.layers.deityDetail)}</span>
               </div>
               <div class="omni-pillar-cell">
                 <span class="cell-label">⚡ Thập Can:</span>
-                <span class="cell-val">${res.layers.stemPatternDetail}</span>
+                <span class="cell-val">${formatMdText(res.layers.stemPatternDetail)}</span>
               </div>
             </div>
           </div>
@@ -944,7 +948,7 @@
           <!-- Tầng 3: Không Vong & Dịch Mã -->
           <div class="omni-analysis-sec special-sec">
             <div class="sec-title">⚡ KHÔNG VONG & BIẾN ĐỘNG DỊCH MÃ:</div>
-            <p class="sec-p">${res.layers.specialStates}</p>
+            <p class="sec-p">${formatMdText(res.layers.specialStates)}</p>
           </div>
 
           <!-- Tầng 4: Sách Lược Hành Động & Ứng Kỳ Dự Báo -->
@@ -953,15 +957,15 @@
             <div class="action-grid">
               <div class="action-item strategy">
                 <strong class="action-lbl">📌 Chiến Lược Cốt Lõi:</strong>
-                <p class="action-txt">${res.layers.strategy}</p>
+                <p class="action-txt">${formatMdText(res.layers.strategy)}</p>
               </div>
               <div class="action-item direction">
                 <strong class="action-lbl">🧭 Phương Vị Đắc Lợi:</strong>
-                <p class="action-txt">${res.layers.direction}</p>
+                <p class="action-txt">${formatMdText(res.layers.direction)}</p>
               </div>
               <div class="action-item timing">
                 <strong class="action-lbl">⏳ Ứng Kỳ Dự Báo:</strong>
-                <p class="action-txt">${res.layers.timing}</p>
+                <p class="action-txt">${formatMdText(res.layers.timing)}</p>
               </div>
             </div>
           </div>
@@ -2690,6 +2694,12 @@
    * Render Chế Độ Phong Thủy Nhà Cố Định
    */
   function renderPhongThuyMode(container, modeTabsHtml, chart) {
+    const currentPtDeg = (ptState.degree !== undefined && !isNaN(ptState.degree)) ? ptState.degree : 300.0;
+    const lkRotVal = (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function')
+      ? ((global.NetaLaKinhView.getState().rotation % 360 + 360) % 360)
+      : currentPtDeg;
+    const lkRotDisplay = lkRotVal.toFixed(1);
+
     container.innerHTML = `
       <div class="qmdj-view-container">
         ${modeTabsHtml}
@@ -2741,12 +2751,21 @@
             </button>
           </div>
 
-          <!-- Row 3: Cầu nối La Kinh Vệ Tinh -->
-          <div class="ucc-row pt-row-lakinh-bridge" style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
-            <button type="button" class="pt-sync-lk-btn" id="btn-pt-sync-lakinh" title="Lấy góc xoay & tọa độ thực địa từ La Kinh Vệ Tinh">
-              🧭 Lấy từ La Kinh Vệ Tinh (${(global.NetaLaKinhView && global.NetaLaKinhView.getState) ? global.NetaLaKinhView.getState().rotation.toFixed(1) + '°' : (ptState.degree || 315) + '°'})
-            </button>
-            <span class="pt-survey-note">Đang khảo sát: <strong class="pt-survey-deg">${(ptState.degree || 315).toFixed(1)}°</strong></span>
+          <!-- Row 3: Cầu nối La Kinh Thực Địa & Tọa độ Hướng Nhà -->
+          <div class="ucc-row pt-row-lakinh-bridge" style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <button type="button" class="pt-sync-lk-btn" id="btn-pt-sync-lakinh" title="Đồng bộ góc xoay thực địa từ La Kinh">
+                🧭 Lấy góc (${lkRotDisplay}°)
+              </button>
+              <button type="button" class="pt-open-lk-btn" id="btn-pt-open-lakinh" title="Mở La Kinh thực địa để ngắm hướng">
+                🧭 Mở La Kinh
+              </button>
+            </div>
+            <div class="pt-survey-wrap" style="display: flex; align-items: center; gap: 3px;">
+              <span class="pt-survey-note">Tọa độ:</span>
+              <input type="number" id="pt-input-deg" class="pt-input-deg" min="0" max="360" step="0.5" value="${currentPtDeg.toFixed(1)}" title="Nhập độ số hướng nhà thực tế (0 - 360°)" />
+              <span class="pt-survey-unit">°</span>
+            </div>
           </div>
 
           <!-- Row 4: Trường phái Thần (10 Thần vs 8 Thần) -->
@@ -3430,7 +3449,33 @@
     const selVan = document.getElementById('pt-select-van');
     const selHuong = document.getElementById('pt-select-huong');
     const selCua = document.getElementById('pt-select-cua');
+    const inputDeg = document.getElementById('pt-input-deg');
     const btnSubmit = document.getElementById('btn-pt-submit');
+    const btnSyncLk = document.getElementById('btn-pt-sync-lakinh');
+    const btnOpenLk = document.getElementById('btn-pt-open-lakinh');
+
+    // Sự kiện thay đổi Hướng Nhà 16 Hướng: Tự động cập nhật degree danh định
+    if (selHuong) {
+      selHuong.addEventListener('change', () => {
+        ptState.huongKey = selHuong.value || 'TB1';
+        const hObj = HUONG_16_LIST.find(h => h.key === ptState.huongKey);
+        if (hObj) {
+          ptState.huongPalace = hObj.palace;
+          ptState.degree = hObj.deg;
+        }
+        renderQmdj();
+      });
+    }
+
+    // Sự kiện nhập tay độ số hướng nhà thực tế
+    if (inputDeg) {
+      inputDeg.addEventListener('change', (e) => {
+        const val = parseFloat(e.target.value);
+        if (!isNaN(val)) {
+          setPhongThuyDegree(val);
+        }
+      });
+    }
 
     if (btnSubmit) {
       btnSubmit.onclick = () => {
@@ -3438,34 +3483,62 @@
         if (selHuong) {
           ptState.huongKey = selHuong.value || 'TB1';
           const hObj = HUONG_16_LIST.find(h => h.key === ptState.huongKey);
-          if (hObj) ptState.huongPalace = hObj.palace;
+          if (hObj) {
+            ptState.huongPalace = hObj.palace;
+            if (ptState.degree === undefined || isNaN(ptState.degree)) {
+              ptState.degree = hObj.deg;
+            }
+          }
         }
         if (selCua) ptState.sonCua = selCua.value || 'Thìn';
         renderQmdj();
       };
     }
 
-    // Sự kiện Cầu Nối Đồng Bộ từ La Kinh Vệ Tinh
-    const btnSyncLk = document.getElementById('btn-pt-sync-lakinh');
+    // Sự kiện Cầu Nối Đồng Bộ từ La Kinh Thực Địa
     if (btnSyncLk) {
       btnSyncLk.onclick = () => {
         if (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function') {
           const lkState = global.NetaLaKinhView.getState();
           if (lkState) {
-            const rot = lkState.rotation || 0;
-            ptState.degree = rot;
+            const rot = ((lkState.rotation % 360) + 360) % 360;
+            ptState.degree = Math.round(rot * 10) / 10;
+            
+            // Tìm 16 hướng gần nhất theo góc đo thực địa
+            let bestH = HUONG_16_LIST[0];
+            let minDiff = 999;
+            HUONG_16_LIST.forEach(h => {
+              let diff = Math.abs(h.deg - ptState.degree);
+              if (diff > 180) diff = 360 - diff;
+              if (diff < minDiff) {
+                minDiff = diff;
+                bestH = h;
+              }
+            });
+            ptState.huongKey = bestH.key;
+            ptState.huongPalace = bestH.palace;
+
+            // Đồng bộ 24 Sơn Cửa
             if (global.KetNoiVuTruEngine) {
-              const m = global.KetNoiVuTruEngine.degreeToMountain(rot);
-              const matchedH = HUONG_16_LIST.find(h => h.palace === m.palace);
-              if (matchedH) ptState.huongKey = matchedH.key;
+              const m = global.KetNoiVuTruEngine.degreeToMountain(ptState.degree);
               ptState.sonCua = m.name;
-              ptState.huongPalace = m.palace;
             }
+
             renderQmdj();
-            showQmdjToast(`🎯 Đã đồng bộ hướng ${rot.toFixed(1)}° (${ptState.sonCua} Sơn) từ La Kinh!`);
+            showQmdjToast(`🎯 Đã đồng bộ tọa độ ${ptState.degree.toFixed(1)}° (${ptState.sonCua} Sơn - ${bestH.name}) từ La Kinh!`);
           }
         } else {
           showQmdjToast('Không tìm thấy dữ liệu La Kinh');
+        }
+      };
+    }
+
+    // Sự kiện mở La Kinh thực địa để ngắm hướng
+    if (btnOpenLk) {
+      btnOpenLk.onclick = () => {
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('lakinh');
+          showQmdjToast('🧭 Đã mở La Kinh thực địa để ngắm hướng');
         }
       };
     }
