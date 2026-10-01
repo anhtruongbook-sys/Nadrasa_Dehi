@@ -76,10 +76,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.15
-          name: "Neta Light v2.8.15 (Tính Trùng Tang - Nhập Mộ - Thiên Di & Hoá Giải Âm Trạch)"
+          tag_name: v2.8.16
+          name: "Neta Light v2.8.16 (Nút Ẩn/Hiện Đĩa La Kinh Soi Rõ Địa Hình & Tra Cứu Trùng Tang)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.15
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.16
+            - **Tính Năng Mới: Nút Ẩn / Hiện Đĩa La Kinh 1-Chạm (Soi Rõ Địa Hình & Bản Đồ Vệ Tinh)**:
+              + Bổ sung nút tròn nổi (FAB) `👁️` trên bản đồ (ngay phía trên nút GPS `📍`) và nút nhanh trên thanh Top Bar.
+              + Chỉ 1 chạm: Ẩn hoàn toàn đĩa La Kinh 36 tầng và nền lót để quan sát 100% hình thế sông núi, mái nhà, ranh đất, đường sá ngõ ngách bên dưới.
+              + Tâm chữ thập hồng ngoại (`#lakinh-crosshair`) và thanh HUD độ số Tọa Hướng 24 Sơn / 64 Quẻ vẫn giữ nguyên vị trí để đo đạc chuẩn xác.
+              + Bổ sung thanh trạng thái nổi `🗺️ Đang ẩn La Kinh để soi bản đồ [👁️ Hiện lại]` giúp bật lại La Kinh tức thì.
+              + Bổ sung bộ điều khiển chi tiết trong Bảng Điều Khiển (`⚙️ Công Cụ`): Nút chuyển đổi và thanh trượt độ mờ đĩa La Kinh (Disc Opacity) với các mức đặt nhanh 0% (Ẩn), 30% (Kính mờ), 60% (Cân bằng), 100% (Đậm nét).
             - **Tính Năng Chuyên Sâu: Tra Cứu Trùng Tang - Nhập Mộ - Thiên Di (Âm Trạch)**:
               + Bấm quẻ tay 12 cung Địa Chi kinh điển: Nam khởi 10 tuổi tại Dần (thuận chiều), Nữ khởi 10 tuổi tại Thân (nghịch chiều).
               + Bóc tách trọn vẹn 4 Trụ lâm chung: Trụ Năm (Tuổi thọ), Trụ Tháng (Tháng mất ÂL), Trụ Ngày (Ngày mất ÂL), Trụ Giờ (Giờ mất Can Chi).

@@ -22,6 +22,7 @@
     : 480;
 
   let state = {
+    isDiscVisible: true, // Trạng thái ẩn/hiện đĩa La Kinh để soi rõ bản đồ & địa hình vệ tinh
     bgOpacity: 0.35, // Độ mờ nền tròn lót (0.0 = trong suốt 100% thấy rõ địa hình, 0.35 = kính mờ cân bằng, 0.85 = nền trắng)
     discOpacity: 1.0, // Độ đậm nét đĩa La Kinh
     activePlate: 'thuoc_trans', // Mặc định là Mica trong suốt 'thuoc_trans'
@@ -120,8 +121,19 @@
           <span style="font-size: 1.15rem; line-height: 1;">📍</span>
         </button>
 
+        <!-- Nút Nổi Ẩn/Hiện Đĩa La Kinh (Xem Rõ Bản Đồ & Địa Hình Vệ Tinh) -->
+        <button id="lakinh-btn-toggle-disc-fab" class="lakinh-fab-map-btn ${state.isDiscVisible ? '' : 'disc-hidden'}" title="${state.isDiscVisible ? 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình' : 'Hiện Đĩa La Kinh 36 Tầng'}" aria-label="Ẩn hiện La Kinh">
+          <span id="lakinh-fab-disc-icon" style="font-size: 1.15rem; line-height: 1;">${state.isDiscVisible ? '👁️' : '🙈'}</span>
+        </button>
+
+        <!-- Banner thông báo khi đang ẩn đĩa La Kinh để soi bản đồ -->
+        <div id="lakinh-disc-hidden-banner" class="lakinh-disc-hidden-banner" style="${state.isDiscVisible ? 'display: none;' : 'display: flex;'}">
+          <span class="disc-banner-text">🗺️ Đang ẩn La Kinh để soi bản đồ địa hình</span>
+          <button type="button" id="btn-disc-hidden-restore" class="disc-banner-btn">👁️ Hiện lại</button>
+        </div>
+
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
-        <div id="lakinh-overlay-container" style="width: ${state.size}px; height: ${state.size}px;">
+        <div id="lakinh-overlay-container" class="${state.isDiscVisible ? '' : 'is-disc-hidden'}" style="width: ${state.size}px; height: ${state.size}px;">
           <div id="lakinh-backdrop-circle" style="opacity: ${state.bgOpacity};"></div>
           <img id="lakinh-disc" src="${getPlateSrc(state.activePlate)}" alt="Thước Lập Cực 36 Tầng" style="opacity: ${state.discOpacity};" />
           <!-- Lớp Vector Kỳ Môn Chiến Lược Joey Yap (Phase 3) -->
@@ -490,6 +502,9 @@
               <span class="hud-pill-arrow" id="hud-pill-arrow">▾</span>
             </div>
             <div class="lakinh-top-right-group">
+              <button class="lakinh-float-btn icon-only ${state.isDiscVisible ? '' : 'disc-hidden'}" id="lakinh-btn-toggle-disc" title="${state.isDiscVisible ? 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình' : 'Hiện Đĩa La Kinh 36 Tầng'}">
+                <span id="lakinh-top-disc-icon">${state.isDiscVisible ? '👁️' : '🙈'}</span>
+              </button>
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-tam-hop" title="Thẩm Định Phong Thủy Tam Hợp Phái ">
                 🌊
               </button>
@@ -621,6 +636,38 @@
             <button class="sheet-close-btn" id="sheet-close-btn">
               ✕ Đóng / Xem Toàn Màn Hình
             </button>
+          </div>
+
+          <!-- Nhóm Ẩn / Hiện Đĩa La Kinh (Xem Rõ Bản Đồ & Địa Hình Vệ Tinh) -->
+          <div class="sheet-control-group">
+            <div class="sheet-control-label">
+              <span>👁️ Đĩa La Kinh 36 Tầng (Soi Địa Hình)</span>
+              <span class="val" id="sheet-val-disc-status">${state.isDiscVisible ? 'Đang hiện' : 'Đã ẩn'}</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <button class="lakinh-step-btn ${state.isDiscVisible ? 'active' : ''}" id="btn-disc-show" style="font-weight: 700; color: #38bdf8;">
+                👁️ Hiện Đĩa La Kinh
+              </button>
+              <button class="lakinh-step-btn ${!state.isDiscVisible ? 'active' : ''}" id="btn-disc-hide" style="font-weight: 700; color: #f59e0b;">
+                🙈 Ẩn La Kinh (Soi Địa Hình)
+              </button>
+            </div>
+            <div style="margin-top: 8px;">
+              <div class="sheet-control-sublabel">
+                <span>Độ mờ đĩa La Kinh (Soi xuyên thấu)</span>
+                <span class="val" id="sheet-val-disc-opacity">${Math.round(state.discOpacity * 100)}%</span>
+              </div>
+              <input type="range" class="lakinh-slider" id="sheet-slider-disc-opacity" min="0" max="100" value="${Math.round(state.discOpacity * 100)}">
+              <div class="lakinh-btn-row" style="margin-top: 4px;">
+                <button class="lakinh-step-btn" id="btn-disc-op-0" style="color: #ef4444; font-weight: 600;">0% (Ẩn)</button>
+                <button class="lakinh-step-btn" id="btn-disc-op-30" style="color: #38bdf8; font-weight: 600;">30% (Kính mờ)</button>
+                <button class="lakinh-step-btn" id="btn-disc-op-60" style="color: #22c55e; font-weight: 600;">60% (Cân bằng)</button>
+                <button class="lakinh-step-btn ${Math.round(state.discOpacity * 100) === 100 ? 'active' : ''}" id="btn-disc-op-100" style="color: #f5b041; font-weight: 600;">100% (Đậm)</button>
+              </div>
+            </div>
+            <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 4px; line-height: 1.3;">
+              💡 <em>Chạm "Ẩn La Kinh" hoặc nút 👁️ trên bản đồ để soi rõ mái nhà, ngõ ngách, hình thế địa lý.</em>
+            </div>
           </div>
 
           <!-- Nhóm chọn mẫu Đĩa La Kinh / Thước Lập Cực -->
@@ -4591,6 +4638,146 @@ function updateQmdjStrategicLayer() {
       });
     }
 
+    // 2b. Nút Ẩn / Hiện Đĩa La Kinh (Xem Rõ Bản Đồ & Địa Hình Vệ Tinh)
+    const toggleDiscVisibility = (forceVisible) => {
+      if (forceVisible !== undefined) {
+        state.isDiscVisible = forceVisible;
+      } else {
+        state.isDiscVisible = !state.isDiscVisible;
+      }
+
+      const container = document.getElementById('lakinh-overlay-container');
+      const fabBtn = document.getElementById('lakinh-btn-toggle-disc-fab');
+      const fabIcon = document.getElementById('lakinh-fab-disc-icon');
+      const topBtn = document.getElementById('lakinh-btn-toggle-disc');
+      const topIcon = document.getElementById('lakinh-top-disc-icon');
+      const banner = document.getElementById('lakinh-disc-hidden-banner');
+      const valStatus = document.getElementById('sheet-val-disc-status');
+      const btnShow = document.getElementById('btn-disc-show');
+      const btnHide = document.getElementById('btn-disc-hide');
+
+      if (state.isDiscVisible) {
+        if (container) container.classList.remove('is-disc-hidden');
+        if (fabBtn) {
+          fabBtn.classList.remove('disc-hidden');
+          fabBtn.title = 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình';
+        }
+        if (fabIcon) fabIcon.textContent = '👁️';
+        if (topBtn) {
+          topBtn.classList.remove('disc-hidden');
+          topBtn.title = 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình';
+        }
+        if (topIcon) topIcon.textContent = '👁️';
+        if (banner) banner.style.display = 'none';
+        if (valStatus) valStatus.textContent = 'Đang hiện';
+        if (btnShow) btnShow.classList.add('active');
+        if (btnHide) btnHide.classList.remove('active');
+        showLaKinhToast('👁️ Đã hiện lại Đĩa La Kinh 36 Tầng');
+      } else {
+        if (container) container.classList.add('is-disc-hidden');
+        if (fabBtn) {
+          fabBtn.classList.add('disc-hidden');
+          fabBtn.title = 'Đang ẩn La Kinh (Chạm để hiện lại)';
+        }
+        if (fabIcon) fabIcon.textContent = '🙈';
+        if (topBtn) {
+          topBtn.classList.add('disc-hidden');
+          topBtn.title = 'Đang ẩn La Kinh (Chạm để hiện lại)';
+        }
+        if (topIcon) topIcon.textContent = '🙈';
+        if (banner) banner.style.display = 'flex';
+        if (valStatus) valStatus.textContent = 'Đã ẩn (Soi địa hình)';
+        if (btnHide) btnHide.classList.add('active');
+        if (btnShow) btnShow.classList.remove('active');
+        showLaKinhToast('🗺️ Đã ẩn La Kinh: Bản đồ & địa hình hiển thị 100% rõ nét');
+      }
+    };
+
+    const fabToggleDisc = document.getElementById('lakinh-btn-toggle-disc-fab');
+    if (fabToggleDisc) {
+      fabToggleDisc.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDiscVisibility();
+      });
+    }
+
+    const topToggleDisc = document.getElementById('lakinh-btn-toggle-disc');
+    if (topToggleDisc) {
+      topToggleDisc.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDiscVisibility();
+      });
+    }
+
+    const btnRestoreDisc = document.getElementById('btn-disc-hidden-restore');
+    if (btnRestoreDisc) {
+      btnRestoreDisc.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDiscVisibility(true);
+      });
+    }
+
+    const btnDiscShow = document.getElementById('btn-disc-show');
+    if (btnDiscShow) {
+      btnDiscShow.addEventListener('click', () => toggleDiscVisibility(true));
+    }
+
+    const btnDiscHide = document.getElementById('btn-disc-hide');
+    if (btnDiscHide) {
+      btnDiscHide.addEventListener('click', () => toggleDiscVisibility(false));
+    }
+
+    // Sliders & Presets: Độ mờ đĩa La Kinh (Disc Opacity)
+    const sDiscOpacity = document.getElementById('sheet-slider-disc-opacity');
+    const valDiscOpacity = document.getElementById('sheet-val-disc-opacity');
+    const btnDiscOp0 = document.getElementById('btn-disc-op-0');
+    const btnDiscOp30 = document.getElementById('btn-disc-op-30');
+    const btnDiscOp60 = document.getElementById('btn-disc-op-60');
+    const btnDiscOp100 = document.getElementById('btn-disc-op-100');
+
+    const updateDiscOpacity = (val) => {
+      state.discOpacity = Math.max(0.0, Math.min(1.0, val / 100.0));
+      const disc = document.getElementById('lakinh-disc');
+      if (disc) disc.style.opacity = state.discOpacity;
+      if (sDiscOpacity) sDiscOpacity.value = Math.round(state.discOpacity * 100);
+      if (valDiscOpacity) valDiscOpacity.textContent = `${Math.round(state.discOpacity * 100)}%`;
+
+      if (btnDiscOp0) btnDiscOp0.classList.toggle('active', Math.round(state.discOpacity * 100) === 0);
+      if (btnDiscOp30) btnDiscOp30.classList.toggle('active', Math.round(state.discOpacity * 100) === 30);
+      if (btnDiscOp60) btnDiscOp60.classList.toggle('active', Math.round(state.discOpacity * 100) === 60);
+      if (btnDiscOp100) btnDiscOp100.classList.toggle('active', Math.round(state.discOpacity * 100) === 100);
+
+      // Nếu kéo về 0%: Tự động kích hoạt ẩn; nếu kéo > 0: Tự động kích hoạt hiện
+      if (state.discOpacity === 0 && state.isDiscVisible) {
+        toggleDiscVisibility(false);
+      } else if (state.discOpacity > 0 && !state.isDiscVisible) {
+        toggleDiscVisibility(true);
+      }
+    };
+
+    if (sDiscOpacity) {
+      sDiscOpacity.addEventListener('input', (e) => {
+        updateDiscOpacity(parseFloat(e.target.value));
+      });
+    }
+
+    if (btnDiscOp0) btnDiscOp0.addEventListener('click', () => {
+      updateDiscOpacity(0);
+      showLaKinhToast('🙈 Độ mờ 0%: Ẩn hoàn toàn đĩa La Kinh');
+    });
+    if (btnDiscOp30) btnDiscOp30.addEventListener('click', () => {
+      updateDiscOpacity(30);
+      showLaKinhToast('🌫️ Độ mờ 30%: Kính mờ nhẹ, thấy rõ nóc nhà địa hình');
+    });
+    if (btnDiscOp60) btnDiscOp60.addEventListener('click', () => {
+      updateDiscOpacity(60);
+      showLaKinhToast('⚖️ Độ mờ 60%: Cân bằng hoàn hảo giữa chữ và địa hình');
+    });
+    if (btnDiscOp100) btnDiscOp100.addEventListener('click', () => {
+      updateDiscOpacity(100);
+      showLaKinhToast('🎯 Độ mờ 100%: Đĩa La Kinh hiển thị sắc nét tối đa');
+    });
+
     const dockSensor = document.getElementById('lakinh-dock-sensor');
     if (dockSensor) {
       dockSensor.addEventListener('click', (e) => {
@@ -5621,7 +5808,7 @@ function updateQmdjStrategicLayer() {
     // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
     if (lkContainer) {
       lkContainer.addEventListener('click', (e) => {
-        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-my-location, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-my-location, #lakinh-btn-toggle-disc-fab, #lakinh-disc-hidden-banner, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
           return;
         }
         if (state.isRayActive && !state.isPlanPanActive) {
