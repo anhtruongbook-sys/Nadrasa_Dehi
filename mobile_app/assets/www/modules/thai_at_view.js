@@ -300,24 +300,110 @@
         font-weight: 800 !important;
       }
 
-      /* Ribbon Strip Items with Clean Wrapping & Contrast */
-      .thaiat-strip-item,
-      .lucnham-strip-item {
-        display: inline-flex;
+      /* Master Strip: 5 Cột Phân Bổ Đều, Không Díu Chữ, Rõ Ràng & Thoáng Đãng */
+      .thaiat-master-strip {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 2px !important;
+        background: rgba(26, 3, 7, 0.95);
+        border: 1px solid rgba(245, 176, 65, 0.35);
+        border-radius: 8px;
+        padding: 6px 3px;
+        margin: 4px 0 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        box-sizing: border-box;
+        width: 100%;
+        text-align: center;
+      }
+      body.theme-light .thaiat-master-strip {
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+      }
+      .thaiat-stat-item {
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 4px;
+        justify-content: center;
+        padding: 0 1px;
+        min-width: 0;
+      }
+      .thaiat-stat-item:not(:last-child) {
+        border-right: 1px solid rgba(245, 176, 65, 0.18);
+      }
+      body.theme-light .thaiat-stat-item:not(:last-child) {
+        border-right-color: #e2e8f0;
+      }
+      .thaiat-stat-lbl {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.2px;
+        margin-bottom: 2px;
         white-space: nowrap;
+        text-transform: uppercase;
       }
-      .thaiat-strip-item:not(:last-child)::after,
-      .lucnham-strip-item:not(:last-child)::after {
-        content: "•";
-        margin-left: 8px;
-        opacity: 0.5;
-        color: currentColor;
+      body.theme-light .thaiat-stat-lbl {
+        color: #64748b !important;
       }
-      body.theme-light .thaiat-master-strip strong {
+      .thaiat-stat-val {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        white-space: nowrap;
+        line-height: 1.2;
+      }
+      .thaiat-stat-val.tms-val-gold {
+        color: #f5b041;
+      }
+      body.theme-light .thaiat-stat-val {
         color: #0f172a !important;
-        font-weight: 800 !important;
+      }
+      body.theme-light .thaiat-stat-val.tms-val-gold {
+        color: #b45309 !important;
+      }
+
+      /* Thanh Tứ Kể: 5 Nút Trải Đều 100% Theo Phương Ngang */
+      .thaiat-ke-bar {
+        display: flex;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 8px;
+        padding: 2px;
+        box-sizing: border-box;
+        margin: 0 0 6px 0;
+        gap: 2px;
+      }
+      body.theme-light .thaiat-ke-bar {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+      .thaiat-ke-bar .ucc-view-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        text-align: center;
+        justify-content: center;
+        height: 28px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        border-radius: 6px;
+        color: var(--text-muted, #94a3b8);
+        padding: 0;
+        margin: 0;
+      }
+      body.theme-light .thaiat-ke-bar .ucc-view-btn {
+        color: #64748b;
+      }
+      .thaiat-ke-bar .ucc-view-btn.active {
+        background: rgba(245, 176, 65, 0.25);
+        color: #f5b041;
+        font-weight: 900;
+      }
+      body.theme-light .thaiat-ke-bar .ucc-view-btn.active {
+        background: #ffffff;
+        color: #b45309;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
       .thaiat-badges-anomalies {
         display: flex;
@@ -891,24 +977,37 @@
         </div>
 
         ${currentMainTab === 'analysis' ? renderThaiAtAnalysisHTML(keData, currentChart, luanData) : `
-          <!-- Sub-bar Tứ Kể khi xem Trận Đồ -->
-          <div style="display: flex; justify-content: center; margin: 4px 0 6px;">
-            <div class="ucc-pill-view" style="max-width: 320px; width: 100%; height: 28px;">
-              <button class="ucc-view-btn ${currentKeType === 'gio' ? 'active' : ''}" data-ke="gio">Giờ</button>
-              <button class="ucc-view-btn ${currentKeType === 'ngay' ? 'active' : ''}" data-ke="ngay">Ngày</button>
-              <button class="ucc-view-btn ${currentKeType === 'thang' ? 'active' : ''}" data-ke="thang">Tháng</button>
-              <button class="ucc-view-btn ${currentKeType === 'nam' ? 'active' : ''}" data-ke="nam">Năm</button>
-              <button class="ucc-view-btn ${currentKeType === 'menh' ? 'active' : ''}" data-ke="menh">Mệnh</button>
+          <!-- 1. Master Overview Ribbon (Thái Ất Master Strip - Đưa lên trên) -->
+          <div class="thaiat-master-strip">
+            <div class="thaiat-stat-item">
+              <span class="thaiat-stat-lbl">Độn</span>
+              <strong class="thaiat-stat-val tms-val-gold">${keData.donType}</strong>
+            </div>
+            <div class="thaiat-stat-item">
+              <span class="thaiat-stat-lbl">Cục</span>
+              <strong class="thaiat-stat-val">Cục ${keData.cuc}</strong>
+            </div>
+            <div class="thaiat-stat-item">
+              <span class="thaiat-stat-lbl">Nguyên</span>
+              <strong class="thaiat-stat-val">Nguyên ${keData.nguyen}</strong>
+            </div>
+            <div class="thaiat-stat-item">
+              <span class="thaiat-stat-lbl">Kỷ Dư</span>
+              <strong class="thaiat-stat-val">${keData.kyDu}</strong>
+            </div>
+            <div class="thaiat-stat-item">
+              <span class="thaiat-stat-lbl">Tiết khí</span>
+              <strong class="thaiat-stat-val">${currentChart.tietKhi}</strong>
             </div>
           </div>
 
-          <!-- 2. Master Overview Ribbon (Thái Ất Master Strip) -->
-          <div class="thaiat-master-strip">
-            <div class="thaiat-strip-item"><span>Độn:</span> <strong class="tms-val-gold">${keData.donType}</strong></div>
-            <div class="thaiat-strip-item"><span>Cục:</span> <strong>Cục ${keData.cuc}</strong></div>
-            <div class="thaiat-strip-item"><span>Nguyên:</span> <strong>Nguyên ${keData.nguyen}</strong></div>
-            <div class="thaiat-strip-item"><span>Kỷ Dư:</span> <strong>${keData.kyDu}</strong></div>
-            <div class="thaiat-strip-item"><span>Tiết khí:</span> <strong>${currentChart.tietKhi}</strong></div>
+          <!-- 2. Sub-bar Tứ Kể khi xem Trận Đồ (Đưa xuống dưới, bố trí đều 100% theo phương ngang) -->
+          <div class="thaiat-ke-bar">
+            <button type="button" class="ucc-view-btn ${currentKeType === 'gio' ? 'active' : ''}" data-ke="gio">Giờ</button>
+            <button type="button" class="ucc-view-btn ${currentKeType === 'ngay' ? 'active' : ''}" data-ke="ngay">Ngày</button>
+            <button type="button" class="ucc-view-btn ${currentKeType === 'thang' ? 'active' : ''}" data-ke="thang">Tháng</button>
+            <button type="button" class="ucc-view-btn ${currentKeType === 'nam' ? 'active' : ''}" data-ke="nam">Năm</button>
+            <button type="button" class="ucc-view-btn ${currentKeType === 'menh' ? 'active' : ''}" data-ke="menh">Mệnh</button>
           </div>
 
           <!-- 3. Bộ lọc 5 tầng thông tin (Grid 5 cột cân đối, không cuộn ngang) -->

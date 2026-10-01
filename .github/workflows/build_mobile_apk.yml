@@ -76,18 +76,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.20
-          name: "Neta Light v2.8.20 (Tối Giản Tuyệt Đối Giao Diện La Kinh Vệ Tinh)"
+          tag_name: v2.8.21
+          name: "Neta Light v2.8.21 (Tối Ưu Bố Cục Thái Ất Thần Kinh & Cân Đối Tứ Kể)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.20
-            - **Loại Bỏ Nút Nổi GPS Bên Phải – Tận Dụng Nút Vị Trí Dưới Thanh Dock**:
-              + Bỏ hoàn toàn nút nổi GPS tròn phía trên bên phải để tránh trùng lặp dư thừa.
-              + Chức năng định vị GPS vệ tinh tập trung duy nhất và tối ưu tại nút `📍 Vị Trí` trên thanh Dock dưới đáy màn hình.
-            - **Xóa Bỏ Thanh Capsule Thông Báo Dưới Đáy**:
-              + Loại bỏ dải banner nổi, trả lại 100% không gian hiển thị thông thoáng cho bản đồ địa hình và vệ tinh.
-              + Bật/tắt La Kinh 36 tầng chỉ với 1 chạm vào nút con mắt `👁️ / 🙈` trên thanh Top Bar.
-            - **Triệt Tiêu Vòng Tròn Xanh GPS Mờ**:
-              + Xóa triệt để vòng tròn sai số GPS để giữ vệ tinh hiển thị tự nhiên, nguyên bản và sắc nét nhất.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.21
+            - **Tối Ưu & Đảo Vị Trí Bố Cục Thái Ất Thần Kinh**:
+              + **Đưa ô thông tin quẻ (Master Strip) lên trên**: Thiết kế lại thành lưới 5 cột cân đối hoàn hảo (`Độn | Cục | Nguyên | Kỷ Dư | Tiết khí`), hiển thị nhãn thanh lịch, số liệu đậm nét, giải quyết triệt để hiện tượng chữ bị díu vào nhau hay xuống dòng lộn xộn.
+              + **Đưa thanh Tứ Kể (`Giờ | Ngày | Tháng | Năm | Mệnh`) xuống dưới**: Bố trí 5 nút phân bổ đều 100% theo phương ngang (`flex: 1` mỗi nút chiếm đúng 20% chiều rộng), xóa bỏ khoảng trống thừa bên phải và hiện tượng co cụm nút sang bên trái.
+              + Đồng bộ hoàn hảo hệ thống 3 hàng (Thông tin quẻ $\rightarrow$ Chọn Tứ Kể $\rightarrow$ Bộ lọc tầng) thành ma trận 5 cột đối xứng tuyệt đối.
+            - **Hệ Thống La Kinh Vệ Tinh Siêu Tối Giản**:
+              + Tối giản toàn diện bản đồ vệ tinh, loại bỏ nút nổi dư thừa và vòng tròn mờ GPS.
             - **Tính Năng Chuyên Sâu: Tra Cứu Trùng Tang - Nhập Mộ - Thiên Di (Âm Trạch)**:
               + Bấm quẻ tay 12 cung Địa Chi kinh điển: Nam khởi 10 tuổi tại Dần (thuận chiều), Nữ khởi 10 tuổi tại Thân (nghịch chiều).
               + Bóc tách trọn vẹn 4 Trụ lâm chung: Trụ Năm (Tuổi thọ), Trụ Tháng (Tháng mất ÂL), Trụ Ngày (Ngày mất ÂL), Trụ Giờ (Giờ mất Can Chi).
