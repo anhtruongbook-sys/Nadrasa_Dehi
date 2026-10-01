@@ -128,12 +128,6 @@
           </svg>
         </button>
 
-        <!-- Banner thông báo khi đang ẩn đĩa La Kinh để soi bản đồ -->
-        <div id="lakinh-disc-hidden-banner" class="lakinh-disc-hidden-banner" style="${state.isDiscVisible ? 'display: none;' : 'display: flex;'}">
-          <span class="disc-banner-text">🗺️ Đang ẩn La Kinh để soi bản đồ địa hình</span>
-          <button type="button" id="btn-disc-hidden-restore" class="disc-banner-btn">👁️ Hiện lại</button>
-        </div>
-
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
         <div id="lakinh-overlay-container" class="${state.isDiscVisible ? '' : 'is-disc-hidden'}" style="width: ${state.size}px; height: ${state.size}px;">
           <div id="lakinh-backdrop-circle" style="opacity: ${state.bgOpacity};"></div>
@@ -4631,7 +4625,6 @@ function updateQmdjStrategicLayer() {
       const container = document.getElementById('lakinh-overlay-container');
       const topBtn = document.getElementById('lakinh-btn-toggle-disc');
       const topIcon = document.getElementById('lakinh-top-disc-icon');
-      const banner = document.getElementById('lakinh-disc-hidden-banner');
       const valStatus = document.getElementById('sheet-val-disc-status');
       const btnShow = document.getElementById('btn-disc-show');
       const btnHide = document.getElementById('btn-disc-hide');
@@ -4643,7 +4636,6 @@ function updateQmdjStrategicLayer() {
           topBtn.title = 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình';
         }
         if (topIcon) topIcon.textContent = '👁️';
-        if (banner) banner.style.display = 'none';
         if (valStatus) valStatus.textContent = 'Đang hiện';
         if (btnShow) btnShow.classList.add('active');
         if (btnHide) btnHide.classList.remove('active');
@@ -4658,7 +4650,6 @@ function updateQmdjStrategicLayer() {
           topBtn.title = 'Đang ẩn La Kinh (Chạm để hiện lại)';
         }
         if (topIcon) topIcon.textContent = '🙈';
-        if (banner) banner.style.display = 'flex';
         if (valStatus) valStatus.textContent = 'Đã ẩn (Soi địa hình)';
         if (btnHide) btnHide.classList.add('active');
         if (btnShow) btnShow.classList.remove('active');
@@ -4674,14 +4665,6 @@ function updateQmdjStrategicLayer() {
       topToggleDisc.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleDiscVisibility();
-      });
-    }
-
-    const btnRestoreDisc = document.getElementById('btn-disc-hidden-restore');
-    if (btnRestoreDisc) {
-      btnRestoreDisc.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleDiscVisibility(true);
       });
     }
 
@@ -5776,7 +5759,7 @@ function updateQmdjStrategicLayer() {
     // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
     if (lkContainer) {
       lkContainer.addEventListener('click', (e) => {
-        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-my-location, #lakinh-disc-hidden-banner, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-my-location, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
           return;
         }
         if (state.isRayActive && !state.isPlanPanActive) {
