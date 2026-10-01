@@ -17150,6 +17150,319 @@ body.theme-light .luan-role-note {
   border-left-color: #d97706;
 }
 
+/* ================= KỲ MÔN KẾT NỐI VŨ TRỤ (NGUYỄN TẤN CÔNG) ================= */
+.qmdj-school-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin-top: 4px;
+}
+.qmdj-school-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.strip-lbl {
+  font-size: 0.68rem;
+  color: var(--text-muted, #94a3b8);
+  font-weight: 700;
+}
+.btn-school-toggle {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-school-toggle.active {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000;
+  border-color: #f59e0b;
+  font-weight: 800;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
 
+/* Omni-Forecast Card */
+.qmdj-omni-card {
+  background: linear-gradient(180deg, rgba(20, 24, 39, 0.95) 0%, rgba(10, 14, 26, 0.98) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  margin-top: 6px;
+}
+.omni-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.omni-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #e9d5ff;
+  letter-spacing: 0.5px;
+}
+.omni-domain-select {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #f3e8ff;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  outline: none;
+}
+.omni-result-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+}
+.omni-score-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 62px;
+  height: 52px;
+  border-radius: 8px;
+  font-weight: 900;
+  padding: 2px 4px;
+}
+.omni-score-badge .score-num {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.omni-score-badge .score-verdict {
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+}
+.badge-great { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #4ade80; }
+.badge-good { background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa; }
+.badge-neutral { background: rgba(148, 163, 184, 0.2); border: 1px solid #94a3b8; color: #cbd5e1; }
+.badge-warning { background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; color: #fbbf24; }
+.badge-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; }
 
+.omni-info-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.omni-rel-line {
+  font-size: 0.7rem;
+  color: #cbd5e1;
+}
+.omni-val {
+  color: #facc15;
+}
+.omni-palaces-tag {
+  color: #94a3b8;
+  font-size: 0.65rem;
+  margin-left: 4px;
+}
+.omni-advice-line {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #e2e8f0;
+}
 
+/* Feng Shui Taboo Card */
+.pt-safety-card {
+  background: linear-gradient(180deg, rgba(26, 12, 16, 0.95) 0%, rgba(15, 6, 9, 0.98) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-safety-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(239, 68, 68, 0.25);
+  padding-bottom: 6px;
+}
+.pt-safety-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fca5a5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pt-sync-lk-btn {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(37, 99, 235, 0.35));
+  border: 1px solid #3b82f6;
+  color: #93c5fd;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pt-sync-lk-btn:hover {
+  background: #3b82f6;
+  color: #fff;
+}
+.pt-rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
+}
+.pt-room-item {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pt-room-lbl {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.pt-room-select {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f8fafc;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.68rem;
+}
+.pt-alert-box {
+  background: rgba(239, 68, 68, 0.15);
+  border-left: 3px solid #ef4444;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #fecaca;
+}
+
+/* 4-7-8 Breathing Pulse Widget */
+.thien-breath-widget {
+  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.15) 0%, rgba(3, 7, 18, 0.95) 70%);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  margin-top: 8px;
+}
+.breath-circle-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.breath-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, rgba(14, 165, 233, 0.1) 70%);
+  border: 2px solid #38bdf8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 1s ease-in-out;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+}
+.breath-circle.inhale {
+  transform: scale(1.25);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+  border-color: #38bdf8;
+}
+.breath-circle.hold {
+  transform: scale(1.25);
+  border-color: #f59e0b;
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
+}
+.breath-circle.exhale {
+  transform: scale(0.9);
+  border-color: #10b981;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+.breath-time-txt {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+.breath-phase-txt {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #bae6fd;
+}
+.breath-instruction {
+  font-size: 0.76rem;
+  color: #e0f2fe;
+  max-width: 320px;
+  line-height: 1.35;
+}
+.btn-breath-toggle {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  border: none;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+}
+
+.qmdj-toast {
+  position: fixed;
+  bottom: calc(var(--safe-bottom, 20px) + 65px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(245, 176, 65, 0.5);
+  color: #f8fafc;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+.qmdj-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

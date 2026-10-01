@@ -76,23 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.27
-          name: "Neta Light v2.8.27 (Khóa Tâm Mặt Bằng GPS Thửa Đất & Hệ Thống Quản Lý Hồ Sơ IndexedDB)"
+          tag_name: v2.8.28
+          name: "Neta Light v2.8.28 (Tích Hợp Toàn Diện Kỳ Môn Độn Giáp - Kết Nối Vũ Trụ & Thập Thần)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.27
-            - **Khóa Tâm Mặt Bằng Nhà Theo Tọa Độ Địa Lý GPS (Geo-Anchoring)**:
-              + **Ghim Chặt Tâm Nhà Vào Thửa Đất Thực Tế**: Mặt bằng kiến trúc được gắn vĩnh viễn vào tọa độ GPS `[lat, lng]` trên bản đồ vệ tinh qua Leaflet Pane. Khi kéo bản đồ hoặc xoay điện thoại ở chế độ la bàn, mặt bằng bám chắc trên thửa đất không bị trôi.
-              + **Tự Động Co Giãn Tỉ Lệ Khi Zoom Bản Đồ**: Kích thước ngôi nhà tự động co giãn theo cấp số $2^{\Delta z}$, bảo đảm ngôi nhà luôn khớp với thước mét thực địa ở mọi độ phóng đại (zoom 18, 19, 20, 21).
-              + **Bộ Bóc Tách Tọa Độ Google Maps Đa Năng**: Hỗ trợ dán trực tiếp đường link Google Maps hoặc cặp tọa độ thập phân (`21.028511, 105.854167`), hệ thống tự động bóc tách và bay đến đúng vị trí.
-              + **Cụm Phím Tinh Chỉnh Micro-Tuning (D-Pad)**: Dịch chuyển tâm nhà theo 4 hướng Bắc - Nam - Tây - Đông với các bước vi mô 0.2m, 0.5m, 1.0m để căn khít mép tường và ranh đất thực địa.
-              + **Chuyển Đổi Linh Hoạt 1-Chạm**: Nút `🎯 Tâm` đưa tâm nhà về tâm La Kinh để đo đạc 36 tầng mà không mất vị trí ghim đất.
-            - **Hệ Thống Lưu Trữ Hồ Sơ Khảo Sát Đa Tầng (3-Tier Persistence - IndexedDB)**:
-              + **Cơ Sở Dữ Liệu IndexedDB Cục Bộ**: Lưu trữ không giới hạn số lượng công trình và kích thước ảnh mặt bằng, hoạt động Offline 100%, bảo lưu toàn vẹn khi cập nhật phiên bản mới.
-              + **Xuất / Nhập Tệp Hồ Sơ (.neta)**: Cho phép xuất tệp hồ sơ công trình ra bộ nhớ máy (`Download/`) để lưu trữ vĩnh viễn (chống mất khi xóa app), hoặc gửi qua Zalo/Drive cho khách hàng/cộng sự.
-              + **Sao Lưu Toàn Bộ CSDL**: 1-chạm sao lưu toàn bộ danh sách công trình đã khảo sát thành 1 file backup duy nhất.
-            - **Hệ Thống Khóa Hướng Mặt Bằng Địa Hình (Terrain-Locked Sync)**:
-              + Khóa hướng mặt bằng đồng bộ cùng La Kinh và bản đồ vệ tinh xoay 360 độ theo thời gian thực (Heading-Up).
-            - **Bản Đồ Vệ Tinh Xoay Đồng Bộ Theo La Bàn Thực Địa (Heading-Up Mode)**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.28
+            - **Tích Hợp Toàn Diện Tác Phẩm Kỳ Môn Độn Giáp - Kết Nối Vũ Trụ (Nguyễn Tấn Công)**:
+              + **Hệ Thống Thập Thần (10 Deities) Dual-School**: Hỗ trợ chuyển đổi linh hoạt giữa 10 Thần (Nguyễn Tấn Công) và 8 Thần (Joey Yap). Phân bổ âm dương chuẩn xác: Dương Độn nạp Câu Trận & Chu Tước, Âm Độn nạp Bạch Hổ & Huyền Vũ.
+              + **Thuật Toán Định Cục Trí Nhuận Pháp (Zhi Run Method, Trang 307)**: Đối soát độc lập với phương pháp Sách Bổ (Chai Bu), tự động tính Phù Đầu, Siêu Thần, Tiếp Khí và Nhuận Cục tại Mang Chủng / Đại Tuyết.
+              + **Động Cơ Chiêm Đoán Vạn Sự (Omni-Forecast 12 Lĩnh Vực)**: Tính điểm 0-100đ, phân hạng Cát/Hung và xuất lời khuyên hành động theo 5 mối quan hệ ngũ hành Dụng Thần (Hôn nhân, Sự nghiệp, Bất động sản, Tài lộc, Hợp đồng, v.v.).
+              + **Cầu Nối 2 Chiều La Kinh Vệ Tinh ↔ Kỳ Môn Phong Thủy**: Nút 1-chạm `🔮 Kỳ Môn` từ thanh công cụ mặt bằng và Bottom Sheet chuyển giao tức thì góc xoay thực địa sang Kỳ Môn Phong Thủy.
+              + **Kiểm Định Cấm Kỵ 5 Phòng Ốc Thực Tế**: Tự động phát hiện đại sát "Hỏa Thiêu Thiên Môn" (Bếp tại Càn 6) và "Ô Uế Sinh Môn / Trực Phù" (Toilet), đề xuất phương án thông quan hóa giải ngũ hành cụ thể.
+              + **Chế Độ Tọa Thiền Định Tâm & Nhịp Thở Khí Công 4-7-8**: Đồng hồ nhịp thở động (Hít 4s - Nín 7s - Thở 8s) đưa sóng não về tầng Alpha/Theta (7-14 Hz), kết nối trường năng lượng Thần bảo hộ với tư thế Tọa Lưng (Back-To).
+              + **Kỳ Môn Bản Mệnh Kết Nối Thần Vũ Trụ**: Tích hợp từ điển tiềm thức, bản chất tâm thức, bẫy tâm lý và thần chú kích hoạt năng lượng trọn đời.
               + Khắc phục hoàn toàn hiện tượng bản đồ đứng yên khi xoay điện thoại ở chế độ la bàn thực địa (`🧭 Đang Đọc`).
               + Toàn bộ bản đồ ảnh vệ tinh & đường phố xoay mượt mà 360 độ theo thời gian thực trùng khớp với góc nhìn thực tế của người dùng (12h là hướng trước mặt).
               + Kết cấu khung hiển thị Oversized 160vmax triệt tiêu 100% hiện tượng hở góc trắng/đen khi xoay bản đồ ở bất kỳ góc độ nào.

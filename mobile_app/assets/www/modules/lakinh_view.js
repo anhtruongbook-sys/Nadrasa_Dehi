@@ -248,6 +248,7 @@
               <button type="button" class="fl-plan-btn ${state.isPlanLockedToTerrain ? 'active' : ''}" id="fl-btn-rot-match" title="Khóa hướng mặt bằng theo góc La Kinh hiện tại (${state.rotation.toFixed(1)}°)">🔒<span class="fl-btn-lbl"> Khóa LK</span></button>
               <button type="button" class="fl-plan-btn ${state.isPlanGeoAnchored ? 'active' : ''}" id="fl-btn-geo-anchor" title="Khóa tâm vào thửa đất GPS">📍<span class="fl-btn-lbl"> Ghim Đất</span></button>
               <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa tâm nhà về tâm La Kinh">🎯<span class="fl-btn-lbl"> Tâm</span></button>
+              <button type="button" class="fl-plan-btn" id="fl-btn-goto-qmdj" title="Mở Kỳ Môn Phong Thủy theo hướng nhà hiện tại">🔮<span class="fl-btn-lbl"> Kỳ Môn</span></button>
               <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-opacity" title="Đổi độ mờ (35% / 65% / 85%)">👁️</button>
               <button type="button" class="fl-plan-btn icon-only" id="btn-plan-pan-done" title="Ẩn thanh công cụ mặt bằng">✕</button>
             </div>
@@ -853,6 +854,11 @@
                   </button>
                   <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-plan-reset-center" style="font-size: 0.74rem;" title="Trở về chính tâm">
                     🎯 Về Chính Tâm
+                  </button>
+                </div>
+                <div style="margin-top: 8px;">
+                  <button type="button" class="lakinh-action-btn" id="btn-sheet-goto-qmdj" style="width: 100%; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; border: 1px solid rgba(167, 139, 250, 0.4); font-size: 0.76rem; font-weight: 600; padding: 7px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;" title="Chuyển sang Kỳ Môn Phong Thủy với góc hướng nhà này">
+                    🔮 Khảo Sát Bàn Kỳ Môn Phong Thủy
                   </button>
                 </div>
               </div>
@@ -8267,8 +8273,31 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
       }, 150);
     };
 
+    const switchToQmdjFengShui = () => {
+      const currentRot = state.rotation || 0;
+      if (global.NetaQMDJView && typeof global.NetaQMDJView.setPhongThuyDegree === 'function') {
+        global.NetaQMDJView.setPhongThuyDegree(currentRot);
+      }
+      if (typeof window.switchAppMode === 'function') {
+        window.switchAppMode('qmdj');
+      }
+      setTimeout(() => {
+        if (global.NetaQMDJView && typeof global.NetaQMDJView.setMode === 'function') {
+          global.NetaQMDJView.setMode('phongthuy');
+        }
+      }, 150);
+    };
+
     if (btnViewDetail) btnViewDetail.addEventListener('click', switchToQmdjBoard);
     if (btnSheetViewLink) btnSheetViewLink.addEventListener('click', switchToQmdjBoard);
+    document.getElementById('fl-btn-goto-qmdj')?.addEventListener('click', (e) => {
+      if (e && e.stopPropagation) e.stopPropagation();
+      switchToQmdjFengShui();
+    });
+    document.getElementById('btn-sheet-goto-qmdj')?.addEventListener('click', (e) => {
+      if (e && e.stopPropagation) e.stopPropagation();
+      switchToQmdjFengShui();
+    });
   }
 
   // Public module API

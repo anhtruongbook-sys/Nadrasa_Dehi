@@ -17,12 +17,34 @@
   let isQmdjLunarMode = false;
   let currentBanMenhIsMale = true;
 
-  // State for Phong Thủy mode (16 Hướng Nhà & 24 Sơn Vị Cửa)
+  // Cấu hình Trường phái & Thuật toán (Kỳ Môn Độn Giáp - Kết Nối Vũ Trụ & Joey Yap)
+  let currentDeitySchool = '10thần'; // '10thần' (Nguyễn Tấn Công) | '8thần' (Joey Yap)
+  let currentJuMethod = 'chao_bu';   // 'chao_bu' (Sách Bổ) | 'zhi_run' (Trí Nhuận)
+  let currentInquiryDomain = 'wealth'; // 12 domains: wealth, marriage, career, contract, real_estate, etc.
+
+  // Trạng thái Bộ đếm nhịp thở 4-7-8 Sóng não Alpha
+  let breathTimer = null;
+  let breathState = {
+    isRunning: false,
+    phase: 'inhale', // 'inhale' (4s), 'hold' (7s), 'exhale' (8s)
+    countdown: 4,
+    cycle: 1
+  };
+
+  // State for Phong Thủy mode (16 Hướng Nhà & 24 Sơn Vị Cửa & Cấm Kỵ 5 Phòng)
   let ptState = {
     van: 9,            // Vận 9 (2024 - 2043)
     huongKey: 'TB1',   // 16 Hướng Nhà chuẩn (TB1: Tuất, TB2_3: Càn-Hợi, ...)
     huongPalace: 6,    // Càn 6 (Tây Bắc)
-    sonCua: 'Thìn'     // 24 Sơn vị cửa (Thìn default)
+    sonCua: 'Thìn',    // 24 Sơn vị cửa (Thìn default)
+    degree: 315.0,     // Độ số thực tế từ La Kinh Vệ Tinh (0 - 360°)
+    rooms: {
+      kitchen: 6,      // Bếp (Mặc định Càn 6 để kiểm tra Hỏa Thiêu Thiên Môn)
+      toilet: 8,       // Nhà vệ sinh
+      bedroom: 4,      // Phòng ngủ
+      living_room: 3,  // Phòng khách
+      altar: 9         // Ban thờ
+    }
   };
 
   // 16 Hướng Nhà Chuẩn Mực Kỳ Môn Phong Thủy (8 cặp: Hướng 1 [Địa Nguyên Long] vs Hướng 2/3 [Thiên & Nhân Nguyên Long])
@@ -466,6 +488,17 @@
       let roundArg = undefined;
       if (currentQmdjMode === 'amban') {
         roundArg = computeYinPanRound(date);
+      } else if (currentJuMethod === 'zhi_run' && global.KetNoiVuTruEngine) {
+        let dayCan = "Giáp", dayChi = "Tý", term = "Xuân Phân";
+        if (global.NetaCalendarEngine) {
+          const info = global.NetaCalendarEngine.getFullDayInfo(date);
+          const parts = (info.canChi.day || '').split(' ');
+          if (parts.length >= 2) { dayCan = parts[0]; dayChi = parts[1]; }
+          term = global.NetaCalendarEngine.getSolarTerm(date.getDate(), date.getMonth() + 1, date.getFullYear());
+        }
+        const zr = global.KetNoiVuTruEngine.calculateZhiRunJu(term, dayCan, dayChi, 0);
+        const cuc = zr.juNumber;
+        roundArg = zr.dunType.includes('Dương') ? cuc : -cuc;
       }
 
       const chart = new global.QMDJCore.TheArtOfBecomingInvisible(date, roundArg);
@@ -533,6 +566,93 @@
     } else {
       renderTimeMode(container, modeTabsHtml, chart, patterns);
     }
+  }
+
+  /**
+   * Sinh HTML Thẻ Chiêm Đoán Vạn Sự (Omni-Forecast 12 Lĩnh Vực) theo sách Nguyễn Tấn Công
+   */
+  function buildOmniForecastHtml(chart) {
+    if (!global.KetNoiVuTruEngine || currentQmdjMode === 'phongthuy') return '';
+    const domains = global.KetNoiVuTruEngine.FORECAST_DOMAINS;
+
+    // Chuẩn hóa cấu trúc chart plain cho forecast engine
+    const chartPlain = {
+      round: chart.round || 1,
+      day_palace: 1,
+      hour_palace: 9,
+      palaces: {}
+    };
+
+    let chiefPalaceNum = 1;
+    if (chart && chart.box) {
+      chart.box.forEach((row) => {
+        row.forEach((palace) => {
+          if (palace && palace.index !== 4 && translate(palace.getDivinity(true)).includes('Trực Phù')) {
+            chiefPalaceNum = palace.index + 1;
+          }
+        });
+      });
+      const roundVal = chart.round || 1;
+      const tenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần')
+        ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
+        : {};
+
+      chart.box.flat().forEach(p => {
+        if (!p) return;
+        const pIdx = p.index;
+        const pNum = pIdx + 1;
+        const door = translate(p.getDoor(true));
+        const stars = Array.isArray(p.getStar(true)) ? p.getStar(true).map(translate) : [translate(p.getStar(true))];
+        const rawDivinity = translate(p.getDivinity(true));
+        const divinity = (currentDeitySchool === '10thần' && tenDeityMap[pNum]) ? tenDeityMap[pNum] : rawDivinity;
+        const hcs = Array.isArray(p.getHCS(true)) ? p.getHCS(true).map(translate) : [translate(p.getHCS(true))];
+        const ecs = Array.isArray(p.getECS(true)) ? p.getECS(true).map(translate) : [translate(p.getECS(true))];
+
+        chartPlain.palaces[pNum] = {
+          name: PALACE_NAMES[pIdx] || `Cung ${pNum}`,
+          door: door,
+          star: stars[0] || '',
+          deity: divinity,
+          heaven_stem: hcs[0] || '',
+          earth_stem: ecs[0] || '',
+          is_kong_wang: !!p.de,
+          is_sky_horse: !!p.hs
+        };
+      });
+    }
+
+    const res = global.KetNoiVuTruEngine.runOmniForecast(currentInquiryDomain, chartPlain);
+    if (!res) return '';
+
+    return `
+      <div class="qmdj-omni-card">
+        <div class="omni-header-row">
+          <div class="omni-title-wrap">
+            <span class="omni-icon">🔮</span>
+            <span class="omni-title">CHIÊM ĐOÁN VẠN SỰ (12 LĨNH VỰC)</span>
+          </div>
+          <select id="qmdj-select-omni-domain" class="omni-domain-select">
+            ${domains.map(d => `<option value="${d.key}" ${currentInquiryDomain === d.key ? 'selected' : ''}>${d.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="omni-result-body">
+          <div class="omni-score-badge ${res.badgeClass}">
+            <span class="score-num">${res.score}</span>
+            <span class="score-verdict">${res.verdict}</span>
+          </div>
+          <div class="omni-info-col">
+            <div class="omni-rel-line">
+              <span class="omni-lbl">Đối soát Dụng Thần:</span>
+              <strong class="omni-val">${res.relationship}</strong>
+              <span class="omni-palaces-tag">(Cung ${res.subjectPalace} ↔ Cung ${res.objectPalace})</span>
+            </div>
+            <div class="omni-advice-line">
+              ${res.advice}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   /**
@@ -646,6 +766,20 @@
             </div>
             <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
           </div>
+
+          <!-- Row 4: Trường phái Thần & Thuật toán Định Cục -->
+          <div class="qmdj-school-strip">
+            <div class="qmdj-school-pill">
+              <span class="strip-lbl">Thần:</span>
+              <button type="button" class="btn-school-toggle ${currentDeitySchool === '10thần' ? 'active' : ''}" id="btn-toggle-deity-10" title="10 Thần (Nguyễn Tấn Công - Kết Nối Vũ Trụ)">10 Thần</button>
+              <button type="button" class="btn-school-toggle ${currentDeitySchool === '8thần' ? 'active' : ''}" id="btn-toggle-deity-8" title="8 Thần (Joey Yap / Phổ Thông)">8 Thần</button>
+            </div>
+            <div class="qmdj-school-pill">
+              <span class="strip-lbl">Định Cục:</span>
+              <button type="button" class="btn-school-toggle ${currentJuMethod === 'chao_bu' ? 'active' : ''}" id="btn-toggle-ju-chaobu" title="Sách Bổ / Chiết Bổ (Chai Bu)">Sách Bổ</button>
+              <button type="button" class="btn-school-toggle ${currentJuMethod === 'zhi_run' ? 'active' : ''}" id="btn-toggle-ju-zhirun" title="Trí Nhuận Pháp (Zhi Run - Trang 307)">Trí Nhuận</button>
+            </div>
+          </div>
         </div>
 
         <!-- Solar Term Info Strip -->
@@ -683,6 +817,9 @@
             ${patterns.length > 8 ? `<span class="pattern-chip chip-more">+${patterns.length - 8} cách cục</span>` : ''}
           </div>
         </div>
+
+        <!-- Omni-Forecast 12 Domains Card (Nguyễn Tấn Công) -->
+        ${buildOmniForecastHtml(chart)}
       </div>
 
       <!-- Palace Detail Modal -->
@@ -1229,15 +1366,26 @@
       yearVal = lInfo.lunar.year;
     }
 
-    // Identify Deity palaces in current chart
+    // Identify Deity palaces in current chart (hỗ trợ cả 8 Thần và 10 Thần)
     const deityMap = {};
     if (chart && chart.box) {
+      let chiefPalaceNum = 1;
+      chart.box.flat().forEach(p => {
+        if (p && p.index !== 4 && translate(p.getDivinity(true)).includes('Trực Phù')) {
+          chiefPalaceNum = p.index + 1;
+        }
+      });
+      const roundVal = chart.round || 1;
+      const tenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần')
+        ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
+        : {};
+
       chart.box.flat().forEach(p => {
         if (!p || p.index === 4) return; // Skip center palace
-        const divinity = translate(p.getDivinity(true));
+        const pNum = p.index + 1;
+        const divinity = (currentDeitySchool === '10thần' && tenDeityMap[pNum]) ? tenDeityMap[pNum] : translate(p.getDivinity(true));
         const door = translate(p.getDoor(true));
         const stars = Array.isArray(p.getStar(true)) ? p.getStar(true).map(translate) : [translate(p.getStar(true))];
-        const pNum = p.index + 1;
         deityMap[divinity] = {
           palace: pNum,
           palaceName: PALACE_NAMES[p.index] || `Cung ${pNum}`,
@@ -1249,53 +1397,40 @@
       });
     }
 
-    const DEITY_CONFIGS = [
-      {
-        key: 'Trực Phù',
-        icon: '👑',
-        title: 'Trực Phù - Thần Tối Thượng (Chief)',
-        desc: 'Đại diện cho ý chí vũ trụ tối cao, hộ mệnh vô lượng, chuyển hung thành cát, cầu gì ứng nấy.',
-        color: '#f59e0b',
-        energy: 'Ánh sáng vàng kim',
-        guide: 'Ngồi thẳng lưng, lưng quay chuẩn về phương vị Trực Phù. Nhắm mắt hít sâu, cảm nhận hào quang vàng kim ấm áp từ sau lưng rót qua cột sống, phát khởi ý niệm bảo trợ và định hướng cuộc đời.'
-      },
-      {
-        key: 'Thái Âm',
-        icon: '🌙',
-        title: 'Thái Âm - Thần Trí Tuệ & Định Tâm (Moon)',
-        desc: 'Chủ về sự an tĩnh thâm sâu, khai mở tuệ giác, xoa dịu stress, tìm ra đáp án sáng suốt cho bế tắc.',
-        color: '#38bdf8',
-        energy: 'Ánh trăng bạc thanh lương',
-        guide: 'Lưng quay về hướng Thái Âm. Quán tưởng ánh trăng bạc mát dịu thẩm thấu từ đỉnh đầu xuống đan điền, quét sạch mọi căng thẳng lo âu, tâm trí trở nên phẳng lặng như mặt hồ mùa thu.'
-      },
-      {
-        key: 'Cửu Địa',
-        icon: '🌍',
-        title: 'Cửu Địa - Thần Đất & Phục Hồi Thể Chất (Earth)',
-        desc: 'Tiếp đất (grounding), ổn định khí huyết, chữa lành bệnh tật và tái tạo tế bào sinh học vững vàng như núi đá.',
-        color: '#10b981',
-        energy: 'Ánh sáng xanh ngọc bích',
-        guide: 'Lưng quay về hướng Cửu Địa. Cảm nhận từ trường dày đặc vững chãi từ lòng đất truyền lên lưng, đan điền ấm dần, hơi thở trở nên sâu, chậm và êm ái tự nhiên.'
-      },
-      {
-        key: 'Cửu Thiên',
-        icon: '⚡',
-        title: 'Cửu Thiên - Thần Sáng Tạo & Tầm Nhìn (Heaven)',
-        desc: 'Khơi dậy dũng khí, kích hoạt năng lực đột phá, nâng cao tần số rung động và mở rộng tầm nhìn dài hạn.',
-        color: '#a855f7',
-        energy: 'Ánh sáng tím tử khí đông lai',
-        guide: 'Lưng quay về hướng Cửu Thiên. Hít sâu vào ngực trên, cảm nhận luồng khí thế mạnh mẽ tiếp thêm năng lượng và lòng tin vào bản thân, sẵn sàng vượt qua mọi chướng ngại.'
-      },
-      {
-        key: 'Lục Hợp',
-        icon: '🤝',
-        title: 'Lục Hợp - Thần Hòa Hợp & Bình Yên (Harmony)',
-        desc: 'Chữa lành các mối quan hệ gia đình/công việc, xóa bỏ xung đột, thu hút quý nhân và sự đồng điệu.',
-        color: '#ec4899',
-        energy: 'Ánh sáng hồng ấm áp',
-        guide: 'Lưng quay về hướng Lục Hợp. Quán tưởng ánh sáng hồng bao bọc lấy trái tim, khởi tâm từ bi và tha thứ cho mọi khúc mắc, lan tỏa bình an đến người thân và đối tác.'
-      }
+    const DEITY_ORDER = [
+      'Trực Phù', 'Đằng Xà', 'Thái Âm', 'Lục Hợp', 'Bạch Hổ', 'Câu Trận', 'Huyền Vũ', 'Chu Tước', 'Cửu Địa', 'Cửu Thiên'
     ];
+
+    const DEITY_ICONS = {
+      'Trực Phù': '👑', 'Đằng Xà': '🐍', 'Thái Âm': '🌙', 'Lục Hợp': '🤝',
+      'Bạch Hổ': '🐯', 'Câu Trận': '⚓', 'Huyền Vũ': '🐢', 'Chu Tước': '🦚',
+      'Cửu Địa': '🌍', 'Cửu Thiên': '⚡'
+    };
+
+    const DEITY_COLORS = {
+      'Trực Phù': '#f59e0b', 'Đằng Xà': '#ec4899', 'Thái Âm': '#38bdf8', 'Lục Hợp': '#10b981',
+      'Bạch Hổ': '#f87171', 'Câu Trận': '#fb923c', 'Huyền Vũ': '#6366f1', 'Chu Tước': '#ef4444',
+      'Cửu Địa': '#84cc16', 'Cửu Thiên': '#a855f7'
+    };
+
+    const activeDeities = (currentDeitySchool === '10thần')
+      ? DEITY_ORDER
+      : ['Trực Phù', 'Đằng Xà', 'Thái Âm', 'Lục Hợp', 'Bạch Hổ', 'Huyền Vũ', 'Cửu Địa', 'Cửu Thiên'];
+
+    const DEITY_CONFIGS = activeDeities.map(k => {
+      const d = (global.KetNoiVuTruEngine && global.KetNoiVuTruEngine.DEITIES[k]) || {};
+      return {
+        key: k,
+        icon: DEITY_ICONS[k] || '🔮',
+        title: `${k} - ${d.role || ''} (${d.alias || d.name_en || ''})`,
+        desc: d.traits || '',
+        caution: d.caution || '',
+        color: DEITY_COLORS[k] || '#38bdf8',
+        energy: d.energy || 'Năng lượng ánh sáng thuần khiết',
+        guide: d.meditation_guide || 'Ngồi thẳng lưng, lưng quay chuẩn về phương vị Thần. Nhắm mắt hít sâu, cảm nhận hào quang ấm áp bao bọc cơ thể.',
+        affirmation: d.affirmation || ''
+      };
+    });
 
     container.innerHTML = `
       <div class="qmdj-view-container">
@@ -1388,6 +1523,35 @@
           </button>
         </div>
 
+        <!-- Breathing Pulse Widget 4-7-8 -->
+        <div class="thien-breath-widget" id="thien-breath-widget">
+          <div style="font-weight: 700; color: #38bdf8; font-size: 0.95rem; margin-bottom: 4px;">
+            🫁 NHỊP THỞ KHÍ CÔNG 4-7-8 (ĐƯA SÓNG NÃO VỀ TẦNG ALPHA / THETA)
+          </div>
+          <div style="font-size: 0.76rem; color: #94a3b8; margin-bottom: 8px;">
+            Hít sâu 4 giây • Nín thở định khí 7 giây • Thở chậm êm 8 giây
+          </div>
+          <div class="thien-breath-circle ${breathState.isRunning ? breathState.phase : ''}" id="thien-breath-circle">
+            <div class="thien-breath-phase" id="thien-breath-phase">
+              ${breathState.isRunning ? (breathState.phase === 'inhale' ? 'HÍT VÀO (4s)' : breathState.phase === 'hold' ? 'GIỮ KHÍ (7s)' : 'THỞ RA (8s)') : 'SẴN SÀNG'}
+            </div>
+            <div class="thien-breath-sec" id="thien-breath-sec">
+              ${breathState.countdown}s
+            </div>
+          </div>
+          <div style="display: flex; justify-content: center; gap: 8px; margin-top: 10px;">
+            <button type="button" class="ucc-step-btn" id="btn-thien-breath-toggle" style="padding: 6px 14px; font-weight: 700; background: ${breathState.isRunning ? '#ef4444' : '#10b981'}; color: #fff; border-radius: 8px; border: none; cursor: pointer;">
+              ${breathState.isRunning ? '⏹ Dừng Thở' : '▶ Bắt Đầu Thở 4-7-8'}
+            </button>
+            <button type="button" class="ucc-step-btn" id="btn-thien-breath-reset" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; cursor: pointer;">
+              🔄 Đặt Lại
+            </button>
+          </div>
+          <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 8px;" id="thien-breath-cycle-label">
+            Vòng thở hiện tại: <strong>${breathState.cycle}</strong>
+          </div>
+        </div>
+
         <!-- Noble Deities Cards -->
         <div class="qmdj-deities-list">
           ${DEITY_CONFIGS.map(cfg => {
@@ -1417,9 +1581,11 @@
                   <span>🚪 Môn: <strong>${match.door}</strong></span>
                 </div>
                 <p class="deity-desc">${cfg.desc}</p>
+                ${cfg.caution ? `<div style="font-size: 0.72rem; color: #fca5a5; margin: 4px 0;"><strong>⚠️ Thận trọng:</strong> ${cfg.caution}</div>` : ''}
                 <div class="deity-practice-box">
                   <div class="practice-label">🧘 Pháp Quán Tưởng (${cfg.energy}):</div>
                   <p class="practice-text">${cfg.guide}</p>
+                  ${cfg.affirmation ? `<div style="margin-top: 6px; font-style: italic; color: #fef08a; font-size: 0.74rem;"><strong>💬 Thần chú:</strong> "${cfg.affirmation}"</div>` : ''}
                 </div>
               </div>
             `;
@@ -1466,6 +1632,7 @@
             <!-- Dynamically populated -->
           </div>
         </div>
+      </div>
     `;
 
     bindThienEvents(chart);
@@ -1483,6 +1650,84 @@
           const tab = document.getElementById('tab-mode-lakinh');
           if (tab) tab.click();
         }
+      };
+    }
+
+    const btnToggle = document.getElementById('btn-thien-breath-toggle');
+    const btnReset = document.getElementById('btn-thien-breath-reset');
+    const circle = document.getElementById('thien-breath-circle');
+    const phaseEl = document.getElementById('thien-breath-phase');
+    const secEl = document.getElementById('thien-breath-sec');
+    const cycleEl = document.getElementById('thien-breath-cycle-label');
+
+    function updateBreathUI() {
+      if (!circle || !secEl || !phaseEl) return;
+      circle.className = `thien-breath-circle ${breathState.isRunning ? breathState.phase : ''}`;
+      secEl.textContent = `${breathState.countdown}s`;
+      let phaseText = 'SẴN SÀNG';
+      if (breathState.isRunning) {
+        if (breathState.phase === 'inhale') phaseText = 'HÍT VÀO (4s)';
+        else if (breathState.phase === 'hold') phaseText = 'GIỮ KHÍ (7s)';
+        else if (breathState.phase === 'exhale') phaseText = 'THỞ RA (8s)';
+      }
+      phaseEl.textContent = phaseText;
+      if (btnToggle) {
+        btnToggle.textContent = breathState.isRunning ? '⏹ Dừng Thở' : '▶ Bắt Đầu Thở 4-7-8';
+        btnToggle.style.background = breathState.isRunning ? '#ef4444' : '#10b981';
+      }
+      if (cycleEl) {
+        cycleEl.innerHTML = `Vòng thở hiện tại: <strong>${breathState.cycle}</strong>`;
+      }
+    }
+
+    if (btnToggle) {
+      btnToggle.onclick = () => {
+        breathState.isRunning = !breathState.isRunning;
+        if (breathState.isRunning) {
+          breathState.phase = 'inhale';
+          breathState.countdown = 4;
+          updateBreathUI();
+          if (breathTimer) clearInterval(breathTimer);
+          breathTimer = setInterval(() => {
+            breathState.countdown--;
+            if (breathState.countdown <= 0) {
+              if (breathState.phase === 'inhale') {
+                breathState.phase = 'hold';
+                breathState.countdown = 7;
+              } else if (breathState.phase === 'hold') {
+                breathState.phase = 'exhale';
+                breathState.countdown = 8;
+              } else if (breathState.phase === 'exhale') {
+                breathState.phase = 'inhale';
+                breathState.countdown = 4;
+                breathState.cycle++;
+              }
+            }
+            updateBreathUI();
+          }, 1000);
+        } else {
+          if (breathTimer) {
+            clearInterval(breathTimer);
+            breathTimer = null;
+          }
+          breathState.phase = 'inhale';
+          breathState.countdown = 4;
+          updateBreathUI();
+        }
+      };
+    }
+
+    if (btnReset) {
+      btnReset.onclick = () => {
+        if (breathTimer) {
+          clearInterval(breathTimer);
+          breathTimer = null;
+        }
+        breathState.isRunning = false;
+        breathState.phase = 'inhale';
+        breathState.countdown = 4;
+        breathState.cycle = 1;
+        updateBreathUI();
       };
     }
   }
@@ -1628,6 +1873,7 @@
       'Cửu Thiên': '🚀'
     };
     const deityIcon = DEITY_ICONS[lp.deity] || '🔮';
+    const ketNoiDeity = (global.KetNoiVuTruEngine && global.KetNoiVuTruEngine.DEITIES) ? global.KetNoiVuTruEngine.DEITIES[lp.deity] : null;
 
     const pillars = {
       year: formatPillarCanChi(chart.year),
@@ -1739,7 +1985,7 @@
                 <span class="bqc-icon">${deityIcon}</span>
                 <div class="bqc-deity-titles">
                   <div class="bqc-deity-name">${lp.deity} <span class="bqc-deity-en">(${lp.deity_en})</span></div>
-                  <div class="bqc-deity-role">${lp.deity_title}</div>
+                  <div class="bqc-deity-role">${(ketNoiDeity && ketNoiDeity.role) ? ketNoiDeity.role : lp.deity_title}</div>
                 </div>
               </div>
 
@@ -1748,9 +1994,26 @@
                 <span class="bqc-val">${lp.deity_power}</span>
               </div>
 
+              ${ketNoiDeity ? `
+                <div class="bqc-prop-row">
+                  <span class="bqc-label">Bản chất Tâm thức:</span>
+                  <span class="bqc-val">${ketNoiDeity.traits}</span>
+                </div>
+                <div class="bqc-prop-row">
+                  <span class="bqc-label">Hành động Phù hợp:</span>
+                  <span class="bqc-val">${ketNoiDeity.suitable_actions}</span>
+                </div>
+                ${ketNoiDeity.caution ? `
+                  <div class="bqc-prop-row">
+                    <span class="bqc-label">Bẫy Tâm lý / Kỵ:</span>
+                    <span class="bqc-val" style="color: #fca5a5;">⚠️ ${ketNoiDeity.caution}</span>
+                  </div>
+                ` : ''}
+              ` : ''}
+
               <div class="bqc-prop-row bqc-affirmation-row">
                 <span class="bqc-label">Khẩu quyết Kích hoạt:</span>
-                <blockquote class="bqc-affirmation-quote">"${lp.deity_affirmation}"</blockquote>
+                <blockquote class="bqc-affirmation-quote">"${(ketNoiDeity && ketNoiDeity.affirmation) ? ketNoiDeity.affirmation : lp.deity_affirmation}"</blockquote>
               </div>
 
               <div class="bqc-prop-row">
@@ -1944,6 +2207,31 @@
     }
   }
 
+  function renderPtSafetyAlerts(chart) {
+    if (!global.KetNoiVuTruEngine) return '';
+    const chartPlain = { palaces: {} };
+    if (chart && chart.palacesData) {
+      for (const [pNum, pInfo] of Object.entries(chart.palacesData)) {
+        chartPlain.palaces[pNum] = {
+          name: pInfo.name || `Cung ${pNum}`,
+          door: pInfo.door || '',
+          deity: pInfo.divinity || '',
+          is_kong_wang: false
+        };
+      }
+    }
+    const audit = global.KetNoiVuTruEngine.evaluateHouseFengShuiSafety(ptState.degree || 315.0, chartPlain, ptState.rooms);
+    let html = '';
+    if (audit.criticalAlerts && audit.criticalAlerts.length > 0) {
+      audit.criticalAlerts.forEach(al => {
+        html += `<div class="pt-alert-box ${al.level === 'CRITICAL' ? 'crit' : ''}"><strong>${al.level === 'CRITICAL' ? '🚨' : '⚠️'}</strong> ${al.text}</div>`;
+      });
+    } else {
+      html += `<div class="pt-alert-box" style="background: rgba(34,197,94,0.15); border-left-color: #22c55e; color: #bbf7d0;">✅ Không có lỗi đại sát nghiêm trọng trong bố trí 5 phòng.</div>`;
+    }
+    return html;
+  }
+
   /**
    * Render Chế Độ Phong Thủy Nhà Cố Định
    */
@@ -1995,6 +2283,14 @@
               🔮 Lập Bàn
             </button>
           </div>
+
+          <!-- Row 3: Cầu nối La Kinh Vệ Tinh -->
+          <div class="ucc-row pt-row-lakinh-bridge" style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <button type="button" class="pt-sync-lk-btn" id="btn-pt-sync-lakinh" title="Lấy góc xoay & tọa độ thực địa từ La Kinh Vệ Tinh">
+              🧭 Lấy từ La Kinh Vệ Tinh (${(global.NetaLaKinhView && global.NetaLaKinhView.getState) ? global.NetaLaKinhView.getState().rotation.toFixed(1) + '°' : (ptState.degree || 315) + '°'})
+            </button>
+            <span style="font-size: 0.68rem; color: #94a3b8;">Đang khảo sát: <strong style="color: #f59e0b;">${(ptState.degree || 315).toFixed(1)}°</strong></span>
+          </div>
         </div>
 
         <!-- Phong Thủy Info Strip -->
@@ -2030,6 +2326,51 @@
           </div>
           <div class="pt-ls-grid">
             ${renderLucSuItems(chart)}
+          </div>
+        </div>
+
+        <!-- Kiểm Định Cấm Kỵ 5 Phòng Ốc (Nguyễn Tấn Công - Kết Nối Vũ Trụ) -->
+        <div class="pt-safety-card">
+          <div class="pt-safety-header">
+            <div class="pt-safety-title">
+              <span>🚨</span>
+              <span>KIỂM TRA CẤM KỴ 5 PHÒNG ỐC (NGUYỄN TẤN CÔNG)</span>
+            </div>
+          </div>
+          <div class="pt-rooms-grid">
+            <div class="pt-room-item">
+              <span class="pt-room-lbl">🍳 Bếp Nấu:</span>
+              <select id="pt-select-room-kitchen" class="pt-room-select">
+                ${[6,1,8,3,4,9,2,7].map(p => `<option value="${p}" ${ptState.rooms.kitchen === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
+            <div class="pt-room-item">
+              <span class="pt-room-lbl">🚽 Vệ Sinh:</span>
+              <select id="pt-select-room-toilet" class="pt-room-select">
+                ${[8,1,3,4,9,2,7,6].map(p => `<option value="${p}" ${ptState.rooms.toilet === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
+            <div class="pt-room-item">
+              <span class="pt-room-lbl">🛏️ Phòng Ngủ:</span>
+              <select id="pt-select-room-bedroom" class="pt-room-select">
+                ${[4,1,8,3,9,2,7,6].map(p => `<option value="${p}" ${ptState.rooms.bedroom === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
+            <div class="pt-room-item">
+              <span class="pt-room-lbl">🛋️ Phòng Khách:</span>
+              <select id="pt-select-room-living" class="pt-room-select">
+                ${[3,1,8,4,9,2,7,6].map(p => `<option value="${p}" ${ptState.rooms.living_room === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
+            <div class="pt-room-item">
+              <span class="pt-room-lbl">🕯️ Ban Thờ:</span>
+              <select id="pt-select-room-altar" class="pt-room-select">
+                ${[9,1,8,3,4,2,7,6].map(p => `<option value="${p}" ${ptState.rooms.altar === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="pt-safety-alerts">
+            ${renderPtSafetyAlerts(chart)}
           </div>
         </div>
       </div>
@@ -2130,6 +2471,22 @@
     const isPt = !!chart.isFengShui;
     let html = '';
 
+    // Phân bổ 10 Thần (Nguyễn Tấn Công) nếu được chọn
+    let chiefPalaceNum = 1;
+    if (box) {
+      box.forEach((row) => {
+        row.forEach((palace) => {
+          if (palace && palace.index !== 4 && translate(palace.getDivinity(true)).includes('Trực Phù')) {
+            chiefPalaceNum = palace.index + 1;
+          }
+        });
+      });
+    }
+    const roundVal = chart.round || 1;
+    const tenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần' && !isPt)
+      ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
+      : {};
+
     box.forEach((row) => {
       row.forEach((palace) => {
         const isCenter = palace.index === 4;
@@ -2138,7 +2495,8 @@
         const pData = (chart.palacesData && chart.palacesData[pNum]) ? chart.palacesData[pNum] : {};
         const door = translate(palace.getDoor(true));
         const stars = Array.isArray(palace.getStar(true)) ? palace.getStar(true).map(translate) : [translate(palace.getStar(true))];
-        const divinity = translate(palace.getDivinity(true));
+        const rawDivinity = translate(palace.getDivinity(true));
+        const divinity = (currentDeitySchool === '10thần' && tenDeityMap[pNum]) ? tenDeityMap[pNum] : rawDivinity;
         const hcs = Array.isArray(palace.getHCS(true)) ? palace.getHCS(true).map(translate) : [translate(palace.getHCS(true))];
         const ecs = Array.isArray(palace.getECS(true)) ? palace.getECS(true).map(translate) : [translate(palace.getECS(true))];
         const isVoid = palace.de;
@@ -2542,6 +2900,32 @@
       };
     }
 
+    // Sự kiện chuyển đổi trường phái Thập Thần (10 Thần vs 8 Thần)
+    document.getElementById('btn-toggle-deity-10')?.addEventListener('click', () => {
+      currentDeitySchool = '10thần';
+      renderQmdj();
+    });
+    document.getElementById('btn-toggle-deity-8')?.addEventListener('click', () => {
+      currentDeitySchool = '8thần';
+      renderQmdj();
+    });
+
+    // Sự kiện chuyển đổi phương pháp định Cục (Sách Bổ vs Trí Nhuận)
+    document.getElementById('btn-toggle-ju-chaobu')?.addEventListener('click', () => {
+      currentJuMethod = 'chao_bu';
+      renderQmdj();
+    });
+    document.getElementById('btn-toggle-ju-zhirun')?.addEventListener('click', () => {
+      currentJuMethod = 'zhi_run';
+      renderQmdj();
+    });
+
+    // Sự kiện chọn lĩnh vực Chiêm Đoán Vạn Sự
+    document.getElementById('qmdj-select-omni-domain')?.addEventListener('change', (e) => {
+      currentInquiryDomain = e.target.value;
+      renderQmdj();
+    });
+
     bindTimeCellClickEvents(chart, patterns);
   }
 
@@ -2563,6 +2947,46 @@
         renderQmdj();
       };
     }
+
+    // Sự kiện Cầu Nối Đồng Bộ từ La Kinh Vệ Tinh
+    const btnSyncLk = document.getElementById('btn-pt-sync-lakinh');
+    if (btnSyncLk) {
+      btnSyncLk.onclick = () => {
+        if (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function') {
+          const lkState = global.NetaLaKinhView.getState();
+          if (lkState) {
+            const rot = lkState.rotation || 0;
+            ptState.degree = rot;
+            if (global.KetNoiVuTruEngine) {
+              const m = global.KetNoiVuTruEngine.degreeToMountain(rot);
+              const matchedH = HUONG_16_LIST.find(h => h.palace === m.palace);
+              if (matchedH) ptState.huongKey = matchedH.key;
+              ptState.sonCua = m.name;
+              ptState.huongPalace = m.palace;
+            }
+            renderQmdj();
+            showQmdjToast(`🎯 Đã đồng bộ hướng ${rot.toFixed(1)}° (${ptState.sonCua} Sơn) từ La Kinh!`);
+          }
+        } else {
+          showQmdjToast('Không tìm thấy dữ liệu La Kinh');
+        }
+      };
+    }
+
+    // Sự kiện thay đổi vị trí 5 Phòng Ốc
+    const roomsMap = [
+      { id: 'pt-select-room-kitchen', key: 'kitchen' },
+      { id: 'pt-select-room-toilet',  key: 'toilet' },
+      { id: 'pt-select-room-bedroom', key: 'bedroom' },
+      { id: 'pt-select-room-living',  key: 'living_room' },
+      { id: 'pt-select-room-altar',   key: 'altar' }
+    ];
+    roomsMap.forEach(r => {
+      document.getElementById(r.id)?.addEventListener('change', (e) => {
+        ptState.rooms[r.key] = parseInt(e.target.value) || 1;
+        renderQmdj();
+      });
+    });
 
     bindTimeCellClickEvents(chart, []);
   }
@@ -2707,6 +3131,48 @@
     renderQmdj();
   }
 
+  function setPhongThuyDegree(deg) {
+    if (typeof deg === 'number') {
+      const normDeg = ((deg % 360) + 360) % 360;
+      ptState.degree = Math.round(normDeg * 10) / 10;
+      // Match nearest 16 Huong
+      let bestH = HUONG_16_LIST[0];
+      let minDiff = 999;
+      HUONG_16_LIST.forEach(h => {
+        let diff = Math.abs(h.deg - normDeg);
+        if (diff > 180) diff = 360 - diff;
+        if (diff < minDiff) {
+          minDiff = diff;
+          bestH = h;
+        }
+      });
+      ptState.huongKey = bestH.key;
+      ptState.huongPalace = bestH.palace;
+      // Match nearest 24 son cua
+      let bestSon = SON_24_DOOR_INFO[0].son;
+      let minSonDiff = 999;
+      SON_24_DOOR_INFO.forEach(s => {
+        const parts = s.deg.replace(/°/g, '').split('-').map(x => parseFloat(x.trim()));
+        if (parts.length === 2) {
+          let cDeg = (parts[0] + parts[1]) / 2;
+          if (parts[0] > parts[1]) {
+            cDeg = ((parts[0] + parts[1] + 360) / 2) % 360;
+          }
+          let d = Math.abs(cDeg - normDeg);
+          if (d > 180) d = 360 - d;
+          if (d < minSonDiff) {
+            minSonDiff = d;
+            bestSon = s.son;
+          }
+        }
+      });
+      ptState.sonCua = bestSon;
+      if (currentQmdjMode === 'phongthuy') {
+        renderQmdj();
+      }
+    }
+  }
+
   // Export to global
   global.NetaQMDJView = {
     init: initQmdjView,
@@ -2715,7 +3181,29 @@
     setMode: (m) => {
       currentQmdjMode = m;
       renderQmdj();
-    }
+    },
+    setPhongThuyDegree: setPhongThuyDegree,
+    setDeitySchool: (sch) => {
+      currentDeitySchool = sch;
+      renderQmdj();
+    },
+    setJuMethod: (m) => {
+      currentJuMethod = m;
+      renderQmdj();
+    },
+    setInquiryDomain: (d) => {
+      currentInquiryDomain = d;
+      renderQmdj();
+    },
+    getState: () => ({
+      currentQmdjMode,
+      currentDeitySchool,
+      currentJuMethod,
+      currentInquiryDomain,
+      currentQmdjDate,
+      ptState,
+      breathState
+    })
   };
 
 })(typeof window !== 'undefined' ? window : this);
