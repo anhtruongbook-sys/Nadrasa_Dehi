@@ -30,6 +30,8 @@
     rotation: 0.0,
     isSensorActive: false,
     isLocked: false,
+    isMapRotateWithCompass: true, // Xoay bản đồ đồng bộ theo la bàn thực địa (Heading-Up)
+    manualMapRotate: false, // Xoay bản đồ khi chỉnh tay góc đo (mặc định ưu tiên xoay tự do khi bật la bàn)
     // Tia ngắm phong thủy (lập cực qua 1 điểm bất kỳ)
     isRayActive: false,
     isRayHudCollapsed: true, // Mặc định mở dạng rút gọn 2 dòng mini capsule
@@ -809,6 +811,11 @@
               <button class="lakinh-step-btn" id="btn-rot-p1">+1°</button>
               <button class="lakinh-step-btn" id="btn-rot-p5">+5°</button>
             </div>
+            <div style="margin-top: 8px;">
+              <button type="button" id="sheet-btn-toggle-heading-up" class="lakinh-action-btn ${state.isMapRotateWithCompass ? 'success' : 'secondary'}" style="width: 100%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                ${state.isMapRotateWithCompass ? '🧭 Bản Đồ Xoay Theo La Bàn (Heading-Up): BẬT' : '🧭 Khóa Bản Đồ Hướng Bắc (North-Up): BẬT'}
+              </button>
+            </div>
           </div>
 
           <!-- Tùy chọn la bàn & Cảm biến & TIA NGẮM PHÂN KIM (ĐI QUA 1 ĐIỂM BẤT KỲ) -->
@@ -1039,12 +1046,15 @@
         crossOrigin: true,
         attribution: 'Esri World Imagery'
       }),
-      osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+      googleRoad: L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 22,
+        subdomains: '0123',
         crossOrigin: true,
-        attribution: 'OpenStreetMap'
+        attribution: 'Google Maps'
       })
     };
+
+    window.lakinhMap = mapInstance;
 
     currentLayer = layers.googleSat;
     currentLayer.addTo(mapInstance);
@@ -1110,6 +1120,16 @@
       // 1. Hướng đo (Sơn hướng nhà) nằm ở đỉnh 12h dưới vạch ngắm hồng ngoại
       // 2. Kim La Bàn (và Sơn Tý 0°) luôn chỉ chính xác 100% về hướng Bắc Trái Đất
       disc.style.transform = `rotate(${-rounded}deg)`;
+    }
+
+    // Xoay bản đồ vệ tinh / đường phố đồng bộ theo la bàn thực địa (Heading-Up)
+    const mapEl = document.getElementById('lakinh-map');
+    if (mapEl) {
+      if (state.isMapRotateWithCompass && (state.isSensorActive || state.manualMapRotate)) {
+        mapEl.style.transform = `rotate(${-rounded}deg)`;
+      } else if (!state.manualMapRotate) {
+        mapEl.style.transform = 'rotate(0deg)';
+      }
     }
 
     const qmdjSvg = document.getElementById('lakinh-qmdj-svg');
@@ -2900,15 +2920,17 @@ function updateQmdjStrategicLayer() {
       showLaKinhToast('Chuyển sang: Ảnh Vệ Tinh Esri');
     } else if (currentLayer === layers.esriSat) {
       mapInstance.removeLayer(layers.esriSat);
-      currentLayer = layers.osm;
+      currentLayer = layers.googleRoad;
       currentLayer.addTo(mapInstance);
       if (btn) {
         btn.innerHTML = '🗺️';
-        btn.title = 'Lớp bản đồ: Đường Phố OSM (Chạm để đổi)';
+        btn.title = 'Lớp bản đồ: Google Đường Phố (Chạm để đổi)';
       }
-      showLaKinhToast('Chuyển sang: Bản Đồ Đường Phố');
+      showLaKinhToast('Chuyển sang: Google Bản Đồ Đường Phố');
     } else {
-      mapInstance.removeLayer(layers.osm);
+      if (layers.googleRoad && mapInstance.hasLayer(layers.googleRoad)) {
+        mapInstance.removeLayer(layers.googleRoad);
+      }
       currentLayer = layers.googleSat;
       currentLayer.addTo(mapInstance);
       if (btn) {
@@ -3506,7 +3528,10 @@ function updateQmdjStrategicLayer() {
     window.addEventListener('deviceorientationabsolute', onAbsolute, true);
     window.addEventListener('deviceorientation', onStandard, true);
 
-    showLaKinhToast('🧭 Đã bật cảm biến la bàn. Đỉnh điện thoại (12h) là hướng đo nhà.');
+    // Cập nhật góc xoay bản đồ theo la bàn ngay khi bật
+    updateRotationDisplay(state.rotation);
+
+    showLaKinhToast('🧭 Đã bật cảm biến la bàn. Bản đồ & La Kinh xoay theo hướng thực tế.');
   }
 
   function stopSensorListening(btn) {
@@ -3514,6 +3539,12 @@ function updateQmdjStrategicLayer() {
     if (btn) {
       btn.classList.remove('active-green');
       btn.innerHTML = '🧭 La Bàn';
+    }
+
+    // Trả bản đồ về chuẩn Bắc khi tắt cảm biến la bàn
+    const mapEl = document.getElementById('lakinh-map');
+    if (mapEl && !state.manualMapRotate) {
+      mapEl.style.transform = 'rotate(0deg)';
     }
 
     // Tắt cảm biến phần cứng native nếu đang mở
@@ -5027,6 +5058,21 @@ function updateQmdjStrategicLayer() {
     bindStep('btn-rot-m1', -1);
     bindStep('btn-rot-p1', 1);
     bindStep('btn-rot-p5', 5);
+
+    const btnToggleHeadingUp = document.getElementById('sheet-btn-toggle-heading-up');
+    if (btnToggleHeadingUp) {
+      btnToggleHeadingUp.addEventListener('click', () => {
+        state.isMapRotateWithCompass = !state.isMapRotateWithCompass;
+        btnToggleHeadingUp.className = `lakinh-action-btn ${state.isMapRotateWithCompass ? 'success' : 'secondary'}`;
+        btnToggleHeadingUp.innerHTML = state.isMapRotateWithCompass
+          ? '🧭 Bản Đồ Xoay Theo La Bàn (Heading-Up): BẬT'
+          : '🧭 Khóa Bản Đồ Hướng Bắc (North-Up): BẬT';
+        showLaKinhToast(state.isMapRotateWithCompass
+          ? '🧭 Đã bật: Bản đồ xoay theo la bàn thực địa'
+          : '🧭 Đã bật: Khóa bản đồ hướng Bắc (North-Up)');
+        updateRotationDisplay(state.rotation);
+      });
+    }
 
     // Zoom buttons
     const btnZoomTieu = document.getElementById('btn-zoom-tieu');

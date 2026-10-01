@@ -76,10 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.24
-          name: "Neta Light v2.8.24 (Tối Ưu Chuẩn Hóa Thông Tin Thần Khóa & 8 Lớp/1 Chạm Lục Nhâm)"
+          tag_name: v2.8.25
+          name: "Neta Light v2.8.25 (Bản Đồ Xoay Theo La Bàn Heading-Up & Lớp Google Maps Đường Phố)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.24
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.25
+            - **Bản Đồ Vệ Tinh Xoay Đồng Bộ Theo La Bàn Thực Địa (Heading-Up Mode)**:
+              + Khắc phục hoàn toàn hiện tượng bản đồ đứng yên khi xoay điện thoại ở chế độ la bàn thực địa (`🧭 Đang Đọc`).
+              + Toàn bộ bản đồ ảnh vệ tinh & đường phố xoay mượt mà 360 độ theo thời gian thực trùng khớp với góc nhìn thực tế của người dùng (12h là hướng trước mặt).
+              + Kết cấu khung hiển thị Oversized 160vmax triệt tiêu 100% hiện tượng hở góc trắng/đen khi xoay bản đồ ở bất kỳ góc độ nào.
+              + Tích hợp nút tùy chọn chế độ Xoay theo La Bàn (Heading-Up) hoặc Khóa Hướng Bắc (North-Up) trong Bảng điều khiển công cụ.
+            - **Nâng Cấp Lớp Bản Đồ: Thay OpenStreetMap bằng Google Maps Đường Phố**:
+              + Tích hợp đầy đủ lớp Google Maps Roadmap chính thức (`lyrs=m`), hiển thị tên đường sá, địa danh, số nhà tiếng Việt chuẩn xác và sắc nét tương tự Google Maps và các ứng dụng la bàn chuyên nghiệp.
+              + Bộ chuyển đổi 3 lớp linh hoạt: Vệ Tinh Google Earth (`lyrs=y`), Vệ Tinh Esri World Imagery, và Google Maps Đường Phố (`lyrs=m`).
             - **Tối Ưu Hóa Giao Diện Lục Nhâm Đại Độn**:
               + **Hợp Nhất Thẻ Tổng Quan Thần Khóa**: Loại bỏ nút chuyển 8 lớp/1 chạm rời rạc và ô ngày giờ tiết khí bị ngắt dòng lộn xộn, tích hợp thành một thẻ Master Card thống nhất, sang trọng.
               + **Bộ Nút Chuyển Chế Độ Đồng Bộ (8 Lớp / 1 Chạm)**: Đặt gọn gàng ngay tại tiêu đề Thần Khóa ở trên đỉnh và đồng bộ trực tiếp tại thanh tiêu đề Bàn Cờ 12 Cung bên dưới.
