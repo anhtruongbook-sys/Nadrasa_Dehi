@@ -1413,6 +1413,12 @@
       'Cửu Địa': '#84cc16', 'Cửu Thiên': '#a855f7'
     };
 
+    const DEITY_SLUGS = {
+      'Trực Phù': 'truc-phu', 'Đằng Xà': 'dang-xa', 'Thái Âm': 'thai-am', 'Lục Hợp': 'luc-hop',
+      'Bạch Hổ': 'bach-ho', 'Câu Trận': 'cau-tran', 'Huyền Vũ': 'huyen-vu', 'Chu Tước': 'chu-tuoc',
+      'Cửu Địa': 'cuu-dia', 'Cửu Thiên': 'cuu-thien'
+    };
+
     const activeDeities = (currentDeitySchool === '10thần')
       ? DEITY_ORDER
       : ['Trực Phù', 'Đằng Xà', 'Thái Âm', 'Lục Hợp', 'Bạch Hổ', 'Huyền Vũ', 'Cửu Địa', 'Cửu Thiên'];
@@ -1421,6 +1427,7 @@
       const d = (global.KetNoiVuTruEngine && global.KetNoiVuTruEngine.DEITIES[k]) || {};
       return {
         key: k,
+        slug: DEITY_SLUGS[k] || 'truc-phu',
         icon: DEITY_ICONS[k] || '🔮',
         title: `${k} - ${d.role || ''} (${d.alias || d.name_en || ''})`,
         desc: d.traits || '',
@@ -1525,10 +1532,10 @@
 
         <!-- Breathing Pulse Widget 4-7-8 -->
         <div class="thien-breath-widget" id="thien-breath-widget">
-          <div style="font-weight: 700; color: #38bdf8; font-size: 0.95rem; margin-bottom: 4px;">
+          <div class="thien-breath-title">
             🫁 NHỊP THỞ KHÍ CÔNG 4-7-8 (ĐƯA SÓNG NÃO VỀ TẦNG ALPHA / THETA)
           </div>
-          <div style="font-size: 0.76rem; color: #94a3b8; margin-bottom: 8px;">
+          <div class="thien-breath-subtitle">
             Hít sâu 4 giây • Nín thở định khí 7 giây • Thở chậm êm 8 giây
           </div>
           <div class="thien-breath-circle ${breathState.isRunning ? breathState.phase : ''}" id="thien-breath-circle">
@@ -1547,7 +1554,7 @@
               🔄 Đặt Lại
             </button>
           </div>
-          <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 8px;" id="thien-breath-cycle-label">
+          <div class="thien-breath-cycle-label" id="thien-breath-cycle-label">
             Vòng thở hiện tại: <strong>${breathState.cycle}</strong>
           </div>
         </div>
@@ -1563,11 +1570,11 @@
               star: '—'
             };
             return `
-              <div class="qmdj-deity-card" style="border-left: 4px solid ${cfg.color};">
+              <div class="qmdj-deity-card deity-card-${cfg.slug}" style="border-left: 4px solid ${cfg.color};">
                 <div class="deity-card-header">
                   <div class="deity-title-wrap">
                     <span class="deity-icon">${cfg.icon}</span>
-                    <strong class="deity-name" style="color: ${cfg.color};">${cfg.title}</strong>
+                    <strong class="deity-name deity-${cfg.slug}">${cfg.title}</strong>
                   </div>
                   <div class="deity-backto-badge">
                     Tọa Lưng: <strong>${match.direction}</strong>
@@ -1581,11 +1588,11 @@
                   <span>🚪 Môn: <strong>${match.door}</strong></span>
                 </div>
                 <p class="deity-desc">${cfg.desc}</p>
-                ${cfg.caution ? `<div style="font-size: 0.72rem; color: #fca5a5; margin: 4px 0;"><strong>⚠️ Thận trọng:</strong> ${cfg.caution}</div>` : ''}
+                ${cfg.caution ? `<div class="deity-caution-box"><strong>⚠️ Thận trọng:</strong> ${cfg.caution}</div>` : ''}
                 <div class="deity-practice-box">
                   <div class="practice-label">🧘 Pháp Quán Tưởng (${cfg.energy}):</div>
                   <p class="practice-text">${cfg.guide}</p>
-                  ${cfg.affirmation ? `<div style="margin-top: 6px; font-style: italic; color: #fef08a; font-size: 0.74rem;"><strong>💬 Thần chú:</strong> "${cfg.affirmation}"</div>` : ''}
+                  ${cfg.affirmation ? `<div class="deity-mantra-box"><strong>💬 Thần chú:</strong> "${cfg.affirmation}"</div>` : ''}
                 </div>
               </div>
             `;
@@ -2006,7 +2013,7 @@
                 ${ketNoiDeity.caution ? `
                   <div class="bqc-prop-row">
                     <span class="bqc-label">Bẫy Tâm lý / Kỵ:</span>
-                    <span class="bqc-val" style="color: #fca5a5;">⚠️ ${ketNoiDeity.caution}</span>
+                    <span class="bqc-val bqc-prop-val-caution">⚠️ ${ketNoiDeity.caution}</span>
                   </div>
                 ` : ''}
               ` : ''}
@@ -2227,7 +2234,7 @@
         html += `<div class="pt-alert-box ${al.level === 'CRITICAL' ? 'crit' : ''}"><strong>${al.level === 'CRITICAL' ? '🚨' : '⚠️'}</strong> ${al.text}</div>`;
       });
     } else {
-      html += `<div class="pt-alert-box" style="background: rgba(34,197,94,0.15); border-left-color: #22c55e; color: #bbf7d0;">✅ Không có lỗi đại sát nghiêm trọng trong bố trí 5 phòng.</div>`;
+      html += `<div class="pt-alert-box pt-alert-success">✅ Không có lỗi đại sát nghiêm trọng trong bố trí 5 phòng.</div>`;
     }
     return html;
   }
@@ -2289,7 +2296,7 @@
             <button type="button" class="pt-sync-lk-btn" id="btn-pt-sync-lakinh" title="Lấy góc xoay & tọa độ thực địa từ La Kinh Vệ Tinh">
               🧭 Lấy từ La Kinh Vệ Tinh (${(global.NetaLaKinhView && global.NetaLaKinhView.getState) ? global.NetaLaKinhView.getState().rotation.toFixed(1) + '°' : (ptState.degree || 315) + '°'})
             </button>
-            <span style="font-size: 0.68rem; color: #94a3b8;">Đang khảo sát: <strong style="color: #f59e0b;">${(ptState.degree || 315).toFixed(1)}°</strong></span>
+            <span class="pt-survey-note">Đang khảo sát: <strong class="pt-survey-deg">${(ptState.degree || 315).toFixed(1)}°</strong></span>
           </div>
         </div>
 
@@ -2310,7 +2317,7 @@
           <div class="q-pillar"><span class="q-lbl">HƯỚNG:</span><strong class="q-val">${chart.huongShortName || chart.huongName}</strong></div>
           <div class="q-pillar"><span class="q-lbl">CỬA:</span><strong class="q-val">Sơn ${chart.sonCua} (Cung ${chart.cuaPalace})</strong></div>
           <div class="q-pillar highlight-hour"><span class="q-lbl">TRỰC PHÙ:</span><strong class="q-val">${chart.rootStar}</strong></div>
-          ${chart.hkMatrix ? `<div class="q-pillar"><span class="q-lbl">CÁCH CỤC:</span><strong class="q-val" style="color: #f59e0b;">${chart.hkMatrix.patternName}</strong></div>` : ''}
+          ${chart.hkMatrix ? `<div class="q-pillar"><span class="q-lbl">CÁCH CỤC:</span><strong class="q-val q-pattern-val">${chart.hkMatrix.patternName}</strong></div>` : ''}
         </div>
 
         <!-- 9-Palace Matrix -->

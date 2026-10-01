@@ -13913,6 +13913,27 @@ body.theme-light .qmdj-deity-card {
   font-size: 0.78rem;
   font-weight: 800;
 }
+.deity-name.deity-truc-phu { color: #f59e0b; }
+.deity-name.deity-dang-xa { color: #ec4899; }
+.deity-name.deity-thai-am { color: #38bdf8; }
+.deity-name.deity-luc-hop { color: #10b981; }
+.deity-name.deity-bach-ho { color: #f87171; }
+.deity-name.deity-cau-tran { color: #fb923c; }
+.deity-name.deity-huyen-vu { color: #818cf8; }
+.deity-name.deity-chu-tuoc { color: #ef4444; }
+.deity-name.deity-cuu-dia { color: #84cc16; }
+.deity-name.deity-cuu-thien { color: #a855f7; }
+
+body.theme-light .deity-name.deity-truc-phu { color: #b45309; }
+body.theme-light .deity-name.deity-dang-xa { color: #be185d; }
+body.theme-light .deity-name.deity-thai-am { color: #0284c7; }
+body.theme-light .deity-name.deity-luc-hop { color: #047857; }
+body.theme-light .deity-name.deity-bach-ho { color: #b91c1c; }
+body.theme-light .deity-name.deity-cau-tran { color: #c2410c; }
+body.theme-light .deity-name.deity-huyen-vu { color: #4338ca; }
+body.theme-light .deity-name.deity-chu-tuoc { color: #dc2626; }
+body.theme-light .deity-name.deity-cuu-dia { color: #4d7c0f; }
+body.theme-light .deity-name.deity-cuu-thien { color: #7e22ce; }
 
 .deity-backto-badge {
   background: rgba(245, 176, 65, 0.15);
@@ -13926,8 +13947,9 @@ body.theme-light .qmdj-deity-card {
 
 body.theme-light .deity-backto-badge {
   background: #fef3c7;
-  border-color: #f59e0b;
-  color: #b45309;
+  border: 1.5px solid #f59e0b;
+  color: #92400e;
+  font-weight: 700;
 }
 
 .deity-meta-strip {
@@ -13942,16 +13964,41 @@ body.theme-light .deity-backto-badge {
 body.theme-light .deity-meta-strip {
   color: #64748b;
 }
+body.theme-light .deity-meta-strip strong {
+  color: #0f172a;
+}
 
 .deity-desc {
-  font-size: 0.70rem;
+  font-size: 0.72rem;
   color: #cbd5e1;
-  line-height: 1.4;
+  line-height: 1.45;
   margin: 0;
 }
 
 body.theme-light .deity-desc {
-  color: #475569;
+  color: #1e293b;
+}
+
+.deity-caution-box {
+  font-size: 0.72rem;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.deity-caution-box strong {
+  color: #f87171;
+}
+body.theme-light .deity-caution-box {
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+body.theme-light .deity-caution-box strong {
+  color: #7f1d1d;
 }
 
 .deity-practice-box {
@@ -13974,18 +14021,50 @@ body.theme-light .deity-practice-box {
 }
 
 body.theme-light .practice-label {
-  color: #d97706;
+  color: #b45309;
 }
 
 .practice-text {
-  font-size: 0.68rem;
+  font-size: 0.70rem;
   line-height: 1.45;
   color: #e2e8f0;
   margin: 0;
 }
 
 body.theme-light .practice-text {
-  color: #334155;
+  color: #1e293b;
+}
+
+.deity-mantra-box {
+  margin-top: 6px;
+  font-style: italic;
+  color: #fef08a;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+.deity-mantra-box strong {
+  color: #fde047;
+  font-style: normal;
+}
+body.theme-light .deity-mantra-box {
+  color: #854d0e;
+  background: #fefce8;
+  border: 1px solid #fef08a;
+}
+body.theme-light .deity-mantra-box strong {
+  color: #713f12;
+}
+
+.bqc-prop-val-caution {
+  color: #fca5a5;
+}
+body.theme-light .bqc-prop-val-caution {
+  color: #b91c1c;
+  font-weight: 700;
 }
 
 .qmdj-thien-guide-box {
@@ -17374,9 +17453,20 @@ body.theme-light .luan-role-note {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   text-align: center;
   margin-top: 8px;
+}
+.thien-breath-title {
+  font-weight: 800;
+  color: #38bdf8;
+  font-size: 0.88rem;
+  margin-bottom: 2px;
+}
+.thien-breath-subtitle {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  margin-bottom: 6px;
 }
 .breath-circle-wrap {
   position: relative;
@@ -17386,9 +17476,10 @@ body.theme-light .luan-role-note {
   align-items: center;
   justify-content: center;
 }
+.thien-breath-circle,
 .breath-circle {
-  width: 80px;
-  height: 80px;
+  width: 85px;
+  height: 85px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, rgba(14, 165, 233, 0.1) 70%);
   border: 2px solid #38bdf8;
@@ -17396,34 +17487,45 @@ body.theme-light .luan-role-note {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: transform 1s ease-in-out;
+  transition: transform 1s ease-in-out, border-color 0.5s ease;
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+  margin: 4px auto;
 }
+.thien-breath-circle.inhale,
 .breath-circle.inhale {
-  transform: scale(1.25);
+  transform: scale(1.22);
   box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
   border-color: #38bdf8;
 }
+.thien-breath-circle.hold,
 .breath-circle.hold {
-  transform: scale(1.25);
+  transform: scale(1.22);
   border-color: #f59e0b;
   box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
 }
+.thien-breath-circle.exhale,
 .breath-circle.exhale {
-  transform: scale(0.9);
+  transform: scale(0.92);
   border-color: #10b981;
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
 }
+.thien-breath-sec,
 .breath-time-txt {
   font-size: 1.4rem;
   font-weight: 900;
   color: #fff;
-  line-height: 1;
+  line-height: 1.1;
 }
+.thien-breath-phase,
 .breath-phase-txt {
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #bae6fd;
+}
+.thien-breath-cycle-label {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  margin-top: 6px;
 }
 .breath-instruction {
   font-size: 0.76rem;
@@ -17441,6 +17543,208 @@ body.theme-light .luan-role-note {
   font-size: 0.75rem;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+}
+
+/* ================= LIGHT MODE OVERRIDES: KỲ MÔN VŨ TRỤ & PHONG THỦY ================= */
+body.theme-light .qmdj-school-strip {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+body.theme-light .strip-lbl {
+  color: #475569;
+}
+body.theme-light .btn-school-toggle {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+body.theme-light .btn-school-toggle.active {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000000;
+  border-color: #f59e0b;
+  font-weight: 800;
+}
+
+/* Light Mode: Omni-Forecast 12 Domains Card */
+body.theme-light .qmdj-omni-card {
+  background: #ffffff;
+  border: 1.5px solid #d8b4fe;
+  box-shadow: 0 4px 14px rgba(147, 51, 234, 0.08);
+}
+body.theme-light .omni-title-wrap {
+  color: #6b21a8;
+  font-weight: 800;
+}
+body.theme-light .omni-domain-select {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+}
+body.theme-light .omni-result-body {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+body.theme-light .omni-score-badge.badge-great {
+  background: #dcfce7;
+  border: 1.5px solid #16a34a;
+  color: #15803d;
+}
+body.theme-light .omni-score-badge.badge-good {
+  background: #dbeafe;
+  border: 1.5px solid #2563eb;
+  color: #1d4ed8;
+}
+body.theme-light .omni-score-badge.badge-neutral {
+  background: #f1f5f9;
+  border: 1.5px solid #94a3b8;
+  color: #334155;
+}
+body.theme-light .omni-score-badge.badge-warning {
+  background: #fef3c7;
+  border: 1.5px solid #d97706;
+  color: #b45309;
+}
+body.theme-light .omni-score-badge.badge-danger {
+  background: #fee2e2;
+  border: 1.5px solid #dc2626;
+  color: #b91c1c;
+}
+body.theme-light .omni-rel-line {
+  color: #334155;
+}
+body.theme-light .omni-val {
+  color: #0f172a;
+  font-weight: 700;
+}
+body.theme-light .omni-palaces-tag {
+  color: #64748b;
+}
+body.theme-light .omni-advice-line {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Light Mode: Phong Thuy 5-Room Safety Card */
+body.theme-light .pt-safety-card {
+  background: #ffffff;
+  border: 1.5px solid #fca5a5;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.08);
+}
+body.theme-light .pt-safety-header {
+  border-bottom: 1px solid #fee2e2;
+}
+body.theme-light .pt-safety-title {
+  color: #991b1b;
+  font-weight: 800;
+}
+body.theme-light .pt-sync-lk-btn {
+  background: #eff6ff;
+  border: 1.5px solid #3b82f6;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+body.theme-light .pt-sync-lk-btn:hover {
+  background: #3b82f6;
+  color: #ffffff;
+}
+body.theme-light .pt-room-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+body.theme-light .pt-room-lbl {
+  color: #1e293b;
+  font-weight: 700;
+}
+body.theme-light .pt-room-select {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  font-weight: 600;
+}
+body.theme-light .pt-alert-box {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #991b1b;
+  font-weight: 500;
+}
+body.theme-light .pt-alert-box strong {
+  color: #7f1d1d;
+  font-weight: 800;
+}
+body.theme-light .pt-alert-box.pt-alert-success {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  color: #166534;
+  font-weight: 500;
+}
+body.theme-light .pt-survey-note {
+  color: #475569;
+}
+body.theme-light .pt-survey-deg {
+  color: #b45309;
+  font-weight: 700;
+}
+body.theme-light .q-pattern-val {
+  color: #b45309;
+}
+
+/* Light Mode: 4-7-8 Breathing Pulse Widget */
+body.theme-light .thien-breath-widget {
+  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, #f0f9ff 70%);
+  border: 1.5px solid #bae6fd;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+}
+body.theme-light .thien-breath-title {
+  color: #0369a1;
+  font-weight: 800;
+}
+body.theme-light .thien-breath-subtitle {
+  color: #475569;
+}
+body.theme-light .thien-breath-circle,
+body.theme-light .breath-circle {
+  background: radial-gradient(circle, rgba(224, 242, 254, 0.95) 0%, rgba(186, 230, 253, 0.5) 70%);
+  border: 2px solid #0284c7;
+  box-shadow: 0 0 20px rgba(2, 132, 199, 0.15);
+}
+body.theme-light .thien-breath-circle.inhale,
+body.theme-light .breath-circle.inhale {
+  border-color: #0284c7;
+  box-shadow: 0 0 25px rgba(2, 132, 199, 0.35);
+}
+body.theme-light .thien-breath-circle.hold,
+body.theme-light .breath-circle.hold {
+  border-color: #d97706;
+  box-shadow: 0 0 25px rgba(217, 119, 6, 0.35);
+}
+body.theme-light .thien-breath-circle.exhale,
+body.theme-light .breath-circle.exhale {
+  border-color: #16a34a;
+  box-shadow: 0 0 20px rgba(22, 163, 74, 0.25);
+}
+body.theme-light .thien-breath-phase,
+body.theme-light .breath-phase-txt {
+  color: #0284c7;
+  font-weight: 800;
+}
+body.theme-light .thien-breath-sec,
+body.theme-light .breath-time-txt {
+  color: #0369a1;
+  font-weight: 900;
+}
+body.theme-light .thien-breath-cycle-label {
+  color: #334155;
+}
+body.theme-light #btn-thien-breath-reset {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+body.theme-light .qmdj-toast {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid #f59e0b;
+  color: #ffffff;
 }
 
 .qmdj-toast {

@@ -76,12 +76,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.28
-          name: "Neta Light v2.8.28 (Tích Hợp Toàn Diện Kỳ Môn Độn Giáp - Kết Nối Vũ Trụ & Thập Thần)"
+          tag_name: v2.8.29
+          name: "Neta Light v2.8.29 (Chuẩn Hóa Giao Diện Sáng Màu & Độ Tương Phản Cao WCAG AAA)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.28
-            - **Tích Hợp Toàn Diện Tác Phẩm Kỳ Môn Độn Giáp - Kết Nối Vũ Trụ (Nguyễn Tấn Công)**:
-              + **Hệ Thống Thập Thần (10 Deities) Dual-School**: Hỗ trợ chuyển đổi linh hoạt giữa 10 Thần (Nguyễn Tấn Công) và 8 Thần (Joey Yap). Phân bổ âm dương chuẩn xác: Dương Độn nạp Câu Trận & Chu Tước, Âm Độn nạp Bạch Hổ & Huyền Vũ.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.29
+            - **Chuẩn Hóa Giao Diện Sáng Màu (Light Mode Uniformity)**:
+              + Đồng nhất màu nền và khung viền cho toàn bộ thẻ Chiêm đoán vạn sự (Omni-Forecast), Thẻ kiểm tra cấm kỵ 5 phòng ốc (Phong Thủy) và Nhịp thở khí công 4-7-8 (Tọa Thiền) trên nền sáng.
+              + Nâng cấp độ tương phản vượt trội (WCAG AAA) cho Thẻ Thập Thần: Thần chú nền ngà chữ đồng đậm, Thận trọng nền hồng chữ đỏ đậm, danh xưng Thần theo phổ màu đậm nét tương phản cao.
+              + Tối ưu hiển thị select dropdown, badge đánh giá và ghi chú thực địa trên cả 2 giao diện sáng/tối.
               + **Thuật Toán Định Cục Trí Nhuận Pháp (Zhi Run Method, Trang 307)**: Đối soát độc lập với phương pháp Sách Bổ (Chai Bu), tự động tính Phù Đầu, Siêu Thần, Tiếp Khí và Nhuận Cục tại Mang Chủng / Đại Tuyết.
               + **Động Cơ Chiêm Đoán Vạn Sự (Omni-Forecast 12 Lĩnh Vực)**: Tính điểm 0-100đ, phân hạng Cát/Hung và xuất lời khuyên hành động theo 5 mối quan hệ ngũ hành Dụng Thần (Hôn nhân, Sự nghiệp, Bất động sản, Tài lộc, Hợp đồng, v.v.).
               + **Cầu Nối 2 Chiều La Kinh Vệ Tinh ↔ Kỳ Môn Phong Thủy**: Nút 1-chạm `🔮 Kỳ Môn` từ thanh công cụ mặt bằng và Bottom Sheet chuyển giao tức thì góc xoay thực địa sang Kỳ Môn Phong Thủy.
