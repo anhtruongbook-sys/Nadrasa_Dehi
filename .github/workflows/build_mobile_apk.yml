@@ -76,18 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.29
-          name: "Neta Light v2.8.29 (Chuẩn Hóa Giao Diện Sáng Màu & Độ Tương Phản Cao WCAG AAA)"
+          tag_name: v2.8.30
+          name: "Neta Light v2.8.30 (Đa Nhân Chiêm Can Năm Sinh & Luận Giải Đa Tầng Kỳ Môn Độn Giáp)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.29
-            - **Chuẩn Hóa Giao Diện Sáng Màu (Light Mode Uniformity)**:
-              + Đồng nhất màu nền và khung viền cho toàn bộ thẻ Chiêm đoán vạn sự (Omni-Forecast), Thẻ kiểm tra cấm kỵ 5 phòng ốc (Phong Thủy) và Nhịp thở khí công 4-7-8 (Tọa Thiền) trên nền sáng.
-              + Nâng cấp độ tương phản vượt trội (WCAG AAA) cho Thẻ Thập Thần: Thần chú nền ngà chữ đồng đậm, Thận trọng nền hồng chữ đỏ đậm, danh xưng Thần theo phổ màu đậm nét tương phản cao.
-              + Tối ưu hiển thị select dropdown, badge đánh giá và ghi chú thực địa trên cả 2 giao diện sáng/tối.
-              + **Thuật Toán Định Cục Trí Nhuận Pháp (Zhi Run Method, Trang 307)**: Đối soát độc lập với phương pháp Sách Bổ (Chai Bu), tự động tính Phù Đầu, Siêu Thần, Tiếp Khí và Nhuận Cục tại Mang Chủng / Đại Tuyết.
-              + **Động Cơ Chiêm Đoán Vạn Sự (Omni-Forecast 12 Lĩnh Vực)**: Tính điểm 0-100đ, phân hạng Cát/Hung và xuất lời khuyên hành động theo 5 mối quan hệ ngũ hành Dụng Thần (Hôn nhân, Sự nghiệp, Bất động sản, Tài lộc, Hợp đồng, v.v.).
-              + **Cầu Nối 2 Chiều La Kinh Vệ Tinh ↔ Kỳ Môn Phong Thủy**: Nút 1-chạm `🔮 Kỳ Môn` từ thanh công cụ mặt bằng và Bottom Sheet chuyển giao tức thì góc xoay thực địa sang Kỳ Môn Phong Thủy.
-              + **Kiểm Định Cấm Kỵ 5 Phòng Ốc Thực Tế**: Tự động phát hiện đại sát "Hỏa Thiêu Thiên Môn" (Bếp tại Càn 6) và "Ô Uế Sinh Môn / Trực Phù" (Toilet), đề xuất phương án thông quan hóa giải ngũ hành cụ thể.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.30
+            - **Hỗ Trợ Đa Nhân Chiêm Trong 1 Canh Giờ (Can Năm Sinh / Niên Can Bản Mệnh)**:
+              + Bổ sung chế độ chọn Dụng Thần Người Hỏi: Chuyển đổi linh hoạt giữa `[⏰ Can Giờ/Ngày]` mặc định và `[🎂 Can Năm Sinh]`.
+              + Tự động quy đổi năm sinh (1940 - 2026) sang Can Chi và Dụng Thần Thiên Can tương ứng (với Giáp quy về Mậu hoặc Cung Trực Phù).
+              + Hỗ trợ chọn nhanh trực tiếp 10 Thiên Can bản mệnh để định vị Cung Chủ Thể không bị trùng lặp khi nhiều người cùng hỏi trong 1 thời điểm.
+            - **Nâng Cấp Động Cơ Luận Giải Chuyên Sâu Đa Tầng (Multi-Layer Divination Synthesis)**:
+              + Tầng 1: Tương quan Chủ - Khách & Ngũ Hành Sinh Khắc (Sinh Nhập, Khắc Nhập, Tỷ Hòa, Sinh Xuất, Khắc Xuất) cùng điểm số định lượng 0-100đ.
+              + Tầng 2: Bóc tách Bộ Tứ Kỳ Môn tại Cung Sự Việc (Bát Môn, Cửu Tinh, Thần Trợ, Phối Cách Thập Can với 17 cách cục kinh điển như Thanh Long Phản Thủ, Thái Bạch Nhập Huỳnh, v.v.).
+              + Tầng 3: Nhận diện Trạng thái Đặc biệt - Tuần Không (Khí số suy giảm 70-80%) & Biến Động Dịch Mã (Tốc độ chuyển biến nhanh, xuất hành).
+              + Tầng 4: Sách Lược Hành Động & Ứng Kỳ Dự Báo - Chỉ định chiến lược (Tấn Công / Phòng Thủ), Phương vị đón Cát Khí và Thời điểm ứng nghiệm theo Địa Chi.
+            - **Đồng Nhất Giao Diện Sáng / Tối (WCAG AAA)**:
+              + Hoàn thiện độ tương phản chuẩn mực cho thẻ Chiêm đoán trên cả hai chế độ nền Sáng và Tối.
               + **Chế Độ Tọa Thiền Định Tâm & Nhịp Thở Khí Công 4-7-8**: Đồng hồ nhịp thở động (Hít 4s - Nín 7s - Thở 8s) đưa sóng não về tầng Alpha/Theta (7-14 Hz), kết nối trường năng lượng Thần bảo hộ với tư thế Tọa Lưng (Back-To).
               + **Kỳ Môn Bản Mệnh Kết Nối Thần Vũ Trụ**: Tích hợp từ điển tiềm thức, bản chất tâm thức, bẫy tâm lý và thần chú kích hoạt năng lượng trọn đời.
               + Khắc phục hoàn toàn hiện tượng bản đồ đứng yên khi xoay điện thoại ở chế độ la bàn thực địa (`🧭 Đang Đọc`).

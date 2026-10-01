@@ -17364,6 +17364,210 @@ body.theme-light .luan-role-note {
   color: #e2e8f0;
 }
 
+/* Omni-Forecast Querent & Multi-Layer Divination Styles */
+.omni-querent-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin-top: 2px;
+}
+.omni-querent-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.omni-q-lbl {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c084fc;
+}
+.btn-omni-qmode {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-omni-qmode.active {
+  background: linear-gradient(135deg, #a855f7, #7e22ce);
+  color: #ffffff;
+  border-color: #c084fc;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+}
+.omni-birth-selects {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(168, 85, 247, 0.2);
+}
+.omni-select-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.omni-sub-lbl {
+  font-size: 0.66rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+.omni-sub-select {
+  background: #0f172a;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #f8fafc;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  outline: none;
+}
+
+/* Cặp Cung Chủ Thể ↔ Sự Việc */
+.omni-sub-obj-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 2px;
+}
+.omni-so-badge {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.omni-so-badge.subj {
+  border-left: 3px solid #38bdf8;
+}
+.omni-so-badge.obj {
+  border-left: 3px solid #f59e0b;
+}
+.omni-so-badge .so-lbl {
+  font-size: 0.62rem;
+  color: #94a3b8;
+  font-weight: 700;
+}
+.omni-so-badge .so-name {
+  font-size: 0.72rem;
+  color: #f8fafc;
+  font-weight: 800;
+}
+.omni-so-badge .so-sub {
+  font-size: 0.62rem;
+  color: #cbd5e1;
+}
+.omni-so-arrow {
+  color: #a855f7;
+  font-weight: 900;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* Khối Luận Giải Đa Tầng */
+.omni-deep-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.omni-analysis-sec {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.omni-analysis-sec .sec-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #e9d5ff;
+  letter-spacing: 0.3px;
+}
+.omni-analysis-sec .sec-p {
+  font-size: 0.70rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.omni-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 6px;
+  margin-top: 2px;
+}
+.omni-pillar-cell {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.omni-pillar-cell .cell-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+.omni-pillar-cell .cell-val {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: #cbd5e1;
+}
+
+.action-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 2px;
+}
+.action-item {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #38bdf8;
+  border-radius: 4px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.action-item.strategy {
+  border-left-color: #22c55e;
+}
+.action-item.direction {
+  border-left-color: #f59e0b;
+}
+.action-item.timing {
+  border-left-color: #a855f7;
+}
+.action-item .action-lbl {
+  font-size: 0.68rem;
+  color: #f8fafc;
+  font-weight: 800;
+}
+.action-item .action-txt {
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: #e2e8f0;
+  margin: 0;
+}
+
 /* Feng Shui Taboo Card */
 .pt-safety-card {
   background: linear-gradient(180deg, rgba(26, 12, 16, 0.95) 0%, rgba(15, 6, 9, 0.98) 100%);
@@ -17623,6 +17827,114 @@ body.theme-light .omni-palaces-tag {
 body.theme-light .omni-advice-line {
   color: #0f172a;
   font-weight: 600;
+}
+
+/* Light Mode: Omni-Forecast Querent & Multi-Layer Divination */
+body.theme-light .omni-querent-strip {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+}
+body.theme-light .omni-q-lbl {
+  color: #7e22ce;
+  font-weight: 800;
+}
+body.theme-light .btn-omni-qmode {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-weight: 700;
+}
+body.theme-light .btn-omni-qmode.active {
+  background: linear-gradient(135deg, #9333ea, #7e22ce);
+  color: #ffffff;
+  border-color: #9333ea;
+  box-shadow: 0 2px 6px rgba(147, 51, 234, 0.3);
+}
+body.theme-light .omni-birth-selects {
+  border-top: 1px dashed #cbd5e1;
+}
+body.theme-light .omni-sub-lbl {
+  color: #475569;
+  font-weight: 700;
+}
+body.theme-light .omni-sub-select {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  font-weight: 700;
+}
+body.theme-light .omni-so-badge {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+body.theme-light .omni-so-badge.subj {
+  border-left: 3.5px solid #0284c7;
+}
+body.theme-light .omni-so-badge.obj {
+  border-left: 3.5px solid #d97706;
+}
+body.theme-light .omni-so-badge .so-lbl {
+  color: #475569;
+  font-weight: 700;
+}
+body.theme-light .omni-so-badge .so-name {
+  color: #0f172a;
+  font-weight: 800;
+}
+body.theme-light .omni-so-badge .so-sub {
+  color: #334155;
+  font-weight: 600;
+}
+body.theme-light .omni-so-arrow {
+  color: #7e22ce;
+}
+body.theme-light .omni-analysis-sec {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+body.theme-light .omni-analysis-sec .sec-title {
+  color: #6b21a8;
+  font-weight: 800;
+}
+body.theme-light .omni-analysis-sec .sec-p {
+  color: #1e293b;
+  font-weight: 500;
+}
+body.theme-light .omni-pillar-cell {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+body.theme-light .omni-pillar-cell .cell-label {
+  color: #b45309;
+  font-weight: 800;
+}
+body.theme-light .omni-pillar-cell .cell-val {
+  color: #1e293b;
+  font-weight: 600;
+}
+body.theme-light .action-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+body.theme-light .action-item.strategy {
+  border-left: 3.5px solid #16a34a;
+}
+body.theme-light .action-item.direction {
+  border-left: 3.5px solid #d97706;
+}
+body.theme-light .action-item.timing {
+  border-left: 3.5px solid #9333ea;
+}
+body.theme-light .action-item .action-lbl {
+  color: #0f172a;
+  font-weight: 800;
+}
+body.theme-light .action-item .action-txt {
+  color: #1e293b;
+  font-weight: 500;
 }
 
 /* Light Mode: Phong Thuy 5-Room Safety Card */

@@ -332,22 +332,105 @@
     return { relation: 'Bình Hòa', scoreDelta: 0, type: 'neutral' };
   }
 
+  // ==============================================================================
+  // 4. ĐỘNG CƠ CHIÊM ĐOÁN VẠN SỰ 12 LĨNH VỰC (OMNI-FORECAST ENGINE ĐA TẦNG)
+  // ==============================================================================
+  const PALACE_DETAILS = {
+    1: { name: 'Khảm 1', direction: 'Chính Bắc', element: 'Thủy', branches: 'Tý' },
+    2: { name: 'Khôn 2', direction: 'Tây Nam', element: 'Thổ', branches: 'Mùi, Thân' },
+    3: { name: 'Chấn 3', direction: 'Chính Đông', element: 'Mộc', branches: 'Mão' },
+    4: { name: 'Tốn 4', direction: 'Đông Nam', element: 'Mộc', branches: 'Thìn, Tị' },
+    5: { name: 'Trung 5', direction: 'Trung Cung', element: 'Thổ', branches: 'Thổ Vị' },
+    6: { name: 'Càn 6', direction: 'Tây Bắc', element: 'Kim', branches: 'Tuất, Hợi' },
+    7: { name: 'Đoài 7', direction: 'Chính Tây', element: 'Kim', branches: 'Dậu' },
+    8: { name: 'Cấn 8', direction: 'Đông Bắc', element: 'Thổ', branches: 'Sửu, Dần' },
+    9: { name: 'Ly 9', direction: 'Chính Nam', element: 'Hỏa', branches: 'Ngọ' }
+  };
+
+  const DOOR_ROLES = {
+    'Khai Môn': { nature: 'Cát Môn (Kim)', role: 'Khai mở, lập nghiệp, thăng chức, hanh thông, việc công, xuất hành.', delta: 20 },
+    'Hưu Môn':  { nature: 'Cát Môn (Thủy)', role: 'Nghỉ ngơi, hòa giải, yến tiệc, quý nhân nâng đỡ, gia đạo an bình.', delta: 18 },
+    'Sinh Môn': { nature: 'Đại Cát Môn (Thổ)', role: 'Sinh sôi tài lộc, kinh doanh bất động sản, sinh con, nguồn vốn tăng trưởng.', delta: 25 },
+    'Thương Môn': { nature: 'Hung Môn (Mộc)', role: 'Va chạm, tổn thương, đòi nợ gấp, xích mích, tai nạn, hao tài.', delta: -22 },
+    'Đỗ Môn':   { nature: 'Bình Môn (Mộc)', role: 'Bế tắc, che giấu bí mật, phòng thủ, chờ đợi thời cơ, việc nội bộ khó công khai.', delta: -5 },
+    'Cảnh Môn': { nature: 'Trung Cát (Hỏa)', role: 'Văn thư, hợp đồng, bằng cấp, danh tiếng rực rỡ, tiệc tùng; cần cẩn trọng pháp lý.', delta: 10 },
+    'Tử Môn':   { nature: 'Đại Hung Môn (Thổ)', role: 'Đóng băng, đình trệ, đất đai mồ mả, điềm gở, thất bại, bế tắc cùng cực.', delta: -30 },
+    'Kinh Môn': { nature: 'Hung Môn (Kim)', role: 'Lo âu kinh sợ, nghi ngờ, khẩu thiệt tranh tụng, tin dữ, kiện cáo bất an.', delta: -25 }
+  };
+
+  const STAR_ROLES = {
+    'Thiên Bồng': { nature: 'Hung tinh (Thủy)', desc: 'Rủi ro lớn, đầu cơ, mạo hiểm, trộm cắp, cạm bẫy khó lường.', delta: -15 },
+    'Thiên Nhuế': { nature: 'Hung tinh (Thổ)', desc: 'Mầm bệnh, sai phạm tích tụ, cản trở, bạn bè hẹp hòi.', delta: -18 },
+    'Thiên Xung': { nature: 'Bình tinh (Mộc)', desc: 'Xung đột, bộc phát nhanh, dũng cảm, sự việc biến chuyển đột ngột.', delta: 2 },
+    'Thiên Phụ': { nature: 'Cát tinh (Mộc)', desc: 'Văn khúc, học vấn, thi cử, danh tiếng, quý nhân chỉ dạy.', delta: 15 },
+    'Thiên Cầm': { nature: 'Đại Cát tinh (Thổ)', desc: 'Uy quyền trung ương, trung thực, trăm việc hanh thông.', delta: 20 },
+    'Thiên Tâm': { nature: 'Đại Cát tinh (Kim)', desc: 'Trí tuệ lãnh đạo, chiến lược gia, đại phẫu thuật, thầy thuốc giỏi.', delta: 18 },
+    'Thiên Trụ': { nature: 'Hung tinh (Kim)', desc: 'Phá hoại, tổn thương, thị phi, đổ vỡ, hào nhoáng nhưng rỗng ruột.', delta: -15 },
+    'Thiên Nhậm': { nature: 'Cát tinh (Thổ)', desc: 'Kiên nhẫn, điền sản, trung hậu, làm việc chăm chỉ có tích lũy.', delta: 15 },
+    'Thiên Anh': { nature: 'Bình tinh (Hỏa)', desc: 'Danh tiếng bề ngoài, rực rỡ nhưng dễ nóng giận, chóng tàn.', delta: 5 }
+  };
+
+  const DEITY_ROLES = {
+    'Trực Phù': { nature: 'Đại Cát Thần', desc: 'Thủ lĩnh chư thần, bảo trợ tâm linh, quý nhân cấp cao nâng đỡ, trăm sự bình an.', delta: 20 },
+    'Đằng Xà':  { nature: 'Hung Thần', desc: 'Dối trá, lo âu, ác mộng, biến cố quái dị, tiểu nhân đổi trắng thay đen.', delta: -18 },
+    'Thái Âm':  { nature: 'Cát Thần', desc: 'Mưu lược ngầm, quý nhân nữ giới, bảo vệ kín đáo, nghiên cứu thâm sâu.', delta: 15 },
+    'Lục Hợp':  { nature: 'Đại Cát Thần', desc: 'Hôn phối, đồng thuận, môi giới, hợp đồng, bạn bè đối tác hòa hợp.', delta: 20 },
+    'Bạch Hổ':  { nature: 'Đại Hung Thần', desc: 'Xung đột bạo lực, tai nạn, đổ máu, kiện tụng gắt gao, hao tổn lớn.', delta: -25 },
+    'Câu Trận':  { nature: 'Hung Thần', desc: 'Trở lực, ngáng đường, tranh chấp đất đai, dây dưa không dứt.', delta: -18 },
+    'Huyền Vũ': { nature: 'Hung Thần', desc: 'Trộm cắp, gian lận, khẩu thiệt, lừa đảo tài chính, tiểu nhân ném đá giấu tay.', delta: -22 },
+    'Chu Tước': { nature: 'Hung Thần', desc: 'Thị phi khẩu nghiệp, tranh cãi ồn ào, văn thư khiếu nại, tin đồn thất thiệt.', delta: -18 },
+    'Cửu Địa':  { nature: 'Cát Thần', desc: 'Bền vững, trầm tĩnh, phòng thủ kiên cố, tích lũy đất đai, chậm mà chắc.', delta: 15 },
+    'Cửu Thiên': { nature: 'Cát Thần', desc: 'Thăng hoa, bứt phá ngoạn mục, danh tiếng vang xa, xuất hành đi xa cát lợi.', delta: 18 }
+  };
+
+  const STEM_PATTERN_LOOKUP = {
+    'Mậu+Bính': { name: 'Thanh Long Phản Thủ (Rồng Xanh Quay Đầu)', grade: 'dai_cat', note: 'Đại Cát! Tiền tài tự đến, mưu sự đại thành, đầu tư kinh doanh phát đạt vượt bậc.', delta: 20 },
+    'Bính+Mậu': { name: 'Phi Điểu Điệt Huyệt (Chim Bay Vào Tổ)', grade: 'dai_cat', note: 'Đại Cát! Không nhọc công sức mà hưởng trọn thành quả, quý nhân đem lại cơ hội lớn.', delta: 20 },
+    'Ất+Bính':  { name: 'Kỳ Thuận Điểm Huyệt', grade: 'dai_cat', note: 'Đại Cát! Công danh hiển hách, thi cử đỗ đạt, sự nghiệp thăng hoa.', delta: 18 },
+    'Ất+Đinh':  { name: 'Kỳ Hóa Phong Vân', grade: 'cat', note: 'Cát Lợi! Danh tiếng vang xa, được đề bạt thăng chức, quý nhân hỗ trợ.', delta: 15 },
+    'Đinh+Ất':  { name: 'Ngọc Nữ Thừa Phong', grade: 'cat', note: 'Cát Lợi! Hôn nhân hòa hợp, tài lộc bất ngờ, việc liên quan phụ nữ thuận lợi.', delta: 15 },
+    'Đinh+Bính': { name: 'Tinh Kỳ Nghênh Khách', grade: 'cat', note: 'Cát Lợi! Ký kết hợp đồng thành công, quang minh chính đại.', delta: 15 },
+    'Canh+Bính': { name: 'Thái Bạch Nhập Huỳnh (Sao Kim Vào Lửa)', grade: 'dai_hung', note: 'Đại Hung! Kẻ gian hãm hại, trộm cắp thất thoát, đề phòng mất mát tài sản lớn.', delta: -25 },
+    'Bính+Canh': { name: 'Huỳnh Nhập Thái Bạch (Lửa Vào Sao Kim)', grade: 'hung', note: 'Hung! Tiền của hao tán, gia đạo xích mích, đối tác trở mặt.', delta: -20 },
+    'Canh+Quý':  { name: 'Đại Cách', grade: 'hung', note: 'Hung! Đi lại trắc trở, xe cộ hư hỏng, công việc gãy gánh giữa đường.', delta: -18 },
+    'Canh+Nhâm': { name: 'Tiểu Cách / Thượng Cách', grade: 'hung', note: 'Hung! Thay đổi nơi ở, xa xứ tha hương, biến cố đột ngột.', delta: -16 },
+    'Canh+Canh': { name: 'Chiến Cách', grade: 'dai_hung', note: 'Rất Hung! Huynh đệ tương tàn, kiện cáo kéo dài, tự tổn thương lẫn nhau.', delta: -25 },
+    'Tân+Ất':   { name: 'Bạch Hổ Xương Cuồng', grade: 'dai_hung', note: 'Đại Hung! Gia đạo bất an, tai nạn thân thể, kiện tụng thua thiệt.', delta: -25 },
+    'Ất+Tân':   { name: 'Thanh Long Đào Tẩu', grade: 'hung', note: 'Hung! Đối tác bỏ đi, tiền bạc thất thoát, người dưới trướng phản trắc.', delta: -20 },
+    'Quý+Quý':  { name: 'Thiên Võng Tứ Trương', grade: 'dai_hung', note: 'Đại Hung! Lưới trời bủa vây bốn bề, bế tắc, tuyệt đối không được manh động.', delta: -25 },
+    'Nhâm+Nhâm': { name: 'Xà Nhập Địa Võng', grade: 'hung', note: 'Hung! Mắc kẹt trong khó khăn, việc dây dưa không có lối thoát.', delta: -18 },
+    'Kỷ+Kỷ':    { name: 'Địa Hộ Phùng Quỷ', grade: 'hung', note: 'Hung! Mưu sự khó thành, mầm bệnh âm ỉ, đề phòng tiểu nhân giấu mặt.', delta: -18 },
+    'Mậu+Canh': { name: 'Trực Phù Phi Cung', grade: 'hung', note: 'Hung! Chức vụ lung lay, mất đi chỗ dựa, phải thay đổi nơi làm việc.', delta: -18 }
+  };
+
+  function getStemChiFromYear(y) {
+    const year = parseInt(y, 10) || 1990;
+    const yOffset = year - 4;
+    const ganIdx = ((yOffset % 10) + 10) % 10;
+    const zhiIdx = ((yOffset % 12) + 12) % 12;
+    return {
+      stem: CAN_VN[ganIdx],
+      branch: CHI_VN[zhiIdx],
+      canChi: `${CAN_VN[ganIdx]} ${CHI_VN[zhiIdx]}`
+    };
+  }
+
   const FORECAST_DOMAINS = [
-    { key: 'wealth',       name: '💰 Đầu Tư & Tài Chính',    desc: 'Vốn Mậu <-> Lợi nhuận Sinh Môn <-> Nhà đầu tư Trực Phù' },
-    { key: 'marriage',     name: '💍 Hôn Nhân & Tình Duyên',  desc: 'Vợ Ất <-> Chồng Canh <-> Hôn nhân Lục Hợp' },
-    { key: 'career',       name: '💼 Công Danh & Xin Việc',   desc: 'Công việc Khai Môn <-> Người hỏi Nhật Can <-> Sếp Trực Phù' },
-    { key: 'contract',     name: '📝 Ký Hợp Đồng & Đàm Phán', desc: 'Văn bản Cảnh Môn <-> Đồng thuận Lục Hợp <-> Thời Can' },
-    { key: 'real_estate',  name: '🏡 Mua Bán Nhà Đất',        desc: 'Bất động sản Sinh Môn <-> Đất đai Tử Môn <-> Nhật/Thời Can' },
-    { key: 'debt',         name: '⚖️ Đòi Nợ & Thu Hồi Vốn',   desc: 'Người đòi Thương Môn <-> Con nợ Thiên Ất <-> Tiền vốn Mậu' },
-    { key: 'exam',         name: '🎓 Thi Cử & Học Vấn',       desc: 'Hội đồng Thiên Phụ <-> Bài thi Cảnh Môn <-> Thí sinh' },
-    { key: 'medical',      name: '🩺 Sức Khỏe & Bệnh Tật',    desc: 'Mầm bệnh Thiên Nhuế <-> Bác sĩ Ất Kỳ/Thiên Tâm <-> Bệnh nhân' },
-    { key: 'lawsuit',      name: '🏛️ Kiện Tụng & Tòa Án',     desc: 'Tranh cãi Kinh Môn <-> Chứng cứ Cảnh Môn <-> Thẩm phán' },
-    { key: 'lost_item',    name: '🔍 Tìm Đồ Vật Thất Lạc',    desc: 'Vật mất Thời Can <-> Kẻ trộm Huyền Vũ <-> Nội/Ngoại bàn' },
-    { key: 'missing_user', name: '✈️ Xuất Ngoại & Đi Xa',     desc: 'Phương vị Cửu Thiên <-> Dịch Mã <-> Bình an Lục Hợp' },
-    { key: 'childbirth',   name: '👶 Sinh Nở & Con Cái',      desc: 'Sản phụ Cung Khôn/Thiên Nhuế <-> Thai nhi Sinh Môn' }
+    { key: 'wealth', name: '💰 Đầu Tư & Tài Chính' },
+    { key: 'career', name: '👔 Công Danh & Sự Nghiệp' },
+    { key: 'marriage', name: '💍 Hôn Nhân & Tình Duyên' },
+    { key: 'contract', name: '📝 Ký Hợp Đồng & Đàm Phán' },
+    { key: 'real_estate', name: '🏡 Mua Bán Nhà Đất & BĐS' },
+    { key: 'debt', name: '💵 Đòi Nợ & Thu Hồi Vốn' },
+    { key: 'exam', name: '🎓 Thi Cử & Học Vấn' },
+    { key: 'medical', name: '🩺 Sức Khỏe & Bệnh Tật' },
+    { key: 'lawsuit', name: '⚖️ Kiện Tụng & Tòa Án' },
+    { key: 'lost_item', name: '🔍 Tìm Đồ Vật Thất Lạc' },
+    { key: 'missing_user', name: '✈️ Xuất Ngoại & Đi Xa' },
+    { key: 'childbirth', name: '👶 Sinh Nở & Con Cái' }
   ];
 
-  function runOmniForecast(domainKey, chartData) {
+  function runOmniForecast(domainKey, chartData, querentOptions = {}) {
     if (!chartData || !chartData.palaces) return null;
     const palaces = chartData.palaces;
 
@@ -360,98 +443,201 @@
       return 1;
     };
 
+    // 1. Xác định Cung Chủ Thể (Người Hỏi)
     let subjP = 1;
-    let objP = 1;
-    let detailNote = "";
-    let baseScore = 50;
+    let querentLabel = "";
+    const querentMode = querentOptions.mode || 'hour'; // 'hour' | 'birth_year'
 
-    switch (domainKey) {
-      case 'wealth': {
-        subjP = findPalaceWith('heaven_stem', 'Mậu');
-        objP = findPalaceWith('door', 'Sinh Môn');
-        const pObj = palaces[objP] || {};
-        const isKW = pObj.is_kong_wang;
-        const rel = evaluate5Relationship(subjP, objP);
-        let score = baseScore + rel.scoreDelta;
-        if (isKW) {
-          score -= 35;
-          detailNote = "Cung Sinh Môn ngộ Không Vong: Nguy cơ hao tổn vốn, cần thận trọng trước các cam kết lợi nhuận cao bất thường.";
-        } else if (rel.type === 'sinh_nhap') {
-          score += 20;
-          detailNote = "Sinh Môn sinh Cung Vốn Mậu: Dòng tiền sinh sôi gấp bội, đầu tư thuận lợi, lợi nhuận về đều đặn.";
-        } else {
-          detailNote = `Quan hệ ngũ hành giữa Vốn và Lợi nhuận là ${rel.relation}. Cần quản trị chi phí chặt chẽ.`;
-        }
-        return formatForecastResult('Đầu Tư & Tài Chính', subjP, objP, rel, score, detailNote);
+    if (querentMode === 'birth_year') {
+      let stem = querentOptions.stem;
+      if (!stem && querentOptions.year) {
+        stem = getStemChiFromYear(querentOptions.year).stem;
       }
+      stem = stem || 'Giáp';
+      querentLabel = `Can Năm Sinh: ${stem}${querentOptions.year ? ` (${querentOptions.year})` : ''}`;
 
-      case 'marriage': {
-        subjP = findPalaceWith('heaven_stem', 'Ất'); // Vợ
-        objP = findPalaceWith('heaven_stem', 'Canh'); // Chồng
-        const lhPalace = findPalaceWith('deity', 'Lục Hợp');
-        const rel = evaluate5Relationship(subjP, objP);
-        let score = baseScore + rel.scoreDelta;
-        if (palaces[lhPalace]?.is_kong_wang) {
-          score -= 25;
-          detailNote = "Lục Hợp ngộ Không Vong: Cuộc hôn nhân thiếu vắng sự kết nối cảm xúc sâu sắc hoặc có sự ngăn cách địa lý.";
-        } else if (rel.type === 'equal' || rel.type === 'sinh_nhap' || rel.type === 'sinh_xuat') {
-          score += 15;
-          detailNote = "Vợ chồng tương sinh hoặc tỷ hòa: Gia đạo êm ấm, tôn trọng và nâng đỡ nhau cùng phát triển.";
-        } else {
-          detailNote = "Ất Canh tương khắc: Đôi bên dễ nảy sinh bất đồng quan điểm, cần lắng nghe và thấu cảm nhiều hơn.";
+      // Giáp trong Kỳ Môn ẩn dưới Lục Nghi (mặc định Giáp Tý ẩn Mậu hoặc Cung Trực Phù)
+      if (stem === 'Giáp') {
+        subjP = findPalaceWith('deity', 'Trực Phù') || findPalaceWith('heaven_stem', 'Mậu');
+      } else {
+        subjP = findPalaceWith('heaven_stem', stem);
+        if (!subjP || subjP === 1) {
+          subjP = findPalaceWith('earth_stem', stem) || 1;
         }
-        return formatForecastResult('Hôn Nhân & Tình Duyên', subjP, objP, rel, score, detailNote);
       }
-
-      case 'medical': {
-        subjP = findPalaceWith('star', 'Thiên Nhuế'); // Bệnh tật
-        objP = findPalaceWith('heaven_stem', 'Ất');   // Y dược / Thầy thuốc
-        const rel = evaluate5Relationship(objP, subjP); // Thầy thuốc có khắc chế được bệnh không
-        let score = baseScore;
-        if (rel.type === 'khac_xuat') {
-          score += 35;
-          detailNote = "Cung Y Dược (Ất Kỳ) khắc Cung Bệnh (Thiên Nhuế): Gặp đúng thầy đúng thuốc, phác đồ điều trị phát huy hiệu quả nhanh chóng.";
-        } else if (rel.type === 'khac_nhap') {
-          score -= 30;
-          detailNote = "Cung Bệnh khắc Cung Y Dược: Bệnh tật kháng thuốc hoặc triệu chứng phức tạp, cần tham vấn thêm chuyên gia tuyến đầu.";
-        } else {
-          score += 10;
-          detailNote = "Bệnh ở mức kiểm soát được, cần chú trọng chế độ sinh hoạt và kiên trì theo dõi.";
-        }
-        return formatForecastResult('Sức Khỏe & Bệnh Tật', subjP, objP, rel, score, detailNote);
-      }
-
-      case 'career': {
-        subjP = chartData.day_palace || findPalaceWith('door', 'Khai Môn');
-        objP = findPalaceWith('door', 'Khai Môn');
-        const rel = evaluate5Relationship(subjP, objP);
-        let score = baseScore + rel.scoreDelta;
-        if (rel.type === 'sinh_nhap') {
-          score += 20;
-          detailNote = "Cơ quan/Công việc sinh người hỏi: Dễ trúng tuyển, công việc phù hợp năng lực, cấp trên quý mến nâng đỡ.";
-        } else if (rel.type === 'khac_nhap') {
-          score -= 20;
-          detailNote = "Công việc khắc bản thân: Áp lực công việc lớn, cạnh tranh nội bộ gay gắt.";
-        } else {
-          detailNote = "Công việc bình ổn, muốn thăng tiến cần chủ động trau dồi chuyên môn.";
-        }
-        return formatForecastResult('Công Danh & Sự Nghiệp', subjP, objP, rel, score, detailNote);
-      }
-
-      default: {
+    } else {
+      // Mặc định: Nhật Can (Can Ngày) hoặc Cung 1
+      const dayCan = chartData.day_can || '';
+      if (dayCan) {
+        subjP = (dayCan === 'Giáp')
+          ? (findPalaceWith('deity', 'Trực Phù') || findPalaceWith('heaven_stem', 'Mậu'))
+          : findPalaceWith('heaven_stem', dayCan);
+        querentLabel = `Nhật Can (Can Ngày): ${dayCan}`;
+      } else {
         subjP = chartData.day_palace || 1;
-        objP = chartData.hour_palace || 9;
-        const rel = evaluate5Relationship(subjP, objP);
-        const score = Math.max(10, Math.min(95, baseScore + rel.scoreDelta));
-        detailNote = `Sự việc đối soát ngũ hành: ${rel.relation}. Hành sự theo lẽ tự nhiên, thuận thời đạt cát.`;
-        const matched = FORECAST_DOMAINS.find(d => d.key === domainKey);
-        return formatForecastResult(matched ? matched.name : 'Vạn Sự Chiêm Đoán', subjP, objP, rel, score, detailNote);
+        querentLabel = `Chủ Thể Can Giờ / Ngày`;
       }
     }
-  }
 
-  function formatForecastResult(name, subjP, objP, rel, score, note) {
-    const finalScore = Math.max(10, Math.min(98, Math.round(score)));
+    // 2. Xác định Cung Dụng Thần (Sự Việc) theo 12 Lĩnh Vực
+    let objP = 1;
+    let targetLabel = "";
+    let domainName = "";
+
+    switch (domainKey) {
+      case 'wealth':
+        domainName = "Đầu Tư & Tài Chính";
+        objP = findPalaceWith('door', 'Sinh Môn');
+        targetLabel = "Lợi Nhuận (Sinh Môn) & Vốn Liếng (Mậu)";
+        break;
+      case 'marriage':
+        domainName = "Hôn Nhân & Tình Duyên";
+        objP = findPalaceWith('deity', 'Lục Hợp');
+        targetLabel = "Hôn Phối (Lục Hợp) • Đối tác (Ất/Canh)";
+        break;
+      case 'career':
+        domainName = "Công Danh & Sự Nghiệp";
+        objP = findPalaceWith('door', 'Khai Môn');
+        targetLabel = "Cơ Quan / Công Việc (Khai Môn)";
+        break;
+      case 'contract':
+        domainName = "Ký Hợp Đồng & Đàm Phán";
+        objP = findPalaceWith('door', 'Cảnh Môn');
+        targetLabel = "Văn Bản Hợp Đồng (Cảnh Môn) • Đồng thuận (Lục Hợp)";
+        break;
+      case 'real_estate':
+        domainName = "Mua Bán Nhà Đất & BĐS";
+        objP = findPalaceWith('door', 'Sinh Môn');
+        targetLabel = "Nhà Cửa BĐS (Sinh Môn) • Đất Đai (Tử Môn)";
+        break;
+      case 'debt':
+        domainName = "Đòi Nợ & Thu Hồi Vốn";
+        objP = findPalaceWith('door', 'Thương Môn');
+        targetLabel = "Người Đòi Nợ (Thương Môn) • Tiền Vốn (Mậu)";
+        break;
+      case 'exam':
+        domainName = "Thi Cử & Học Vấn";
+        objP = findPalaceWith('star', 'Thiên Phụ');
+        targetLabel = "Hội Đồng / Trường Thi (Thiên Phụ) • Bài Thi (Cảnh Môn)";
+        break;
+      case 'medical':
+        domainName = "Sức Khỏe & Bệnh Tật";
+        objP = findPalaceWith('star', 'Thiên Nhuế');
+        targetLabel = "Mầm Bệnh (Thiên Nhuế) • Thầy Thuốc (Thiên Tâm / Ất)";
+        break;
+      case 'lawsuit':
+        domainName = "Kiện Tụng & Tòa Án";
+        objP = findPalaceWith('door', 'Kinh Môn');
+        targetLabel = "Khẩu Thiệt Tranh Tụng (Kinh Môn) • Tòa Án (Trực Phù)";
+        break;
+      case 'lost_item':
+        domainName = "Tìm Đồ Vật Thất Lạc";
+        objP = chartData.hour_palace || findPalaceWith('deity', 'Huyền Vũ');
+        targetLabel = "Vật Mất (Thời Can) • Kẻ Gian (Huyền Vũ)";
+        break;
+      case 'missing_user':
+        domainName = "Xuất Ngoại & Đi Xa";
+        objP = findPalaceWith('deity', 'Cửu Thiên');
+        targetLabel = "Phương Xa (Cửu Thiên) • Di Chuyển (Dịch Mã)";
+        break;
+      case 'childbirth':
+        domainName = "Sinh Nở & Con Cái";
+        objP = 2; // Cung Khôn 2
+        targetLabel = "Sản Phụ (Cung Khôn 2) • Thai Nhi (Sinh Môn)";
+        break;
+      default:
+        domainName = "Vạn Sự Chiêm Đoán";
+        objP = chartData.hour_palace || 9;
+        targetLabel = "Sự Việc Khách Thể (Thời Can)";
+        break;
+    }
+
+    const pSubj = palaces[subjP] || {};
+    const pObj = palaces[objP] || {};
+
+    // 3. Phân tích Ngũ Hành Sinh Khắc Chủ - Khách
+    const rel = evaluate5Relationship(subjP, objP);
+    let baseScore = 50 + rel.scoreDelta;
+
+    // 4. Bóc tách chi tiết 4 Trụ Cột tại Cung Sự Việc
+    const doorInfo = DOOR_ROLES[pObj.door] || { nature: pObj.door || 'Bình Môn', role: 'Năng lượng bình ổn.', delta: 0 };
+    const starInfo = STAR_ROLES[pObj.star] || { nature: pObj.star || 'Bình Tinh', desc: 'Thiên thời trung tính.', delta: 0 };
+    const deityInfo = DEITY_ROLES[pObj.deity] || { nature: pObj.deity || 'Bình Thần', desc: 'Thần trợ mức trung bình.', delta: 0 };
+
+    const stemPair = `${pObj.heaven_stem || ''}+${pObj.earth_stem || ''}`;
+    const patternInfo = STEM_PATTERN_LOOKUP[stemPair] || null;
+
+    baseScore += (doorInfo.delta || 0);
+    baseScore += (starInfo.delta || 0);
+    baseScore += (deityInfo.delta || 0);
+    if (patternInfo) {
+      baseScore += (patternInfo.delta || 0);
+    }
+
+    // 5. Kiểm tra Không Vong & Dịch Mã
+    const objIsKW = !!pObj.is_kong_wang;
+    const subjIsKW = !!pSubj.is_kong_wang;
+    const hasHorse = !!pObj.is_sky_horse;
+
+    if (objIsKW) baseScore -= 25;
+    if (subjIsKW) baseScore -= 15;
+    if (hasHorse) baseScore += 5;
+
+    // 6. Tổng hợp Luận Giải Đa Tầng (Multi-Layer Synthesis)
+    // Tầng 1: Chủ - Khách
+    let hostGuestText = "";
+    if (rel.type === 'sinh_nhap') {
+      hostGuestText = `Thế sự đại thuận! Cung Sự việc (${PALACE_DETAILS[objP]?.name} - ${PALACE_WUXING[objP]}) SINH NHẬP cho Cung Bản mệnh (${PALACE_DETAILS[subjP]?.name} - ${PALACE_WUXING[subjP]}). Mọi sự tự tìm đến, được quý nhân chủ động đưa cơ hội và tài lộc tới tay, không nhọc công tranh đấu.`;
+    } else if (rel.type === 'sinh_xuat') {
+      hostGuestText = `Cung Bản mệnh (${PALACE_DETAILS[subjP]?.name} - ${PALACE_WUXING[subjP]}) SINH XUẤT cho Cung Sự việc (${PALACE_DETAILS[objP]?.name} - ${PALACE_WUXING[objP]}). Bản thân phải đầu tư nhiều công sức, tiền bạc và tâm huyết ra gầy dựng ban đầu. Có kết quả nhưng hao tổn sinh lực, cần lượng sức.`;
+    } else if (rel.type === 'khac_xuat') {
+      hostGuestText = `Cung Bản mệnh KHẮC XUẤT Cung Sự việc. Thế trận nằm trong tầm kiểm soát của bạn, nhưng phải nỗ lực vượt qua nhiều chông gai, tranh đấu quyết liệt mới giành được thắng lợi cuối cùng.`;
+    } else if (rel.type === 'khac_nhap') {
+      hostGuestText = `Cảnh báo bất lợi nghiêm trọng! Cung Sự việc KHẮC NHẬP Cung Bản mệnh. Bạn đang ở thế yếu, dễ bị đối phương hoặc hoàn cảnh chèn ép, nguy cơ thua thiệt và hao tài tốn của rất cao. Tuyệt đối không nên đối đầu trực diện.`;
+    } else {
+      hostGuestText = `Cung Bản mệnh và Cung Sự việc TỶ HÒA đồng khí (${PALACE_WUXING[subjP]}). Thế trận cân bằng, hòa hợp, thích hợp đàm phán hợp tác đôi bên cùng có lợi.`;
+    }
+
+    // Tầng 2: Tứ Trụ Cột (Môn - Tinh - Thần - Can)
+    const doorDetail = `🚪 Bát Môn [${pObj.door || 'Chưa định'}]: ${doorInfo.nature}. ${doorInfo.role}`;
+    const starDetail = `⭐ Cửu Tinh [${pObj.star || 'Chưa định'}]: ${starInfo.nature}. ${starInfo.desc}`;
+    const deityDetail = `🔮 Thần Trợ [${pObj.deity || 'Chưa định'}]: ${deityInfo.nature}. ${deityInfo.desc}`;
+    let stemPatternDetail = `⚡ Thập Can [${stemPair}]: Can Thiên ${pObj.heaven_stem} phối Can Địa ${pObj.earth_stem}.`;
+    if (patternInfo) {
+      stemPatternDetail += ` Đắc Cách: **${patternInfo.name}** (${patternInfo.note})`;
+    } else {
+      stemPatternDetail += ` Khí trường bình ổn, không xung sát nghiêm trọng.`;
+    }
+
+    // Tầng 3: Không Vong & Dịch Mã
+    let specialText = "";
+    if (objIsKW) {
+      specialText += `⚠️ Cung Dụng Thần lâm **TUẦN KHÔNG (Không Vong)**: Khí số suy giảm 70-80%, sự việc còn lơ lửng, lời hứa hẹn dễ thành "bánh vẽ", hợp đồng có nguy cơ bị hoãn hoặc hủy. Cần đợi tuần xung Không để mọi sự rõ ràng. `;
+    }
+    if (subjIsKW) {
+      specialText += `⚠️ Cung Người Hỏi lâm **TUẦN KHÔNG**: Tâm lý người hỏi còn hoang mang, năng lực hoặc tài chính chưa chuẩn bị chu tất, chớ vội vàng quyết định lớn. `;
+    }
+    if (hasHorse) {
+      specialText += `🐎 Cung ngộ **DỊCH MÃ**: Biến chuyển cực kỳ mau lẹ! Có sự di chuyển vị trí, thay đổi nhân sự hoặc công tác xa, cần chớp thời cơ dứt khoát.`;
+    }
+    if (!specialText) {
+      specialText = "Cung vị vững vàng, không ngộ Tuần Không, trường năng lượng tập trung ổn định.";
+    }
+
+    // Tầng 4: Sách Lược Hành Động & Ứng Kỳ
+    let strategyText = "";
+    let timingText = `Dự báo ứng nghiệm vào các ngày / tháng có Địa Chi: **${PALACE_DETAILS[objP]?.branches || 'Tùy Cung'}** hoặc khi Trực Sử lâm vị.`;
+    let directionText = `Phương vị đón Cát Khí hành động: **${PALACE_DETAILS[objP]?.direction || 'Xem bàn cờ'}** (Cung ${objP}) hoặc Cung có Trực Phù / Khai Môn.`;
+
+    if (baseScore >= 70) {
+      strategyText = `🎯 SÁCH LƯỢC TẤN CÔNG: Thời cơ chín muồi, nên chủ động ký kết, mở rộng đầu tư, xuất hành đàm phán. Tận dụng tối đa sự ủng hộ của quý nhân để chốt việc dứt khoát.`;
+    } else if (baseScore >= 50) {
+      strategyText = `🎯 SÁCH LƯỢC BẢO TOÀN: Giữ vững thế trận, làm rõ từng điều khoản hợp đồng/pháp lý, tiến từng bước chắc chắn. Không nên vay mượn quá đà hoặc mạo hiểm vào lĩnh vực mới.`;
+    } else {
+      strategyText = `🎯 SÁCH LƯỢC PHÒNG THỦ: Tạm hoãn các kế hoạch mở rộng, kiểm toán lại dòng tiền và bảo mật thông tin. Chuyển sang thế thủ, tích lũy nội lực, chờ thời vận chuyển biến mới hành động.`;
+    }
+
+    const finalScore = Math.max(5, Math.min(98, Math.round(baseScore)));
     let verdict = "BÌNH HÒA";
     let badgeClass = "badge-neutral";
     if (finalScore >= 80) {
@@ -469,14 +655,52 @@
     }
 
     return {
-      domainName: name,
+      domainKey: domainKey,
+      domainName: domainName,
       subjectPalace: subjP,
+      subjectInfo: {
+        palaceId: subjP,
+        name: PALACE_DETAILS[subjP]?.name || `Cung ${subjP}`,
+        direction: PALACE_DETAILS[subjP]?.direction || '',
+        element: PALACE_WUXING[subjP] || 'Thổ',
+        querentLabel: querentLabel,
+        door: pSubj.door || '',
+        star: pSubj.star || '',
+        deity: pSubj.deity || '',
+        heavenStem: pSubj.heaven_stem || '',
+        earthStem: pSubj.earth_stem || ''
+      },
       objectPalace: objP,
+      objectInfo: {
+        palaceId: objP,
+        name: PALACE_DETAILS[objP]?.name || `Cung ${objP}`,
+        direction: PALACE_DETAILS[objP]?.direction || '',
+        element: PALACE_WUXING[objP] || 'Thổ',
+        targetLabel: targetLabel,
+        door: pObj.door || '',
+        star: pObj.star || '',
+        deity: pObj.deity || '',
+        heavenStem: pObj.heaven_stem || '',
+        earthStem: pObj.earth_stem || '',
+        isKongWang: objIsKW,
+        isSkyHorse: hasHorse
+      },
       relationship: rel.relation,
       score: finalScore,
       verdict: verdict,
       badgeClass: badgeClass,
-      advice: note
+      layers: {
+        hostGuest: hostGuestText,
+        doorDetail: doorDetail,
+        starDetail: starDetail,
+        deityDetail: deityDetail,
+        stemPatternDetail: stemPatternDetail,
+        specialStates: specialText,
+        strategy: strategyText,
+        direction: directionText,
+        timing: timingText
+      },
+      advice: `${hostGuestText} ${strategyText}`
     };
   }
 
@@ -610,6 +834,7 @@
     findFuTou: findFuTou,
     calculateZhiRunJu: calculateZhiRunJu,
     FORECAST_DOMAINS: FORECAST_DOMAINS,
+    getStemChiFromYear: getStemChiFromYear,
     runOmniForecast: runOmniForecast,
     evaluate5Relationship: evaluate5Relationship,
     degreeToMountain: degreeToMountain,

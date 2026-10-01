@@ -22,6 +22,11 @@
   let currentJuMethod = 'chao_bu';   // 'chao_bu' (Sách Bổ) | 'zhi_run' (Trí Nhuận)
   let currentInquiryDomain = 'wealth'; // 12 domains: wealth, marriage, career, contract, real_estate, etc.
 
+  // Dụng Thần Người Hỏi (Chủ Thể) - Hỗ trợ Đa nhân chiêm trong 1 canh giờ
+  let currentQuerentMode = 'hour'; // 'hour' (Can Giờ/Ngày mặc định) | 'birth_year' (Can Năm Sinh người hỏi)
+  let currentQuerentYear = 1990;
+  let currentQuerentStem = 'Canh';
+
   // Trạng thái Bộ đếm nhịp thở 4-7-8 Sóng não Alpha
   let breathTimer = null;
   let breathState = {
@@ -570,14 +575,22 @@
 
   /**
    * Sinh HTML Thẻ Chiêm Đoán Vạn Sự (Omni-Forecast 12 Lĩnh Vực) theo sách Nguyễn Tấn Công
+   * Hỗ trợ Dụng Thần Can Năm Sinh (Đa nhân chiêm trong 1 canh giờ) & Luận Giải Đa Tầng
    */
   function buildOmniForecastHtml(chart) {
     if (!global.KetNoiVuTruEngine || currentQmdjMode === 'phongthuy') return '';
     const domains = global.KetNoiVuTruEngine.FORECAST_DOMAINS;
 
+    const dayStr = formatPillarCanChi(chart.date);
+    const hourStr = formatPillarCanChi(chart.hour);
+    const dayCan = (dayStr || '').split(' ')[0] || '';
+    const hourCan = (hourStr || '').split(' ')[0] || '';
+
     // Chuẩn hóa cấu trúc chart plain cho forecast engine
     const chartPlain = {
       round: chart.round || 1,
+      day_can: dayCan,
+      hour_can: hourCan,
       day_palace: 1,
       hour_palace: 9,
       palaces: {}
@@ -608,12 +621,16 @@
         const hcs = Array.isArray(p.getHCS(true)) ? p.getHCS(true).map(translate) : [translate(p.getHCS(true))];
         const ecs = Array.isArray(p.getECS(true)) ? p.getECS(true).map(translate) : [translate(p.getECS(true))];
 
+        const hCan = hcs[0] || '';
+        if (hCan === dayCan) chartPlain.day_palace = pNum;
+        if (hCan === hourCan) chartPlain.hour_palace = pNum;
+
         chartPlain.palaces[pNum] = {
           name: PALACE_NAMES[pIdx] || `Cung ${pNum}`,
           door: door,
           star: stars[0] || '',
           deity: divinity,
-          heaven_stem: hcs[0] || '',
+          heaven_stem: hCan,
           earth_stem: ecs[0] || '',
           is_kong_wang: !!p.de,
           is_sky_horse: !!p.hs
@@ -621,11 +638,18 @@
       });
     }
 
-    const res = global.KetNoiVuTruEngine.runOmniForecast(currentInquiryDomain, chartPlain);
+    const querentOptions = {
+      mode: currentQuerentMode,
+      year: currentQuerentYear,
+      stem: currentQuerentStem
+    };
+
+    const res = global.KetNoiVuTruEngine.runOmniForecast(currentInquiryDomain, chartPlain, querentOptions);
     if (!res) return '';
 
     return `
       <div class="qmdj-omni-card">
+        <!-- Header & Domain Selector -->
         <div class="omni-header-row">
           <div class="omni-title-wrap">
             <span class="omni-icon">🔮</span>
@@ -635,6 +659,57 @@
             ${domains.map(d => `<option value="${d.key}" ${currentInquiryDomain === d.key ? 'selected' : ''}>${d.name}</option>`).join('')}
           </select>
         </div>
+
+        <!-- Hàng Chọn Dụng Thần Người Hỏi (Chủ Thể - Hỗ Trợ Đa Nhân Chiêm) -->
+        <div class="omni-querent-strip">
+          <div class="omni-querent-pills">
+            <span class="omni-q-lbl">👤 Người Hỏi:</span>
+            <button type="button" class="btn-omni-qmode ${currentQuerentMode === 'hour' ? 'active' : ''}" data-qmode="hour" title="Dùng Can Giờ / Ngày mặc định">
+              ⏰ Can Giờ/Ngày
+            </button>
+            <button type="button" class="btn-omni-qmode ${currentQuerentMode === 'birth_year' ? 'active' : ''}" data-qmode="birth_year" title="Dùng Can Năm Sinh của người hỏi (khi có nhiều người hỏi trong 1 canh giờ)">
+              🎂 Can Năm Sinh
+            </button>
+          </div>
+          ${currentQuerentMode === 'birth_year' ? `
+            <div class="omni-birth-selects">
+              <div class="omni-select-item">
+                <span class="omni-sub-lbl">Năm sinh:</span>
+                <select id="omni-select-birth-year" class="omni-sub-select">
+                  ${Array.from({length: 87}, (_, i) => 2026 - i).map(y => {
+                    const sc = global.KetNoiVuTruEngine.getStemChiFromYear(y);
+                    return `<option value="${y}" ${currentQuerentYear === y ? 'selected' : ''}>${y} (${sc.canChi})</option>`;
+                  }).join('')}
+                </select>
+              </div>
+              <div class="omni-select-item">
+                <span class="omni-sub-lbl">Hoặc Can:</span>
+                <select id="omni-select-birth-stem" class="omni-sub-select">
+                  ${["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"].map(s => 
+                    `<option value="${s}" ${currentQuerentStem === s ? 'selected' : ''}>Can ${s}${s === 'Giáp' ? ' (ẩn Mậu)' : ''}</option>`
+                  ).join('')}
+                </select>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Bảng Cặp Cung Chủ Thể ↔ Sự Việc -->
+        <div class="omni-sub-obj-strip">
+          <div class="omni-so-badge subj">
+            <span class="so-lbl">CHỦ THỂ (${res.subjectInfo.querentLabel}):</span>
+            <strong class="so-name">${res.subjectInfo.name} (${res.subjectInfo.direction}) • Hành ${res.subjectInfo.element}</strong>
+            <span class="so-sub">${res.subjectInfo.door ? `Môn ${res.subjectInfo.door}` : '—'} • ${res.subjectInfo.star || '—'} • ${res.subjectInfo.deity || '—'}</span>
+          </div>
+          <div class="omni-so-arrow">➔</div>
+          <div class="omni-so-badge obj">
+            <span class="so-lbl">SỰ VIỆC (${res.objectInfo.targetLabel}):</span>
+            <strong class="so-name">${res.objectInfo.name} (${res.objectInfo.direction}) • Hành ${res.objectInfo.element}</strong>
+            <span class="so-sub">${res.objectInfo.door ? `Môn ${res.objectInfo.door}` : '—'} • ${res.objectInfo.star || '—'} • ${res.objectInfo.deity || '—'}</span>
+          </div>
+        </div>
+
+        <!-- Kết Quả Điểm Số & Đánh Giá Tổng Quan -->
         <div class="omni-result-body">
           <div class="omni-score-badge ${res.badgeClass}">
             <span class="score-num">${res.score}</span>
@@ -642,12 +717,62 @@
           </div>
           <div class="omni-info-col">
             <div class="omni-rel-line">
-              <span class="omni-lbl">Đối soát Dụng Thần:</span>
+              <span class="omni-lbl">Đối soát Ngũ Hành:</span>
               <strong class="omni-val">${res.relationship}</strong>
-              <span class="omni-palaces-tag">(Cung ${res.subjectPalace} ↔ Cung ${res.objectPalace})</span>
             </div>
             <div class="omni-advice-line">
-              ${res.advice}
+              ${res.layers.hostGuest}
+            </div>
+          </div>
+        </div>
+
+        <!-- Nội Dung Luận Giải Đa Tầng Chuyên Sâu (Comprehensive Multi-Layer Divination) -->
+        <div class="omni-deep-analysis">
+          <!-- Tầng 2: Tứ Trụ Cột Kỳ Môn -->
+          <div class="omni-analysis-sec pillars-sec">
+            <div class="sec-title">🏛️ BỘ TỨ KỲ MÔN TẠI CUNG SỰ VIỆC (${res.objectInfo.name}):</div>
+            <div class="omni-pillars-grid">
+              <div class="omni-pillar-cell">
+                <span class="cell-label">🚪 Bát Môn:</span>
+                <span class="cell-val">${res.layers.doorDetail}</span>
+              </div>
+              <div class="omni-pillar-cell">
+                <span class="cell-label">⭐ Cửu Tinh:</span>
+                <span class="cell-val">${res.layers.starDetail}</span>
+              </div>
+              <div class="omni-pillar-cell">
+                <span class="cell-label">🔮 Thần Trợ:</span>
+                <span class="cell-val">${res.layers.deityDetail}</span>
+              </div>
+              <div class="omni-pillar-cell">
+                <span class="cell-label">⚡ Thập Can:</span>
+                <span class="cell-val">${res.layers.stemPatternDetail}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tầng 3: Không Vong & Dịch Mã -->
+          <div class="omni-analysis-sec special-sec">
+            <div class="sec-title">⚡ KHÔNG VONG & BIẾN ĐỘNG DỊCH MÃ:</div>
+            <p class="sec-p">${res.layers.specialStates}</p>
+          </div>
+
+          <!-- Tầng 4: Sách Lược Hành Động & Ứng Kỳ Dự Báo -->
+          <div class="omni-analysis-sec action-sec">
+            <div class="sec-title">🎯 SÁCH LƯỢC HÀNH ĐỘNG & ỨNG KỲ DỰ BÁO:</div>
+            <div class="action-grid">
+              <div class="action-item strategy">
+                <strong class="action-lbl">📌 Chiến Lược Cốt Lõi:</strong>
+                <p class="action-txt">${res.layers.strategy}</p>
+              </div>
+              <div class="action-item direction">
+                <strong class="action-lbl">🧭 Phương Vị Đắc Lợi:</strong>
+                <p class="action-txt">${res.layers.direction}</p>
+              </div>
+              <div class="action-item timing">
+                <strong class="action-lbl">⏳ Ứng Kỳ Dự Báo:</strong>
+                <p class="action-txt">${res.layers.timing}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -2930,6 +3055,32 @@
     // Sự kiện chọn lĩnh vực Chiêm Đoán Vạn Sự
     document.getElementById('qmdj-select-omni-domain')?.addEventListener('change', (e) => {
       currentInquiryDomain = e.target.value;
+      renderQmdj();
+    });
+
+    // Sự kiện chuyển đổi chế độ Dụng Thần Người Hỏi (Can Giờ vs Can Năm Sinh)
+    document.querySelectorAll('.btn-omni-qmode').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const qm = btn.getAttribute('data-qmode');
+        if (qm) {
+          currentQuerentMode = qm;
+          renderQmdj();
+        }
+      });
+    });
+
+    // Sự kiện thay đổi năm sinh người hỏi (tự động cập nhật Can)
+    document.getElementById('omni-select-birth-year')?.addEventListener('change', (e) => {
+      currentQuerentYear = parseInt(e.target.value, 10);
+      if (global.KetNoiVuTruEngine && global.KetNoiVuTruEngine.getStemChiFromYear) {
+        currentQuerentStem = global.KetNoiVuTruEngine.getStemChiFromYear(currentQuerentYear).stem;
+      }
+      renderQmdj();
+    });
+
+    // Sự kiện chọn trực tiếp Can năm sinh người hỏi
+    document.getElementById('omni-select-birth-stem')?.addEventListener('change', (e) => {
+      currentQuerentStem = e.target.value;
       renderQmdj();
     });
 
