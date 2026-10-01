@@ -3187,7 +3187,9 @@ function updateQmdjStrategicLayer() {
 
   function getCurrentGPS(silent = false) {
     const btn = document.getElementById('lakinh-dock-gps');
+    const fab = document.getElementById('lakinh-hud-gps') || btn;
     if (btn) btn.classList.add('pulse-radar-active');
+    if (fab) fab.classList.add('pulse-radar-active');
 
     // NẾU CHẠY TRONG APP FLUTTER ANDROID: Gọi cầu nối Native Bridge để truy cập GPS phần cứng máy
     if (typeof window !== 'undefined' && window.NativeBridge) {

@@ -76,15 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.31
-          name: "Neta Light v2.8.31 (Dải Nhập Liệu Bản Mệnh & Giới Tính Dùng Chung Toàn Module Kỳ Môn Độn Giáp)"
+          tag_name: v2.8.32
+          name: "Neta Light v2.8.32 (Thanh Chọn Bát Thần / Thập Thần Đồng Nhất Toàn Bộ Subtab & Cầu Nối La Kinh Chiến Lược Tác Quyết)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.31
-            - **Thanh Điều Khiển Bản Mệnh & Giới Tính Dùng Chung Toàn Module (Unified Querent & Gender Strip)**:
-              + Tích hợp trực tiếp thanh nhập liệu bản mệnh ngay trên đầu bảng điều khiển: Giới tính `[♂ Nam]` / `[♀ Nữ]`, Ô nhập số Năm sinh (1920-2035) và Hộp chọn Can năm sinh.
-              + Dùng chung trạng thái đồng bộ toàn diện trên tất cả các phân hệ Kỳ Môn: `Dương Bàn`, `Âm Bàn`, `Chiến Lược Tác Quyết`, `Tọa Thiền Kết Nối Vũ Trụ`, `Phong Thủy Nhà`, `Bản Mệnh`.
-              + Tự động lưu nhớ thông tin (Local Storage) vĩnh viễn qua các phiên sử dụng.
-              + Thiết kế co giãn thông minh không tràn viền trên màn hình điện thoại di động (360px - 412px), độ tương phản cao sắc nét cả chế độ Sáng (Light Mode) và Tối (Dark Mode).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.32
+            - **Thanh Chọn Trường Phái Thần Trợ & Phương Pháp Định Cục Toàn Diện (Universal School Strip)**:
+              + Đồng bộ dải điều khiển Bát Thần / Thập Thần (`[🔮 Thập Thần]` vs `[⛩️ Bát Thần]`) và Phương Pháp Định Cục (`[📐 Sách Bổ]` vs `[🔄 Trí Nhuận]`) trên 100% tất cả các phân hệ Kỳ Môn: `Dương Bàn`, `Âm Bàn`, `Chiến Lược Tác Quyết`, `Tọa Thiền`, `Bản Mệnh`, `Phong Thủy`.
+              + Lưu trạng thái lựa chọn vào bộ nhớ máy (`localStorage`) tự động đồng bộ xuyên suốt toàn app, chuyển đổi tức thì không cần sang tab khác.
+            - **Cầu Nối La Kinh Chiến Lược Tác Quyết Trực Quan (Tác Quyết ➔ La Kinh Bridge)**:
+              + Thêm nút điều hướng nhanh `[🧭 Chuyển Sang La Kinh Định Vị Thực Địa]` ngay tại thẻ điều khiển Tác Quyết.
+              + Bổ sung nút hành động `[🧭 Mở La Kinh Để Định Vị Hướng Tác Chiến]` tại thanh công cụ Thước Ngắm Chiến Lược.
+              + Mỗi hướng tọa độ thực chiến (`🟢 Tọa Lưng Đắc Thắng`, `🟡 Thái Trùng Thiên Mã`) và từng ô trong bảng 9 Cung đều tích hợp huy hiệu/nút `[🧭 Ngắm]` / `[🧭 Mở La Kinh Hướng Cung ...]`.
+              + Tự động kích hoạt lớp phủ hình nón Kỳ Môn Chiến Lược (QMDJ Strategic Layer) và xoay La Kinh chính xác đến từng độ số thực địa.
+            - **Chuẩn Hóa Độ Tương Phản & Chống Tràn Viền Giao Diện Sáng / Tối (WCAG AAA)**:
+              + Tối ưu màu sắc, độ tương phản sắc nét trên cả giao diện Sáng (Light Mode) và Tối (Dark Mode).
+              + Bảo đảm hiển thị hoàn hảo trên màn hình điện thoại di động (360px - 412px), tuyệt đối không tràn viền ngang.
             - **Định Vị Tự Động Cung Bản Mệnh / Cung Gia Chủ Trên Bàn 9 Cung**:
               + Tự động đánh dấu huy hiệu `[👤 Mệnh]` trên Thiên Bàn 9 Cung tương ứng với Thiên Can năm sinh của người hỏi.
               + Trong phân hệ Phong Thủy Nhà 16 Hướng, tự động định vị và đánh dấu `[👤 Gia Chủ]` trực quan trên bản đồ Bát Vi Thần & Huyền Không Phi Tinh.

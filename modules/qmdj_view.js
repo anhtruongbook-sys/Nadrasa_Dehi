@@ -131,6 +131,69 @@
     }
   }
 
+  function renderSchoolStripHtml(includeJuMethod = true) {
+    return `
+      <div class="ucc-row qmdj-school-strip">
+        <div class="qmdj-school-pill">
+          <span class="strip-lbl">Thần:</span>
+          <button type="button" class="btn-school-toggle ${currentDeitySchool === '10thần' ? 'active' : ''}" id="btn-toggle-deity-10" title="10 Thần (Nguyễn Tấn Công - Kết Nối Vũ Trụ)">10 Thần</button>
+          <button type="button" class="btn-school-toggle ${currentDeitySchool === '8thần' ? 'active' : ''}" id="btn-toggle-deity-8" title="8 Thần (Joey Yap / Phổ Thông)">8 Thần</button>
+        </div>
+        ${includeJuMethod ? `
+        <div class="qmdj-school-pill">
+          <span class="strip-lbl">Định Cục:</span>
+          <button type="button" class="btn-school-toggle ${currentJuMethod === 'chao_bu' ? 'active' : ''}" id="btn-toggle-ju-chaobu" title="Sách Bổ / Chiết Bổ (Chai Bu)">Sách Bổ</button>
+          <button type="button" class="btn-school-toggle ${currentJuMethod === 'zhi_run' ? 'active' : ''}" id="btn-toggle-ju-zhirun" title="Trí Nhuận Pháp (Zhi Run - Trang 307)">Trí Nhuận</button>
+        </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  function bindSchoolStripEvents() {
+    const btn10 = document.getElementById('btn-toggle-deity-10');
+    const btn8 = document.getElementById('btn-toggle-deity-8');
+    const btnCb = document.getElementById('btn-toggle-ju-chaobu');
+    const btnZr = document.getElementById('btn-toggle-ju-zhirun');
+
+    if (btn10) {
+      btn10.onclick = () => {
+        if (currentDeitySchool !== '10thần') {
+          currentDeitySchool = '10thần';
+          try { localStorage.setItem('qmdj_deity_school', '10thần'); } catch (e) {}
+          renderQmdj();
+        }
+      };
+    }
+    if (btn8) {
+      btn8.onclick = () => {
+        if (currentDeitySchool !== '8thần') {
+          currentDeitySchool = '8thần';
+          try { localStorage.setItem('qmdj_deity_school', '8thần'); } catch (e) {}
+          renderQmdj();
+        }
+      };
+    }
+    if (btnCb) {
+      btnCb.onclick = () => {
+        if (currentJuMethod !== 'chao_bu') {
+          currentJuMethod = 'chao_bu';
+          try { localStorage.setItem('qmdj_ju_method', 'chao_bu'); } catch (e) {}
+          renderQmdj();
+        }
+      };
+    }
+    if (btnZr) {
+      btnZr.onclick = () => {
+        if (currentJuMethod !== 'zhi_run') {
+          currentJuMethod = 'zhi_run';
+          try { localStorage.setItem('qmdj_ju_method', 'zhi_run'); } catch (e) {}
+          renderQmdj();
+        }
+      };
+    }
+  }
+
   // Cấu hình Trường phái & Thuật toán (Kỳ Môn Độn Giáp - Kết Nối Vũ Trụ & Joey Yap)
   let currentDeitySchool = '10thần'; // '10thần' (Nguyễn Tấn Công) | '8thần' (Joey Yap)
   let currentJuMethod = 'chao_bu';   // 'chao_bu' (Sách Bổ) | 'zhi_run' (Trí Nhuận)
@@ -262,6 +325,17 @@
     9: "Nam"
   };
 
+  const PALACE_TO_DEGREE = {
+    1: 0,   // Bắc (Khảm 1)
+    8: 45,  // Đông Bắc (Cấn 8)
+    3: 90,  // Đông (Chấn 3)
+    4: 135, // Đông Nam (Tốn 4)
+    9: 180, // Nam (Ly 9)
+    2: 225, // Tây Nam (Khôn 2)
+    7: 270, // Tây (Đoài 7)
+    6: 315  // Tây Bắc (Càn 6)
+  };
+
   const SHORT_DIRECTIONS = {
     1: "Bắc",
     2: "T.Nam",
@@ -378,6 +452,14 @@
         currentQuerentStem = savedS;
       } else {
         currentQuerentStem = getQuerentStemChi(currentQuerentYear).stem;
+      }
+      const savedSchool = localStorage.getItem('qmdj_deity_school');
+      if (savedSchool === '10thần' || savedSchool === '8thần') {
+        currentDeitySchool = savedSchool;
+      }
+      const savedJu = localStorage.getItem('qmdj_ju_method');
+      if (savedJu === 'chao_bu' || savedJu === 'zhi_run') {
+        currentJuMethod = savedJu;
       }
     } catch (e) {}
     renderQmdj();
@@ -1003,19 +1085,8 @@
             <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn">🔮 Lập Bàn</button>
           </div>
 
-          <!-- Row 4: Trường phái Thần & Thuật toán Định Cục -->
-          <div class="qmdj-school-strip">
-            <div class="qmdj-school-pill">
-              <span class="strip-lbl">Thần:</span>
-              <button type="button" class="btn-school-toggle ${currentDeitySchool === '10thần' ? 'active' : ''}" id="btn-toggle-deity-10" title="10 Thần (Nguyễn Tấn Công - Kết Nối Vũ Trụ)">10 Thần</button>
-              <button type="button" class="btn-school-toggle ${currentDeitySchool === '8thần' ? 'active' : ''}" id="btn-toggle-deity-8" title="8 Thần (Joey Yap / Phổ Thông)">8 Thần</button>
-            </div>
-            <div class="qmdj-school-pill">
-              <span class="strip-lbl">Định Cục:</span>
-              <button type="button" class="btn-school-toggle ${currentJuMethod === 'chao_bu' ? 'active' : ''}" id="btn-toggle-ju-chaobu" title="Sách Bổ / Chiết Bổ (Chai Bu)">Sách Bổ</button>
-              <button type="button" class="btn-school-toggle ${currentJuMethod === 'zhi_run' ? 'active' : ''}" id="btn-toggle-ju-zhirun" title="Trí Nhuận Pháp (Zhi Run - Trang 307)">Trí Nhuận</button>
-            </div>
-          </div>
+          <!-- Row 5: Trường phái Thần & Thuật toán Định Cục -->
+          ${renderSchoolStripHtml(true)}
         </div>
 
         <!-- Solar Term Info Strip -->
@@ -1288,6 +1359,50 @@
     const roundVal = chart.round || 1;
     const roundText = roundVal > 0 ? `Dương ${roundVal} Cục` : `Âm ${Math.abs(roundVal)} Cục`;
 
+    // Tính góc xoay thực địa cho La Kinh
+    let presenterDeg = 0;
+    if (analysis && analysis.three_victories && analysis.three_victories.first_victory) {
+      presenterDeg = PALACE_TO_DEGREE[analysis.three_victories.first_victory.palace_id] || 0;
+    } else if (strat.presenter_back_facing) {
+      const s = strat.presenter_back_facing;
+      if (s.includes('Đông Bắc')) presenterDeg = 45;
+      else if (s.includes('Đông Nam')) presenterDeg = 135;
+      else if (s.includes('Tây Bắc')) presenterDeg = 315;
+      else if (s.includes('Tây Nam')) presenterDeg = 225;
+      else if (s.includes('Bắc')) presenterDeg = 0;
+      else if (s.includes('Nam')) presenterDeg = 180;
+      else if (s.includes('Đông')) presenterDeg = 90;
+      else if (s.includes('Tây')) presenterDeg = 270;
+    }
+
+    let horseDeg = 225;
+    if (analysis && analysis.sky_horse && analysis.sky_horse.palace_id) {
+      horseDeg = PALACE_TO_DEGREE[analysis.sky_horse.palace_id] || 225;
+    } else if (strat.emergency_escape_vector) {
+      const s = strat.emergency_escape_vector;
+      if (s.includes('Đông Nam')) horseDeg = 135;
+      else if (s.includes('Tây Nam')) horseDeg = 225;
+      else if (s.includes('Đông Bắc')) horseDeg = 45;
+      else if (s.includes('Tây Bắc')) horseDeg = 315;
+      else if (s.includes('Bắc')) horseDeg = 0;
+      else if (s.includes('Nam')) horseDeg = 180;
+      else if (s.includes('Đông')) horseDeg = 90;
+      else if (s.includes('Tây')) horseDeg = 270;
+    }
+
+    // Phân bổ 10 Thần (Nguyễn Tấn Công) nếu được kích hoạt
+    let chiefPalaceNum = 1;
+    if (chart && chart.box) {
+      chart.box.flat().forEach(palace => {
+        if (palace && palace.index !== 4 && translate(palace.getDivinity(true)).includes('Trực Phù')) {
+          chiefPalaceNum = palace.index + 1;
+        }
+      });
+    }
+    const tenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần')
+      ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
+      : {};
+
     // 3x3 Lạc Thư Layout
     const layout = [
       [4, 9, 2],
@@ -1363,6 +1478,16 @@
             </div>
             <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập bàn Kỳ Môn Tác Quyết">⚡ Lập Bàn</button>
           </div>
+
+          <!-- Row 5: Chọn Trường Phái (10 Thần vs 8 Thần) & Định Cục (Sách Bổ vs Trí Nhuận) -->
+          ${renderSchoolStripHtml(true)}
+
+          <!-- Row 6: Cầu nối La Kinh Chiến Lược -->
+          <div class="ucc-row cl-row-lakinh-bridge">
+            <button type="button" class="btn-cl-nav-lakinh" id="btn-cl-nav-lakinh" title="Mở La Kinh để định vị phương vị chiến lược thực tế">
+              🧭 Chuyển Sang La Kinh Định Vị Thực Địa
+            </button>
+          </div>
         </div>
 
         <!-- 4 Pillars Summary Header -->
@@ -1395,14 +1520,28 @@
               <span class="tc-badge ${analysis && analysis.score >= 0 ? 'tc-badge-good' : 'tc-badge-warn'}">Điểm: ${analysis ? (analysis.score > 0 ? '+' : '') + analysis.score : 0}đ</span>
             </div>
           </div>
+
+          <!-- Nút Mở La Kinh Định Vị Chiến Lược -->
+          <div class="jy-strat-lakinh-bar">
+            <button type="button" class="btn-qmdj-open-lakinh btn-cl-open-lakinh" id="btn-cl-open-lakinh" data-deg="${presenterDeg}">
+              🧭 Mở La Kinh Để Định Vị Hướng Tác Chiến (${presenterDeg}°)
+            </button>
+          </div>
+
           <div class="tc-spatial-grid">
-            <div class="tc-spatial-item victory">
-              <span class="tc-spatial-label">🟢 Tọa Lưng Đắc Thắng (Presenter Back-Facing):</span>
+            <div class="tc-spatial-item victory" data-target-dir="presenter" data-deg="${presenterDeg}" role="button" tabindex="0" title="Chạm để mở La Kinh ngắm hướng Tọa Lưng Đắc Thắng (${presenterDeg}°)">
+              <div class="tc-spatial-head-row">
+                <span class="tc-spatial-label">🟢 Tọa Lưng Đắc Thắng:</span>
+                <span class="tc-spatial-lk-tag">🧭 Ngắm</span>
+              </div>
               <span class="tc-spatial-val">${strat.presenter_back_facing}</span>
               <small class="tc-spatial-tip">Ngồi quay lưng hướng này để tiếp nhận sinh khí, át vía đối phương</small>
             </div>
-            <div class="tc-spatial-item horse">
-              <span class="tc-spatial-label">🟡 Thái Trùng Thiên Mã:</span>
+            <div class="tc-spatial-item horse" data-target-dir="horse" data-deg="${horseDeg}" role="button" tabindex="0" title="Chạm để mở La Kinh ngắm hướng Thái Trùng Thiên Mã (${horseDeg}°)">
+              <div class="tc-spatial-head-row">
+                <span class="tc-spatial-label">🟡 Thái Trùng Thiên Mã:</span>
+                <span class="tc-spatial-lk-tag">🧭 Ngắm</span>
+              </div>
               <span class="tc-spatial-val">${strat.emergency_escape_vector}</span>
               <small class="tc-spatial-tip">Phương vị xuất hành giải cứu khẩn cấp, thoát hiểm an toàn</small>
             </div>
@@ -1444,6 +1583,7 @@
 
               const shortStar = (p.star || '—').replace(/Thiên\s*/g, '');
               const shortDoor = (p.door || '—').replace(/\s*Môn$/g, '');
+              const cellGod = (currentDeitySchool === '10thần' && tenDeityMap[pNum]) ? tenDeityMap[pNum] : (p.deity || '—');
 
               return `
                 <div class="${cellClass}" data-palace-index="${pNum - 1}" role="button" tabindex="0">
@@ -1460,7 +1600,7 @@
                   </div>
                   <div class="jy-cell-body">
                     <div class="jy-row-god-star">
-                      <span class="jy-val-god ${getCatClass(p.deity)}" title="${p.deity || ''}">${p.deity || '—'}</span>
+                      <span class="jy-val-god ${getCatClass(cellGod)}" title="${cellGod}">${cellGod}</span>
                       <span class="jy-val-star ${getCatClass(p.star)}" title="${p.star || ''}">${shortStar}</span>
                     </div>
                     <div class="jy-row-door">
@@ -1540,6 +1680,9 @@
   }
 
   function bindChienLuocEvents(chart, patterns) {
+    bindQuerentRowEvents();
+    bindSchoolStripEvents();
+
     // Goal selector buttons
     document.querySelectorAll('.jy-goal-btn').forEach(btn => {
       btn.onclick = () => {
@@ -1556,6 +1699,57 @@
       cell.onclick = () => {
         const pIndex = parseInt(cell.getAttribute('data-palace-index'));
         openPalaceDetailModal(chart, patterns, pIndex);
+      };
+    });
+
+    function openLaKinhStrategic(targetDeg, note = '') {
+      if (global.NetaLaKinhView) {
+        const lkState = global.NetaLaKinhView.getState();
+        if (lkState) {
+          lkState.isQmdjStratActive = true;
+          lkState.qmdjStratGoal = currentChienLuocGoal;
+          lkState.qmdjStratDate = new Date(currentQmdjDate);
+          if (typeof global.NetaLaKinhView.updateQmdjStrategicLayer === 'function') {
+            global.NetaLaKinhView.updateQmdjStrategicLayer();
+          }
+        }
+        if (targetDeg !== undefined && typeof global.NetaLaKinhView.updateRotation === 'function') {
+          global.NetaLaKinhView.updateRotation(targetDeg);
+        }
+      }
+      if (typeof window.switchAppMode === 'function') {
+        window.switchAppMode('lakinh');
+      } else {
+        const tab = document.getElementById('tab-mode-lakinh');
+        if (tab) tab.click();
+      }
+      if (typeof showQmdjToast === 'function') {
+        showQmdjToast(note || '🧭 Đã chuyển sang La Kinh và kích hoạt lớp Chiến Lược Kỳ Môn!');
+      }
+    }
+
+    const btnNavLk = document.getElementById('btn-cl-nav-lakinh');
+    if (btnNavLk) {
+      btnNavLk.onclick = () => {
+        openLaKinhStrategic(undefined, '🧭 Đã mở La Kinh Định Vị Chiến Lược!');
+      };
+    }
+
+    const btnOpenLk = document.getElementById('btn-cl-open-lakinh');
+    if (btnOpenLk) {
+      btnOpenLk.onclick = () => {
+        const deg = parseFloat(btnOpenLk.getAttribute('data-deg')) || 0;
+        openLaKinhStrategic(deg, `🧭 Đã mở La Kinh ngắm hướng Tọa Lưng (${deg}°)!`);
+      };
+    }
+
+    // Click on spatial items (Tọa lưng / Thiên Mã)
+    document.querySelectorAll('.tc-spatial-item[data-deg]').forEach(item => {
+      item.onclick = () => {
+        const deg = parseFloat(item.getAttribute('data-deg'));
+        const type = item.getAttribute('data-target-dir');
+        const title = type === 'horse' ? 'Thái Trùng Thiên Mã' : 'Tọa Lưng Đắc Thắng';
+        openLaKinhStrategic(isNaN(deg) ? 0 : deg, `🧭 Đã mở La Kinh ngắm hướng ${title} (${deg}°)!`);
       };
     });
   }
@@ -1746,6 +1940,9 @@
             </div>
             <button class="ucc-btn-submit" id="btn-qmdj-submit" title="Lập Bàn Tọa Thiền">🧘 Lập Bàn</button>
           </div>
+
+          <!-- Row 5: Trường phái Thần & Thuật toán Định Cục -->
+          ${renderSchoolStripHtml(true)}
         </div>
 
         <!-- 4 Pillars Summary Header -->
@@ -2203,6 +2400,9 @@
               🔮 Lập Mệnh Bàn
             </button>
           </div>
+
+          <!-- Row 5: Trường phái Thần & Thuật toán Định Cục -->
+          ${renderSchoolStripHtml(true)}
         </div>
 
         <!-- Tứ Trụ Sinh Mệnh Strip -->
@@ -2430,6 +2630,8 @@
   function bindBanMenhEvents(chart, lp) {
     bindQmdjTimeEvents(chart, []);
     bindModeTabsEvents();
+    bindQuerentRowEvents();
+    bindSchoolStripEvents();
 
     const btnMale = document.getElementById('btn-banmenh-male');
     const btnFemale = document.getElementById('btn-banmenh-female');
@@ -2546,6 +2748,9 @@
             </button>
             <span class="pt-survey-note">Đang khảo sát: <strong class="pt-survey-deg">${(ptState.degree || 315).toFixed(1)}°</strong></span>
           </div>
+
+          <!-- Row 4: Trường phái Thần (10 Thần vs 8 Thần) -->
+          ${renderSchoolStripHtml(false)}
         </div>
 
         <!-- Phong Thủy Info Strip -->
@@ -3181,25 +3386,8 @@
       };
     }
 
-    // Sự kiện chuyển đổi trường phái Thập Thần (10 Thần vs 8 Thần)
-    document.getElementById('btn-toggle-deity-10')?.addEventListener('click', () => {
-      currentDeitySchool = '10thần';
-      renderQmdj();
-    });
-    document.getElementById('btn-toggle-deity-8')?.addEventListener('click', () => {
-      currentDeitySchool = '8thần';
-      renderQmdj();
-    });
-
-    // Sự kiện chuyển đổi phương pháp định Cục (Sách Bổ vs Trí Nhuận)
-    document.getElementById('btn-toggle-ju-chaobu')?.addEventListener('click', () => {
-      currentJuMethod = 'chao_bu';
-      renderQmdj();
-    });
-    document.getElementById('btn-toggle-ju-zhirun')?.addEventListener('click', () => {
-      currentJuMethod = 'zhi_run';
-      renderQmdj();
-    });
+    // Sự kiện chuyển đổi trường phái Thần & Định Cục (dùng chung & lưu nhớ)
+    bindSchoolStripEvents();
 
     // Sự kiện chọn lĩnh vực Chiêm Đoán Vạn Sự
     document.getElementById('qmdj-select-omni-domain')?.addEventListener('change', (e) => {
@@ -3238,6 +3426,7 @@
 
   function bindPhongThuyEvents(chart) {
     bindQuerentRowEvents();
+    bindSchoolStripEvents();
     const selVan = document.getElementById('pt-select-van');
     const selHuong = document.getElementById('pt-select-huong');
     const selCua = document.getElementById('pt-select-cua');
@@ -3379,11 +3568,47 @@
               </div>
             `}
           </div>
+          <div style="margin-top: 12px; display: flex; justify-content: center;">
+            <button type="button" class="btn-qmdj-open-lakinh btn-modal-lk" id="btn-modal-open-lakinh" data-deg="${PALACE_TO_DEGREE[pIndex + 1] !== undefined ? PALACE_TO_DEGREE[pIndex + 1] : 0}">
+              🧭 Mở La Kinh Hướng Cung ${palaceName} (${PALACE_DIRECTIONS[pIndex + 1]} • ${PALACE_TO_DEGREE[pIndex + 1] !== undefined ? PALACE_TO_DEGREE[pIndex + 1] : 0}°)
+            </button>
+          </div>
         </div>
       `;
     }
 
     modal.style.display = 'flex';
+
+    const btnModalLk = document.getElementById('btn-modal-open-lakinh');
+    if (btnModalLk) {
+      btnModalLk.onclick = () => {
+        modal.style.display = 'none';
+        const targetDeg = parseFloat(btnModalLk.getAttribute('data-deg')) || 0;
+        if (global.NetaLaKinhView) {
+          const lkState = global.NetaLaKinhView.getState();
+          if (lkState) {
+            lkState.isQmdjStratActive = true;
+            lkState.qmdjStratGoal = currentChienLuocGoal;
+            lkState.qmdjStratDate = new Date(currentQmdjDate);
+            if (typeof global.NetaLaKinhView.updateQmdjStrategicLayer === 'function') {
+              global.NetaLaKinhView.updateQmdjStrategicLayer();
+            }
+          }
+          if (typeof global.NetaLaKinhView.updateRotation === 'function') {
+            global.NetaLaKinhView.updateRotation(targetDeg);
+          }
+        }
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('lakinh');
+        } else {
+          const tab = document.getElementById('tab-mode-lakinh');
+          if (tab) tab.click();
+        }
+        if (typeof showQmdjToast === 'function') {
+          showQmdjToast(`🧭 Đã mở La Kinh ngắm hướng Cung ${palaceName} (${targetDeg}°)!`);
+        }
+      };
+    }
   }
 
   function getFengShuiAdviceForPalace(door, divinity, pNum, chart) {
