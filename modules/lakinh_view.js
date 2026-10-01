@@ -116,18 +116,6 @@
 
         <div id="lakinh-crosshair"></div>
 
-        <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Bên Phải - Vector GPS Target Cao Cấp) -->
-        <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn" aria-label="Về vị trí hiện tại">
-          <svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="8"></circle>
-            <line x1="12" y1="2" x2="12" y2="5"></line>
-            <line x1="12" y1="19" x2="12" y2="22"></line>
-            <line x1="2" y1="12" x2="5" y1="12"></line>
-            <line x1="19" y1="12" x2="22" y1="12"></line>
-            <circle cx="12" cy="12" r="2.5" fill="currentColor"></circle>
-          </svg>
-        </button>
-
         <!-- Đĩa La Kinh / Thước Lập Cực 36 Tầng Xuyên Thấu Siêu Nét -->
         <div id="lakinh-overlay-container" class="${state.isDiscVisible ? '' : 'is-disc-hidden'}" style="width: ${state.size}px; height: ${state.size}px;">
           <div id="lakinh-backdrop-circle" style="opacity: ${state.bgOpacity};"></div>
@@ -2735,9 +2723,7 @@ function updateQmdjStrategicLayer() {
   // Callback toàn cục nhận tọa độ từ Native App (Flutter Android)
   window._onNativeLocationReceived = function(lat, lng, accuracy) {
     const btn = document.getElementById('lakinh-dock-gps');
-    const fab = document.getElementById('lakinh-btn-my-location');
     if (btn) btn.classList.remove('pulse-radar-active');
-    if (fab) fab.classList.remove('pulse-radar-active');
 
     state.userLocation = [lat, lng];
     state.centerCoords = [lat, lng];
@@ -2764,9 +2750,7 @@ function updateQmdjStrategicLayer() {
   // Callback báo lỗi từ Native App
   window._onNativeLocationError = function(errMsg) {
     const btn = document.getElementById('lakinh-dock-gps');
-    const fab = document.getElementById('lakinh-btn-my-location');
     if (btn) btn.classList.remove('pulse-radar-active');
-    if (fab) fab.classList.remove('pulse-radar-active');
 
     console.warn('Native GPS Error:', errMsg);
     const isPermission = errMsg && (errMsg.includes('PERMISSION') || errMsg.includes('từ chối') || errMsg.includes('denied'));
@@ -2786,9 +2770,7 @@ function updateQmdjStrategicLayer() {
 
   function getCurrentGPS(silent = false) {
     const btn = document.getElementById('lakinh-dock-gps');
-    const fab = document.getElementById('lakinh-btn-my-location');
     if (btn) btn.classList.add('pulse-radar-active');
-    if (fab) fab.classList.add('pulse-radar-active');
 
     // NẾU CHẠY TRONG APP FLUTTER ANDROID: Gọi cầu nối Native Bridge để truy cập GPS phần cứng máy
     if (typeof window !== 'undefined' && window.NativeBridge) {
@@ -4605,15 +4587,6 @@ function updateQmdjStrategicLayer() {
       });
     }
 
-    // 2. Nút Bay Về Vị Trí Hiện Tại (Floating FAB & Bottom Dock) - Phản hồi ngay lập tức
-    const btnMyLocation = document.getElementById('lakinh-btn-my-location');
-    if (btnMyLocation) {
-      btnMyLocation.addEventListener('click', (e) => {
-        e.stopPropagation();
-        getCurrentGPS(false);
-      });
-    }
-
     // 2b. Nút Ẩn / Hiện Đĩa La Kinh (Xem Rõ Bản Đồ & Địa Hình Vệ Tinh)
     const toggleDiscVisibility = (forceVisible) => {
       if (forceVisible !== undefined) {
@@ -5759,7 +5732,7 @@ function updateQmdjStrategicLayer() {
     // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
     if (lkContainer) {
       lkContainer.addEventListener('click', (e) => {
-        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-my-location, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
           return;
         }
         if (state.isRayActive && !state.isPlanPanActive) {

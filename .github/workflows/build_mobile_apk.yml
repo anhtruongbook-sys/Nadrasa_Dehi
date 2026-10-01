@@ -76,17 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.19
-          name: "Neta Light v2.8.19 (Xóa Thanh Thông Báo Trạng Thái & Tối Giản Tầm Nhìn Bản Đồ Vệ Tinh)"
+          tag_name: v2.8.20
+          name: "Neta Light v2.8.20 (Tối Giản Tuyệt Đối Giao Diện La Kinh Vệ Tinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.19
-            - **Xóa Bỏ Hoàn Toàn Thanh Capsule Thông Báo Dưới Đáy Màn Hình**:
-              + Loại bỏ dải banner nổi `🗺️ Đang ẩn La Kinh để soi bản đồ địa hình [👁️ Hiện lại]`.
-              + Trả lại 100% không gian hiển thị thông thoáng cho bản đồ vệ tinh, hình thế sông núi và công trình.
-              + Khi muốn bật lại La Kinh, người dùng chỉ cần chạm nút biểu tượng con mắt `👁️` trên thanh công cụ Top Bar.
-            - **Triệt Tiêu Vòng Tròn Xanh GPS & Giản Lược Giao Diện**:
-              + Đã xóa vòng tròn mờ bán kính sai số GPS, không còn vệt màu hay viền đứt đoạn trên bản đồ.
-              + Bỏ nút tròn góc dưới bên trái, chỉ giữ duy nhất nút định vị GPS vector sắc nét ở góc dưới bên phải.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.20
+            - **Loại Bỏ Nút Nổi GPS Bên Phải – Tận Dụng Nút Vị Trí Dưới Thanh Dock**:
+              + Bỏ hoàn toàn nút nổi GPS tròn phía trên bên phải để tránh trùng lặp dư thừa.
+              + Chức năng định vị GPS vệ tinh tập trung duy nhất và tối ưu tại nút `📍 Vị Trí` trên thanh Dock dưới đáy màn hình.
+            - **Xóa Bỏ Thanh Capsule Thông Báo Dưới Đáy**:
+              + Loại bỏ dải banner nổi, trả lại 100% không gian hiển thị thông thoáng cho bản đồ địa hình và vệ tinh.
+              + Bật/tắt La Kinh 36 tầng chỉ với 1 chạm vào nút con mắt `👁️ / 🙈` trên thanh Top Bar.
+            - **Triệt Tiêu Vòng Tròn Xanh GPS Mờ**:
+              + Xóa triệt để vòng tròn sai số GPS để giữ vệ tinh hiển thị tự nhiên, nguyên bản và sắc nét nhất.
             - **Tính Năng Chuyên Sâu: Tra Cứu Trùng Tang - Nhập Mộ - Thiên Di (Âm Trạch)**:
               + Bấm quẻ tay 12 cung Địa Chi kinh điển: Nam khởi 10 tuổi tại Dần (thuận chiều), Nữ khởi 10 tuổi tại Thân (nghịch chiều).
               + Bóc tách trọn vẹn 4 Trụ lâm chung: Trụ Năm (Tuổi thọ), Trụ Tháng (Tháng mất ÂL), Trụ Ngày (Ngày mất ÂL), Trụ Giờ (Giờ mất Can Chi).
