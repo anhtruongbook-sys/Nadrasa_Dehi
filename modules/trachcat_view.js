@@ -121,9 +121,66 @@
           </ul>
         </div>
       `;
+    } else if (taskId === 'MUC_28') {
+      return `
+        <div class="tc-task-guide-box">
+          <div class="tc-task-guide-title">⚰️ NGUYÊN TẮC TRẠCH NHẬT AN TÁNG / CHÔN CẤT (ÂM TRẠCH)</div>
+          <ul class="tc-task-guide-list">
+            <li><strong>Tuổi căn cứ gốc:</strong> Bắt buộc căn cứ theo tuổi và bản mệnh của <strong>Người đã khuất (Người mất)</strong> để tránh ngày Trực Xung Địa Chi, tránh ngày xung khắc Ngũ hành bản mệnh.</li>
+            <li><strong>Tuổi phối hợp:</strong> Ngày giờ hạ huyệt/chôn cất kiêng trực xung với tuổi của <strong>Trưởng nam (Chủ tang)</strong>.</li>
+            <li><strong>Cấm kỵ ngày hung âm phần:</strong> Tuyệt đối tránh ngày Trùng Tang, Tam Tang, Thập Ác Đại Bại, Sát Chủ Âm Phần, Bạch Hổ nhập mộ.</li>
+            <li><strong>Không tính hạn làm nhà:</strong> Hạn Kim Lâu và Hoang Ốc (làm nhà) <em>tuyệt đối không áp dụng cho tang lễ</em>.</li>
+            <li><strong>Tọa Sơn Mộ Phần:</strong> Hướng đặt mộ / Tọa huyệt mộ cần đồng khí hoặc tương sinh với Bản Mệnh người mất.</li>
+          </ul>
+        </div>
+      `;
+    } else if (taskId === 'MUC_22') {
+      return `
+        <div class="tc-task-guide-box">
+          <div class="tc-task-guide-title">💍 NGUYÊN TẮC TRẠCH NHẬT CƯỚI HỎI (HÔN NHÂN ĐẠI SỰ)</div>
+          <ul class="tc-task-guide-list">
+            <li><strong>Tuổi trọng tâm:</strong> Cổ nhân định lệ <em>"Lấy vợ xem tuổi đàn bà"</em> — Hạn Kim Lâu cưới gả bắt buộc tính theo tuổi mụ của <strong>Cô dâu</strong> (chọn "♀ Nữ", tuổi chia 9 dư 1, 3, 6, 8 là phạm Kim Lâu).</li>
+            <li><strong>Ngày cát hôn nhân:</strong> Ưu tiên ngày Bất Tương, Thiên Hỷ, Nguyệt Đức, Trực Định, Trực Thành; sao Bích, Phòng, Tâm.</li>
+            <li><strong>Ngày đại kỵ:</strong> Tránh ngày Tam Nương, Nguyệt Kỵ, Cô Thần Quả Tú, Ly Sào, Không Vong. Không tính hạn Hoang Ốc làm nhà.</li>
+          </ul>
+        </div>
+      `;
     }
     return '';
   }
+
+  const NAP_AM_MAP = {
+    'Giáp Tý': 'Hải Trung Kim', 'Ất Sửu': 'Hải Trung Kim',
+    'Bính Dần': 'Lư Trung Hỏa', 'Đinh Mão': 'Lư Trung Hỏa',
+    'Mậu Thìn': 'Đại Lâm Mộc', 'Kỷ Tị': 'Đại Lâm Mộc',
+    'Canh Ngọ': 'Lộ Bàng Thổ', 'Tân Mùi': 'Lộ Bàng Thổ',
+    'Nhâm Thân': 'Kiếm Phong Kim', 'Quý Dậu': 'Kiếm Phong Kim',
+    'Giáp Tuất': 'Sơn Đầu Hỏa', 'Ất Hợi': 'Sơn Đầu Hỏa',
+    'Bính Tý': 'Giản Hạ Thủy', 'Đinh Sửu': 'Giản Hạ Thủy',
+    'Mậu Dần': 'Thành Đầu Thổ', 'Kỷ Mão': 'Thành Đầu Thổ',
+    'Canh Thìn': 'Bạch Lạp Kim', 'Tân Tị': 'Bạch Lạp Kim',
+    'Nhâm Ngọ': 'Dương Liễu Mộc', 'Quý Mùi': 'Dương Liễu Mộc',
+    'Giáp Thân': 'Tuyền Trung Thủy', 'Ất Dậu': 'Tuyền Trung Thủy',
+    'Bính Tuất': 'Ốc Thượng Thổ', 'Đinh Hợi': 'Ốc Thượng Thổ',
+    'Mậu Tý': 'Tích Lịch Hỏa', 'Kỷ Sửu': 'Tích Lịch Hỏa',
+    'Canh Dần': 'Tùng Bách Mộc', 'Tân Mão': 'Tùng Bách Mộc',
+    'Nhâm Thìn': 'Trường Lưu Thủy', 'Quý Tị': 'Trường Lưu Thủy',
+    'Giáp Ngọ': 'Sa Trung Kim', 'Ất Mùi': 'Sa Trung Kim',
+    'Bính Thân': 'Sơn Hạ Hỏa', 'Đinh Dậu': 'Sơn Hạ Hỏa',
+    'Mậu Tuất': 'Bình Địa Mộc', 'Kỷ Hợi': 'Bình Địa Mộc',
+    'Canh Tý': 'Bích Thượng Thổ', 'Tân Sửu': 'Bích Thượng Thổ',
+    'Nhâm Dần': 'Kim Bạch Kim', 'Quý Mão': 'Kim Bạch Kim',
+    'Giáp Thìn': 'Phúc Đăng Hỏa', 'Ất Tị': 'Phúc Đăng Hỏa',
+    'Bính Ngọ': 'Thiên Hà Thủy', 'Đinh Mùi': 'Thiên Hà Thủy',
+    'Mậu Thân': 'Đại Trạch Thổ', 'Kỷ Dậu': 'Đại Trạch Thổ',
+    'Canh Tuất': 'Thoa Xuyến Kim', 'Tân Hợi': 'Thoa Xuyến Kim',
+    'Nhâm Tý': 'Tang Đố Mộc', 'Quý Sửu': 'Tang Đố Mộc',
+    'Giáp Dần': 'Đại Khê Thủy', 'Ất Mão': 'Đại Khê Thủy',
+    'Bính Thìn': 'Sa Trung Thổ', 'Đinh Tị': 'Sa Trung Thổ',
+    'Mậu Ngọ': 'Thiên Thượng Hỏa', 'Kỷ Mùi': 'Thiên Thượng Hỏa',
+    'Canh Thân': 'Thạch Lựu Mộc', 'Tân Dậu': 'Thạch Lựu Mộc',
+    'Nhâm Tuất': 'Đại Hải Thủy', 'Quý Hợi': 'Đại Hải Thủy'
+  };
 
   const CATEGORIES = [
     'Tất cả',
@@ -230,12 +287,32 @@
     });
 
     const task = tasks.find(t => t.id === state.taskId);
-    const isMarriageTask = (task && task.category === 'Hôn nhân') || (state.category === 'Hôn nhân');
-    const yearSuit = state.results ? state.results.year_suitability : eng.evaluateYearSuitability(state.personYear, state.selectedYear, null, state.isMale, isMarriageTask);
+    const taskCat = (task && task.category) || state.category || '';
+    const isFuneral = taskCat === 'Tang lễ' || ['MUC_28', 'MUC_29', 'MUC_30'].includes(state.taskId);
+    const isMarriage = taskCat === 'Hôn nhân' || ['MUC_22', 'MUC_23'].includes(state.taskId);
+    const isBuilding = ['Xây dựng', 'Nhà ở', 'Sửa chữa'].includes(taskCat) || ['MUC_04', 'MUC_05', 'MUC_15'].includes(state.taskId);
+
+    const yearSuit = state.results ? state.results.year_suitability : eng.evaluateYearSuitability(state.personYear, state.selectedYear, null, state.isMale, isMarriage);
     const cungPhi = (yearSuit && yearSuit.cung_phi) || (eng.calculateCungPhi ? eng.calculateCungPhi(state.personYear, state.isMale) : null);
+    const napAm = NAP_AM_MAP[state.personCanChi] || '';
     const batTrach = (state.mountainSittingDeg != null && eng.calculateBatTrach && cungPhi)
       ? eng.calculateBatTrach(cungPhi.number, state.mountainSittingDeg)
       : null;
+
+    let personLabel = 'Năm sinh gia chủ (Dương lịch)';
+    if (isFuneral) {
+      personLabel = 'Năm sinh Người Mất / Âm trạch (Dương lịch)';
+    } else if (isMarriage) {
+      personLabel = 'Năm sinh Cô dâu / Hôn nhân (Dương lịch)';
+    } else if (!isBuilding) {
+      personLabel = 'Năm sinh Chủ sự / Người thực hiện (Dương lịch)';
+    }
+
+    const ageText = isFuneral
+      ? `Tuổi: ${state.personCanChi} (Hưởng thọ ${yearSuit ? yearSuit.age_lunar : ''} tuổi)`
+      : `Tuổi: ${state.personCanChi} (${yearSuit ? yearSuit.age_lunar : ''} tuổi mụ)`;
+
+    const personChi = (state.personCanChi.split(' ')[1]) || '';
 
     container.innerHTML = `
       <div class="tc-container">
@@ -288,48 +365,84 @@
           <div class="tc-grid-2">
             <div class="tc-field">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <label class="tc-label" style="margin-bottom: 0;">Năm sinh gia chủ (Dương lịch)</label>
+                <label class="tc-label" style="margin-bottom: 0;">${personLabel}</label>
                 <div class="ucc-pill-gender" style="height: 26px; padding: 2px;">
                   <button type="button" class="ucc-gender-btn ${state.isMale ? 'active male' : ''}" id="tc-btn-male" style="height: 22px; padding: 0 8px; font-size: 0.72rem;">♂ Nam</button>
                   <button type="button" class="ucc-gender-btn ${!state.isMale ? 'active female' : ''}" id="tc-btn-female" style="height: 22px; padding: 0 8px; font-size: 0.72rem;">♀ Nữ</button>
                 </div>
               </div>
               <div class="tc-input-row">
-                <input type="number" id="tc-input-year" class="tc-input" min="1920" max="2050" value="${state.personYear}" placeholder="Nhập năm sinh (VD: 1990)...">
+                <input type="number" id="tc-input-year" class="tc-input" min="1920" max="2050" value="${state.personYear}" placeholder="Nhập năm sinh (VD: 1944)...">
               </div>
               <div class="tc-person-badges">
-                <span class="tc-badge tc-badge-info">Tuổi: ${state.personCanChi} (${yearSuit ? yearSuit.age_lunar : ''} tuổi mụ)</span>
+                <span class="tc-badge tc-badge-info">${ageText}</span>
+                ${napAm ? `
+                  <span class="tc-badge" style="background: rgba(168, 85, 247, 0.15); color: #9333ea; border: 1px solid rgba(168, 85, 247, 0.35); font-weight: 700;">
+                    Mệnh: ${napAm}
+                  </span>
+                ` : ''}
                 ${cungPhi ? `
                   <span class="tc-badge" style="background: rgba(14, 165, 233, 0.15); color: #0284c7; border: 1px solid rgba(14, 165, 233, 0.35); font-weight: 700;">
                     ${cungPhi.symbol} Cung ${cungPhi.name} (${cungPhi.element} • ${cungPhi.group})
                   </span>
                 ` : ''}
-                ${yearSuit ? `
-                  <span class="tc-badge ${yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
-                    ${yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
+
+                ${isFuneral ? `
+                  <span class="tc-badge tc-badge-good" title="Tang lễ không tính hạn làm nhà">✓ Tang lễ không tính Kim Lâu / Hoang Ốc</span>
+                  <span class="tc-badge tc-badge-warn">Kỵ ngày trực xung ${personChi}</span>
+                ` : (isMarriage ? `
+                  <span class="tc-badge ${yearSuit && yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
+                    ${yearSuit && yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
                   </span>
-                  <span class="tc-badge ${yearSuit.kim_lau.is_kim_lau ? 'tc-badge-bad' : 'tc-badge-good'}">
-                    ${yearSuit.kim_lau.is_kim_lau ? `⚠️ Kim Lâu (${yearSuit.kim_lau.type})` : '✓ Không Kim Lâu'}
-                  </span>
-                  <span class="tc-badge ${yearSuit.hoang_oc.is_good ? 'tc-badge-good' : 'tc-badge-bad'}">
-                    ${yearSuit.hoang_oc.cung_name} (${yearSuit.hoang_oc.is_good ? 'Tốt' : 'Xấu'})
-                  </span>
-                ` : ''}
+                  ${yearSuit ? `
+                    <span class="tc-badge ${yearSuit.kim_lau.is_kim_lau ? 'tc-badge-bad' : 'tc-badge-good'}">
+                      ${yearSuit.kim_lau.is_kim_lau ? `⚠️ Kim Lâu (${yearSuit.kim_lau.type})` : '✓ Không Kim Lâu'}
+                    </span>
+                  ` : ''}
+                ` : (isBuilding ? `
+                  ${yearSuit ? `
+                    <span class="tc-badge ${yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
+                      ${yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
+                    </span>
+                    <span class="tc-badge ${yearSuit.kim_lau.is_kim_lau ? 'tc-badge-bad' : 'tc-badge-good'}">
+                      ${yearSuit.kim_lau.is_kim_lau ? `⚠️ Kim Lâu (${yearSuit.kim_lau.type})` : '✓ Không Kim Lâu'}
+                    </span>
+                    <span class="tc-badge ${yearSuit.hoang_oc.is_good ? 'tc-badge-good' : 'tc-badge-bad'}">
+                      ${yearSuit.hoang_oc.cung_name} (${yearSuit.hoang_oc.is_good ? 'Tốt' : 'Xấu'})
+                    </span>
+                  ` : ''}
+                ` : `
+                  ${yearSuit ? `
+                    <span class="tc-badge ${yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
+                      ${yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
+                    </span>
+                  ` : ''}
+                `))}
               </div>
-              ${isMarriageTask ? `
-                <div style="font-size: 0.72rem; color: #a855f7; margin-top: 4px; line-height: 1.35;">
-                  💍 <em>Xem ngày cưới hỏi theo phong tục: "Lấy vợ xem tuổi đàn bà". Khi xem hạn Kim Lâu cưới gả, vui lòng chọn "♀ Nữ" và nhập năm sinh cô dâu để đối chiếu chuẩn xác.</em>
+
+              ${isFuneral ? `
+                <div style="font-size: 0.72rem; color: #0284c7; margin-top: 5px; line-height: 1.4; background: rgba(14, 165, 233, 0.08); padding: 6px 10px; border-radius: 6px; border: 1px dashed rgba(14, 165, 233, 0.35);">
+                  ⚰️ <strong>Phép xem ngày Tang lễ / An táng theo phong thủy Âm trạch:</strong>
+                  <div style="margin-top: 2px;">• <strong>Căn cứ số 1:</strong> Tuổi &amp; Bản mệnh của <strong>Người đã khuất (Người mất)</strong> để chọn ngày không Trực Xung Địa Chi (${personChi}), tránh ngày xung ngũ hành bản mệnh, kiêng ngày Trùng Tang, Tam Tang, Thập Ác Đại Bại, Sát Chủ Âm Phần.</div>
+                  <div style="margin-top: 1px;">• <strong>Chủ tang (Trưởng nam):</strong> Tránh ngày giờ hạ huyệt trực xung với tuổi Trưởng nam (người đứng đầu tang tế).</div>
+                  <div style="margin-top: 1px;">• <strong>Bất biến:</strong> Tang lễ tuyệt đối <em>không tính hạn Kim Lâu và Hoang Ốc</em> (vốn chỉ áp dụng cho việc làm nhà).</div>
                 </div>
-              ` : (yearSuit && (!yearSuit.overall_good_for_building) ? `
+              ` : (isMarriage ? `
+                <div style="font-size: 0.72rem; color: #9333ea; margin-top: 5px; line-height: 1.4; background: rgba(168, 85, 247, 0.08); padding: 6px 10px; border-radius: 6px; border: 1px dashed rgba(168, 85, 247, 0.35);">
+                  💍 <strong>Phép xem ngày Cưới hỏi / Hôn nhân:</strong>
+                  <div style="margin-top: 2px;">• Cổ nhân định lệ <em>"Lấy vợ xem tuổi đàn bà, làm nhà xem tuổi đàn ông"</em> — Hạn Kim Lâu cưới gả tính theo tuổi mụ của <strong>Cô dâu</strong> (vui lòng chọn "♀ Nữ").</div>
+                  <div style="margin-top: 1px;">• Kiêng ngày Tam Nương, Nguyệt Kỵ, Cô Thần, Quả Tú, Ly Sào. Hôn nhân <em>không tính hạn Hoang Ốc</em>.</div>
+                </div>
+              ` : (isBuilding && yearSuit && (!yearSuit.overall_good_for_building) ? `
                 <div style="font-size: 0.72rem; color: #f59e0b; margin-top: 4px; line-height: 1.35;">
-                  💡 <em>Lưu ý: Gia chủ (${state.isMale ? 'Nam' : 'Nữ'}) có phạm hạn trong năm (Tam Tai/Kim Lâu/Hoang Ốc). Nếu làm nhà / động thổ nên mượn tuổi người thân hợp tuổi đứng tên khởi sự.</em>
+                  💡 <em>Lưu ý: Gia chủ (${state.isMale ? 'Nam' : 'Nữ'}) có phạm hạn làm nhà trong năm (Tam Tai/Kim Lâu/Hoang Ốc). Nếu làm nhà / động thổ nên mượn tuổi người thân hợp tuổi đứng tên khởi sự.</em>
                 </div>
-              ` : '')}
+              ` : ''))}
             </div>
 
             <!-- Tọa Sơn Nhà & Liên kết La Kinh -->
             <div class="tc-field">
-              <label class="tc-label">Tọa Sơn Nhà / Công Trình (Phối Hợp La Kinh)</label>
+              <label class="tc-label">${isFuneral ? 'Tọa Sơn Mộ Phần / Huyệt Mộ (Âm Trạch - Phối La Kinh)' : (isBuilding ? 'Tọa Sơn Nhà / Công Trình (Dương Trạch - Phối La Kinh)' : 'Tọa Sơn Hướng Vị (Phối Hợp La Kinh)')}</label>
               <div class="tc-lakinh-bridge-row">
                 <button type="button" class="tc-btn-get-lakinh" id="tc-btn-get-lakinh" title="Đọc độ số Tọa Sơn từ đĩa La Kinh Vệ Tinh">
                   🧭 Lấy Tọa Từ La Kinh
@@ -349,10 +462,10 @@
               </div>
               ${state.mountainSittingDeg != null ? `
                 <div class="tc-mountain-active-card">
-                  <div>🏡 <strong>Tọa Sơn: ${state.mountainSittingDeg}°</strong> ${batTrach ? `• <strong>Hướng Nhà: ${batTrach.facing_deg}° (${batTrach.facing_name})</strong>` : ''}</div>
+                  <div>🏡 <strong>${isFuneral ? 'Tọa Mộ' : 'Tọa Sơn'}: ${state.mountainSittingDeg}°</strong> ${batTrach ? `• <strong>${isFuneral ? 'Hướng Mộ' : 'Hướng Nhà'}: ${batTrach.facing_deg}° (${batTrach.facing_name})</strong>` : ''}</div>
                   ${batTrach && cungPhi ? `
                     <div style="margin-top: 4px; font-size: 0.75rem;">
-                      Bát Trạch gia chủ (${state.isMale ? 'Nam' : 'Nữ'} ${cungPhi.name} • ${cungPhi.group}): 
+                      Bát Trạch ${isFuneral ? 'mộ phần' : 'gia chủ'} (${state.isMale ? 'Nam' : 'Nữ'} ${cungPhi.name} • ${cungPhi.group}): 
                       <span style="font-weight: 800; color: ${batTrach.is_good ? '#10b981' : '#ef4444'};">
                         ${batTrach.is_good ? '✓' : '⚠️'} Cung ${batTrach.du_nien} (${batTrach.rating})
                       </span>
@@ -364,7 +477,7 @@
                 </div>
               ` : `
                 <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">
-                  💡 <em>Bấm "Lấy Tọa Từ La Kinh" để nạp ngay hướng nhà đang đo trên bản đồ.</em>
+                  💡 <em>Bấm "Lấy Tọa Từ La Kinh" để nạp ngay hướng ${isFuneral ? 'mộ phần' : 'nhà'} đang đo trên bản đồ.</em>
                 </div>
               `}
             </div>

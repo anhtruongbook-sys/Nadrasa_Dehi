@@ -76,15 +76,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.13
-          name: "Neta Light v2.8.13 (Bổ Sung Nút Chọn Giới Tính Nam/Nữ & Cung Phi Bát Trạch Trong Trạch Cát)"
+          tag_name: v2.8.14
+          name: "Neta Light v2.8.14 (Chuẩn Hóa Âm Trạch Tang Lễ & Phân Định Tuổi Trạch Cát Chuyên Biệt)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.13
-            - **Bổ Sung Chọn Giới Tính Nam/Nữ Trong Phân Hệ Trạch Cát**:
-              + Bổ sung cụm phím chuyển đổi giới tính `[ ♂ Nam ] [ ♀ Nữ ]` ngay tại mục nhập Năm sinh gia chủ theo chuẩn chung UCC (Universal Calendar Control), đồng bộ 100% với các phân hệ Bát Tự, Tử Vi, Kỳ Môn, Thái Ất, Lục Nhâm.
-              + Tự động tính toán Cung Phi Bát Trạch (Mệnh Quái: Khảm, Càn, Đoài, Ly, Chấn, Tốn, Cấn, Khôn) và nhóm Trạch Mệnh (Đông Tứ Mệnh / Tây Tứ Mệnh) chuẩn xác theo giới tính.
-              + Tương phối Bát Trạch tự động giữa Mệnh Quái của gia chủ với Hướng Nhà / Tọa Sơn La Kinh (Sinh Khí, Diên Niên, Thiên Y, Phục Vị / Tuyệt Mệnh, Ngũ Quỷ, Lục Sát, Họa Hại).
-              + Tự động nhắc nhở quy tắc phong tục "Lấy vợ xem tuổi đàn bà" khi chọn mục việc Hôn nhân (cưới gả) để chuyển sang tuổi Nữ (cô dâu) tính hạn Kim Lâu chính xác.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.14
+            - **Chuẩn Hóa Phân Định Tuổi & Nghi Thức Âm Trạch Tang Lễ (Chôn Cất / An Táng)**:
+              + Tự động nhận diện mục việc Tang lễ để chuyển nhãn thành: `Năm sinh Người Mất / Âm trạch (Dương lịch)` và hiển thị Hưởng thọ.
+              + Bổ sung tra cứu Bản Mệnh Ngũ Hành Nạp Âm Lục Thập Hoa Giáp (Ví dụ: Giáp Thân - Tuyền Trung Thủy).
+              + **ẨN HOÀN TOÀN hạn Kim Lâu và Hoang Ốc** khi xem Tang lễ / Chôn cất (Hoang Ốc chỉ dùng cho làm nhà dương trạch, cưới hỏi chỉ dùng cho cô dâu; tang lễ tuyệt đối không áp dụng).
+              + Thay thế bằng cảnh báo âm trạch chuẩn mực: Tránh ngày Trực Xung Địa Chi & Bản Mệnh của Người Mất, kiêng ngày Trùng Tang/Tam Tang/Sát Chủ Âm Phần, kiêng ngày xung tuổi Trưởng nam (Chủ tang).
+              + Chuyển đổi nhãn Tọa Sơn tương ứng: `Tọa Sơn Mộ Phần / Huyệt Mộ (Âm Trạch - Phối La Kinh)`.
+            - **Phân Định Tuổi Thông Minh Theo Mục Việc**:
+              + Nhóm Hôn nhân: Tính Kim Lâu cô dâu, ẩn Hoang Ốc làm nhà.
+              + Nhóm Xây dựng / Dương trạch: Tính đầy đủ Tam Tai, Kim Lâu, Hoang Ốc và Tọa Sơn Nhà.
+            - **Cụm Chọn Giới Tính Nam/Nữ & Cung Phi Bát Trạch**: Đồng bộ 100% trên toàn ứng dụng.
             - **Đồng Nhất Giao Diện Chọn Trường Phái Trạch Cát**:
               + Gỡ bỏ khung viền thừa thãi bao quanh ô chọn `☯ Huyền Không Đại Quái` và `🔮 Kỳ Môn Chiến Lược & Tác Quyết`.
             - **Khắc Phục Hoàn Toàn Lỗi Module Bị Đẩy Xuống Dưới Không Dùng Được**:
