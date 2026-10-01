@@ -619,7 +619,7 @@
       /* Dashboard Metrics */
       .luan-dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 6px;
         margin-bottom: 8px;
       }
@@ -771,27 +771,50 @@
         background: rgba(239, 68, 68, 0.2);
         color: #fca5a5;
         border: 1px solid #ef4444;
-        padding: 2px 6px;
+        padding: 2px 6px !important;
         border-radius: 4px;
-        font-size: 11.5px;
+        font-size: 11px;
         font-weight: 800;
+        white-space: nowrap !important;
+        display: inline-block !important;
+        text-align: center !important;
       }
       .luan-badge-cat {
         background: rgba(16, 185, 129, 0.2);
         color: #6ee7b7;
         border: 1px solid #10b981;
-        padding: 2px 6px;
+        padding: 2px 6px !important;
         border-radius: 4px;
-        font-size: 11.5px;
+        font-size: 11px;
         font-weight: 800;
+        white-space: nowrap !important;
+        display: inline-block !important;
+        text-align: center !important;
+      }
+      .luan-badge-binh {
+        background: rgba(148, 163, 184, 0.2);
+        color: #cbd5e1;
+        border: 1px solid #94a3b8;
+        padding: 2px 6px !important;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap !important;
+        display: inline-block !important;
+        text-align: center !important;
+      }
+      body.theme-light .luan-badge-binh {
+        background: #f1f5f9;
+        color: #475569;
+        border-color: #cbd5e1;
       }
       .luan-hours-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12.5px;
+        font-size: 12px;
       }
       .luan-hours-table th, .luan-hours-table td {
-        padding: 6px 8px;
+        padding: 5px 6px;
         border: 1px solid rgba(245, 176, 65, 0.15);
       }
       body.theme-light .luan-hours-table th, body.theme-light .luan-hours-table td {
@@ -801,10 +824,62 @@
         background: rgba(245, 176, 65, 0.15);
         color: #f5b041;
         font-weight: 800;
+        font-size: 11.5px;
       }
       body.theme-light .luan-hours-table th {
         background: #f1f5f9;
         color: #475569;
+      }
+      .col-trangthai {
+        text-align: center;
+        white-space: nowrap !important;
+        vertical-align: middle;
+      }
+      .col-gio {
+        vertical-align: middle;
+      }
+      .hour-name {
+        font-weight: 800;
+        color: var(--gold-primary, #f5b041);
+        font-size: 11.5px;
+      }
+      body.theme-light .hour-name {
+        color: #b45309;
+      }
+      .hour-time {
+        font-size: 9.5px;
+        color: var(--text-muted, #94a3b8);
+        font-weight: normal;
+      }
+      body.theme-light .hour-time {
+        color: #64748b;
+      }
+      .hour-hanh {
+        font-size: 9.5px;
+        color: #38bdf8;
+        font-weight: 600;
+      }
+      body.theme-light .hour-hanh {
+        color: #0284c7;
+      }
+      .col-loikhuyen {
+        font-size: 11.5px;
+        line-height: 1.35;
+      }
+      .luan-role-note {
+        font-size: 11px;
+        color: var(--text-muted, #94a3b8);
+        line-height: 1.35;
+        margin-bottom: 6px;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 4px 6px;
+        border-radius: 4px;
+        border-left: 2px solid #f5b041;
+      }
+      body.theme-light .luan-role-note {
+        background: #f8fafc;
+        color: #475569;
+        border-left-color: #d97706;
       }
       .luan-loading-spinner {
         display: inline-block;
@@ -1637,17 +1712,27 @@
       cards += `
         <div class="luan-section-card luan-card-personal" data-cat="daicuc">
           <div class="luan-section-header" onclick="window.NetaThaiAtView.toggleSection('sec-0')" style="background: rgba(245, 176, 65, 0.12);">
-            <span style="color: #f5b041; font-weight: 800;">[🎯 ĐỐI CHIẾU VAI VẾ & BẢN MỆNH NGƯỜI HỎI]</span>
+            <span style="color: #f5b041; font-weight: 800; font-size: 12px;">[🎯 ĐỐI CHIẾU VAI VẾ & BẢN MỆNH NGƯỜI HỎI]</span>
             <span class="luan-section-toggle">${isCol ? '▼' : '▲'}</span>
           </div>
           ${!isCol ? `
             <div class="luan-section-body">
               <div class="luan-sub-item">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
-                  <div><strong>Vai vế đã chọn:</strong> <span class="${vv.role === 'chu' ? 'luan-badge-cat' : 'luan-badge-khach'}">${vv.roleName}</span></div>
-                  <div style="font-size: 11px; font-weight: 800; color: ${vv.diemLoiThe >= 60 ? '#10b981' : (vv.diemLoiThe >= 40 ? '#f5b041' : '#f43f5e')};">${vv.diemLoiThe}/100 Lợi thế</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <strong>Vai vế:</strong>
+                    <span class="${vv.role === 'chu' ? 'luan-badge-cat' : 'luan-badge-khach'}">
+                      ${vv.role === 'chu' ? '🛡️ Phe Chủ' : '⚔️ Phe Khách'}
+                    </span>
+                  </div>
+                  <div style="font-size: 11.5px; font-weight: 800; color: ${vv.diemLoiThe >= 60 ? '#10b981' : (vv.diemLoiThe >= 40 ? '#f5b041' : '#f43f5e')};">
+                    ${vv.diemLoiThe}/100 Lợi thế
+                  </div>
                 </div>
-                <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin: 4px 0;">★ ${vv.ketLuan}</div>
+                <div class="luan-role-note">
+                  <strong>Đặc trưng:</strong> ${vv.role === 'chu' ? 'Bên tại vị, phòng thủ, gia chủ, nhà tuyển dụng, bên cho vay, bị đơn' : 'Bên tiến công, xuất hành, ứng viên tuyển dụng, người đi vay, khởi kiện'}
+                </div>
+                <div style="font-size: 12.5px; font-weight: 700; color: #38bdf8; margin: 6px 0 4px;">★ ${vv.ketLuan}</div>
                 <div style="margin: 4px 0 6px;">💡 <strong>Lời khuyên cốt tử:</strong> ${vv.loiKhuyen}</div>
                 ${bm ? `
                   <div style="border-top: 1px dashed rgba(245,176,65,0.25); padding-top: 6px; margin-top: 6px;">
@@ -1948,14 +2033,28 @@
       // Card 13: [XIII. BẢNG DỰ BÁO CÁT HUNG 12 THỜI THẦN]
       if (shouldShow('canhgio')) {
         let isCol = collapsedSections['sec-13'];
-        let hourRows = luan.thoi_than_12_gio.map(h => `
-          <tr>
-            <td><strong>${h.gio}</strong></td>
-            <td>${h.ngu_hanh}</td>
-            <td><span class="${h.trang_thai.includes('Cát') ? 'luan-badge-cat' : (h.trang_thai.includes('Hung') ? 'luan-badge-hung' : '')}">${h.trang_thai}</span></td>
-            <td>${h.loi_khuyen}</td>
-          </tr>
-        `).join('');
+        let hourRows = luan.thoi_than_12_gio.map(h => {
+          let badgeCls = 'luan-badge-binh';
+          if (h.trang_thai.includes('Cát')) badgeCls = 'luan-badge-cat';
+          else if (h.trang_thai.includes('Hung')) badgeCls = 'luan-badge-hung';
+
+          let parts = h.gio.split(' ');
+          let name = parts[0];
+          let timeRange = parts.slice(1).join(' ').replace(/[()]/g, '');
+
+          return `
+            <tr>
+              <td class="col-gio">
+                <div class="hour-name">${name} <span class="hour-time">(${timeRange})</span></div>
+                <div class="hour-hanh">Hành ${h.ngu_hanh}</div>
+              </td>
+              <td class="col-trangthai">
+                <span class="${badgeCls}">${h.trang_thai}</span>
+              </td>
+              <td class="col-loikhuyen">${h.loi_khuyen}</td>
+            </tr>
+          `;
+        }).join('');
         cards += `
           <div class="luan-section-card" data-cat="canhgio">
             <div class="luan-section-header" onclick="window.NetaThaiAtView.toggleSection('sec-13')">
@@ -1966,7 +2065,11 @@
               <div class="luan-section-body" style="padding: 4px;">
                 <table class="luan-hours-table">
                   <thead>
-                    <tr><th>Giờ</th><th>Hành</th><th>Trạng thái</th><th>Lời khuyên</th></tr>
+                    <tr>
+                      <th style="width: 32%;">Thời Thần</th>
+                      <th style="width: 22%;">Trạng thái</th>
+                      <th style="width: 46%;">Chiến lược hành động</th>
+                    </tr>
                   </thead>
                   <tbody>${hourRows}</tbody>
                 </table>

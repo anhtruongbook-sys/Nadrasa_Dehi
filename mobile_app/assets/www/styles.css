@@ -16861,5 +16861,153 @@ body.theme-light .luan-badge-khach {
   color: #0369a1;
 }
 
+/* Luận Giải Chuyên Sâu Thái Ất */
+.luan-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.luan-metric-card {
+  background: rgba(26, 4, 8, 0.85);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 8px;
+  padding: 6px;
+  text-align: center;
+}
+body.theme-light .luan-metric-card {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+.luan-metric-num {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.luan-metric-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+body.theme-light .luan-metric-label { color: #64748b; }
+
+.luan-badge-hung {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  padding: 2px 6px !important;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+.luan-badge-cat {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid #10b981;
+  padding: 2px 6px !important;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+.luan-badge-binh {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+  border: 1px solid #94a3b8;
+  padding: 2px 6px !important;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+body.theme-light .luan-badge-binh {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+.luan-hours-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.luan-hours-table th, .luan-hours-table td {
+  padding: 5px 6px;
+  border: 1px solid rgba(245, 176, 65, 0.15);
+}
+body.theme-light .luan-hours-table th, body.theme-light .luan-hours-table td {
+  border-color: #e2e8f0;
+}
+.luan-hours-table th {
+  background: rgba(245, 176, 65, 0.15);
+  color: #f5b041;
+  font-weight: 800;
+  font-size: 11.5px;
+}
+body.theme-light .luan-hours-table th {
+  background: #f1f5f9;
+  color: #475569;
+}
+.col-trangthai {
+  text-align: center;
+  white-space: nowrap !important;
+  vertical-align: middle;
+}
+.col-gio {
+  vertical-align: middle;
+}
+.hour-name {
+  font-weight: 800;
+  color: var(--gold-primary, #f5b041);
+  font-size: 11.5px;
+}
+body.theme-light .hour-name {
+  color: #b45309;
+}
+.hour-time {
+  font-size: 9.5px;
+  color: var(--text-muted, #94a3b8);
+  font-weight: normal;
+}
+body.theme-light .hour-time {
+  color: #64748b;
+}
+.hour-hanh {
+  font-size: 9.5px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+body.theme-light .hour-hanh {
+  color: #0284c7;
+}
+.col-loikhuyen {
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+.luan-role-note {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+  line-height: 1.35;
+  margin-bottom: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 4px 6px;
+  border-radius: 4px;
+  border-left: 2px solid #f5b041;
+}
+body.theme-light .luan-role-note {
+  background: #f8fafc;
+  color: #475569;
+  border-left-color: #d97706;
+}
+
+
 
 

@@ -76,16 +76,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.22
-          name: "Neta Light v2.8.22 (Bổ Sung Nhãn Ngữ Cảnh, Chọn Phe Chủ/Khách & Bản Mệnh Thái Ất)"
+          tag_name: v2.8.23
+          name: "Neta Light v2.8.23 (Tối Ưu Hoàn Hảo Format Giao Diện Luận Giải Di Động Thái Ất)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.22
-            - **Nâng Cấp Thái Ất Thần Kinh Toàn Diện & Cá Nhân Hóa Đương Số**:
-              + **Nhãn Ngữ Cảnh Thông Minh (Smart Context Header)**: Phân định rõ ràng thời điểm chiêm sự/hỏi việc khi xem Tứ Kể (`Giờ | Ngày | Tháng | Năm`) và tự động chuyển đổi sang ngày giờ sinh của đương số khi xem `Mệnh` (Thái Ất Mệnh Pháp 12 Cung).
-              + **Bộ Chọn Vai Vế Phe Chủ vs Phe Khách**: Tùy chọn vai vế đương số (`🛡️ Phe Chủ` - Tại vị, phòng thủ, tuyển dụng, chủ nợ, bị kiện vs `⚔️ Phe Khách` - Tiến công, xuất hành, ứng viên, đi vay, khởi kiện) để cá nhân hóa kết quả luận giải thế cờ thắng bại ngay trên Trận Đồ và Luận Giải chuyên sâu.
-              + **Đối Chiếu Thần Vị Ngự Cung Bản Mệnh**: Nhập năm sinh đương số (tính Can Chi & Địa Chi cung tuổi) để đối chiếu trực tiếp các thần tinh cát hung (Thái Ất, Ngũ Phúc, Văn Xương, Thủy Kích, Kế Thần, Cờ Đen, Cờ Đỏ, Đại Tướng...) chiếu mệnh.
-              + **Dải Chiến Lược Cá Nhân Hóa (Personalized Strategy Strip)**: Hiển thị ngay dưới quẻ bàn cờ, tóm tắt thế trận và tác động trực tiếp lên bản mệnh đương số.
-              + **Mục Luận Giải Chuyên Biệt (Card 0)**: Bổ sung phân tích tác chiến riêng cho người hỏi, đánh giá lợi thế và cung cấp lời khuyên hành động cốt tử.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.23
+            - **Chuẩn Hóa & Hoàn Thiện Format Giao Diện Di Động Luận Giải Thái Ất**:
+              + **Lưới Chỉ Số Tổng Quan (2x2 Matrix)**: Bố trí đối xứng 2 hàng x 2 cột (Cát Khánh, Tương Quan Lực Lượng, Nguy Cơ Xung Đột, Nguy Cơ Môi Trường) cân đối, vuông vức, triệt tiêu khoảng trống thừa trên màn hình di động.
+              + **Card 0 (Đối Chiếu Vai Vế & Bản Mệnh)**: Tiêu đề gọn gàng trên 1 dòng duy nhất, thu gọn badge vai vế súc tích `🛡️ Phe Chủ` / `⚔️ Phe Khách`, căn chỉnh thẳng hàng với điểm lợi thế, tách khối mô tả đặc trưng thành hộp ghi chú viền vàng trang nhã.
+              + **Bảng 12 Thời Thần (Card 13)**: Hợp nhất cột Giờ & Ngũ Hành giúp giải phóng không gian; định dạng các huy hiệu trạng thái (`Đại Cát`, `Tiểu Cát`, `Bình`, `Tiểu Hung`, `Hung`) nằm ngang nguyên vẹn 100% không bị ngắt dòng; tối ưu độ rộng cột chiến lược hành động.
             - **Hệ Thống La Kinh Vệ Tinh Siêu Tối Giản**:
               + Tối giản toàn diện bản đồ vệ tinh, loại bỏ nút nổi dư thừa và vòng tròn mờ GPS.
             - **Tính Năng Chuyên Sâu: Tra Cứu Trùng Tang - Nhập Mộ - Thiên Di (Âm Trạch)**:
