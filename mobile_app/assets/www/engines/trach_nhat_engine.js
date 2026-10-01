@@ -449,6 +449,148 @@
       };
     }
 
+    calculateTrungTang(params = {}) {
+      const birthYear = parseInt(params.birthYear, 10) || 1944;
+      const deathYear = parseInt(params.deathYear, 10) || (new Date()).getFullYear();
+      const lunarMonth = parseInt(params.deathMonthLunar, 10) || 1;
+      const lunarDay = parseInt(params.deathDayLunar, 10) || 1;
+      const hourChiName = params.deathHourChi || 'Tý';
+      const isMale = params.isMale !== false;
+
+      const tuoiTho = deathYear - birthYear + 1;
+      if (tuoiTho < 10) {
+        return {
+          is_applicable: false,
+          tuoi_tho: tuoiTho,
+          message: "Người mất dưới 10 tuổi (hoặc trẻ nhỏ) theo quan niệm cổ truyền không tính Trùng Tang."
+        };
+      }
+
+      const CHI_ORDER = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tị", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
+
+      // Nam: Khởi Dần (index 2), thuận chiều (+1)
+      // Nữ: Khởi Thân (index 8), nghịch chiều (-1)
+      const step = isMale ? 1 : -1;
+      const startPos = isMale ? 2 : 8;
+
+      // 1. Cung Năm (Tuổi thọ)
+      const chuc = Math.floor(tuoiTho / 10);
+      const le = tuoiTho % 10;
+      let curPos = (((startPos + (chuc - 1) * step) % 12) + 12) % 12;
+      if (le > 0) {
+        curPos = (((curPos + le * step) % 12) + 12) % 12;
+      }
+      const cungNamIdx = curPos;
+
+      // 2. Cung Tháng (Tháng mất âm lịch)
+      // Liền sau cung năm là tháng 1
+      curPos = (((cungNamIdx + step) % 12) + 12) % 12;
+      curPos = (((curPos + (lunarMonth - 1) * step) % 12) + 12) % 12;
+      const cungThangIdx = curPos;
+
+      // 3. Cung Ngày (Ngày mất âm lịch)
+      // Liền sau cung tháng là ngày 1
+      curPos = (((cungThangIdx + step) % 12) + 12) % 12;
+      curPos = (((curPos + (lunarDay - 1) * step) % 12) + 12) % 12;
+      const cungNgayIdx = curPos;
+
+      // 4. Cung Giờ (Giờ mất)
+      // Liền sau cung ngày là giờ Tý
+      let hIdx = CHI_ORDER.indexOf(hourChiName);
+      if (hIdx === -1) hIdx = 0;
+      curPos = (((cungNgayIdx + step) % 12) + 12) % 12;
+      curPos = (((curPos + hIdx * step) % 12) + 12) % 12;
+      const cungGioIdx = curPos;
+
+      const classify = (idx, label) => {
+        const chi = CHI_ORDER[idx];
+        if (["Dần", "Thân", "Tị", "Hợi"].includes(chi)) {
+          return {
+            pillar: label,
+            chi: chi,
+            type: "Trùng Tang",
+            nature: "bad",
+            badge_class: "tc-badge-bad",
+            icon: "⚠️",
+            meaning: "Cung Tứ Sinh (Dần, Thân, Tị, Hợi) — Rơi vào Trùng Tang, cần chú ý cầu siêu."
+          };
+        } else if (["Thìn", "Tuất", "Sửu", "Mùi"].includes(chi)) {
+          return {
+            pillar: label,
+            chi: chi,
+            type: "Nhập Mộ",
+            nature: "good",
+            badge_class: "tc-badge-good",
+            icon: "🌸",
+            meaning: "Cung Tứ Mộ (Thìn, Tuất, Sửu, Mùi) — Rơi vào Nhập Mộ, đại cát đại lợi, vong linh an nghỉ."
+          };
+        } else {
+          return {
+            pillar: label,
+            chi: chi,
+            type: "Thiên Di",
+            nature: "neutral",
+            badge_class: "tc-badge-info",
+            icon: "☁️",
+            meaning: "Cung Tứ Chính (Tý, Ngọ, Mão, Dậu) — Rơi vào Thiên Di, thuận theo ý trời, thanh thản chuyển hóa."
+          };
+        }
+      };
+
+      const pNam = classify(cungNamIdx, "Năm");
+      const pThang = classify(cungThangIdx, "Tháng");
+      const pNgay = classify(cungNgayIdx, "Ngày");
+      const pGio = classify(cungGioIdx, "Giờ");
+
+      const pillars = [pNam, pThang, pNgay, pGio];
+      const countNhapMo = pillars.filter(p => p.type === "Nhập Mộ").length;
+      const countTrungTang = pillars.filter(p => p.type === "Trùng Tang").length;
+      const countThienDi = pillars.filter(p => p.type === "Thiên Di").length;
+
+      let summaryTitle = "";
+      let summaryDesc = "";
+      let isSevere = false;
+
+      if (countNhapMo >= 1) {
+        summaryTitle = `Được ${countNhapMo} Nhập Mộ (Cát Lành — Hoá Giải Trùng Tang)`;
+        summaryDesc = `Theo lệ xưa: "Nhập Mộ thắng Trùng Tang". Có cung Nhập Mộ (${pillars.filter(p => p.type === "Nhập Mộ").map(p => p.pillar).join(', ')}) tức là vong linh được mồ yên mả đẹp, yên nghỉ nơi cõi vĩnh hằng, không quấy quả con cháu, gia quyến hoàn toàn yên tâm.`;
+      } else if (countTrungTang === 4) {
+        isSevere = true;
+        summaryTitle = `Phạm 4 Trùng Tang (Trùng Tang Liên Táng — Cần Chú Ý)`;
+        summaryDesc = `Cả 4 trụ Năm, Tháng, Ngày, Giờ đều rơi vào cung Tứ Sinh (Dần, Thân, Tị, Hợi). Dân gian quan niệm đây là Trùng Tang Liên Táng. Gia quyến nên thỉnh chư Tăng cử hành nghi lễ cầu siêu, quy y Tam Bảo cho vong linh, làm nhiều việc thiện lành hồi hướng công đức, gửi linh vị lên chùa thanh tịnh.`;
+      } else if (countTrungTang >= 1) {
+        summaryTitle = `Phạm ${countTrungTang} Trùng Tang (${countThienDi} Thiên Di)`;
+        summaryDesc = `Rơi vào ${countTrungTang} cung Trùng Tang (${pillars.filter(p => p.type === "Trùng Tang").map(p => p.pillar).join(', ')}). Gia đình nên tổ chức tang lễ trang nghiêm, tụng kinh niệm Phật siêu độ, giữ tâm thiện lành hồi hướng, không nên quá hoang mang lo lắng.`;
+      } else {
+        summaryTitle = `Được 4 Thiên Di (Bình Hoà — Thuận Thiên)`;
+        summaryDesc = `Cả 4 trụ đều rơi vào Tứ Chính (Tý, Ngọ, Mão, Dậu), số mệnh thuận theo ý trời, thanh thản tự tại, bình an vô sự.`;
+      }
+
+      return {
+        is_applicable: true,
+        tuoi_tho: tuoiTho,
+        is_male: isMale,
+        gender_text: isMale ? "Nam" : "Nữ",
+        pillars: {
+          nam: pNam,
+          thang: pThang,
+          ngay: pNgay,
+          gio: pGio
+        },
+        counts: {
+          nhap_mo: countNhapMo,
+          trung_tang: countTrungTang,
+          thien_di: countThienDi
+        },
+        summary: {
+          title: summaryTitle,
+          desc: summaryDesc,
+          is_severe: isSevere,
+          has_nhap_mo: countNhapMo >= 1
+        }
+      };
+    }
+
     evaluateYearSuitability(birthYear, targetYear, personChi, isMale = true, isMarriage = false) {
       const bYear = parseInt(birthYear, 10) || 1990;
       const tYear = parseInt(targetYear, 10) || (new Date()).getFullYear();

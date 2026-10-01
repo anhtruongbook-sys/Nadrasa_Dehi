@@ -76,11 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.14
-          name: "Neta Light v2.8.14 (Chuẩn Hóa Âm Trạch Tang Lễ & Phân Định Tuổi Trạch Cát Chuyên Biệt)"
+          tag_name: v2.8.15
+          name: "Neta Light v2.8.15 (Tính Trùng Tang - Nhập Mộ - Thiên Di & Hoá Giải Âm Trạch)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.14
-            - **Chuẩn Hóa Phân Định Tuổi & Nghi Thức Âm Trạch Tang Lễ (Chôn Cất / An Táng)**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.15
+            - **Tính Năng Chuyên Sâu: Tra Cứu Trùng Tang - Nhập Mộ - Thiên Di (Âm Trạch)**:
+              + Bấm quẻ tay 12 cung Địa Chi kinh điển: Nam khởi 10 tuổi tại Dần (thuận chiều), Nữ khởi 10 tuổi tại Thân (nghịch chiều).
+              + Bóc tách trọn vẹn 4 Trụ lâm chung: Trụ Năm (Tuổi thọ), Trụ Tháng (Tháng mất ÂL), Trụ Ngày (Ngày mất ÂL), Trụ Giờ (Giờ mất Can Chi).
+              + Phân loại Tứ Sinh (Dần/Thân/Tị/Hợi = Trùng Tang ⚠️), Tứ Mộ (Thìn/Tuất/Sửu/Mùi = Nhập Mộ 🌸), Tứ Chính (Tý/Ngọ/Mão/Dậu = Thiên Di ☁️).
+              + Luận giải phong thủy chính thống: *"Nhập Mộ thắng Trùng Tang"* (chỉ cần có 1 Nhập Mộ là đại cát, mồ yên mả đẹp).
+              + Cung cấp hướng dẫn tâm linh đạo Phật chuẩn mực: tụng kinh siêu độ, quy y Tam Bảo, làm thiện hồi hướng, tránh hoang mang mê tín dị đoan làm tổn hao tài lực gia đình.
+              + Tự động tích hợp trực quan khi chọn mục việc Tang lễ / An táng, hỗ trợ tùy biến Năm mất, Tháng mất, Ngày mất, Giờ mất tương tác thời gian thực.
+            - **Chuẩn Hóa Phân Định Tuổi & Nghi Thức Âm Trạch Tang Lễ**:
               + Tự động nhận diện mục việc Tang lễ để chuyển nhãn thành: `Năm sinh Người Mất / Âm trạch (Dương lịch)` và hiển thị Hưởng thọ.
               + Bổ sung tra cứu Bản Mệnh Ngũ Hành Nạp Âm Lục Thập Hoa Giáp (Ví dụ: Giáp Thân - Tuyền Trung Thủy).
               + **ẨN HOÀN TOÀN hạn Kim Lâu và Hoang Ốc** khi xem Tang lễ / Chôn cất (Hoang Ốc chỉ dùng cho làm nhà dương trạch, cưới hỏi chỉ dùng cho cô dâu; tang lễ tuyệt đối không áp dụng).
