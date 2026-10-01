@@ -76,10 +76,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.11
-          name: "Neta Light v2.8.11 (Khắc Phục Lỗi Dropdown Bị Tràn & Không Bấm Được Module Dịch Học Cuối Bảng)"
+          tag_name: v2.8.12
+          name: "Neta Light v2.8.12 (Đồng Nhất Giao Diện Trạch Cát: Gỡ Bỏ Viền Bao Quanh Huyền Không Đại Quái & Kỳ Môn)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.11
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.12
+            - **Đồng Nhất 100% Giao Diện Chọn Trường Phái Trạch Cát**:
+              + Gỡ bỏ khung viền màu nâu và tím thừa thãi bao quanh ô chọn `☯ Huyền Không Đại Quái (64 Quẻ)` và `🔮 Kỳ Môn Chiến Lược & Tác Quyết`.
+              + Đồng bộ toàn bộ 6 ô chọn trường phái theo cùng chuẩn mực thiết kế phẳng, hài hòa, tinh tế và không còn viền hộp lệch tông.
             - **Khắc Phục Hoàn Toàn Lỗi Module Bị Đẩy Xuống Dưới Không Dùng Được**:
               + Bổ sung giới hạn chiều cao tối đa thích ứng màn hình `max-height: calc(100dvh - 65px)` cho menu danh mục phân hệ `.deck-dropdown-menu`.
               + Kích hoạt cuộn mượt độc lập `overflow-y: auto`, `-webkit-overflow-scrolling: touch`, `overscroll-behavior: contain`.

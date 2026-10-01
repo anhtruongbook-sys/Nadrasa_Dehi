@@ -354,10 +354,10 @@
             <label class="tc-toggle-label">
               <input type="checkbox" id="tc-chk-tc16" ${state.schools.enable_16_criteria ? 'checked' : ''}> 16 Tiêu Chí Cát Thần
             </label>
-            <label class="tc-toggle-label highlight-xkdg" title="Huyền Không Đại Quái 64 Quẻ: Quái Khí, Quái Vận, Hợp Thập, Hà Đồ & Tọa Sơn">
+            <label class="tc-toggle-label" title="Huyền Không Đại Quái 64 Quẻ: Quái Khí, Quái Vận, Hợp Thập, Hà Đồ & Tọa Sơn">
               <input type="checkbox" id="tc-chk-xkdg" ${state.schools.enable_xkdg ? 'checked' : ''}> ☯ Huyền Không Đại Quái (64 Quẻ)
             </label>
-            <label class="tc-toggle-label highlight-qimen" title="Kỳ Môn Chiến Lược: 5 Quy Tắc Vàng & 76 Cách Cục, Tam Thắng, Thiên Mã">
+            <label class="tc-toggle-label" title="Kỳ Môn Chiến Lược: 5 Quy Tắc Vàng & 76 Cách Cục, Tam Thắng, Thiên Mã">
               <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Chiến Lược &amp; Tác Quyết
             </label>
           </div>

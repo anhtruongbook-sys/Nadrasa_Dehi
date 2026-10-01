@@ -1191,16 +1191,11 @@ body.theme-light .tc-btn-qmdj:hover {
 /* ==========================================================================
    HUYỀN KHÔNG ĐẠI QUÁI & KỲ MÔN TAM NGUYÊN BOXES (DARK THEME)
    ========================================================================== */
-.tc-toggle-label.highlight-xkdg {
-  border-color: rgba(245, 158, 11, 0.4);
-  background: rgba(245, 158, 11, 0.08);
-  color: #fcd34d;
-}
-
+.tc-toggle-label.highlight-xkdg,
 .tc-toggle-label.highlight-qimen {
-  border-color: rgba(168, 85, 247, 0.4);
-  background: rgba(168, 85, 247, 0.08);
-  color: #d8b4fe;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
 }
 
 .tc-xkdg-box {
@@ -1310,18 +1305,12 @@ body.theme-light .tc-btn-qmdj:hover {
 /* ==========================================================================
    HUYỀN KHÔNG ĐẠI QUÁI & KỲ MÔN TAM NGUYÊN (LIGHT THEME)
    ========================================================================== */
-body.theme-light .tc-toggle-label.highlight-xkdg {
-  background: #fefce8 !important;
-  border: 1.5px solid #ca8a04 !important;
-  color: #854d0e !important;
-  font-weight: 700 !important;
-}
-
+body.theme-light .tc-toggle-label.highlight-xkdg,
 body.theme-light .tc-toggle-label.highlight-qimen {
-  background: #faf5ff !important;
-  border: 1.5px solid #9333ea !important;
-  color: #6b21a8 !important;
-  font-weight: 700 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-weight: normal !important;
 }
 
 body.theme-light .tc-xkdg-box {
