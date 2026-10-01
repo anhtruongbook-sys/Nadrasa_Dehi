@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.25
-          name: "Neta Light v2.8.25 (Bản Đồ Xoay Theo La Bàn Heading-Up & Lớp Google Maps Đường Phố)"
+          tag_name: v2.8.26
+          name: "Neta Light v2.8.26 (Hệ Thống Khóa Mặt Bằng Địa Hình & Xoay Đồng Bộ La Kinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.25
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.26
+            - **Hệ Thống Khóa Mặt Bằng Địa Hình (Terrain-Locked Floor Plan Sync)**:
+              + **Khóa 1 Chạm Theo La Kinh (`🔒 Khóa Theo La Kinh`)**: Người dùng xoay La Kinh ngắm theo trục cửa chính, bấm 1 chạm để khóa cố định mặt bằng vào tọa độ địa hình thực tế.
+              + **Xoay Đồng Bộ 100% Cùng Bản Đồ Vệ Tinh**: Khi xoay La Kinh hoặc xoay điện thoại ở chế độ la bàn thực địa (`🧭 Đang Đọc`), mặt bằng kiến trúc và bản đồ vệ tinh xoay đồng bộ cùng nhau theo thời gian thực (nhà gắn chặt trên thửa đất).
+              + **Nhập Trực Tiếp Số Độ Hướng Nhà Thực Địa**: Hỗ trợ ô nhập số độ chính xác 0.1° kèm tên Sơn Hướng và thanh trượt xoay trực quan.
+              + **Tùy Chọn Chế Độ Linh Hoạt**: Hỗ trợ chuyển đổi nhanh giữa Khóa Mặt Bằng Vào Địa Hình (Xoay cùng bản đồ) hoặc Giữ Cố Định Khung Màn Hình.
             - **Bản Đồ Vệ Tinh Xoay Đồng Bộ Theo La Bàn Thực Địa (Heading-Up Mode)**:
               + Khắc phục hoàn toàn hiện tượng bản đồ đứng yên khi xoay điện thoại ở chế độ la bàn thực địa (`🧭 Đang Đọc`).
               + Toàn bộ bản đồ ảnh vệ tinh & đường phố xoay mượt mà 360 độ theo thời gian thực trùng khớp với góc nhìn thực tế của người dùng (12h là hướng trước mặt).

@@ -42,6 +42,8 @@
     planImageSrc: null,
     planScale: 1.0,
     planRotation: 0.0,
+    planTerrainRotation: 0.0, // Hướng thực tế của ngôi nhà ngoài thực địa (0-360 độ từ Bắc)
+    isPlanLockedToTerrain: true, // Mặc định KHÓA mặt bằng vào địa hình bản đồ (xoay đồng bộ cùng bản đồ)
     planOpacity: 0.85,
     planOffsetX: 0,
     planOffsetY: 0,
@@ -239,7 +241,7 @@
             <div class="fl-plan-right">
               <button type="button" class="fl-plan-btn ${state.isPlanPanActive ? 'active' : ''}" id="fl-btn-plan-pan" title="Bật/Tắt chế độ kéo rê 1 ngón">✋<span class="fl-btn-lbl"> Kéo</span></button>
               <button type="button" class="fl-plan-btn ${state.isPlanPinchRotateEnabled ? 'active' : ''}" id="fl-btn-toggle-pinch-rot" title="Cho phép 2 ngón xoay góc mặt bằng (Mặc định: TẮT, chỉ thu phóng)">${state.isPlanPinchRotateEnabled ? '🔄' : '🔒'}<span class="fl-btn-lbl"> ${state.isPlanPinchRotateEnabled ? 'Xoay' : 'Khóa'}</span></button>
-              <button type="button" class="fl-plan-btn" id="fl-btn-rot-match" title="Xoay khớp hướng nhà">🧭<span class="fl-btn-lbl"> Khớp</span></button>
+              <button type="button" class="fl-plan-btn ${state.isPlanLockedToTerrain ? 'active' : ''}" id="fl-btn-rot-match" title="Khóa hướng mặt bằng theo góc La Kinh hiện tại (${state.rotation.toFixed(1)}°)">🔒<span class="fl-btn-lbl"> Khóa LK</span></button>
               <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa về chính tâm (0,0)">🎯<span class="fl-btn-lbl"> Tâm</span></button>
               <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-opacity" title="Đổi độ mờ (35% / 65% / 85%)">👁️</button>
               <button type="button" class="fl-plan-btn icon-only" id="btn-plan-pan-done" title="Ẩn thanh công cụ mặt bằng">✕</button>
@@ -742,22 +744,33 @@
                 </div>
               </div>
 
-              <!-- Xoay góc bản vẽ -->
+              <!-- Xoay góc bản vẽ & Khóa hướng địa hình -->
               <div style="margin-top: 10px;">
-                <div class="sheet-control-sublabel">
-                  <span>Xoay góc bản vẽ</span>
-                  <span class="val" id="sheet-val-plan-rot">${state.planRotation.toFixed(1)}°</span>
+                <div class="sheet-control-sublabel" style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>Hướng Nhà Thực Địa (Khóa Địa Hình):</span>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" id="sheet-input-plan-rot" class="tamhop-input" style="width: 76px; text-align: right; font-weight: 700; color: #38bdf8; padding: 2px 6px; font-size: 0.82rem; border-radius: 6px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.4);" min="0" max="359.9" step="0.1" value="${state.planTerrainRotation.toFixed(1)}">
+                    <span style="color: #38bdf8; font-weight: 700;">°</span>
+                    <span class="val" id="sheet-val-plan-rot" style="color: #f5b041; font-weight: 700; margin-left: 4px;"></span>
+                  </div>
                 </div>
-                <input type="range" class="lakinh-slider" id="sheet-slider-plan-rot" min="0" max="360" value="${state.planRotation.toFixed(1)}" step="0.5">
+                <input type="range" class="lakinh-slider" id="sheet-slider-plan-rot" min="0" max="360" value="${state.planTerrainRotation.toFixed(1)}" step="0.5">
                 <div class="lakinh-btn-row" style="margin-top: 4px;">
-                  <button class="lakinh-step-btn" id="btn-plan-rot-match" style="color: #38bdf8; font-weight: 600;">🧭 Theo Hướng Nhà</button>
+                  <button class="lakinh-step-btn" id="btn-plan-rot-match" style="color: #38bdf8; font-weight: 700;">🔒 Khóa Theo La Kinh</button>
                   <button class="lakinh-step-btn" id="btn-plan-rot-zero">0° Bắc</button>
+                  <button class="lakinh-step-btn" id="btn-plan-rot-m5">-5°</button>
                   <button class="lakinh-step-btn" id="btn-plan-rot-m1">-1°</button>
                   <button class="lakinh-step-btn" id="btn-plan-rot-p1">+1°</button>
+                  <button class="lakinh-step-btn" id="btn-plan-rot-p5">+5°</button>
+                </div>
+                <div style="margin-top: 8px;">
+                  <button type="button" id="sheet-btn-toggle-plan-lock" class="lakinh-action-btn ${state.isPlanLockedToTerrain ? 'success' : 'secondary'}" style="width: 100%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    ${state.isPlanLockedToTerrain ? '🔒 Mặt Bằng Khóa Vào Địa Hình (Xoay cùng bản đồ): BẬT' : '🔓 Mặt Bằng Cố Định Khung Màn Hình: BẬT'}
+                  </button>
                 </div>
                 <label style="display: flex; align-items: center; gap: 8px; font-size: 0.74rem; color: #cbd5e1; cursor: pointer; margin-top: 8px; background: rgba(15, 23, 42, 0.6); padding: 6px 10px; border-radius: 8px; border: 1px dashed rgba(56, 189, 248, 0.35);">
                   <input type="checkbox" id="sheet-chk-plan-pinch-rotate" ${state.isPlanPinchRotateEnabled ? 'checked' : ''} style="width: 16px; height: 16px; accent-color: #38bdf8;">
-                  <span>🔄 Cho phép 2 ngón tay xoay góc mặt bằng (Mặc định: TẮT, chỉ thu phóng)</span>
+                  <span>🔄 Cho phép 2 ngón tay xoay góc mặt bằng trực quan (Mặc định: TẮT, chỉ thu phóng)</span>
                 </label>
               </div>
 
@@ -1132,6 +1145,27 @@
       }
     }
 
+    // Xoay mặt bằng kiến trúc đồng bộ theo địa hình bản đồ (Terrain-Locked Floor Plan)
+    const planWrapper = document.getElementById('lakinh-floorplan-wrapper');
+    if (planWrapper && state.planImageSrc) {
+      if (state.isPlanLockedToTerrain) {
+        // Góc hiển thị trên màn hình = Hướng nhà thực địa - Góc la bàn/bản đồ
+        const visualRot = ((state.planTerrainRotation - rounded) % 360 + 360) % 360;
+        planWrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${visualRot}deg) scale(${state.planScale})`;
+      } else {
+        planWrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${state.planRotation}deg) scale(${state.planScale})`;
+      }
+    }
+
+    const btnPlanRotMatch = document.getElementById('btn-plan-rot-match');
+    if (btnPlanRotMatch) {
+      btnPlanRotMatch.textContent = `🔒 Khóa Theo La Kinh (${rounded.toFixed(1)}°)`;
+    }
+    const flBtnRotMatch = document.getElementById('fl-btn-rot-match');
+    if (flBtnRotMatch) {
+      flBtnRotMatch.title = `Khóa hướng mặt bằng theo góc La Kinh hiện tại (${rounded.toFixed(1)}°)`;
+    }
+
     const qmdjSvg = document.getElementById('lakinh-qmdj-svg');
     if (qmdjSvg) {
       qmdjSvg.style.transform = `rotate(${-rounded}deg)`;
@@ -1329,7 +1363,12 @@
       img.src = state.planImageSrc;
     }
     img.style.display = 'block';
-    wrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${state.planRotation}deg) scale(${state.planScale})`;
+
+    const visualRot = state.isPlanLockedToTerrain
+      ? (((state.planTerrainRotation - state.rotation) % 360 + 360) % 360)
+      : state.planRotation;
+
+    wrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${visualRot}deg) scale(${state.planScale})`;
     wrapper.style.opacity = state.planOpacity;
 
     // Cập nhật giá trị hiển thị trên Floating Plan Bar trên màn hình
@@ -1346,6 +1385,11 @@
     if (flScaleVal) flScaleVal.textContent = `${Math.round(state.planScale * 100)}%`;
     const flBtnPan = document.getElementById('fl-btn-plan-pan');
     if (flBtnPan) flBtnPan.classList.toggle('active', !!state.isPlanPanActive);
+    const flBtnRotMatch = document.getElementById('fl-btn-rot-match');
+    if (flBtnRotMatch) {
+      flBtnRotMatch.classList.toggle('active', !!state.isPlanLockedToTerrain);
+      flBtnRotMatch.title = `Khóa hướng mặt bằng theo góc La Kinh hiện tại (${state.rotation.toFixed(1)}°)`;
+    }
 
     // Cập nhật giá trị hiển thị trên bảng điều khiển Bottom Sheet
     const planWrap = document.getElementById('lakinh-plan-controls-wrap');
@@ -1362,11 +1406,31 @@
       sliderScale.value = Math.round(state.planScale * 100);
     }
 
+    const curTerrainDeg = Math.round(state.planTerrainRotation * 10) / 10;
     const valRot = document.getElementById('sheet-val-plan-rot');
-    if (valRot) valRot.textContent = `${state.planRotation.toFixed(1)}°`;
+    const inputRot = document.getElementById('sheet-input-plan-rot');
     const sliderRot = document.getElementById('sheet-slider-plan-rot');
+    const btnToggleLock = document.getElementById('sheet-btn-toggle-plan-lock');
+
+    if (valRot) {
+      let sonTxt = '';
+      if (global.NetaLaKinhEngine && typeof global.NetaLaKinhEngine.getSonInfo === 'function') {
+        const sInfo = global.NetaLaKinhEngine.getSonInfo(curTerrainDeg);
+        if (sInfo) sonTxt = `(Sơn ${sInfo.name})`;
+      }
+      valRot.textContent = `${sonTxt}`;
+    }
+    if (inputRot && document.activeElement !== inputRot) {
+      inputRot.value = curTerrainDeg.toFixed(1);
+    }
     if (sliderRot && document.activeElement !== sliderRot) {
-      sliderRot.value = state.planRotation.toFixed(1);
+      sliderRot.value = curTerrainDeg;
+    }
+    if (btnToggleLock) {
+      btnToggleLock.className = `lakinh-action-btn ${state.isPlanLockedToTerrain ? 'success' : 'secondary'}`;
+      btnToggleLock.innerHTML = state.isPlanLockedToTerrain
+        ? '🔒 Mặt Bằng Khóa Vào Địa Hình (Xoay cùng bản đồ): BẬT'
+        : '🔓 Mặt Bằng Cố Định Khung Màn Hình: BẬT';
     }
 
     const valOp = document.getElementById('sheet-val-plan-opacity');
@@ -1399,7 +1463,9 @@
       state.planScale = 1.0;
       state.planOffsetX = 0;
       state.planOffsetY = 0;
-      state.planRotation = 0.0;
+      state.planTerrainRotation = state.rotation; // Mặc định khóa theo góc La Kinh thực tế hiện tại
+      state.planRotation = state.rotation;
+      state.isPlanLockedToTerrain = true;
       state.planOpacity = 0.85;
       state.isPlanPanActive = true; // Mặc định mở chế độ kéo để người dùng dễ căn chỉnh
 
@@ -1566,6 +1632,8 @@
       const data = {
         scale: state.planScale,
         rotation: state.planRotation,
+        terrainRotation: state.planTerrainRotation,
+        lockedToTerrain: state.isPlanLockedToTerrain,
         opacity: state.planOpacity,
         offsetX: state.planOffsetX,
         offsetY: state.planOffsetY,
@@ -1586,6 +1654,10 @@
       if (data.scale !== undefined && data.scale > 0) state.planScale = data.scale;
       else state.planScale = 1.0;
       if (data.rotation !== undefined) state.planRotation = data.rotation;
+      if (data.terrainRotation !== undefined) state.planTerrainRotation = data.terrainRotation;
+      else state.planTerrainRotation = state.planRotation || 0.0;
+      if (data.lockedToTerrain !== undefined) state.isPlanLockedToTerrain = !!data.lockedToTerrain;
+      else state.isPlanLockedToTerrain = true;
       if (data.opacity) state.planOpacity = data.opacity;
       if (data.offsetX !== undefined) state.planOffsetX = data.offsetX;
       if (data.offsetY !== undefined) state.planOffsetY = data.offsetY;
@@ -5245,10 +5317,17 @@ function updateQmdjStrategicLayer() {
     if (flBtnRotMatch) {
       flBtnRotMatch.addEventListener('click', (e) => {
         e.stopPropagation();
+        state.planTerrainRotation = state.rotation;
         state.planRotation = state.rotation;
+        state.isPlanLockedToTerrain = true;
         updateFloorPlanTransform();
         saveFloorPlanState();
-        showLaKinhToast(`🧭 Đã xoay bản vẽ khớp hướng nhà (${state.rotation.toFixed(1)}°)`);
+        let sonName = '';
+        if (global.NetaLaKinhEngine && typeof global.NetaLaKinhEngine.getSonInfo === 'function') {
+          const s = global.NetaLaKinhEngine.getSonInfo(state.rotation);
+          if (s) sonName = ` (Sơn ${s.name} - ${s.cung})`;
+        }
+        showLaKinhToast(`🔒 Đã khóa mặt bằng theo góc La Kinh ${state.rotation.toFixed(1)}°${sonName}. Mặt bằng sẽ tự động xoay cùng bản đồ!`);
       });
     }
 
@@ -5351,7 +5430,34 @@ function updateQmdjStrategicLayer() {
     const sPlanRot = document.getElementById('sheet-slider-plan-rot');
     if (sPlanRot) {
       sPlanRot.addEventListener('input', (e) => {
-        state.planRotation = parseFloat(e.target.value);
+        const val = parseFloat(e.target.value);
+        state.planTerrainRotation = Math.round(val * 10) / 10;
+        state.planRotation = state.planTerrainRotation;
+        state.isPlanLockedToTerrain = true;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+      });
+    }
+
+    const inputPlanRot = document.getElementById('sheet-input-plan-rot');
+    if (inputPlanRot) {
+      inputPlanRot.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        if (!isNaN(val)) {
+          state.planTerrainRotation = Math.round((((val % 360) + 360) % 360) * 10) / 10;
+          state.planRotation = state.planTerrainRotation;
+          state.isPlanLockedToTerrain = true;
+          updateFloorPlanTransform();
+          saveFloorPlanState();
+        }
+      });
+      inputPlanRot.addEventListener('change', (e) => {
+        let val = parseFloat(e.target.value);
+        if (isNaN(val)) val = 0.0;
+        val = ((val % 360) + 360) % 360;
+        state.planTerrainRotation = Math.round(val * 10) / 10;
+        state.planRotation = state.planTerrainRotation;
+        state.isPlanLockedToTerrain = true;
         updateFloorPlanTransform();
         saveFloorPlanState();
       });
@@ -5360,17 +5466,26 @@ function updateQmdjStrategicLayer() {
     const btnPlanRotMatch = document.getElementById('btn-plan-rot-match');
     if (btnPlanRotMatch) {
       btnPlanRotMatch.addEventListener('click', () => {
+        state.planTerrainRotation = state.rotation;
         state.planRotation = state.rotation;
+        state.isPlanLockedToTerrain = true;
         updateFloorPlanTransform();
         saveFloorPlanState();
-        showLaKinhToast(`🧭 Đã xoay bản vẽ khớp hướng nhà (${state.rotation.toFixed(1)}°)`);
+        let sonName = '';
+        if (global.NetaLaKinhEngine && typeof global.NetaLaKinhEngine.getSonInfo === 'function') {
+          const s = global.NetaLaKinhEngine.getSonInfo(state.rotation);
+          if (s) sonName = ` (Sơn ${s.name} - ${s.cung})`;
+        }
+        showLaKinhToast(`🔒 Đã khóa mặt bằng theo góc La Kinh ${state.rotation.toFixed(1)}°${sonName}. Mặt bằng sẽ xoay cùng bản đồ!`);
       });
     }
 
     const btnPlanRotZero = document.getElementById('btn-plan-rot-zero');
     if (btnPlanRotZero) {
       btnPlanRotZero.addEventListener('click', () => {
+        state.planTerrainRotation = 0.0;
         state.planRotation = 0.0;
+        state.isPlanLockedToTerrain = true;
         updateFloorPlanTransform();
         saveFloorPlanState();
         showLaKinhToast('🧭 Đã quay bản vẽ về Chuẩn Bắc (0°)');
@@ -5381,15 +5496,31 @@ function updateQmdjStrategicLayer() {
       const b = document.getElementById(id);
       if (b) {
         b.addEventListener('click', () => {
-          state.planRotation = ((state.planRotation + delta) % 360 + 360) % 360;
-          state.planRotation = Math.round(state.planRotation * 10) / 10;
+          state.planTerrainRotation = ((state.planTerrainRotation + delta) % 360 + 360) % 360;
+          state.planTerrainRotation = Math.round(state.planTerrainRotation * 10) / 10;
+          state.planRotation = state.planTerrainRotation;
+          state.isPlanLockedToTerrain = true;
           updateFloorPlanTransform();
           saveFloorPlanState();
         });
       }
     };
+    bindPlanRotStep('btn-plan-rot-m5', -5);
     bindPlanRotStep('btn-plan-rot-m1', -1);
     bindPlanRotStep('btn-plan-rot-p1', 1);
+    bindPlanRotStep('btn-plan-rot-p5', 5);
+
+    const btnTogglePlanLock = document.getElementById('sheet-btn-toggle-plan-lock');
+    if (btnTogglePlanLock) {
+      btnTogglePlanLock.addEventListener('click', () => {
+        state.isPlanLockedToTerrain = !state.isPlanLockedToTerrain;
+        updateFloorPlanTransform();
+        saveFloorPlanState();
+        showLaKinhToast(state.isPlanLockedToTerrain
+          ? '🔒 Đã bật: Mặt bằng khóa vào địa hình (xoay đồng bộ cùng bản đồ)'
+          : '🔓 Đã tắt: Mặt bằng cố định theo khung màn hình');
+      });
+    }
 
     const sPlanOpacity = document.getElementById('sheet-slider-plan-opacity');
     if (sPlanOpacity) {
@@ -5468,7 +5599,7 @@ function updateQmdjStrategicLayer() {
           initialPinchDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
           initialPinchScale = state.planScale;
           initialPinchAngle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x) * 180 / Math.PI;
-          initialPinchRot = state.planRotation;
+          initialPinchRot = state.isPlanLockedToTerrain ? state.planTerrainRotation : state.planRotation;
         }
 
         try { lkContainer.setPointerCapture(e.pointerId); } catch (_) {}
@@ -5489,7 +5620,12 @@ function updateQmdjStrategicLayer() {
             if (state.isPlanPinchRotateEnabled) {
               const curAngle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x) * 180 / Math.PI;
               const diffAngle = curAngle - initialPinchAngle;
-              state.planRotation = Math.round(((initialPinchRot + diffAngle) % 360 + 360) % 360 * 10) / 10;
+              if (state.isPlanLockedToTerrain) {
+                state.planTerrainRotation = Math.round(((initialPinchRot + diffAngle) % 360 + 360) % 360 * 10) / 10;
+                state.planRotation = state.planTerrainRotation;
+              } else {
+                state.planRotation = Math.round(((initialPinchRot + diffAngle) % 360 + 360) % 360 * 10) / 10;
+              }
             }
             updateFloorPlanTransform();
           }
