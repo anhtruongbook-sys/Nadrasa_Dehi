@@ -76,15 +76,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.26
-          name: "Neta Light v2.8.26 (Hệ Thống Khóa Mặt Bằng Địa Hình & Xoay Đồng Bộ La Kinh)"
+          tag_name: v2.8.27
+          name: "Neta Light v2.8.27 (Khóa Tâm Mặt Bằng GPS Thửa Đất & Hệ Thống Quản Lý Hồ Sơ IndexedDB)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.26
-            - **Hệ Thống Khóa Mặt Bằng Địa Hình (Terrain-Locked Floor Plan Sync)**:
-              + **Khóa 1 Chạm Theo La Kinh (`🔒 Khóa Theo La Kinh`)**: Người dùng xoay La Kinh ngắm theo trục cửa chính, bấm 1 chạm để khóa cố định mặt bằng vào tọa độ địa hình thực tế.
-              + **Xoay Đồng Bộ 100% Cùng Bản Đồ Vệ Tinh**: Khi xoay La Kinh hoặc xoay điện thoại ở chế độ la bàn thực địa (`🧭 Đang Đọc`), mặt bằng kiến trúc và bản đồ vệ tinh xoay đồng bộ cùng nhau theo thời gian thực (nhà gắn chặt trên thửa đất).
-              + **Nhập Trực Tiếp Số Độ Hướng Nhà Thực Địa**: Hỗ trợ ô nhập số độ chính xác 0.1° kèm tên Sơn Hướng và thanh trượt xoay trực quan.
-              + **Tùy Chọn Chế Độ Linh Hoạt**: Hỗ trợ chuyển đổi nhanh giữa Khóa Mặt Bằng Vào Địa Hình (Xoay cùng bản đồ) hoặc Giữ Cố Định Khung Màn Hình.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.27
+            - **Khóa Tâm Mặt Bằng Nhà Theo Tọa Độ Địa Lý GPS (Geo-Anchoring)**:
+              + **Ghim Chặt Tâm Nhà Vào Thửa Đất Thực Tế**: Mặt bằng kiến trúc được gắn vĩnh viễn vào tọa độ GPS `[lat, lng]` trên bản đồ vệ tinh qua Leaflet Pane. Khi kéo bản đồ hoặc xoay điện thoại ở chế độ la bàn, mặt bằng bám chắc trên thửa đất không bị trôi.
+              + **Tự Động Co Giãn Tỉ Lệ Khi Zoom Bản Đồ**: Kích thước ngôi nhà tự động co giãn theo cấp số $2^{\Delta z}$, bảo đảm ngôi nhà luôn khớp với thước mét thực địa ở mọi độ phóng đại (zoom 18, 19, 20, 21).
+              + **Bộ Bóc Tách Tọa Độ Google Maps Đa Năng**: Hỗ trợ dán trực tiếp đường link Google Maps hoặc cặp tọa độ thập phân (`21.028511, 105.854167`), hệ thống tự động bóc tách và bay đến đúng vị trí.
+              + **Cụm Phím Tinh Chỉnh Micro-Tuning (D-Pad)**: Dịch chuyển tâm nhà theo 4 hướng Bắc - Nam - Tây - Đông với các bước vi mô 0.2m, 0.5m, 1.0m để căn khít mép tường và ranh đất thực địa.
+              + **Chuyển Đổi Linh Hoạt 1-Chạm**: Nút `🎯 Tâm` đưa tâm nhà về tâm La Kinh để đo đạc 36 tầng mà không mất vị trí ghim đất.
+            - **Hệ Thống Lưu Trữ Hồ Sơ Khảo Sát Đa Tầng (3-Tier Persistence - IndexedDB)**:
+              + **Cơ Sở Dữ Liệu IndexedDB Cục Bộ**: Lưu trữ không giới hạn số lượng công trình và kích thước ảnh mặt bằng, hoạt động Offline 100%, bảo lưu toàn vẹn khi cập nhật phiên bản mới.
+              + **Xuất / Nhập Tệp Hồ Sơ (.neta)**: Cho phép xuất tệp hồ sơ công trình ra bộ nhớ máy (`Download/`) để lưu trữ vĩnh viễn (chống mất khi xóa app), hoặc gửi qua Zalo/Drive cho khách hàng/cộng sự.
+              + **Sao Lưu Toàn Bộ CSDL**: 1-chạm sao lưu toàn bộ danh sách công trình đã khảo sát thành 1 file backup duy nhất.
+            - **Hệ Thống Khóa Hướng Mặt Bằng Địa Hình (Terrain-Locked Sync)**:
+              + Khóa hướng mặt bằng đồng bộ cùng La Kinh và bản đồ vệ tinh xoay 360 độ theo thời gian thực (Heading-Up).
             - **Bản Đồ Vệ Tinh Xoay Đồng Bộ Theo La Bàn Thực Địa (Heading-Up Mode)**:
               + Khắc phục hoàn toàn hiện tượng bản đồ đứng yên khi xoay điện thoại ở chế độ la bàn thực địa (`🧭 Đang Đọc`).
               + Toàn bộ bản đồ ảnh vệ tinh & đường phố xoay mượt mà 360 độ theo thời gian thực trùng khớp với góc nhìn thực tế của người dùng (12h là hướng trước mặt).

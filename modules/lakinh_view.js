@@ -44,6 +44,10 @@
     planRotation: 0.0,
     planTerrainRotation: 0.0, // Hướng thực tế của ngôi nhà ngoài thực địa (0-360 độ từ Bắc)
     isPlanLockedToTerrain: true, // Mặc định KHÓA mặt bằng vào địa hình bản đồ (xoay đồng bộ cùng bản đồ)
+    planAnchorCoords: null, // [lat, lng] Tọa độ địa lý tâm ngôi nhà ghim trên bản đồ vệ tinh
+    isPlanGeoAnchored: true, // Khóa tâm mặt bằng vào tọa độ địa lý GPS thực tế
+    planBaseZoom: 19, // Zoom level chuẩn khi định tỉ lệ
+    planMicroStepMeters: 0.5, // Bước tinh chỉnh D-Pad (0.2m, 0.5m, 1.0m)
     planOpacity: 0.85,
     planOffsetX: 0,
     planOffsetY: 0,
@@ -242,7 +246,8 @@
               <button type="button" class="fl-plan-btn ${state.isPlanPanActive ? 'active' : ''}" id="fl-btn-plan-pan" title="Bật/Tắt chế độ kéo rê 1 ngón">✋<span class="fl-btn-lbl"> Kéo</span></button>
               <button type="button" class="fl-plan-btn ${state.isPlanPinchRotateEnabled ? 'active' : ''}" id="fl-btn-toggle-pinch-rot" title="Cho phép 2 ngón xoay góc mặt bằng (Mặc định: TẮT, chỉ thu phóng)">${state.isPlanPinchRotateEnabled ? '🔄' : '🔒'}<span class="fl-btn-lbl"> ${state.isPlanPinchRotateEnabled ? 'Xoay' : 'Khóa'}</span></button>
               <button type="button" class="fl-plan-btn ${state.isPlanLockedToTerrain ? 'active' : ''}" id="fl-btn-rot-match" title="Khóa hướng mặt bằng theo góc La Kinh hiện tại (${state.rotation.toFixed(1)}°)">🔒<span class="fl-btn-lbl"> Khóa LK</span></button>
-              <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa về chính tâm (0,0)">🎯<span class="fl-btn-lbl"> Tâm</span></button>
+              <button type="button" class="fl-plan-btn ${state.isPlanGeoAnchored ? 'active' : ''}" id="fl-btn-geo-anchor" title="Khóa tâm vào thửa đất GPS">📍<span class="fl-btn-lbl"> Ghim Đất</span></button>
+              <button type="button" class="fl-plan-btn" id="fl-btn-plan-center" title="Đưa tâm nhà về tâm La Kinh">🎯<span class="fl-btn-lbl"> Tâm</span></button>
               <button type="button" class="fl-plan-btn icon-only" id="fl-btn-plan-opacity" title="Đổi độ mờ (35% / 65% / 85%)">👁️</button>
               <button type="button" class="fl-plan-btn icon-only" id="btn-plan-pan-done" title="Ẩn thanh công cụ mặt bằng">✕</button>
             </div>
@@ -783,25 +788,72 @@
                 <input type="range" class="lakinh-slider" id="sheet-slider-plan-opacity" min="10" max="100" value="${Math.round(state.planOpacity * 100)}" step="5">
               </div>
 
-              <!-- Căn chỉnh tâm nhà (Dịch tâm) -->
-              <div style="margin-top: 10px;">
-                <div class="sheet-control-sublabel">
-                  <span>Căn chỉnh tim nhà (Dịch tâm)</span>
-                  <span class="val" id="sheet-val-plan-offset">X: ${state.planOffsetX}px, Y: ${state.planOffsetY}px</span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
-                  <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-plan-pan">
-                    ✋ Kéo Dịch Tâm
+              <!-- KHÓA TÂM THỬA ĐẤT GPS & TINH CHỈNH D-PAD -->
+              <div style="margin-top: 12px; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 10px 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <span style="font-weight: 700; color: #38bdf8; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                    📍 Khóa Tâm Thửa Đất (GPS Anchor)
+                  </span>
+                  <button type="button" id="btn-toggle-geo-anchor" class="lakinh-step-btn ${state.isPlanGeoAnchored ? 'active' : ''}" style="font-size: 0.72rem; padding: 2px 8px;">
+                    ${state.isPlanGeoAnchored ? '🔒 Đang Khóa Đất' : '🔓 Tự Do Màn Hình'}
                   </button>
-                  <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-plan-reset-center" title="Trở về chính tâm (0, 0)">
+                </div>
+
+                <!-- Tọa độ GPS hiện tại của tâm nhà -->
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Tọa độ tâm nhà:</span>
+                  <span id="sheet-plan-coords-text" style="color: #facc15; font-weight: 700; font-family: monospace;">
+                    ${state.planAnchorCoords ? `${state.planAnchorCoords[0].toFixed(6)}, ${state.planAnchorCoords[1].toFixed(6)}` : 'Chưa ghim đất'}
+                  </span>
+                </div>
+
+                <!-- Input Dán Tọa Độ Google Maps -->
+                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                  <input type="text" id="sheet-input-plan-coords" class="tamhop-input" placeholder="Dán tọa độ hoặc link Google Maps..." style="flex: 1; font-size: 0.74rem; padding: 5px 8px; border-radius: 6px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.35); color: #fff;">
+                  <button type="button" class="lakinh-step-btn" id="btn-paste-coords" title="Dán tọa độ từ Clipboard" style="padding: 5px 10px; font-size: 0.75rem;">📋 Dán</button>
+                  <button type="button" class="lakinh-step-btn" id="btn-apply-coords" title="Áp dụng tọa độ" style="padding: 5px 10px; font-size: 0.75rem; color: #38bdf8; font-weight: 700;">Áp Dụng</button>
+                </div>
+
+                <!-- Nút Ghim & Bay đến tâm -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                  <button type="button" class="lakinh-action-btn secondary" id="btn-anchor-to-current" style="font-size: 0.74rem; padding: 6px 8px;">
+                    📍 Ghim Tâm Hiện Tại
+                  </button>
+                  <button type="button" class="lakinh-action-btn secondary" id="btn-fly-to-plan-center" style="font-size: 0.74rem; padding: 6px 8px; color: #38bdf8;">
+                    🎯 Bay Về Tâm Nhà
+                  </button>
+                </div>
+
+                <!-- Cụm D-Pad Tinh Chỉnh Micro-Tuning (Thực địa) -->
+                <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 0.72rem; color: #94a3b8;">Tinh chỉnh vi mô thực địa (D-Pad):</span>
+                    <div style="display: flex; gap: 4px;">
+                      <button type="button" class="lakinh-step-btn ${state.planMicroStepMeters === 0.2 ? 'active' : ''}" id="btn-step-m02">0.2m</button>
+                      <button type="button" class="lakinh-step-btn ${state.planMicroStepMeters === 0.5 ? 'active' : ''}" id="btn-step-m05">0.5m</button>
+                      <button type="button" class="lakinh-step-btn ${state.planMicroStepMeters === 1.0 ? 'active' : ''}" id="btn-step-m10">1.0m</button>
+                    </div>
+                  </div>
+                  
+                  <div class="lakinh-dpad-container" style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 4px 0;">
+                    <button type="button" class="lakinh-step-btn dpad-btn" id="btn-dpad-up" title="Dịch lên phía Bắc">▲ Bắc</button>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      <button type="button" class="lakinh-step-btn dpad-btn" id="btn-dpad-left" title="Dịch sang phía Tây">◄ Tây</button>
+                      <button type="button" class="lakinh-step-btn dpad-btn" id="btn-dpad-center" title="Đưa tâm nhà về tâm La Kinh" style="color: #38bdf8; font-weight: 700;">🎯</button>
+                      <button type="button" class="lakinh-step-btn dpad-btn" id="btn-dpad-right" title="Dịch sang phía Đông">Đông ►</button>
+                    </div>
+                    <button type="button" class="lakinh-step-btn dpad-btn" id="btn-dpad-down" title="Dịch xuống phía Nam">▼ Nam</button>
+                  </div>
+                </div>
+
+                <!-- Kéo rê tự do bằng ngón tay -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                  <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-plan-pan" style="font-size: 0.74rem;">
+                    ✋ Kéo Dịch Bằng Tay
+                  </button>
+                  <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-plan-reset-center" style="font-size: 0.74rem;" title="Trở về chính tâm">
                     🎯 Về Chính Tâm
                   </button>
-                </div>
-                <div class="lakinh-btn-row" style="margin-top: 6px; justify-content: center; gap: 6px;">
-                  <button class="lakinh-step-btn" id="btn-plan-shift-left">← Trái</button>
-                  <button class="lakinh-step-btn" id="btn-plan-shift-up">↑ Lên</button>
-                  <button class="lakinh-step-btn" id="btn-plan-shift-down">↓ Xuống</button>
-                  <button class="lakinh-step-btn" id="btn-plan-shift-right">→ Phải</button>
                 </div>
               </div>
             </div>
@@ -976,14 +1028,22 @@
             </div>
           </div>
 
-          <!-- Lưu & Xuất file KML -->
+          <!-- Lưu & Xuất Hồ Sơ Dự Án -->
           <div class="sheet-control-group" style="margin-bottom: 0;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
               <button id="sheet-btn-save" class="lakinh-action-btn success">
                 💾 Lưu Hồ Sơ
               </button>
-              <button id="sheet-btn-kml" class="lakinh-action-btn secondary">
-                📄 Tải file KML Google Earth
+              <button id="sheet-btn-projects" class="lakinh-action-btn secondary">
+                📁 Danh Sách Hồ Sơ
+              </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button id="sheet-btn-export-file" class="lakinh-action-btn secondary" style="font-size: 0.76rem;">
+                📤 Xuất Tệp (.neta)
+              </button>
+              <button id="sheet-btn-kml" class="lakinh-action-btn secondary" style="font-size: 0.76rem;">
+                📄 Google Earth (KML)
               </button>
             </div>
           </div>
@@ -1078,9 +1138,21 @@
     userLocationLayerGroup = L.layerGroup().addTo(mapInstance);
     searchMarkerLayerGroup = L.layerGroup().addTo(mapInstance);
 
-    mapInstance.on('move', onMapMove);
-    mapInstance.on('moveend', onMapMoveEnd);
+    mapInstance.on('move', () => {
+      onMapMove();
+      if (state.isPlanGeoAnchored) updateFloorPlanGeoPos();
+    });
+    mapInstance.on('moveend', () => {
+      onMapMoveEnd();
+      if (state.isPlanGeoAnchored) updateFloorPlanGeoPos();
+    });
+    mapInstance.on('zoom zoomend viewreset', () => {
+      if (state.isPlanGeoAnchored) updateFloorPlanGeoPos();
+    });
     mapInstance.on('click', onMapClick);
+
+    // Đồng bộ DOM container mặt bằng vào pane bản đồ nếu đã ghim đất
+    syncFloorPlanDomParent();
 
     // Cập nhật thông số vị trí ban đầu
     updateLocationHUD(state.centerCoords[0], state.centerCoords[1]);
@@ -1338,6 +1410,221 @@
   }
 
   // ================= 3.1. QUẢN LÝ MẶT BẰNG BẢN VẼ KIẾN TRÚC DƯỚI LA KINH =================
+  function syncFloorPlanDomParent() {
+    const container = document.getElementById('lakinh-floorplan-container');
+    if (!container || !mapInstance) return;
+
+    if (state.isPlanGeoAnchored && state.planAnchorCoords) {
+      let pane = mapInstance.getPane('floorPlanPane');
+      if (!pane) {
+        pane = mapInstance.createPane('floorPlanPane');
+        pane.style.zIndex = '350';
+      }
+      if (container.parentElement !== pane) {
+        pane.appendChild(container);
+      }
+      container.classList.add('is-geo-anchored');
+      updateFloorPlanGeoPos();
+    } else {
+      const viewLakinh = document.getElementById('view-lakinh');
+      const crosshair = document.getElementById('lakinh-crosshair');
+      if (container.parentElement !== viewLakinh && viewLakinh) {
+        if (crosshair) {
+          viewLakinh.insertBefore(container, crosshair);
+        } else {
+          viewLakinh.appendChild(container);
+        }
+      }
+      container.classList.remove('is-geo-anchored');
+      container.style.transform = '';
+      container.style.left = '';
+      container.style.top = '';
+      updateFloorPlanTransform();
+    }
+    updateFloorPlanCoordsUI();
+  }
+
+  function updateFloorPlanGeoPos() {
+    if (!state.planImageSrc) return;
+    const container = document.getElementById('lakinh-floorplan-container');
+    const wrapper = document.getElementById('lakinh-floorplan-wrapper');
+    if (!container || !wrapper) return;
+
+    if (state.isPlanGeoAnchored && state.planAnchorCoords && mapInstance) {
+      const latLng = L.latLng(state.planAnchorCoords[0], state.planAnchorCoords[1]);
+      const layerPt = mapInstance.latLngToLayerPoint(latLng);
+      L.DomUtil.setPosition(container, layerPt);
+
+      const curZoom = mapInstance.getZoom();
+      const baseZoom = state.planBaseZoom || 19;
+      const zoomFactor = Math.pow(2, curZoom - baseZoom);
+      const effectiveScale = state.planScale * zoomFactor;
+
+      const ox = state.planOffsetX || 0;
+      const oy = state.planOffsetY || 0;
+      wrapper.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) rotate(${state.planTerrainRotation}deg) scale(${effectiveScale})`;
+      wrapper.style.opacity = state.planOpacity;
+    }
+  }
+
+  function updateFloorPlanCoordsUI() {
+    const coordsTxt = document.getElementById('sheet-plan-coords-text');
+    const inputCoords = document.getElementById('sheet-input-plan-coords');
+    const btnToggleGeo = document.getElementById('btn-toggle-geo-anchor');
+    const flBtnGeo = document.getElementById('fl-btn-geo-anchor');
+
+    if (coordsTxt) {
+      coordsTxt.textContent = (state.planAnchorCoords && state.isPlanGeoAnchored)
+        ? `${state.planAnchorCoords[0].toFixed(6)}, ${state.planAnchorCoords[1].toFixed(6)}`
+        : (state.planAnchorCoords ? `${state.planAnchorCoords[0].toFixed(6)}, ${state.planAnchorCoords[1].toFixed(6)} (Chưa khóa)` : 'Chưa ghim đất');
+    }
+    if (inputCoords && state.planAnchorCoords && document.activeElement !== inputCoords) {
+      inputCoords.value = `${state.planAnchorCoords[0].toFixed(6)}, ${state.planAnchorCoords[1].toFixed(6)}`;
+    }
+    if (btnToggleGeo) {
+      btnToggleGeo.classList.toggle('active', !!state.isPlanGeoAnchored);
+      btnToggleGeo.textContent = state.isPlanGeoAnchored ? '🔒 Đang Khóa Đất' : '🔓 Tự Do Màn Hình';
+    }
+    if (flBtnGeo) {
+      flBtnGeo.classList.toggle('active', !!state.isPlanGeoAnchored);
+      flBtnGeo.title = state.isPlanGeoAnchored ? 'Đang khóa tâm vào thửa đất GPS' : 'Chưa khóa tâm vào thửa đất GPS';
+    }
+  }
+
+  function shiftPlanAnchorMeters(dxMeters, dyMeters) {
+    if (!state.planAnchorCoords || !mapInstance) {
+      const center = mapInstance ? mapInstance.getCenter() : { lat: state.centerCoords[0], lng: state.centerCoords[1] };
+      state.planAnchorCoords = [center.lat, center.lng];
+      state.isPlanGeoAnchored = true;
+    }
+    const lat = state.planAnchorCoords[0];
+    const lng = state.planAnchorCoords[1];
+
+    const deltaLat = dyMeters / 111320;
+    const deltaLng = dxMeters / (111320 * Math.cos(lat * Math.PI / 180));
+
+    state.planAnchorCoords = [lat + deltaLat, lng + deltaLng];
+    if (!state.isPlanGeoAnchored) {
+      state.isPlanGeoAnchored = true;
+      syncFloorPlanDomParent();
+    } else {
+      updateFloorPlanGeoPos();
+    }
+    updateFloorPlanCoordsUI();
+    saveFloorPlanState();
+  }
+
+  function parseGoogleMapsCoords(input) {
+    if (!input || typeof input !== 'string') return null;
+    const s = input.trim();
+
+    // 1. Google Maps URL with @lat,lng e.g. https://www.google.com/maps/@21.028511,105.854167,19z
+    const urlAtMatch = s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (urlAtMatch) {
+      const lat = parseFloat(urlAtMatch[1]);
+      const lng = parseFloat(urlAtMatch[2]);
+      if (isValidLatLng(lat, lng)) return { lat, lng };
+    }
+
+    // 2. Google Maps URL with ?q=lat,lng or &q=lat,lng
+    const urlQMatch = s.match(/[?&]q=(-?\d+\.\d+)[,\s]+(-?\d+\.\d+)/);
+    if (urlQMatch) {
+      const lat = parseFloat(urlQMatch[1]);
+      const lng = parseFloat(urlQMatch[2]);
+      if (isValidLatLng(lat, lng)) return { lat, lng };
+    }
+
+    // 3. Decimal coordinates pair: "21.028511, 105.854167" or "21.028511 105.854167"
+    const decMatch = s.match(/(-?\d+\.\d+)[,\s]+(-?\d+\.\d+)/);
+    if (decMatch) {
+      const lat = parseFloat(decMatch[1]);
+      const lng = parseFloat(decMatch[2]);
+      if (isValidLatLng(lat, lng)) return { lat, lng };
+    }
+
+    // 4. DMS coordinates: 21°01'42.6"N 105°51'15.0"E
+    const dmsMatch = s.match(/(\d+)[°\s]+(\d+)['\s]+([\d.]+)["]?\s*([NSns])[,\s]+(\d+)[°\s]+(\d+)['\s]+([\d.]+)["]?\s*([EWew])/);
+    if (dmsMatch) {
+      let lat = parseInt(dmsMatch[1], 10) + parseInt(dmsMatch[2], 10) / 60 + parseFloat(dmsMatch[3]) / 3600;
+      if (dmsMatch[4].toUpperCase() === 'S') lat = -lat;
+      let lng = parseInt(dmsMatch[5], 10) + parseInt(dmsMatch[6], 10) / 60 + parseFloat(dmsMatch[7]) / 3600;
+      if (dmsMatch[8].toUpperCase() === 'W') lng = -lng;
+      if (isValidLatLng(lat, lng)) return { lat, lng };
+    }
+
+    return null;
+  }
+
+  function isValidLatLng(lat, lng) {
+    return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+  }
+
+  function applyPlanCoordsInput(coordsStr) {
+    const parsed = parseGoogleMapsCoords(coordsStr);
+    if (!parsed) {
+      showLaKinhToast('❌ Không nhận diện được tọa độ hoặc link Google Maps!');
+      return false;
+    }
+    state.planAnchorCoords = [parsed.lat, parsed.lng];
+    state.planBaseZoom = mapInstance ? (mapInstance.getZoom() || 19) : 19;
+    state.isPlanGeoAnchored = true;
+    state.planOffsetX = 0;
+    state.planOffsetY = 0;
+
+    if (mapInstance) {
+      mapInstance.flyTo([parsed.lat, parsed.lng], 19, { animate: true });
+    }
+    syncFloorPlanDomParent();
+    updateFloorPlanGeoPos();
+    updateFloorPlanCoordsUI();
+    saveFloorPlanState();
+    showLaKinhToast(`📍 Đã khóa tâm nhà tại: ${parsed.lat.toFixed(6)}, ${parsed.lng.toFixed(6)}`);
+    return true;
+  }
+
+  async function pasteCoordsFromClipboard() {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        const input = document.getElementById('sheet-input-plan-coords');
+        if (input) input.value = text.trim();
+        applyPlanCoordsInput(text);
+      } else {
+        showLaKinhToast('Clipboard trống!');
+      }
+    } catch (_) {
+      const text = prompt('Dán tọa độ hoặc liên kết Google Maps vào đây:');
+      if (text) {
+        const input = document.getElementById('sheet-input-plan-coords');
+        if (input) input.value = text.trim();
+        applyPlanCoordsInput(text);
+      }
+    }
+  }
+
+  function togglePlanGeoAnchor(force) {
+    if (force !== undefined) state.isPlanGeoAnchored = force;
+    else state.isPlanGeoAnchored = !state.isPlanGeoAnchored;
+
+    if (state.isPlanGeoAnchored && !state.planAnchorCoords) {
+      if (mapInstance) {
+        const c = mapInstance.getCenter();
+        state.planAnchorCoords = [c.lat, c.lng];
+        state.planBaseZoom = mapInstance.getZoom() || 19;
+      } else {
+        state.planAnchorCoords = [...state.centerCoords];
+        state.planBaseZoom = 19;
+      }
+    }
+
+    syncFloorPlanDomParent();
+    updateFloorPlanTransform();
+    saveFloorPlanState();
+    showLaKinhToast(state.isPlanGeoAnchored
+      ? '🔒 Đã bật Khóa Đất: Mặt bằng bám cố định vào tọa độ GPS thửa đất'
+      : '🔓 Đã tắt Khóa Đất: Mặt bằng tự do theo khung màn hình');
+  }
+
   function updateFloorPlanTransform() {
     const wrapper = document.getElementById('lakinh-floorplan-wrapper');
     const img = document.getElementById('lakinh-floorplan-img');
@@ -1368,7 +1655,11 @@
       ? (((state.planTerrainRotation - state.rotation) % 360 + 360) % 360)
       : state.planRotation;
 
-    wrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${visualRot}deg) scale(${state.planScale})`;
+    if (state.isPlanGeoAnchored && state.planAnchorCoords) {
+      updateFloorPlanGeoPos();
+    } else {
+      wrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${visualRot}deg) scale(${state.planScale})`;
+    }
     wrapper.style.opacity = state.planOpacity;
 
     // Cập nhật giá trị hiển thị trên Floating Plan Bar trên màn hình
@@ -1389,6 +1680,11 @@
     if (flBtnRotMatch) {
       flBtnRotMatch.classList.toggle('active', !!state.isPlanLockedToTerrain);
       flBtnRotMatch.title = `Khóa hướng mặt bằng theo góc La Kinh hiện tại (${state.rotation.toFixed(1)}°)`;
+    }
+    const flBtnGeo = document.getElementById('fl-btn-geo-anchor');
+    if (flBtnGeo) {
+      flBtnGeo.classList.toggle('active', !!state.isPlanGeoAnchored);
+      flBtnGeo.title = state.isPlanGeoAnchored ? 'Đang khóa tâm vào thửa đất GPS' : 'Chưa khóa tâm vào thửa đất GPS';
     }
 
     // Cập nhật giá trị hiển thị trên bảng điều khiển Bottom Sheet
@@ -1442,6 +1738,8 @@
 
     const valOffset = document.getElementById('sheet-val-plan-offset');
     if (valOffset) valOffset.textContent = `X: ${state.planOffsetX}px, Y: ${state.planOffsetY}px`;
+
+    updateFloorPlanCoordsUI();
   }
 
   function setFloorPlanFromDataUrl(dataUrl) {
@@ -1459,15 +1757,26 @@
       img.onload = null;
       img.onerror = null;
 
-      // Chuẩn hóa tỉ lệ mặc định 100% (vừa vặn khung màn hình nhờ CSS max-width/max-height)
+      // Chuẩn hóa tỉ lệ mặc định 100%
       state.planScale = 1.0;
       state.planOffsetX = 0;
       state.planOffsetY = 0;
       state.planTerrainRotation = state.rotation; // Mặc định khóa theo góc La Kinh thực tế hiện tại
       state.planRotation = state.rotation;
       state.isPlanLockedToTerrain = true;
+      state.isPlanGeoAnchored = true;
+
+      if (mapInstance) {
+        const c = mapInstance.getCenter();
+        state.planAnchorCoords = [c.lat, c.lng];
+        state.planBaseZoom = mapInstance.getZoom() || 19;
+      } else {
+        state.planAnchorCoords = [...state.centerCoords];
+        state.planBaseZoom = 19;
+      }
+
       state.planOpacity = 0.85;
-      state.isPlanPanActive = true; // Mặc định mở chế độ kéo để người dùng dễ căn chỉnh
+      state.isPlanPanActive = false;
 
       // Cập nhật DOM của Bottom Sheet nếu đang mở
       if (statusVal) statusVal.textContent = 'Đã nạp bản vẽ';
@@ -1495,9 +1804,10 @@
         if (btnPlateGold) btnPlateGold.classList.remove('active');
       }
 
+      syncFloorPlanDomParent();
       updateFloorPlanTransform();
       saveFloorPlanState();
-      showLaKinhToast('✅ Đã nạp mặt bằng. Dùng nút + / - hoặc 2 ngón tay thu phóng.');
+      showLaKinhToast('✅ Đã nạp & khóa mặt bằng vào thửa đất!');
     };
 
     if (img) {
@@ -1634,6 +1944,10 @@
         rotation: state.planRotation,
         terrainRotation: state.planTerrainRotation,
         lockedToTerrain: state.isPlanLockedToTerrain,
+        anchorCoords: state.planAnchorCoords,
+        isGeoAnchored: state.isPlanGeoAnchored,
+        baseZoom: state.planBaseZoom,
+        microStepMeters: state.planMicroStepMeters,
         opacity: state.planOpacity,
         offsetX: state.planOffsetX,
         offsetY: state.planOffsetY,
@@ -1658,6 +1972,10 @@
       else state.planTerrainRotation = state.planRotation || 0.0;
       if (data.lockedToTerrain !== undefined) state.isPlanLockedToTerrain = !!data.lockedToTerrain;
       else state.isPlanLockedToTerrain = true;
+      if (data.anchorCoords && Array.isArray(data.anchorCoords)) state.planAnchorCoords = data.anchorCoords;
+      if (data.isGeoAnchored !== undefined) state.isPlanGeoAnchored = !!data.isGeoAnchored;
+      if (data.baseZoom !== undefined) state.planBaseZoom = data.baseZoom;
+      if (data.microStepMeters !== undefined) state.planMicroStepMeters = data.microStepMeters;
       if (data.opacity) state.planOpacity = data.opacity;
       if (data.offsetX !== undefined) state.planOffsetX = data.offsetX;
       if (data.offsetY !== undefined) state.planOffsetY = data.offsetY;
@@ -1678,6 +1996,7 @@
           img.style.display = 'block';
         }
       }
+      syncFloorPlanDomParent();
       updateFloorPlanTransform();
     } catch (_) {}
   }
@@ -4522,55 +4841,291 @@ function updateQmdjStrategicLayer() {
     }
   }
 
-  // Lưu & Mở hồ sơ
-  function saveCurrentProject() {
-    const name = prompt('Nhập tên công trình / thửa đất:', `Khảo sát ${new Date().toLocaleDateString('vi-VN')}`);
-    if (!name) return;
+  // ================= 3.9. HỆ THỐNG QUẢN LÝ LƯU TRỮ & HỒ SƠ KHẢO SÁT (INDEXEDDB MULTI-TIER) =================
+  const LakinhStorage = {
+    db: null,
+    dbName: 'neta_lakinh_db',
+    dbVersion: 1,
 
-    const record = {
-      id: 'lakinh_' + Date.now(),
-      name: name,
-      date: new Date().toISOString(),
-      lat: state.centerCoords[0],
-      lng: state.centerCoords[1],
-      rotation: state.rotation,
-      elevation: state.centerElevation,
-      declination: state.declination
-    };
+    async getDb() {
+      if (this.db) return this.db;
+      return new Promise((resolve) => {
+        if (typeof window === 'undefined' || !window.indexedDB) {
+          console.warn('IndexedDB không được hỗ trợ');
+          return resolve(null);
+        }
+        const request = indexedDB.open(this.dbName, this.dbVersion);
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains('projects')) {
+            const store = db.createObjectStore('projects', { keyPath: 'id' });
+            store.createIndex('date', 'date', { unique: false });
+            store.createIndex('name', 'name', { unique: false });
+          }
+        };
+        request.onsuccess = (event) => {
+          this.db = event.target.result;
+          this.migrateLegacyLocalStorage().finally(() => resolve(this.db));
+        };
+        request.onerror = (err) => {
+          console.error('IndexedDB open error:', err);
+          resolve(null);
+        };
+      });
+    },
 
-    try {
-      const list = JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
-      list.unshift(record);
-      localStorage.setItem('neta_lakinh_projects', JSON.stringify(list));
-      showLaKinhToast('✅ Đã lưu hồ sơ khảo sát!');
-      closeBottomSheet();
-    } catch (e) {
-      showLaKinhToast('❌ Lỗi khi lưu vào bộ nhớ máy');
+    async migrateLegacyLocalStorage() {
+      try {
+        const raw = localStorage.getItem('neta_lakinh_projects');
+        if (!raw) return;
+        const list = JSON.parse(raw);
+        if (Array.isArray(list) && list.length > 0) {
+          for (const item of list) {
+            if (item && item.id) {
+              await this.saveProject(item, true);
+            }
+          }
+          localStorage.removeItem('neta_lakinh_projects');
+        }
+      } catch (e) {
+        console.warn('Lỗi migrate legacy projects:', e);
+      }
+    },
+
+    async saveProject(project, silent = false) {
+      const db = await this.getDb();
+      if (!db) {
+        const list = JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
+        const idx = list.findIndex(p => p.id === project.id);
+        if (idx >= 0) list[idx] = project; else list.unshift(project);
+        localStorage.setItem('neta_lakinh_projects', JSON.stringify(list));
+        return true;
+      }
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(['projects'], 'readwrite');
+        const store = tx.objectStore('projects');
+        const req = store.put(project);
+        req.onsuccess = () => resolve(true);
+        req.onerror = (e) => reject(e);
+      });
+    },
+
+    async getAllProjects() {
+      const db = await this.getDb();
+      if (!db) {
+        return JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
+      }
+      return new Promise((resolve) => {
+        const tx = db.transaction(['projects'], 'readonly');
+        const store = tx.objectStore('projects');
+        const req = store.getAll();
+        req.onsuccess = () => {
+          const list = req.result || [];
+          list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+          resolve(list);
+        };
+        req.onerror = () => resolve([]);
+      });
+    },
+
+    async getProject(id) {
+      const db = await this.getDb();
+      if (!db) {
+        const list = JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
+        return list.find(p => p.id === id) || null;
+      }
+      return new Promise((resolve) => {
+        const tx = db.transaction(['projects'], 'readonly');
+        const store = tx.objectStore('projects');
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      });
+    },
+
+    async deleteProject(id) {
+      const db = await this.getDb();
+      if (!db) {
+        const list = JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
+        const filtered = list.filter(p => p.id !== id);
+        localStorage.setItem('neta_lakinh_projects', JSON.stringify(filtered));
+        return true;
+      }
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(['projects'], 'readwrite');
+        const store = tx.objectStore('projects');
+        const req = store.delete(id);
+        req.onsuccess = () => resolve(true);
+        req.onerror = (e) => reject(e);
+      });
     }
+  };
+
+  function downloadJsonBlob(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 250);
   }
 
-  function openProjectsModal() {
+  // Mở hộp thoại Lưu Hồ Sơ
+  function saveCurrentProject() {
     const modalBox = document.getElementById('lakinh-modal-container');
     if (!modalBox) return;
 
-    const list = JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
+    const defaultName = `Khảo sát ${new Date().toLocaleDateString('vi-VN')}`;
+    const sonInfo = global.NetaLaKinhEngine ? global.NetaLaKinhEngine.getSonInfo(state.rotation) : null;
+    const sonName = sonInfo ? `Sơn ${sonInfo.name} (${sonInfo.cung})` : '';
+
+    modalBox.innerHTML = `
+      <div class="lakinh-modal-overlay" id="modal-save-project-overlay">
+        <div class="lakinh-glass-panel lakinh-modal-dialog" style="max-width: 400px; width: 94%;">
+          <div class="lakinh-modal-header" style="border-bottom: 1px solid rgba(74, 222, 128, 0.4); padding-bottom: 8px; margin-bottom: 12px;">
+            <div class="lakinh-modal-title" style="color: #4ade80; font-size: 0.96rem; display: flex; align-items: center; gap: 6px;">
+              💾 LƯU HỒ SƠ KHẢO SÁT & MẶT BẰNG
+            </div>
+            <button class="lakinh-modal-close" onclick="document.getElementById('modal-save-project-overlay').remove()">✕</button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.78rem;">
+            <div>
+              <label style="color: #cbd5e1; display: block; margin-bottom: 4px; font-weight: 600;">Tên công trình / Thửa đất (*):</label>
+              <input type="text" id="save-proj-name" class="tamhop-input" value="${defaultName}" style="width: 100%; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; font-size: 0.8rem;">
+            </div>
+            <div>
+              <label style="color: #cbd5e1; display: block; margin-bottom: 4px;">Chủ nhà / Gia chủ (tuổi, can chi):</label>
+              <input type="text" id="save-proj-client" class="tamhop-input" placeholder="Ví dụ: Anh Tuấn (1984 - Giáp Tý)" style="width: 100%; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.3); color: #fff; border-radius: 6px; font-size: 0.8rem;">
+            </div>
+            <div>
+              <label style="color: #cbd5e1; display: block; margin-bottom: 4px;">Địa chỉ khảo sát:</label>
+              <input type="text" id="save-proj-address" class="tamhop-input" placeholder="Ví dụ: Khu đô thị Vườn Cam, Hoài Đức, Hà Nội" style="width: 100%; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.3); color: #fff; border-radius: 6px; font-size: 0.8rem;">
+            </div>
+            <div>
+              <label style="color: #cbd5e1; display: block; margin-bottom: 4px;">Ghi chú hiện trường:</label>
+              <textarea id="save-proj-notes" class="tamhop-input" rows="2" placeholder="Ghi chú vị trí thủy khẩu, long mạch, loan đầu..." style="width: 100%; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.3); color: #fff; border-radius: 6px; font-size: 0.78rem; resize: none;"></textarea>
+            </div>
+            <div style="font-size: 0.72rem; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.15);">
+              📍 Tọa độ GPS: <b>${state.centerCoords[0].toFixed(6)}, ${state.centerCoords[1].toFixed(6)}</b><br>
+              🧭 Hướng nhà: <b>${state.rotation.toFixed(1)}°</b> ${sonName ? `(${sonName})` : ''}<br>
+              ${state.planImageSrc ? `📐 Có mặt bằng: <b>Đã khóa đất</b> (${state.planTerrainRotation.toFixed(1)}°, Scale: ${Math.round(state.planScale * 100)}%)` : 'ℹ️ Chưa nạp ảnh mặt bằng.'}
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+              <button type="button" class="lakinh-action-btn secondary" onclick="document.getElementById('modal-save-project-overlay').remove()">Hủy</button>
+              <button type="button" class="lakinh-action-btn success" id="btn-confirm-save-project">💾 Lưu Vào Máy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('btn-confirm-save-project')?.addEventListener('click', async () => {
+      const name = document.getElementById('save-proj-name')?.value?.trim() || defaultName;
+      const client = document.getElementById('save-proj-client')?.value?.trim() || '';
+      const address = document.getElementById('save-proj-address')?.value?.trim() || '';
+      const notes = document.getElementById('save-proj-notes')?.value?.trim() || '';
+
+      const record = {
+        id: 'lakinh_' + Date.now(),
+        name: name,
+        client: client,
+        address: address,
+        notes: notes,
+        date: new Date().toISOString(),
+        lat: state.centerCoords[0],
+        lng: state.centerCoords[1],
+        rotation: state.rotation,
+        elevation: state.centerElevation,
+        declination: state.declination,
+        floorPlan: state.planImageSrc ? {
+          imageSrc: state.planImageSrc,
+          anchorCoords: state.planAnchorCoords || [state.centerCoords[0], state.centerCoords[1]],
+          isGeoAnchored: state.isPlanGeoAnchored !== false,
+          terrainRotation: state.planTerrainRotation,
+          isLockedToTerrain: state.isPlanLockedToTerrain,
+          scale: state.planScale,
+          baseZoom: state.planBaseZoom || (mapInstance ? mapInstance.getZoom() : 19),
+          opacity: state.planOpacity,
+          offsetX: state.planOffsetX || 0,
+          offsetY: state.planOffsetY || 0
+        } : null,
+        tamHop: state.isTamHopActive ? {
+          duongCuc: state.tamHopDuongCuc,
+          cucData: state.tamHopCucData,
+          thuyKhauDeg: state.tamHopThuyKhauDeg,
+          dongChay: state.tamHopDongChay,
+          canChu: state.tamHopCanChu,
+          chiChu: state.tamHopChiChu,
+          namChi: state.tamHopNamChi
+        } : null,
+        qmdj: state.isQmdjStratActive ? {
+          goal: state.qmdjStratGoal,
+          date: state.qmdjStratDate
+        } : null
+      };
+
+      try {
+        await LakinhStorage.saveProject(record);
+        document.getElementById('modal-save-project-overlay')?.remove();
+        showLaKinhToast(`✅ Đã lưu hồ sơ: ${name}`);
+        closeBottomSheet();
+      } catch (err) {
+        showLaKinhToast('❌ Lỗi khi lưu hồ sơ: ' + err.message);
+      }
+    });
+  }
+
+  async function openProjectsModal() {
+    const modalBox = document.getElementById('lakinh-modal-container');
+    if (!modalBox) return;
+
+    const list = await LakinhStorage.getAllProjects();
     let itemsHtml = '';
 
     if (list.length === 0) {
-      itemsHtml = '<div style="text-align:center;padding:20px;color:#94a3b8;font-size:0.75rem;">Chưa có hồ sơ khảo sát nào được lưu.</div>';
+      itemsHtml = '<div style="text-align:center;padding:25px 15px;color:#94a3b8;font-size:0.78rem;">Chưa có hồ sơ khảo sát nào được lưu.<br><span style="font-size:0.72rem;color:#64748b;">(Bấm nút "Lưu Hiện Trường" bên trên để lưu công trình hiện tại)</span></div>';
     } else {
-      list.forEach((item, idx) => {
+      list.forEach((item) => {
+        const son = global.NetaLaKinhEngine ? global.NetaLaKinhEngine.getSonInfo(item.rotation || 0) : null;
+        const sonTxt = son ? `Sơn ${son.name}` : '';
+        const hasPlan = item.floorPlan && item.floorPlan.imageSrc;
+        const dateStr = item.date ? new Date(item.date).toLocaleDateString('vi-VN') : '';
+
         itemsHtml += `
-          <div style="background:rgba(30,41,59,0.7);border:1px solid rgba(245,176,65,0.2);border-radius:8px;padding:8px 10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
-            <div>
-              <div style="font-weight:700;font-size:0.78rem;color:#f5b041;">${item.name}</div>
-              <div style="font-size:0.68rem;color:#cbd5e1;margin-top:2px;">
-                ${item.lat.toFixed(6)}, ${item.lng.toFixed(6)} • ${item.rotation.toFixed(1)}° • ${new Date(item.date).toLocaleDateString('vi-VN')}
+          <div class="project-card" style="background:rgba(30,41,59,0.75);border:1px solid rgba(245,176,65,0.25);border-radius:8px;padding:9px 11px;margin-bottom:8px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              ${hasPlan ? `
+                <div style="width:52px;height:52px;border-radius:6px;overflow:hidden;border:1px solid rgba(56,189,248,0.4);flex-shrink:0;background:#000;">
+                  <img src="${item.floorPlan.imageSrc}" style="width:100%;height:100%;object-fit:cover;" alt="Mặt bằng">
+                </div>
+              ` : `
+                <div style="width:52px;height:52px;border-radius:6px;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">
+                  🧭
+                </div>
+              `}
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:0.82rem;color:#f5b041;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  ${item.name}
+                </div>
+                ${item.client ? `<div style="font-size:0.72rem;color:#e2e8f0;margin-top:1px;">👤 ${item.client}</div>` : ''}
+                <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">
+                  📍 ${item.lat ? item.lat.toFixed(6) : '0'}, ${item.lng ? item.lng.toFixed(6) : '0'}
+                </div>
+                <div style="font-size:0.68rem;color:#38bdf8;margin-top:2px;">
+                  🧭 ${(item.rotation || 0).toFixed(1)}° ${sonTxt ? `(${sonTxt})` : ''} • 📅 ${dateStr}
+                </div>
+                ${hasPlan ? `<span style="display:inline-block;font-size:0.62rem;background:rgba(56,189,248,0.18);color:#38bdf8;padding:1px 6px;border-radius:4px;margin-top:4px;border:1px solid rgba(56,189,248,0.3);">📐 Có mặt bằng (${(item.floorPlan.terrainRotation || 0).toFixed(1)}°)</span>` : ''}
               </div>
             </div>
-            <div style="display:flex;gap:4px;">
-              <button class="lakinh-step-btn" style="padding:4px 8px;" onclick="window.NetaLaKinhView.loadProject(${idx})">Mở</button>
-              <button class="lakinh-step-btn" style="padding:4px 8px;color:#ef4444;" onclick="window.NetaLaKinhView.deleteProject(${idx})">Xóa</button>
+            <div style="display:flex;justify-content:flex-end;gap:5px;margin-top:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:6px;">
+              <button class="lakinh-step-btn" style="padding:4px 10px;font-size:0.72rem;color:#4ade80;font-weight:700;" onclick="window.NetaLaKinhView.loadProject('${item.id}')">🎯 Mở</button>
+              <button class="lakinh-step-btn" style="padding:4px 8px;font-size:0.72rem;color:#38bdf8;" onclick="window.NetaLaKinhView.exportProject('${item.id}')" title="Xuất tệp .neta để cất trữ hoặc gửi Zalo">📤 Xuất File</button>
+              <button class="lakinh-step-btn" style="padding:4px 8px;font-size:0.72rem;color:#ef4444;" onclick="window.NetaLaKinhView.deleteProject('${item.id}')">🗑️ Xóa</button>
             </div>
           </div>
         `;
@@ -4579,39 +5134,253 @@ function updateQmdjStrategicLayer() {
 
     modalBox.innerHTML = `
       <div class="lakinh-modal-overlay" id="modal-projects-overlay">
-        <div class="lakinh-glass-panel lakinh-modal-dialog">
-          <div class="lakinh-modal-header">
-            <div class="lakinh-modal-title">📁 HỒ SƠ KHẢO SÁT ĐÃ LƯU</div>
+        <div class="lakinh-glass-panel lakinh-modal-dialog" style="max-width: 460px; width: 94%;">
+          <div class="lakinh-modal-header" style="border-bottom: 1px solid rgba(245, 176, 65, 0.3); padding-bottom: 8px; margin-bottom: 10px;">
+            <div class="lakinh-modal-title" style="color: #f5b041; display: flex; align-items: center; gap: 6px; font-size: 0.95rem;">
+              📁 QUẢN LÝ HỒ SƠ KHẢO SÁT & MẶT BẰNG
+            </div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-projects-overlay').remove()">✕</button>
           </div>
-          <div style="max-height: 50vh; overflow-y: auto;">
+
+          <!-- Thanh thao tác nhanh đầu modal -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+            <button type="button" class="lakinh-action-btn success" id="modal-btn-save-current" style="font-size: 0.76rem; padding: 7px;">
+              💾 Lưu Hiện Trường
+            </button>
+            <button type="button" class="lakinh-action-btn secondary" id="modal-btn-import-file" style="font-size: 0.76rem; padding: 7px;">
+              📥 Nhập Tệp (.neta)
+            </button>
+          </div>
+          <input type="file" id="lakinh-input-import-project" accept=".neta,.json" style="display: none;">
+
+          <div style="max-height: 50vh; overflow-y: auto; padding-right: 2px;">
             ${itemsHtml}
           </div>
-          <button class="lakinh-action-btn secondary" style="margin-top:10px;" onclick="document.getElementById('modal-projects-overlay').remove()">Đóng</button>
+
+          <!-- Thanh thao tác chân modal -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+            <button type="button" class="lakinh-step-btn" id="modal-btn-backup-all" style="font-size: 0.72rem; color: #38bdf8;">
+              📦 Sao Lưu Toàn Bộ CSDL
+            </button>
+            <button type="button" class="lakinh-action-btn secondary" style="font-size: 0.74rem; padding: 6px 14px;" onclick="document.getElementById('modal-projects-overlay').remove()">
+              Đóng
+            </button>
+          </div>
         </div>
       </div>
     `;
+
+    document.getElementById('modal-btn-save-current')?.addEventListener('click', () => {
+      document.getElementById('modal-projects-overlay')?.remove();
+      saveCurrentProject();
+    });
+
+    const fileInput = document.getElementById('lakinh-input-import-project');
+    document.getElementById('modal-btn-import-file')?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+    fileInput?.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) importProjectFromFile(file);
+    });
+
+    document.getElementById('modal-btn-backup-all')?.addEventListener('click', () => {
+      exportAllProjectsBackup();
+    });
   }
 
-  function loadProject(idx) {
-    const list = JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
-    const item = list[idx];
-    if (!item) return;
+  async function loadProject(id) {
+    const list = await LakinhStorage.getAllProjects();
+    let item = null;
+    if (typeof id === 'number') {
+      item = list[id];
+    } else {
+      item = list.find(p => p.id === id) || (await LakinhStorage.getProject(id));
+    }
+    if (!item) {
+      showLaKinhToast('Không tìm thấy hồ sơ!');
+      return;
+    }
 
     document.getElementById('modal-projects-overlay')?.remove();
-    if (mapInstance) {
-      mapInstance.setView([item.lat, item.lng], 19);
-      updateRotationDisplay(item.rotation);
-      showLaKinhToast(`Đã mở hồ sơ: ${item.name}`);
+
+    // 1. Bay bản đồ đến tọa độ
+    if (mapInstance && item.lat && item.lng) {
+      state.centerCoords = [item.lat, item.lng];
+      mapInstance.setView([item.lat, item.lng], 19, { animate: true });
+      updateLocationHUD(item.lat, item.lng);
     }
+
+    // 2. Cập nhật góc la kinh
+    if (item.rotation !== undefined) {
+      updateRotationDisplay(item.rotation);
+    }
+
+    // 3. Khôi phục mặt bằng nếu có
+    if (item.floorPlan && item.floorPlan.imageSrc) {
+      state.planImageSrc = item.floorPlan.imageSrc;
+      state.planAnchorCoords = item.floorPlan.anchorCoords || [item.lat, item.lng];
+      state.isPlanGeoAnchored = item.floorPlan.isGeoAnchored !== false;
+      state.planTerrainRotation = item.floorPlan.terrainRotation !== undefined ? item.floorPlan.terrainRotation : (item.rotation || 0.0);
+      state.planRotation = state.planTerrainRotation;
+      state.planScale = item.floorPlan.scale || 1.0;
+      state.planBaseZoom = item.floorPlan.baseZoom || 19;
+      state.planOpacity = item.floorPlan.opacity !== undefined ? item.floorPlan.opacity : 0.85;
+      state.isPlanLockedToTerrain = item.floorPlan.isLockedToTerrain !== false;
+      state.planOffsetX = item.floorPlan.offsetX || 0;
+      state.planOffsetY = item.floorPlan.offsetY || 0;
+
+      const img = document.getElementById('lakinh-floorplan-img');
+      if (img) {
+        img.onload = null;
+        img.src = state.planImageSrc;
+        img.style.display = 'block';
+      }
+      syncFloorPlanDomParent();
+      updateFloorPlanTransform();
+      saveFloorPlanState();
+    } else {
+      state.planImageSrc = null;
+      syncFloorPlanDomParent();
+      updateFloorPlanTransform();
+    }
+
+    // 4. Khôi phục Tam Hợp nếu có
+    if (item.tamHop) {
+      state.tamHopDuongCuc = item.tamHop.duongCuc || state.tamHopDuongCuc;
+      state.tamHopCucData = item.tamHop.cucData || state.tamHopCucData;
+      state.tamHopThuyKhauDeg = item.tamHop.thuyKhauDeg !== undefined ? item.tamHop.thuyKhauDeg : state.tamHopThuyKhauDeg;
+      state.tamHopDongChay = item.tamHop.dongChay || state.tamHopDongChay;
+      state.tamHopCanChu = item.tamHop.canChu || state.tamHopCanChu;
+      state.tamHopChiChu = item.tamHop.chiChu || state.tamHopChiChu;
+      state.tamHopNamChi = item.tamHop.namChi || state.tamHopNamChi;
+      if (state.isTamHopActive && typeof updateTamHopLayer === 'function') {
+        updateTamHopLayer();
+      }
+    }
+
+    showLaKinhToast(`🎯 Đã mở hồ sơ: ${item.name}`);
   }
 
-  function deleteProject(idx) {
-    if (!confirm('Bạn có chắc muốn xóa hồ sơ này?')) return;
-    const list = JSON.parse(localStorage.getItem('neta_lakinh_projects') || '[]');
-    list.splice(idx, 1);
-    localStorage.setItem('neta_lakinh_projects', JSON.stringify(list));
+  async function deleteProject(id) {
+    const list = await LakinhStorage.getAllProjects();
+    const item = typeof id === 'number' ? list[id] : (await LakinhStorage.getProject(id));
+    const targetId = item ? item.id : id;
+    const name = item ? item.name : 'hồ sơ này';
+
+    if (!confirm(`Bạn có chắc muốn xóa vĩnh viễn hồ sơ "${name}"?`)) return;
+    await LakinhStorage.deleteProject(targetId);
+    showLaKinhToast('🗑️ Đã xóa hồ sơ');
     openProjectsModal();
+  }
+
+  async function exportSingleProject(id) {
+    const item = await LakinhStorage.getProject(id);
+    if (!item) {
+      showLaKinhToast('Không tìm thấy hồ sơ để xuất!');
+      return;
+    }
+    const payload = {
+      netaFormat: 'lakinh_project_v1',
+      exportedAt: new Date().toISOString(),
+      project: item
+    };
+    const safeName = (item.name || 'Ho_So').replace(/[^a-zA-Z0-9_\u00C0-\u024F\u1EA0-\u1EF9]/g, '_');
+    const filename = `${safeName}_${new Date().toISOString().slice(0, 10)}.neta`;
+    downloadJsonBlob(payload, filename);
+    showLaKinhToast(`📤 Đã xuất tệp hồ sơ: ${filename}`);
+  }
+
+  function exportCurrentProjectFile() {
+    const currentPlan = state.planImageSrc ? {
+      imageSrc: state.planImageSrc,
+      anchorCoords: state.planAnchorCoords || [state.centerCoords[0], state.centerCoords[1]],
+      isGeoAnchored: state.isPlanGeoAnchored !== false,
+      terrainRotation: state.planTerrainRotation,
+      isLockedToTerrain: state.isPlanLockedToTerrain,
+      scale: state.planScale,
+      baseZoom: state.planBaseZoom || (mapInstance ? mapInstance.getZoom() : 19),
+      opacity: state.planOpacity,
+      offsetX: state.planOffsetX || 0,
+      offsetY: state.planOffsetY || 0
+    } : null;
+
+    const proj = {
+      id: 'lakinh_' + Date.now(),
+      name: `Khao_Sat_${new Date().toISOString().slice(0,10)}`,
+      date: new Date().toISOString(),
+      lat: state.centerCoords[0],
+      lng: state.centerCoords[1],
+      rotation: state.rotation,
+      elevation: state.centerElevation,
+      declination: state.declination,
+      floorPlan: currentPlan
+    };
+
+    const payload = {
+      netaFormat: 'lakinh_project_v1',
+      exportedAt: new Date().toISOString(),
+      project: proj
+    };
+    const filename = `HoSo_LaKinh_${new Date().toISOString().slice(0, 10)}.neta`;
+    downloadJsonBlob(payload, filename);
+    showLaKinhToast(`📤 Đã xuất tệp: ${filename}`);
+  }
+
+  async function exportAllProjectsBackup() {
+    const all = await LakinhStorage.getAllProjects();
+    if (all.length === 0) {
+      showLaKinhToast('Chưa có hồ sơ nào để sao lưu');
+      return;
+    }
+    const payload = {
+      netaFormat: 'lakinh_backup_all_v1',
+      exportedAt: new Date().toISOString(),
+      count: all.length,
+      projects: all
+    };
+    const filename = `Neta_LaKinh_All_Backup_${new Date().toISOString().slice(0, 10)}.neta`;
+    downloadJsonBlob(payload, filename);
+    showLaKinhToast(`📦 Đã sao lưu ${all.length} công trình ra tệp: ${filename}`);
+  }
+
+  function importProjectFromFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (data.netaFormat === 'lakinh_project_v1' && data.project) {
+          data.project.id = 'lakinh_' + Date.now();
+          await LakinhStorage.saveProject(data.project);
+          showLaKinhToast(`✅ Đã nhập hồ sơ: ${data.project.name}`);
+          openProjectsModal();
+          if (confirm(`Đã nạp hồ sơ "${data.project.name}". Bạn có muốn mở ngay không?`)) {
+            loadProject(data.project.id);
+          }
+        } else if (data.netaFormat === 'lakinh_backup_all_v1' && Array.isArray(data.projects)) {
+          let count = 0;
+          for (const p of data.projects) {
+            if (p && p.name) {
+              await LakinhStorage.saveProject(p);
+              count++;
+            }
+          }
+          showLaKinhToast(`📦 Đã phục hồi ${count} công trình từ tệp sao lưu!`);
+          openProjectsModal();
+        } else if (data.name && (data.lat !== undefined || data.rotation !== undefined)) {
+          data.id = 'lakinh_' + Date.now();
+          await LakinhStorage.saveProject(data);
+          showLaKinhToast(`✅ Đã nhập hồ sơ: ${data.name}`);
+          openProjectsModal();
+        } else {
+          showLaKinhToast('❌ Định dạng tệp không hợp lệ!');
+        }
+      } catch (err) {
+        showLaKinhToast('❌ Lỗi đọc tệp: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
   }
 
   function exportKML() {
@@ -5536,32 +6305,73 @@ function updateQmdjStrategicLayer() {
       btnPlanPan.addEventListener('click', () => togglePlanPanMode());
     }
 
-    const btnPlanResetCenter = document.getElementById('sheet-btn-plan-reset-center');
-    if (btnPlanResetCenter) {
-      btnPlanResetCenter.addEventListener('click', () => {
+    // CÁC SỰ KIỆN KHÓA TÂM THỬA ĐẤT GPS & TINH CHỈNH VI MÔ D-PAD
+    document.getElementById('btn-toggle-geo-anchor')?.addEventListener('click', () => togglePlanGeoAnchor());
+    document.getElementById('fl-btn-geo-anchor')?.addEventListener('click', () => togglePlanGeoAnchor());
+
+    document.getElementById('btn-paste-coords')?.addEventListener('click', pasteCoordsFromClipboard);
+    document.getElementById('btn-apply-coords')?.addEventListener('click', () => {
+      const input = document.getElementById('sheet-input-plan-coords');
+      if (input) applyPlanCoordsInput(input.value);
+    });
+    document.getElementById('sheet-input-plan-coords')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyPlanCoordsInput(e.target.value);
+      }
+    });
+
+    document.getElementById('btn-anchor-to-current')?.addEventListener('click', () => {
+      if (!mapInstance) return;
+      const c = mapInstance.getCenter();
+      state.planAnchorCoords = [c.lat, c.lng];
+      state.planBaseZoom = mapInstance.getZoom() || 19;
+      state.isPlanGeoAnchored = true;
+      state.planOffsetX = 0;
+      state.planOffsetY = 0;
+      syncFloorPlanDomParent();
+      updateFloorPlanGeoPos();
+      updateFloorPlanCoordsUI();
+      saveFloorPlanState();
+      showLaKinhToast(`📍 Đã ghim tâm nhà tại: ${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}`);
+    });
+
+    const flyToPlanCenter = () => {
+      if (state.isPlanGeoAnchored && state.planAnchorCoords && mapInstance) {
+        mapInstance.panTo(state.planAnchorCoords, { animate: true });
+        showLaKinhToast('🎯 Đã đưa tâm nhà về tâm La Kinh');
+      } else {
         state.planOffsetX = 0;
         state.planOffsetY = 0;
         updateFloorPlanTransform();
         saveFloorPlanState();
         showLaKinhToast('🎯 Đã đưa mặt bằng về chính tâm La Kinh (0, 0)');
-      });
-    }
+      }
+    };
+    document.getElementById('btn-fly-to-plan-center')?.addEventListener('click', flyToPlanCenter);
+    document.getElementById('btn-dpad-center')?.addEventListener('click', flyToPlanCenter);
+    document.getElementById('fl-btn-plan-center')?.addEventListener('click', flyToPlanCenter);
+    document.getElementById('sheet-btn-plan-reset-center')?.addEventListener('click', flyToPlanCenter);
 
-    const bindPlanShift = (id, dx, dy) => {
-      const b = document.getElementById(id);
-      if (b) {
-        b.addEventListener('click', () => {
-          state.planOffsetX += dx;
-          state.planOffsetY += dy;
-          updateFloorPlanTransform();
+    ['m02', 'm05', 'm10'].forEach(k => {
+      const val = k === 'm02' ? 0.2 : (k === 'm05' ? 0.5 : 1.0);
+      const btn = document.getElementById(`btn-step-${k}`);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          state.planMicroStepMeters = val;
+          ['m02', 'm05', 'm10'].forEach(x => {
+            document.getElementById(`btn-step-${x}`)?.classList.toggle('active', x === k);
+          });
+          showLaKinhToast(`Bước tinh chỉnh: ${val}m`);
           saveFloorPlanState();
         });
       }
-    };
-    bindPlanShift('btn-plan-shift-left', -5, 0);
-    bindPlanShift('btn-plan-shift-right', 5, 0);
-    bindPlanShift('btn-plan-shift-up', 0, -5);
-    bindPlanShift('btn-plan-shift-down', 0, 5);
+    });
+
+    document.getElementById('btn-dpad-up')?.addEventListener('click', () => shiftPlanAnchorMeters(0, state.planMicroStepMeters || 0.5));
+    document.getElementById('btn-dpad-down')?.addEventListener('click', () => shiftPlanAnchorMeters(0, -(state.planMicroStepMeters || 0.5)));
+    document.getElementById('btn-dpad-left')?.addEventListener('click', () => shiftPlanAnchorMeters(-(state.planMicroStepMeters || 0.5), 0));
+    document.getElementById('btn-dpad-right')?.addEventListener('click', () => shiftPlanAnchorMeters((state.planMicroStepMeters || 0.5), 0));
 
     // Kéo rê & Thu phóng 2 ngón tay (Pinch-to-Zoom & Pan) khi ở chế độ Mặt Bằng
     const lkContainer = document.getElementById('view-lakinh');
@@ -5576,6 +6386,7 @@ function updateQmdjStrategicLayer() {
     let planDragStartY = 0;
     let planDragInitOx = 0;
     let planDragInitOy = 0;
+    let planDragInitCoords = null;
 
     if (lkContainer) {
       lkContainer.addEventListener('pointerdown', (e) => {
@@ -5592,6 +6403,7 @@ function updateQmdjStrategicLayer() {
           planDragStartY = e.clientY;
           planDragInitOx = state.planOffsetX;
           planDragInitOy = state.planOffsetY;
+          planDragInitCoords = state.planAnchorCoords ? [...state.planAnchorCoords] : null;
         } else if (activePointers.size === 2) {
           isPlanDragging = false;
           isPinching = true;
@@ -5633,9 +6445,29 @@ function updateQmdjStrategicLayer() {
         } else if (isPlanDragging && activePointers.size === 1) {
           const dx = e.clientX - planDragStartX;
           const dy = e.clientY - planDragStartY;
-          state.planOffsetX = Math.round(planDragInitOx + dx);
-          state.planOffsetY = Math.round(planDragInitOy + dy);
-          updateFloorPlanTransform();
+          if (state.isPlanGeoAnchored && planDragInitCoords && mapInstance) {
+            const rotRad = (state.isMapRotateWithCompass ? state.rotation : 0.0) * Math.PI / 180;
+            const mapDx = dx * Math.cos(rotRad) - dy * Math.sin(rotRad);
+            const mapDy = dx * Math.sin(rotRad) + dy * Math.cos(rotRad);
+
+            const curZoom = mapInstance.getZoom() || 19;
+            const lat = planDragInitCoords[0];
+            const metersPerPx = 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, curZoom);
+
+            const shiftMetersX = mapDx * metersPerPx;
+            const shiftMetersY = -mapDy * metersPerPx;
+
+            const deltaLat = shiftMetersY / 111320;
+            const deltaLng = shiftMetersX / (111320 * Math.cos(lat * Math.PI / 180));
+
+            state.planAnchorCoords = [planDragInitCoords[0] + deltaLat, planDragInitCoords[1] + deltaLng];
+            updateFloorPlanGeoPos();
+            updateFloorPlanCoordsUI();
+          } else {
+            state.planOffsetX = Math.round(planDragInitOx + dx);
+            state.planOffsetY = Math.round(planDragInitOy + dy);
+            updateFloorPlanTransform();
+          }
           e.stopPropagation();
         }
       });
@@ -5975,6 +6807,12 @@ function updateQmdjStrategicLayer() {
 
     const btnSave = document.getElementById('sheet-btn-save');
     if (btnSave) btnSave.addEventListener('click', saveCurrentProject);
+
+    const btnProjectsSheet = document.getElementById('sheet-btn-projects');
+    if (btnProjectsSheet) btnProjectsSheet.addEventListener('click', openProjectsModal);
+
+    const btnExportSheet = document.getElementById('sheet-btn-export-file');
+    if (btnExportSheet) btnExportSheet.addEventListener('click', exportCurrentProjectFile);
 
     const btnKML = document.getElementById('sheet-btn-kml');
     if (btnKML) btnKML.addEventListener('click', exportKML);
@@ -7439,7 +8277,17 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     render: renderLaKinh,
     jumpTo: jumpToLocation,
     loadProject: loadProject,
+    saveCurrentProject: saveCurrentProject,
+    openProjectsModal: openProjectsModal,
+    loadProject: loadProject,
     deleteProject: deleteProject,
+    exportProject: exportSingleProject,
+    exportCurrentProject: exportCurrentProjectFile,
+    exportAllProjects: exportAllProjectsBackup,
+    importProjectFromFile: importProjectFromFile,
+    applyPlanCoordsInput: applyPlanCoordsInput,
+    togglePlanGeoAnchor: togglePlanGeoAnchor,
+    shiftPlanAnchorMeters: shiftPlanAnchorMeters,
     openBottomSheet: openBottomSheet,
     closeBottomSheet: closeBottomSheet,
     openHuyenKhongModal: openHuyenKhongModal,
@@ -7458,6 +8306,9 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     removeFloorPlan: removeFloorPlan,
     togglePlanPanMode: togglePlanPanMode,
     updateFloorPlanTransform: updateFloorPlanTransform,
+    syncFloorPlanDomParent: syncFloorPlanDomParent,
+    updateFloorPlanGeoPos: updateFloorPlanGeoPos,
+    storage: LakinhStorage,
     getState: () => state
   };
 
