@@ -76,14 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.30
-          name: "Neta Light v2.8.30 (Đa Nhân Chiêm Can Năm Sinh & Luận Giải Đa Tầng Kỳ Môn Độn Giáp)"
+          tag_name: v2.8.31
+          name: "Neta Light v2.8.31 (Dải Nhập Liệu Bản Mệnh & Giới Tính Dùng Chung Toàn Module Kỳ Môn Độn Giáp)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.30
-            - **Hỗ Trợ Đa Nhân Chiêm Trong 1 Canh Giờ (Can Năm Sinh / Niên Can Bản Mệnh)**:
-              + Bổ sung chế độ chọn Dụng Thần Người Hỏi: Chuyển đổi linh hoạt giữa `[⏰ Can Giờ/Ngày]` mặc định và `[🎂 Can Năm Sinh]`.
-              + Tự động quy đổi năm sinh (1940 - 2026) sang Can Chi và Dụng Thần Thiên Can tương ứng (với Giáp quy về Mậu hoặc Cung Trực Phù).
-              + Hỗ trợ chọn nhanh trực tiếp 10 Thiên Can bản mệnh để định vị Cung Chủ Thể không bị trùng lặp khi nhiều người cùng hỏi trong 1 thời điểm.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.31
+            - **Thanh Điều Khiển Bản Mệnh & Giới Tính Dùng Chung Toàn Module (Unified Querent & Gender Strip)**:
+              + Tích hợp trực tiếp thanh nhập liệu bản mệnh ngay trên đầu bảng điều khiển: Giới tính `[♂ Nam]` / `[♀ Nữ]`, Ô nhập số Năm sinh (1920-2035) và Hộp chọn Can năm sinh.
+              + Dùng chung trạng thái đồng bộ toàn diện trên tất cả các phân hệ Kỳ Môn: `Dương Bàn`, `Âm Bàn`, `Chiến Lược Tác Quyết`, `Tọa Thiền Kết Nối Vũ Trụ`, `Phong Thủy Nhà`, `Bản Mệnh`.
+              + Tự động lưu nhớ thông tin (Local Storage) vĩnh viễn qua các phiên sử dụng.
+              + Thiết kế co giãn thông minh không tràn viền trên màn hình điện thoại di động (360px - 412px), độ tương phản cao sắc nét cả chế độ Sáng (Light Mode) và Tối (Dark Mode).
+            - **Định Vị Tự Động Cung Bản Mệnh / Cung Gia Chủ Trên Bàn 9 Cung**:
+              + Tự động đánh dấu huy hiệu `[👤 Mệnh]` trên Thiên Bàn 9 Cung tương ứng với Thiên Can năm sinh của người hỏi.
+              + Trong phân hệ Phong Thủy Nhà 16 Hướng, tự động định vị và đánh dấu `[👤 Gia Chủ]` trực quan trên bản đồ Bát Vi Thần & Huyền Không Phi Tinh.
             - **Nâng Cấp Động Cơ Luận Giải Chuyên Sâu Đa Tầng (Multi-Layer Divination Synthesis)**:
               + Tầng 1: Tương quan Chủ - Khách & Ngũ Hành Sinh Khắc (Sinh Nhập, Khắc Nhập, Tỷ Hòa, Sinh Xuất, Khắc Xuất) cùng điểm số định lượng 0-100đ.
               + Tầng 2: Bóc tách Bộ Tứ Kỳ Môn tại Cung Sự Việc (Bát Môn, Cửu Tinh, Thần Trợ, Phối Cách Thập Can với 17 cách cục kinh điển như Thanh Long Phản Thủ, Thái Bạch Nhập Huỳnh, v.v.).

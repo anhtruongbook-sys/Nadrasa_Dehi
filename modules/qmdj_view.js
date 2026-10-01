@@ -16,16 +16,125 @@
   let currentPatterns = [];
   let isQmdjLunarMode = false;
   let currentBanMenhIsMale = true;
+  let currentQuerentGender = 'nam'; // 'nam' | 'nu'
+  let currentQuerentMode = 'birth_year'; // 'birth_year' (Can Năm Sinh người hỏi) | 'hour' (Can Giờ/Ngày)
+  let currentQuerentYear = 1990;
+  let currentQuerentStem = 'Canh';
+
+  const CAN_LIST = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
+
+  function getQuerentStemChi(y) {
+    if (global.KetNoiVuTruEngine && typeof global.KetNoiVuTruEngine.getStemChiFromYear === 'function') {
+      return global.KetNoiVuTruEngine.getStemChiFromYear(y);
+    }
+    const year = parseInt(y, 10) || 1990;
+    const yOffset = year - 4;
+    const ganIdx = ((yOffset % 10) + 10) % 10;
+    const zhiIdx = ((yOffset % 12) + 12) % 12;
+    const CHI_LIST = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+    return {
+      stem: CAN_LIST[ganIdx],
+      branch: CHI_LIST[zhiIdx],
+      canChi: `${CAN_LIST[ganIdx]} ${CHI_LIST[zhiIdx]}`
+    };
+  }
+
+  function renderQuerentRowHtml(customLabel = 'Người hỏi') {
+    const info = getQuerentStemChi(currentQuerentYear);
+    const isMale = (currentQuerentGender === 'nam');
+    return `
+      <div class="ucc-row ucc-row-querent">
+        <div class="ucc-q-group-left">
+          <span class="ucc-q-label">👤 ${customLabel}:</span>
+          <div class="ucc-pill-gender">
+            <button type="button" class="ucc-gender-btn ${isMale ? 'active male' : ''}" id="btn-qmdj-gender-male" data-gender="nam" title="Giới tính Nam">♂ Nam</button>
+            <button type="button" class="ucc-gender-btn ${!isMale ? 'active female' : ''}" id="btn-qmdj-gender-female" data-gender="nu" title="Giới tính Nữ">♀ Nữ</button>
+          </div>
+        </div>
+        <div class="ucc-q-group-right">
+          <span class="ucc-q-label">Năm:</span>
+          <input type="number" id="qmdj-input-birth-year" class="num-box num-birth-year" min="1920" max="2035" value="${currentQuerentYear}" placeholder="Năm">
+          <select id="qmdj-select-birth-stem" class="select-birth-stem" title="Can năm sinh của ${customLabel}">
+            ${CAN_LIST.map(c => {
+              const isSel = (currentQuerentStem === c);
+              const extra = (c === info.stem) ? ` (${info.branch})` : '';
+              return `<option value="${c}" ${isSel ? 'selected' : ''}>${c}${extra}</option>`;
+            }).join('')}
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindQuerentRowEvents() {
+    const btnMale = document.getElementById('btn-qmdj-gender-male');
+    const btnFemale = document.getElementById('btn-qmdj-gender-female');
+    const inputYear = document.getElementById('qmdj-input-birth-year');
+    const selectStem = document.getElementById('qmdj-select-birth-stem');
+
+    if (btnMale) {
+      btnMale.onclick = () => {
+        if (currentQuerentGender !== 'nam') {
+          currentQuerentGender = 'nam';
+          currentBanMenhIsMale = true;
+          try { localStorage.setItem('qmdj_querent_gender', 'nam'); } catch (e) {}
+          renderQmdj();
+        }
+      };
+    }
+    if (btnFemale) {
+      btnFemale.onclick = () => {
+        if (currentQuerentGender !== 'nu') {
+          currentQuerentGender = 'nu';
+          currentBanMenhIsMale = false;
+          try { localStorage.setItem('qmdj_querent_gender', 'nu'); } catch (e) {}
+          renderQmdj();
+        }
+      };
+    }
+    if (inputYear) {
+      inputYear.addEventListener('change', (e) => {
+        const y = parseInt(e.target.value, 10);
+        if (!isNaN(y) && y >= 1920 && y <= 2035) {
+          currentQuerentYear = y;
+          const sc = getQuerentStemChi(y);
+          currentQuerentStem = sc.stem;
+          try {
+            localStorage.setItem('qmdj_querent_year', String(y));
+            localStorage.setItem('qmdj_querent_stem', sc.stem);
+          } catch (e) {}
+          renderQmdj();
+        }
+      });
+    }
+    if (selectStem) {
+      selectStem.addEventListener('change', (e) => {
+        const stem = e.target.value;
+        currentQuerentStem = stem;
+        const targetIdx = CAN_LIST.indexOf(stem);
+        if (targetIdx >= 0) {
+          const curOffset = (((currentQuerentYear - 4) % 10) + 10) % 10;
+          let diff = targetIdx - curOffset;
+          let newY = currentQuerentYear + diff;
+          if (diff > 5) newY -= 10;
+          if (diff < -5) newY += 10;
+          if (newY >= 1920 && newY <= 2035) {
+            currentQuerentYear = newY;
+          }
+        }
+        try {
+          localStorage.setItem('qmdj_querent_year', String(currentQuerentYear));
+          localStorage.setItem('qmdj_querent_stem', currentQuerentStem);
+        } catch (e) {}
+        renderQmdj();
+      });
+    }
+  }
 
   // Cấu hình Trường phái & Thuật toán (Kỳ Môn Độn Giáp - Kết Nối Vũ Trụ & Joey Yap)
   let currentDeitySchool = '10thần'; // '10thần' (Nguyễn Tấn Công) | '8thần' (Joey Yap)
   let currentJuMethod = 'chao_bu';   // 'chao_bu' (Sách Bổ) | 'zhi_run' (Trí Nhuận)
   let currentInquiryDomain = 'wealth'; // 12 domains: wealth, marriage, career, contract, real_estate, etc.
-
-  // Dụng Thần Người Hỏi (Chủ Thể) - Hỗ trợ Đa nhân chiêm trong 1 canh giờ
-  let currentQuerentMode = 'hour'; // 'hour' (Can Giờ/Ngày mặc định) | 'birth_year' (Can Năm Sinh người hỏi)
-  let currentQuerentYear = 1990;
-  let currentQuerentStem = 'Canh';
 
   // Trạng thái Bộ đếm nhịp thở 4-7-8 Sóng não Alpha
   let breathTimer = null;
@@ -254,6 +363,23 @@
   function initQmdjView() {
     const container = document.getElementById('view-qmdj');
     if (!container) return;
+    try {
+      const savedG = localStorage.getItem('qmdj_querent_gender');
+      if (savedG === 'nam' || savedG === 'nu') {
+        currentQuerentGender = savedG;
+        currentBanMenhIsMale = (savedG === 'nam');
+      }
+      const savedY = parseInt(localStorage.getItem('qmdj_querent_year'), 10);
+      if (!isNaN(savedY) && savedY >= 1920 && savedY <= 2035) {
+        currentQuerentYear = savedY;
+      }
+      const savedS = localStorage.getItem('qmdj_querent_stem');
+      if (savedS && CAN_LIST.includes(savedS)) {
+        currentQuerentStem = savedS;
+      } else {
+        currentQuerentStem = getQuerentStemChi(currentQuerentYear).stem;
+      }
+    } catch (e) {}
     renderQmdj();
   }
 
@@ -641,11 +767,14 @@
     const querentOptions = {
       mode: currentQuerentMode,
       year: currentQuerentYear,
-      stem: currentQuerentStem
+      stem: currentQuerentStem,
+      gender: currentQuerentGender
     };
 
     const res = global.KetNoiVuTruEngine.runOmniForecast(currentInquiryDomain, chartPlain, querentOptions);
     if (!res) return '';
+
+    const qGenderStr = currentQuerentGender === 'nam' ? 'Nam ♂' : 'Nữ ♀';
 
     return `
       <div class="qmdj-omni-card">
@@ -660,38 +789,17 @@
           </select>
         </div>
 
-        <!-- Hàng Chọn Dụng Thần Người Hỏi (Chủ Thể - Hỗ Trợ Đa Nhân Chiêm) -->
+        <!-- Hàng Xác Nhận Dụng Thần Người Hỏi (Đồng bộ với bảng điều khiển chính) -->
         <div class="omni-querent-strip">
           <div class="omni-querent-pills">
-            <span class="omni-q-lbl">👤 Người Hỏi:</span>
-            <button type="button" class="btn-omni-qmode ${currentQuerentMode === 'hour' ? 'active' : ''}" data-qmode="hour" title="Dùng Can Giờ / Ngày mặc định">
+            <span class="omni-q-lbl">👤 Dụng Thần:</span>
+            <button type="button" class="btn-omni-qmode ${currentQuerentMode === 'birth_year' ? 'active' : ''}" data-qmode="birth_year" title="Dùng Can Năm Sinh của người hỏi (đã chọn ở bảng điều khiển trên: ${currentQuerentStem} - ${qGenderStr})">
+              🎂 Can Năm Sinh: ${currentQuerentStem} (${currentQuerentYear} ${qGenderStr})
+            </button>
+            <button type="button" class="btn-omni-qmode ${currentQuerentMode === 'hour' ? 'active' : ''}" data-qmode="hour" title="Dùng Can Giờ / Ngày">
               ⏰ Can Giờ/Ngày
             </button>
-            <button type="button" class="btn-omni-qmode ${currentQuerentMode === 'birth_year' ? 'active' : ''}" data-qmode="birth_year" title="Dùng Can Năm Sinh của người hỏi (khi có nhiều người hỏi trong 1 canh giờ)">
-              🎂 Can Năm Sinh
-            </button>
           </div>
-          ${currentQuerentMode === 'birth_year' ? `
-            <div class="omni-birth-selects">
-              <div class="omni-select-item">
-                <span class="omni-sub-lbl">Năm sinh:</span>
-                <select id="omni-select-birth-year" class="omni-sub-select">
-                  ${Array.from({length: 87}, (_, i) => 2026 - i).map(y => {
-                    const sc = global.KetNoiVuTruEngine.getStemChiFromYear(y);
-                    return `<option value="${y}" ${currentQuerentYear === y ? 'selected' : ''}>${y} (${sc.canChi})</option>`;
-                  }).join('')}
-                </select>
-              </div>
-              <div class="omni-select-item">
-                <span class="omni-sub-lbl">Hoặc Can:</span>
-                <select id="omni-select-birth-stem" class="omni-sub-select">
-                  ${["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"].map(s => 
-                    `<option value="${s}" ${currentQuerentStem === s ? 'selected' : ''}>Can ${s}${s === 'Giáp' ? ' (ẩn Mậu)' : ''}</option>`
-                  ).join('')}
-                </select>
-              </div>
-            </div>
-          ` : ''}
         </div>
 
         <!-- Bảng Cặp Cung Chủ Thể ↔ Sự Việc -->
@@ -881,7 +989,10 @@
             </div>
           </div>
 
-          <!-- Row 3: Actions -->
+          <!-- Row 3: Người Hỏi (Can Năm Sinh & Giới Tính) - Dùng chung toàn module -->
+          ${renderQuerentRowHtml('Người hỏi')}
+
+          <!-- Row 4: Actions -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
             <div class="qmdj-cuc-badge" title="Cục số và Tiết khí: ${solarTermFullStr || solarTermStr}">
@@ -1239,7 +1350,10 @@
             </div>
           </div>
 
-          <!-- Row 3: Info & Submit -->
+          <!-- Row 3: Người Hỏi (Can Năm Sinh & Giới Tính) - Dùng chung toàn module -->
+          ${renderQuerentRowHtml('Người hỏi')}
+
+          <!-- Row 4: Info & Submit -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="btn-qmdj-now" title="Đặt lại về thời điểm hiện tại">⚡ Giờ thực</button>
             <div class="qmdj-cuc-badge" title="Cục số và Tiết khí: ${solarTermFullStr || solarTerm}">
@@ -1619,7 +1733,10 @@
             </div>
           </div>
 
-          <!-- Row 3: Info & Submit -->
+          <!-- Row 3: Người Thiền (Can Năm Sinh & Giới Tính) - Dùng chung toàn module -->
+          ${renderQuerentRowHtml('Người thiền')}
+
+          <!-- Row 4: Info & Submit -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="btn-qmdj-now" title="Thời gian hiện tại">⚡ Giờ thực</button>
             <div class="qmdj-cuc-badge" title="Cục số và Tiết khí: ${solarTermFullStr || solarTerm}">
@@ -2065,13 +2182,16 @@
               <button type="button" class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
               <button type="button" class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
             </div>
-            <div class="ucc-pill-gender">
-              <button type="button" class="ucc-gender-btn ${currentBanMenhIsMale ? 'active male' : ''}" id="btn-banmenh-male">♂ Nam</button>
-              <button type="button" class="ucc-gender-btn ${!currentBanMenhIsMale ? 'active female' : ''}" id="btn-banmenh-female">♀ Nữ</button>
+            <div class="ucc-step-group">
+              <button type="button" class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
+              <button type="button" class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
             </div>
           </div>
 
-          <!-- Row 3: Actions -->
+          <!-- Row 3: Người Hỏi / Bản Mệnh (Nam/Nữ & Can Năm Sinh) - Dùng chung toàn module -->
+          ${renderQuerentRowHtml('Bản mệnh')}
+
+          <!-- Row 4: Actions -->
           <div class="ucc-row ucc-row-actions">
             <button class="ucc-btn-now" id="btn-qmdj-now" title="Về thời điểm hiện tại">
               ⚡ Giờ thực
@@ -2374,6 +2494,9 @@
 
         <!-- Phong Thuy Control Card -->
         <div class="unified-ctrl-card pt-ctrl-card">
+          <!-- Row 0: Gia Chủ (Nam/Nữ & Can Năm Sinh) - Dùng chung toàn module -->
+          ${renderQuerentRowHtml('Gia chủ')}
+
           <!-- Row 1: Vận Nhà & Hướng Nhà (16 Hướng Chuẩn) -->
           <div class="ucc-row pt-row-params">
             <div class="pt-field-group">
@@ -2667,6 +2790,25 @@
         } else {
           const palaceName = PALACE_NAMES[pIndex] || `Cung ${pIndex + 1}`;
 
+          let isQuerentPalace = false;
+          if (currentQuerentStem && currentQmdjMode !== 'banmenh') {
+            if (currentQuerentStem === 'Giáp') {
+              const GIAP_LEADER_MAP = {
+                'Tý': 'Mậu', 'Tuất': 'Kỷ', 'Thân': 'Canh',
+                'Ngọ': 'Tân', 'Thìn': 'Nhâm', 'Dần': 'Quý'
+              };
+              const qBranch = getQuerentStemChi(currentQuerentYear).branch;
+              const mappedStem = GIAP_LEADER_MAP[qBranch] || 'Mậu';
+              if (hcs.some(s => s && s.includes(mappedStem))) {
+                isQuerentPalace = true;
+              }
+            } else {
+              if (hcs.some(s => s && s.includes(currentQuerentStem))) {
+                isQuerentPalace = true;
+              }
+            }
+          }
+
           if (isPt) {
             const isFacing = pData.isFacing;
             const isDoor = pData.isDoor;
@@ -2678,12 +2820,13 @@
             const cleanEcs = String(ecs[0] || '—').replace(/\s*\([^)]*\)/g, '').trim();
 
             html += `
-              <div class="qmdj-palace-cell pt-palace-cell ${isFacing ? 'pt-palace-facing' : ''} ${isDoor ? 'pt-palace-door' : ''}" data-palace-index="${pIndex}">
+              <div class="qmdj-palace-cell pt-palace-cell ${isFacing ? 'pt-palace-facing' : ''} ${isDoor ? 'pt-palace-door' : ''} ${isQuerentPalace ? 'cell-highlight-querent' : ''}" data-palace-index="${pIndex}">
                 <!-- Top Row: Thần, Sao & Số Cung -->
                 <div class="p-top pt-cell-top">
                   <span class="p-divinity ${getCatClass(divinity)}">${divinity}</span>
                   <span class="pt-cell-star ${getCatClass(stars[0])}">${ptShortStar}</span>
                   <div class="p-top-right">
+                    ${isQuerentPalace ? `<span class="qmdj-badge-querent-palace ${currentQuerentGender}" title="Cung Gia Chủ (${currentQuerentStem} ${currentQuerentGender === 'nam' ? 'Nam ♂' : 'Nữ ♀'})">👤 Gia Chủ</span>` : ''}
                     <span class="p-num">${pIndex + 1}</span>
                   </div>
                 </div>
@@ -2742,6 +2885,11 @@
                   cellHighlightClass = 'cell-highlight-banmenh';
                 }
               }
+            }
+
+            if (isQuerentPalace) {
+              modeBadgeTop += `<span class="qmdj-badge-querent-palace ${currentQuerentGender}" title="Cung Bản Mệnh (${currentQuerentStem} ${currentQuerentGender === 'nam' ? 'Nam ♂' : 'Nữ ♀'})">👤 Mệnh</span>`;
+              if (!cellHighlightClass) cellHighlightClass = 'cell-highlight-querent';
             }
 
             html += `
@@ -2834,6 +2982,7 @@
   }
 
   function bindQmdjTimeEvents(chart, patterns) {
+    bindQuerentRowEvents();
     const pad = n => String(n).padStart(2, '0');
 
     const inputDay = document.getElementById('qmdj-input-day');
@@ -3088,6 +3237,7 @@
   }
 
   function bindPhongThuyEvents(chart) {
+    bindQuerentRowEvents();
     const selVan = document.getElementById('pt-select-van');
     const selHuong = document.getElementById('pt-select-huong');
     const selCua = document.getElementById('pt-select-cua');

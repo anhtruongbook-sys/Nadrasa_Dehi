@@ -454,7 +454,8 @@
         stem = getStemChiFromYear(querentOptions.year).stem;
       }
       stem = stem || 'Giáp';
-      querentLabel = `Can Năm Sinh: ${stem}${querentOptions.year ? ` (${querentOptions.year})` : ''}`;
+      const gStr = querentOptions.gender ? (querentOptions.gender === 'nam' ? 'Nam ♂' : 'Nữ ♀') : '';
+      querentLabel = `Can Năm Sinh: ${stem}${querentOptions.year ? ` (${querentOptions.year}${gStr ? ' ' + gStr : ''})` : (gStr ? ` (${gStr})` : '')}`;
 
       // Giáp trong Kỳ Môn ẩn dưới Lục Nghi (mặc định Giáp Tý ẩn Mậu hoặc Cung Trực Phù)
       if (stem === 'Giáp') {
@@ -492,8 +493,16 @@
         break;
       case 'marriage':
         domainName = "Hôn Nhân & Tình Duyên";
-        objP = findPalaceWith('deity', 'Lục Hợp');
-        targetLabel = "Hôn Phối (Lục Hợp) • Đối tác (Ất/Canh)";
+        if (querentOptions.gender === 'nam') {
+          objP = findPalaceWith('heaven_stem', 'Ất') || findPalaceWith('deity', 'Lục Hợp');
+          targetLabel = "Người Nữ / Bạn Đời (Thiên Can Ất) • Đồng Thuận (Lục Hợp)";
+        } else if (querentOptions.gender === 'nu') {
+          objP = findPalaceWith('heaven_stem', 'Canh') || findPalaceWith('deity', 'Lục Hợp');
+          targetLabel = "Người Nam / Bạn Đời (Thiên Can Canh) • Đồng Thuận (Lục Hợp)";
+        } else {
+          objP = findPalaceWith('deity', 'Lục Hợp');
+          targetLabel = "Hôn Phối (Lục Hợp) • Đối tác (Ất/Canh)";
+        }
         break;
       case 'career':
         domainName = "Công Danh & Sự Nghiệp";
@@ -542,8 +551,13 @@
         break;
       case 'childbirth':
         domainName = "Sinh Nở & Con Cái";
-        objP = 2; // Cung Khôn 2
-        targetLabel = "Sản Phụ (Cung Khôn 2) • Thai Nhi (Sinh Môn)";
+        if (querentOptions.gender === 'nu') {
+          objP = findPalaceWith('door', 'Sinh Môn');
+          targetLabel = "Thai Nhi & Sinh Nở (Sinh Môn) • Sản Phụ (Cung Bản Mệnh)";
+        } else {
+          objP = 2; // Cung Khôn 2
+          targetLabel = "Sản Phụ / Người Mẹ (Cung Khôn 2) • Thai Nhi (Sinh Môn)";
+        }
         break;
       default:
         domainName = "Vạn Sự Chiêm Đoán";
