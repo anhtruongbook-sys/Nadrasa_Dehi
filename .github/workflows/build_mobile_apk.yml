@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.36
-          name: "Neta Light v2.8.36 (Khắc Phục Cuộn Lên Đầu Trang & Tối Ưu In-Place Navigation Toàn Diện Đa Module)"
+          tag_name: v2.8.37
+          name: "Neta Light v2.8.37 (Chuẩn Hóa Toàn Diện Thuật Toán Bát Tự & Triệt Tiêu Mâu Thuẫn Thân Vượng / Thân Nhược)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.36
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.37
+            - **Chuẩn Hóa Toàn Diện Thuật Toán Bát Tự & Triệt Tiêu Mâu Thuẫn Thân Vượng / Thân Nhược**:
+              + **Khắc phục lỗi logic thuộc tính `is_strong`**: Bổ sung đầy đủ các cờ trạng thái `is_strong`, `is_weak`, `is_balanced` trong động cơ Cân Lực Ngũ Hành (QEE - 100 điểm) tại `classifyBodyStrength`, giải quyết triệt để lỗi đánh giá Cách Cục bị fallback nhầm thành Thân Nhược.
+              + **Đồng bộ hóa 100% Cây Quyết Định Cách Cục (`evaluateGeJu`)**: Tái cấu trúc toàn diện logic thẩm định cách cục (Dương Nhẫn Cách, Kiến Lộc Cách, Chính Quan, Thất Sát, Chính Ấn, Thiên Ấn, Tài Tinh, Thực Thương, Tỉ Kiếp). Khi Bản Mệnh là Thân Vượng, Cách Cục đồng bộ chính xác thành `Thân Vượng Đắc Cách (Ưa Tiết Khí, Tài Quan Gánh Vác)` hoặc `Thành Cách`, loại bỏ hoàn toàn hiện tượng "trên ghi Thân Vượng, dưới ghi Thân Nhược".
+              + **Phân định rành mạch giữa Nguyệt Lệnh Mùa và Thân Vượng/Nhược Toàn Cục**: Chuẩn hóa nhãn ngũ hành mùa từ `VƯỢNG` sang `ĐẮC LỆNH (Cùng hành mùa, đắc thời khí vượng)` trong `bazi_engine.js`, kèm ghi chú đối sánh học thuật Tử Bình giải thích rõ ràng mối tương quan khi đắc lệnh nhưng thân nhược hoặc thất lệnh nhưng thân vượng.
+              + **Kiểm thử tự động đối sánh quy mô lớn**: Vượt qua bộ kiểm thử tự động 576 lá số đại diện qua 6 thập kỷ (1970 - 2030) với 0 lỗi mâu thuẫn.
             - **Khắc Phục Cuộn Lên Đầu Trang & Tối Ưu In-Place Navigation Toàn Diện (Bát Tự, Lục Nhâm, Thái Ất, Kỳ Môn, Dịch Học, Trạch Cát)**:
               + **Bát Tự (Manh Phái Mệnh Lý)**: Chuyển đổi bộ lọc 6 Trụ Cột Đời Người sang In-Place DOM Display Toggle, cuộn mượt mà trực tiếp đến thẻ chủ đề tương ứng (`scroll-margin-top: 65px`), bảo toàn 100% vị trí cuộn trên `.bazi-view-container`.
               + **Lục Nhâm Đại Độn**: Chuyển đổi bộ lọc phân loại (Tất Pháp Phú, Timeline 3 Giai Đoạn, 7 Chuyên Đề, 8 Sự Vụ Đời Sống) và đóng/mở Accordion sang cập nhật tại chỗ (In-Place DOM Class Toggle), không bao giờ bị giật hay cuộn ngược lên đỉnh trang.

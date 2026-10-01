@@ -344,9 +344,16 @@
       }
     }
 
+    const isStrong = (strength === 'Thân Vượng' || strength === 'Cực Vượng');
+    const isWeak = (strength === 'Thân Nhược' || strength.includes('Tòng Nhược'));
+    const isBalanced = (strength === 'Trung Hòa');
+
     return {
       pattern,
       strength,
+      is_strong: isStrong,
+      is_weak: isWeak,
+      is_balanced: isBalanced,
       support_score: supportScore,
       drain_score: drainScore,
       detail,
@@ -407,7 +414,7 @@
         favorable = [sameWx];
         unfavorable = [officerWx, wealthWx];
         idle = [outputWx];
-      } else if (strength === 'Thân Vượng') {
+      } else if (strength === 'Thân Vượng' || strength === 'Cực Vượng') {
         primaryUse = [wealthWx, officerWx];
         favorable = [outputWx];
         unfavorable = [resourceWx, sameWx];
@@ -982,7 +989,7 @@
     let wealthLevel = '';
     let wealthAdvice = '';
 
-    if (strength.includes('Thân Vượng')) {
+    if (strength.includes('Thân Vượng') || strength.includes('Cực Vượng')) {
       if (wealthScore >= 15.0) {
         wealthLevel = 'Thân Vượng Thắng Tài: Bản lĩnh quản trị tài chính mạnh mẽ, có sức khỏe và nghị lực gánh vác khối lượng của cải lớn, đại cát đại lợi.';
         wealthAdvice = 'Nên mạnh dạn đầu tư vào tài sản hữu hình, bất động sản hoặc sản xuất kinh doanh có chiều sâu.';
@@ -990,7 +997,7 @@
         wealthLevel = 'Thân Vượng Tài Khí Tiềm Ẩn: Sức làm việc rất lớn nhưng cần gặp thời vận tương sinh (Đại vận Tài/Thương) để khai phá dòng tiền bùng nổ.';
         wealthAdvice = 'Tập trung xây dựng nền tảng chuyên môn vững chắc, tiền tài sẽ tự tìm đến khi thời cơ chín muồi.';
       }
-    } else if (strength.includes('Thân Nhược')) {
+    } else if (strength.includes('Thân Nhược') || strength.includes('Tòng Nhược')) {
       if (wealthScore >= 25.0) {
         wealthLevel = 'Tài Đa Thân Nhược (Cơ hội ngập tràn nhưng năng lực tự thân chịu áp lực lớn): Dễ mệt mỏi vì tiền của, kiếm được nhiều nhưng dễ hao hụt qua quan hệ xã hội.';
         wealthAdvice = 'Tuyệt đối không nên ôm đồm quá nhiều dự án cùng lúc; nên hợp tác cổ phần với người đáng tin cậy để chia sẻ rủi ro.';
@@ -999,8 +1006,8 @@
         wealthAdvice = 'Duy trì kỷ luật chi tiêu có kế hoạch, tích lũy từng bước chắc chắn.';
       }
     } else {
-      wealthLevel = 'Mệnh Cục Tài Vận Đặc Thù: Lợi nhuận bùng nổ mạnh mẽ theo chu kỳ thời vận hỷ dụng thần.';
-      wealthAdvice = 'Nắm bắt các cơ hội theo xu thế công nghệ mới và liên minh hợp tác lớn.';
+      wealthLevel = 'Mệnh Cục Trung Hòa Đắc Lực: Khí số cân bằng, tài chính ổn định và tiến triển vững vàng theo từng giai đoạn phát triển năng lực cá nhân.';
+      wealthAdvice = 'Duy trì kế hoạch đầu tư bài bản, nắm bắt cơ hội theo chu kỳ vận hội Hỷ Dụng Thần.';
     }
 
     return {
@@ -1346,6 +1353,11 @@
   function evaluateGeJu(chart, quant) {
     const dm = chart.day_gan;
     const mz = chart.month_zhi;
+    const bodyStr = quant.body_strength || {};
+    const isStrong = Boolean(bodyStr.is_strong || bodyStr.strength === 'Thân Vượng' || bodyStr.strength === 'Cực Vượng');
+    const isWeak = Boolean(bodyStr.is_weak || bodyStr.strength === 'Thân Nhược' || (bodyStr.strength && bodyStr.strength.includes('Tòng Nhược')));
+    const isBalanced = Boolean(bodyStr.is_balanced || bodyStr.strength === 'Trung Hòa');
+
     const luKinhMap = {
       'Giáp': { lộc: 'Dần', nhẫn: 'Mão' },
       'Ất': { lộc: 'Mão', nhẫn: 'Thìn' },
@@ -1360,23 +1372,39 @@
     };
 
     if (luKinhMap[dm] && luKinhMap[dm].nhẫn === mz) {
+      let statusStr = '';
+      if (isStrong) {
+        statusStr = 'Thành Cách (Dương Nhẫn Thân Vượng, cần Quan Sát hoặc Thực Thương chế hóa)';
+      } else if (isWeak) {
+        statusStr = 'Dương Nhẫn Thân Nhược (Đắc Kình Dương trợ lực, cần thêm Ấn Tỉ nâng đỡ)';
+      } else {
+        statusStr = 'Khí Số Trung Hòa (Dương Nhẫn đắc lực, vận hành theo Hỷ Dụng Thần)';
+      }
       return {
         name: 'Dương Nhẫn Cách (Kình Dương Nguyệt Lệnh)',
         type: 'Đặc Cách Tử Bình',
-        status: quant.body_strength.is_strong ? 'Thành Cách (Thân vượng cần Quan Sát chế ngự)' : 'Cần Ấn Thụ điều phối',
+        status: statusStr,
         description: 'Khí lực bản thân cực kỳ dũng mãnh, tính cách quyết đoán, dám nghĩ dám làm, thích hợp lĩnh vực quản lý kỷ luật, kỹ thuật phức tạp hoặc tiên phong khai phá.',
-        favorableGods: 'Quan Sát hoặc Thực Thương',
+        favorableGods: isStrong ? 'Quan Sát hoặc Thực Thương' : 'Ấn Thụ và Tỉ Kiếp',
         advice: 'Cần duy trì sự bình tĩnh, tránh nóng vội, lắng nghe ý kiến cộng sự để chuyển hóa uy lực thành thành tựu bền vững.'
       };
     }
 
     if (luKinhMap[dm] && luKinhMap[dm].lộc === mz) {
+      let statusStr = '';
+      if (isStrong) {
+        statusStr = 'Thành Cách (Kiến Lộc Thân Vượng, cần Tài Quan thấu lộ phát tiết)';
+      } else if (isWeak) {
+        statusStr = 'Kiến Lộc Thân Nhược (Đắc Lộc nhưng bị khắc tiết, cần Ấn Tỉ bồi bổ)';
+      } else {
+        statusStr = 'Khí Số Trung Hòa (Kiến Lộc tự lập, khí thế cân bằng hài hòa)';
+      }
       return {
         name: 'Kiến Lộc Cách (Lộc Thần Nguyệt Lệnh)',
         type: 'Đặc Cách Tử Bình',
-        status: 'Thành Cách (Thân vượng tự lập, cần Tài Quan thấu lộ)',
+        status: statusStr,
         description: 'Mệnh chủ tự lực cánh sinh, không nương tựa gia sản tổ nghiệp, tự thân dựng nên cơ đồ bằng thực lực và ý chí kiên định.',
-        favorableGods: 'Tài Tinh và Quan Tinh',
+        favorableGods: isStrong ? 'Tài Tinh và Quan Tinh' : 'Ấn Thụ và Tỉ Kiếp',
         advice: 'Tận dụng ưu thế năng lực bản thân, mở rộng mạng lưới hợp tác và tích lũy dòng vốn bài bản.'
       };
     }
@@ -1393,7 +1421,7 @@
     }
     if (!chosen && hidden.length > 0) chosen = hidden[0];
 
-    const deity = calculate10Deities(dm, chosen.gan);
+    const deity = calculate10Deities(dm, chosen ? chosen.gan : dm);
     const geJuNames = {
       'Chính Quan': { name: 'Chính Quan Cách', desc: 'Thanh cao chính trực, quy phạm khuôn phép, có tài quản lý hành chính và danh dự xã hội.' },
       'Thất Sát': { name: 'Thất Sát Cách (Thiên Quan)', desc: 'Uy dũng quyết liệt, năng lực ứng biến sắc bén, thích nghi vượt trội trong môi trường cạnh tranh khốc liệt.' },
@@ -1402,18 +1430,32 @@
       'Chính Tài': { name: 'Chính Tài Cách', desc: 'Cần kiệm, thực tế, tài chính minh bạch, tích lũy vững vàng từng bước, coi trọng chữ tín và gia đình.' },
       'Thiên Tài': { name: 'Thiên Tài Cách', desc: 'Hào sảng, nhạy bén cơ hội thương trường, dòng tiền luân chuyển mạnh mẽ, năng khiếu kinh doanh đầu tư.' },
       'Thực Thần': { name: 'Thực Thần Cách', desc: 'Ôn hòa, thanh lịch, tài hoa tiết tú, khẩu tài xuất chúng, phúc lộc tự nhiên và trường thọ an nhàn.' },
-      'Thương Quan': { name: 'Thương Quan Cách', desc: 'Thông tuệ xuất chúng, tài hoa phát tiết, phản biện sắc sảo, dám đột phá lối mòn nhưng cần khiêm nhường.' }
+      'Thương Quan': { name: 'Thương Quan Cách', desc: 'Thông tuệ xuất chúng, tài hoa phát tiết, phản biện sắc sảo, dám đột phá lối mòn nhưng cần khiêm nhường.' },
+      'Tỉ Kiên': { name: 'Tỉ Kiên Cách', desc: 'Tự lập, cương nghị, đồng cam cộng khổ với anh em bạn hữu, tự thân lập nghiệp.' },
+      'Kiếp Tài': { name: 'Kiếp Tài Cách', desc: 'Nhiệt huyết, xông xáo, cạnh tranh quyết liệt, dám mạo hiểm đón đầu thử thách.' }
     };
 
     const info = geJuNames[deity] || { name: `${deity} Cách`, desc: 'Cách cục thiên định vận hành theo Thập Thần chủ quản.' };
+
+    let statusStr = '';
+    if (bodyStr.pattern && bodyStr.pattern.includes('Tòng')) {
+      statusStr = `Tòng Cách Thuận Thế (${bodyStr.strength || bodyStr.pattern})`;
+    } else if (isStrong) {
+      statusStr = 'Thân Vượng Đắc Cách (Ưa Tiết Khí, Tài Quan Gánh Vác)';
+    } else if (isWeak) {
+      statusStr = 'Thân Nhược Hữu Cách (Cần Ấn Tỉ Tương Trợ Nâng Đỡ)';
+    } else {
+      statusStr = 'Khí Số Trung Hòa (Cân Bằng Hài Hòa, Ưa Vận Hỷ Dụng)';
+    }
+
     return {
       name: info.name,
-      type: `Chính Cách Tử Bình (${chosen.type} thấu lộ)`,
+      type: `Chính Cách Tử Bình (${chosen ? chosen.type : 'Bản khí'} thấu lộ)`,
       deity: deity,
-      originGan: chosen.gan,
-      status: quant.body_strength.is_strong ? 'Thân Vượng Đắc Cách' : 'Thân Nhược Hữu Cách (Cần Ấn Tỉ nâng đỡ)',
+      originGan: chosen ? chosen.gan : dm,
+      status: statusStr,
       description: info.desc,
-      favorableGods: quant.gods_selection.primary_use.join(', ') || 'Tùy vận',
+      favorableGods: (quant.gods_selection && quant.gods_selection.primary_use && quant.gods_selection.primary_use.length > 0) ? quant.gods_selection.primary_use.join(', ') : (isStrong ? 'Thực Thương, Tài, Quan' : 'Ấn Thụ, Tỉ Kiếp'),
       advice: 'Lấy Dụng Thần làm trung tâm điều phối hành vi, duy trì sự cân bằng ngũ hành để cách cục đạt hiệu quả cao nhất.'
     };
   }
@@ -1468,8 +1510,8 @@
 
       // 1. Điểm cốt cách định lượng khách quan (overallScore 50-96)
       let overallScore = 68;
-      if (body.strength === 'Thân Vượng' || body.strength === 'Trung Hòa') overallScore += 7;
-      if (geju.status && geju.status.includes('Thành Cách')) overallScore += 6;
+      if (body.strength === 'Thân Vượng' || body.strength === 'Trung Hòa' || body.strength === 'Cực Vượng') overallScore += 7;
+      if (geju.status && (geju.status.includes('Thành Cách') || geju.status.includes('Đắc Cách'))) overallScore += 6;
       if (mangPai.work_mechanisms && mangPai.work_mechanisms.length >= 2) overallScore += 5;
 
       const goodShenSha = (shenSha || []).filter(s =>

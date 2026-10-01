@@ -635,11 +635,21 @@
             <div class="bazi-card-title-main">
               <span>⚖️</span> CÂN LỰC NGŨ HÀNH QEE & ĐẮC LỆNH NGUYỆT LỆNH
             </div>
-            <span class="bazi-card-tag">${bodyStr.pattern || 'Chính Cách'} • ${bodyStr.strength || 'Thân Vượng'}</span>
+            <span class="bazi-card-tag">${escapeHTML(bodyStr.pattern || 'Chính Cách')} • ${escapeHTML(bodyStr.strength || 'Trung Hòa')}</span>
           </div>
 
           <div style="font-size: 0.8rem; margin-bottom: 12px; color: var(--text-color); line-height: 1.6;">
-            <strong>Trạng thái Bản Mệnh:</strong> ${bodyStr.detail || ''} • Nguyệt Lệnh: <strong class="gold-text">${chart.dayMaster.seasonStatus.status}</strong>
+            <strong>Trạng thái Bản Mệnh:</strong> ${escapeHTML(bodyStr.detail || '')} • <strong>Khí Tiết Nguyệt Lệnh:</strong> <strong class="gold-text">${escapeHTML(chart.dayMaster.seasonStatus.status)}</strong>
+            ${bodyStr.strength === 'Thân Nhược' && (chart.dayMaster.seasonStatus.stateCode === 'VUONG' || chart.dayMaster.seasonStatus.stateCode === 'TUONG') ? `
+              <div style="font-size: 0.77rem; color: #e67e22; margin-top: 6px; padding: 5px 10px; background: rgba(230, 126, 34, 0.09); border-radius: 4px; border-left: 3px solid #e67e22; line-height: 1.5;">
+                💡 <em>Đối sánh học thuật Tử Bình:</em> Nhật Chủ tuy được mùa (Đắc Lệnh/Tướng) nhưng do các trụ khác chịu nhiều lực Khắc (Quan Sát), Tiết (Thực Thương) hoặc Hao (Tài Tinh) áp đảo, nên tổng thể toàn cục định lượng là <strong>Thân Nhược</strong>, tối ưu nhất lấy Ấn Tỉ làm gốc nâng đỡ.
+              </div>
+            ` : ''}
+            ${(bodyStr.strength === 'Thân Vượng' || bodyStr.strength === 'Cực Vượng') && (chart.dayMaster.seasonStatus.stateCode === 'TU' || chart.dayMaster.seasonStatus.stateCode === 'HUU' || chart.dayMaster.seasonStatus.stateCode === 'TU_KHAC') ? `
+              <div style="font-size: 0.77rem; color: #27ae60; margin-top: 6px; padding: 5px 10px; background: rgba(39, 174, 96, 0.09); border-radius: 4px; border-left: 3px solid #27ae60; line-height: 1.5;">
+                💡 <em>Đối sánh học thuật Tử Bình:</em> Nhật Chủ tuy sinh vào mùa khí suy (Thất Lệnh/Hưu/Tù/Tử) nhưng do đắc địa thông căn vững chắc và được nhiều can chi tương sinh trợ lực, nên tổng thể toàn cục định lượng là <strong>Thân Vượng</strong>, ưa tiết hao gánh vác Tài Quan.
+              </div>
+            ` : ''}
           </div>
 
           <div class="bazi-wuxing-grid">

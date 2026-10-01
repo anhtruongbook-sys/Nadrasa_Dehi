@@ -161,11 +161,11 @@
     const dIdx = WX_ORDER.indexOf(dayGanWx);
     const diff = ((dIdx - mIdx) % 5 + 5) % 5;
     const statuses = [
-      'VƯỢNG (Đắc lệnh, cùng hành mùa)',
-      'TƯỚNG (Được mùa tương sinh)',
-      'TỬ (Bị mùa khắc phạt)',
-      'TÙ (Khắc lại mùa, hao lực)',
-      'HƯU (Sinh xuất ra mùa, tiết khí)'
+      'ĐẮC LỆNH (Cùng hành mùa, đắc thời khí vượng)',
+      'TƯỚNG (Được mùa tương sinh, sinh khí dồi dào)',
+      'TỬ (Bị mùa khắc phạt, suy thoái khí)',
+      'TÙ (Khắc mùa hao tổn, tiết giảm khí thế)',
+      'HƯU (Sinh xuất cho mùa, tiết khí nghỉ ngơi)'
     ];
     return {
       season,
