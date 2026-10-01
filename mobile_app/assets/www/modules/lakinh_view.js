@@ -116,23 +116,6 @@
 
         <div id="lakinh-crosshair"></div>
 
-        <!-- Nút Nổi Ẩn/Hiện Đĩa La Kinh (Bên Trái - Thẳng Hàng Nút GPS 74px) -->
-        <button id="lakinh-btn-toggle-disc-fab" class="lakinh-fab-map-btn ${state.isDiscVisible ? '' : 'disc-hidden'}" title="${state.isDiscVisible ? 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình' : 'Hiện Đĩa La Kinh 36 Tầng'}" aria-label="Ẩn hiện La Kinh">
-          <span id="lakinh-fab-disc-icon">
-            ${state.isDiscVisible ? `
-              <svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-            ` : `
-              <svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                <line x1="1" y1="1" x2="23" y2="23"></line>
-              </svg>
-            `}
-          </span>
-        </button>
-
         <!-- Nút Nổi Bay Về Vị Trí Hiện Tại (My Location FAB - Bên Phải - Vector GPS Target Cao Cấp) -->
         <button id="lakinh-btn-my-location" title="Bay về vị trí GPS thực tế hiện tại của bạn" aria-label="Về vị trí hiện tại">
           <svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2768,16 +2751,6 @@ function updateQmdjStrategicLayer() {
     if (mapInstance && userLocationLayerGroup) {
       userLocationLayerGroup.clearLayers();
 
-      // Vòng tròn bán kính sai số GPS
-      L.circle([lat, lng], {
-        radius: Math.max(accuracy || 10, 12),
-        color: '#38bdf8',
-        fillColor: '#38bdf8',
-        fillOpacity: 0.15,
-        weight: 1.5,
-        dashArray: '4, 4'
-      }).addTo(userLocationLayerGroup);
-
       // Radar Beacon Marker nhấp nháy xanh tại vị trí thực
       L.marker([lat, lng], {
         icon: L.divIcon({
@@ -2861,16 +2834,6 @@ function updateQmdjStrategicLayer() {
 
       if (mapInstance && userLocationLayerGroup) {
         userLocationLayerGroup.clearLayers();
-
-        // Vòng tròn bán kính sai số GPS
-        L.circle([lat, lng], {
-          radius: Math.max(accuracy, 12),
-          color: '#38bdf8',
-          fillColor: '#38bdf8',
-          fillOpacity: 0.15,
-          weight: 1.5,
-          dashArray: '4, 4'
-        }).addTo(userLocationLayerGroup);
 
         // Radar Beacon Marker nhấp nháy xanh tại vị trí thực
         L.marker([lat, lng], {
@@ -4666,8 +4629,6 @@ function updateQmdjStrategicLayer() {
       }
 
       const container = document.getElementById('lakinh-overlay-container');
-      const fabBtn = document.getElementById('lakinh-btn-toggle-disc-fab');
-      const fabIcon = document.getElementById('lakinh-fab-disc-icon');
       const topBtn = document.getElementById('lakinh-btn-toggle-disc');
       const topIcon = document.getElementById('lakinh-top-disc-icon');
       const banner = document.getElementById('lakinh-disc-hidden-banner');
@@ -4677,13 +4638,6 @@ function updateQmdjStrategicLayer() {
 
       if (state.isDiscVisible) {
         if (container) container.classList.remove('is-disc-hidden');
-        if (fabBtn) {
-          fabBtn.classList.remove('disc-hidden');
-          fabBtn.title = 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình';
-        }
-        if (fabIcon) {
-          fabIcon.innerHTML = `<svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-        }
         if (topBtn) {
           topBtn.classList.remove('disc-hidden');
           topBtn.title = 'Ẩn Đĩa La Kinh để xem rõ bản đồ địa hình';
@@ -4693,16 +4647,12 @@ function updateQmdjStrategicLayer() {
         if (valStatus) valStatus.textContent = 'Đang hiện';
         if (btnShow) btnShow.classList.add('active');
         if (btnHide) btnHide.classList.remove('active');
+        if (mapInstance && userLocationLayerGroup && !mapInstance.hasLayer(userLocationLayerGroup)) {
+          mapInstance.addLayer(userLocationLayerGroup);
+        }
         showLaKinhToast('👁️ Đã hiện lại Đĩa La Kinh 36 Tầng');
       } else {
         if (container) container.classList.add('is-disc-hidden');
-        if (fabBtn) {
-          fabBtn.classList.add('disc-hidden');
-          fabBtn.title = 'Đang ẩn La Kinh (Chạm để hiện lại)';
-        }
-        if (fabIcon) {
-          fabIcon.innerHTML = `<svg class="lakinh-fab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
-        }
         if (topBtn) {
           topBtn.classList.add('disc-hidden');
           topBtn.title = 'Đang ẩn La Kinh (Chạm để hiện lại)';
@@ -4712,17 +4662,12 @@ function updateQmdjStrategicLayer() {
         if (valStatus) valStatus.textContent = 'Đã ẩn (Soi địa hình)';
         if (btnHide) btnHide.classList.add('active');
         if (btnShow) btnShow.classList.remove('active');
+        if (mapInstance && userLocationLayerGroup && mapInstance.hasLayer(userLocationLayerGroup)) {
+          mapInstance.removeLayer(userLocationLayerGroup);
+        }
         showLaKinhToast('🗺️ Đã ẩn La Kinh: Bản đồ & địa hình hiển thị 100% rõ nét');
       }
     };
-
-    const fabToggleDisc = document.getElementById('lakinh-btn-toggle-disc-fab');
-    if (fabToggleDisc) {
-      fabToggleDisc.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleDiscVisibility();
-      });
-    }
 
     const topToggleDisc = document.getElementById('lakinh-btn-toggle-disc');
     if (topToggleDisc) {
@@ -5831,7 +5776,7 @@ function updateQmdjStrategicLayer() {
     // Chạm vào màn hình để đặt tia ngắm đi qua điểm chạm
     if (lkContainer) {
       lkContainer.addEventListener('click', (e) => {
-        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-my-location, #lakinh-btn-toggle-disc-fab, #lakinh-disc-hidden-banner, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
+        if (e.target.closest('#lakinh-bottom-sheet, #lakinh-bottom-dock, #lakinh-top-panel, #lakinh-hud-detail-card, #lakinh-btn-my-location, #lakinh-disc-hidden-banner, #lakinh-ray-target-handle, #lakinh-ray-floating-hud, #lakinh-ray-mini-pill, #lakinh-plan-pan-banner, .lakinh-float-btn, .sheet-control-group, input, button')) {
           return;
         }
         if (state.isRayActive && !state.isPlanPanActive) {

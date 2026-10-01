@@ -4282,31 +4282,8 @@ body.light-theme .tamhop-duongcuc-btn.active {
 }
 
 /* ==========================================================================
-   NÚT NỔI ẨN / HIỆN ĐĨA LA KINH (SOI RÕ BẢN ĐỒ & ĐỊA HÌNH VỆ TINH)
+   BIỂU TƯỢNG SVG CHO CÁC NÚT NỔI FAB
    ========================================================================== */
-#lakinh-btn-toggle-disc-fab {
-  position: absolute;
-  left: 12px;
-  bottom: 74px;
-  z-index: 25;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  padding: 0;
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1.5px solid rgba(56, 189, 248, 0.65);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(56, 189, 248, 0.35);
-  color: #38bdf8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
-  user-select: none;
-}
-
 .lakinh-fab-svg {
   width: 20px;
   height: 20px;
@@ -4317,45 +4294,6 @@ body.light-theme .tamhop-duongcuc-btn.active {
   stroke-linejoin: round;
   display: block;
   pointer-events: none;
-}
-
-#lakinh-btn-toggle-disc-fab:hover,
-#lakinh-btn-toggle-disc-fab:active {
-  transform: scale(1.08);
-  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
-}
-
-#lakinh-btn-toggle-disc-fab.disc-hidden {
-  border-color: #f59e0b;
-  color: #fbbf24;
-  background: rgba(30, 27, 46, 0.95);
-  box-shadow: 0 0 14px rgba(245, 158, 11, 0.6);
-  animation: pulse-disc-hidden 2s infinite ease-in-out;
-}
-
-@keyframes pulse-disc-hidden {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); box-shadow: 0 0 18px rgba(245, 158, 11, 0.8); }
-  100% { transform: scale(1); }
-}
-
-body.light-theme #lakinh-btn-toggle-disc-fab {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: #0284c7;
-  color: #0284c7;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-body.light-theme #lakinh-btn-toggle-disc-fab.disc-hidden {
-  border-color: #d97706;
-  color: #d97706;
-  background: #fffbeb;
-  box-shadow: 0 0 12px rgba(217, 119, 6, 0.4);
-}
-
-#lakinh-bottom-sheet.open ~ #lakinh-btn-toggle-disc-fab {
-  opacity: 0 !important;
-  pointer-events: none !important;
 }
 
 /* Nút trên top bar khi đang ẩn */
