@@ -2380,8 +2380,6 @@
                 <span class="num-colon">:</span>
                 <input type="number" id="qmdj-input-minute" class="num-box num-min" min="0" max="59" value="${pad(d.getMinutes())}" placeholder="Phút">
               </div>
-              <button type="button" class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
-              <button type="button" class="ucc-step-btn" id="btn-qmdj-next-hour" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
             </div>
             <div class="ucc-step-group">
               <button type="button" class="ucc-step-btn" id="btn-qmdj-prev-hour" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>

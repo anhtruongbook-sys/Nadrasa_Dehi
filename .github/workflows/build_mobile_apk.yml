@@ -76,13 +76,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.33
-          name: "Neta Light v2.8.33 (Khắc Phục Hoàn Toàn Ký Tự Asterisks & Chuẩn Hóa Tọa Độ Đo Phong Thủy La Kinh)"
+          tag_name: v2.8.34
+          name: "Neta Light v2.8.34 (Khắc Phục Nhân Bản Nút Tăng Giảm Giờ Canh Tại Tab Bản Mệnh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.33
-            - **Khắc Phục Hoàn Toàn Ký Tự Markdown Sao (`**`)**:
-              + Loại bỏ 100% tình trạng xuất hiện thô ký tự `**` (như `**Chính Nam**`, `**Ngọ**`, `**TUẦN KHÔNG**`, `**DỊCH MÃ**`) trong thẻ Chiêm Đoán Vạn Sự.
-              + Tự động chuyển đổi thành thẻ định dạng chuẩn HTML `<strong>` in đậm rõ nét, tương phản cao.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.34
+            - **Khắc Phục Hiện Tượng Nhân Bản Nút Tăng Giảm 2 Giờ (1 Canh)**:
+              + Loại bỏ khối mã lặp thừa gây hiển thị 4 nút (`[◀ 2h] [2h ▶] [◀ 2h] [2h ▶]`) tại hàng chọn thời gian của phân hệ Kỳ Môn Bản Mệnh.
+              + Chuẩn hóa còn đúng 1 cặp nút điều khiển duy nhất (`[◀ 2h] [2h ▶]`) nằm gọn gàng bên cạnh nhóm nhập giờ phút, loại bỏ hoàn toàn hiện tượng tràn viền màn hình di động.
             - **Chuẩn Hóa Tọa Độ Hướng Nhà & Cầu Nối La Kinh Phong Thủy Thực Địa**:
               + Xóa bỏ nhãn gây hiểu lầm "Đang khảo sát: 315.0°"; thay thế bằng ô hiển thị và nhập tay tọa độ chuẩn mực: `Tọa độ: [ 300.0 ]°`.
               + Giá trị khởi tạo mặc định đồng bộ chính xác với hướng đã chọn (TB1 - Tuất: 300.0°, TB2_3 - Càn/Hợi: 315.0°, Bắc 1: 345.0°, v.v.).
