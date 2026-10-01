@@ -123,7 +123,9 @@
     }
   }
 
-  function renderTuVi() {
+  function renderTuVi(preserveScroll = false) {
+    const scrollEl = document.querySelector('#view-tuvi .tuvi-view-container');
+    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
     const container = document.getElementById('view-tuvi');
     if (!container) return;
 
@@ -268,6 +270,17 @@
     `;
 
     bindTuViEvents(chart);
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = document.querySelector('#view-tuvi .tuvi-view-container');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+      });
+    }
   }
 
   function renderGrid4x4HTML(meta, palaces) {
@@ -1342,7 +1355,7 @@
           </div>
 
           <div class="tuvi-palaces-treatise-list">
-            ${displayedPalaces.map(ep => {
+            ${(evaluatedPalaces || []).map(ep => {
               const cungName = ep.ten_cung || ep.cung_name || 'Cung';
               const canChi = ep.can_chi || `${ep.thien_can || ''} ${ep.dia_chi || ''}`.trim();
               const score = ep.score != null ? ep.score : (ep.quality_score != null ? ep.quality_score : 50);
@@ -1350,9 +1363,10 @@
               const isMenh = cungName === 'Mệnh';
               const treatiseContent = ep.deep_treatise || ep.summary || '';
               const deepTreatiseHTML = renderMarkdownToHTML(treatiseContent);
+              const isMatch = (currentPalaceFilter === 'ALL' || currentPalaceFilter === cungName);
 
               return `
-                <div class="tuvi-palace-treatise-card" id="palace-card-${cungName}">
+                <div class="tuvi-palace-treatise-card" id="palace-card-${cungName.replace(/\s+/g, '-')}" data-palace-name="${cungName}" style="${isMatch ? '' : 'display: none;'}">
                   <div class="tuvi-treatise-head">
                     <span class="tuvi-treatise-name">
                       🏰 CUNG ${String(cungName).toUpperCase()} ${canChi ? `(${canChi})` : ''}
@@ -1545,23 +1559,53 @@
     if (btnTabDash) {
       btnTabDash.onclick = () => {
         currentAnalysisSubTab = 'dashboard';
-        renderTuVi();
+        renderTuVi(true);
       };
     }
     const btnTabFull = document.getElementById('btn-tuvi-tab-full-report');
     if (btnTabFull) {
       btnTabFull.onclick = () => {
         currentAnalysisSubTab = 'full-report';
-        renderTuVi();
+        renderTuVi(true);
       };
     }
 
-    // Palace Filter Pills
+    // Palace Filter Pills: Chuyển đổi cung tức thì tại chỗ & cuộn mượt đến nội dung đã chọn
     document.querySelectorAll('.tuvi-palace-pill').forEach(pill => {
-      pill.onclick = () => {
-        const val = pill.getAttribute('data-palace-filter');
-        currentPalaceFilter = val || 'ALL';
-        renderTuVi();
+      pill.onclick = (e) => {
+        e.preventDefault();
+        const val = pill.getAttribute('data-palace-filter') || 'ALL';
+        currentPalaceFilter = val;
+
+        // 1. Cập nhật trạng thái active trên các nút pill
+        document.querySelectorAll('.tuvi-palace-pill').forEach(p => {
+          if (p.getAttribute('data-palace-filter') === val) {
+            p.classList.add('active');
+          } else {
+            p.classList.remove('active');
+          }
+        });
+
+        // 2. Chuyển đổi hiển thị trực tiếp thẻ cung tương ứng (không reload lại cả trang)
+        const cards = document.querySelectorAll('.tuvi-palace-treatise-card');
+        cards.forEach(card => {
+          const cardPalace = card.getAttribute('data-palace-name');
+          if (val === 'ALL' || cardPalace === val) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // 3. Cuộn mượt và trực tiếp đến nội dung đã chọn (không bao giờ nhảy lên đầu trang)
+        const filterBar = document.querySelector('.tuvi-palace-filter-bar');
+        const targetCard = (val !== 'ALL')
+          ? document.querySelector(`.tuvi-palace-treatise-card[data-palace-name="${val}"]`)
+          : null;
+        const scrollTarget = (val !== 'ALL' && targetCard) ? targetCard : filterBar;
+        if (scrollTarget) {
+          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       };
     });
 

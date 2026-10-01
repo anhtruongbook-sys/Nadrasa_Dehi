@@ -76,13 +76,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.34
-          name: "Neta Light v2.8.34 (Khắc Phục Nhân Bản Nút Tăng Giảm Giờ Canh Tại Tab Bản Mệnh)"
+          tag_name: v2.8.35
+          name: "Neta Light v2.8.35 (Khắc Phục Lọc Cung Tử Vi Bị Cuộn Lên Đầu Trang & Tối Ưu Smooth Scroll)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.34
-            - **Khắc Phục Hiện Tượng Nhân Bản Nút Tăng Giảm 2 Giờ (1 Canh)**:
-              + Loại bỏ khối mã lặp thừa gây hiển thị 4 nút (`[◀ 2h] [2h ▶] [◀ 2h] [2h ▶]`) tại hàng chọn thời gian của phân hệ Kỳ Môn Bản Mệnh.
-              + Chuẩn hóa còn đúng 1 cặp nút điều khiển duy nhất (`[◀ 2h] [2h ▶]`) nằm gọn gàng bên cạnh nhóm nhập giờ phút, loại bỏ hoàn toàn hiện tượng tràn viền màn hình di động.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.35
+            - **Khắc Phục Lọc Cung Tử Vi Bị Cuộn Lên Đầu Trang & Tối Ưu Smooth Scroll**:
+              + Chuyển đổi cơ chế lọc cung Tử Vi sang cập nhật tại chỗ (In-Place DOM Display Toggle), loại bỏ việc re-render toàn bộ DOM gây mất vị trí cuộn.
+              + Tự động cuộn mượt mà (`smooth scrollIntoView`) trực tiếp đến thẻ luận giải cung đã chọn hoặc thanh lọc cung với `scroll-margin-top: 65px`.
+              + Lưu trữ và khôi phục chính xác `scrollTop` trên container cuộn `.tuvi-view-container` khi chuyển đổi tab chức năng.
             - **Chuẩn Hóa Tọa Độ Hướng Nhà & Cầu Nối La Kinh Phong Thủy Thực Địa**:
               + Xóa bỏ nhãn gây hiểu lầm "Đang khảo sát: 315.0°"; thay thế bằng ô hiển thị và nhập tay tọa độ chuẩn mực: `Tọa độ: [ 300.0 ]°`.
               + Giá trị khởi tạo mặc định đồng bộ chính xác với hướng đã chọn (TB1 - Tuất: 300.0°, TB2_3 - Càn/Hợi: 315.0°, Bắc 1: 345.0°, v.v.).

@@ -5440,6 +5440,7 @@ body.theme-light .tuvi-dv-cung {
   border-radius: 10px;
   padding: 12px 14px;
   margin-bottom: 10px;
+  scroll-margin-top: 65px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -15207,6 +15208,7 @@ body.theme-light .tuvi-subnav-btn.active {
   padding: 8px;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
+  scroll-margin-top: 65px;
 }
 
 body.theme-light .tuvi-palace-filter-bar {
