@@ -73,6 +73,173 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
 
+      /* Unified Master Card: Thông Tin Thần Khóa & Chế Độ Xem (8 Lớp / 1 Chạm) */
+      .lucnham-master-card {
+        background: rgba(26, 3, 7, 0.95);
+        border: 1px solid rgba(245, 176, 65, 0.35);
+        border-radius: 8px;
+        padding: 6px 8px;
+        margin: 4px 0 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        box-sizing: border-box;
+        width: 100%;
+      }
+      body.theme-light .lucnham-master-card {
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+      }
+
+      .lucnham-master-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px dashed rgba(245, 176, 65, 0.22);
+      }
+      body.theme-light .lucnham-master-header {
+        border-bottom-color: #e2e8f0;
+      }
+
+      .lucnham-master-title {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--gold-primary, #f5b041);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
+      }
+      body.theme-light .lucnham-master-title {
+        color: #b45309;
+      }
+
+      .lucnham-mode-pill {
+        width: 156px !important;
+        height: 24px !important;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 6px;
+        padding: 1px;
+        gap: 2px;
+        display: flex;
+        box-sizing: border-box;
+      }
+      body.theme-light .lucnham-mode-pill {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+      .lucnham-mode-pill .ucc-view-btn {
+        flex: 1 1 0;
+        height: 20px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 0 4px;
+        border-radius: 4px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted, #94a3b8);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+      }
+      body.theme-light .lucnham-mode-pill .ucc-view-btn {
+        color: #64748b;
+      }
+      .lucnham-mode-pill .ucc-view-btn.active {
+        background: rgba(245, 176, 65, 0.25);
+        color: #f5b041;
+        font-weight: 900;
+      }
+      body.theme-light .lucnham-mode-pill .ucc-view-btn.active {
+        background: #ffffff;
+        color: #b45309;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Ma Trận 2 Hàng x 3 Cột Cân Đối Hoàn Hảo */
+      .lucnham-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px 2px;
+        text-align: center;
+      }
+      .lucnham-stat-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 1px;
+        min-width: 0;
+      }
+      .lucnham-stat-cell:not(:nth-child(3n)) {
+        border-right: 1px solid rgba(245, 176, 65, 0.15);
+      }
+      body.theme-light .lucnham-stat-cell:not(:nth-child(3n)) {
+        border-right-color: #e2e8f0;
+      }
+      .lucnham-stat-lbl {
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.2px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        text-transform: uppercase;
+      }
+      body.theme-light .lucnham-stat-lbl {
+        color: #64748b !important;
+      }
+      .lucnham-stat-val {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        white-space: nowrap;
+        line-height: 1.2;
+      }
+      body.theme-light .lucnham-stat-val {
+        color: #0f172a !important;
+      }
+      .lucnham-stat-val.tms-val-gold {
+        color: #f5b041;
+      }
+      body.theme-light .lucnham-stat-val.tms-val-gold {
+        color: #b45309 !important;
+      }
+      .lucnham-stat-val.val-danmo {
+        color: #f59e0b;
+      }
+      body.theme-light .lucnham-stat-val.val-danmo {
+        color: #d97706 !important;
+      }
+      .lucnham-stat-val.val-tuong {
+        color: #38bdf8;
+      }
+      body.theme-light .lucnham-stat-val.val-tuong {
+        color: #0284c7 !important;
+      }
+      .lucnham-stat-val.val-menh {
+        color: #c084fc;
+      }
+      body.theme-light .lucnham-stat-val.val-menh {
+        color: #7e22ce !important;
+      }
+      .lucnham-stat-val.val-hanhnien {
+        color: #34d399;
+      }
+      body.theme-light .lucnham-stat-val.val-hanhnien {
+        color: #15803d !important;
+      }
+      .val-sub {
+        font-size: 0.68rem;
+        font-weight: normal;
+        opacity: 0.85;
+      }
+
       /* Hero Section: Tam Truyền */
       .lucnham-hero-grid {
         display: grid;
@@ -1037,22 +1204,46 @@
         </div>
 
         ${currentMainTab === 'analysis' ? renderLucNhamAnalysisHTML(c) : `
-          <!-- Sub-bar 8 Lớp vs 1 Chạm khi xem Bàn Quẻ -->
-          <div style="display: flex; justify-content: center; margin: 4px 0 6px;">
-            <div class="ucc-pill-view" style="max-width: 220px; width: 100%; height: 28px;">
-              <button class="ucc-view-btn ${currentViewMode === 'classic' ? 'active' : ''}" id="btn-lucnham-mode-classic" title="Bàn cờ 8 lớp đầy đủ">🗂️ 8 Lớp</button>
-              <button class="ucc-view-btn ${currentViewMode === 'touch' ? 'active' : ''}" id="btn-lucnham-mode-touch" title="Bàn cảm ứng tối giản 1-chạm">📱 1 Chạm</button>
+          <!-- Unified Master Card: Thông Tin Thần Khóa & Chế Độ Xem (8 Lớp / 1 Chạm) -->
+          <div class="lucnham-master-card">
+            <div class="lucnham-master-header">
+              <div class="lucnham-master-title">
+                <span style="font-size: 13px;">📜</span>
+                <span>THÔNG TIN THẦN KHÓA</span>
+              </div>
+              <div class="ucc-pill-view lucnham-mode-pill">
+                <button class="ucc-view-btn ${currentViewMode === 'classic' ? 'active' : ''}" id="btn-lucnham-mode-classic" title="Bàn cờ 8 lớp đầy đủ">🗂️ 8 Lớp</button>
+                <button class="ucc-view-btn ${currentViewMode === 'touch' ? 'active' : ''}" id="btn-lucnham-mode-touch" title="Bàn cảm ứng tối giản 1-chạm">📱 1 Chạm</button>
+              </div>
             </div>
-          </div>
 
-          <!-- 2. Master Overview Ribbon (Lục Nhâm Master Strip) -->
-          <div class="lucnham-master-strip">
-            <div class="lucnham-strip-item"><span>Ngày:</span> <strong class="tms-val-gold">${c.canNgay} ${c.chiNgay}</strong></div>
-            <div class="lucnham-strip-item"><span>Giờ:</span> <strong>${c.chiGio}</strong></div>
-            <div class="lucnham-strip-item"><span>${isDay ? '☀️ Đán Quý' : '🌙 Mộ Quý'}</span></div>
-            <div class="lucnham-strip-item"><span>Tướng:</span> <strong>${c.nguyetTuong}</strong> (${c.tietKhi})</div>
-            <div class="lucnham-strip-item"><span>Mệnh:</span> <strong>${c.banMenhChi || '---'}</strong></div>
-            <div class="lucnham-strip-item"><span>H.Niên:</span> <strong>${c.hanhNienChi} (${c.tuoiAm}T)</strong></div>
+            <!-- Ma trận 2 hàng x 3 cột cân đối tuyệt đối -->
+            <div class="lucnham-stat-grid">
+              <div class="lucnham-stat-cell">
+                <div class="lucnham-stat-lbl">NGÀY</div>
+                <div class="lucnham-stat-val tms-val-gold">${c.canNgay} ${c.chiNgay}</div>
+              </div>
+              <div class="lucnham-stat-cell">
+                <div class="lucnham-stat-lbl">GIỜ</div>
+                <div class="lucnham-stat-val">${c.chiGio}</div>
+              </div>
+              <div class="lucnham-stat-cell">
+                <div class="lucnham-stat-lbl">QUÝ NHÂN</div>
+                <div class="lucnham-stat-val val-danmo">${isDay ? '☀️ Đán Quý' : '🌙 Mộ Quý'}</div>
+              </div>
+              <div class="lucnham-stat-cell">
+                <div class="lucnham-stat-lbl">NGUYỆT TƯỚNG</div>
+                <div class="lucnham-stat-val val-tuong">${c.nguyetTuong} <span class="val-sub">(${c.tietKhi})</span></div>
+              </div>
+              <div class="lucnham-stat-cell">
+                <div class="lucnham-stat-lbl">BẢN MỆNH</div>
+                <div class="lucnham-stat-val val-menh">${c.banMenhChi || '---'}</div>
+              </div>
+              <div class="lucnham-stat-cell">
+                <div class="lucnham-stat-lbl">HÀNH NIÊN</div>
+                <div class="lucnham-stat-val val-hanhnien">${c.hanhNienChi} <span class="val-sub">(${c.tuoiAm}T)</span></div>
+              </div>
+            </div>
           </div>
 
           <!-- 3. Tam Truyền Hero Card -->
@@ -1152,7 +1343,10 @@
               <span style="font-size: 11px; font-weight: 800; color: var(--gold-primary, #f5b041); text-transform: uppercase;">
                 ${currentViewMode === 'classic' ? 'Bàn Cờ 8 Lớp Thông Tin' : 'Bàn Cảm Ứng 1-Chạm'}
               </span>
-              <span style="font-size: 9px; color: #94a3b8;">Chạm cung để xem luận giải</span>
+              <div class="ucc-pill-view lucnham-mode-pill" style="width: 140px !important;">
+                <button class="ucc-view-btn ${currentViewMode === 'classic' ? 'active' : ''}" id="btn-lucnham-mode-classic-bottom" title="Bàn cờ 8 lớp đầy đủ">🗂️ 8 Lớp</button>
+                <button class="ucc-view-btn ${currentViewMode === 'touch' ? 'active' : ''}" id="btn-lucnham-mode-touch-bottom" title="Bàn cảm ứng tối giản 1-chạm">📱 1 Chạm</button>
+              </div>
             </div>
 
             <div class="lucnham-dial-grid">
@@ -1300,21 +1494,20 @@
       };
     }
 
-    // Mode Switches (8 Lớp vs 1 Chạm)
-    const btnClassic = document.getElementById('btn-lucnham-mode-classic');
-    const btnTouch = document.getElementById('btn-lucnham-mode-touch');
-    if (btnClassic) {
-      btnClassic.onclick = () => {
-        currentViewMode = 'classic';
-        renderLucNham();
-      };
-    }
-    if (btnTouch) {
-      btnTouch.onclick = () => {
-        currentViewMode = 'touch';
-        renderLucNham();
-      };
-    }
+    // Mode Switches (8 Lớp vs 1 Chạm: Đồng bộ cả Top Master Card và Bottom Bàn Cờ)
+    const bindModeBtn = (btnId, mode) => {
+      const el = document.getElementById(btnId);
+      if (el) {
+        el.onclick = () => {
+          currentViewMode = mode;
+          renderLucNham();
+        };
+      }
+    };
+    bindModeBtn('btn-lucnham-mode-classic', 'classic');
+    bindModeBtn('btn-lucnham-mode-touch', 'touch');
+    bindModeBtn('btn-lucnham-mode-classic-bottom', 'classic');
+    bindModeBtn('btn-lucnham-mode-touch-bottom', 'touch');
 
     // Calendar Toggle
     const btnSolar = document.getElementById('lucnham-btn-solar');

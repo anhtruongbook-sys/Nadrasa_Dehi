@@ -76,14 +76,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.23
-          name: "Neta Light v2.8.23 (Tối Ưu Hoàn Hảo Format Giao Diện Luận Giải Di Động Thái Ất)"
+          tag_name: v2.8.24
+          name: "Neta Light v2.8.24 (Tối Ưu Chuẩn Hóa Thông Tin Thần Khóa & 8 Lớp/1 Chạm Lục Nhâm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.23
-            - **Chuẩn Hóa & Hoàn Thiện Format Giao Diện Di Động Luận Giải Thái Ất**:
-              + **Lưới Chỉ Số Tổng Quan (2x2 Matrix)**: Bố trí đối xứng 2 hàng x 2 cột (Cát Khánh, Tương Quan Lực Lượng, Nguy Cơ Xung Đột, Nguy Cơ Môi Trường) cân đối, vuông vức, triệt tiêu khoảng trống thừa trên màn hình di động.
-              + **Card 0 (Đối Chiếu Vai Vế & Bản Mệnh)**: Tiêu đề gọn gàng trên 1 dòng duy nhất, thu gọn badge vai vế súc tích `🛡️ Phe Chủ` / `⚔️ Phe Khách`, căn chỉnh thẳng hàng với điểm lợi thế, tách khối mô tả đặc trưng thành hộp ghi chú viền vàng trang nhã.
-              + **Bảng 12 Thời Thần (Card 13)**: Hợp nhất cột Giờ & Ngũ Hành giúp giải phóng không gian; định dạng các huy hiệu trạng thái (`Đại Cát`, `Tiểu Cát`, `Bình`, `Tiểu Hung`, `Hung`) nằm ngang nguyên vẹn 100% không bị ngắt dòng; tối ưu độ rộng cột chiến lược hành động.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.24
+            - **Tối Ưu Hóa Giao Diện Lục Nhâm Đại Độn**:
+              + **Hợp Nhất Thẻ Tổng Quan Thần Khóa**: Loại bỏ nút chuyển 8 lớp/1 chạm rời rạc và ô ngày giờ tiết khí bị ngắt dòng lộn xộn, tích hợp thành một thẻ Master Card thống nhất, sang trọng.
+              + **Bộ Nút Chuyển Chế Độ Đồng Bộ (8 Lớp / 1 Chạm)**: Đặt gọn gàng ngay tại tiêu đề Thần Khóa ở trên đỉnh và đồng bộ trực tiếp tại thanh tiêu đề Bàn Cờ 12 Cung bên dưới.
+              + **Ma Trận Tọa Độ 2x3 Cân Đối (2 Hàng x 3 Cột)**: Hiển thị 6 thông số cốt tử của quẻ Lục Nhâm (NGÀY, GIỜ, QUÝ NHÂN, NGUYỆT TƯỚNG, BẢN MỆNH, HÀNH NIÊN) vuông vức, đối xứng, không còn hiện tượng rớt dòng hay dấu chấm lửng thừa.
             - **Hệ Thống La Kinh Vệ Tinh Siêu Tối Giản**:
               + Tối giản toàn diện bản đồ vệ tinh, loại bỏ nút nổi dư thừa và vòng tròn mờ GPS.
             - **Tính Năng Chuyên Sâu: Tra Cứu Trùng Tang - Nhập Mộ - Thiên Di (Âm Trạch)**:
