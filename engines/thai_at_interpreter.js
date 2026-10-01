@@ -851,7 +851,7 @@
   // III. HÀM TỔNG HỢP LUẬN GIẢI 1 KỂ
   // ==========================================
 
-  function luanGiaiKe(ke, chartContext) {
+  function luanGiaiKe(ke, chartContext, userContext = {}) {
     if (!ke) return null;
 
     let cungTaName = ke.thaiAtPos || "Kiền";
@@ -986,6 +986,109 @@
       }
     };
 
+    // Phân tích vai vế người hỏi (Phe Chủ vs Phe Khách)
+    const querentRole = userContext.querentRole || 'chu';
+    const isRoleChu = (querentRole === 'chu');
+    let ketLuanVaiVe = '';
+    let loiKhuyenVaiVe = '';
+    let diemLoiThe = 50;
+
+    if (isRoleChu) {
+      if (sChu >= 20 && sKhach < 10) {
+        ketLuanVaiVe = '🛡️ Phe Chủ (Của Bạn) Đại Đắc Thắng - Chiếm Trọn Thiên Thời & Địa Lợi';
+        loiKhuyenVaiVe = 'Bạn đang nắm giữ thế chủ động hoàn toàn. Chiến lược tối ưu: "Dĩ dật đãi lao" - kiên định tại vị, bảo vệ thành quả, không cần vội vã. Mọi áp lực từ đối phương sẽ tự thoái lui.';
+        diemLoiThe = 95;
+      } else if (sKhach >= 20 && sChu < 10) {
+        ketLuanVaiVe = '🛡️ Phe Chủ (Của Bạn) Gặp Bất Lợi - Đối Phương Tiến Công Rất Mạnh';
+        loiKhuyenVaiVe = 'Bên Khách có xung lực áp đảo. Bạn không nên đối đầu trực diện hoặc bảo thủ cứng nhắc. Hãy chủ động phòng thủ kiên cố, rà soát lại hợp đồng/nội bộ và kéo dài thời gian để đối phương hạ nhiệt.';
+        diemLoiThe = 30;
+      } else if (sChu >= 20 && sKhach >= 20) {
+        ketLuanVaiVe = '🛡️ Phe Chủ (Của Bạn) Ở Thế Giằng Co - Lưỡng Long Tranh Châu';
+        loiKhuyenVaiVe = 'Cả hai bên đều có thực lực hùng hậu. Tranh đoạt chỉ dẫn đến hao tổn tài lực. Giải pháp tối ưu cho bạn là đàm phán hợp tác chia sẻ lợi ích (Win-Win).';
+        diemLoiThe = 65;
+      } else {
+        ketLuanVaiVe = '🛡️ Phe Chủ (Của Bạn) Cần Án Binh Bất Động - Bảo Toàn Thực Lực';
+        loiKhuyenVaiVe = 'Khí số cả hai bên đều trầm lắng. Không nên mở rộng thêm cam kết mới; tập trung giữ tiền mặt và ổn định nội bộ.';
+        diemLoiThe = 45;
+      }
+    } else {
+      if (sKhach >= 20 && sChu < 10) {
+        ketLuanVaiVe = '⚔️ Phe Khách (Của Bạn) Đại Toàn Thắng - Xung Lực Đột Phá Mạnh Mẽ';
+        loiKhuyenVaiVe = 'Thời cơ vàng để bạn tiến công! Dù là xuất hành, đi thi, phỏng vấn, nộp hồ sơ dự thầu hay mở thị trường, bạn đều chiếm thượng phong. Hãy hành động quyết đoán, chớp lấy thời cơ.';
+        diemLoiThe = 95;
+      } else if (sChu >= 20 && sKhach < 10) {
+        ketLuanVaiVe = '⚔️ Phe Khách (Của Bạn) Khó Lòng Đột Phá - Thành Trì Đối Phương Kiên Cố';
+        loiKhuyenVaiVe = 'Phe Chủ đang nắm giữ ưu thế phòng thủ áp đảo. Bạn xuất kích lúc này dễ gặp cản trở, tốn kém chi phí mà hiệu quả thấp. Nên tạm hoãn hoặc chuyển hướng mục tiêu.';
+        diemLoiThe = 28;
+      } else if (sChu >= 20 && sKhach >= 20) {
+        ketLuanVaiVe = '⚔️ Phe Khách (Của Bạn) Thế Trận Đối Đầu Cân Não';
+        loiKhuyenVaiVe = 'Đối phương cũng có nguồn lực rất mạnh. Đừng cố gắng thâu tóm hay ép giá cực đoan. Hãy dùng mưu lược khôn khéo và đề xuất phương án đôi bên cùng có lợi.';
+        diemLoiThe = 65;
+      } else {
+        ketLuanVaiVe = '⚔️ Phe Khách (Của Bạn) Chưa Đủ Xung Lực Tiến Công';
+        loiKhuyenVaiVe = 'Khí thế còn non yếu. Tạm thời hoãn xuất hành hoặc ký kết mạo hiểm; tiếp tục tích lũy tài nguyên và chuẩn bị kỹ lưỡng hơn.';
+        diemLoiThe = 40;
+      }
+    }
+
+    luanRes.vai_ve_duong_so = {
+      role: querentRole,
+      roleName: isRoleChu ? 'Phe Chủ (Tại vị / Phòng thủ / Bị đơn / Chủ nợ / Tuyển dụng)' : 'Phe Khách (Tiến công / Xuất hành / Khởi kiện / Đi vay / Ứng viên)',
+      ketLuan: ketLuanVaiVe,
+      loiKhuyen: loiKhuyenVaiVe,
+      diemLoiThe: diemLoiThe
+    };
+
+    // Đối chiếu thần vị lâm cung tuổi đương số
+    const querentBirthBranch = userContext.querentBirthBranch;
+    const querentBirthYear = userContext.querentBirthYear;
+    const querentCanChi = userContext.querentCanChi;
+
+    if (querentBirthBranch) {
+      const branchStars = [];
+      for (let s in ke.stars) {
+        if (ke.stars[s] === querentBirthBranch) {
+          branchStars.push(s);
+        }
+      }
+      let danhGiaMenh = 'Cung bản mệnh bình hòa, không bị hung sát trực chiếu, tâm lý ổn định, tiến thoái thuận theo thời cuộc.';
+      let mucDo = 'Bình Hòa';
+      if (branchStars.includes('Thái Ất')) {
+        danhGiaMenh = '👑 Đại Cát Tối Cao: Thái Ất Thần Kinh giáng ngự trực tiếp vào cung tuổi của bạn! Đây là điềm đại cát đại hỷ, nguyên khí tràn đầy, uy quyền và quý khí nâng đỡ.';
+        mucDo = 'Đại Cát';
+      } else if (branchStars.includes('Ngũ Phúc')) {
+        danhGiaMenh = '✨ Đại Cát Quý Nhân: Cung tuổi đắc Ngũ Phúc Thần Tinh giáng hạ! Giải trừ mọi tai ương hoạn nạn, biến hung thành cát, tài lộc hanh thông.';
+        mucDo = 'Đại Cát';
+      } else if (branchStars.includes('Văn Xương')) {
+        danhGiaMenh = '📜 Thượng Cát Khoa Bảng: Văn Xương giáng ngự cung tuổi! Trí tuệ sáng suốt, mưu lược sâu sắc, đắc lợi cho việc học, thi cử, ký kết và hoạch định.';
+        mucDo = 'Thượng Cát';
+      } else if (branchStars.includes('Thủy Kích')) {
+        danhGiaMenh = '⚠️ Cảnh Báo Xung Kích: Cung tuổi bị sao Thủy Kích chiếu trực diện! Cần đề phòng va chạm giao thông, tổn thương thân thể, bị đối thủ đánh úp hoặc tranh chấp pháp lý.';
+        mucDo = 'Hung Sát';
+      } else if (branchStars.includes('Kế Thần')) {
+        danhGiaMenh = '⚠️ Cảnh Báo Ám Muội: Cung tuổi gặp Kế Thần giáng hạ! Cần đề phòng tiểu nhân bưng bít, thông tin sai lệch, bệnh tật ngầm hoặc hiểu lầm nội bộ.';
+        mucDo = 'Hung';
+      } else if (branchStars.includes('Cờ Đen') || branchStars.includes('Hắc Kỳ')) {
+        danhGiaMenh = '⚠️ Cảnh Báo Hắc Kỳ: Thần cờ đen ám muội ngự cung tuổi! Cảnh giác với các chiêu trò lừa đảo, rủi ro sông nước hoặc thất thoát dữ liệu mạng.';
+        mucDo = 'Tiểu Hung';
+      } else if (branchStars.includes('Cờ Đỏ') || branchStars.includes('Xích Kỳ')) {
+        danhGiaMenh = '⚠️ Cảnh Báo Xích Kỳ: Cờ đỏ quân lệnh ngự cung tuổi! Đề phòng xung đột tranh cãi nóng nảy, nguy cơ cháy nổ hỏa hoạn hoặc thủ tục hành chính gắt gao.';
+        mucDo = 'Tiểu Hung';
+      } else if (branchStars.includes('Chủ Đại Tướng') || branchStars.includes('Khách Đại Tướng')) {
+        danhGiaMenh = '🛡️⚔️ Tướng Tinh Chiếu Mệnh: Cung tuổi đắc Đại Tướng ngự trị! Bạn có quyền lực điều phối thực tế, được giao phó trọng trách tiên phong trong sự vụ.';
+        mucDo = 'Cát Tinh';
+      }
+
+      luanRes.doi_chieu_ban_menh = {
+        namSinh: querentBirthYear,
+        canChi: querentCanChi || '',
+        cungDiaChi: querentBirthBranch,
+        stars: branchStars,
+        mucDo: mucDo,
+        danhGia: danhGiaMenh
+      };
+    }
+
     luanRes.sau_phan_he_hanh_dong = generateSixActionScenarios(luanRes);
     luanRes.doi_song_hang_ngay = interpretDailyLifeAffairs(ke, luanRes);
 
@@ -996,12 +1099,12 @@
   // IV. XUẤT TOÀN VĂN BÁO CÁO 15 PHÂN HỆ ([I.] -> [XV.])
   // ==========================================
 
-  function generateFullReportText(chart, targetKe = "gio") {
+  function generateFullReportText(chart, targetKe = "gio", userContext = {}) {
     let ke = (targetKe === 'nam') ? chart.keNam :
              (targetKe === 'thang') ? chart.keThang :
              (targetKe === 'ngay') ? chart.keNgay : chart.keGio;
 
-    let luan = luanGiaiKe(ke, chart);
+    let luan = luanGiaiKe(ke, chart, userContext);
     if (!luan) return "";
 
     let lines = [];
@@ -1021,6 +1124,19 @@
     lines.push(`  ▲ Nguy Cơ Thiên Tai Môi Trường: ${idx.nguy_co_thien_tai}/100`);
     lines.push(`  ⚔ Tương Quan Lực Lượng      : Bên Chủ ${idx.ty_le_chu}% vs Bên Khách ${idx.ty_le_khach}%`);
     lines.push("-".repeat(84));
+
+    if (luan.vai_ve_duong_so) {
+      lines.push(`[ĐỐI CHIẾU VAI VẾ & BẢN MỆNH NGƯỜI HỎI]`);
+      lines.push(`• Vai Vế Đương Số    : ${luan.vai_ve_duong_so.roleName}`);
+      lines.push(`  ★ Nhận Định Thế Trận : ${luan.vai_ve_duong_so.ketLuan}`);
+      lines.push(`  💡 Lời Khuyên Cốt Tử : ${luan.vai_ve_duong_so.loiKhuyen}`);
+      if (luan.doi_chieu_ban_menh) {
+        lines.push(`• Bản Mệnh Đương Số  : Tuổi ${luan.doi_chieu_ban_menh.canChi} (Cung Địa Chi: [${luan.doi_chieu_ban_menh.cungDiaChi}])`);
+        lines.push(`  ★ Thần Sát Lâm Cung  : ${luan.doi_chieu_ban_menh.stars.join(', ') || 'Bình hòa'} (${luan.doi_chieu_ban_menh.mucDo})`);
+        lines.push(`  🎯 Tác Động Bản Mệnh : ${luan.doi_chieu_ban_menh.danhGia}`);
+      }
+      lines.push("-".repeat(84));
+    }
 
     // [I. VẬN KHÍ THIÊN MỆNH - THÁI ẤT CHỦ TINH]
     let ta = luan.cung_thai_at;

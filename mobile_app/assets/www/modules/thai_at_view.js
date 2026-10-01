@@ -15,6 +15,21 @@
   let isLunarMode = false;
   let currentIsMale = true;
 
+  // Trạng thái Chủ Sự & Bản Mệnh người hỏi
+  let querentRole = 'chu';     // 'chu' (🛡️ Phe Chủ) | 'khach' (⚔️ Phe Khách)
+  let querentBirthYear = 1990; // Năm sinh người hỏi để đối chiếu thần vị ngự cung tuổi
+
+  const CAN_NAMES = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
+  const CHI_NAMES = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
+
+  function getCanChiYear(year) {
+    let y = parseInt(year, 10);
+    if (isNaN(y) || y < 1900 || y > 2100) y = 1990;
+    const can = CAN_NAMES[(y + 6) % 10];
+    const chi = CHI_NAMES[(y + 8) % 12];
+    return { can, chi, canChi: `${can} ${chi}` };
+  }
+
   // Trạng thái Phân hệ Luận Giải Chuyên Sâu 15 Phân Hệ
   let currentMainTab = 'chart'; // 'chart' (🏛️ Trận Đồ) | 'analysis' (📜 Luận Giải)
   let currentReportMode = 'standard'; // 'standard' (📜 Bản Gốc) | 'ai' (✨ Bản AI)
@@ -834,6 +849,258 @@
         border-color: #d97706;
         color: #ffffff;
       }
+
+      /* Context Header & Querent Controls */
+      .thaiat-context-header {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(245, 176, 65, 0.22);
+        border-radius: 8px;
+        padding: 6px 8px;
+        margin-bottom: 8px;
+      }
+      body.theme-light .thaiat-context-header {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+      }
+      .thaiat-context-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .thaiat-context-icon {
+        font-size: 1.15rem;
+        line-height: 1;
+      }
+      .thaiat-context-texts {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        flex: 1;
+      }
+      .thaiat-context-title {
+        font-size: 0.76rem;
+        font-weight: 800;
+        color: var(--gold-primary, #f5b041);
+        letter-spacing: 0.2px;
+      }
+      body.theme-light .thaiat-context-title {
+        color: #b45309;
+      }
+      .thaiat-context-desc {
+        font-size: 0.65rem;
+        color: var(--text-muted, #94a3b8);
+        line-height: 1.25;
+      }
+      body.theme-light .thaiat-context-desc {
+        color: #64748b;
+      }
+
+      .thaiat-querent-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding-top: 5px;
+        border-top: 1px dashed rgba(245, 176, 65, 0.2);
+      }
+      body.theme-light .thaiat-querent-bar {
+        border-top-color: #e2e8f0;
+      }
+
+      .thaiat-role-toggle {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .thaiat-role-lbl, .thaiat-birth-lbl {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--text-muted, #94a3b8);
+        white-space: nowrap;
+      }
+      body.theme-light .thaiat-role-lbl, body.theme-light .thaiat-birth-lbl {
+        color: #64748b;
+      }
+
+      .thaiat-role-pill {
+        display: flex;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 6px;
+        padding: 2px;
+        gap: 2px;
+      }
+      body.theme-light .thaiat-role-pill {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+      }
+
+      .thaiat-role-btn {
+        background: transparent;
+        border: none;
+        border-radius: 4px;
+        padding: 2.5px 7px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--text-muted, #94a3b8);
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+      }
+      body.theme-light .thaiat-role-btn {
+        color: #64748b;
+      }
+      .thaiat-role-btn.active-chu {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        font-weight: 800;
+        box-shadow: 0 1px 4px rgba(16, 185, 129, 0.3);
+      }
+      .thaiat-role-btn.active-khach {
+        background: linear-gradient(135deg, #0284c7, #0369a1);
+        color: #ffffff;
+        font-weight: 800;
+        box-shadow: 0 1px 4px rgba(2, 132, 199, 0.3);
+      }
+
+      .thaiat-birth-box {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .num-qyear {
+        width: 58px;
+        height: 24px;
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 800;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 4px;
+        color: var(--text-primary, #f8fafc);
+      }
+      body.theme-light .num-qyear {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        color: #0f172a;
+      }
+      .thaiat-qyear-badge {
+        background: rgba(245, 176, 65, 0.15);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        color: var(--gold-primary, #f5b041);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      body.theme-light .thaiat-qyear-badge {
+        background: #fef3c7;
+        border-color: #fde68a;
+        color: #b45309;
+      }
+
+      /* Personalized Strategy Strip */
+      .thaiat-personal-strip {
+        background: rgba(20, 2, 5, 0.9);
+        border: 1px solid rgba(245, 176, 65, 0.35);
+        border-radius: 8px;
+        padding: 6px 8px;
+        margin-bottom: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+      body.theme-light .thaiat-personal-strip {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      }
+      .thaiat-personal-strip.role-chu-border {
+        border-left: 3.5px solid #10b981;
+      }
+      .thaiat-personal-strip.role-khach-border {
+        border-left: 3.5px solid #0284c7;
+      }
+
+      .tps-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .tps-role-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        background: rgba(245, 176, 65, 0.15);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: var(--gold-primary, #f5b041);
+      }
+      body.theme-light .tps-role-tag {
+        background: #fef3c7;
+        color: #b45309;
+      }
+      .tps-verdict {
+        font-size: 0.74rem;
+        font-weight: 800;
+        color: #f8fafc;
+        flex: 1;
+        min-width: 140px;
+      }
+      body.theme-light .tps-verdict {
+        color: #0f172a;
+      }
+
+      .tps-birth-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.68rem;
+        flex-wrap: wrap;
+        border-top: 1px dashed rgba(245, 176, 65, 0.15);
+        padding-top: 3px;
+      }
+      body.theme-light .tps-birth-row {
+        border-top-color: #e2e8f0;
+      }
+      .tps-birth-label {
+        color: var(--text-muted, #94a3b8);
+        font-weight: 700;
+      }
+      body.theme-light .tps-birth-label {
+        color: #64748b;
+      }
+      .tps-birth-stars.tps-stars-cat {
+        color: #10b981;
+        font-weight: 800;
+      }
+      .tps-birth-stars.tps-stars-hung {
+        color: #ef4444;
+        font-weight: 800;
+      }
+
+      .luan-badge-khach {
+        background: rgba(2, 132, 199, 0.18);
+        border: 1px solid #0284c7;
+        color: #38bdf8;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 9.5px;
+        font-weight: 800;
+      }
+      body.theme-light .luan-badge-khach {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
     `;
     document.head.appendChild(styleEl);
   }
@@ -893,11 +1160,19 @@
     else if (currentKeType === 'thang') keData = currentChart.keThang;
     else keData = currentChart.keNam;
 
+    const qCanChi = getCanChiYear(querentBirthYear);
+    const userContext = {
+      querentRole: querentRole,
+      querentBirthYear: querentBirthYear,
+      querentBirthBranch: qCanChi.chi,
+      querentCanChi: qCanChi.canChi
+    };
+
     let luanQuickBadge = '15 Phân Hệ';
     let luanData = null;
     if (global.NetaThaiAtInterpreter && keData) {
       try {
-        luanData = global.NetaThaiAtInterpreter.luanGiaiKe(keData, currentChart);
+        luanData = global.NetaThaiAtInterpreter.luanGiaiKe(keData, currentChart, userContext);
         if (luanData && luanData.chi_so_dinh_luong) {
           luanQuickBadge = `${luanData.chi_so_dinh_luong.diem_cat_khanh}đ Cát • ${luanData.dao_chu_khach.ket_luan.split('(')[0].trim()}`;
         }
@@ -906,10 +1181,61 @@
       }
     }
 
+    const starsAtBirth = [];
+    if (keData && keData.stars && qCanChi.chi) {
+      for (let s in keData.stars) {
+        if (keData.stars[s] === qCanChi.chi) starsAtBirth.push(s);
+      }
+    }
+    const starStatusText = starsAtBirth.length > 0 
+      ? starsAtBirth.join(', ')
+      : 'Bình hòa (Không phạm sát)';
+    const isHungStar = starsAtBirth.some(s => ['Thủy Kích', 'Kế Thần', 'Cờ Đen', 'Cờ Đỏ', 'Hắc Kỳ', 'Xích Kỳ', 'Âm Cả'].includes(s));
+
     container.innerHTML = `
       <div class="thaiat-view-wrap">
         <!-- 1. Unified Control Card (Chuẩn Tử Vi / Bát Tự) -->
         <div class="unified-ctrl-card">
+          <!-- Row 0: Contextual Header & Querent Controls -->
+          <div class="thaiat-context-header">
+            <div class="thaiat-context-title-wrap">
+              <span class="thaiat-context-icon">${currentKeType === 'menh' ? '🎂' : '⏱️'}</span>
+              <div class="thaiat-context-texts">
+                <strong class="thaiat-context-title">
+                  ${currentKeType === 'menh'
+                    ? 'LÁ SỐ NHÂN MỆNH THÁI ẤT (12 CUNG)'
+                    : `THỜI ĐIỂM CHIÊM SỰ • ${currentKeType === 'gio' ? 'KỂ GIỜ' : currentKeType === 'ngay' ? 'KỂ NGÀY' : currentKeType === 'thang' ? 'KỂ THÁNG' : 'KỂ NĂM'}`
+                  }
+                </strong>
+                <span class="thaiat-context-desc">
+                  ${currentKeType === 'menh'
+                    ? 'Nhập ngày giờ sinh để an cung Mệnh, Thân, Vận hạn đời người'
+                    : 'Thời điểm khởi tâm chiêm vấn / phát sinh sự việc'
+                  }
+                </span>
+              </div>
+            </div>
+
+            ${currentKeType !== 'menh' ? `
+              <!-- Controls chọn vai vế Chủ / Khách & Năm sinh đương số -->
+              <div class="thaiat-querent-bar">
+                <div class="thaiat-role-toggle" title="Chọn vai vế đương số trong sự việc để xác định thế thắng bại">
+                  <span class="thaiat-role-lbl">Vai vế:</span>
+                  <div class="thaiat-role-pill">
+                    <button type="button" class="thaiat-role-btn ${querentRole === 'chu' ? 'active-chu' : ''}" id="thaiat-btn-role-chu" title="Phe Chủ: Tại vị, phòng thủ, gia chủ, tuyển dụng, chủ nợ, bị kiện">🛡️ Chủ</button>
+                    <button type="button" class="thaiat-role-btn ${querentRole === 'khach' ? 'active-khach' : ''}" id="thaiat-btn-role-khach" title="Phe Khách: Tiến công, xuất hành, ứng viên, đi vay, khởi kiện">⚔️ Khách</button>
+                  </div>
+                </div>
+
+                <div class="thaiat-birth-box" title="Năm sinh đương số để đối chiếu thần vị ngự cung tuổi">
+                  <span class="thaiat-birth-lbl">Tuổi:</span>
+                  <input type="number" id="thaiat-input-querent-year" class="num-box num-qyear" min="1920" max="2040" value="${querentBirthYear}" placeholder="Năm">
+                  <span class="thaiat-qyear-badge" id="thaiat-qyear-badge">${qCanChi.canChi}</span>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
           <!-- Row 1: Calendar switch & Date Box -->
           <div class="ucc-row ucc-row-date">
             <div class="ucc-pill-cal">
@@ -1010,7 +1336,28 @@
             <button type="button" class="ucc-view-btn ${currentKeType === 'menh' ? 'active' : ''}" data-ke="menh">Mệnh</button>
           </div>
 
-          <!-- 3. Bộ lọc 5 tầng thông tin (Grid 5 cột cân đối, không cuộn ngang) -->
+          <!-- 3. Personalized Strategic Strip (Thế Cờ & Bản Mệnh Riêng Của Đương Số) -->
+          ${currentKeType !== 'menh' ? `
+            <div class="thaiat-personal-strip ${querentRole === 'chu' ? 'role-chu-border' : 'role-khach-border'}">
+              <div class="tps-row">
+                <div class="tps-role-tag">
+                  <span class="tps-tag-icon">${querentRole === 'chu' ? '🛡️' : '⚔️'}</span>
+                  <strong>${querentRole === 'chu' ? 'Phe Chủ' : 'Phe Khách'}</strong>
+                </div>
+                <div class="tps-verdict">
+                  ${luanData?.vai_ve_duong_so?.ketLuan || keData.tinhThe}
+                </div>
+              </div>
+              <div class="tps-birth-row">
+                <span class="tps-birth-label">🎯 Bản Mệnh [${qCanChi.canChi} - Cung ${qCanChi.chi}]:</span>
+                <span class="tps-birth-stars ${isHungStar ? 'tps-stars-hung' : 'tps-stars-cat'}">
+                  ${starStatusText}
+                </span>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- 4. Bộ lọc 5 tầng thông tin (Grid 5 cột cân đối, không cuộn ngang) -->
           ${currentKeType !== 'menh' ? `
             <div class="thaiat-filters-bar">
               <button class="thaiat-filter-btn ${currentLayer === 'all' ? 'active' : ''}" data-layer="all">Tất cả</button>
@@ -1078,6 +1425,9 @@
         if (keData.stars[s] === pos) starsHere.push(s);
       }
     }
+    const qCanChi = getCanChiYear(querentBirthYear);
+    const isQuerentPalace = (pos === qCanChi.chi);
+
     let advice = '💡 <strong>Chiến lược hành sự:</strong> Cung bình hòa, tiến thoái thuận theo thời cơ.';
     if (starsHere.includes('Thái Ất')) {
       advice = '👑 <strong>Chiến lược Thái Ất:</strong> Chúa tể ngự cung! Đại cát lợi, là trung tâm sinh khí và quyền lực tối cao.';
@@ -1087,8 +1437,16 @@
       advice = '🛡️ <strong>Chiến lược Chủ Tướng:</strong> Lực lượng phòng thủ nội bộ vững chắc, thuận cho củng cố tổ chức và căn cơ.';
     } else if (starsHere.includes('Khách Đại Tướng')) {
       advice = '⚔️ <strong>Chiến lược Khách Tướng:</strong> Lực lượng tiến công sắc bén, thuận xuất chinh, mở rộng thị trường và đàm phán.';
+    } else if (starsHere.includes('Thủy Kích')) {
+      advice = '⚠️ <strong>Cảnh báo Thủy Kích:</strong> Cung vị bị sát thần kích phá, đề phòng va chạm giao thông hoặc bị đối thủ đánh úp.';
+    } else if (starsHere.includes('Kế Thần')) {
+      advice = '⚠️ <strong>Cảnh báo Kế Thần:</strong> Khí u ám bưng bít, cần đề phòng thông tin thất thiệt hoặc bất đồng ngầm.';
     } else if (starsHere.includes('Cờ Đỏ') || starsHere.includes('Cờ Đen')) {
       advice = '⚠️ <strong>Cảnh báo Kỳ Thần:</strong> Khí tượng biến động, dễ phát sinh tranh chấp hoặc trắc trở, cần đề phòng bất trắc.';
+    }
+
+    if (isQuerentPalace) {
+      advice = `<div style="color:#f5b041; font-weight:800; margin-bottom:4px;">🎯 CUNG BẢN MỆNH CỦA BẠN (Tuổi ${qCanChi.canChi})</div>` + advice;
     }
     return advice;
   }
@@ -1270,6 +1628,40 @@
     };
 
     let cards = '';
+
+    // Card 0: [🎯 ĐỐI CHIẾU VAI VẾ & BẢN MỆNH NGƯỜI HỎI]
+    if (luan.vai_ve_duong_so && (currentLuanFilter === 'all' || currentLuanFilter === 'daicuc')) {
+      let isCol = collapsedSections['sec-0'];
+      let vv = luan.vai_ve_duong_so;
+      let bm = luan.doi_chieu_ban_menh;
+      cards += `
+        <div class="luan-section-card luan-card-personal" data-cat="daicuc">
+          <div class="luan-section-header" onclick="window.NetaThaiAtView.toggleSection('sec-0')" style="background: rgba(245, 176, 65, 0.12);">
+            <span style="color: #f5b041; font-weight: 800;">[🎯 ĐỐI CHIẾU VAI VẾ & BẢN MỆNH NGƯỜI HỎI]</span>
+            <span class="luan-section-toggle">${isCol ? '▼' : '▲'}</span>
+          </div>
+          ${!isCol ? `
+            <div class="luan-section-body">
+              <div class="luan-sub-item">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+                  <div><strong>Vai vế đã chọn:</strong> <span class="${vv.role === 'chu' ? 'luan-badge-cat' : 'luan-badge-khach'}">${vv.roleName}</span></div>
+                  <div style="font-size: 11px; font-weight: 800; color: ${vv.diemLoiThe >= 60 ? '#10b981' : (vv.diemLoiThe >= 40 ? '#f5b041' : '#f43f5e')};">${vv.diemLoiThe}/100 Lợi thế</div>
+                </div>
+                <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin: 4px 0;">★ ${vv.ketLuan}</div>
+                <div style="margin: 4px 0 6px;">💡 <strong>Lời khuyên cốt tử:</strong> ${vv.loiKhuyen}</div>
+                ${bm ? `
+                  <div style="border-top: 1px dashed rgba(245,176,65,0.25); padding-top: 6px; margin-top: 6px;">
+                    <div>• <strong>Bản Mệnh Đương Số:</strong> Tuổi ${bm.canChi} (Cung ${bm.cungDiaChi})</div>
+                    <div>• <strong>Thần Vị Lâm Cung:</strong> <strong style="color: ${bm.mucDo.includes('Cát') ? '#10b981' : (bm.mucDo.includes('Hung') ? '#ef4444' : '#f5b041')};">${bm.stars.join(', ') || 'Bình hòa'}</strong> (${bm.mucDo})</div>
+                    <div style="margin-top: 2px;">• <strong>Chiêm đoán:</strong> ${bm.danhGia}</div>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
 
       // Card 1: [I. VẬN KHÍ THIÊN MỆNH - THÁI ẤT CHỦ TINH]
       if (shouldShow('daicuc')) {
@@ -1971,11 +2363,58 @@
     }
     if (btnCopyLuan) {
       btnCopyLuan.onclick = () => {
+        const userCtx = {
+          querentRole: querentRole,
+          querentBirthYear: querentBirthYear,
+          querentBirthBranch: getCanChiYear(querentBirthYear).chi,
+          querentCanChi: getCanChiYear(querentBirthYear).canChi
+        };
         const textToCopy = (currentReportMode === 'ai' && aiPolishedText)
           ? aiPolishedText
-          : (global.NetaThaiAtInterpreter.generateFullReportText(chart, currentKeType));
+          : (global.NetaThaiAtInterpreter.generateFullReportText(chart, currentKeType, userCtx));
         copyLuanReport(textToCopy);
       };
+    }
+
+    // Role Switcher: Phe Chủ vs Phe Khách
+    const btnRoleChu = document.getElementById('thaiat-btn-role-chu');
+    const btnRoleKhach = document.getElementById('thaiat-btn-role-khach');
+    if (btnRoleChu) {
+      btnRoleChu.onclick = () => {
+        if (querentRole !== 'chu') {
+          querentRole = 'chu';
+          renderThaiAt();
+        }
+      };
+    }
+    if (btnRoleKhach) {
+      btnRoleKhach.onclick = () => {
+        if (querentRole !== 'khach') {
+          querentRole = 'khach';
+          renderThaiAt();
+        }
+      };
+    }
+
+    // Querent Birth Year Input
+    const inputQYear = document.getElementById('thaiat-input-querent-year');
+    if (inputQYear) {
+      inputQYear.addEventListener('change', () => {
+        let y = parseInt(inputQYear.value, 10);
+        if (!isNaN(y) && y >= 1920 && y <= 2040) {
+          querentBirthYear = y;
+          renderThaiAt();
+        }
+      });
+      inputQYear.addEventListener('input', () => {
+        let y = parseInt(inputQYear.value, 10);
+        if (!isNaN(y) && y >= 1920 && y <= 2040) {
+          const badge = document.getElementById('thaiat-qyear-badge');
+          if (badge) {
+            badge.textContent = getCanChiYear(y).canChi;
+          }
+        }
+      });
     }
 
     // Filter pills

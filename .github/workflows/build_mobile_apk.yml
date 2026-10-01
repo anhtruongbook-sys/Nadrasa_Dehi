@@ -76,14 +76,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.21
-          name: "Neta Light v2.8.21 (Tối Ưu Bố Cục Thái Ất Thần Kinh & Cân Đối Tứ Kể)"
+          tag_name: v2.8.22
+          name: "Neta Light v2.8.22 (Bổ Sung Nhãn Ngữ Cảnh, Chọn Phe Chủ/Khách & Bản Mệnh Thái Ất)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.21
-            - **Tối Ưu & Đảo Vị Trí Bố Cục Thái Ất Thần Kinh**:
-              + **Đưa ô thông tin quẻ (Master Strip) lên trên**: Thiết kế lại thành lưới 5 cột cân đối hoàn hảo (`Độn | Cục | Nguyên | Kỷ Dư | Tiết khí`), hiển thị nhãn thanh lịch, số liệu đậm nét, giải quyết triệt để hiện tượng chữ bị díu vào nhau hay xuống dòng lộn xộn.
-              + **Đưa thanh Tứ Kể (`Giờ | Ngày | Tháng | Năm | Mệnh`) xuống dưới**: Bố trí 5 nút phân bổ đều 100% theo phương ngang (`flex: 1` mỗi nút chiếm đúng 20% chiều rộng), xóa bỏ khoảng trống thừa bên phải và hiện tượng co cụm nút sang bên trái.
-              + Đồng bộ hoàn hảo hệ thống 3 hàng (Thông tin quẻ $\rightarrow$ Chọn Tứ Kể $\rightarrow$ Bộ lọc tầng) thành ma trận 5 cột đối xứng tuyệt đối.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.22
+            - **Nâng Cấp Thái Ất Thần Kinh Toàn Diện & Cá Nhân Hóa Đương Số**:
+              + **Nhãn Ngữ Cảnh Thông Minh (Smart Context Header)**: Phân định rõ ràng thời điểm chiêm sự/hỏi việc khi xem Tứ Kể (`Giờ | Ngày | Tháng | Năm`) và tự động chuyển đổi sang ngày giờ sinh của đương số khi xem `Mệnh` (Thái Ất Mệnh Pháp 12 Cung).
+              + **Bộ Chọn Vai Vế Phe Chủ vs Phe Khách**: Tùy chọn vai vế đương số (`🛡️ Phe Chủ` - Tại vị, phòng thủ, tuyển dụng, chủ nợ, bị kiện vs `⚔️ Phe Khách` - Tiến công, xuất hành, ứng viên, đi vay, khởi kiện) để cá nhân hóa kết quả luận giải thế cờ thắng bại ngay trên Trận Đồ và Luận Giải chuyên sâu.
+              + **Đối Chiếu Thần Vị Ngự Cung Bản Mệnh**: Nhập năm sinh đương số (tính Can Chi & Địa Chi cung tuổi) để đối chiếu trực tiếp các thần tinh cát hung (Thái Ất, Ngũ Phúc, Văn Xương, Thủy Kích, Kế Thần, Cờ Đen, Cờ Đỏ, Đại Tướng...) chiếu mệnh.
+              + **Dải Chiến Lược Cá Nhân Hóa (Personalized Strategy Strip)**: Hiển thị ngay dưới quẻ bàn cờ, tóm tắt thế trận và tác động trực tiếp lên bản mệnh đương số.
+              + **Mục Luận Giải Chuyên Biệt (Card 0)**: Bổ sung phân tích tác chiến riêng cho người hỏi, đánh giá lợi thế và cung cấp lời khuyên hành động cốt tử.
             - **Hệ Thống La Kinh Vệ Tinh Siêu Tối Giản**:
               + Tối giản toàn diện bản đồ vệ tinh, loại bỏ nút nổi dư thừa và vòng tròn mờ GPS.
             - **Tính Năng Chuyên Sâu: Tra Cứu Trùng Tang - Nhập Mộ - Thiên Di (Âm Trạch)**:
