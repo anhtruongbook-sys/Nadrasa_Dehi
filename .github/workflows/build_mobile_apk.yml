@@ -76,13 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.12
-          name: "Neta Light v2.8.12 (Đồng Nhất Giao Diện Trạch Cát: Gỡ Bỏ Viền Bao Quanh Huyền Không Đại Quái & Kỳ Môn)"
+          tag_name: v2.8.13
+          name: "Neta Light v2.8.13 (Bổ Sung Nút Chọn Giới Tính Nam/Nữ & Cung Phi Bát Trạch Trong Trạch Cát)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.12
-            - **Đồng Nhất 100% Giao Diện Chọn Trường Phái Trạch Cát**:
-              + Gỡ bỏ khung viền màu nâu và tím thừa thãi bao quanh ô chọn `☯ Huyền Không Đại Quái (64 Quẻ)` và `🔮 Kỳ Môn Chiến Lược & Tác Quyết`.
-              + Đồng bộ toàn bộ 6 ô chọn trường phái theo cùng chuẩn mực thiết kế phẳng, hài hòa, tinh tế và không còn viền hộp lệch tông.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.13
+            - **Bổ Sung Chọn Giới Tính Nam/Nữ Trong Phân Hệ Trạch Cát**:
+              + Bổ sung cụm phím chuyển đổi giới tính `[ ♂ Nam ] [ ♀ Nữ ]` ngay tại mục nhập Năm sinh gia chủ theo chuẩn chung UCC (Universal Calendar Control), đồng bộ 100% với các phân hệ Bát Tự, Tử Vi, Kỳ Môn, Thái Ất, Lục Nhâm.
+              + Tự động tính toán Cung Phi Bát Trạch (Mệnh Quái: Khảm, Càn, Đoài, Ly, Chấn, Tốn, Cấn, Khôn) và nhóm Trạch Mệnh (Đông Tứ Mệnh / Tây Tứ Mệnh) chuẩn xác theo giới tính.
+              + Tương phối Bát Trạch tự động giữa Mệnh Quái của gia chủ với Hướng Nhà / Tọa Sơn La Kinh (Sinh Khí, Diên Niên, Thiên Y, Phục Vị / Tuyệt Mệnh, Ngũ Quỷ, Lục Sát, Họa Hại).
+              + Tự động nhắc nhở quy tắc phong tục "Lấy vợ xem tuổi đàn bà" khi chọn mục việc Hôn nhân (cưới gả) để chuyển sang tuổi Nữ (cô dâu) tính hạn Kim Lâu chính xác.
+            - **Đồng Nhất Giao Diện Chọn Trường Phái Trạch Cát**:
+              + Gỡ bỏ khung viền thừa thãi bao quanh ô chọn `☯ Huyền Không Đại Quái` và `🔮 Kỳ Môn Chiến Lược & Tác Quyết`.
             - **Khắc Phục Hoàn Toàn Lỗi Module Bị Đẩy Xuống Dưới Không Dùng Được**:
               + Bổ sung giới hạn chiều cao tối đa thích ứng màn hình `max-height: calc(100dvh - 65px)` cho menu danh mục phân hệ `.deck-dropdown-menu`.
               + Kích hoạt cuộn mượt độc lập `overflow-y: auto`, `-webkit-overflow-scrolling: touch`, `overscroll-behavior: contain`.

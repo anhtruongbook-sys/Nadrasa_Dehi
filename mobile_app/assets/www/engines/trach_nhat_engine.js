@@ -371,7 +371,85 @@
       return ranked;
     }
 
-    evaluateYearSuitability(birthYear, targetYear, personChi) {
+    calculateCungPhi(birthYear, isMale = true) {
+      const y = parseInt(birthYear, 10) || 1990;
+      const twoDigits = y % 100;
+      let s = String(twoDigits).split('').reduce((acc, d) => acc + parseInt(d, 10), 0);
+      while (s > 9) {
+        s = String(s).split('').reduce((acc, d) => acc + parseInt(d, 10), 0);
+      }
+      let q;
+      if (y < 2000) {
+        q = isMale ? (10 - s) % 9 : (s + 5) % 9;
+      } else {
+        q = isMale ? (9 - s) % 9 : (s + 6) % 9;
+      }
+      if (q === 0) q = 9;
+      if (q === 5) {
+        q = isMale ? 2 : 8; // Nam Khôn (2), Nữ Cấn (8)
+      }
+
+      const CUNG_INFO = {
+        1: { name: 'Khảm', element: 'Thủy', group: 'Đông Tứ Mệnh', dir: 'Chính Bắc', symbol: '☵' },
+        2: { name: 'Khôn', element: 'Thổ', group: 'Tây Tứ Mệnh', dir: 'Tây Nam', symbol: '☷' },
+        3: { name: 'Chấn', element: 'Mộc', group: 'Đông Tứ Mệnh', dir: 'Chính Đông', symbol: '☳' },
+        4: { name: 'Tốn', element: 'Mộc', group: 'Đông Tứ Mệnh', dir: 'Đông Nam', symbol: '☴' },
+        6: { name: 'Càn', element: 'Kim', group: 'Tây Tứ Mệnh', dir: 'Tây Bắc', symbol: '☰' },
+        7: { name: 'Đoài', element: 'Kim', group: 'Tây Tứ Mệnh', dir: 'Chính Tây', symbol: '☱' },
+        8: { name: 'Cấn', element: 'Thổ', group: 'Tây Tứ Mệnh', dir: 'Đông Bắc', symbol: '☶' },
+        9: { name: 'Ly', element: 'Hỏa', group: 'Đông Tứ Mệnh', dir: 'Chính Nam', symbol: '☲' }
+      };
+
+      const info = CUNG_INFO[q] || CUNG_INFO[1];
+      return {
+        number: q,
+        name: info.name,
+        element: info.element,
+        group: info.group,
+        dir: info.dir,
+        symbol: info.symbol
+      };
+    }
+
+    calculateBatTrach(cungPhiNumber, deg) {
+      if (deg == null || isNaN(deg)) return null;
+      // deg là Tọa Sơn, Hướng Nhà đối diện = (deg + 180) % 360
+      const facingDeg = Math.round((((deg + 180) % 360 + 360) % 360) * 10) / 10;
+
+      let facingPalace = 1;
+      let facingName = 'Chính Bắc (Khảm)';
+      if (facingDeg >= 337.5 || facingDeg < 22.5) { facingPalace = 1; facingName = 'Chính Bắc (Khảm)'; }
+      else if (facingDeg >= 22.5 && facingDeg < 67.5) { facingPalace = 8; facingName = 'Đông Bắc (Cấn)'; }
+      else if (facingDeg >= 67.5 && facingDeg < 112.5) { facingPalace = 3; facingName = 'Chính Đông (Chấn)'; }
+      else if (facingDeg >= 112.5 && facingDeg < 157.5) { facingPalace = 4; facingName = 'Đông Nam (Tốn)'; }
+      else if (facingDeg >= 157.5 && facingDeg < 202.5) { facingPalace = 9; facingName = 'Chính Nam (Ly)'; }
+      else if (facingDeg >= 202.5 && facingDeg < 247.5) { facingPalace = 2; facingName = 'Tây Nam (Khôn)'; }
+      else if (facingDeg >= 247.5 && facingDeg < 292.5) { facingPalace = 7; facingName = 'Chính Tây (Đoài)'; }
+      else if (facingDeg >= 292.5 && facingDeg < 337.5) { facingPalace = 6; facingName = 'Tây Bắc (Càn)'; }
+
+      const MATRIX = {
+        1: { 1: ['Phục Vị', true, 'Tiểu Cát'], 9: ['Diên Niên', true, 'Thượng Cát'], 3: ['Thiên Y', true, 'Thượng Cát'], 4: ['Sinh Khí', true, 'Thượng Cát'], 6: ['Lục Sát', false, 'Thứ Hung'], 2: ['Tuyệt Mệnh', false, 'Đại Hung'], 8: ['Ngũ Quỷ', false, 'Đại Hung'], 7: ['Họa Hại', false, 'Thứ Hung'] },
+        2: { 2: ['Phục Vị', true, 'Tiểu Cát'], 6: ['Diên Niên', true, 'Thượng Cát'], 7: ['Thiên Y', true, 'Thượng Cát'], 8: ['Sinh Khí', true, 'Thượng Cát'], 1: ['Tuyệt Mệnh', false, 'Đại Hung'], 9: ['Lục Sát', false, 'Thứ Hung'], 3: ['Họa Hại', false, 'Thứ Hung'], 4: ['Ngũ Quỷ', false, 'Đại Hung'] },
+        3: { 3: ['Phục Vị', true, 'Tiểu Cát'], 4: ['Diên Niên', true, 'Thượng Cát'], 1: ['Thiên Y', true, 'Thượng Cát'], 9: ['Sinh Khí', true, 'Thượng Cát'], 7: ['Tuyệt Mệnh', false, 'Đại Hung'], 8: ['Lục Sát', false, 'Thứ Hung'], 6: ['Ngũ Quỷ', false, 'Đại Hung'], 2: ['Họa Hại', false, 'Thứ Hung'] },
+        4: { 4: ['Phục Vị', true, 'Tiểu Cát'], 3: ['Diên Niên', true, 'Thượng Cát'], 9: ['Thiên Y', true, 'Thượng Cát'], 1: ['Sinh Khí', true, 'Thượng Cát'], 8: ['Tuyệt Mệnh', false, 'Đại Hung'], 7: ['Lục Sát', false, 'Thứ Hung'], 2: ['Ngũ Quỷ', false, 'Đại Hung'], 6: ['Họa Hại', false, 'Thứ Hung'] },
+        6: { 6: ['Phục Vị', true, 'Tiểu Cát'], 2: ['Diên Niên', true, 'Thượng Cát'], 8: ['Thiên Y', true, 'Thượng Cát'], 7: ['Sinh Khí', true, 'Thượng Cát'], 9: ['Tuyệt Mệnh', false, 'Đại Hung'], 1: ['Lục Sát', false, 'Thứ Hung'], 4: ['Họa Hại', false, 'Thứ Hung'], 3: ['Ngũ Quỷ', false, 'Đại Hung'] },
+        7: { 7: ['Phục Vị', true, 'Tiểu Cát'], 8: ['Diên Niên', true, 'Thượng Cát'], 2: ['Thiên Y', true, 'Thượng Cát'], 6: ['Sinh Khí', true, 'Thượng Cát'], 3: ['Tuyệt Mệnh', false, 'Đại Hung'], 4: ['Lục Sát', false, 'Thứ Hung'], 9: ['Ngũ Quỷ', false, 'Đại Hung'], 1: ['Họa Hại', false, 'Thứ Hung'] },
+        8: { 8: ['Phục Vị', true, 'Tiểu Cát'], 7: ['Diên Niên', true, 'Thượng Cát'], 6: ['Thiên Y', true, 'Thượng Cát'], 2: ['Sinh Khí', true, 'Thượng Cát'], 4: ['Tuyệt Mệnh', false, 'Đại Hung'], 3: ['Lục Sát', false, 'Thứ Hung'], 1: ['Ngũ Quỷ', false, 'Đại Hung'], 9: ['Họa Hại', false, 'Thứ Hung'] },
+        9: { 9: ['Phục Vị', true, 'Tiểu Cát'], 1: ['Diên Niên', true, 'Thượng Cát'], 4: ['Thiên Y', true, 'Thượng Cát'], 3: ['Sinh Khí', true, 'Thượng Cát'], 6: ['Tuyệt Mệnh', false, 'Đại Hung'], 2: ['Lục Sát', false, 'Thứ Hung'], 7: ['Ngũ Quỷ', false, 'Đại Hung'], 8: ['Họa Hại', false, 'Thứ Hung'] }
+      };
+
+      const pInfo = (MATRIX[cungPhiNumber] && MATRIX[cungPhiNumber][facingPalace]) || ['Phục Vị', true, 'Tiểu Cát'];
+      return {
+        facing_deg: facingDeg,
+        facing_name: facingName,
+        facing_palace: facingPalace,
+        du_nien: pInfo[0],
+        is_good: pInfo[1],
+        rating: pInfo[2]
+      };
+    }
+
+    evaluateYearSuitability(birthYear, targetYear, personChi, isMale = true, isMarriage = false) {
       const bYear = parseInt(birthYear, 10) || 1990;
       const tYear = parseInt(targetYear, 10) || (new Date()).getFullYear();
       const chiOrder = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tị", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
@@ -420,9 +498,15 @@
       const isHoangOc = !isHoGood;
       const hoangOcDesc = `Cung ${cungName} (${isHoGood ? 'Tốt' : 'Phạm Hoang Ốc'}): ${cungMeaning}`;
 
+      // 4. Cung Phi Bát Trạch
+      const cungPhi = this.calculateCungPhi(bYear, isMale);
+
       return {
         tuoi_mu: tuoiMu,
         age_lunar: tuoiMu,
+        is_male: isMale,
+        gender_text: isMale ? 'Nam' : 'Nữ',
+        cung_phi: cungPhi,
         target_year: tYear,
         target_year_chi: targetYearChi,
         tam_tai: { is_tam_tai: isTamTai, is_pham: isTamTai, desc: tamTaiDesc },
@@ -785,7 +869,9 @@
       // Hạn năm
       const targetYear = startDate.getFullYear();
       const personChi = (personCanChi.split(' ')[1]) || 'Thân';
-      const yearSuitability = this.evaluateYearSuitability(birthYear, targetYear, personChi);
+      const isMale = options.isMale !== false;
+      const isMarriage = (task && task.category === 'Hôn nhân') || false;
+      const yearSuitability = this.evaluateYearSuitability(birthYear, targetYear, personChi, isMale, isMarriage);
 
       while (cur.getTime() <= endMs) {
         const d = cur.getDate();

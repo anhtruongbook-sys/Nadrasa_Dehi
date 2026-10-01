@@ -17,6 +17,7 @@
     searchTerm: '',
     personYear: 1990,
     personCanChi: 'Canh Ngọ',
+    isMale: true,
     selectedMonth: (new Date()).getMonth() + 1,
     selectedYear: (new Date()).getFullYear(),
     mountainSittingDeg: null,
@@ -149,11 +150,17 @@
     const container = document.getElementById('view-trachcat');
     if (!container) return;
 
-    // Tự động nhận diện năm sinh từ Bát Tự / Tử Vi nếu có lưu trong localStorage
+    // Tự động nhận diện năm sinh và giới tính nếu có lưu trong localStorage
     try {
       const savedYear = localStorage.getItem('neta_user_birth_year');
       if (savedYear && /^\d{4}$/.test(savedYear)) {
         state.personYear = parseInt(savedYear, 10);
+      }
+      const savedGender = localStorage.getItem('neta_user_gender');
+      if (savedGender === 'female' || savedGender === '0' || savedGender === 'false') {
+        state.isMale = false;
+      } else if (savedGender === 'male' || savedGender === '1' || savedGender === 'true') {
+        state.isMale = true;
       }
       const savedSitting = localStorage.getItem('neta_lakinh_sitting');
       if (savedSitting && !isNaN(parseFloat(savedSitting))) {
@@ -190,6 +197,7 @@
       taskId: state.taskId,
       personYear: state.personYear,
       personCanChi: state.personCanChi,
+      isMale: state.isMale,
       startDate: startDate,
       endDate: endDate,
       schoolConfig: {
@@ -221,7 +229,13 @@
       return matchCat && matchSearch;
     });
 
-    const yearSuit = state.results ? state.results.year_suitability : eng.evaluateYearSuitability(state.personYear, state.selectedYear);
+    const task = tasks.find(t => t.id === state.taskId);
+    const isMarriageTask = (task && task.category === 'Hôn nhân') || (state.category === 'Hôn nhân');
+    const yearSuit = state.results ? state.results.year_suitability : eng.evaluateYearSuitability(state.personYear, state.selectedYear, null, state.isMale, isMarriageTask);
+    const cungPhi = (yearSuit && yearSuit.cung_phi) || (eng.calculateCungPhi ? eng.calculateCungPhi(state.personYear, state.isMale) : null);
+    const batTrach = (state.mountainSittingDeg != null && eng.calculateBatTrach && cungPhi)
+      ? eng.calculateBatTrach(cungPhi.number, state.mountainSittingDeg)
+      : null;
 
     container.innerHTML = `
       <div class="tc-container">
@@ -273,12 +287,23 @@
           <!-- Thông tin gia chủ & Năm tuổi -->
           <div class="tc-grid-2">
             <div class="tc-field">
-              <label class="tc-label">Năm sinh gia chủ (Dương lịch)</label>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <label class="tc-label" style="margin-bottom: 0;">Năm sinh gia chủ (Dương lịch)</label>
+                <div class="ucc-pill-gender" style="height: 26px; padding: 2px;">
+                  <button type="button" class="ucc-gender-btn ${state.isMale ? 'active male' : ''}" id="tc-btn-male" style="height: 22px; padding: 0 8px; font-size: 0.72rem;">♂ Nam</button>
+                  <button type="button" class="ucc-gender-btn ${!state.isMale ? 'active female' : ''}" id="tc-btn-female" style="height: 22px; padding: 0 8px; font-size: 0.72rem;">♀ Nữ</button>
+                </div>
+              </div>
               <div class="tc-input-row">
-                <input type="number" id="tc-input-year" class="tc-input" min="1920" max="2050" value="${state.personYear}" placeholder="Nhập năm sinh (VD: 1979)...">
+                <input type="number" id="tc-input-year" class="tc-input" min="1920" max="2050" value="${state.personYear}" placeholder="Nhập năm sinh (VD: 1990)...">
               </div>
               <div class="tc-person-badges">
                 <span class="tc-badge tc-badge-info">Tuổi: ${state.personCanChi} (${yearSuit ? yearSuit.age_lunar : ''} tuổi mụ)</span>
+                ${cungPhi ? `
+                  <span class="tc-badge" style="background: rgba(14, 165, 233, 0.15); color: #0284c7; border: 1px solid rgba(14, 165, 233, 0.35); font-weight: 700;">
+                    ${cungPhi.symbol} Cung ${cungPhi.name} (${cungPhi.element} • ${cungPhi.group})
+                  </span>
+                ` : ''}
                 ${yearSuit ? `
                   <span class="tc-badge ${yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
                     ${yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
@@ -291,11 +316,15 @@
                   </span>
                 ` : ''}
               </div>
-              ${yearSuit && (!yearSuit.overall_good_for_building) ? `
-                <div style="font-size: 0.72rem; color: #f59e0b; margin-top: 4px; line-height: 1.35;">
-                  💡 <em>Lưu ý: Gia chủ có phạm hạn trong năm (Tam Tai/Kim Lâu/Hoang Ốc). Nếu làm nhà / động thổ nên mượn tuổi người thân hợp tuổi đứng tên khởi sự.</em>
+              ${isMarriageTask ? `
+                <div style="font-size: 0.72rem; color: #a855f7; margin-top: 4px; line-height: 1.35;">
+                  💍 <em>Xem ngày cưới hỏi theo phong tục: "Lấy vợ xem tuổi đàn bà". Khi xem hạn Kim Lâu cưới gả, vui lòng chọn "♀ Nữ" và nhập năm sinh cô dâu để đối chiếu chuẩn xác.</em>
                 </div>
-              ` : ''}
+              ` : (yearSuit && (!yearSuit.overall_good_for_building) ? `
+                <div style="font-size: 0.72rem; color: #f59e0b; margin-top: 4px; line-height: 1.35;">
+                  💡 <em>Lưu ý: Gia chủ (${state.isMale ? 'Nam' : 'Nữ'}) có phạm hạn trong năm (Tam Tai/Kim Lâu/Hoang Ốc). Nếu làm nhà / động thổ nên mượn tuổi người thân hợp tuổi đứng tên khởi sự.</em>
+                </div>
+              ` : '')}
             </div>
 
             <!-- Tọa Sơn Nhà & Liên kết La Kinh -->
@@ -320,7 +349,18 @@
               </div>
               ${state.mountainSittingDeg != null ? `
                 <div class="tc-mountain-active-card">
-                  🏡 <strong>Tọa Sơn Đang Khóa: ${state.mountainSittingDeg}°</strong> • Tự động lọc bỏ các ngày Trực Xung Tọa Sơn & Tam Sát phương vị.
+                  <div>🏡 <strong>Tọa Sơn: ${state.mountainSittingDeg}°</strong> ${batTrach ? `• <strong>Hướng Nhà: ${batTrach.facing_deg}° (${batTrach.facing_name})</strong>` : ''}</div>
+                  ${batTrach && cungPhi ? `
+                    <div style="margin-top: 4px; font-size: 0.75rem;">
+                      Bát Trạch gia chủ (${state.isMale ? 'Nam' : 'Nữ'} ${cungPhi.name} • ${cungPhi.group}): 
+                      <span style="font-weight: 800; color: ${batTrach.is_good ? '#10b981' : '#ef4444'};">
+                        ${batTrach.is_good ? '✓' : '⚠️'} Cung ${batTrach.du_nien} (${batTrach.rating})
+                      </span>
+                    </div>
+                  ` : ''}
+                  <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 3px;">
+                    Tự động lọc bỏ các ngày Trực Xung Tọa Sơn & Tam Sát phương vị.
+                  </div>
                 </div>
               ` : `
                 <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">
@@ -775,6 +815,30 @@
       inputYear.addEventListener('change', (e) => {
         applyYear(e.target.value);
       });
+    }
+
+    // Gender toggle buttons
+    const btnMale = document.getElementById('tc-btn-male');
+    const btnFemale = document.getElementById('tc-btn-female');
+    if (btnMale) {
+      btnMale.onclick = () => {
+        if (!state.isMale) {
+          state.isMale = true;
+          try { localStorage.setItem('neta_user_gender', 'male'); } catch (_) {}
+          runEvaluation();
+          render();
+        }
+      };
+    }
+    if (btnFemale) {
+      btnFemale.onclick = () => {
+        if (state.isMale) {
+          state.isMale = false;
+          try { localStorage.setItem('neta_user_gender', 'female'); } catch (_) {}
+          runEvaluation();
+          render();
+        }
+      };
     }
 
     // Mountain degree input
