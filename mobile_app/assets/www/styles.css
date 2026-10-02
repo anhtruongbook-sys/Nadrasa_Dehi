@@ -22165,6 +22165,136 @@ body.theme-light .btn-timing-ics:hover {
   height: 100%;
 }
 
+/* Địa Chính Leaflet Map & Interactive Controls */
+.dc-map-tools {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.dc-tool-btn.dc-btn-lock {
+  padding: 3px 8px !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
+  background: rgba(30, 41, 59, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #cbd5e1 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dc-tool-btn.dc-btn-lock.is-unlocked {
+  background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+  color: #ffffff !important;
+  border-color: #fde68a !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6) !important;
+  animation: dc-pulse-border 1.5s infinite;
+}
+
+@keyframes dc-pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
+  70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+.dc-map-layer-switcher {
+  display: inline-flex;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 1px;
+}
+
+.dc-layer-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.dc-layer-btn:hover {
+  color: #f8fafc;
+}
+
+.dc-layer-btn.active {
+  background: #f59e0b;
+  color: #0f172a;
+}
+
+.dc-map-container {
+  width: 100%;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-top: 4px;
+}
+
+#dc-leaflet-map {
+  width: 100%;
+  height: 330px;
+  background: #0f172a;
+}
+
+.dc-map-drag-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 999;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  color: #fef08a;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+body.theme-light #view-diachinh .dc-map-layer-switcher {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+body.theme-light #view-diachinh .dc-layer-btn {
+  color: #64748b;
+}
+
+body.theme-light #view-diachinh .dc-layer-btn.active {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+body.theme-light #view-diachinh .dc-tool-btn.dc-btn-lock {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+body.theme-light #view-diachinh .dc-tool-btn.dc-btn-lock.is-unlocked {
+  background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+}
+
+body.theme-light #view-diachinh .dc-map-container {
+  border-color: #cbd5e1;
+}
+
 /* Boundary Edges & 24 Sơn Vị Table */
 .dc-table-wrapper {
   width: 100%;

@@ -14,8 +14,18 @@
     parcelName: '',
     coordText: '',
     currentParcel: null,
-    isInitialized: false
+    isInitialized: false,
+    viewMode: 'map', // 'map' or 'svg'
+    currentLayerKey: 'googleSat', // 'googleSat', 'esriSat', 'googleRoad'
+    isPointsLocked: true // Mặc định khóa điểm để di chuyển bản đồ tự do, mở khóa để kéo mốc
   };
+
+  let dcMapInstance = null;
+  let dcCurrentLayer = null;
+  let dcLayers = {};
+  let dcPolygonLayer = null;
+  let dcMarkersGroup = null;
+  let dcMidpointGroup = null;
 
   // Helper escape
   function escapeHTML(str) {
@@ -33,8 +43,14 @@
     containerEl = container || document.getElementById('view-diachinh');
     if (!containerEl) return;
 
-    render();
-    state.isInitialized = true;
+    if (!state.isInitialized || !containerEl.querySelector('.dc-container')) {
+      render();
+      state.isInitialized = true;
+    } else {
+      if (dcMapInstance) {
+        setTimeout(() => { dcMapInstance.invalidateSize(); }, 100);
+      }
+    }
   }
 
   // Render toàn bộ View giao diện Địa chính
@@ -143,6 +159,8 @@
 
     containerEl.innerHTML = html;
     bindEvents();
+    bindResultsEvents();
+    initOrUpdateDcMap();
   }
 
   // Render phần thống kê và bảng biểu kết quả
@@ -201,16 +219,43 @@
         </div>
       </div>
 
-      <!-- Preview Hình Học Đa Giác Ranh Đất -->
+      <!-- Preview Hình Học Đa Giác Ranh Đất & Bản Đồ Vệ Tinh 3 Chế Độ -->
       <div class="dc-panel" style="margin-top:12px;">
-        <div class="dc-panel-title">
+        <div class="dc-panel-title" style="flex-wrap: wrap; gap: 8px;">
           <div class="title-left">
-            <span>🗺️</span>
-            <span>Mặt Bằng Hình Học Khu Đất &amp; Tim Lập Cực</span>
+            <span>🛰️</span>
+            <span>Bản Đồ Vệ Tinh &amp; Ranh Thửa Đất</span>
           </div>
-          <div class="dc-badge-ktt">Tỉ lệ chuẩn 1:1</div>
+          <div class="dc-map-tools">
+            <!-- Nút Khóa / Mở Khóa Điểm -->
+            <button type="button" class="dc-tool-btn dc-btn-lock ${state.isPointsLocked ? '' : 'is-unlocked'}" id="dc-btn-toggle-lock" title="Chạm để mở khóa di chuyển mốc tọa độ trên bản đồ">
+              <span class="lock-icon" id="dc-lock-icon">${state.isPointsLocked ? '🔒' : '🔓'}</span>
+              <span class="lock-text" id="dc-lock-text">${state.isPointsLocked ? 'Khóa Điểm' : 'Mở Khóa (Di Điểm)'}</span>
+            </button>
+            <!-- 3 Chế Độ Bản Đồ Vệ Tinh -->
+            <div class="dc-map-layer-switcher" id="dc-map-layer-switcher">
+              <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'googleSat' ? 'active' : ''}" data-layer="googleSat" title="Ảnh vệ tinh Google Hybrid">Vệ Tinh</button>
+              <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'esriSat' ? 'active' : ''}" data-layer="esriSat" title="Ảnh vệ tinh Esri Clarity">Esri</button>
+              <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'googleRoad' ? 'active' : ''}" data-layer="googleRoad" title="Bản đồ giao thông Google">Giao Thông</button>
+            </div>
+            <!-- Chuyển đổi Vệ Tinh / Sơ Đồ Hình Học SVG -->
+            <button type="button" class="dc-tool-btn" id="dc-btn-toggle-viewmode" title="Chuyển giữa Bản đồ vệ tinh và Sơ đồ hình học SVG">
+              <span id="dc-viewmode-icon">${state.viewMode === 'svg' ? '🛰️' : '📐'}</span>
+              <span id="dc-viewmode-text">${state.viewMode === 'svg' ? 'Xem Vệ Tinh' : 'Xem Sơ Đồ'}</span>
+            </button>
+          </div>
         </div>
-        <div class="dc-preview-container">
+
+        <!-- Khung Bản Đồ Leaflet -->
+        <div id="dc-map-container" class="dc-map-container" style="${state.viewMode === 'svg' ? 'display:none;' : 'display:block;'}">
+          <div id="dc-leaflet-map"></div>
+          <div id="dc-drag-hint" class="dc-map-drag-hint" style="${state.isPointsLocked ? 'display:none;' : 'display:block;'}">
+            💡 Đang mở khóa: Chạm và kéo các mốc ranh để tinh chỉnh tọa độ trực tiếp trên bản đồ
+          </div>
+        </div>
+
+        <!-- Khung Sơ Đồ Hình Học SVG (Tỉ lệ 1:1) -->
+        <div id="dc-svg-container" class="dc-preview-container" style="${state.viewMode === 'svg' ? 'display:flex;' : 'display:none;'}">
           ${svgContent}
         </div>
       </div>
@@ -671,6 +716,340 @@
     showToast(`Đã nạp mẫu: ${sample.name}`);
   }
 
+  // Khởi tạo hoặc cập nhật bản đồ vệ tinh trong Địa Chính
+  function initOrUpdateDcMap() {
+    const mapEl = document.getElementById('dc-leaflet-map');
+    if (!mapEl || !state.currentParcel || !state.currentParcel.vertices || state.currentParcel.vertices.length < 3) {
+      if (dcMapInstance) {
+        try { dcMapInstance.remove(); } catch (e) {}
+        dcMapInstance = null;
+      }
+      return;
+    }
+
+    if (typeof L === 'undefined') {
+      setTimeout(initOrUpdateDcMap, 200);
+      return;
+    }
+
+    // Nếu DOM container đã bị thay mới bởi renderResultsHTML hoặc dcMapInstance chưa có
+    if (dcMapInstance) {
+      const curContainer = dcMapInstance.getContainer ? dcMapInstance.getContainer() : null;
+      if (!curContainer || !document.body.contains(curContainer) || curContainer !== mapEl) {
+        try { dcMapInstance.remove(); } catch (e) {}
+        dcMapInstance = null;
+      }
+    }
+
+    if (!dcMapInstance) {
+      const p = state.currentParcel;
+      const initialCenter = (p && p.centroid) ? [p.centroid.lat, p.centroid.lng] : [21.0285, 105.854];
+
+      dcMapInstance = L.map(mapEl, {
+        center: initialCenter,
+        zoom: 18,
+        maxZoom: 22,
+        zoomControl: false,
+        attributionControl: false
+      });
+      L.control.zoom({ position: 'topright' }).addTo(dcMapInstance);
+
+      dcLayers = {
+        googleSat: L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+          maxZoom: 22,
+          subdomains: '0123'
+        }),
+        esriSat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19
+        }),
+        googleRoad: L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          maxZoom: 22,
+          subdomains: '0123'
+        })
+      };
+
+      const activeKey = state.currentLayerKey || 'googleSat';
+      dcCurrentLayer = dcLayers[activeKey] || dcLayers.googleSat;
+      dcCurrentLayer.addTo(dcMapInstance);
+
+      dcPolygonLayer = L.polygon([], {
+        color: '#f59e0b',
+        weight: 3,
+        fillColor: '#f59e0b',
+        fillOpacity: 0.22
+      }).addTo(dcMapInstance);
+
+      dcMarkersGroup = L.layerGroup().addTo(dcMapInstance);
+      dcMidpointGroup = L.layerGroup().addTo(dcMapInstance);
+    }
+
+    renderDcMapLayers(true);
+  }
+
+  // Vẽ các lớp mốc ranh, cạnh ranh, tim đất lên bản đồ vệ tinh
+  function renderDcMapLayers(shouldFitBounds = false) {
+    if (!dcMapInstance || !state.currentParcel || !state.currentParcel.vertices) return;
+
+    const p = state.currentParcel;
+    const latLngs = p.vertices.map(v => [v.lat, v.lng]);
+
+    // 1. Cập nhật đa giác ranh đất
+    if (dcPolygonLayer) {
+      dcPolygonLayer.setLatLngs(latLngs);
+    }
+
+    // 2. Cập nhật các mốc ranh với tính năng kéo rê (di điểm tinh chỉnh)
+    if (dcMarkersGroup) {
+      dcMarkersGroup.clearLayers();
+      const isLocked = state.isPointsLocked !== false;
+
+      p.vertices.forEach(v => {
+        const bg = isLocked ? '#0f172a' : '#d97706';
+        const border = isLocked ? '#f59e0b' : '#fde047';
+        const shadow = isLocked ? '0 2px 6px rgba(0,0,0,0.8)' : '0 0 10px rgba(245,158,11,0.95)';
+        const cursor = isLocked ? 'pointer' : 'grab';
+
+        const marker = L.marker([v.lat, v.lng], {
+          icon: L.divIcon({
+            className: 'dc-point-divicon',
+            html: `<div style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${bg};border:2px solid ${border};color:#ffffff;font-size:11px;font-weight:800;box-shadow:${shadow};cursor:${cursor};transition:all 0.2s ease;">${v.id}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          }),
+          draggable: !isLocked
+        });
+
+        marker.bindPopup(`
+          <div style="font-size:12px;color:#0f172a;padding:2px;">
+            <b>Mốc ${v.id}</b><br>
+            X: ${v.x.toFixed(2)} m<br>
+            Y: ${v.y.toFixed(2)} m<br>
+            WGS84: ${v.lat.toFixed(6)}°, ${v.lng.toFixed(6)}°
+            ${!isLocked ? '<br><span style="color:#d97706;font-weight:700;">✋ Kéo rê để tinh chỉnh</span>' : ''}
+          </div>
+        `);
+
+        // Xử lý kéo mốc tinh chỉnh trực tiếp
+        marker.on('drag', (e) => {
+          v.lat = e.target.getLatLng().lat;
+          v.lng = e.target.getLatLng().lng;
+          const updatedLatLngs = p.vertices.map(pt => [pt.lat, pt.lng]);
+          if (dcPolygonLayer) dcPolygonLayer.setLatLngs(updatedLatLngs);
+        });
+
+        marker.on('dragend', (e) => {
+          const newPos = e.target.getLatLng();
+          v.lat = newPos.lat;
+          v.lng = newPos.lng;
+
+          const engine = global.NetaDiaChinhEngine;
+          if (engine) {
+            const curProv = engine.getProvince(state.provinceKey) || { name: 'Hà Nội', ktt: 105.0 };
+            const provData = engine.PROVINCES_DATA[curProv.name] || engine.PROVINCES_DATA['Hà Nội'];
+            const k0 = provData && provData.zone3 ? 0.9999 : 0.9996;
+            const vn = engine.wgs84ToVn2000(v.lat, v.lng, provData ? provData.cm : curProv.ktt, k0);
+            v.x = Math.round(vn.x * 100) / 100;
+            v.y = Math.round(vn.y * 100) / 100;
+
+            p.areaM2 = engine.calculatePolygonArea(p.vertices);
+            p.perimeterM = engine.calculateEdges(p.vertices).reduce((sum, ed) => sum + ed.lengthM, 0);
+            p.centroid = engine.calculateCentroid(p.vertices);
+            p.edges = engine.calculateEdges(p.vertices);
+            p.vertexCount = p.vertices.length;
+            if (p.areaM2) p.areaSao = (p.areaM2 / 360).toFixed(1);
+
+            state.coordText = p.vertices.map(pt => `${pt.id}  ${pt.x.toFixed(2)}  ${pt.y.toFixed(2)}`).join('\n');
+            const txtCoords = document.getElementById('dc-textarea-coords');
+            if (txtCoords) txtCoords.value = state.coordText;
+
+            updateDcStatsAndTables();
+            renderDcMapLayers(false);
+            showToast(`📍 Đã tinh chỉnh Mốc ${v.id}: X=${v.x.toFixed(2)}, Y=${v.y.toFixed(2)}`);
+          }
+        });
+
+        marker.addTo(dcMarkersGroup);
+      });
+    }
+
+    // 3. Cập nhật trung điểm các cạnh và 24 Sơn Vị
+    if (dcMidpointGroup) {
+      dcMidpointGroup.clearLayers();
+      if (p.edges && p.edges.length > 0) {
+        p.edges.forEach(e => {
+          const vFrom = p.vertices.find(v => String(v.id) === String(e.from));
+          const vTo = p.vertices.find(v => String(v.id) === String(e.to));
+          if (vFrom && vTo) {
+            const midLat = (vFrom.lat + vTo.lat) / 2;
+            const midLng = (vFrom.lng + vTo.lng) / 2;
+            const sonName = e.sonVi ? e.sonVi.name : e.huong;
+
+            L.marker([midLat, midLng], {
+              icon: L.divIcon({
+                className: 'dc-edge-divicon',
+                html: `<div style="background:rgba(15,10,25,0.85);border:1px solid #f59e0b;border-radius:4px;padding:1px 5px;color:#f8fafc;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.6);text-align:center;">
+                  <span style="color:#38bdf8;">${e.lengthM.toFixed(1)}m</span> • <span style="color:#facc15;">${sonName} (${e.bearingDeg.toFixed(0)}°)</span>
+                </div>`,
+                iconAnchor: [45, 10]
+              })
+            }).addTo(dcMidpointGroup);
+          }
+        });
+      }
+
+      // 4. Centroid (Tim Đất)
+      if (p.centroid) {
+        const areaFmt = p.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 });
+        L.marker([p.centroid.lat, p.centroid.lng], {
+          icon: L.divIcon({
+            className: 'dc-centroid-divicon',
+            html: `<div style="display:inline-flex;align-items:center;background:none;border:none;">
+              <span style="font-size:18px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.9));">🎯</span>
+              <span style="color:#ef4444;font-size:10px;font-weight:900;white-space:nowrap;margin-left:3px;background:rgba(0,0,0,0.75);padding:1px 4px;border-radius:3px;text-shadow:0 1px 2px #000;">${areaFmt} m²</span>
+            </div>`,
+            iconSize: [75, 22],
+            iconAnchor: [9, 11]
+          })
+        }).addTo(dcMidpointGroup);
+      }
+    }
+
+    if (shouldFitBounds && dcPolygonLayer && dcPolygonLayer.getBounds().isValid()) {
+      dcMapInstance.fitBounds(dcPolygonLayer.getBounds(), { padding: [35, 35] });
+    }
+
+    setTimeout(() => {
+      if (dcMapInstance) dcMapInstance.invalidateSize();
+    }, 150);
+  }
+
+  // Cập nhật số liệu thống kê và bảng biểu khi kéo mốc tinh chỉnh
+  function updateDcStatsAndTables() {
+    if (!state.currentParcel) return;
+    const p = state.currentParcel;
+    const c = p.centroid;
+    const formattedArea = p.areaM2.toLocaleString('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+    const formattedPerimeter = p.perimeterM.toLocaleString('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+
+    const areaValEl = document.querySelector('.dc-hero-area-val');
+    const areaUnitEl = document.querySelector('.dc-hero-area-unit');
+    if (areaValEl) areaValEl.textContent = formattedArea;
+    if (areaUnitEl) areaUnitEl.textContent = `m² (${p.areaSao ? p.areaSao + ' sào' : 'mét vuông'})`;
+
+    const statVals = document.querySelectorAll('.dc-stat-val');
+    if (statVals && statVals.length >= 4) {
+      statVals[0].textContent = `${p.vertexCount} mốc ranh`;
+      statVals[1].textContent = `${formattedPerimeter} m`;
+      statVals[2].textContent = `${c.lat.toFixed(6)}°`;
+      statVals[3].textContent = `${c.lng.toFixed(6)}°`;
+    }
+
+    // Bảng 24 Sơn Vị
+    const tbodyEdges = document.querySelector('.dc-edges-table tbody');
+    if (tbodyEdges && p.edges) {
+      tbodyEdges.innerHTML = p.edges.map(e => {
+        const son = e.sonVi;
+        const sonClass = son ? getElementBadgeClass(son.nguHanh) : '';
+        return `
+          <tr>
+            <td><span class="dc-edge-badge">${e.from} ➔ ${e.to}</span></td>
+            <td style="font-weight:700;">${e.lengthM.toFixed(2)} m</td>
+            <td style="font-family:ui-monospace,Menlo,Consolas,monospace;">${e.bearingDeg.toFixed(1)}°</td>
+            <td>
+              <span class="dc-son-badge ${sonClass}">
+                ${son ? son.name : e.huong} (${son ? son.cung : ''})
+              </span>
+            </td>
+            <td>
+              <span style="font-size:0.75rem;color:#94a3b8;">
+                ${son ? `${son.cung} • Hành ${son.nguHanh}` : ''}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Bảng tọa độ chi tiết
+    const tbodyVerts = document.querySelector('.dc-vertices-table tbody');
+    if (tbodyVerts && p.vertices) {
+      tbodyVerts.innerHTML = p.vertices.map(v => `
+        <tr>
+          <td style="font-weight:700;color:#facc15;">${v.id}</td>
+          <td>${v.x.toFixed(2)}</td>
+          <td>${v.y.toFixed(2)}</td>
+          <td>${v.lat.toFixed(7)}°</td>
+          <td>${v.lng.toFixed(7)}°</td>
+        </tr>
+      `).join('');
+    }
+
+    // Sơ đồ SVG
+    const svgCont = document.getElementById('dc-svg-container');
+    if (svgCont) {
+      svgCont.innerHTML = renderSvgPreview(p.vertices, p.centroid);
+    }
+  }
+
+  // Gắn sự kiện cho các điều khiển trong vùng kết quả (Bản đồ, Khóa, Lớp vệ tinh)
+  function bindResultsEvents() {
+    const btnLock = document.getElementById('dc-btn-toggle-lock');
+    const btnViewMode = document.getElementById('dc-btn-toggle-viewmode');
+    const layerBtns = document.querySelectorAll('#dc-map-layer-switcher .dc-layer-btn');
+
+    if (btnLock) {
+      btnLock.onclick = () => {
+        state.isPointsLocked = !state.isPointsLocked;
+        btnLock.classList.toggle('is-unlocked', !state.isPointsLocked);
+        const lockIcon = document.getElementById('dc-lock-icon');
+        const lockText = document.getElementById('dc-lock-text');
+        const dragHint = document.getElementById('dc-drag-hint');
+        if (lockIcon) lockIcon.textContent = state.isPointsLocked ? '🔒' : '🔓';
+        if (lockText) lockText.textContent = state.isPointsLocked ? 'Khóa Điểm' : 'Mở Khóa (Di Điểm)';
+        if (dragHint) dragHint.style.display = state.isPointsLocked ? 'none' : 'block';
+
+        renderDcMapLayers(false);
+        showToast(state.isPointsLocked ? '🔒 Đã khóa mốc tọa độ' : '🔓 Đã mở khóa: Bạn có thể chạm và kéo rê mốc ranh để tinh chỉnh!');
+      };
+    }
+
+    if (btnViewMode) {
+      btnViewMode.onclick = () => {
+        state.viewMode = state.viewMode === 'map' ? 'svg' : 'map';
+        const mapCont = document.getElementById('dc-map-container');
+        const svgCont = document.getElementById('dc-svg-container');
+        const vmIcon = document.getElementById('dc-viewmode-icon');
+        const vmText = document.getElementById('dc-viewmode-text');
+        if (mapCont) mapCont.style.display = state.viewMode === 'map' ? 'block' : 'none';
+        if (svgCont) svgCont.style.display = state.viewMode === 'svg' ? 'flex' : 'none';
+        if (vmIcon) vmIcon.textContent = state.viewMode === 'svg' ? '🛰️' : '📐';
+        if (vmText) vmText.textContent = state.viewMode === 'svg' ? 'Xem Vệ Tinh' : 'Xem Sơ Đồ';
+
+        if (state.viewMode === 'map' && dcMapInstance) {
+          setTimeout(() => { dcMapInstance.invalidateSize(); }, 100);
+        }
+      };
+    }
+
+    if (layerBtns) {
+      layerBtns.forEach(btn => {
+        btn.onclick = () => {
+          const lKey = btn.getAttribute('data-layer');
+          if (!lKey || !dcLayers[lKey] || !dcMapInstance) return;
+
+          layerBtns.forEach(b => b.classList.toggle('active', b === btn));
+          state.currentLayerKey = lKey;
+
+          if (dcCurrentLayer) {
+            dcMapInstance.removeLayer(dcCurrentLayer);
+          }
+          dcCurrentLayer = dcLayers[lKey];
+          dcCurrentLayer.addTo(dcMapInstance);
+        };
+      });
+    }
+  }
+
   // Tái phân tích và cập nhật khu vực kết quả
   function reprocessAndRefresh() {
     const engine = global.NetaDiaChinhEngine;
@@ -685,6 +1064,8 @@
     const resultsArea = document.getElementById('dc-results-area');
     if (resultsArea) {
       resultsArea.innerHTML = renderResultsHTML(state.currentParcel);
+      bindResultsEvents();
+      initOrUpdateDcMap();
     }
   }
 
@@ -700,15 +1081,18 @@
       return;
     }
 
-    // Chuyển sang La Kinh và nạp thửa đất
-    global.NetaLaKinhView.importParcelFromVN2000(state.currentParcel);
-
-    // Chuyển màn hình giao diện
+    // 1. Chuyển sang La Kinh trước để container được hiển thị và có kích thước thực
     if (typeof window.switchAppMode === 'function') {
       window.switchAppMode('lakinh');
     }
 
-    showToast(`Đã đưa thửa đất vào La Kinh: ${state.currentParcel.parcelName}`);
+    // 2. Chuyển giao và nạp thửa đất vào La Kinh
+    setTimeout(() => {
+      if (global.NetaLaKinhView && typeof global.NetaLaKinhView.importParcelFromVN2000 === 'function') {
+        global.NetaLaKinhView.importParcelFromVN2000(state.currentParcel);
+      }
+      showToast(`Đã đưa thửa đất vào La Kinh: ${state.currentParcel.parcelName || 'VN-2000'}`);
+    }, 120);
   }
 
   // Xuất file KML cho Google Earth

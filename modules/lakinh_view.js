@@ -57,6 +57,7 @@
     isSheetOpen: false,
     isHudDetailOpen: false,
     polygonPoints: [],
+    importedParcel: null,
     declination: -1.34,
     centerElevation: 19.0,
     centerCoords: [21.028511, 105.854167], // Mặc định Hà Nội
@@ -3297,7 +3298,11 @@ function updateQmdjStrategicLayer() {
       const accuracy = Math.round(pos.coords.accuracy || 0);
 
       state.userLocation = [lat, lng];
-      state.centerCoords = [lat, lng];
+      const hasActiveParcel = !!(state.importedParcel || state.isPlanGeoAnchored || (state.polygonPoints && state.polygonPoints.length > 0));
+
+      if (!silent || !hasActiveParcel) {
+        state.centerCoords = [lat, lng];
+      }
 
       if (mapInstance && userLocationLayerGroup) {
         userLocationLayerGroup.clearLayers();
@@ -3312,12 +3317,14 @@ function updateQmdjStrategicLayer() {
           })
         }).addTo(userLocationLayerGroup);
 
-        // Đưa tâm bản đồ về vị trí người dùng
-        mapInstance.setView([lat, lng], 19, { animate: true });
+        // Đưa tâm bản đồ về vị trí người dùng (chỉ khi người dùng chủ động bấm GPS hoặc chưa có thửa đất)
+        if (!silent || !hasActiveParcel) {
+          mapInstance.setView([lat, lng], 19, { animate: true });
+          updateLocationHUD(lat, lng);
+        }
         if (!silent) {
           showLaKinhToast(`🎯 Đã định vị vị trí hiện tại! (Sai số ~${accuracy}m)`);
         }
-        updateLocationHUD(lat, lng);
       }
     };
 
@@ -4207,6 +4214,9 @@ function updateQmdjStrategicLayer() {
   // Chuyển giao và hiển thị ranh thửa đất từ tọa độ VN-2000 vào bản đồ La Kinh Vệ Tinh
   function importParcelFromVN2000(parcelData) {
     if (!parcelData || !parcelData.vertices || parcelData.vertices.length < 3) return;
+
+    state.importedParcel = parcelData;
+    state.isPlanGeoAnchored = true;
 
     if (!mapInstance) {
       renderLaKinh();
