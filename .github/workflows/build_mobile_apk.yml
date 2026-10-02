@@ -76,13 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.40
-          name: "Neta Light v2.8.40 (Phân Hệ Chiêm Đoán Xuyên Tam Thức: Thái Ất - Kỳ Môn - Lục Nhâm)"
+          tag_name: v2.8.41
+          name: "Neta Light v2.8.41 (Chuẩn Hóa Danh Xưng Tam Thức, Khắc Phục Menu Bị Che & Luận Giải Sâu Theo Câu Hỏi)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.40
-            - **Ra Mắt Phân Hệ Mới: Chiêm Đoán Xuyên Tam Thức (Thái Ất • Kỳ Môn • Lục Nhâm)**:
-              + **Động cơ Tổng hợp Tam Tài Độc lập & Tự trị 100% (`engines/tam_thuc_engine.js`)**: Tích hợp thuật toán đối sánh 10 ca kiểm chứng chuẩn xác 100% (80/80 tiêu chí đạt), kết nối Thiên Thời (Thái Ất), Địa Lợi (Kỳ Môn) và Nhân Sự (Lục Nhâm).
-              + **Ma trận Trọng số Động 12 Lĩnh vực then chốt (D01 - D12)**: Tự động phân bổ trọng số Thiên - Địa - Nhân theo câu hỏi hoặc lĩnh vực tác nghiệp (Sự nghiệp, Đầu tư, Pháp lý, Y tế, Xây dựng, Hôn nhân...).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.41
+            - **Khắc Phục Hoàn Toàn Lỗi Menu Bị Che (Dropdown Menu Stacking Context Collision)**:
+              + Nâng cấp cấp độ phân lớp `z-index: 10000` cho `.app-header` và `z-index: 10001` cho `.deck-dropdown-menu`.
+              + Tăng khoảng đệm đáy (`padding-bottom: calc(var(--safe-bottom, 16px) + 75px)`) và chiều cao tối đa (`max-height: calc(100dvh - 50px)`), đảm bảo menu nổi hoàn toàn bên trên thanh điều khiển đáy (`.app-controls`), hiển thị trọn vẹn 100% tất cả các mục (Trạch Cát, La Kinh, Pháp Hành, Bốc Quẻ Dịch Lý) mà không bao giờ bị che khuất.
+            - **Chuẩn Hóa Danh Xưng Ngắn Gọn: "Tam Thức"**:
+              + Tối giản danh xưng trên toàn bộ giao diện: thay thế các cụm từ dài dòng thành **"Tam Thức"** (Tiêu đề Header, Dropdown menu, thông báo Toast, tên file ảnh chụp, và nút liên kết chéo `[⚡ Tam Thức]` tại Kỳ Môn, Thái Ất, Lục Nhâm).
+            - **Đột Phá Nâng Cấp Luận Giải Chuyên Sâu Trực Diện Theo Câu Hỏi Người Dùng (Specific Query Resolution)**:
+              + **Nhận diện Tự động Lĩnh vực Thời Gian Thực (Live Domain Auto-detection)**: Bộ chuẩn hóa tiếng Việt khử dấu (`removeVietnameseTones`) kết hợp thuật toán tính điểm độ dài từ khóa, tự động nhận diện chính xác các câu hỏi phức tạp (ví dụ: gõ "Có nên mua mảnh đất..." sẽ tự động nhận diện ngay sang `[D05] Phong Thủy & Điền Trạch`).
+              + **Thẻ Quyết Nghị Chiêm Đoán Chuyên Biệt (`tamthuc-query-resolution-card`)**: Trả lời trực diện câu hỏi của người dùng (NÊN / THẬN TRỌNG ĐÀM PHÁN / TẠM HOÃN), phân tích chi tiết 3 trụ cột theo sự việc cụ thể (Thái Ất: Vị thế giá cả & đàm phán; Kỳ Môn: Địa thế phong thủy & không gian địa phương như Thái Bình, Hà Nội, Hải Phòng...; Lục Nhâm: Tính minh bạch pháp lý, sổ đỏ & thiện chí của đối tác).
+              + **Tích Hợp Luận Giải AI Đa Tầng (`[✨ Luận Giải Chuyên Sâu AI]`)**: Cho phép người dùng một chạm nhận bài bình giải AI toàn diện đối chiếu 3 cổ thư kinh điển theo câu hỏi riêng biệt.
+            - **Bảo toàn Toàn vẹn 100% Năng Lực Offline Cho Ứng Dụng Di Động**:
+              + Đồng bộ đầy đủ mã nguồn và động cơ vào `mobile_app/assets/www/`, độc lập 100% không phụ thuộc internet.
               + **Chỉ số Đồng thuận $C_{3T}$ & Nhận diện Hình thái Tương tác**: Đánh giá độ lệch chuẩn $\sigma$ giữa 3 phân hệ, phân tích 5 hình thái tương tác chiến lược (Tam Tài Đồng Thanh, Tam Tài Tương Khắc, Địa Lợi Hóa Giải...).
               + **Báo cáo Chiến lược 5 Tầng Toàn diện**: Cung cấp ma trận hành động định lượng chuẩn mực hành chính - kỹ thuật gồm Cửa sổ thời gian (Timing), Định vị không gian (Spatial), Tác nghiệp cụ thể, Quản trị nhân sự và Kiểm soát rủi ro.
               + **Giao diện Trực quan Native SVG (Zero Dependencies)**: Biểu đồ Radar Tam Tài 3 trục, đồng hồ đo độ đồng thuận $C_{3T}$, tương thích hoàn hảo cả Dark Theme và Light Theme.

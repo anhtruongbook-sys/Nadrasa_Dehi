@@ -1792,9 +1792,9 @@
                 <span class="ucc-txt-long">🏡 Phong Thủy</span>
                 <span class="ucc-txt-short">🏡 P.Thủy</span>
               </button>
-              <button type="button" class="ucc-view-btn btn-cross-tamthuc" id="btn-lucnham-cross-tamthuc" title="Đối chiếu tổng hợp Xuyên Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
+              <button type="button" class="ucc-view-btn btn-cross-tamthuc" id="btn-lucnham-cross-tamthuc" title="Đối chiếu tổng hợp Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
                 <span class="ucc-txt-long">⚡ Tam Thức</span>
-                <span class="ucc-txt-short">⚡ 3T</span>
+                <span class="ucc-txt-short">⚡ Tam Thức</span>
               </button>
             </div>
             <button class="ucc-btn-submit" id="lucnham-btn-submit" title="Lập quẻ Lục Nhâm">

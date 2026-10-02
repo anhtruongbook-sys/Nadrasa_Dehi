@@ -52,7 +52,7 @@
       isCardDeck: true
     },
     tamthuc: {
-      name: 'XUYÊN TAM THỨC',
+      name: 'TAM THỨC',
       subtitle: 'Thái Ất • Kỳ Môn • Lục Nhâm',
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
@@ -2121,7 +2121,7 @@
       const now = new Date();
       const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
       let modeName = 'NetaLight';
-      if (currentDeckMode === 'tamthuc') modeName = 'XuyenTamThuc';
+      if (currentDeckMode === 'tamthuc') modeName = 'TamThuc';
       else if (currentDeckMode === 'poker') modeName = 'Poker';
       else if (currentDeckMode === 'qmdj') modeName = 'KyMonDonGiap';
       else if (currentDeckMode === 'thaiat') modeName = 'ThaiAtThanKinh';

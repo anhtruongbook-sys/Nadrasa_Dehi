@@ -1874,7 +1874,7 @@
               <button type="button" class="ucc-view-btn ${currentMainTab === 'fengshui' ? 'active' : ''}" id="btn-thaiat-tab-fengshui" title="Phong Thủy Không Gian 16 Thần Vị">
                 🏡 Phong Thủy
               </button>
-              <button type="button" class="ucc-view-btn btn-cross-tamthuc" id="btn-thaiat-cross-tamthuc" title="Đối chiếu tổng hợp Xuyên Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
+              <button type="button" class="ucc-view-btn btn-cross-tamthuc" id="btn-thaiat-cross-tamthuc" title="Đối chiếu tổng hợp Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
                 ⚡ Tam Thức
               </button>
             </div>

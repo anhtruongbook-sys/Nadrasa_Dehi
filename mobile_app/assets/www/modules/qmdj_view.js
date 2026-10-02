@@ -794,8 +794,8 @@
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'banmenh' ? 'active' : ''}" data-mode="banmenh">
           👤 Bản Mệnh
         </button>
-        <button type="button" class="qmdj-tab-btn btn-cross-tamthuc" id="btn-qmdj-cross-tamthuc" title="Đối chiếu tổng hợp Xuyên Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
-          ⚡ Xuyên Tam Thức
+        <button type="button" class="qmdj-tab-btn btn-cross-tamthuc" id="btn-qmdj-cross-tamthuc" title="Đối chiếu tổng hợp Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
+          ⚡ Tam Thức
         </button>
       </div>
     `;

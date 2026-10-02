@@ -33,6 +33,16 @@
     return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // Khởi tạo và tính toán báo cáo
   function computeReport() {
     if (!global.NetaTamThucEngine) {
@@ -40,14 +50,22 @@
       return null;
     }
     try {
-      const codeOrQuery = currentQuery.trim() ? currentQuery : currentDomainCode;
-      currentReport = global.NetaTamThucEngine.synthesizeTamThuc(currentDate, codeOrQuery, currentRole);
-      if (currentReport) {
+      const q = currentQuery.trim();
+      let targetDomain = currentDomainCode;
+      if (q && global.NetaTamThucEngine.detectDomainFromQuery) {
+        const detected = global.NetaTamThucEngine.detectDomainFromQuery(q);
+        if (detected && detected.code) {
+          targetDomain = detected.code;
+          currentDomainCode = targetDomain;
+        }
+      }
+      currentReport = global.NetaTamThucEngine.synthesizeTamThuc(currentDate, targetDomain, currentRole, { query: q });
+      if (currentReport && currentReport.domain_code) {
         currentDomainCode = currentReport.domain_code;
       }
       return currentReport;
     } catch (e) {
-      console.error("Lỗi khi lập báo cáo Xuyên Tam Thức:", e);
+      console.error("Lỗi khi lập báo cáo Tam Thức:", e);
       return null;
     }
   }
@@ -263,7 +281,7 @@
               <input type="text" id="tamthuc-query-input" class="tamthuc-query-input" placeholder="Nhập sự việc cần chiêm đoán (ví dụ: bổ nhiệm, mua đất, hợp đồng, phẫu thuật...)" value="${currentQuery}">
               ${currentQuery ? `<button type="button" class="btn-clear-query" id="btn-clear-query">✕</button>` : ''}
             </div>
-            <button type="button" class="ucc-btn-submit" id="btn-tamthuc-run" title="Thực hiện chiêm đoán Xuyên Tam Thức">
+            <button type="button" class="ucc-btn-submit" id="btn-tamthuc-run" title="Thực hiện chiêm đoán Tam Thức">
               🔮 Luận Giải
             </button>
           </div>
@@ -292,6 +310,57 @@
             }).join('')}
           </div>
         </div>
+
+        ${rep.query_resolution ? `
+        <!-- 2.5 QUYẾT NGHỊ CHIÊM ĐOÁN THEO CÂU HỎI (QUESTION INTENT RESOLUTION) -->
+        <div class="tamthuc-query-resolution-card">
+          <div class="qres-header">
+            <div class="qres-title-wrap">
+              <span class="qres-badge-icon">🎯</span>
+              <div>
+                <div class="qres-title">QUYẾT NGHỊ CHIÊM ĐOÁN THEO CÂU HỎI</div>
+                <div class="qres-user-query">"${escapeHtml(rep.query_resolution.raw_query)}"</div>
+              </div>
+            </div>
+            <button type="button" class="btn-ai-tamthuc" id="btn-ai-tamthuc" title="Luận giải AI chuyên sâu theo câu hỏi">
+              ✨ Luận Giải Chuyên Sâu AI
+            </button>
+          </div>
+
+          <div class="qres-verdict-box verdict-${rep.query_resolution.verdict_level}">
+            <div>
+              <div class="verdict-label">KẾT LUẬN &amp; HƯỚNG DẪN HÀNH ĐỘNG:</div>
+              <div class="verdict-text">${rep.query_resolution.verdict_title}</div>
+            </div>
+            <div class="qres-sub-desc" style="max-width: 500px;">${rep.query_resolution.verdict_rationale}</div>
+          </div>
+
+          <div class="qres-grid-3col">
+            <div class="qres-sub-card">
+              <div class="qres-sub-title">${rep.query_resolution.pillars.price_and_position.title}</div>
+              <div class="qres-sub-desc">${rep.query_resolution.pillars.price_and_position.content}</div>
+            </div>
+            <div class="qres-sub-card">
+              <div class="qres-sub-title">${rep.query_resolution.pillars.spatial_and_fengshui.title}</div>
+              <div class="qres-sub-desc">${rep.query_resolution.pillars.spatial_and_fengshui.content}</div>
+            </div>
+            <div class="qres-sub-card">
+              <div class="qres-sub-title">${rep.query_resolution.pillars.legal_and_trust.title}</div>
+              <div class="qres-sub-desc">${rep.query_resolution.pillars.legal_and_trust.content}</div>
+            </div>
+          </div>
+
+          <div class="qres-actions-footer">
+            <strong style="color: #94a3b8; font-size: 0.78rem; text-transform: uppercase;">Khuyến nghị trọng tâm:</strong>
+            <ul style="margin: 4px 0 6px 18px; padding: 0; font-size: 0.8rem; color: #cbd5e1;">
+              ${(rep.query_resolution.action_steps || []).map(s => `<li>${s}</li>`).join('')}
+            </ul>
+            <div style="font-size: 0.78rem; color: #fbbf24;">⏳ <strong>Thời điểm tối ưu:</strong> ${rep.query_resolution.optimal_window}</div>
+          </div>
+
+          <div id="tamthuc-ai-output" style="display: none;"></div>
+        </div>
+        ` : ''}
 
         <!-- 3. DASHBOARD TỔNG HỢP: RADAR TAM TÀI & GAUGE ĐỒNG THUẬN -->
         <div class="tamthuc-dashboard-card">
@@ -559,12 +628,34 @@
       };
     }
 
-    // 3. Query input & run
+    // 3. Query input & run with Live Domain Auto-detection
     const queryInput = container.querySelector('#tamthuc-query-input');
     const btnRun = container.querySelector('#btn-tamthuc-run');
     const btnClear = container.querySelector('#btn-clear-query');
 
+    let debounceTimer = null;
     if (queryInput) {
+      queryInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          const val = queryInput.value.trim();
+          if (val && global.NetaTamThucEngine && typeof global.NetaTamThucEngine.detectDomainFromQuery === 'function') {
+            const detected = global.NetaTamThucEngine.detectDomainFromQuery(val);
+            if (detected && detected.code) {
+              currentDomainCode = detected.code;
+              container.querySelectorAll('.domain-pill-card[data-domain]').forEach(btn => {
+                if (btn.getAttribute('data-domain') === detected.code) {
+                  btn.classList.add('active');
+                  btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else {
+                  btn.classList.remove('active');
+                }
+              });
+            }
+          }
+        }, 150);
+      });
+
       queryInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           currentQuery = queryInput.value.trim();
@@ -582,6 +673,77 @@
       btnClear.onclick = () => {
         currentQuery = '';
         render(container);
+      };
+    }
+
+    // 3.5 AI Luận giải Chuyên sâu
+    const btnAi = container.querySelector('#btn-ai-tamthuc');
+    const aiOutput = container.querySelector('#tamthuc-ai-output');
+    if (btnAi && aiOutput) {
+      btnAi.onclick = async () => {
+        if (!currentReport) return;
+        btnAi.disabled = true;
+        const origText = btnAi.innerHTML;
+        btnAi.innerHTML = '⏳ Đang Luận Giải AI...';
+        aiOutput.style.display = 'block';
+        aiOutput.innerHTML = '<div class="ai-modal-box"><em>✨ Đang kết nối mô hình trí tuệ nhân tạo để tổng hợp luận giải chiêm đoán chuyên sâu 100% theo câu hỏi...</em></div>';
+
+        try {
+          const prompt = `Bạn là Đại Sư Chiêm Đoán Tam Thức (Thái Ất Thần Kinh, Kỳ Môn Độn Giáp, Lục Nhâm Đại Độn) của hệ thống Neta Light.
+Người dùng đặt câu hỏi chiêm đoán sự việc cụ thể:
+"${currentQuery || 'Chiêm đoán sự vụ theo thời điểm'}"
+
+Dữ liệu tính toán từ 3 hệ thống cổ thư:
+- Thời gian: ${currentReport.four_pillars} (Tiết khí: ${currentReport.solar_term})
+- Vị thế: ${currentRole}
+- Tổng điểm Tam Tài: ${currentReport.score_breakdown.weighted_total_score}/100 (${currentReport.score_breakdown.classification})
+- Chỉ số đồng thuận C_3T: ${currentReport.score_breakdown.consensus_index}%
+- Thái Ất (Thiên Thời): Điểm ${currentReport.score_breakdown.score_thai_at}, Cung ${currentReport.layer2_thai_at.cung_thai_at}, Toán Chủ ${currentReport.layer2_thai_at.chu_toan} vs Khách ${currentReport.layer2_thai_at.khach_toan}. Thế cờ: ${currentReport.layer2_thai_at.the_co}.
+- Kỳ Môn (Địa Lợi): Điểm ${currentReport.score_breakdown.score_ky_mon}, Cục ${currentReport.layer3_ky_mon.cuc}, Trực Phù ${currentReport.layer3_ky_mon.truc_phu}, Trực Sử ${currentReport.layer3_ky_mon.truc_su}, Dụng thần cung: ${currentReport.layer3_ky_mon.palace_name}, Cách cục: ${currentReport.layer3_ky_mon.formation}, Phương vị cát: ${currentReport.layer3_ky_mon.auspicious_directions}.
+- Lục Nhâm (Nhân Sự): Điểm ${currentReport.score_breakdown.score_luc_nham}, Nguyệt tướng ${currentReport.layer4_luc_nham.nguyet_tuong}, Cách cục: ${currentReport.layer4_luc_nham.cach_cuc}, Tam truyền: ${currentReport.layer4_luc_nham.so_truyen} -> ${currentReport.layer4_luc_nham.trung_truyen} -> ${currentReport.layer4_luc_nham.mat_truyen}, Tứ khóa: ${currentReport.layer4_luc_nham.tu_khoa_status}.
+
+Hãy đưa ra bài luận giải chiêm đoán sắc bén, trả lời TRỰC DIỆN 100% vào câu hỏi của người dùng:
+1. Quyết nghị dứt khoát: NÊN hay KHÔNG NÊN hay CẦN ĐIỀU KIỆN GÌ?
+2. Bóc tách chi tiết theo câu hỏi: Vị thế giá cả/đàm phán (Thái Ất), địa thế phong thủy/quy hoạch (Kỳ Môn), pháp lý/lòng người đối tác (Lục Nhâm).
+3. Ba bước hành động cụ thể và thời điểm vàng nên xuống tiền hoặc ra quyết định.
+Văn phong đĩnh đạc, chuẩn xác, định lượng, không vòng vo.`;
+
+          let aiResult = "";
+          if (global.NetaGeminiService && typeof global.NetaGeminiService.callGeminiAPI === 'function') {
+            aiResult = await global.NetaGeminiService.callGeminiAPI(prompt);
+          } else if (global.NetaGeminiService && typeof global.NetaGeminiService.polishEssay === 'function') {
+            aiResult = await global.NetaGeminiService.polishEssay(prompt);
+          } else {
+            const qr = currentReport.query_resolution;
+            aiResult = `### 🔮 BẢN LUẬN GIẢI CHUYÊN SÂU TAM THỨC THEO CÂU HỎI
+
+**Câu hỏi:** "${currentQuery}"
+**Quyết nghị:** **${qr ? qr.verdict_title : currentReport.score_breakdown.classification}**
+
+**1. Luận Điểm Cốt Lõi:**
+${qr ? qr.verdict_rationale : currentReport.layer1_overview.summary}
+
+**2. Bóc Tách 3 Trụ Cột Tam Tài:**
+- **Thái Ất (Giá Cả & Đàm Phán):** ${qr ? qr.pillars.price_and_position.content : currentReport.layer2_thai_at.detailed_analysis}
+- **Kỳ Môn (Địa Thế, Phong Thủy & Không Gian):** ${qr ? qr.pillars.spatial_and_fengshui.content : currentReport.layer3_ky_mon.detailed_analysis}
+- **Lục Nhâm (Pháp Lý, Sổ Sách & Chủ Đất):** ${qr ? qr.pillars.legal_and_trust.content : currentReport.layer4_luc_nham.detailed_analysis}
+
+**3. Khuyến Nghị Hành Động:**
+${(qr && qr.action_steps ? qr.action_steps : currentReport.layer5_action_strategy.concrete_actions).map((s, idx) => `${idx + 1}. ${s}`).join('\n')}
+
+**4. Khung Thời Gian Kích Hoạt Tối Ưu:**
+${qr ? qr.optimal_window : currentReport.layer5_action_strategy.timing_strategy}`;
+          }
+
+          aiOutput.innerHTML = `<div class="ai-modal-box">${escapeHtml(aiResult).replace(/\n/g, '<br>')}</div>`;
+          btnAi.innerHTML = '✨ Cập Nhật Luận Giải AI';
+        } catch (err) {
+          console.error("Lỗi AI:", err);
+          aiOutput.innerHTML = `<div class="ai-modal-box" style="color: #f87171;">⚠️ Lỗi kết nối dịch vụ AI. Quý bạn vui lòng kiểm tra kết nối mạng hoặc cấu hình API Key.</div>`;
+          btnAi.innerHTML = '✨ Thử Lại';
+        } finally {
+          btnAi.disabled = false;
+        }
       };
     }
 

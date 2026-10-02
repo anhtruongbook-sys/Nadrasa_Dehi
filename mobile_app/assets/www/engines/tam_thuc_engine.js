@@ -25,7 +25,7 @@
       code: "D01",
       name: "Sự Nghiệp & Quan Lộ",
       description: "Thăng chức, bổ nhiệm, thi tuyển, công danh, giữ vị trí lãnh đạo, quyền lực chính trị.",
-      keywords: ["thăng chức", "bổ nhiệm", "quan chức", "sự nghiệp", "lãnh đạo", "chính trị", "xin việc", "công danh", "chức vụ"],
+      keywords: ["thăng chức", "bổ nhiệm", "quan chức", "sự nghiệp", "lãnh đạo", "chính trị", "xin việc", "công danh", "chức vụ", "biên chế", "cơ quan", "cấp trên", "chuyển công tác", "luân chuyển", "phỏng vấn", "thi công chức", "trúng cử", "ghế lãnh đạo", "việc làm", "đi làm"],
       weight_thai_at: 0.35,
       weight_ky_mon: 0.35,
       weight_luc_nham: 0.30,
@@ -38,7 +38,7 @@
       code: "D02",
       name: "Tài Chính & Đầu Tư",
       description: "Kinh doanh, chứng khoán, bất động sản, tiền tệ, đầu tư mạo hiểm, thâu tóm sáp nhập.",
-      keywords: ["tài chính", "đầu tư", "tiền bạc", "chứng khoán", "kinh doanh", "lợi nhuận", "bất động sản", "vốn", "giải ngân", "mua đất"],
+      keywords: ["tài chính", "đầu tư", "tiền bạc", "chứng khoán", "kinh doanh", "lợi nhuận", "bất động sản", "vốn", "giải ngân", "mua đất", "cổ phiếu", "tiền tệ", "lãi suất", "sinh lời", "vay vốn", "thế chấp", "thua lỗ", "thu hồi vốn", "góp vốn", "giao dịch", "mở cửa hàng", "buôn bán", "kiếm tiền", "giá vàng"],
       weight_thai_at: 0.40,
       weight_ky_mon: 0.35,
       weight_luc_nham: 0.25,
@@ -51,7 +51,7 @@
       code: "D03",
       name: "Hôn Nhân & Gia Đạo",
       description: "Tình cảm, kết hôn, ly hợp, hòa khí gia đình, tình duyên đôi lứa, đào hoa.",
-      keywords: ["hôn nhân", "tình cảm", "vợ chồng", "ly hôn", "kết hôn", "người yêu", "gia đạo", "duyên nợ", "gia đình"],
+      keywords: ["hôn nhân", "tình cảm", "vợ chồng", "ly hôn", "kết hôn", "người yêu", "gia đạo", "duyên nợ", "gia đình", "tình duyên", "hẹn hò", "bạn gái", "bạn trai", "cưới xin", "bồ bịch", "ngoại tình", "mẹ chồng", "con cái"],
       weight_thai_at: 0.10,
       weight_ky_mon: 0.30,
       weight_luc_nham: 0.60,
@@ -64,7 +64,7 @@
       code: "D04",
       name: "Sức Khỏe & Bệnh Tật",
       description: "Chẩn trị y tế, nguy cơ bệnh lý hiểm nghèo, phẫu thuật, ngũ tạng suy thoái, thọ yểu.",
-      keywords: ["sức khỏe", "bệnh tật", "thuốc", "bác sĩ", "phẫu thuật", "ốm đau", "tai nạn", "sinh mệnh", "khối u", "điều trị"],
+      keywords: ["sức khỏe", "bệnh tật", "thuốc", "bác sĩ", "phẫu thuật", "ốm đau", "tai nạn", "sinh mệnh", "khối u", "điều trị", "mổ", "nhập viện", "ung thư", "chữa bệnh", "khám bệnh", "đau ốm", "tai ương", "bệnh viện"],
       weight_thai_at: 0.20,
       weight_ky_mon: 0.40,
       weight_luc_nham: 0.40,
@@ -77,7 +77,7 @@
       code: "D05",
       name: "Phong Thủy & Điền Trạch",
       description: "Dương trạch nhà ở, Âm trạch mồ mả, mua bán nhà đất, quy hoạch, khởi công, nhập trạch.",
-      keywords: ["phong thủy", "nhà đất", "mộ phần", "dương trạch", "âm trạch", "xây nhà", "mua đất", "nhập trạch", "động thổ", "trụ sở"],
+      keywords: ["phong thủy", "nhà đất", "mảnh đất", "thửa đất", "lô đất", "bất động sản", "mua đất", "bán đất", "mua nhà", "bán nhà", "thuê nhà", "thuê đất", "căn hộ", "chung cư", "địa ốc", "đất đai", "đất cát", "mộ phần", "mồ mả", "dương trạch", "âm trạch", "xây nhà", "sửa nhà", "nhập trạch", "động thổ", "trụ sở", "sổ đỏ", "sổ hồng", "quy hoạch", "thổ cư", "khởi công", "mặt bằng", "đất"],
       weight_thai_at: 0.15,
       weight_ky_mon: 0.45,
       weight_luc_nham: 0.40,
@@ -90,7 +90,7 @@
       code: "D06",
       name: "Pháp Lý & Kiện Tụng",
       description: "Tranh chấp dân sự/hình sự, điều tra, ký kết hợp đồng, tòa án phán quyết, thị phi pháp luật.",
-      keywords: ["kiện tụng", "tòa án", "tranh chấp", "pháp luật", "hợp đồng", "công an", "thị phi", "luật sư", "khởi kiện", "thắng kiện"],
+      keywords: ["kiện tụng", "tòa án", "tranh chấp", "pháp luật", "hợp đồng", "công an", "thị phi", "luật sư", "khởi kiện", "thắng kiện", "bồi thường", "bắt bớ", "tạm giam", "thanh tra", "khiếu nại", "tố cáo", "hầu tòa"],
       weight_thai_at: 0.25,
       weight_ky_mon: 0.40,
       weight_luc_nham: 0.35,
@@ -103,7 +103,7 @@
       code: "D07",
       name: "Đàm Phán & Hợp Tác",
       description: "Thương thảo hợp đồng kinh tế, lập liên minh, nhượng bộ, thuyết phục đối tác kinh doanh.",
-      keywords: ["đàm phán", "thương thảo", "hợp tác", "ký kết", "thuyết phục", "đối tác", "liên minh", "nhượng bộ", "sáp nhập", "m&a"],
+      keywords: ["đàm phán", "thương thảo", "hợp tác", "ký kết", "thuyết phục", "đối tác", "liên minh", "nhượng bộ", "sáp nhập", "m&a", "thỏa thuận", "liên doanh", "hợp đồng kinh tế", "gặp đối tác"],
       weight_thai_at: 0.20,
       weight_ky_mon: 0.45,
       weight_luc_nham: 0.35,
@@ -116,7 +116,7 @@
       code: "D08",
       name: "Thi Cử & Học Vấn",
       description: "Khoa bảng, thi tuyển sinh, lấy chứng chỉ quốc tế, du học, nghiên cứu khoa học, xuất bản.",
-      keywords: ["thi cử", "học vấn", "bằng cấp", "du học", "khoa cử", "nghiên cứu", "điểm thi", "đỗ đạt", "luận án", "tiến sĩ"],
+      keywords: ["thi cử", "học vấn", "bằng cấp", "du học", "khoa cử", "nghiên cứu", "điểm thi", "đỗ đạt", "luận án", "tiến sĩ", "thi đỗ", "kết quả thi", "đại học", "học bổng", "thạc sĩ", "thi chuyển cấp"],
       weight_thai_at: 0.20,
       weight_ky_mon: 0.40,
       weight_luc_nham: 0.40,
@@ -129,7 +129,7 @@
       code: "D09",
       name: "Xuất Hành & Di Chuyển",
       description: "Đi công tác xa, du lịch nước ngoài, định cư, di dời trụ sở, an toàn giao thông lộ trình.",
-      keywords: ["xuất hành", "du lịch", "định cư", "di chuyển", "đi xa", "máy bay", "an toàn", "giao thông", "lộ trình"],
+      keywords: ["xuất hành", "du lịch", "định cư", "di chuyển", "đi xa", "máy bay", "an toàn", "giao thông", "lộ trình", "công tác", "đi nước ngoài", "visa", "tàu xe", "đi đường"],
       weight_thai_at: 0.20,
       weight_ky_mon: 0.50,
       weight_luc_nham: 0.30,
@@ -142,7 +142,7 @@
       code: "D10",
       name: "Mất Mát & Tìm Kiếm",
       description: "Tìm người thân mất liên lạc, tìm đồ vật đánh rơi, điều tra thủ phạm trộm cắp, truy vết.",
-      keywords: ["tìm đồ", "mất trộm", "thất lạc", "tìm người", "manh mối", "dấu vết", "mất tích", "đánh rơi"],
+      keywords: ["tìm đồ", "mất trộm", "thất lạc", "tìm người", "manh mối", "dấu vết", "mất tích", "đánh rơi", "trộm cắp", "kẻ gian", "đồ bị mất", "tìm kiếm"],
       weight_thai_at: 0.10,
       weight_ky_mon: 0.45,
       weight_luc_nham: 0.45,
@@ -155,7 +155,7 @@
       code: "D11",
       name: "Quản Trị & Nhân Sự",
       description: "Tuyển mộ nhân sự chủ chốt, phòng ngừa phản trắc nội bộ, phân quyền, dùng người, triệt tiêu phe cánh.",
-      keywords: ["nhân sự", "tuyển dụng", "phản trắc", "cộng sự", "dùng người", "quản trị", "nội bộ", "phe cánh", "tái cấu trúc", "luân chuyển"],
+      keywords: ["nhân sự", "tuyển dụng", "phản trắc", "cộng sự", "dùng người", "quản trị", "nội bộ", "phe cánh", "tái cấu trúc", "luân chuyển", "sa thải", "bổ nhiệm nhân sự", "nhân viên", "trung thành"],
       weight_thai_at: 0.25,
       weight_ky_mon: 0.35,
       weight_luc_nham: 0.40,
@@ -168,7 +168,7 @@
       code: "D12",
       name: "Chiến Lược & Vận Thế",
       description: "Đại cuộc dài hạn, bước ngoặt cuộc đời, chu kỳ kinh tế vĩ mô, phòng ngừa rủi ro thời đại.",
-      keywords: ["chiến lược", "vận thế", "đại cuộc", "tương lai", "chu kỳ", "bước ngoặt", "thời đại", "vĩ mô", "chuyển đổi số", "dài hạn"],
+      keywords: ["chiến lược", "vận thế", "đại cuộc", "tương lai", "chu kỳ", "bước ngoặt", "thời đại", "vĩ mô", "chuyển đổi số", "dài hạn", "vận mệnh", "số phận", "thời vận", "đại vận"],
       weight_thai_at: 0.50,
       weight_ky_mon: 0.30,
       weight_luc_nham: 0.20,
@@ -189,22 +189,36 @@
     return Object.values(DOMAINS_12);
   }
 
+  function removeVietnameseTones(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str.normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+      .toLowerCase();
+  }
+
   function detectDomainFromQuery(query) {
     if (!query || typeof query !== 'string') return DOMAINS_12["D01"];
-    const q = query.toLowerCase();
+    const qRaw = query.toLowerCase().trim();
+    const qClean = removeVietnameseTones(qRaw);
     let bestDomain = DOMAINS_12["D01"];
-    let maxMatches = 0;
+    let maxScore = 0;
 
     for (const key of Object.keys(DOMAINS_12)) {
       const d = DOMAINS_12[key];
-      let matches = 0;
+      let score = 0;
       for (const kw of d.keywords) {
-        if (q.includes(kw.toLowerCase())) {
-          matches++;
+        const kwLower = kw.toLowerCase();
+        const kwClean = removeVietnameseTones(kwLower);
+
+        if (qRaw.includes(kwLower)) {
+          score += kwLower.length >= 8 ? 6 : (kwLower.length >= 5 ? 4 : 2);
+        } else if (qClean.includes(kwClean)) {
+          score += kwClean.length >= 8 ? 4 : (kwClean.length >= 5 ? 2 : 1);
         }
       }
-      if (matches > maxMatches) {
-        maxMatches = matches;
+      if (score > maxScore) {
+        maxScore = score;
         bestDomain = d;
       }
     }
@@ -1101,16 +1115,206 @@
   }
 
   // ==============================================================================
+  // 4.5. LUẬN GIẢI CHUYÊN BIỆT THEO CÂU HỎI NGƯỜI DÙNG (QUESTION INTENT RESOLUTION)
+  // ==============================================================================
+  function analyzeSpecificQuery(query, domainCode, role, taDetails, kmDetails, lnDetails, weightedScore, consensus) {
+    if (!query || typeof query !== 'string' || !query.trim()) {
+      return null;
+    }
+    const q = query.trim();
+    const qClean = removeVietnameseTones(q.toLowerCase());
+
+    // 1. Phân loại loại câu hỏi (Question Intent)
+    const isYesNo = qClean.includes("co nen") || qClean.includes("nen hay khong") || qClean.includes("duoc khong") || qClean.includes("duoc chang") || qClean.includes("nen mua") || qClean.includes("co the");
+    const isTiming = qClean.includes("khi nao") || qClean.includes("bao gio") || qClean.includes("thoi diem") || qClean.includes("thang may") || qClean.includes("ngay nao");
+    const isSpatial = qClean.includes("o dau") || qClean.includes("huong nao") || qClean.includes("phuong vi");
+
+    // 2. Nhận diện thực thể địa lý (Geographical Entities)
+    let geoEntity = "";
+    let geoPalace = "";
+    if (qClean.includes("thai binh")) {
+      geoEntity = "Thái Bình (Đồng bằng châu thổ sông Hồng - Đông Nam / Đông)";
+      geoPalace = "Cung Tốn (Đông Nam) & Cung Chấn (Chính Đông)";
+    } else if (qClean.includes("ha noi")) {
+      geoEntity = "Hà Nội (Khu vực trung tâm đồng bằng Bắc Bộ)";
+      geoPalace = "Trung Cung & Cung Cấn/Khảm";
+    } else if (qClean.includes("hai phong")) {
+      geoEntity = "Hải Phòng (Vùng duyên hải Đông Bắc - Chính Đông / Đông Nam)";
+      geoPalace = "Cung Chấn (Chính Đông) & Cung Tốn (Đông Nam)";
+    } else if (qClean.includes("nam dinh")) {
+      geoEntity = "Nam Định (Vùng ven biển đồng bằng sông Hồng - Nam / Đông Nam)";
+      geoPalace = "Cung Tốn & Cung Ly";
+    } else if (qClean.includes("da nang") || qClean.includes("quang nam")) {
+      geoEntity = "Đà Nẵng / Miền Trung (Duyên hải miền Trung)";
+      geoPalace = "Cung Ly & Cung Chấn";
+    } else if (qClean.includes("sai gon") || qClean.includes("tphcm") || qClean.includes("ho chi minh")) {
+      geoEntity = "TP. Hồ Chí Minh / Miền Nam (Phương Nam châu thổ Cửu Long)";
+      geoPalace = "Cung Ly (Chính Nam) & Cung Khôn (Tây Nam)";
+    }
+
+    // 3. Nhận diện chủ đề sự việc
+    let topicName = "Chiêm đoán sự vụ";
+    let isLandOrProperty = false;
+    let isCareer = false;
+    let isFinance = false;
+    let isLaw = false;
+    let isMarriage = false;
+    let isHealth = false;
+
+    if (qClean.includes("dat") || qClean.includes("nha") || qClean.includes("bat dong san") || qClean.includes("can ho") || qClean.includes("chung cu") || domainCode === "D05") {
+      isLandOrProperty = true;
+      topicName = "Giao dịch Đất đai / Bất động sản / Nhà ở";
+    } else if (qClean.includes("thang chuc") || qClean.includes("bo nhiem") || qClean.includes("xin viec") || qClean.includes("cong danh") || domainCode === "D01") {
+      isCareer = true;
+      topicName = "Công danh / Sự nghiệp / Quan lộ";
+    } else if (qClean.includes("dau tu") || qClean.includes("tien") || qClean.includes("chung khoan") || qClean.includes("kinh doanh") || domainCode === "D02") {
+      isFinance = true;
+      topicName = "Tài chính / Đầu tư / Kinh doanh";
+    } else if (qClean.includes("kien") || qClean.includes("toa") || qClean.includes("hop dong") || qClean.includes("tranh chap") || domainCode === "D06") {
+      isLaw = true;
+      topicName = "Pháp lý / Hợp đồng / Tranh tụng";
+    } else if (qClean.includes("cuoi") || qClean.includes("ket hon") || qClean.includes("ly hon") || qClean.includes("yeu") || domainCode === "D03") {
+      isMarriage = true;
+      topicName = "Hôn nhân / Tình cảm / Gia đạo";
+    } else if (qClean.includes("benh") || qClean.includes("mo") || qClean.includes("suc khoe") || qClean.includes("phau thuat") || domainCode === "D04") {
+      isHealth = true;
+      topicName = "Sức khỏe / Y tế / Điều trị";
+    }
+
+    // 4. Quyết nghị trực tiếp (Decisive Verdict)
+    let verdictLevel = "caution";
+    let verdictTitle = "";
+    let verdictRationale = "";
+
+    if (weightedScore >= 62) {
+      verdictLevel = "positive";
+      if (isLandOrProperty) {
+        verdictTitle = "QUYẾT NGHỊ: NÊN TIẾN HÀNH MUA (ĐẮC ĐỊA LỢI & KHÍ VẬN)";
+        verdictRationale = `Tổng điểm chiến lược Tam Tài đạt ${weightedScore.toFixed(1)}/100 (Hạng Cát). Mảnh đất đón được trường khí thuận lợi, dòng tiền tích lũy và an cư bền vững.`;
+      } else if (isCareer) {
+        verdictTitle = "QUYẾT NGHỊ: NÊN CHỦ ĐỘNG TIẾN CỬ / NHẬN NHIỆM VỤ";
+        verdictRationale = `Thế trận thiên thời và nhân hòa tương trợ, cơ hội thăng tiến rộng mở, uy quyền được củng cố vững chắc.`;
+      } else if (isFinance) {
+        verdictTitle = "QUYẾT NGHỊ: NÊN GIẢI NGÂN / MỞ RỘNG ĐẦU TƯ";
+        verdictRationale = `Dòng tiền sinh lời đắc cách, chu kỳ tài chính đang ở pha tích lũy tăng trưởng, tỷ lệ rủi ro thấp.`;
+      } else {
+        verdictTitle = "QUYẾT NGHỊ: NÊN THỰC HIỆN KẾ HOẠCH";
+        verdictRationale = `Tam Tài tương hợp, mức độ đồng thuận cao (${consensus.toFixed(1)}%), ngoại cảnh và nội lực đều thuận lợi.`;
+      }
+    } else if (weightedScore >= 48) {
+      verdictLevel = "caution";
+      if (isLandOrProperty) {
+        verdictTitle = "QUYẾT NGHỊ: THẬN TRỌNG ĐÀM PHÁN - CHƯA NÊN ĐẶT CỌC VỘI";
+        verdictRationale = `Tổng điểm ở mức bình hòa (${weightedScore.toFixed(1)}/100). Đất có tiềm năng nhưng bên bán đang giữ giá hoặc còn tồn tại điểm mập mờ về quy hoạch/ranh giới cần kiểm chứng.`;
+      } else if (isCareer) {
+        verdictTitle = "QUYẾT NGHỊ: GIỮ THẾ ỔN ĐỊNH - CHƯA NÊN NÓNG VỘI TRANH ĐOẠT";
+        verdictRationale = `Thời cơ chưa chín muồi, cần bồi đắp thêm sự ủng hộ của cấp trên và cộng sự trước khi hành động.`;
+      } else if (isFinance) {
+        verdictTitle = "QUYẾT NGHỊ: THẬN TRỌNG GIỮ TIỀN - KHÔNG VAY NỢ ĐÒN BẨY";
+        verdictRationale = `Thị trường có dấu hiệu phân kỳ, chỉ nên giải ngân từng phần nhỏ để thăm dò, không nên tất tay.`;
+      } else {
+        verdictTitle = "QUYẾT NGHỊ: CẦN THẬN TRỌNG - CHỜ THỜI CƠ RÕ RÀNG";
+        verdictRationale = `Các hệ thống có độ phân kỳ, các yếu tố ngoại cảnh còn biến động khó lường.`;
+      }
+    } else {
+      verdictLevel = "negative";
+      if (isLandOrProperty) {
+        verdictTitle = "QUYẾT NGHỊ: TẠM HOÃN - KHÔNG NÊN MUA VÀO LÚC NÀY";
+        verdictRationale = `Điểm số Tam Tài suy vi (${weightedScore.toFixed(1)}/100). Cảnh báo nguy cơ chôn vốn, đất phạm sát khí hoặc đối tác/chủ đất thiếu trung thực.`;
+      } else if (isCareer) {
+        verdictTitle = "QUYẾT NGHỊ: PHÒNG THỦ - ĐỀ PHÒNG TIỂU NHÂN THỊ PHI";
+        verdictRationale = `Thế trận bất lợi, đối thủ cạnh tranh chiếm ưu thế hoặc cơ cấu nội bộ chưa thuận lợi cho bạn.`;
+      } else if (isFinance) {
+        verdictTitle = "QUYẾT NGHỊ: ĐÌNH CHỈ GIẢI NGÂN - BẢO TOÀN VỐN";
+        verdictRationale = `Nguy cơ thua lỗ hoặc đọng vốn kéo dài rất cao, áp lực dòng tiền vĩ mô đang siết chặt.`;
+      } else {
+        verdictTitle = "QUYẾT NGHỊ: TẠM DỪNG / THAY ĐỔI PHƯƠNG ÁN";
+        verdictRationale = `Khí số nghịch chuyển, hành động lúc này dễ dẫn đến hao tổn tài lực và tinh thần.`;
+      }
+    }
+
+    // 5. Ba trụ cột bóc tách chuyên sâu theo câu hỏi
+    const chuToan = taDetails.chu_toan || 0;
+    const khachToan = taDetails.khach_toan || 0;
+    let p1Title = "💰 Về Vị Thế & Đàm Phán (Thái Ất)";
+    let p1Desc = "";
+    if (chuToan >= khachToan) {
+      p1Desc = `Toán Chủ (${chuToan}) thắng Toán Khách (${khachToan}). Bạn ở thế chủ động nắm đằng chuôi. Trong sự việc '${q}', bạn hoàn toàn có thể mặc cả, ra điều kiện thanh toán hoặc kéo giãn tiến độ có lợi nhất cho mình.`;
+    } else {
+      p1Desc = `Toán Khách (${khachToan}) lớn hơn Toán Chủ (${chuToan}). Đối phương hoặc bên bán đang ở thế áp đảo giữ giá. Bạn không nên để lộ sự nóng vội kẻo bị ép giá hoặc rơi vào thế bị động.`;
+    }
+
+    let p2Title = "🧭 Về Địa Thế, Phong Thủy & Không Gian (Kỳ Môn)";
+    let p2Desc = "";
+    if (isLandOrProperty) {
+      p2Desc = `Dụng thần Bất động sản (Sinh Môn) và Thổ trạch (Cửu Địa) kết hợp tại ${kmDetails.palace_name} với cách cục '${kmDetails.formation}'. Phương vị đón sinh khí: ${kmDetails.auspicious_directions}. ` +
+               (geoEntity ? `Đối chiếu địa bàn ${geoEntity} ứng hợp với ${geoPalace}, cho thấy vị trí này đang hưởng nguồn sinh khí tương hỗ.` : `Cần đối chiếu hướng đất với phương vị cát lợi để nạp khí.`);
+    } else {
+      p2Desc = `Trận đồ 9 cung Kỳ Môn ghi nhận Trực Phù tại ${kmDetails.truc_phu}, Trực Sử tại ${kmDetails.truc_su}. Không gian triển khai tối ưu nhất là hướng ${kmDetails.auspicious_directions}.`;
+    }
+
+    let p3Title = "📜 Về Pháp Lý, Lòng Người & Minh Bạch (Lục Nhâm)";
+    let p3Desc = "";
+    if (isLandOrProperty) {
+      p3Desc = `Khóa III (Chi vi Trạch - hiện trạng khu đất) và Khóa IV (Kim tĩnh/móng ngầm) đi qua Tam Truyền '${lnDetails.cach_cuc}'. ` +
+               (lnDetails.tu_khoa_status.includes("Hòa") ?
+                `Tứ Khóa hòa hợp, bên bán thiện chí, sổ đỏ rõ ràng, ít nguy cơ tranh chấp nội bộ gia tộc.` :
+                `Tứ Khóa có khắc trở, cần cẩn trọng rà soát xem đất có tranh chấp lối đi, tường chung, thừa kế chưa phân chia hoặc quy hoạch mở đường hay không.`);
+    } else {
+      p3Desc = `Tam Truyền '${lnDetails.cach_cuc}' phản ánh tiến trình sự việc qua 3 chặng: Khởi đầu (${lnDetails.so_truyen}) ➔ Phát triển (${lnDetails.trung_truyen}) ➔ Kết cục (${lnDetails.mat_truyen}). ` +
+               (lnDetails.tu_khoa_status.includes("Hòa") ? "Nhân sự ủng hộ, đối tác trung thực." : "Có sự bất hòa ngầm hoặc lời nói không đi đôi với việc làm.");
+    }
+
+    // 6. Các bước hành động trực tiếp
+    const actionSteps = [];
+    if (isLandOrProperty) {
+      actionSteps.push("Kiểm tra trích lục bản đồ địa chính và thông tin quy hoạch mới nhất tại cơ quan chức năng địa phương trước khi đặt cọc.");
+      actionSteps.push("Khảo sát thực địa quanh khu đất bán kính 200m vào nhiều thời điểm (sáng, trưa, tối) để đánh giá hạ tầng, dân cư và phong thủy thực tế.");
+      actionSteps.push("Yêu cầu các bên có tên trong sổ hộ khẩu/thừa kế ký cam kết đồng thuận bán để triệt tiêu rủi ro tranh chấp dân sự về sau.");
+    } else if (isCareer) {
+      actionSteps.push("Chuẩn bị hồ sơ năng lực và thành tích cụ thể, có số liệu minh chứng thuyết phục.");
+      actionSteps.push("Tham vấn ý kiến của người đỡ đầu hoặc cấp trên trực tiếp trước khi công khai nguyện vọng.");
+      actionSteps.push("Giữ kín thông tin cho đến khi có quyết định chính thức.");
+    } else {
+      actionSteps.push("Kiểm soát chặt chẽ các cam kết bằng văn bản có giá trị pháp lý rõ ràng.");
+      actionSteps.push("Phân bổ ngân sách theo từng cột mốc nghiệm thu, không giải ngân một lần.");
+      actionSteps.push("Giữ tâm thế chủ động, sẵn sàng phương án dự phòng (Plan B).");
+    }
+
+    return {
+      raw_query: q,
+      topic_name: topicName,
+      geographical_entity: geoEntity,
+      verdict_level: verdictLevel,
+      verdict_title: verdictTitle,
+      verdict_rationale: verdictRationale,
+      pillars: {
+        price_and_position: { title: p1Title, content: p1Desc },
+        spatial_and_fengshui: { title: p2Title, content: p2Desc },
+        legal_and_trust: { title: p3Title, content: p3Desc }
+      },
+      action_steps: actionSteps,
+      optimal_window: `Nên chọn khung giờ Hoàng Đạo cát lợi, hướng đón sinh khí ${kmDetails.auspicious_directions} để tiến hành giao dịch hoặc gặp gỡ đối tác.`
+    };
+  }
+
+  // ==============================================================================
   // 5. BỘ TỔNG HỢP TOÀN DIỆN XUYÊN TAM THỨC (SYNTHESIZER)
   // ==============================================================================
   function synthesizeTamThuc(dateInput, queryOrDomain = "D01", role = "Chủ", options = {}) {
     const dt = (dateInput instanceof Date) ? dateInput : new Date(dateInput);
 
-    // 1. Nhận diện Lĩnh vực
+    // 1. Nhận diện Lĩnh vực & Trích xuất câu hỏi
     let domainCfg;
+    let userQuery = "";
+    if (typeof options === 'object' && options && options.query) {
+      userQuery = String(options.query).trim();
+    }
+
     if (DOMAINS_12[queryOrDomain]) {
       domainCfg = DOMAINS_12[queryOrDomain];
     } else {
+      userQuery = userQuery || String(queryOrDomain).trim();
       domainCfg = detectDomainFromQuery(queryOrDomain);
     }
     const domainCode = domainCfg.code;
@@ -1319,8 +1523,24 @@
       mitigation_strategy: mitigation.join(" ")
     };
 
+    const specificResolution = userQuery ? analyzeSpecificQuery(
+      userQuery,
+      domainCode,
+      role,
+      evalTa.details,
+      evalKm.details,
+      evalLn.details,
+      weightedScore,
+      consensus
+    ) : null;
+
+    let summaryText = `Đối với vấn đề ${domainCfg.name} của vị thế ${role}: Kết quả đạt mức ${classification}. Chỉ số đồng thuận đạt ${consensus.toFixed(1)}%. ${pattern}`;
+    if (specificResolution) {
+      summaryText = `[Giải đáp: "${userQuery}"]: ${specificResolution.verdict_title}. ${specificResolution.verdict_rationale}`;
+    }
+
     const layer1 = {
-      summary: `Đối với vấn đề ${domainCfg.name} của vị thế ${role}: Kết quả đạt mức ${classification}. Chỉ số đồng thuận đạt ${consensus.toFixed(1)}%. ${pattern}`,
+      summary: summaryText,
       w_ta: w_ta,
       w_km: w_km,
       w_ln: w_ln
@@ -1333,6 +1553,8 @@
       four_pillars: `${fourPillars.year} - ${fourPillars.month} - ${fourPillars.day} - ${fourPillars.hour}`,
       domain_code: domainCode,
       domain_name: domainCfg.name,
+      user_query: userQuery,
+      query_resolution: specificResolution,
       role: role,
       score_breakdown: scoreBreakdown,
       layer1_overview: layer1,
@@ -1352,9 +1574,25 @@
 
       toMarkdown: function () {
         const md = [];
-        md.push("# BÁO CÁO CHIÊM ĐOÁN XUYÊN TAM THỨC");
+        md.push("# BÁO CÁO CHIÊM ĐOÁN TAM THỨC");
         md.push(`**Lĩnh Vực:** [${domainCode}] ${domainCfg.name} | **Vị Thế:** ${role}\n`);
         
+        if (specificResolution) {
+          md.push("## QUYẾT NGHỊ CHIÊM ĐOÁN THEO CÂU HỎI");
+          md.push(`> **Câu hỏi người dùng:** *"${specificResolution.raw_query}"*`);
+          md.push(`> **Quyết nghị trực tiếp:** **${specificResolution.verdict_title}**`);
+          md.push(`> **Cơ sở luận giải:** ${specificResolution.verdict_rationale}\n`);
+          md.push("### Phân Tích Chuyên Sâu 3 Trụ Cột Cho Câu Hỏi:");
+          md.push(`- **${specificResolution.pillars.price_and_position.title}:** ${specificResolution.pillars.price_and_position.content}`);
+          md.push(`- **${specificResolution.pillars.spatial_and_fengshui.title}:** ${specificResolution.pillars.spatial_and_fengshui.content}`);
+          md.push(`- **${specificResolution.pillars.legal_and_trust.title}:** ${specificResolution.pillars.legal_and_trust.content}\n`);
+          md.push("### Khuyến Nghị Hành Động Trọng Tâm:");
+          for (const st of specificResolution.action_steps || []) {
+            md.push(`1. ${st}`);
+          }
+          md.push(`\n**Khung thời gian tối ưu:** ${specificResolution.optimal_window}\n`);
+        }
+
         md.push("## TẦNG 1: ĐÁNH GIÁ TỔNG QUAN & CHỈ SỐ TAM TÀI");
         md.push(`- **Tổng Điểm Chiến Lược (Weighted Score):** \`${scoreBreakdown.weighted_total_score.toFixed(1)} / 100\``);
         md.push(`- **Chỉ Số Đồng Thuận Tam Thức (Consensus Index C_3T):** \`${scoreBreakdown.consensus_index.toFixed(1)}%\``);
@@ -1432,7 +1670,9 @@
     DOMAINS_12,
     getDomainConfig,
     listAllDomains,
+    removeVietnameseTones,
     detectDomainFromQuery,
+    analyzeSpecificQuery,
     computeThaiAtCore,
     plotFullChartKetNoiVuTru,
     evaluateThaiAt,
