@@ -76,18 +76,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.49
-          name: "Neta Light v2.8.49 (Hoàn Thiện Gia Chủ 2 Dòng: Đưa Can Chi & Tuổi Lên Dòng Trên)"
+          tag_name: v2.8.50
+          name: "Neta Light v2.8.50 (Tinh Chỉnh Giao Diện Thẩm Định: Thu Gọn Nút Bấm & Bố Cục 2 Cột Song Hành)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.49
-            - **Cải Tiến Khung Gia Chủ 2 Dòng Hài Hòa & Cân Đối**:
-              + **Dòng 1**: Bố trí trọn vẹn `Gia chủ: [ 1990 ] [ Canh Ngọ (37t) ]` và nút chọn `[ Nam | Nữ ]` sát bên phải, lấp đầy khoảng trống dư thừa và cân bằng màn hình.
-              + **Dòng 2**: Dành riêng cho thẻ Nạp Âm Mệnh (`Lộ Bàng Thổ`) và Cung Phi Bát Trạch (`Cung Khảm (Đông Tứ Mệnh)`), hoàn toàn không bị rớt dòng hay tràn viền.
-            - **Tổ Chức Giao Diện Khoa Học: Tiêu Chí Ở Trên - Kết Quả Ở Dưới**:
-              + Toàn bộ khu vực setup/tiêu chí lựa chọn gom gọn gàng 100% trong panel điều khiển ở phía trên.
-              + Toàn bộ kết quả tra cứu, thẻ ngày cát lành, giờ hoàng đạo và phân tích sao trực được bố trí tách biệt rõ ràng ở nửa dưới.
-            - **Trọng Tâm Tìm Ngày Tốt Cát Lành Trong Tháng (Instant Good Days Scanner)**:
-              + Mặc định vào tab `✨ Tìm Ngày Tốt`, tự động quét và hiển thị tức thì.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.50
+            - **Loại Bỏ Nút To Đùng & Tinh Gọn Nút Hành Động**:
+              + Tinh chỉnh nút `⚡ Thẩm Định Ngày Giờ Này` xuống chiều cao thanh mảnh 36px, font chữ Title Case tinh tế (0.84rem), dải màu hổ phách sang trọng, hòa hợp tuyệt đối với tổng thể.
+              + Tự động cập nhật kết quả thẩm định tức thì khi người dùng thay đổi ngày, giờ hoặc bấm chọn nhanh.
+            - **Thu Gọn Bộ Chọn Ngày & Khung Giờ Thành 2 Cột Song Hành**:
+              + Bố trí Ngày khởi sự (cùng micro-chip `Nay`/`Mai`) và Khung giờ (cùng micro-chip `Giờ này`) song hành 2 cột cân đối, tiết kiệm hơn 80px chiều cao màn hình.
+            - **Căn Thẳng Hàng Thẻ Kết Luận & Điểm Số**:
+              + Tiêu đề Cát/Hung và huy hiệu điểm số (`53/100đ`) được xếp thẳng hàng ngang tinh tế, gọn gàng.
+            - **Bảo Toàn Chuẩn Chỉ Khung Gia Chủ 2 Dòng**:
+              + Dòng 1: `Gia chủ: [ 1990 ] [ Canh Ngọ (37t) ]` + `[ Nam | Nữ ]`.
+              + Dòng 2: `[ Lộ Bàng Thổ ] [ ☵ Cung Khảm (Đông Tứ Mệnh) ]`.
               + **Bộ chuyển đổi chế độ kép linh hoạt (Dual Mode Switcher)**: Cho phép chuyển đổi tức thì giữa `[🔍 Thẩm Định Ngày Giờ Cụ Thể]` và `[📅 Tìm Ngày Tốt Trong Tháng]`.
               + **Đánh giá thời điểm chi tiết**: Nhập ngày Dương lịch cụ thể (hỗ trợ nút nhanh `Hôm nay`, `Ngày mai`), chọn 12 khung giờ chi hoặc nút `[🕒 Giờ Hiện Tại]`.
               + **Kết luận dứt khoát (Verdict & Score 0-100)**: Phán quyết rõ ràng `✅ ĐẠI CÁT`, `🟢 CÁT LÀNH`, `🟡 BÌNH HÒA`, `❌ HUNG SÁT` kèm Veto Guardrails an toàn (xung tọa sơn, xung bản mệnh, sát chủ, đổng công đại hung).

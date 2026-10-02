@@ -550,14 +550,14 @@
           </select>
         </div>
 
-        <!-- 2. Chọn Ngày và Khung Giờ Cụ Thể (Gọn gàng) -->
+        <!-- 2. Chọn Ngày và Khung Giờ Cụ Thể (2 Cột Siêu Tinh Gọn) -->
         <div class="tc-datetime-grid">
-          <div class="tc-field">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-              <label class="tc-label" style="margin-bottom: 0;">📅 Ngày khởi sự</label>
-              <div style="display: flex; gap: 4px;">
-                <button type="button" class="tc-quick-btn" id="tc-btn-today">Hôm nay</button>
-                <button type="button" class="tc-quick-btn" id="tc-btn-tomorrow">Ngày mai</button>
+          <div class="tc-dt-col">
+            <div class="tc-dt-head">
+              <label class="tc-label tc-label-sm">📅 Ngày khởi sự</label>
+              <div class="tc-dt-chips">
+                <button type="button" class="tc-micro-chip" id="tc-btn-today" title="Hôm nay">Nay</button>
+                <button type="button" class="tc-micro-chip" id="tc-btn-tomorrow" title="Ngày mai">Mai</button>
               </div>
             </div>
             <div class="tc-date-input-wrap">
@@ -565,14 +565,16 @@
             </div>
           </div>
 
-          <div class="tc-field">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-              <label class="tc-label" style="margin-bottom: 0;">⏰ Khung giờ</label>
-              <button type="button" class="tc-quick-btn" id="tc-btn-cur-hour">🕒 Hiện tại</button>
+          <div class="tc-dt-col">
+            <div class="tc-dt-head">
+              <label class="tc-label tc-label-sm">⏰ Khung giờ</label>
+              <div class="tc-dt-chips">
+                <button type="button" class="tc-micro-chip" id="tc-btn-cur-hour" title="Khung giờ hiện tại">Giờ này</button>
+              </div>
             </div>
             <div>
               <select id="tc-select-specific-hour" class="tc-select-hour">
-                <option value="">-- Tự động chọn Giờ Hoàng Đạo tốt nhất --</option>
+                <option value="">-- Tự chọn tốt nhất --</option>
                 ${CHI_HOURS.map(h => `
                   <option value="${h.chi}" ${state.specificHourChi === h.chi ? 'selected' : ''}>
                     Giờ ${h.label}
@@ -641,10 +643,11 @@
         <!-- Trùng Tang (nếu có) -->
         ${isFuneral ? renderTrungTangSection() : ''}
 
-        <!-- Nút Tra Cứu Thẩm Định -->
-        <div style="margin-top: 8px;">
+        <!-- Nút Tra Cứu Thẩm Định Tinh Gọn -->
+        <div class="tc-search-btn-wrap">
           <button type="button" id="tc-btn-run-specific" class="tc-btn-search">
-            ⚡ THẨM ĐỊNH NGÀY GIỜ NÀY
+            <span class="tc-btn-icon">⚡</span>
+            <span>Thẩm Định Ngày Giờ Này</span>
           </button>
         </div>
       </div>
@@ -674,14 +677,12 @@
       <!-- Thẻ Kết Luận Hero -->
       <div class="tc-spec-hero ${res.verdict_badge}">
         <div class="tc-spec-hero-header">
-          <div class="tc-spec-hero-title-wrap">
+          <div class="tc-spec-hero-top-row">
             <div class="tc-spec-hero-title">${res.verdict_title}</div>
-            <div class="tc-spec-hero-meta">
-              📅 Ngày ${res.solar_date} (Âm: ${res.lunar_date} - ${res.can_chi_day}) • ⏰ Giờ ${curHour ? curHour.hour_chi + ' (' + curHour.solar_time_range + ')' : 'Hoàng Đạo'} • 🎯 Việc: <strong>${res.task.name}</strong>
-            </div>
-          </div>
-          <div class="tc-spec-score-box">
             <div class="tc-spec-score-badge">${res.score}/100đ</div>
+          </div>
+          <div class="tc-spec-hero-meta">
+            📅 Ngày ${res.solar_date} (Âm: ${res.lunar_date} - ${res.can_chi_day}) • ⏰ Giờ ${curHour ? curHour.hour_chi + ' (' + curHour.solar_time_range + ')' : 'Hoàng Đạo'} • 🎯 Việc: <strong>${res.task.name}</strong>
           </div>
         </div>
 
