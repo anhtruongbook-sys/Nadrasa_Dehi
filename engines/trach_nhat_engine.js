@@ -371,6 +371,123 @@
       return ranked;
     }
 
+    getAll12HoursForDay(dayCanChi, personCanChi) {
+      const dayInfo = this.getCanChiInfo(dayCanChi);
+      if (!dayInfo) return [];
+
+      const personInfo = this.getCanChiInfo(personCanChi) || { can: 'Giáp', chi: 'Tý', nap_am_hanh: 'Kim' };
+      const dayChi = dayInfo.chi;
+      const startChi = (this.core.hoang_dao_start_chi && this.core.hoang_dao_start_chi[dayChi]) || 'Tý';
+      const chiOrder = (this.core.dia_chi || []).map(c => c.name);
+      const startIdx = chiOrder.indexOf(startChi);
+      const spirits = this.core.hoang_dao_12_than || [];
+
+      const canList = (this.core.thien_can || []).map(c => c.name);
+      const dayCanIdx = canList.indexOf(dayInfo.can) + 1;
+      const startCanHourIdx = ((dayCanIdx * 2) - 1) % 10 - 1;
+
+      const HOUR_TIMES = {
+        "Tý": "23h00 - 01h00", "Sửu": "01h00 - 03h00", "Dần": "03h00 - 05h00", "Mão": "05h00 - 07h00",
+        "Thìn": "07h00 - 09h00", "Tị": "09h00 - 11h00", "Ngọ": "11h00 - 13h00", "Mùi": "13h00 - 15h00",
+        "Thân": "15h00 - 17h00", "Dậu": "17h00 - 19h00", "Tuất": "19h00 - 21h00", "Hợi": "21h00 - 23h00"
+      };
+
+      const XUNG_MAP = {
+        "Tý": "Ngọ", "Ngọ": "Tý", "Sửu": "Mùi", "Mùi": "Sửu",
+        "Dần": "Thân", "Thân": "Dần", "Mão": "Dậu", "Dậu": "Mão",
+        "Thìn": "Tuất", "Tuất": "Thìn", "Tị": "Hợi", "Hợi": "Tị"
+      };
+
+      const allHours = [];
+
+      for (let chiIdx = 0; chiIdx < 12; chiIdx++) {
+        const hChi = chiOrder[chiIdx];
+        const hCan = canList[((startCanHourIdx + chiIdx) % 10 + 10) % 10];
+        const hStr = `${hCan} ${hChi}`;
+        const hInfo = this.getCanChiInfo(hStr);
+
+        // Xác định Thần sát Hoàng Đạo / Hắc Đạo
+        const spiritIdx = (chiIdx - startIdx + 12) % 12;
+        const sp = spirits[spiritIdx] || { name: "Bình Hòa", is_hoang_dao: false, nature: "Bình", meaning: "" };
+
+        let goodCount = 0;
+        let badCount = 0;
+        const details = [];
+
+        // Thiên can tương tác
+        if (hInfo) {
+          const canRes = this.checkCanInteraction(personInfo.can, hInfo.can);
+          if (canRes.score > 0) { goodCount++; details.push(`Can: ${canRes.desc} (Tốt)`); }
+          else if (canRes.score < 0) { badCount++; details.push(`Can: ${canRes.desc} (Xấu)`); }
+
+          // Địa chi tương tác
+          const chiResList = this.checkChiInteraction(personInfo.chi, hInfo.chi);
+          chiResList.forEach(cr => {
+            if (cr.score > 0) { goodCount++; details.push(`Chi: ${cr.desc} (Tốt)`); }
+            else if (cr.score < 0) { badCount++; details.push(`Chi: ${cr.desc} (Xấu)`); }
+          });
+
+          // Nạp âm tương tác
+          const napAmRes = this.checkNapAmInteraction(personInfo.nap_am_hanh, hInfo.nap_am_hanh);
+          if (napAmRes.score > 0) { goodCount++; details.push(`Nạp âm: ${napAmRes.desc} (Tốt)`); }
+          else if (napAmRes.score < 0) { badCount++; details.push(`Nạp âm: ${napAmRes.desc} (Xấu)`); }
+        }
+
+        // 9 Hạng Trạng Trình
+        let rank = 5;
+        let recommendation = "Hạng năm, tạm dùng";
+        if (goodCount >= 3 && badCount === 0) { rank = 1; recommendation = "Bậc nhất, rất nên dùng (Lộc Tinh)"; }
+        else if (goodCount === 2 && badCount === 0) { rank = 2; recommendation = "Bậc nhì, nên dùng (Quý Nhân)"; }
+        else if (goodCount === 1 && badCount === 0) { rank = 3; recommendation = "Hạng ba, khá nên dùng"; }
+        else if (goodCount === 2 && badCount === 1) { rank = 4; recommendation = "Hạng tư, khá nên dùng"; }
+        else if (goodCount === 1 && badCount === 1) { rank = 5; recommendation = "Hạng năm, tạm dùng"; }
+        else if (goodCount === 0 && badCount === 1) { rank = 6; recommendation = "Hạng sáu, chẳng nên dùng"; }
+        else if (goodCount === 1 && badCount >= 2) { rank = 7; recommendation = "Hạng bảy, chẳng nên dùng"; }
+        else if (goodCount === 0 && badCount === 2) { rank = 8; recommendation = "Hạng tám, quyết không nên dùng"; }
+        else if (badCount >= 3 && goodCount === 0) { rank = 9; recommendation = "Hạng chín, tuyệt đối chẳng nên dùng"; }
+
+        // Ngũ Bất Ngộ Thời
+        const dayCan = (dayCanChi || '').split(' ')[0] || '';
+        const joeyEngine = (typeof window !== 'undefined' && window.JoeyYapQMDJEngine) || global.JoeyYapQMDJEngine;
+        let isFiveDisharmony = false;
+        if (joeyEngine && typeof joeyEngine.isFiveDisharmony === 'function') {
+          isFiveDisharmony = joeyEngine.isFiveDisharmony(dayCan, hCan);
+        }
+        if (isFiveDisharmony) {
+          details.push("⚠️ Phạm Ngũ Bất Ngộ Thời (Thời Can khắc Nhật Can theo thế Thất Sát)");
+        }
+
+        const isXungPersonChi = (XUNG_MAP[personInfo.chi] === hChi);
+        if (isXungPersonChi) {
+          details.push(`⚠️ Trực xung chi tuổi gia chủ (${personInfo.chi} xung ${hChi})`);
+        }
+
+        const starKhacUng = this.getStarKhacUng("Thiên Nhuế", hChi);
+
+        allHours.push({
+          hour_index: chiIdx,
+          hour_chi: hChi,
+          hour_can: hCan,
+          hour_can_chi: hStr,
+          solar_time_range: HOUR_TIMES[hChi] || "",
+          is_hoang_dao: !!sp.is_hoang_dao,
+          spirit_name: sp.name,
+          spirit_nature: sp.nature,
+          spirit_meaning: sp.meaning,
+          rank: rank,
+          good_count: goodCount,
+          bad_count: badCount,
+          recommendation: recommendation,
+          is_five_disharmony: isFiveDisharmony,
+          is_xung_person_chi: isXungPersonChi,
+          star_khac_ung: starKhacUng,
+          details: details
+        });
+      }
+
+      return allHours;
+    }
+
     calculateCungPhi(birthYear, isMale = true) {
       const y = parseInt(birthYear, 10) || 1990;
       const twoDigits = y % 100;
@@ -1219,6 +1336,431 @@
         school_config: schoolConfig,
         total_found: results.length,
         days: results
+      };
+    }
+
+    evaluateSpecificDateTime(options = {}) {
+      const taskQuery = options.taskId || options.task || "nhập trạch";
+      const personInput = options.personYear || options.personCanChi || options.birth || 1990;
+      const isMale = options.isMale !== false;
+      const inputDate = options.date instanceof Date ? options.date : (options.date ? new Date(options.date) : new Date());
+      const selectedHourChi = options.hourChi || options.hour || null;
+      const mountainDeg = options.mountainDeg != null ? parseFloat(options.mountainDeg) : (options.mountain_sitting_deg != null ? parseFloat(options.mountain_sitting_deg) : null);
+
+      const d = inputDate.getDate();
+      const m = inputDate.getMonth() + 1;
+      const y = inputDate.getFullYear();
+
+      // 1. Thông tin lịch
+      let lDay = 1, lMonth = 1, lYear = y, canChiDay = "Giáp Tý", canChiMonth = "", canChiYear = "", saoName = "Giác", trucName = "Kiến", tietKhi = "";
+      if (global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
+        const cInfo = global.NetaCalendarEngine.getFullDayInfo(inputDate);
+        lDay = cInfo.lunar.day;
+        lMonth = cInfo.lunar.month;
+        lYear = cInfo.lunar.year;
+        canChiDay = cInfo.canChi.day;
+        canChiMonth = cInfo.canChi.month;
+        canChiYear = cInfo.canChi.year;
+        saoName = (cInfo.mansion && cInfo.mansion.name) || (cInfo.constellation && cInfo.constellation.name) || "Giác";
+        trucName = (cInfo.truc && cInfo.truc.name) || (cInfo.officer && cInfo.officer.name) || "Kiến";
+        tietKhi = cInfo.solarTerm || "";
+      }
+
+      const dayCan = canChiDay.split(' ')[0] || "Giáp";
+      const dayChi = canChiDay.split(' ')[1] || "Tý";
+
+      // 2. Mục việc
+      const isGeneral = (!taskQuery || taskQuery === 'ALL' || taskQuery === 'CHUNG' || taskQuery === 'BACH_SU');
+      let task = null;
+      if (!isGeneral) {
+        task = this.resolveTask(taskQuery);
+      }
+      const taskName = task ? task.name : "Công Việc Chung / Bách Sự";
+      const taskCategory = task ? task.category : "Tổng Quát";
+      const isFuneral = (taskCategory === 'Tang lễ') || ['MUC_28', 'MUC_29', 'MUC_30'].includes(task ? task.id : '');
+      const isMarriage = (taskCategory === 'Hôn nhân') || ['MUC_22', 'MUC_23'].includes(task ? task.id : '');
+      const isBuilding = ['Xây dựng', 'Nhà ở', 'Sửa chữa'].includes(taskCategory) || ['MUC_04', 'MUC_05', 'MUC_15'].includes(task ? task.id : '');
+
+      // 3. Gia chủ & Tuổi
+      const personData = this.resolvePersonCanChi(personInput);
+      const personCanChi = personData.canChi;
+      const birthYear = personData.birthYear;
+      const personChi = (personCanChi.split(' ')[1]) || 'Thân';
+      const yearSuitability = this.evaluateYearSuitability(birthYear, y, personChi, isMale, isMarriage);
+      const cungPhi = this.calculateCungPhi(birthYear, isMale);
+
+      // Điểm số khởi điểm
+      let totalScore = 60;
+      const pros = [];
+      const cons = [];
+      const warnings = [];
+
+      // 4. Kiểm tra Dân Gian Sát
+      const isTamNuong = [3, 7, 13, 18, 22, 27].includes(lDay);
+      if (isTamNuong) {
+        totalScore -= 20;
+        cons.push(`Phạm ngày Tam Nương (${lDay} Âm lịch: khởi đầu bất lợi, vạn sự dở dang) (-20đ)`);
+        warnings.push(`Phạm ngày Tam Nương (${lDay})`);
+      }
+
+      const isNguyetKy = [5, 14, 23].includes(lDay);
+      if (isNguyetKy) {
+        totalScore -= 18;
+        cons.push(`Phạm ngày Nguyệt Kỵ (${lDay} Âm lịch: "nửa đời nửa đoạn") (-18đ)`);
+        warnings.push(`Phạm ngày Nguyệt Kỵ (${lDay})`);
+      }
+
+      const satChuDuong = { 1: "Tị", 2: "Tý", 3: "Mùi", 4: "Mão", 5: "Thân", 6: "Tuất", 7: "Sửu", 8: "Hợi", 9: "Ngọ", 10: "Dậu", 11: "Dần", 12: "Thìn" };
+      const isSatChu = (satChuDuong[lMonth] === dayChi);
+      if (isSatChu) {
+        totalScore -= 25;
+        cons.push(`Phạm ngày Sát Chủ Dương (ngày ${dayChi} trong tháng ${lMonth}) (-25đ)`);
+        warnings.push(`Phạm ngày Sát Chủ Dương`);
+      }
+
+      const thoTuMap = { 1: "Tuất", 2: "Thìn", 3: "Hợi", 4: "Tị", 5: "Tý", 6: "Ngọ", 7: "Sửu", 8: "Mùi", 9: "Dần", 10: "Thân", 11: "Mão", 12: "Dậu" };
+      const isThoTu = (thoTuMap[lMonth] === dayChi);
+      if (isThoTu) {
+        totalScore -= 20;
+        cons.push(`Phạm ngày Thọ Tử (trăm sự bất lợi) (-20đ)`);
+        warnings.push(`Phạm ngày Thọ Tử`);
+      }
+
+      // Kỵ sát đặc thù theo mục việc
+      if (task && task.id === 'MUC_05') {
+        if (["Quý Mùi", "Ất Mùi", "Mậu Ngọ"].includes(canChiDay)) {
+          totalScore -= 30;
+          cons.push(`Đại kỵ Động Thổ theo Trạng Trình (${canChiDay}) (-30đ)`);
+          warnings.push(`Đại kỵ Động Thổ (${canChiDay})`);
+        }
+      }
+      if (task && task.id === 'MUC_04' && dayChi === 'Ngọ') {
+        totalScore -= 15;
+        cons.push("Bành Tổ Bách Kỵ: Ngày Ngọ kỵ lợp nhà, cất nóc (-15đ)");
+        warnings.push("Kỵ cất nóc ngày Ngọ");
+      }
+      if (task && task.id === 'MUC_22' && dayChi === 'Hợi') {
+        totalScore -= 15;
+        cons.push("Bành Tổ Bách Kỵ: Ngày Hợi kỵ cưới gả (-15đ)");
+        warnings.push("Kỵ cưới gả ngày Hợi");
+      }
+      if (task && task.id === 'MUC_37' && canChiDay.startsWith('Giáp')) {
+        totalScore -= 12;
+        cons.push("Bành Tổ Bách Kỵ: Ngày Giáp kỵ mở kho, khai trương (-12đ)");
+        warnings.push("Kỵ khai trương ngày Giáp");
+      }
+
+      // 5. Đổng Công Tuyển Trạch
+      const dcEval = this.getDongCongEvaluation(lMonth, canChiDay);
+      const dcRating = dcEval ? dcEval.rating : "Bình";
+      const dcSummary = (dcEval && (dcEval.summary || dcEval.nghi_ki)) || (dcRating === "Bình" ? "Bình hòa, dùng được việc nhỏ" : "");
+      if (dcRating === "Đại Kiết") {
+        totalScore += 22;
+        pros.push(`Đổng Công Tuyển Trạch: Đại Kiết (${dcSummary}) (+22đ)`);
+      } else if (dcRating === "Thứ Kiết") {
+        totalScore += 14;
+        pros.push(`Đổng Công Tuyển Trạch: Thứ Kiết (${dcSummary}) (+14đ)`);
+      } else if (dcRating === "Bình") {
+        totalScore += 4;
+        pros.push(`Đổng Công Tuyển Trạch: Bình Hòa (${dcSummary}) (+4đ)`);
+      } else if (dcRating === "Thứ Hung") {
+        totalScore -= 16;
+        cons.push(`Đổng Công Tuyển Trạch: Thứ Hung (${dcSummary}) (-16đ)`);
+      } else if (dcRating === "Đại Hung") {
+        totalScore -= 30;
+        cons.push(`Đổng Công Tuyển Trạch: Đại Hung (${dcSummary || 'Hao tài, tai họa, tuyệt đối tránh'}) (-30đ)`);
+        warnings.push(`Đổng Công Đại Hung`);
+      }
+
+      // 6. Trạng Trình / Bách Trạch
+      if (task) {
+        const isTrinhBase = (task.base_good_days || []).includes(canChiDay);
+        if (isTrinhBase) {
+          totalScore += 15;
+          pros.push(`Ngày ${canChiDay} nằm trong danh mục ngày tốt Trạng Trình cho việc "${task.name}" (+15đ)`);
+        } else {
+          totalScore -= 8;
+          cons.push(`Ngày ${canChiDay} không nằm trong danh mục ngày tốt Trạng Trình cho việc "${task.name}" (-8đ)`);
+        }
+
+        const goodChuc = task.good_chuc || task.good_truc || [];
+        const badChuc = task.bad_chuc || task.bad_truc || [];
+        if (goodChuc.includes(trucName)) {
+          totalScore += 8;
+          pros.push(`Trực ${trucName} hợp việc "${task.name}" (+8đ)`);
+        } else if (badChuc.includes(trucName)) {
+          totalScore -= 10;
+          cons.push(`Trực ${trucName} kỵ việc "${task.name}" (-10đ)`);
+        }
+
+        if ((task.good_stars || []).includes(saoName)) {
+          totalScore += 8;
+          pros.push(`Sao ${saoName} kiết tinh hợp việc "${task.name}" (+8đ)`);
+        } else if ((task.bad_stars || []).includes(saoName)) {
+          totalScore -= 10;
+          cons.push(`Sao ${saoName} hung tinh kỵ việc "${task.name}" (-10đ)`);
+        }
+      }
+
+      // 7. 16 Tiêu Chí Cát Thần
+      const tc16 = this.get16Criteria(canChiDay, lMonth, lDay, trucName, saoName);
+      if (tc16.tam_dai_cat_tinh) {
+        totalScore += 16;
+        pros.push(`Đắc ${tc16.tam_dai_cat_tinh.name}: Đại Cát Tinh hóa giải bách sát (+16đ)`);
+      }
+      if (tc16.luc_nham) {
+        if (tc16.luc_nham.is_good) {
+          totalScore += 6;
+          pros.push(`Lục Nhâm: Cung ${tc16.luc_nham.cung} (${tc16.luc_nham.meaning}) (+6đ)`);
+        } else {
+          totalScore -= 6;
+          cons.push(`Lục Nhâm: Cung ${tc16.luc_nham.cung} (${tc16.luc_nham.meaning}) (-6đ)`);
+        }
+      }
+      if (tc16.khong_minh) {
+        if (tc16.khong_minh.is_good) {
+          totalScore += 4;
+          pros.push(`Khổng Minh: ${tc16.khong_minh.name} (${tc16.khong_minh.meaning}) (+4đ)`);
+        } else {
+          totalScore -= 4;
+          cons.push(`Khổng Minh: ${tc16.khong_minh.name} (${tc16.khong_minh.meaning}) (-4đ)`);
+        }
+      }
+
+      // 8. Tương hợp Tuổi Gia Chủ
+      const dayInfo = this.getCanChiInfo(canChiDay);
+      const personInfo = this.getCanChiInfo(personCanChi);
+      let isXungTuoi = false;
+      if (dayInfo && personInfo) {
+        // Can
+        const canRes = this.checkCanInteraction(personInfo.can, dayInfo.can);
+        if (canRes.score > 0) { totalScore += 5; pros.push(`Thiên can ${personInfo.can} và ${dayInfo.can}: ${canRes.desc} (+5đ)`); }
+        else if (canRes.score < 0) { totalScore -= 5; cons.push(`Thiên can ${personInfo.can} và ${dayInfo.can}: ${canRes.desc} (-5đ)`); }
+
+        // Chi
+        const chiResList = this.checkChiInteraction(personInfo.chi, dayInfo.chi);
+        chiResList.forEach(cr => {
+          if (cr.type === 'LUC_XUNG') {
+            isXungTuoi = true;
+            totalScore -= 25;
+            cons.push(`⚠️ ĐẠI KỴ: Ngày ${canChiDay} trực xung với tuổi ${personCanChi} (${cr.desc}) (-25đ)`);
+            warnings.push(`Trực xung tuổi gia chủ`);
+          } else if (cr.score > 0) {
+            totalScore += 8;
+            pros.push(`Địa chi ${personInfo.chi} và ${dayInfo.chi}: ${cr.desc} (+8đ)`);
+          } else if (cr.score < 0) {
+            totalScore -= 6;
+            cons.push(`Địa chi ${personInfo.chi} và ${dayInfo.chi}: ${cr.desc} (-6đ)`);
+          }
+        });
+
+        // Nạp âm
+        const napAmRes = this.checkNapAmInteraction(personInfo.nap_am_hanh, dayInfo.nap_am_hanh);
+        if (napAmRes.score > 0) { totalScore += 5; pros.push(`Nạp âm: ${napAmRes.desc} (+5đ)`); }
+        else if (napAmRes.score < 0) { totalScore -= 5; cons.push(`Nạp âm: ${napAmRes.desc} (-5đ)`); }
+      }
+
+      // Hạn năm
+      if (isBuilding) {
+        if (yearSuitability.tam_tai.is_tam_tai) {
+          totalScore -= 8;
+          cons.push(`Gia chủ phạm Tam Tai trong năm ${y} (-8đ)`);
+        }
+        if (yearSuitability.kim_lau.is_kim_lau) {
+          totalScore -= 12;
+          cons.push(`Gia chủ phạm Kim Lâu (${yearSuitability.kim_lau.type}) trong năm ${y} (-12đ)`);
+        }
+        if (!yearSuitability.hoang_oc.is_good) {
+          totalScore -= 10;
+          cons.push(`Gia chủ phạm Hoang Ốc (${yearSuitability.hoang_oc.cung_name}) trong năm ${y} (-10đ)`);
+        }
+      } else if (isMarriage) {
+        if (yearSuitability.kim_lau.is_kim_lau) {
+          totalScore -= 15;
+          cons.push(`Cô dâu phạm Kim Lâu kết hôn (${yearSuitability.kim_lau.type}) (-15đ)`);
+        }
+      }
+
+      // 9. Tọa Sơn La Kinh (nếu có)
+      let houseSitting = null;
+      let isXungToa = false;
+      if (mountainDeg != null && !isNaN(mountainDeg)) {
+        houseSitting = this.evaluateHouseSitting(mountainDeg, canChiDay, lMonth);
+        if (houseSitting) {
+          totalScore += houseSitting.score_delta;
+          if (houseSitting.score_delta < -2) {
+            isXungToa = true;
+            cons.push(...houseSitting.notes);
+            warnings.push("Trực xung Tọa Sơn / Tam Sát");
+          } else if (houseSitting.score_delta > 0) {
+            pros.push("Phối hợp Tọa sơn cát lợi, đắc vị");
+          }
+        }
+      }
+
+      // 10. Tính toán Toàn Bộ 12 Giờ trong Ngày
+      const all12Hours = this.getAll12HoursForDay(canChiDay, personCanChi);
+
+      // 11. Đánh giá Giờ Đã Chọn (selectedHour)
+      let selectedHourData = null;
+      if (selectedHourChi) {
+        selectedHourData = all12Hours.find(h => h.hour_chi === selectedHourChi) || null;
+      }
+      if (!selectedHourData && all12Hours.length > 0) {
+        // Mặc định chọn giờ Hoàng đạo tốt nhất nếu không chỉ định
+        const sortedHD = [...all12Hours].sort((a, b) => {
+          if (a.is_hoang_dao !== b.is_hoang_dao) return b.is_hoang_dao ? 1 : -1;
+          return a.rank - b.rank;
+        });
+        selectedHourData = sortedHD[0];
+      }
+
+      if (selectedHourData) {
+        if (selectedHourData.is_hoang_dao) {
+          totalScore += 10;
+          pros.push(`Giờ ${selectedHourData.hour_chi} là Giờ Hoàng Đạo (${selectedHourData.spirit_name} - ${selectedHourData.spirit_meaning}) (+10đ)`);
+        } else {
+          totalScore -= 10;
+          cons.push(`Giờ ${selectedHourData.hour_chi} là Giờ Hắc Đạo (${selectedHourData.spirit_name} - ${selectedHourData.spirit_meaning}) (-10đ)`);
+        }
+
+        if (selectedHourData.rank <= 2) {
+          totalScore += 12;
+          pros.push(`Giờ ${selectedHourData.hour_chi} đắc ${selectedHourData.recommendation} với tuổi gia chủ (+12đ)`);
+        } else if (selectedHourData.rank <= 5) {
+          totalScore += 4;
+        } else {
+          totalScore -= 12;
+          cons.push(`Giờ ${selectedHourData.hour_chi} phạm ${selectedHourData.recommendation} với tuổi gia chủ (-12đ)`);
+        }
+
+        if (selectedHourData.is_five_disharmony) {
+          totalScore -= 15;
+          cons.push(`Giờ ${selectedHourData.hour_chi} phạm Ngũ Bất Ngộ Thời (Thất Sát) (-15đ)`);
+          warnings.push("Giờ phạm Ngũ Bất Ngộ Thời");
+        }
+
+        if (selectedHourData.is_xung_person_chi) {
+          totalScore -= 15;
+          cons.push(`Giờ ${selectedHourData.hour_chi} trực xung chi tuổi gia chủ (-15đ)`);
+          warnings.push("Giờ xung tuổi gia chủ");
+        }
+      }
+
+      // Chuẩn hóa điểm số [10, 98]
+      let finalScore = Math.max(10, Math.min(98, Math.round(totalScore)));
+
+      // Veto Guardrails (Bảo hộ an toàn)
+      if (isXungToa) finalScore = Math.min(finalScore, 42);
+      if (isXungTuoi) finalScore = Math.min(finalScore, 45);
+      if (isSatChu || dcRating === "Đại Hung") finalScore = Math.min(finalScore, 48);
+      if (tc16.tam_dai_cat_tinh && !isXungToa && !isXungTuoi) {
+        finalScore = Math.max(finalScore, 58); // Cát tinh hóa giải
+      }
+
+      // Xác định Verdict dứt khoát
+      let verdict = "BINH";
+      let verdictTitle = "🟡 BÌNH HÒA — CẦN CÂN NHẮC";
+      let verdictBadge = "warn";
+      let verdictDesc = "";
+      let canUse = false;
+
+      if (finalScore >= 80) {
+        verdict = "DAI_CAT";
+        verdictTitle = "✅ ĐẠI CÁT — RẤT NÊN KHỞI SỰ";
+        verdictBadge = "good";
+        verdictDesc = `Ngày giờ này đắc Thiên Thời Địa Lợi Nhân Hòa, cát tinh hội tụ, rất thuận lợi để tiến hành "${taskName}".`;
+        canUse = true;
+      } else if (finalScore >= 65) {
+        verdict = "CAT";
+        verdictTitle = "🟢 CÁT LÀNH — DÙNG ĐƯỢC TỐT";
+        verdictBadge = "good";
+        verdictDesc = `Ngày giờ tốt, cát khí chiếm ưu thế, hoàn toàn thích hợp để khởi sự "${taskName}".`;
+        canUse = true;
+      } else if (finalScore >= 50) {
+        verdict = "BINH";
+        verdictTitle = "🟡 BÌNH HÒA — CẦN CÂN NHẮC";
+        verdictBadge = "warn";
+        verdictDesc = `Ngày giờ bình thường, cát hung đan xen. Chỉ nên dùng cho việc nhỏ; nếu là đại sự trọng điểm nên ưu tiên đổi sang giờ Hoàng Đạo cát lợi hơn hoặc chọn ngày đại cát.`;
+        canUse = false;
+      } else {
+        verdict = "HUNG";
+        verdictTitle = "❌ HUNG SÁT — KHÔNG NÊN DÙNG";
+        verdictBadge = "bad";
+        verdictDesc = `Mốc thời gian này phạm phải hung sát hoặc xung khắc với bản mệnh/tọa sơn. Khuyến cáo KHÔNG NÊN DÙNG cho việc "${taskName}", hãy chọn các khung giờ cát lành hoặc ngày tốt thay thế bên dưới.`;
+        canUse = false;
+      }
+
+      // Danh sách Giờ Hoàng Đạo thay thế tốt nhất trong ngày
+      const alternativeBestHours = [...all12Hours]
+        .filter(h => h.is_hoang_dao && !h.is_five_disharmony && !h.is_xung_person_chi)
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, 4);
+
+      // Gợi ý ngày tốt gần nhất nếu ngày này không đạt chuẩn
+      let nearbyBetterDays = [];
+      if (finalScore < 65) {
+        try {
+          const nextStart = new Date(inputDate.getTime() + 86400000);
+          const nextEnd = new Date(inputDate.getTime() + 15 * 86400000);
+          const scanRes = this.evaluatePeriod({
+            taskId: task ? task.id : 'MUC_05',
+            personYear: birthYear,
+            personCanChi: personCanChi,
+            isMale: isMale,
+            startDate: nextStart,
+            endDate: nextEnd,
+            schoolConfig: {
+              enable_trinh: true,
+              enable_dong_cong: true,
+              enable_folk_filter: true,
+              enable_16_criteria: true,
+              mountain_sitting_deg: mountainDeg
+            }
+          });
+          if (scanRes && scanRes.days && scanRes.days.length > 0) {
+            nearbyBetterDays = scanRes.days.slice(0, 2);
+          }
+        } catch (_) {}
+      }
+
+      return {
+        date: inputDate,
+        solar_date: `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`,
+        lunar_date: `${String(lDay).padStart(2, '0')}/${String(lMonth).padStart(2, '0')}/${lYear}`,
+        lunar_day: lDay,
+        lunar_month: lMonth,
+        lunar_year: lYear,
+        can_chi_day: canChiDay,
+        can_chi_month: canChiMonth,
+        can_chi_year: canChiYear,
+        sao_name: saoName,
+        truc_name: trucName,
+        tiet_khi: tietKhi,
+        task: task || { id: 'CHUNG', name: taskName, category: taskCategory },
+        person: {
+          birth_year: birthYear,
+          can_chi: personCanChi,
+          nap_am: (this.getCanChiInfo(personCanChi) || {}).nap_am_name || '',
+          cung_phi: cungPhi,
+          year_suitability: yearSuitability
+        },
+        selected_hour: selectedHourData,
+        all_12_hours: all12Hours,
+        alternative_best_hours: alternativeBestHours,
+        nearby_better_days: nearbyBetterDays,
+        house_sitting: houseSitting,
+        dong_cong: dcEval,
+        tc16: tc16,
+        score: finalScore,
+        verdict: verdict,
+        verdict_title: verdictTitle,
+        verdict_badge: verdictBadge,
+        verdict_desc: verdictDesc,
+        can_use: canUse,
+        pros: pros,
+        cons: cons,
+        warnings: warnings
       };
     }
 

@@ -76,11 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.44
-          name: "Neta Light v2.8.44 (Bộ Quét Khung Giờ Hoàng Kim Tam Tài Top 3-5 Thời Điểm & Xuất Lịch .ics)"
+          tag_name: v2.8.45
+          name: "Neta Light v2.8.45 (Thẩm Định Ngày Giờ Cụ Thể Trạch Cát & Bách Sự Toàn Năng)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.44
-            - **Đột Phá: Tính Năng Tuyển Chọn Khung Giờ Hoàng Kim Tam Tài (Optimal Timing Scanner)**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.45
+            - **Đột Phá: Tính Năng Thẩm Định Ngày Giờ Cụ Thể (Single Date & Hour Diagnostic) trong Module Trạch Cát**:
+              + **Bộ chuyển đổi chế độ kép linh hoạt (Dual Mode Switcher)**: Cho phép chuyển đổi tức thì giữa `[🔍 Thẩm Định Ngày Giờ Cụ Thể]` và `[📅 Tìm Ngày Tốt Trong Tháng]`.
+              + **Đánh giá thời điểm chi tiết**: Nhập ngày Dương lịch cụ thể (hỗ trợ nút nhanh `Hôm nay`, `Ngày mai`), chọn 12 khung giờ chi hoặc nút `[🕒 Giờ Hiện Tại]`.
+              + **Kết luận dứt khoát (Verdict & Score 0-100)**: Phán quyết rõ ràng `✅ ĐẠI CÁT`, `🟢 CÁT LÀNH`, `🟡 BÌNH HÒA`, `❌ HUNG SÁT` kèm Veto Guardrails an toàn (xung tọa sơn, xung bản mệnh, sát chủ, đổng công đại hung).
+              + **Bảng đối soát trực quan Ngày vs Giờ & Pros/Cons**: Chi tiết từng điểm cộng/trừ theo Đổng Công, Bách Trạch Trạng Trình, 16 Tiêu Chí Cát Thần, Thần Sát trực giờ, Khắc Ứng Cửu Tinh.
+              + **Khung Giờ Hoàng Đạo Tối Ưu & Gợi Ý 2 Ngày Tốt Gần Nhất**: 1-chạm đổi giờ hoàng đạo hoặc chọn ngày đại cát thay thế khi ngày khảo sát phạm hung.
+              + **Danh mục sự vụ bao phủ 100%**: 83 mục việc Trạng Trình, 7 việc đại sự cốt lõi và mục `🌟 Việc Chung / Bách Sự`.
+              + **Giao diện chuẩn Mobile Responsive**: Khắc phục 100% tràn viền, đồng nhất cả Dark và Light Theme.
+            - **Tính Năng Tuyển Chọn Khung Giờ Hoàng Kim Tam Tài (Optimal Timing Scanner)**:
               + **Tự động nhận diện câu hỏi thời điểm**: Hệ thống tự động phát hiện khi người dùng hỏi *"Khi nào", "Bao giờ", "Ngày nào", "Giờ nào", "Thời điểm nào nên..."*.
               + **Bóc tách dải thời gian thông minh**: Tự động nhận diện khung thời gian cụ thể được đề cập trong câu hỏi (ví dụ: *"trong tuần tới"*, *"tháng 11"*, *"từ ngày 5 đến ngày 12"*, *"ngày mai"*, *"cuối tuần"*) hoặc quét tự động 14 ngày tới.
               + **Động cơ quét & xếp hạng siêu tốc**: Quét hàng chục khung giờ khả dụng, tính toán điểm số tổng hợp Tam Thức và chỉ số đồng thuận Tam Tài $C_{3T}$, chọn lọc ra **TOP 3 - 5 thời điểm ĐẠI CÁT nhất**.
