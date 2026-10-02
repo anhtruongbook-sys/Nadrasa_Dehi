@@ -25,12 +25,12 @@
     isMale: true,
     isDeathLunarMode: false, // Mặc định theo Dương lịch giống các module khác
     deathDate: new Date(),
-    deathHour: 11,
-    deathMinute: 30,
-    deathHourChi: 'Ngọ',
+    deathHour: (new Date()).getHours(),
+    deathMinute: (new Date()).getMinutes(),
+    deathHourChi: getChiFromHour((new Date()).getHours()),
     deathYear: (new Date()).getFullYear(),
-    deathMonthLunar: 8,
-    deathDayLunar: 15,
+    deathMonthLunar: null,
+    deathDayLunar: null,
     selectedMonth: (new Date()).getMonth() + 1,
     selectedYear: (new Date()).getFullYear(),
     specificDate: new Date(),
@@ -103,6 +103,9 @@
       state.deathHourChi = getChiFromHour(state.deathHour);
     }
   }
+
+  // Khởi động đồng bộ âm dương ngay lập tức
+  syncDeathFromSolar();
 
 
   const CORE_TASKS = [
@@ -270,9 +273,13 @@
     const eng = getEngine();
     if (!eng || !eng.calculateTrungTang) return '';
 
-    // Đảm bảo đồng bộ ngày âm/dương ban đầu
-    if (!state.deathDayLunar || !state.deathMonthLunar || !state.deathYear) {
+    // Luôn bảo đảm đồng bộ chặt chẽ 100% hai chiều qua NetaCalendarEngine
+    if (!state.isDeathLunarMode) {
       syncDeathFromSolar();
+    } else if (!state.deathDayLunar || !state.deathMonthLunar || !state.deathYear) {
+      syncDeathFromSolar();
+    } else {
+      syncDeathFromLunar();
     }
 
     const solDate = state.deathDate || new Date();
@@ -283,15 +290,9 @@
     const curHourVal = typeof state.deathHour === 'number' ? state.deathHour : 12;
     const curMinVal = typeof state.deathMinute === 'number' ? state.deathMinute : 0;
 
-    let displayDay = solD;
-    let displayMonth = solM;
-    let displayYear = solY;
-
-    if (state.isDeathLunarMode) {
-      displayDay = state.deathDayLunar || 15;
-      displayMonth = state.deathMonthLunar || 8;
-      displayYear = state.deathYear || solY;
-    }
+    const displayDay = state.isDeathLunarMode ? state.deathDayLunar : solD;
+    const displayMonth = state.isDeathLunarMode ? state.deathMonthLunar : solM;
+    const displayYear = state.isDeathLunarMode ? state.deathYear : solY;
 
     const currentDeathYear = state.deathYear || solY;
     const isDeathBeforeBirth = currentDeathYear < state.personYear;
@@ -303,8 +304,8 @@
       ttRes = eng.calculateTrungTang({
         birthYear: state.personYear,
         deathYear: currentDeathYear,
-        deathMonthLunar: state.deathMonthLunar || 8,
-        deathDayLunar: state.deathDayLunar || 15,
+        deathMonthLunar: state.deathMonthLunar,
+        deathDayLunar: state.deathDayLunar,
         deathHourChi: state.deathHourChi || 'Ngọ',
         isMale: state.isMale
       });
@@ -1999,6 +2000,7 @@
       btnTTSolar.onclick = () => {
         if (state.isDeathLunarMode) {
           state.isDeathLunarMode = false;
+          syncDeathFromLunar();
           render(true);
         }
       };
@@ -2007,6 +2009,7 @@
       btnTTLunar.onclick = () => {
         if (!state.isDeathLunarMode) {
           state.isDeathLunarMode = true;
+          syncDeathFromSolar();
           render(true);
         }
       };
@@ -2169,8 +2172,11 @@
     const btnResetTTYear = document.getElementById('btn-tt-reset-current-year');
     if (btnResetTTYear) {
       btnResetTTYear.onclick = () => {
-        state.deathYear = new Date().getFullYear();
         state.deathDate = new Date();
+        state.deathYear = state.deathDate.getFullYear();
+        state.deathHour = state.deathDate.getHours();
+        state.deathMinute = state.deathDate.getMinutes();
+        state.deathHourChi = getChiFromHour(state.deathHour);
         syncDeathFromSolar();
         render(true);
       };
