@@ -5673,10 +5673,14 @@ body.theme-light .bazi-master-pill-tag {
 
 .ucc-row-date {
   justify-content: space-between;
+  flex-wrap: nowrap !important;
+  gap: 4px;
 }
 
 .ucc-row-time {
   justify-content: space-between;
+  flex-wrap: nowrap !important;
+  gap: 4px;
 }
 
 .ucc-row-actions {
@@ -5963,9 +5967,9 @@ body.theme-light .text-view-year {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  padding: 0 7px;
+  padding: 0 5px;
   height: 22px;
   border-radius: 4px;
   cursor: pointer;
@@ -5988,14 +5992,15 @@ body.theme-light .text-view-year {
 .ucc-time-box {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   background: rgba(0, 0, 0, 0.55);
   border: 1px solid rgba(245, 176, 65, 0.35);
   border-radius: 6px;
-  padding: 1px 6px;
+  padding: 1px 3px;
   height: 26px;
   box-sizing: border-box;
-  flex-grow: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   justify-content: center;
 }
 
@@ -6006,7 +6011,7 @@ body.theme-light .text-view-year {
 .numeric-time-group {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -6015,7 +6020,7 @@ body.theme-light .text-view-year {
   background: transparent;
   border: none;
   color: #fff;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-align: center;
   padding: 0;
@@ -6037,19 +6042,19 @@ body.theme-light .text-view-year {
 }
 
 .num-day, .num-month, .num-hour, .num-min {
-  width: 24px;
+  width: 19px;
 }
 
 .num-year {
-  width: 40px;
+  width: 34px;
 }
 
 .num-slash, .num-colon {
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 700;
   color: var(--gold-glow);
   opacity: 0.75;
-  padding: 0 1px;
+  padding: 0;
   user-select: none;
 }
 
@@ -6057,17 +6062,18 @@ body.theme-light .text-view-year {
   background: rgba(245, 176, 65, 0.15);
   border: 1px solid rgba(245, 176, 65, 0.4);
   color: #f7dc6f;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 800;
   height: 20px;
-  padding: 0 5px;
+  padding: 0 3px;
   border-radius: 4px;
   cursor: pointer;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 2px;
+  margin-left: 1px;
+  flex-shrink: 0;
 }
 
 .btn-picker-cal {
@@ -6075,12 +6081,15 @@ body.theme-light .text-view-year {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.74rem;
-  padding: 0 2px 0 3px;
+  font-size: 0.72rem;
+  padding: 0 1px;
   position: relative;
   height: 20px;
   opacity: 0.85;
   transition: opacity 0.15s ease;
+  margin-left: 1px;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
 .btn-picker-cal:hover {
@@ -17495,36 +17504,46 @@ body.theme-light .luan-role-note {
 
 /* ================= KỲ MÔN KẾT NỐI VŨ TRỤ (NGUYỄN TẤN CÔNG) ================= */
 .qmdj-school-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
   background: rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(245, 176, 65, 0.25);
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 3px 6px !important;
   margin-top: 4px;
+  box-sizing: border-box;
+  width: 100%;
 }
 .qmdj-school-pill {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .strip-lbl {
-  font-size: 0.68rem;
+  font-size: 0.65rem !important;
   color: var(--text-muted, #94a3b8);
   font-weight: 700;
+  margin-right: 1px;
+  white-space: nowrap;
 }
 .btn-school-toggle {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #cbd5e1;
-  font-size: 0.68rem;
+  font-size: 0.65rem !important;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 6px;
+  padding: 2px 5px !important;
+  border-radius: 5px !important;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 .btn-school-toggle.active {
   background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -17532,6 +17551,19 @@ body.theme-light .luan-role-note {
   border-color: #f59e0b;
   font-weight: 800;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+.school-txt-long {
+  display: inline;
+}
+.school-txt-short {
+  display: none;
+}
+@media (max-width: 350px) {
+  .school-txt-long { display: none !important; }
+  .school-txt-short { display: inline !important; }
+  .qmdj-school-strip { gap: 2px !important; padding: 2px 4px !important; }
+  .qmdj-school-pill { gap: 2px !important; }
+  .btn-school-toggle { padding: 2px 3px !important; font-size: 0.62rem !important; }
 }
 
 /* Omni-Forecast Card */

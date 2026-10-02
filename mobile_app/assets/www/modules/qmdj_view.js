@@ -142,14 +142,14 @@
       <div class="ucc-row qmdj-school-strip">
         <div class="qmdj-school-pill">
           <span class="strip-lbl">Thần:</span>
-          <button type="button" class="btn-school-toggle ${currentDeitySchool === '10thần' ? 'active' : ''}" id="btn-toggle-deity-10" title="10 Thần (Nguyễn Tấn Công - Kết Nối Vũ Trụ)">10 Thần</button>
-          <button type="button" class="btn-school-toggle ${currentDeitySchool === '8thần' ? 'active' : ''}" id="btn-toggle-deity-8" title="8 Thần (Joey Yap / Phổ Thông)">8 Thần</button>
+          <button type="button" class="btn-school-toggle ${currentDeitySchool === '10thần' ? 'active' : ''}" id="btn-toggle-deity-10" title="10 Thần (Nguyễn Tấn Công - Kết Nối Vũ Trụ)"><span class="school-txt-long">10 Thần</span><span class="school-txt-short">10</span></button>
+          <button type="button" class="btn-school-toggle ${currentDeitySchool === '8thần' ? 'active' : ''}" id="btn-toggle-deity-8" title="8 Thần (Joey Yap / Phổ Thông)"><span class="school-txt-long">8 Thần</span><span class="school-txt-short">8</span></button>
         </div>
         ${includeJuMethod ? `
         <div class="qmdj-school-pill">
-          <span class="strip-lbl">Định Cục:</span>
-          <button type="button" class="btn-school-toggle ${currentJuMethod === 'chao_bu' ? 'active' : ''}" id="btn-toggle-ju-chaobu" title="Sách Bổ / Chiết Bổ (Chai Bu)">Sách Bổ</button>
-          <button type="button" class="btn-school-toggle ${currentJuMethod === 'zhi_run' ? 'active' : ''}" id="btn-toggle-ju-zhirun" title="Trí Nhuận Pháp (Zhi Run - Trang 307)">Trí Nhuận</button>
+          <span class="strip-lbl">Cục:</span>
+          <button type="button" class="btn-school-toggle ${currentJuMethod === 'chao_bu' ? 'active' : ''}" id="btn-toggle-ju-chaobu" title="Sách Bổ / Chiết Bổ (Chai Bu)"><span class="school-txt-long">Sách Bổ</span><span class="school-txt-short">S.Bổ</span></button>
+          <button type="button" class="btn-school-toggle ${currentJuMethod === 'zhi_run' ? 'active' : ''}" id="btn-toggle-ju-zhirun" title="Trí Nhuận Pháp (Zhi Run - Trang 307)"><span class="school-txt-long">Trí Nhuận</span><span class="school-txt-short">T.Nhuận</span></button>
         </div>
         ` : ''}
       </div>
@@ -3022,8 +3022,8 @@
           </div>
         </div>
 
-        <!-- Row 4: Trường phái Thần (10 Thần vs 8 Thần) -->
-        ${renderSchoolStripHtml(false)}
+        <!-- Row 4: Trường phái Thần (10 Thần vs 8 Thần) & Định Cục -->
+        ${renderSchoolStripHtml(true)}
       </div>
 
       <!-- Phong Thủy Info Strip -->
@@ -3356,8 +3356,8 @@
           </div>
         </div>
 
-        <!-- Row 2: Trường phái Thần -->
-        ${renderSchoolStripHtml(false)}
+        <!-- Row 2: Trường phái Thần & Định Cục -->
+        ${renderSchoolStripHtml(true)}
       </div>
 
       <!-- Strip info Âm Trạch -->
