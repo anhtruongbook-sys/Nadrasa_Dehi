@@ -1729,6 +1729,8 @@ body.theme-light .tc-hour-veto {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .tc-tt-pillar-label {
@@ -1737,12 +1739,14 @@ body.theme-light .tc-hour-veto {
   text-transform: uppercase;
   color: #94a3b8;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .tc-tt-pillar-chi {
   font-size: 0.85rem;
   font-weight: 800;
   color: #f8fafc;
+  white-space: nowrap;
 }
 
 .tc-tt-pillar-status {

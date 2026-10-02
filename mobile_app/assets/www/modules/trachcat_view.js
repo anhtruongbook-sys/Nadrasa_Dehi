@@ -438,18 +438,18 @@
         <!-- Bộ Chọn Ngày Giờ Mất Chuẩn Unified Control Card (Đồng bộ Kỳ Môn / Bát Tự) -->
         <div class="unified-ctrl-card" style="margin: 8px 0 12px 0;">
           <!-- Row 1: Calendar switch (Dương / Âm) + Date Box + ⚡Năm + 📅 Picker -->
-          <div class="ucc-row ucc-row-date">
-            <div class="ucc-pill-cal">
-              <button type="button" class="ucc-pill-btn ${!state.isDeathLunarMode ? 'active' : ''}" id="btn-tt-solar" title="Xem theo Dương lịch">☀️ Dương</button>
-              <button type="button" class="ucc-pill-btn ${state.isDeathLunarMode ? 'active' : ''}" id="btn-tt-lunar" title="Xem theo Âm lịch">🌙 Âm</button>
+          <div class="ucc-row ucc-row-date" style="gap: 4px;">
+            <div class="ucc-pill-cal" style="flex-shrink: 0;">
+              <button type="button" class="ucc-pill-btn ${!state.isDeathLunarMode ? 'active' : ''}" id="btn-tt-solar" style="padding: 0 6px;" title="Xem theo Dương lịch">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${state.isDeathLunarMode ? 'active' : ''}" id="btn-tt-lunar" style="padding: 0 6px;" title="Xem theo Âm lịch">🌙 Âm</button>
             </div>
-            <div class="ucc-date-box" id="tt-ucc-date-box" title="Nhập ngày tháng mất hoặc chạm nút lịch để chọn">
+            <div class="ucc-date-box" id="tt-ucc-date-box" style="flex: 1 1 auto; min-width: 0; padding: 1px 4px;" title="Nhập ngày tháng mất hoặc chạm nút lịch để chọn">
               <input type="number" id="tt-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày">
               <span class="num-slash">/</span>
               <input type="number" id="tt-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng">
               <span class="num-slash">/</span>
               <input type="number" id="tt-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm">
-              <button type="button" class="ucc-btn-year" id="btn-tt-year-jumper" title="Chọn Thập niên & Năm siêu tốc">⚡Năm</button>
+              <button type="button" class="ucc-btn-year" id="btn-tt-year-jumper" style="padding: 0 4px; font-size: 0.62rem;" title="Chọn Thập niên & Năm siêu tốc">⚡Năm</button>
               <label class="btn-picker-cal" id="tt-btn-native-cal" title="Mở bảng chọn Ngày & Giờ">
                 📅
                 <input type="datetime-local" id="tt-date-picker" value="${solY}-${pad(solM)}-${pad(solD)}T${pad(curHourVal)}:${pad(curMinVal)}" class="native-hidden-date">
@@ -458,15 +458,15 @@
           </div>
 
           <!-- Row 2: Can Chi Giờ + Numeric Hour:Minute + ◀ 2h / 2h ▶ Step Buttons -->
-          <div class="ucc-row ucc-row-time">
-            <div class="ucc-time-box">
-              <select id="tt-select-canchi" class="select-canchi">
-                <option value="0" ${state.deathHourChi === 'Tý' ? 'selected' : ''}>Tý (23-01h)</option>
-                <option value="2" ${state.deathHourChi === 'Sửu' ? 'selected' : ''}>Sửu (01-03h)</option>
-                <option value="4" ${state.deathHourChi === 'Dần' ? 'selected' : ''}>Dần (03-05h)</option>
-                <option value="6" ${state.deathHourChi === 'Mão' ? 'selected' : ''}>Mão (05-07h)</option>
-                <option value="8" ${state.deathHourChi === 'Thìn' ? 'selected' : ''}>Thìn (07-09h)</option>
-                <option value="10" ${['Tị', 'Tỵ'].includes(state.deathHourChi) ? 'selected' : ''}>Tị (09-11h)</option>
+          <div class="ucc-row ucc-row-time" style="gap: 4px;">
+            <div class="ucc-time-box" style="flex: 1 1 auto; min-width: 0; justify-content: space-between; padding: 1px 6px;">
+              <select id="tt-select-canchi" class="select-canchi" style="flex: 1 1 auto; min-width: 0; max-width: none; font-size: 0.74rem;">
+                <option value="0" ${state.deathHourChi === 'Tý' ? 'selected' : ''}>Tý (23-1h)</option>
+                <option value="2" ${state.deathHourChi === 'Sửu' ? 'selected' : ''}>Sửu (1-3h)</option>
+                <option value="4" ${state.deathHourChi === 'Dần' ? 'selected' : ''}>Dần (3-5h)</option>
+                <option value="6" ${state.deathHourChi === 'Mão' ? 'selected' : ''}>Mão (5-7h)</option>
+                <option value="8" ${state.deathHourChi === 'Thìn' ? 'selected' : ''}>Thìn (7-9h)</option>
+                <option value="10" ${['Tị', 'Tỵ'].includes(state.deathHourChi) ? 'selected' : ''}>Tị (9-11h)</option>
                 <option value="12" ${state.deathHourChi === 'Ngọ' ? 'selected' : ''}>Ngọ (11-13h)</option>
                 <option value="14" ${state.deathHourChi === 'Mùi' ? 'selected' : ''}>Mùi (13-15h)</option>
                 <option value="16" ${state.deathHourChi === 'Thân' ? 'selected' : ''}>Thân (15-17h)</option>
@@ -474,15 +474,15 @@
                 <option value="20" ${state.deathHourChi === 'Tuất' ? 'selected' : ''}>Tuất (19-21h)</option>
                 <option value="22" ${state.deathHourChi === 'Hợi' ? 'selected' : ''}>Hợi (21-23h)</option>
               </select>
-              <div class="numeric-time-group" style="display:inline-flex; align-items:center;">
+              <div class="numeric-time-group" style="display:inline-flex; align-items:center; flex-shrink: 0; margin-left: 4px;">
                 <input type="number" id="tt-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(curHourVal)}" placeholder="Giờ">
                 <span class="num-colon">:</span>
                 <input type="number" id="tt-input-minute" class="num-box num-min" min="0" max="59" value="${pad(curMinVal)}" placeholder="Phút">
               </div>
             </div>
-            <div class="ucc-step-group">
-              <button type="button" class="ucc-step-btn" id="btn-tt-prev-hour" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
-              <button type="button" class="ucc-step-btn" id="btn-tt-next-hour" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
+            <div class="ucc-step-group" style="flex-shrink: 0; gap: 2px;">
+              <button type="button" class="ucc-step-btn" id="btn-tt-prev-hour" style="padding: 0 6px; font-size: 0.65rem;" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
+              <button type="button" class="ucc-step-btn" id="btn-tt-next-hour" style="padding: 0 6px; font-size: 0.65rem;" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
             </div>
           </div>
         </div>
