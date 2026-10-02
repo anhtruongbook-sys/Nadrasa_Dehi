@@ -76,11 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.45
-          name: "Neta Light v2.8.45 (Thẩm Định Ngày Giờ Cụ Thể Trạch Cát & Bách Sự Toàn Năng)"
+          tag_name: v2.8.46
+          name: "Neta Light v2.8.46 (Tái Thiết Kế Giao Diện Trạch Cát Tinh Tế & Tối Giản)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.45
-            - **Đột Phá: Tính Năng Thẩm Định Ngày Giờ Cụ Thể (Single Date & Hour Diagnostic) trong Module Trạch Cát**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.46
+            - **Đột Phá Thiết Kế: Tái Cấu Trúc Toàn Diện Giao Diện Trạch Cát (Compact & Elegant UI)**:
+              + **Thanh Chuyển Chế Độ Dạng Segmented Pill Siêu Gọn (36px)**: Nút `[ 🔍 Thẩm Định 1 Ngày ]` và `[ 📅 Tìm Trong Tháng ]` bố trí gọn gàng trên 1 hàng duy nhất, triệt tiêu 100% hiện tượng chữ rớt 3 dòng.
+              + **Thanh Chip Sự Vụ Trượt Ngang (Horizontal Scrollable Chips)**: Thay thế lưới 9 khối ô thô kệch bằng thanh chip bo tròn cao 30px, đặt `🌟 Việc Chung` lên vị trí số 1 làm mặc định.
+              + **Hộp Thuyết Minh Thu Gọn (Collapsible Accordion `ℹ️ Nguyên tắc... ▾`)**: Mặc định đóng kín (chỉ chiếm 24px), loại bỏ hoàn toàn các khối chữ dài choán diện tích màn hình.
+              + **Xóa Bỏ Tiêu Đề Lặp Thừa**: Gỡ bỏ các dòng chữ vàng lặp lại thừa thãi.
+              + **Kết Quả Thẩm Định Hiển Thị Ngay Trên Màn Hình Đầu Tiên**: Ngay dưới nút thẩm định, thẻ kết luận `✅ ĐẠI CÁT` / `🟢 CÁT LÀNH` / `❌ HUNG SÁT` kèm điểm số và phân tích xuất hiện trực quan, không cần phải cuộn tìm.
+              + **Đồng Bộ Chuẩn Sáng / Tối (WCAG AAA)**: Tương phản tuyệt đối cho cả Dark Theme và Light Theme, chuẩn di động.
+            - **Tính Năng Thẩm Định Ngày Giờ Cụ Thể (Single Date & Hour Diagnostic)**:
               + **Bộ chuyển đổi chế độ kép linh hoạt (Dual Mode Switcher)**: Cho phép chuyển đổi tức thì giữa `[🔍 Thẩm Định Ngày Giờ Cụ Thể]` và `[📅 Tìm Ngày Tốt Trong Tháng]`.
               + **Đánh giá thời điểm chi tiết**: Nhập ngày Dương lịch cụ thể (hỗ trợ nút nhanh `Hôm nay`, `Ngày mai`), chọn 12 khung giờ chi hoặc nút `[🕒 Giờ Hiện Tại]`.
               + **Kết luận dứt khoát (Verdict & Score 0-100)**: Phán quyết rõ ràng `✅ ĐẠI CÁT`, `🟢 CÁT LÀNH`, `🟡 BÌNH HÒA`, `❌ HUNG SÁT` kèm Veto Guardrails an toàn (xung tọa sơn, xung bản mệnh, sát chủ, đổng công đại hung).
