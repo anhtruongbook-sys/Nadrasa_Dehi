@@ -176,6 +176,10 @@
     }
   };
 
+  if (DEITIES_META['Câu Trần'] && !DEITIES_META['Câu Trận']) {
+    DEITIES_META['Câu Trận'] = DEITIES_META['Câu Trần'];
+  }
+
   const ELEMENT_PRODUCES = { 'Mộc': 'Hỏa', 'Hỏa': 'Thổ', 'Thổ': 'Kim', 'Kim': 'Thủy', 'Thủy': 'Mộc' };
   const ELEMENT_CONTROLS = { 'Mộc': 'Thổ', 'Thổ': 'Thủy', 'Thủy': 'Hỏa', 'Hỏa': 'Kim', 'Kim': 'Mộc' };
 
@@ -839,13 +843,33 @@
         palaces[pNum] = { palace: pNum, door, star, deity, hcs, hcsList, ecs, ecsList, isKongWang, formations: [] };
 
         if (deity === 'Trực Phù') chiefPalace = pNum;
-        if (deity === 'Cửu Thiên') nineHeavenPalace = pNum;
-        if (deity === 'Cửu Địa') nineEarthPalace = pNum;
         if (door.includes('Sinh')) lifeDoorPalace = pNum;
         if (door.includes('Tử')) deathDoorPalace = pNum;
         if (door.includes('Kinh')) fearDoorPalace = pNum;
         if (p.isTrucSu) envoyPalace = pNum;
       });
+
+      // Hỗ trợ trường phái 10 Thần (Nguyễn Tấn Công)
+      let activeTenDeityMap = params.tenDeityMap || null;
+      if (!activeTenDeityMap && params.deitySchool === '10thần' && global.KetNoiVuTruEngine && typeof global.KetNoiVuTruEngine.allocate10Deities === 'function') {
+        const roundVal = chart.round || (chart.getRound ? chart.getRound(true) : 1);
+        const isYang = (typeof roundVal === 'number' ? roundVal > 0 : String(roundVal).includes('Dương'));
+        activeTenDeityMap = global.KetNoiVuTruEngine.allocate10Deities(isYang ? 'Dương Độn' : 'Âm Độn', chiefPalace);
+      }
+      if (activeTenDeityMap) {
+        for (let pid = 1; pid <= 9; pid++) {
+          if (activeTenDeityMap[pid] && palaces[pid]) {
+            palaces[pid].deity = activeTenDeityMap[pid];
+          }
+        }
+      }
+
+      // Cập nhật vị trí Cửu Thiên / Cửu Địa theo deity thực tế của các cung
+      for (let pid = 1; pid <= 9; pid++) {
+        if (!palaces[pid]) continue;
+        if (palaces[pid].deity === 'Cửu Thiên') nineHeavenPalace = pid;
+        if (palaces[pid].deity === 'Cửu Địa') nineEarthPalace = pid;
+      }
 
       // 3. Quét toàn bộ 76 Cách Cục trên 9 Cung
       let totalFormationScore = 0;
@@ -948,8 +972,15 @@
      * @param {Object} baziInput - Đối tượng lá số Bát Tự (từ NetaBaziEngine hoặc { solarDate, tuTru })
      * @param {Object} natalChart - Bàn Kỳ Môn giờ sinh (tùy chọn)
      */
-    computeDestinyQiMen(baziInput, natalChart = null) {
+    computeDestinyQiMen(baziInput, natalChartOrOptions = null, maybeOptions = {}) {
       if (!baziInput) return null;
+
+      let natalChart = natalChartOrOptions;
+      let options = maybeOptions || {};
+      if (natalChartOrOptions && !natalChartOrOptions.box && typeof natalChartOrOptions === 'object' && !natalChartOrOptions.date) {
+        options = natalChartOrOptions;
+        natalChart = null;
+      }
 
       let solarDate = baziInput.solarDate;
       if (!solarDate && baziInput.input) {
@@ -1003,7 +1034,9 @@
       const analyzed = this.analyzeQMDJCoreChart(chart, {
         dayCanChi: `${dayCan} ${dayChi}`,
         hourCanChi: `${hourCan} ${hourChi}`,
-        solarTerm: baziInput.solarTermStr || ''
+        solarTerm: baziInput.solarTermStr || '',
+        deitySchool: options.deitySchool,
+        tenDeityMap: options.tenDeityMap
       });
 
       if (!analyzed || !analyzed.success) return null;

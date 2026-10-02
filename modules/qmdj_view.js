@@ -1385,12 +1385,29 @@
     const joeyEngine = (typeof window !== 'undefined' && window.JoeyYapQMDJEngine) || global.JoeyYapQMDJEngine;
     let analysis = null;
     if (joeyEngine && typeof joeyEngine.analyzeQMDJCoreChart === 'function') {
+      let chiefPalaceNum = 1;
+      if (chart && chart.box) {
+        chart.box.forEach((row) => {
+          row.forEach((palace) => {
+            if (palace && palace.index !== 4 && translate(palace.getDivinity(true)).includes('Trực Phù')) {
+              chiefPalaceNum = palace.index + 1;
+            }
+          });
+        });
+      }
+      const roundVal = chart.round || 1;
+      const decisionTenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần')
+        ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
+        : null;
+
       analysis = joeyEngine.analyzeQMDJCoreChart(chart, {
         dayCanChi: pillars.day,
         hourCanChi: pillars.hour,
         solarTerm: solarTerm,
         lunarMonth: lMonth,
-        taskGoal: currentChienLuocGoal
+        taskGoal: currentChienLuocGoal,
+        deitySchool: currentDeitySchool,
+        tenDeityMap: decisionTenDeityMap
       });
     }
 
@@ -2294,10 +2311,28 @@
       solarTermStr: solarTermStr
     };
 
+    let chiefPalaceNum = 1;
+    if (chart && chart.box) {
+      chart.box.forEach((row) => {
+        row.forEach((palace) => {
+          if (palace && palace.index !== 4 && translate(palace.getDivinity(true)).includes('Trực Phù')) {
+            chiefPalaceNum = palace.index + 1;
+          }
+        });
+      });
+    }
+    const roundVal = chart.round || 1;
+    const tenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần')
+      ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
+      : null;
+
     let destiny = null;
     if (global.JoeyYapQMDJEngine && typeof global.JoeyYapQMDJEngine.computeDestinyQiMen === 'function') {
       try {
-        destiny = global.JoeyYapQMDJEngine.computeDestinyQiMen(baziChart || baziFallback, chart);
+        destiny = global.JoeyYapQMDJEngine.computeDestinyQiMen(baziChart || baziFallback, chart, {
+          deitySchool: currentDeitySchool,
+          tenDeityMap: tenDeityMap
+        });
       } catch (e) {
         console.error("Lỗi tính toán Bản Mệnh Kỳ Môn:", e);
       }
@@ -2328,6 +2363,7 @@
     };
 
     const yp = (destiny && destiny.year_palace) ? destiny.year_palace : {
+      palace_id: 1,
       palace_name: 'Khảm (Bắc)',
       direction: 'Bắc',
       deity: 'Lục Hợp',
@@ -2338,29 +2374,58 @@
     };
 
     const cp = (destiny && destiny.career_palace) || {
+      palace_id: 6,
       palace_name: 'Càn (Tây Bắc)', direction: 'Tây Bắc', door: 'Khai Môn', star: 'Thiên Tâm', deity: 'Trực Phù',
       door_action: 'Mở rộng cơ hội, quan lộ hanh thông, công việc phát triển.', heaven_stem: '—', earth_stem: '—'
     };
     const wp = (destiny && destiny.wealth_palace) || {
+      palace_id: 8,
       palace_name: 'Cấn (Đông Bắc)', direction: 'Đông Bắc', door: 'Sinh Môn', star: 'Thiên Nhậm', deity: 'Cửu Địa',
       door_action: 'Tài nguyên dồi dào, sinh sôi lợi nhuận, tích lũy của cải.', heaven_stem: '—', earth_stem: '—'
     };
     const rp = (destiny && destiny.relationship_palace) || {
+      palace_id: 2,
       palace_name: 'Khôn (Tây Nam)', direction: 'Tây Nam', door: 'Hưu Môn', star: 'Thiên Nhuế', deity: 'Lục Hợp',
       deity_power: 'Hòa hợp nhân duyên, gia đạo ấm êm, thu hút đồng đội chân thành.', heaven_stem: '—', earth_stem: '—'
     };
     const hp = (destiny && destiny.health_palace) || {
+      palace_id: 2,
       palace_name: 'Khôn (Tây Nam)', direction: 'Tây Nam', door: 'Tử Môn', star: 'Thiên Nhuế', deity: 'Đằng Xà',
       heaven_stem: '—', earth_stem: '—'
     };
     const np = (destiny && destiny.nobleman_palace) || {
+      palace_id: 1,
       palace_name: 'Khảm (Bắc)', direction: 'Bắc', door: 'Khai Môn', star: 'Thiên Cầm', deity: 'Trực Phù',
       heaven_stem: '—', earth_stem: '—'
     };
     const chp = (destiny && destiny.hour_palace) || {
+      palace_id: 8,
       palace_name: 'Cấn (Đông Bắc)', direction: 'Đông Bắc', door: 'Sinh Môn', star: 'Thiên Nhậm', deity: 'Thái Âm',
       heaven_stem: '—', earth_stem: '—'
     };
+
+    // Đồng bộ đảm bảo tuyệt đối theo 10 Thần nếu đang ở trường phái 10 Thần
+    if (currentDeitySchool === '10thần' && tenDeityMap) {
+      const syncDeityMeta = (pal) => {
+        if (!pal || !pal.palace_id || !tenDeityMap[pal.palace_id]) return;
+        pal.deity = tenDeityMap[pal.palace_id];
+        const dMeta = (global.JoeyYapQMDJEngine && global.JoeyYapQMDJEngine.DEITIES_META && global.JoeyYapQMDJEngine.DEITIES_META[pal.deity]) || {};
+        const knMeta = (global.KetNoiVuTruEngine && global.KetNoiVuTruEngine.DEITIES && global.KetNoiVuTruEngine.DEITIES[pal.deity]) || {};
+        pal.deity_en = dMeta.en || knMeta.alias || pal.deity;
+        pal.deity_title = knMeta.role || dMeta.title || pal.deity_title;
+        pal.deity_power = dMeta.subconscious_power || knMeta.role || pal.deity_power;
+        pal.deity_affirmation = knMeta.affirmation || dMeta.affirmation || pal.deity_affirmation;
+        pal.deity_advice = dMeta.advice || knMeta.suitable_actions || pal.deity_advice;
+      };
+      syncDeityMeta(lp);
+      syncDeityMeta(yp);
+      syncDeityMeta(cp);
+      syncDeityMeta(wp);
+      syncDeityMeta(rp);
+      syncDeityMeta(hp);
+      syncDeityMeta(np);
+      syncDeityMeta(chp);
+    }
 
     const DEITY_ICONS = {
       'Trực Phù': '✨',
@@ -3541,7 +3606,7 @@
       });
     }
     const roundVal = chart.round || 1;
-    const tenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần' && !isPt)
+    const tenDeityMap = (global.KetNoiVuTruEngine && currentDeitySchool === '10thần')
       ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
       : {};
 
@@ -4756,9 +4821,31 @@
 
     const door = translate(palace.getDoor(true));
     const stars = Array.isArray(palace.getStar(true)) ? palace.getStar(true).map(translate) : [translate(palace.getStar(true))];
-    const divinity = translate(palace.getDivinity(true));
+    let divinity = translate(palace.getDivinity(true));
     const hcs = Array.isArray(palace.getHCS(true)) ? palace.getHCS(true).map(translate) : [translate(palace.getHCS(true))];
     const ecs = Array.isArray(palace.getECS(true)) ? palace.getECS(true).map(translate) : [translate(palace.getECS(true))];
+
+    if (currentDeitySchool === '10thần' && pIndex !== 4) {
+      let chiefPalaceNum = 1;
+      if (chart && chart.box) {
+        chart.box.forEach((row) => {
+          row.forEach((p) => {
+            if (p && p.index !== 4 && translate(p.getDivinity(true)).includes('Trực Phù')) {
+              chiefPalaceNum = p.index + 1;
+            }
+          });
+        });
+      }
+      const roundVal = chart.round || 1;
+      const tenDeityMap = (global.KetNoiVuTruEngine && typeof global.KetNoiVuTruEngine.allocate10Deities === 'function')
+        ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
+        : {};
+      if (tenDeityMap[pIndex + 1]) {
+        divinity = tenDeityMap[pIndex + 1];
+      }
+    }
+
+    const deityLabel = currentDeitySchool === '10thần' ? 'Thần (10 Thần)' : 'Bát Thần';
 
     if (chart.isFengShui) {
       // Feng Shui detail
@@ -4771,7 +4858,7 @@
       bodyEl.innerHTML = `
         <div class="palace-modal-content">
           <div class="pm-badges-row">
-            <div class="pm-badge"><strong>Bát Thần:</strong> ${divinity || 'Trực Phù'}</div>
+            <div class="pm-badge"><strong>${deityLabel}:</strong> ${divinity || 'Trực Phù'}</div>
             <div class="pm-badge"><strong>Cửu Tinh:</strong> ${stars.join(', ')}</div>
             <div class="pm-badge"><strong>Bát Môn:</strong> ${door}</div>
           </div>
@@ -4798,7 +4885,7 @@
       bodyEl.innerHTML = `
         <div class="palace-modal-content">
           <div class="pm-badges-row">
-            <div class="pm-badge"><strong>Bát Thần:</strong> ${divinity}</div>
+            <div class="pm-badge"><strong>${deityLabel}:</strong> ${divinity}</div>
             <div class="pm-badge"><strong>Cửu Tinh:</strong> ${stars.join(', ')}</div>
             <div class="pm-badge"><strong>Bát Môn:</strong> ${door}</div>
           </div>

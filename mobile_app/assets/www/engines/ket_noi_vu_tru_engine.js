@@ -173,6 +173,10 @@
     }
   };
 
+  if (KET_NOI_VU_TRU_10_DEITIES['Câu Trận'] && !KET_NOI_VU_TRU_10_DEITIES['Câu Trần']) {
+    KET_NOI_VU_TRU_10_DEITIES['Câu Trần'] = KET_NOI_VU_TRU_10_DEITIES['Câu Trận'];
+  }
+
   // ==============================================================================
   // 2. PHÂN BỔ THẬP THẦN ÂM / DƯƠNG ĐỘN (Trang 322)
   // ==============================================================================
