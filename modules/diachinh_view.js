@@ -834,8 +834,10 @@
 
         // Xử lý kéo mốc tinh chỉnh trực tiếp
         marker.on('drag', (e) => {
-          v.lat = e.target.getLatLng().lat;
-          v.lng = e.target.getLatLng().lng;
+          const pos = e.target.getLatLng();
+          v.lat = pos.lat;
+          v.lng = pos.lng;
+          v.lon = pos.lng;
           const updatedLatLngs = p.vertices.map(pt => [pt.lat, pt.lng]);
           if (dcPolygonLayer) dcPolygonLayer.setLatLngs(updatedLatLngs);
         });
@@ -844,13 +846,15 @@
           const newPos = e.target.getLatLng();
           v.lat = newPos.lat;
           v.lng = newPos.lng;
+          v.lon = newPos.lng;
 
           const engine = global.NetaDiaChinhEngine;
           if (engine) {
-            const curProv = engine.getProvince(state.provinceKey) || { name: 'Hà Nội', ktt: 105.0 };
-            const provData = engine.PROVINCES_DATA[curProv.name] || engine.PROVINCES_DATA['Hà Nội'];
-            const k0 = provData && provData.zone3 ? 0.9999 : 0.9996;
-            const vn = engine.wgs84ToVn2000(v.lat, v.lng, provData ? provData.cm : curProv.ktt, k0);
+            const curProv = engine.getProvince(state.provinceKey) || { name: 'Hà Nội', ktt: 105.0, cm: 105.0, zone3: true, k0: 0.9999 };
+            // Chuẩn trắc địa Việt Nam (Thông tư 25/2014/TT-BTNMT): Sổ đỏ luôn dùng múi chiếu 3° (k0 = 0.9999)
+            const k0 = (curProv && curProv.k0) ? curProv.k0 : 0.9999;
+            const cm = (curProv && (curProv.cm || curProv.ktt)) ? (curProv.cm || curProv.ktt) : 105.0;
+            const vn = engine.wgs84ToVn2000(v.lat, v.lng, cm, k0);
             v.x = Math.round(vn.x * 100) / 100;
             v.y = Math.round(vn.y * 100) / 100;
 
@@ -864,6 +868,12 @@
             state.coordText = p.vertices.map(pt => `${pt.id}  ${pt.x.toFixed(2)}  ${pt.y.toFixed(2)}`).join('\n');
             const txtCoords = document.getElementById('dc-textarea-coords');
             if (txtCoords) txtCoords.value = state.coordText;
+
+            // Đồng bộ sang La Kinh nếu đang có liên kết
+            if (global.lakinhState && global.lakinhState.importedParcel) {
+              global.lakinhState.importedParcel = p;
+              global.lakinhState.polygonPoints = p.vertices.map(pt => [pt.lat, pt.lng]);
+            }
 
             updateDcStatsAndTables();
             renderDcMapLayers(false);

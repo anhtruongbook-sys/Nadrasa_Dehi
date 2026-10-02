@@ -524,13 +524,15 @@
     cx = cx / (6.0 * signedArea); // Easting centroid
     cy = cy / (6.0 * signedArea); // Northing centroid
 
-    // Cũng tính centroid cho lat/lon
+    // Cũng tính centroid cho lat/lon (hỗ trợ cả trường lon và lng)
     let clat = 0.0, clon = 0.0, geoArea = 0.0;
     for (let i = 0; i < n; i++) {
       const j = (i + 1) % n;
-      const a = (pts[i].lon * pts[j].lat - pts[j].lon * pts[i].lat);
+      const lonI = pts[i].lng !== undefined ? pts[i].lng : pts[i].lon;
+      const lonJ = pts[j].lng !== undefined ? pts[j].lng : pts[j].lon;
+      const a = (lonI * pts[j].lat - lonJ * pts[i].lat);
       geoArea += a;
-      clon += (pts[i].lon + pts[j].lon) * a;
+      clon += (lonI + lonJ) * a;
       clat += (pts[i].lat + pts[j].lat) * a;
     }
     geoArea *= 0.5;
@@ -539,7 +541,7 @@
       clon = clon / (6.0 * geoArea);
     } else {
       clat = pts.reduce((s, p) => s + p.lat, 0) / n;
-      clon = pts.reduce((s, p) => s + p.lon, 0) / n;
+      clon = pts.reduce((s, p) => s + (p.lng !== undefined ? p.lng : p.lon), 0) / n;
     }
 
     return {
@@ -607,7 +609,8 @@
         ktt: p.cm,
         cm: p.cm,
         dms: p.dms,
-        zone3: true
+        zone3: true,
+        k0: SCALE_FACTOR_3DEG
       };
     });
   }
@@ -615,32 +618,32 @@
   function getProvince(nameOrKey) {
     if (!nameOrKey) {
       const p = PROVINCES_DATA["Hà Nội"];
-      return { id: "Hà Nội", name: "Hà Nội", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true };
+      return { id: "Hà Nội", name: "Hà Nội", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true, k0: SCALE_FACTOR_3DEG };
     }
     if (PROVINCES_DATA[nameOrKey]) {
       const p = PROVINCES_DATA[nameOrKey];
-      return { id: nameOrKey, name: nameOrKey, ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true };
+      return { id: nameOrKey, name: nameOrKey, ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true, k0: SCALE_FACTOR_3DEG };
     }
     const lower = String(nameOrKey).toLowerCase().replace(/[-_]/g, ' ');
     if (lower === 'hanoi' || lower === 'chuongmy') {
       const p = PROVINCES_DATA["Hà Nội"];
-      return { id: "Hà Nội", name: "Hà Nội", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true };
+      return { id: "Hà Nội", name: "Hà Nội", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true, k0: SCALE_FACTOR_3DEG };
     }
     if (lower === 'hcm') {
       const p = PROVINCES_DATA["Hồ Chí Minh"];
-      return { id: "Hồ Chí Minh", name: "Hồ Chí Minh", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true };
+      return { id: "Hồ Chí Minh", name: "Hồ Chí Minh", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true, k0: SCALE_FACTOR_3DEG };
     }
     if (lower === 'danang') {
       const p = PROVINCES_DATA["Đà Nẵng"];
-      return { id: "Đà Nẵng", name: "Đà Nẵng", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true };
+      return { id: "Đà Nẵng", name: "Đà Nẵng", ktt: p.cm, cm: p.cm, dms: p.dms, zone3: true, k0: SCALE_FACTOR_3DEG };
     }
     for (const [k, v] of Object.entries(PROVINCES_DATA)) {
       if (k.toLowerCase() === lower || k.toLowerCase().includes(lower)) {
-        return { id: k, name: k, ktt: v.cm, cm: v.cm, dms: v.dms, zone3: true };
+        return { id: k, name: k, ktt: v.cm, cm: v.cm, dms: v.dms, zone3: true, k0: SCALE_FACTOR_3DEG };
       }
     }
     const def = PROVINCES_DATA["Hà Nội"];
-    return { id: "Hà Nội", name: "Hà Nội", ktt: def.cm, cm: def.cm, dms: def.dms, zone3: true };
+    return { id: "Hà Nội", name: "Hà Nội", ktt: def.cm, cm: def.cm, dms: def.dms, zone3: true, k0: SCALE_FACTOR_3DEG };
   }
 
   // ==========================================
