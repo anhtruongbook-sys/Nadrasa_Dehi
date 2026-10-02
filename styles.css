@@ -22233,6 +22233,16 @@ body.theme-light .btn-timing-ics:hover {
   color: #0f172a;
 }
 
+.dc-map-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .dc-map-container {
   width: 100%;
   position: relative;
@@ -22244,8 +22254,13 @@ body.theme-light .btn-timing-ics:hover {
 
 #dc-leaflet-map {
   width: 100%;
-  height: 330px;
+  height: 500px;
   background: #0f172a;
+}
+
+#dc-leaflet-map .leaflet-control-zoom,
+#dc-leaflet-map .leaflet-top.leaflet-right {
+  display: none !important;
 }
 
 .dc-map-drag-hint {

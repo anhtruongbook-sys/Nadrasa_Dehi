@@ -221,28 +221,32 @@
 
       <!-- Preview Hình Học Đa Giác Ranh Đất & Bản Đồ Vệ Tinh 3 Chế Độ -->
       <div class="dc-panel" style="margin-top:12px;">
-        <div class="dc-panel-title" style="flex-wrap: wrap; gap: 8px;">
+        <div class="dc-panel-title">
           <div class="title-left">
             <span>🛰️</span>
             <span>Bản Đồ Vệ Tinh &amp; Ranh Thửa Đất</span>
           </div>
-          <div class="dc-map-tools">
-            <!-- Nút Khóa / Mở Khóa Điểm -->
-            <button type="button" class="dc-tool-btn dc-btn-lock ${state.isPointsLocked ? '' : 'is-unlocked'}" id="dc-btn-toggle-lock" title="Chạm để mở khóa di chuyển mốc tọa độ trên bản đồ">
-              <span class="lock-icon" id="dc-lock-icon">${state.isPointsLocked ? '🔒' : '🔓'}</span>
-              <span class="lock-text" id="dc-lock-text">${state.isPointsLocked ? 'Khóa Điểm' : 'Mở Khóa (Di Điểm)'}</span>
-            </button>
-            <!-- 3 Chế Độ Bản Đồ Vệ Tinh -->
-            <div class="dc-map-layer-switcher" id="dc-map-layer-switcher">
-              <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'googleSat' ? 'active' : ''}" data-layer="googleSat" title="Ảnh vệ tinh Google Hybrid">Vệ Tinh</button>
-              <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'esriSat' ? 'active' : ''}" data-layer="esriSat" title="Ảnh vệ tinh Esri Clarity">Esri</button>
-              <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'googleRoad' ? 'active' : ''}" data-layer="googleRoad" title="Bản đồ giao thông Google">Giao Thông</button>
-            </div>
+          <div class="title-right">
             <!-- Chuyển đổi Vệ Tinh / Sơ Đồ Hình Học SVG -->
             <button type="button" class="dc-tool-btn" id="dc-btn-toggle-viewmode" title="Chuyển giữa Bản đồ vệ tinh và Sơ đồ hình học SVG">
               <span id="dc-viewmode-icon">${state.viewMode === 'svg' ? '🛰️' : '📐'}</span>
               <span id="dc-viewmode-text">${state.viewMode === 'svg' ? 'Xem Vệ Tinh' : 'Xem Sơ Đồ'}</span>
             </button>
+          </div>
+        </div>
+
+        <!-- Thanh công cụ bản đồ: Khóa mốc & 3 Chế độ bản đồ vệ tinh -->
+        <div class="dc-map-toolbar-row">
+          <!-- Nút Khóa / Mở Khóa Điểm -->
+          <button type="button" class="dc-tool-btn dc-btn-lock ${state.isPointsLocked ? '' : 'is-unlocked'}" id="dc-btn-toggle-lock" title="Chạm để mở khóa di chuyển mốc tọa độ trên bản đồ">
+            <span class="lock-icon" id="dc-lock-icon">${state.isPointsLocked ? '🔒' : '🔓'}</span>
+            <span class="lock-text" id="dc-lock-text">${state.isPointsLocked ? 'Khóa Điểm' : 'Mở Khóa (Di Điểm)'}</span>
+          </button>
+          <!-- 3 Chế Độ Bản Đồ Vệ Tinh -->
+          <div class="dc-map-layer-switcher" id="dc-map-layer-switcher">
+            <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'googleSat' ? 'active' : ''}" data-layer="googleSat" title="Ảnh vệ tinh Google Hybrid">Vệ Tinh</button>
+            <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'esriSat' ? 'active' : ''}" data-layer="esriSat" title="Ảnh vệ tinh Esri Clarity">Esri</button>
+            <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'googleRoad' ? 'active' : ''}" data-layer="googleRoad" title="Bản đồ giao thông Google">Giao Thông</button>
           </div>
         </div>
 
@@ -752,7 +756,6 @@
         zoomControl: false,
         attributionControl: false
       });
-      L.control.zoom({ position: 'topright' }).addTo(dcMapInstance);
 
       dcLayers = {
         googleSat: L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
