@@ -262,6 +262,9 @@
               <button type="button" class="fl-parcel-btn fit-btn" id="btn-lakinh-parcel-fit" title="Thu phóng vừa khít trọn vẹn thửa đất">
                 🔍<span class="fl-btn-lbl"> Vừa Khung</span>
               </button>
+              <button type="button" class="fl-parcel-btn save-btn" id="btn-lakinh-parcel-save" title="Lưu thửa đất và toàn bộ thông số hiện trường thành hồ sơ La Kinh">
+                💾<span class="fl-btn-lbl"> Lưu Hồ Sơ</span>
+              </button>
               <button type="button" class="fl-parcel-btn clear-btn" id="btn-lakinh-parcel-clear" title="Xóa bỏ thửa đất khỏi La Kinh">
                 🗑️<span class="fl-btn-lbl"> Bỏ Đất</span>
               </button>
@@ -5278,7 +5281,9 @@ function updateQmdjStrategicLayer() {
     const modalBox = document.getElementById('lakinh-modal-container');
     if (!modalBox) return;
 
-    const defaultName = `Khảo sát ${new Date().toLocaleDateString('vi-VN')}`;
+    const defaultName = state.importedParcel
+      ? (state.importedParcel.parcelName ? `Thửa đất ${state.importedParcel.parcelName}` : `Thửa đất ${new Date().toLocaleDateString('vi-VN')}`)
+      : `Khảo sát ${new Date().toLocaleDateString('vi-VN')}`;
     const sonInfo = global.NetaLaKinhEngine ? global.NetaLaKinhEngine.getSonInfo(state.rotation) : null;
     const sonName = sonInfo ? `Sơn ${sonInfo.name} (${sonInfo.cung})` : '';
 
@@ -5287,14 +5292,14 @@ function updateQmdjStrategicLayer() {
         <div class="lakinh-glass-panel lakinh-modal-dialog" style="max-width: 400px; width: 94%;">
           <div class="lakinh-modal-header" style="border-bottom: 1px solid rgba(74, 222, 128, 0.4); padding-bottom: 8px; margin-bottom: 12px;">
             <div class="lakinh-modal-title" style="color: #4ade80; font-size: 0.96rem; display: flex; align-items: center; gap: 6px;">
-              💾 LƯU HỒ SƠ KHẢO SÁT & MẶT BẰNG
+              💾 LƯU HỒ SƠ KHẢO SÁT & THỬA ĐẤT
             </div>
             <button class="lakinh-modal-close" onclick="document.getElementById('modal-save-project-overlay').remove()">✕</button>
           </div>
           <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.78rem;">
             <div>
               <label style="color: #cbd5e1; display: block; margin-bottom: 4px; font-weight: 600;">Tên công trình / Thửa đất (*):</label>
-              <input type="text" id="save-proj-name" class="tamhop-input" value="${defaultName}" style="width: 100%; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; font-size: 0.8rem;">
+              <input type="text" id="save-proj-name" class="tamhop-input" value="${escapeHTML(defaultName)}" style="width: 100%; padding: 6px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; font-size: 0.8rem;">
             </div>
             <div>
               <label style="color: #cbd5e1; display: block; margin-bottom: 4px;">Chủ nhà / Gia chủ (tuổi, can chi):</label>
@@ -5311,6 +5316,11 @@ function updateQmdjStrategicLayer() {
             <div style="font-size: 0.72rem; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.15);">
               📍 Tọa độ GPS: <b>${state.centerCoords[0].toFixed(6)}, ${state.centerCoords[1].toFixed(6)}</b><br>
               🧭 Hướng nhà: <b>${state.rotation.toFixed(1)}°</b> ${sonName ? `(${sonName})` : ''}<br>
+              ${state.importedParcel ? `
+                <div style="color: #fbbf24; margin-top: 3px;">
+                  🗺️ Thửa đất VN-2000: <b>${escapeHTML(state.importedParcel.parcelName || 'Thửa Đất')}</b> (${state.importedParcel.vertices ? state.importedParcel.vertices.length : 0} mốc, ${state.importedParcel.areaM2 ? state.importedParcel.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) : 0} m²)
+                </div>
+              ` : ''}
               ${state.planImageSrc ? `📐 Có mặt bằng: <b>Đã khóa đất</b> (${state.planTerrainRotation.toFixed(1)}°, Scale: ${Math.round(state.planScale * 100)}%)` : 'ℹ️ Chưa nạp ảnh mặt bằng.'}
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
@@ -5340,6 +5350,8 @@ function updateQmdjStrategicLayer() {
         rotation: state.rotation,
         elevation: state.centerElevation,
         declination: state.declination,
+        importedParcel: state.importedParcel ? JSON.parse(JSON.stringify(state.importedParcel)) : null,
+        isParcelNumbersVisible: state.isParcelNumbersVisible !== false,
         floorPlan: state.planImageSrc ? {
           imageSrc: state.planImageSrc,
           anchorCoords: state.planAnchorCoords || [state.centerCoords[0], state.centerCoords[1]],
@@ -5401,22 +5413,28 @@ function updateQmdjStrategicLayer() {
                 <div style="width:52px;height:52px;border-radius:6px;overflow:hidden;border:1px solid rgba(56,189,248,0.4);flex-shrink:0;background:#000;">
                   <img src="${item.floorPlan.imageSrc}" style="width:100%;height:100%;object-fit:cover;" alt="Mặt bằng">
                 </div>
+              ` : (item.importedParcel ? `
+                <div style="width:52px;height:52px;border-radius:6px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.45);flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;">
+                  🗺️
+                  <span style="font-size:8px;color:#fbbf24;font-weight:700;">${item.importedParcel.vertices ? item.importedParcel.vertices.length + ' mốc' : 'Ranh'}</span>
+                </div>
               ` : `
                 <div style="width:52px;height:52px;border-radius:6px;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">
                   🧭
                 </div>
-              `}
+              `)}
               <div style="flex:1;min-width:0;">
                 <div style="font-weight:700;font-size:0.82rem;color:#f5b041;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                  ${item.name}
+                  ${escapeHTML(item.name)}
                 </div>
-                ${item.client ? `<div style="font-size:0.72rem;color:#e2e8f0;margin-top:1px;">👤 ${item.client}</div>` : ''}
+                ${item.client ? `<div style="font-size:0.72rem;color:#e2e8f0;margin-top:1px;">👤 ${escapeHTML(item.client)}</div>` : ''}
                 <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">
                   📍 ${item.lat ? item.lat.toFixed(6) : '0'}, ${item.lng ? item.lng.toFixed(6) : '0'}
                 </div>
                 <div style="font-size:0.68rem;color:#38bdf8;margin-top:2px;">
                   🧭 ${(item.rotation || 0).toFixed(1)}° ${sonTxt ? `(${sonTxt})` : ''} • 📅 ${dateStr}
                 </div>
+                ${item.importedParcel ? `<span style="display:inline-block;font-size:0.62rem;background:rgba(245,158,11,0.18);color:#fbbf24;padding:1px 6px;border-radius:4px;margin-top:4px;margin-right:4px;border:1px solid rgba(245,158,11,0.35);">🗺️ ${escapeHTML(item.importedParcel.parcelName || 'Thửa Đất')} (${item.importedParcel.areaM2 ? item.importedParcel.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' m²' : ''})</span>` : ''}
                 ${hasPlan ? `<span style="display:inline-block;font-size:0.62rem;background:rgba(56,189,248,0.18);color:#38bdf8;padding:1px 6px;border-radius:4px;margin-top:4px;border:1px solid rgba(56,189,248,0.3);">📐 Có mặt bằng (${(item.floorPlan.terrainRotation || 0).toFixed(1)}°)</span>` : ''}
               </div>
             </div>
@@ -5501,6 +5519,21 @@ function updateQmdjStrategicLayer() {
     }
 
     document.getElementById('modal-projects-overlay')?.remove();
+
+    // 0. Khôi phục ranh thửa đất VN-2000 nếu hồ sơ có lưu thửa đất
+    if (item.importedParcel && item.importedParcel.vertices && item.importedParcel.vertices.length >= 3) {
+      state.importedParcel = item.importedParcel;
+      state.isParcelNumbersVisible = item.isParcelNumbersVisible !== false;
+      importParcelFromVN2000(item.importedParcel);
+    } else if (polygonLayerGroup && !item.importedParcel) {
+      state.importedParcel = null;
+      polygonLayerGroup.clearLayers();
+      const banner = document.getElementById('lakinh-parcel-banner');
+      if (banner) {
+        banner.style.display = 'none';
+        banner.classList.add('is-hidden');
+      }
+    }
 
     // 1. Bay bản đồ đến tọa độ
     if (mapInstance && item.lat && item.lng) {
@@ -6409,6 +6442,14 @@ function updateQmdjStrategicLayer() {
             showLaKinhToast('🔍 Đã thu phóng vừa trọn vẹn ranh thửa đất');
           }
         }
+      });
+    }
+
+    const btnParcelSave = document.getElementById('btn-lakinh-parcel-save');
+    if (btnParcelSave) {
+      btnParcelSave.addEventListener('click', (e) => {
+        e.stopPropagation();
+        saveCurrentProject();
       });
     }
 

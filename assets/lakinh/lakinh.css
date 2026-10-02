@@ -2348,6 +2348,17 @@ body.light-theme .fl-plan-scale-chip {
   color: #ffffff;
 }
 
+.fl-parcel-btn.save-btn {
+  border-color: #10b981;
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.fl-parcel-btn.save-btn:hover {
+  background: rgba(16, 185, 129, 0.3);
+  color: #ffffff;
+}
+
 .fl-parcel-btn.toggle-num-btn {
   border-color: #a855f7;
   color: #d8b4fe;
