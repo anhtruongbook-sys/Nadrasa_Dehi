@@ -76,13 +76,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.42
-          name: "Neta Light v2.8.42 (Tái Thiết Kế Menu Đối Xứng Tràn Viền Mobile & Lớp Kính Mờ Backdrop Blur Cao Cấp)"
+          tag_name: v2.8.43
+          name: "Neta Light v2.8.43 (Tinh Chỉnh Giao Diện Cân Đối 100%, Loại Bỏ Ô Thừa & Chống Tràn Chữ Mobile)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.42
-            - **Tái Thiết Kế Hoàn Toàn Menu Chuyển Bộ Bài Đối Xứng Tràn Viền (Full-Width Symmetrical Mobile Menu)**:
-              + Khắc phục triệt để hiện tượng menu co cụm lệch trái để lộ khoảng trống thừa bên phải: Menu tự động trải rộng cân xứng tuyệt đối (`left: 8px; right: 8px; width: auto; max-width: 480px`), bo góc mềm mại 16px viền vàng kim vương giả.
-              + Căn chỉnh bố cục hoàn mỹ: Tên phân hệ tự động mở rộng dàn hàng đều (`flex: 1`), biểu tượng dấu tích hoạt động căn lề phải sắc nét (`margin-left: auto`).
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.43
+            - **Khôi Phục Trọn Vẹn Tính Tinh Tế & Cân Xứng Của Kỳ Môn, Thái Ất, Lục Nhâm**:
+              + **Loại bỏ triệt để các ô nút liên kết chéo chắp vá**: Gỡ bỏ nút chèn thô vào thanh điều hướng khiến bố cục bị bẻ gãy, trả lại sự thanh thoát nguyên bản cho từng phân hệ.
+              + **Kỳ Môn Độn Giáp**: Khôi phục lưới 6 phân hệ (2 hàng x 3 cột) cân đối tuyệt đối (`🔮 Dương` • `🌙 Âm` • `🏡 P.Thủy` / `⚔️ Quyết` • `🧘 Thiền` • `👤 Mệnh`), triệt tiêu hàng thứ 3 đơn độc và các ô trống thừa thãi.
+              + **Thái Ất Thần Kinh & Lục Nhâm Đại Độn**: Toàn bộ thanh hành động (`⚡ Giờ thực` | `🏛️ Đồ / Quẻ • 📜 Luận • 🏡 P.Thủy` | `🔮 Lập Quẻ`) được cố định 100% trên một dòng duy nhất (`flex-wrap: nowrap !important;`), không còn hiện tượng nút Lập Quẻ bị rớt xuống dòng riêng hay chữ bị đè chồng lấn lên nhau.
+            - **Tối Giản Văn Bản (Responsive Short Text)**:
+              + Tự động kích hoạt nhãn văn bản rút gọn tinh tế trên mọi màn hình điện thoại (<= 430px), tối ưu không gian hiển thị và độ thoáng đãng thị giác.
             - **Tích Hợp Lớp Phủ Kính Mờ Độc Lập Toàn Màn Hình (Backdrop Blur Overlay)**:
               + Bổ sung lớp nền mờ `deck-dropdown-backdrop` (`z-index: 9000`) làm tối và mờ sâu (`backdrop-filter: blur(8px)`) toàn bộ nội dung phía dưới khi mở menu.
               + Triệt tiêu hoàn toàn hiện tượng nền lá bài hay nút điều khiển lộ thô ra ngoài viền menu, đồng thời hỗ trợ chạm bất kỳ đâu bên ngoài để đóng menu mượt mà.

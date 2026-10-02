@@ -1792,10 +1792,6 @@
                 <span class="ucc-txt-long">🏡 Phong Thủy</span>
                 <span class="ucc-txt-short">🏡 P.Thủy</span>
               </button>
-              <button type="button" class="ucc-view-btn btn-cross-tamthuc" id="btn-lucnham-cross-tamthuc" title="Đối chiếu tổng hợp Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
-                <span class="ucc-txt-long">⚡ Tam Thức</span>
-                <span class="ucc-txt-short">⚡ Tam Thức</span>
-              </button>
             </div>
             <button class="ucc-btn-submit" id="lucnham-btn-submit" title="Lập quẻ Lục Nhâm">
               🔮 Lập Quẻ
@@ -2158,17 +2154,7 @@
         renderLucNham(null, true);
       };
     }
-    const btnCross = document.getElementById('btn-lucnham-cross-tamthuc');
-    if (btnCross) {
-      btnCross.onclick = () => {
-        if (window.NetaTamThucView && typeof window.NetaTamThucView.setDate === 'function') {
-          window.NetaTamThucView.setDate(currentDate);
-        }
-        if (typeof window.switchAppMode === 'function') {
-          window.switchAppMode('tamthuc');
-        }
-      };
-    }
+
 
     // Sub-nav for Feng Shui: Dương Trạch vs Âm Trạch + Action Bar
     const btnFsDuong = document.getElementById('btn-fs-mode-duong');

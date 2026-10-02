@@ -777,25 +777,28 @@
     let modeTabsHtml = `
       <div class="qmdj-mode-tabs">
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'duongban' ? 'active' : ''}" data-mode="duongban">
-          🔮 Dương Bàn
+          <span class="qmdj-txt-long">🔮 Dương Bàn</span>
+          <span class="qmdj-txt-short">🔮 Dương</span>
         </button>
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'amban' ? 'active' : ''}" data-mode="amban">
-          🌙 Âm Bàn
+          <span class="qmdj-txt-long">🌙 Âm Bàn</span>
+          <span class="qmdj-txt-short">🌙 Âm</span>
         </button>
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'phongthuy' ? 'active' : ''}" data-mode="phongthuy">
-          🏡 Phong Thủy
+          <span class="qmdj-txt-long">🏡 Phong Thủy</span>
+          <span class="qmdj-txt-short">🏡 P.Thủy</span>
         </button>
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'chienluoc' ? 'active' : ''}" data-mode="chienluoc">
-          ⚔️ Tác Quyết
+          <span class="qmdj-txt-long">⚔️ Tác Quyết</span>
+          <span class="qmdj-txt-short">⚔️ Quyết</span>
         </button>
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'thien' ? 'active' : ''}" data-mode="thien">
-          🧘 Tọa Thiền
+          <span class="qmdj-txt-long">🧘 Tọa Thiền</span>
+          <span class="qmdj-txt-short">🧘 Thiền</span>
         </button>
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'banmenh' ? 'active' : ''}" data-mode="banmenh">
-          👤 Bản Mệnh
-        </button>
-        <button type="button" class="qmdj-tab-btn btn-cross-tamthuc" id="btn-qmdj-cross-tamthuc" title="Đối chiếu tổng hợp Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
-          ⚡ Tam Thức
+          <span class="qmdj-txt-long">👤 Bản Mệnh</span>
+          <span class="qmdj-txt-short">👤 Mệnh</span>
         </button>
       </div>
     `;
@@ -3754,18 +3757,6 @@
         }
       };
     });
-
-    const btnCross = document.getElementById('btn-qmdj-cross-tamthuc');
-    if (btnCross) {
-      btnCross.onclick = () => {
-        if (window.NetaTamThucView && typeof window.NetaTamThucView.setDate === 'function') {
-          window.NetaTamThucView.setDate(currentQmdjDate);
-        }
-        if (typeof window.switchAppMode === 'function') {
-          window.switchAppMode('tamthuc');
-        }
-      };
-    }
   }
 
   function bindTimeCellClickEvents(chart, patterns) {

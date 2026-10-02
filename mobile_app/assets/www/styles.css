@@ -5681,20 +5681,21 @@ body.theme-light .bazi-master-pill-tag {
 
 .ucc-row-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap !important;
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid rgba(245, 176, 65, 0.15);
   padding-top: 6px;
   margin-top: 2px;
-  gap: 6px;
+  gap: 4px;
   box-sizing: border-box;
+  width: 100%;
 }
 
 @media (max-width: 520px) {
   .ucc-row-actions {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: nowrap !important;
     align-items: center;
     justify-content: space-between;
     gap: 3px;
@@ -5737,16 +5738,20 @@ body.theme-light .bazi-master-pill-tag {
   }
 }
 
-@media (max-width: 410px) {
+@media (max-width: 430px) {
   .ucc-pill-view .ucc-txt-long { display: none !important; }
   .ucc-pill-view .ucc-txt-short { display: inline !important; }
+  .qmdj-tab-btn .qmdj-txt-long { display: none !important; }
+  .qmdj-tab-btn .qmdj-txt-short { display: inline !important; }
   .ucc-row-actions .ucc-btn-now { padding: 5px 5px !important; font-size: 0.7rem !important; }
   .ucc-row-actions .ucc-btn-submit { padding: 5px 6px !important; font-size: 0.72rem !important; }
 }
 
-@media (min-width: 411px) {
+@media (min-width: 431px) {
   .ucc-pill-view .ucc-txt-long { display: inline !important; }
   .ucc-pill-view .ucc-txt-short { display: none !important; }
+  .qmdj-tab-btn .qmdj-txt-long { display: inline !important; }
+  .qmdj-tab-btn .qmdj-txt-short { display: none !important; }
 }
 
 /* Row 3: Năm Xem Vận Hạn & Sao Lưu */
@@ -19367,32 +19372,6 @@ body.theme-light .pt-fp-slider-item {
    XUYÊN TAM THỨC (THÁI ẤT - KỲ MÔN - LỤC NHÂM) STYLES
    ============================================================ */
 
-/* Nút liên kết chéo Xuyên Tam Thức */
-.btn-cross-tamthuc {
-  background: linear-gradient(135deg, rgba(180, 83, 9, 0.35), rgba(217, 119, 6, 0.5)) !important;
-  color: #fef08a !important;
-  border: 1px solid rgba(245, 158, 11, 0.6) !important;
-  font-weight: 800 !important;
-  cursor: pointer;
-  transition: all 0.18s ease;
-}
-
-.btn-cross-tamthuc:hover {
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.6), rgba(245, 158, 11, 0.8)) !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4) !important;
-}
-
-body.theme-light .btn-cross-tamthuc {
-  background: #fef3c7 !important;
-  color: #b45309 !important;
-  border-color: #f59e0b !important;
-}
-
-body.theme-light .btn-cross-tamthuc:hover {
-  background: #fde68a !important;
-  color: #78350f !important;
-}
 
 .tamthuc-view-container {
   width: 100%;

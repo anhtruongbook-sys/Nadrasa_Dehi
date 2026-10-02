@@ -1866,16 +1866,16 @@
             </button>
             <div class="ucc-pill-view">
               <button type="button" class="ucc-view-btn ${currentMainTab === 'chart' ? 'active' : ''}" id="btn-thaiat-tab-chart" title="Trận Đồ Thái Ất">
-                🏛️ Trận Đồ
+                <span class="ucc-txt-long">🏛️ Trận Đồ</span>
+                <span class="ucc-txt-short">🏛️ Đồ</span>
               </button>
               <button type="button" class="ucc-view-btn ${currentMainTab === 'analysis' ? 'active' : ''}" id="btn-thaiat-tab-analysis" title="Bản Luận Giải Chuyên Sâu">
-                📜 Luận Giải
+                <span class="ucc-txt-long">📜 Luận Giải</span>
+                <span class="ucc-txt-short">📜 Luận</span>
               </button>
               <button type="button" class="ucc-view-btn ${currentMainTab === 'fengshui' ? 'active' : ''}" id="btn-thaiat-tab-fengshui" title="Phong Thủy Không Gian 16 Thần Vị">
-                🏡 Phong Thủy
-              </button>
-              <button type="button" class="ucc-view-btn btn-cross-tamthuc" id="btn-thaiat-cross-tamthuc" title="Đối chiếu tổng hợp Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
-                ⚡ Tam Thức
+                <span class="ucc-txt-long">🏡 Phong Thủy</span>
+                <span class="ucc-txt-short">🏡 P.Thủy</span>
               </button>
             </div>
             <button class="ucc-btn-submit" id="thaiat-btn-submit" title="Lập quẻ Thái Ất">
@@ -3630,17 +3630,6 @@
       btnTabFengshui.onclick = () => {
         currentMainTab = 'fengshui';
         renderThaiAt(true);
-      };
-    }
-    const btnCross = document.getElementById('btn-thaiat-cross-tamthuc');
-    if (btnCross) {
-      btnCross.onclick = () => {
-        if (window.NetaTamThucView && typeof window.NetaTamThucView.setDate === 'function') {
-          window.NetaTamThucView.setDate(currentDate);
-        }
-        if (typeof window.switchAppMode === 'function') {
-          window.switchAppMode('tamthuc');
-        }
       };
     }
 
