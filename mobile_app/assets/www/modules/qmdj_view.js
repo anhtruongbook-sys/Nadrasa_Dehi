@@ -960,19 +960,27 @@
           </div>
         </div>
 
-        <!-- Bảng Cặp Cung Chủ Thể ↔ Sự Việc -->
-        <div class="omni-sub-obj-strip">
+        <!-- Bảng Cặp Cung Chủ Thể ↔ Dụng Thần (Hỗ trợ Đa Dụng Thần) -->
+        <div class="omni-sub-obj-strip ${res.secondaryTargetInfo ? 'has-dual-targets' : ''}">
           <div class="omni-so-badge subj">
             <span class="so-lbl">CHỦ THỂ (${res.subjectInfo.querentLabel}):</span>
             <strong class="so-name">${res.subjectInfo.name} (${res.subjectInfo.direction}) • Hành ${res.subjectInfo.element}</strong>
             <span class="so-sub">${res.subjectInfo.door ? `Môn ${res.subjectInfo.door}` : '—'} • ${res.subjectInfo.star || '—'} • ${res.subjectInfo.deity || '—'}</span>
           </div>
           <div class="omni-so-arrow">➔</div>
-          <div class="omni-so-badge obj">
-            <span class="so-lbl">SỰ VIỆC (${res.objectInfo.targetLabel}):</span>
-            <strong class="so-name">${res.objectInfo.name} (${res.objectInfo.direction}) • Hành ${res.objectInfo.element}</strong>
-            <span class="so-sub">${res.objectInfo.door ? `Môn ${res.objectInfo.door}` : '—'} • ${res.objectInfo.star || '—'} • ${res.objectInfo.deity || '—'}</span>
+          <div class="omni-so-badge obj t1">
+            <span class="so-lbl">${res.secondaryTargetInfo ? 'DỤNG THẦN 1' : 'SỰ VIỆC'} (${res.primaryTargetInfo.roleName}):</span>
+            <strong class="so-name">${res.primaryTargetInfo.name} (${res.primaryTargetInfo.direction}) • Hành ${res.primaryTargetInfo.element}</strong>
+            <span class="so-sub">${res.primaryTargetInfo.door ? `Môn ${res.primaryTargetInfo.door}` : '—'} • ${res.primaryTargetInfo.star || '—'} • ${res.primaryTargetInfo.deity || '—'}</span>
           </div>
+          ${res.secondaryTargetInfo ? `
+          <div class="omni-so-arrow">➔</div>
+          <div class="omni-so-badge obj t2">
+            <span class="so-lbl">DỤNG THẦN 2 (${res.secondaryTargetInfo.roleName}):</span>
+            <strong class="so-name">${res.secondaryTargetInfo.name} (${res.secondaryTargetInfo.direction}) • Hành ${res.secondaryTargetInfo.element}</strong>
+            <span class="so-sub">${res.secondaryTargetInfo.door ? `Môn ${res.secondaryTargetInfo.door}` : '—'} • ${res.secondaryTargetInfo.star || '—'} • ${res.secondaryTargetInfo.deity || '—'}</span>
+          </div>
+          ` : ''}
         </div>
 
         <!-- Kết Quả Điểm Số & Đánh Giá Tổng Quan -->
@@ -994,9 +1002,9 @@
 
         <!-- Nội Dung Luận Giải Đa Tầng Chuyên Sâu (Comprehensive Multi-Layer Divination) -->
         <div class="omni-deep-analysis">
-          <!-- Tầng 2: Tứ Trụ Cột Kỳ Môn -->
+          <!-- Tầng 2: Tứ Trụ Cột Kỳ Môn (Dụng Thần 1) -->
           <div class="omni-analysis-sec pillars-sec">
-            <div class="sec-title">🏛️ BỘ TỨ KỲ MÔN TẠI CUNG SỰ VIỆC (${res.objectInfo.name}):</div>
+            <div class="sec-title">🏛️ BỘ TỨ TẠI ${res.primaryTargetInfo.roleName.toUpperCase()} (${res.primaryTargetInfo.name}):</div>
             <div class="omni-pillars-grid">
               <div class="omni-pillar-cell">
                 <span class="cell-label">🚪 Bát Môn:</span>
@@ -1016,6 +1024,31 @@
               </div>
             </div>
           </div>
+
+          ${res.secondaryTargetInfo && res.layers.target2Pillars ? `
+          <!-- Tầng 2 (Phụ): Tứ Trụ Cột Kỳ Môn (Dụng Thần 2) -->
+          <div class="omni-analysis-sec pillars-sec t2-sec">
+            <div class="sec-title">🏛️ BỘ TỨ TẠI ${res.secondaryTargetInfo.roleName.toUpperCase()} (${res.secondaryTargetInfo.name}):</div>
+            <div class="omni-pillars-grid">
+              <div class="omni-pillar-cell">
+                <span class="cell-label">🚪 Bát Môn:</span>
+                <span class="cell-val">${formatMdText(res.layers.target2Pillars.door)}</span>
+              </div>
+              <div class="omni-pillar-cell">
+                <span class="cell-label">⭐ Cửu Tinh:</span>
+                <span class="cell-val">${formatMdText(res.layers.target2Pillars.star)}</span>
+              </div>
+              <div class="omni-pillar-cell">
+                <span class="cell-label">🔮 Thần Trợ:</span>
+                <span class="cell-val">${formatMdText(res.layers.target2Pillars.deity)}</span>
+              </div>
+              <div class="omni-pillar-cell">
+                <span class="cell-label">⚡ Thập Can:</span>
+                <span class="cell-val">${formatMdText(res.layers.target2Pillars.stemPattern)}</span>
+              </div>
+            </div>
+          </div>
+          ` : ''}
 
           <!-- Tầng 3: Không Vong & Dịch Mã -->
           <div class="omni-analysis-sec special-sec">

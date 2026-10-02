@@ -17731,17 +17731,19 @@ body.theme-light .luan-role-note {
 /* Cặp Cung Chủ Thể ↔ Sự Việc */
 .omni-sub-obj-strip {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
-  gap: 6px;
+  gap: 5px;
   margin-top: 2px;
+  flex-wrap: wrap;
 }
 .omni-so-badge {
   flex: 1;
+  min-width: 0;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  padding: 5px 8px;
+  padding: 5px 6px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -17752,25 +17754,42 @@ body.theme-light .luan-role-note {
 .omni-so-badge.obj {
   border-left: 3px solid #f59e0b;
 }
+.omni-so-badge.obj.t1 {
+  border-left: 3px solid #f59e0b;
+}
+.omni-so-badge.obj.t2 {
+  border-left: 3px solid #10b981;
+}
+.omni-analysis-sec.pillars-sec {
+  border-left: 3px solid #f59e0b;
+}
+.omni-analysis-sec.pillars-sec.t2-sec {
+  border-left: 3px solid #10b981;
+}
 .omni-so-badge .so-lbl {
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   color: #94a3b8;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .omni-so-badge .so-name {
-  font-size: 0.72rem;
+  font-size: 0.70rem;
   color: #f8fafc;
   font-weight: 800;
 }
 .omni-so-badge .so-sub {
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   color: #cbd5e1;
+  line-height: 1.25;
 }
 .omni-so-arrow {
   color: #a855f7;
   font-weight: 900;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   flex-shrink: 0;
+  align-self: center;
 }
 
 /* Khối Luận Giải Đa Tầng */
