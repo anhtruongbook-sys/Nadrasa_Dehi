@@ -23,10 +23,14 @@
     personYear: 1979,
     personCanChi: 'Kỷ Mùi',
     isMale: true,
+    isDeathLunarMode: false, // Mặc định theo Dương lịch giống các module khác
+    deathDate: new Date(),
+    deathHour: 11,
+    deathMinute: 30,
+    deathHourChi: 'Ngọ',
     deathYear: (new Date()).getFullYear(),
     deathMonthLunar: 8,
     deathDayLunar: 15,
-    deathHourChi: 'Ngọ',
     selectedMonth: (new Date()).getMonth() + 1,
     selectedYear: (new Date()).getFullYear(),
     specificDate: new Date(),
@@ -59,6 +63,47 @@
     { chi: 'Tuất', label: 'Tuất (19h - 21h)' },
     { chi: 'Hợi', label: 'Hợi (21h - 23h)' }
   ];
+
+  function getChiFromHour(h) {
+    const CHI_HOURS_MAP = ['Tý', 'Sửu', 'Sửu', 'Dần', 'Dần', 'Mão', 'Mão', 'Thìn', 'Thìn', 'Tị', 'Tị', 'Ngọ', 'Ngọ', 'Mùi', 'Mùi', 'Thân', 'Thân', 'Dậu', 'Dậu', 'Tuất', 'Tuất', 'Hợi', 'Hợi', 'Tý'];
+    return CHI_HOURS_MAP[h] || 'Tý';
+  }
+
+  function syncDeathFromSolar() {
+    const d = state.deathDate || new Date();
+    if (global.NetaCalendarEngine && global.NetaCalendarEngine.solar2Lunar) {
+      const lun = global.NetaCalendarEngine.solar2Lunar(d.getDate(), d.getMonth() + 1, d.getFullYear(), 7);
+      if (lun) {
+        state.deathDayLunar = lun.day;
+        state.deathMonthLunar = lun.month;
+        state.deathYear = lun.year;
+      }
+    } else {
+      state.deathYear = d.getFullYear();
+    }
+    if (typeof state.deathHour === 'number') {
+      state.deathHourChi = getChiFromHour(state.deathHour);
+    }
+  }
+
+  function syncDeathFromLunar() {
+    if (global.NetaCalendarEngine && global.NetaCalendarEngine.lunar2Solar) {
+      const sol = global.NetaCalendarEngine.lunar2Solar(
+        state.deathDayLunar || 1,
+        state.deathMonthLunar || 1,
+        state.deathYear || (new Date()).getFullYear(),
+        false,
+        7
+      );
+      if (sol) {
+        state.deathDate = new Date(sol.year, sol.month - 1, sol.day, state.deathHour || 12, state.deathMinute || 0, 0);
+      }
+    }
+    if (typeof state.deathHour === 'number') {
+      state.deathHourChi = getChiFromHour(state.deathHour);
+    }
+  }
+
 
   const CORE_TASKS = [
     { id: 'CHUNG', name: 'Việc Chung', icon: '🌟', category: 'Tổng Quát', desc: 'Xem ngày giờ tốt cho mọi việc nói chung' },
@@ -225,9 +270,32 @@
     const eng = getEngine();
     if (!eng || !eng.calculateTrungTang) return '';
 
+    // Đảm bảo đồng bộ ngày âm/dương ban đầu
+    if (!state.deathDayLunar || !state.deathMonthLunar || !state.deathYear) {
+      syncDeathFromSolar();
+    }
+
+    const solDate = state.deathDate || new Date();
+    const solY = solDate.getFullYear();
+    const solM = solDate.getMonth() + 1;
+    const solD = solDate.getDate();
+
+    const curHourVal = typeof state.deathHour === 'number' ? state.deathHour : 12;
+    const curMinVal = typeof state.deathMinute === 'number' ? state.deathMinute : 0;
+
+    let displayDay = solD;
+    let displayMonth = solM;
+    let displayYear = solY;
+
+    if (state.isDeathLunarMode) {
+      displayDay = state.deathDayLunar || 15;
+      displayMonth = state.deathMonthLunar || 8;
+      displayYear = state.deathYear || solY;
+    }
+
     const ttRes = eng.calculateTrungTang({
       birthYear: state.personYear,
-      deathYear: state.deathYear || state.selectedYear,
+      deathYear: state.deathYear || solY,
       deathMonthLunar: state.deathMonthLunar || 8,
       deathDayLunar: state.deathDayLunar || 15,
       deathHourChi: state.deathHourChi || 'Ngọ',
@@ -271,35 +339,62 @@
             <span>🕯️ TRA CỨU TRÙNG TANG - NHẬP MỘ - THIÊN DI (ÂM TRẠCH)</span>
           </div>
           <span class="tc-trungtang-sub">
-            Căn cứ tuổi người mất (${gender_text}, sinh năm ${state.personYear}, hưởng thọ ${tuoi_tho} tuổi) &amp; 4 trụ thời điểm lâm chung (Âm lịch)
+            Căn cứ tuổi người mất (${gender_text}, sinh năm ${state.personYear}, hưởng thọ ${tuoi_tho} tuổi) &amp; 4 trụ thời điểm lâm chung.<br>
+            <span style="display:inline-block; margin-top:4px; font-weight:600; color:var(--text-accent, #38bdf8);">
+              ☀️ Dương: ${pad(solD)}/${pad(solM)}/${solY} ${pad(curHourVal)}:${pad(curMinVal)} ⇄ 🌙 Âm: Ngày ${pad(state.deathDayLunar)}/${pad(state.deathMonthLunar)}/${state.deathYear} (Giờ ${state.deathHourChi})
+            </span>
           </span>
         </div>
 
-        <!-- Các ô nhập Ngày Giờ Mất (Âm lịch) -->
-        <div class="tc-tt-inputs-grid">
-          <div class="tc-field">
-            <label class="tc-label">Năm mất (DL / ÂL)</label>
-            <input type="number" id="tc-tt-death-year" class="tc-input" min="1920" max="2050" value="${state.deathYear || state.selectedYear}">
+        <!-- Bộ Chọn Ngày Giờ Mất Chuẩn Unified Control Card (Đồng bộ Kỳ Môn / Bát Tự) -->
+        <div class="unified-ctrl-card" style="margin: 8px 0 12px 0;">
+          <!-- Row 1: Calendar switch (Dương / Âm) + Date Box + ⚡Năm + 📅 Picker -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!state.isDeathLunarMode ? 'active' : ''}" id="btn-tt-solar" title="Xem theo Dương lịch">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${state.isDeathLunarMode ? 'active' : ''}" id="btn-tt-lunar" title="Xem theo Âm lịch">🌙 Âm</button>
+            </div>
+            <div class="ucc-date-box" id="tt-ucc-date-box" title="Nhập ngày tháng mất hoặc chạm nút lịch để chọn">
+              <input type="number" id="tt-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày">
+              <span class="num-slash">/</span>
+              <input type="number" id="tt-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng">
+              <span class="num-slash">/</span>
+              <input type="number" id="tt-input-year" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm">
+              <button type="button" class="ucc-btn-year" id="btn-tt-year-jumper" title="Chọn Thập niên & Năm siêu tốc">⚡Năm</button>
+              <label class="btn-picker-cal" id="tt-btn-native-cal" title="Mở bảng chọn Ngày & Giờ">
+                📅
+                <input type="datetime-local" id="tt-date-picker" value="${solY}-${pad(solM)}-${pad(solD)}T${pad(curHourVal)}:${pad(curMinVal)}" class="native-hidden-date">
+              </label>
+            </div>
           </div>
-          <div class="tc-field">
-            <label class="tc-label">Tháng mất (Âm lịch)</label>
-            <select id="tc-tt-death-month" class="tc-select">
-              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => `
-                <option value="${m}" ${(state.deathMonthLunar || 8) === m ? 'selected' : ''}>Tháng ${m} ÂL</option>
-              `).join('')}
-            </select>
-          </div>
-          <div class="tc-field">
-            <label class="tc-label">Ngày mất (Âm lịch)</label>
-            <input type="number" id="tc-tt-death-day" class="tc-input" min="1" max="30" value="${state.deathDayLunar || 15}" placeholder="1 - 30">
-          </div>
-          <div class="tc-field">
-            <label class="tc-label">Giờ mất (Chi)</label>
-            <select id="tc-tt-death-hour" class="tc-select">
-              ${CHI_HOURS.map(h => `
-                <option value="${h.chi}" ${(state.deathHourChi || 'Ngọ') === h.chi ? 'selected' : ''}>Giờ ${h.label}</option>
-              `).join('')}
-            </select>
+
+          <!-- Row 2: Can Chi Giờ + Numeric Hour:Minute + ◀ 2h / 2h ▶ Step Buttons -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box">
+              <select id="tt-select-canchi" class="select-canchi">
+                <option value="0" ${state.deathHourChi === 'Tý' ? 'selected' : ''}>Tý (23-01h)</option>
+                <option value="2" ${state.deathHourChi === 'Sửu' ? 'selected' : ''}>Sửu (01-03h)</option>
+                <option value="4" ${state.deathHourChi === 'Dần' ? 'selected' : ''}>Dần (03-05h)</option>
+                <option value="6" ${state.deathHourChi === 'Mão' ? 'selected' : ''}>Mão (05-07h)</option>
+                <option value="8" ${state.deathHourChi === 'Thìn' ? 'selected' : ''}>Thìn (07-09h)</option>
+                <option value="10" ${['Tị', 'Tỵ'].includes(state.deathHourChi) ? 'selected' : ''}>Tị (09-11h)</option>
+                <option value="12" ${state.deathHourChi === 'Ngọ' ? 'selected' : ''}>Ngọ (11-13h)</option>
+                <option value="14" ${state.deathHourChi === 'Mùi' ? 'selected' : ''}>Mùi (13-15h)</option>
+                <option value="16" ${state.deathHourChi === 'Thân' ? 'selected' : ''}>Thân (15-17h)</option>
+                <option value="18" ${state.deathHourChi === 'Dậu' ? 'selected' : ''}>Dậu (17-19h)</option>
+                <option value="20" ${state.deathHourChi === 'Tuất' ? 'selected' : ''}>Tuất (19-21h)</option>
+                <option value="22" ${state.deathHourChi === 'Hợi' ? 'selected' : ''}>Hợi (21-23h)</option>
+              </select>
+              <div class="numeric-time-group" style="display:inline-flex; align-items:center;">
+                <input type="number" id="tt-input-hour" class="num-box num-hour" min="0" max="23" value="${pad(curHourVal)}" placeholder="Giờ">
+                <span class="num-colon">:</span>
+                <input type="number" id="tt-input-minute" class="num-box num-min" min="0" max="59" value="${pad(curMinVal)}" placeholder="Phút">
+              </div>
+            </div>
+            <div class="ucc-step-group">
+              <button type="button" class="ucc-step-btn" id="btn-tt-prev-hour" title="Lùi 2 giờ (1 Canh)">◀ 2h</button>
+              <button type="button" class="ucc-step-btn" id="btn-tt-next-hour" title="Tiến 2 giờ (1 Canh)">2h ▶</button>
+            </div>
           </div>
         </div>
 
@@ -1853,41 +1948,176 @@
       };
     }
 
-    // Trùng Tang events (Khi xem mục việc tang lễ / an táng)
-    const inputTTDeathYear = document.getElementById('tc-tt-death-year');
-    if (inputTTDeathYear) {
-      inputTTDeathYear.onchange = (e) => {
-        const val = parseInt(e.target.value, 10);
-        if (!isNaN(val) && val >= 1920 && val <= 2050) {
-          state.deathYear = val;
-          render();
+    // Trùng Tang events (Bộ chọn Ngày Giờ Mất chuẩn Unified Control Card)
+    const btnTTSolar = document.getElementById('btn-tt-solar');
+    const btnTTLunar = document.getElementById('btn-tt-lunar');
+    if (btnTTSolar) {
+      btnTTSolar.onclick = () => {
+        if (state.isDeathLunarMode) {
+          state.isDeathLunarMode = false;
+          render(true);
+        }
+      };
+    }
+    if (btnTTLunar) {
+      btnTTLunar.onclick = () => {
+        if (!state.isDeathLunarMode) {
+          state.isDeathLunarMode = true;
+          render(true);
         }
       };
     }
 
-    const selTTDeathMonth = document.getElementById('tc-tt-death-month');
-    if (selTTDeathMonth) {
-      selTTDeathMonth.onchange = (e) => {
-        state.deathMonthLunar = parseInt(e.target.value, 10);
-        render();
-      };
+    const inputTTDay = document.getElementById('tt-input-day');
+    const inputTTMonth = document.getElementById('tt-input-month');
+    const inputTTYear = document.getElementById('tt-input-year');
+    const inputTTHour = document.getElementById('tt-input-hour');
+    const inputTTMin = document.getElementById('tt-input-minute');
+    const selectTTCanChi = document.getElementById('tt-select-canchi');
+
+    const handleTTDateChange = () => {
+      if (!inputTTDay || !inputTTMonth || !inputTTYear) return;
+      let d = parseInt(inputTTDay.value, 10) || 1;
+      let m = parseInt(inputTTMonth.value, 10) || 1;
+      let y = parseInt(inputTTYear.value, 10) || (new Date()).getFullYear();
+
+      if (global.NetaSmartPicker && y < 100) {
+        y = global.NetaSmartPicker.parseSmartYear(y);
+        inputTTYear.value = y;
+      }
+      y = Math.min(2100, Math.max(1900, y));
+
+      if (state.isDeathLunarMode) {
+        state.deathDayLunar = Math.min(30, Math.max(1, d));
+        state.deathMonthLunar = Math.min(12, Math.max(1, m));
+        state.deathYear = y;
+        syncDeathFromLunar();
+      } else {
+        d = Math.min(31, Math.max(1, d));
+        m = Math.min(12, Math.max(1, m));
+        state.deathDate = new Date(y, m - 1, d, state.deathHour || 12, state.deathMinute || 0, 0);
+        syncDeathFromSolar();
+      }
+      render(true);
+    };
+
+    [inputTTDay, inputTTMonth, inputTTYear].forEach(inp => {
+      if (inp) {
+        inp.addEventListener('change', handleTTDateChange);
+      }
+    });
+
+    if (global.NetaSmartPicker && inputTTDay && inputTTMonth && inputTTYear) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputTTDay,
+        monthInput: inputTTMonth,
+        yearInput: inputTTYear,
+        hourInput: inputTTHour,
+        minInput: inputTTMin
+      }, handleTTDateChange);
     }
 
-    const inputTTDeathDay = document.getElementById('tc-tt-death-day');
-    if (inputTTDeathDay) {
-      inputTTDeathDay.onchange = (e) => {
-        const val = parseInt(e.target.value, 10);
-        if (!isNaN(val) && val >= 1 && val <= 30) {
-          state.deathDayLunar = val;
-          render();
+    const btnTTYearJumper = document.getElementById('btn-tt-year-jumper');
+    if (btnTTYearJumper && inputTTYear) {
+      btnTTYearJumper.onclick = (e) => {
+        e.preventDefault();
+        if (global.NetaSmartPicker) {
+          global.NetaSmartPicker.openYearJumperModal(inputTTYear.value, (newYear) => {
+            inputTTYear.value = newYear;
+            handleTTDateChange();
+          });
         }
       };
     }
 
-    const selTTDeathHour = document.getElementById('tc-tt-death-hour');
-    if (selTTDeathHour) {
-      selTTDeathHour.onchange = (e) => {
-        state.deathHourChi = e.target.value;
+    const ttDatePicker = document.getElementById('tt-date-picker');
+    if (ttDatePicker) {
+      ttDatePicker.addEventListener('change', () => {
+        if (!ttDatePicker.value) return;
+        const [dPart, tPart] = ttDatePicker.value.split('T');
+        const [y, m, d] = dPart.split('-').map(Number);
+        state.isDeathLunarMode = false;
+        let h = state.deathHour || 12;
+        let min = state.deathMinute || 0;
+        if (tPart) {
+          const parts = tPart.split(':').map(Number);
+          h = parts[0] || 0;
+          min = parts[1] || 0;
+        }
+        state.deathHour = h;
+        state.deathMinute = min;
+        state.deathHourChi = getChiFromHour(h);
+        state.deathDate = new Date(y, m - 1, d, h, min, 0);
+        syncDeathFromSolar();
+        render(true);
+      });
+
+      const pickerLabel = document.getElementById('tt-btn-native-cal');
+      const dateBox = document.getElementById('tt-ucc-date-box');
+      const triggerTTWheelPicker = (e) => {
+        if (e && e.target === ttDatePicker) return;
+        if (e) e.preventDefault();
+        const curD = state.deathDate || new Date();
+        ttDatePicker.value = `${curD.getFullYear()}-${pad(curD.getMonth() + 1)}-${pad(curD.getDate())}T${pad(state.deathHour)}:${pad(state.deathMinute)}`;
+        if (typeof ttDatePicker.showPicker === 'function') {
+          ttDatePicker.showPicker();
+        } else {
+          ttDatePicker.click();
+        }
+      };
+      if (pickerLabel) pickerLabel.onclick = triggerTTWheelPicker;
+      if (dateBox) {
+        dateBox.addEventListener('click', (e) => {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            triggerTTWheelPicker(e);
+          }
+        });
+      }
+    }
+
+    if (selectTTCanChi) {
+      selectTTCanChi.addEventListener('change', () => {
+        const val = parseInt(selectTTCanChi.value, 10);
+        state.deathHour = val;
+        state.deathHourChi = getChiFromHour(val);
+        if (inputTTHour) inputTTHour.value = pad(val);
+        render(true);
+      });
+    }
+
+    if (inputTTHour) {
+      inputTTHour.addEventListener('change', () => {
+        const h = Math.min(23, Math.max(0, parseInt(inputTTHour.value, 10) || 0));
+        state.deathHour = h;
+        state.deathHourChi = getChiFromHour(h);
+        if (selectTTCanChi) {
+          const opt = Array.from(selectTTCanChi.options).find(o => o.text.startsWith(state.deathHourChi));
+          if (opt) selectTTCanChi.value = opt.value;
+        }
+        render(true);
+      });
+    }
+
+    if (inputTTMin) {
+      inputTTMin.addEventListener('change', () => {
+        const min = Math.min(59, Math.max(0, parseInt(inputTTMin.value, 10) || 0));
+        state.deathMinute = min;
+      });
+    }
+
+    const btnTTPrevHour = document.getElementById('btn-tt-prev-hour');
+    const btnTTNextHour = document.getElementById('btn-tt-next-hour');
+    if (btnTTPrevHour) {
+      btnTTPrevHour.onclick = () => {
+        state.deathHour = (state.deathHour - 2 + 24) % 24;
+        state.deathHourChi = getChiFromHour(state.deathHour);
+        render(true);
+      };
+    }
+    if (btnTTNextHour) {
+      btnTTNextHour.onclick = () => {
+        state.deathHour = (state.deathHour + 2) % 24;
+        state.deathHourChi = getChiFromHour(state.deathHour);
         render(true);
       };
     }
