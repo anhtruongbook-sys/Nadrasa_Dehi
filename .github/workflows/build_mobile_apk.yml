@@ -76,17 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.47
-          name: "Neta Light v2.8.47 (Nâng Cấp Chức Năng Tìm Ngày Tốt Làm Trọng Tâm & Giao Diện Tinh Tế)"
+          tag_name: v2.8.48
+          name: "Neta Light v2.8.48 (Tối Ưu Giao Diện Trạch Cát: Gia Chủ 2 Dòng & Phân Tách Tiêu Chí / Kết Quả)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.47
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.48
+            - **Chuẩn Hóa Khung Gia Chủ Chuẩn Đúng 2 Dòng**:
+              + Rút gọn tiêu đề nhãn thành `Gia chủ:`, `Người mất:`, `Cô dâu:` giúp đưa trọn vẹn ô nhập năm sinh và nút chọn giới tính `[ Nam | Nữ ]` lên Dòng 1 (không bị rớt dòng).
+              + Dòng 2 chứa các thẻ Can Chi, Nạp Âm Mệnh, Cung Phi ngắn gọn, chống ngắt quãng hay tràn màn hình.
+            - **Tổ Chức Giao Diện Khoa Học: Tiêu Chí Ở Trên - Kết Quả Ở Dưới**:
+              + Toàn bộ khu vực setup/tiêu chí lựa chọn (mục việc, ngày giờ, gia chủ, tọa sơn và trường phái) gom gọn gàng 100% trong panel điều khiển ở phía trên.
+              + Toàn bộ kết quả tra cứu, thẻ ngày cát lành, giờ hoàng đạo và phân tích sao trực được bố trí tách biệt rõ ràng ở nửa dưới, không bị lẫn lộn vào nội dung setup.
             - **Trọng Tâm Tìm Ngày Tốt Cát Lành Trong Tháng (Instant Good Days Scanner)**:
-              + **Mặc Định Tab "✨ Tìm Ngày Tốt"**: Mở màn hình Trạch Cát là vào ngay chế độ quét ngày tốt của tháng hiện tại, tự động tính toán và hiển thị danh sách ngày cát lành lập tức mà không cần bấm thêm thao tác nào.
-              + **Thanh Điều Hướng Tháng Sang Trọng (Luxury Calendar Navigator)**: Thay thế lưới 12 nút tháng vuông vức bằng thanh điều khiển `◀ Tháng MM / YYYY ▶` tinh tế, chạm đổi tháng tự động cập nhật danh sách ngày tốt tức thì.
-              + **Gia Chủ Strip 1 Hàng Thống Nhất**: Tinh gọn thông tin gia chủ vào 1 dòng duy nhất, nhập năm sinh, nút Nam/Nữ và thẻ can chi/mệnh/cung phi hài hòa, tiết kiệm 150px chiều dọc.
-              + **Tùy Chọn Nâng Cao Dạng Drawer Thu Gọn**: Tọa Sơn La Kinh và 6 trường phái được gấp gọn trong accordion (`⚙️ Tùy chọn nâng cao ▾`), giữ không gian tinh khiết cho danh sách ngày tốt.
-              + **Sửa Lỗi Động Cơ Khi Chọn Việc Chung**: Cập nhật hàm tính toán cho phép việc chung / bách sự quét đầy đủ 60 can chi mà không bị lỗi.
-              + **Tương Thích Tuyệt Đối Dark Theme & Light Theme**: Thiết kế phẳng, viền bo mềm mại, chuẩn WCAG AAA.
+              + Mặc định vào tab `✨ Tìm Ngày Tốt`, tự động quét và hiển thị tức thì.
               + **Bộ chuyển đổi chế độ kép linh hoạt (Dual Mode Switcher)**: Cho phép chuyển đổi tức thì giữa `[🔍 Thẩm Định Ngày Giờ Cụ Thể]` và `[📅 Tìm Ngày Tốt Trong Tháng]`.
               + **Đánh giá thời điểm chi tiết**: Nhập ngày Dương lịch cụ thể (hỗ trợ nút nhanh `Hôm nay`, `Ngày mai`), chọn 12 khung giờ chi hoặc nút `[🕒 Giờ Hiện Tại]`.
               + **Kết luận dứt khoát (Verdict & Score 0-100)**: Phán quyết rõ ràng `✅ ĐẠI CÁT`, `🟢 CÁT LÀNH`, `🟡 BÌNH HÒA`, `❌ HUNG SÁT` kèm Veto Guardrails an toàn (xung tọa sơn, xung bản mệnh, sát chủ, đổng công đại hung).
