@@ -323,6 +323,61 @@ class MainActivity: FlutterActivity() {
                         result.error("ERROR", e.localizedMessage, null)
                     }
                 }
+                "openExternalUrl" -> {
+                    val urlStr = call.argument<String>("url")
+                    if (urlStr.isNullOrEmpty()) {
+                        result.error("INVALID_URL", "URL is null or empty", null)
+                        return@setMethodCallHandler
+                    }
+                    try {
+                        val intent: Intent
+                        if (urlStr.startsWith("intent:")) {
+                            intent = Intent.parseUri(urlStr, Intent.URI_INTENT_SCHEME)
+                        } else {
+                            intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlStr))
+                        }
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        result.success("OK")
+                    } catch (e: Exception) {
+                        try {
+                            if (urlStr.startsWith("intent:")) {
+                                val parsed = Intent.parseUri(urlStr, Intent.URI_INTENT_SCHEME)
+                                val fallbackUrl = parsed.getStringExtra("browser_fallback_url")
+                                if (!fallbackUrl.isNullOrEmpty()) {
+                                    val fallbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl)).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    startActivity(fallbackIntent)
+                                    result.success("OK")
+                                    return@setMethodCallHandler
+                                }
+                            }
+                            // Clean fallback if intent: was parsed from https URL
+                            val cleanUrl = if (urlStr.startsWith("intent:")) {
+                                val parsed = Intent.parseUri(urlStr, Intent.URI_INTENT_SCHEME)
+                                val scheme = parsed.scheme ?: "https"
+                                val dataUri = parsed.data
+                                if (dataUri != null) {
+                                    dataUri.toString()
+                                } else {
+                                    val host = "www.google.com"
+                                    val q = parsed.getStringExtra("q") ?: ""
+                                    "$scheme://$host/maps?q=$q"
+                                }
+                            } else {
+                                urlStr
+                            }
+                            val fallbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(cleanUrl)).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            startActivity(fallbackIntent)
+                            result.success("OK")
+                        } catch (ex: Exception) {
+                            result.error("ERROR", ex.localizedMessage, null)
+                        }
+                    }
+                }
                 "vibrate" -> {
                     val duration = (call.argument<Int>("duration") ?: 20).toLong()
                     try {

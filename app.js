@@ -2232,6 +2232,37 @@
     }
   }
 
+  // ================= EXTERNAL URL OPENER =================
+  window.openExternalUrl = function(url) {
+    if (!url) return;
+    if (window.NativeBridge) {
+      try {
+        window.NativeBridge.postMessage(JSON.stringify({
+          action: 'openExternalUrl',
+          url: url
+        }));
+        return;
+      } catch (e) {
+        console.warn("NativeBridge openExternalUrl error:", e);
+      }
+    }
+    // Web browser fallback
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  // Global link click handler for external links (Google Maps, etc.)
+  document.addEventListener('click', function(e) {
+    const target = e.target.closest('a');
+    if (!target) return;
+    const href = target.getAttribute('href');
+    if (href && (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('geo:') || href.startsWith('intent:'))) {
+      if (!href.includes(window.location.host) && !href.startsWith('javascript:')) {
+        e.preventDefault();
+        window.openExternalUrl(href);
+      }
+    }
+  }, true);
+
   // Run on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

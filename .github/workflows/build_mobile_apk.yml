@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.38
-          name: "Neta Light v2.8.38 (Tích Hợp Chuyên Sâu Kỳ Môn Phong Thủy Dương Trạch & Âm Trạch)"
+          tag_name: v2.8.39
+          name: "Neta Light v2.8.39 (Sửa Lỗi Mở Google Maps Thủy Khẩu & Xử Lý Intent Scheme URL)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.38
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.39
+            - **Khắc Phục Hoàn Toàn Lỗi Mở Google Maps & Xử Lý Intent URL Scheme (net::ERR_UNKNOWN_URL_SCHEME)**:
+              + **Xử lý triệt để lỗi điều hướng WebView**: Tích hợp bộ chặn điều hướng `onNavigationRequest` trong Flutter WebView, tự động nhận diện và chuyển tiếp toàn bộ liên kết ngoại vi (`intent://`, `geo:`, `https://www.google.com/maps`, `https://*`) sang ứng dụng ngoài thay vì để WebView tự nạp gây lỗi màn hình đen `net::ERR_UNKNOWN_URL_SCHEME`.
+              + **Khởi tạo Intent Native Android chuyên dụng (`openExternalUrl`)**: Thêm phương thức xử lý tại `MainActivity.kt`, bóc tách cấu trúc URL Intent Scheme (`Intent.parseUri`) để kích hoạt trực tiếp ứng dụng Google Maps chính thức của máy hoặc trình duyệt hệ thống với cờ `FLAG_ACTIVITY_NEW_TASK`.
+              + **Khai báo thẻ `<queries>` trong AndroidManifest**: Bổ sung intent-filter cho Google Maps (`com.google.android.apps.maps`), giao thức `geo:` và `https:` tuân thủ 100% chính sách Package Visibility của Android 11+.
+              + **Cầu nối JS & Đánh chặn liên kết toàn cục**: Thêm hàm `window.openExternalUrl` và bộ lắng nghe sự kiện click thẻ `<a>` toàn cục trong `app.js` và `lakinh_view.js`.
             - **Tích Hợp Chuyên Sâu Động Cơ Kỳ Môn Phong Thủy (Dương Trạch & Âm Trạch)**:
               + **Ma Trận Hóa Giải 3 Cấp Độ (3-Tier Deterministic Remediation)**: Bổ sung cấu trúc Thông quan (Bridge), Tiết khí (Draining), và Chế sát (Direct Counter) cho toàn bộ 10 cách cục hung sát, hiển thị vật phẩm, vị trí phương vị và giờ hoàng đạo kích hoạt cát lợi.
               + **Tương Phối Bản Mệnh Gia Chủ & Trạch Khí (Destiny House Harmony)**: Tự động đối chiếu Cung Phi Bát Trạch (Đông/Tây Tứ Mệnh), Du Niên 8 hướng (Sinh Khí, Diên Niên, Thiên Y, Phục Vì, Tuyệt Mệnh, Ngũ Quỷ, Lục Sát, Họa Hại) và định vị Cung Bản Mệnh Kỳ Môn theo Thiên Can năm sinh.

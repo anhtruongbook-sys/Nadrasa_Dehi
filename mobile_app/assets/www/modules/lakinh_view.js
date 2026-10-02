@@ -3449,7 +3449,7 @@ function updateQmdjStrategicLayer() {
             • <strong>Cao độ Thủy Khẩu:</strong> ${tk.elevation.toFixed(1)}m (Chênh ${tk.deltaElev >= 0 ? '+' : ''}${tk.deltaElev.toFixed(1)}m so với tâm)<br>
             • <strong>Lai Long (Địa Bàn Chính Châm):</strong> Sơn ${ll.son} (${ll.bearing.toFixed(1)}°) • Cao độ: ${ll.elevation.toFixed(1)}m (Chênh +${ll.deltaElev.toFixed(1)}m)<br>
             <div style="margin-top: 6px;">
-              <a href="${a.googleMapsUrl}" target="_blank" style="color: #38bdf8; text-decoration: underline; font-size: 0.72rem;">📍 Mở vị trí Thủy Khẩu trên Google Maps</a>
+              <a href="${a.googleMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${a.googleMapsUrl}'); } else { window.open('${a.googleMapsUrl}', '_blank'); }" target="_blank" style="color: #38bdf8; text-decoration: underline; font-size: 0.72rem; cursor: pointer;">📍 Mở vị trí Thủy Khẩu trên Google Maps</a>
             </div>
           </div>
         </div>

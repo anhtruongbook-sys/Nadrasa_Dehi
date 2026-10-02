@@ -86,6 +86,18 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
       )
       ..setNavigationDelegate(
         NavigationDelegate(
+          onNavigationRequest: (NavigationRequest request) {
+            final url = request.url;
+            debugPrint('onNavigationRequest url: $url');
+            if (url.startsWith('https://appassets.androidplatform.net') ||
+                url.startsWith('file:') ||
+                url.contains('localhost') ||
+                url.contains('127.0.0.1')) {
+              return NavigationDecision.navigate;
+            }
+            _openExternalUrl(url);
+            return NavigationDecision.prevent;
+          },
           onWebResourceError: (error) {
             debugPrint('WebResourceError: ${error.description}');
           },
@@ -256,11 +268,24 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
           try {
             _platform.invokeMethod('vibrate', {'duration': duration});
           } catch (_) {}
+        } else if (action == 'openExternalUrl') {
+          final String url = data['url'] ?? '';
+          if (url.isNotEmpty) {
+            _openExternalUrl(url);
+          }
         }
       }
     } catch (e) {
       debugPrint('Error in NativeBridge: $e');
       _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi: $e');");
+    }
+  }
+
+  Future<void> _openExternalUrl(String url) async {
+    try {
+      await _platform.invokeMethod('openExternalUrl', {'url': url});
+    } catch (e) {
+      debugPrint('Error opening external url: $e');
     }
   }
 
