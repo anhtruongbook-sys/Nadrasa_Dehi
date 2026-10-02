@@ -135,6 +135,198 @@
     "Đại hàn": "Tý", "Lập xuân": "Tý"
   };
 
+  // Múi giờ và kinh tuyến chuẩn
+  const STANDARD_MERIDIANS = {
+    7: 105.0,   // Việt Nam, Thái Lan, Indonesia (UTC+7)
+    8: 120.0,   // Trung Quốc, Đài Loan, Singapore (UTC+8)
+    9: 135.0,   // Nhật Bản, Hàn Quốc (UTC+9)
+    0: 0.0      // GMT / UTC
+  };
+
+  // Cơ sở dữ liệu kinh độ địa phương (Việt Nam 63 tỉnh/thành & Quốc tế)
+  const CITY_LONGITUDES = {
+    // 5 Thành phố trực thuộc Trung ương
+    "HaNoi": { name: "Hà Nội", lng: 105.85, lat: 21.03 },
+    "TPHCM": { name: "TP. Hồ Chí Minh", lng: 106.66, lat: 10.78 },
+    "DaNang": { name: "Đà Nẵng", lng: 108.20, lat: 16.05 },
+    "HaiPhong": { name: "Hải Phòng", lng: 106.68, lat: 20.84 },
+    "CanTho": { name: "Cần Thơ", lng: 105.78, lat: 10.05 },
+
+    // Miền Bắc
+    "BacNinh": { name: "Bắc Ninh", lng: 106.07, lat: 21.19 },
+    "HaiDuong": { name: "Hải Dương", lng: 106.32, lat: 20.94 },
+    "HungYen": { name: "Hưng Yên", lng: 106.05, lat: 20.65 },
+    "NamDinh": { name: "Nam Định", lng: 106.17, lat: 20.42 },
+    "NinhBinh": { name: "Ninh Bình", lng: 105.97, lat: 20.25 },
+    "ThaiBinh": { name: "Thái Bình", lng: 106.33, lat: 20.45 },
+    "HaNam": { name: "Hà Nam", lng: 105.92, lat: 20.58 },
+    "VinhPhuc": { name: "Vĩnh Phúc", lng: 105.60, lat: 21.31 },
+    "QuangNinh": { name: "Quảng Ninh (Hạ Long)", lng: 107.08, lat: 20.95 },
+    "ThaiNguyen": { name: "Thái Nguyên", lng: 105.84, lat: 21.60 },
+    "BacGiang": { name: "Bắc Giang", lng: 106.20, lat: 21.27 },
+    "PhuTho": { name: "Phú Thọ (Việt Trì)", lng: 105.40, lat: 21.32 },
+    "LangSon": { name: "Lạng Sơn", lng: 106.76, lat: 21.85 },
+    "CaoBang": { name: "Cao Bằng", lng: 106.26, lat: 22.67 },
+    "BacKan": { name: "Bắc Kạn", lng: 105.83, lat: 22.15 },
+    "TuyenQuang": { name: "Tuyên Quang", lng: 105.22, lat: 21.82 },
+    "HaGiang": { name: "Hà Giang", lng: 104.98, lat: 22.82 },
+    "LaoCai": { name: "Lào Cai", lng: 103.97, lat: 22.49 },
+    "YenBai": { name: "Yên Bái", lng: 104.87, lat: 21.72 },
+    "SonLa": { name: "Sơn La", lng: 103.91, lat: 21.33 },
+    "DienBien": { name: "Điện Biên (Điện Biên Phủ)", lng: 103.02, lat: 21.39 },
+    "LaiChau": { name: "Lai Châu", lng: 103.46, lat: 22.40 },
+    "HoaBinh": { name: "Hòa Bình", lng: 105.34, lat: 20.81 },
+
+    // Miền Trung & Tây Nguyên
+    "ThanhHoa": { name: "Thanh Hóa", lng: 105.78, lat: 19.81 },
+    "NgheAn": { name: "Nghệ An (Vinh)", lng: 105.68, lat: 18.67 },
+    "HaTinh": { name: "Hà Tĩnh", lng: 105.90, lat: 18.34 },
+    "QuangBinh": { name: "Quảng Bình (Đồng Hới)", lng: 106.62, lat: 17.47 },
+    "QuangTri": { name: "Quảng Trị (Đông Hà)", lng: 107.09, lat: 16.82 },
+    "Hue": { name: "Thừa Thiên Huế", lng: 107.59, lat: 16.46 },
+    "QuangNam": { name: "Quảng Nam (Tam Kỳ)", lng: 108.48, lat: 15.57 },
+    "QuangNgai": { name: "Quảng Ngãi", lng: 108.80, lat: 15.12 },
+    "BinhDinh": { name: "Bình Định (Quy Nhơn)", lng: 109.22, lat: 13.78 },
+    "PhuYen": { name: "Phú Yên (Tuy Hòa)", lng: 109.30, lat: 13.09 },
+    "KhanhHoa": { name: "Khánh Hòa (Nha Trang)", lng: 109.19, lat: 12.25 },
+    "NinhThuan": { name: "Ninh Thuận (Phan Rang)", lng: 108.99, lat: 11.56 },
+    "BinhThuan": { name: "Bình Thuận (Phan Thiết)", lng: 108.10, lat: 10.93 },
+    "KonTum": { name: "Kon Tum", lng: 108.01, lat: 14.35 },
+    "GiaLai": { name: "Gia Lai (Pleiku)", lng: 108.00, lat: 13.98 },
+    "DakLak": { name: "Đắk Lắk (Buôn Ma Thuột)", lng: 108.04, lat: 12.67 },
+    "DakNong": { name: "Đắk Nông (Gia Nghĩa)", lng: 107.69, lat: 12.00 },
+    "LamDong": { name: "Lâm Đồng (Đà Lạt)", lng: 108.44, lat: 11.94 },
+
+    // Miền Nam
+    "BinhDuong": { name: "Bình Dương (Thủ Dầu Một)", lng: 106.65, lat: 10.98 },
+    "DongNai": { name: "Đồng Nai (Biên Hòa)", lng: 106.83, lat: 10.95 },
+    "BaRiaVungTau": { name: "Bà Rịa - Vũng Tàu", lng: 107.08, lat: 10.35 },
+    "TayNinh": { name: "Tây Ninh", lng: 106.10, lat: 11.31 },
+    "BinhPhuoc": { name: "Bình Phước (Đồng Xoài)", lng: 106.91, lat: 11.53 },
+    "LongAn": { name: "Long An (Tân An)", lng: 106.41, lat: 10.53 },
+    "TienGiang": { name: "Tiền Giang (Mỹ Tho)", lng: 106.36, lat: 10.36 },
+    "BenTre": { name: "Bến Tre", lng: 106.38, lat: 10.24 },
+    "TraVinh": { name: "Trà Vinh", lng: 106.34, lat: 9.93 },
+    "VinhLong": { name: "Vĩnh Long", lng: 105.97, lat: 10.25 },
+    "DongThap": { name: "Đồng Tháp (Cao Lãnh)", lng: 105.63, lat: 10.46 },
+    "AnGiang": { name: "An Giang (Long Xuyên)", lng: 105.43, lat: 10.37 },
+    "KienGiang": { name: "Kiên Giang (Rạch Giá)", lng: 105.08, lat: 10.01 },
+    "PhuQuoc": { name: "Kiên Giang (Phú Quốc)", lng: 103.96, lat: 10.23 },
+    "HauGiang": { name: "Hậu Giang (Vị Thanh)", lng: 105.47, lat: 9.78 },
+    "SocTrang": { name: "Sóc Trăng", lng: 105.97, lat: 9.60 },
+    "BacLieu": { name: "Bạc Liêu", lng: 105.72, lat: 9.29 },
+    "CaMau": { name: "Cà Mau", lng: 105.15, lat: 9.18 },
+
+    // Quốc tế tiêu biểu
+    "BacKinh": { name: "Bắc Kinh (Trung Quốc)", lng: 116.40, lat: 39.90 },
+    "DaiBac": { name: "Đài Bắc (Đài Loan)", lng: 121.56, lat: 25.03 },
+    "HongKong": { name: "Hồng Kông", lng: 114.16, lat: 22.32 },
+    "Singapore": { name: "Singapore", lng: 103.82, lat: 1.35 },
+    "Bangkok": { name: "Bangkok (Thái Lan)", lng: 100.50, lat: 13.75 },
+    "Tokyo": { name: "Tokyo (Nhật Bản)", lng: 139.69, lat: 35.69 },
+    "Seoul": { name: "Seoul (Hàn Quốc)", lng: 126.98, lat: 37.57 },
+    "Paris": { name: "Paris (Pháp)", lng: 2.35, lat: 48.85 },
+    "London": { name: "London (Anh)", lng: -0.13, lat: 51.51 },
+    "NewYork": { name: "New York (Mỹ)", lng: -74.01, lat: 40.71 },
+    "California": { name: "California / Los Angeles (Mỹ)", lng: -118.24, lat: 34.05 }
+  };
+
+  /**
+   * Tính Phương trình thời gian Spencer (Equation of Time - EOT)
+   * @param {number} dayOfYear Ngày thứ bao nhiêu trong năm (1 đến 365/366)
+   * @returns {number} Độ lệch thời gian theo phút
+   */
+  function calculateEquationOfTime(dayOfYear) {
+    const b = (2.0 * Math.PI * (dayOfYear - 1)) / 365.0;
+    return 229.18 * (
+      0.000075 +
+      0.001868 * Math.cos(b) -
+      0.032077 * Math.sin(b) -
+      0.014615 * Math.cos(2.0 * b) -
+      0.040849 * Math.sin(2.0 * b)
+    );
+  }
+
+  function getDayOfYear(date) {
+    const start = new Date(date.getFullYear(), 0, 1);
+    return Math.floor((date.getTime() - start.getTime()) / 86400000) + 1;
+  }
+
+  /**
+   * Tính toán Giờ Chân Thái Dương (True Apparent Solar Time)
+   */
+  function getTrueSolarTime(date, longitude = 105.85, timezoneOffset = 7) {
+    const standardMeridian = STANDARD_MERIDIANS[timezoneOffset] || (timezoneOffset * 15.0);
+    const deltaLonMinutes = (longitude - standardMeridian) * 4.0;
+    const dayOfYear = getDayOfYear(date);
+    const eotMinutes = calculateEquationOfTime(dayOfYear);
+    const totalOffsetMinutes = deltaLonMinutes + eotMinutes;
+    const trueSolarDate = new Date(date.getTime() + totalOffsetMinutes * 60000);
+    return {
+      trueSolarDate,
+      eotMinutes,
+      deltaLonMinutes,
+      totalOffsetMinutes
+    };
+  }
+
+  /**
+   * Xác định chính xác Chi Giờ và Đán / Mộ theo Giờ Chân Thái Dương thực địa
+   */
+  function getChiGioChanThaiDuong(date, longitude = 105.85, timezoneOffset = 7) {
+    const { trueSolarDate, eotMinutes, deltaLonMinutes, totalOffsetMinutes } = getTrueSolarTime(date, longitude, timezoneOffset);
+    const hour = trueSolarDate.getHours();
+    const minute = trueSolarDate.getMinutes();
+    const second = trueSolarDate.getSeconds();
+    const timeDecimal = hour + minute / 60.0 + second / 3600.0;
+
+    let chiGio = "Tý";
+    if (timeDecimal >= 23.0 || timeDecimal < 1.0) {
+      chiGio = "Tý";
+    } else if (timeDecimal < 3.0) {
+      chiGio = "Sửu";
+    } else if (timeDecimal < 5.0) {
+      chiGio = "Dần";
+    } else if (timeDecimal < 7.0) {
+      chiGio = "Mão";
+    } else if (timeDecimal < 9.0) {
+      chiGio = "Thìn";
+    } else if (timeDecimal < 11.0) {
+      chiGio = "Tỵ";
+    } else if (timeDecimal < 13.0) {
+      chiGio = "Ngọ";
+    } else if (timeDecimal < 15.0) {
+      chiGio = "Mùi";
+    } else if (timeDecimal < 17.0) {
+      chiGio = "Thân";
+    } else if (timeDecimal < 19.0) {
+      chiGio = "Dậu";
+    } else if (timeDecimal < 21.0) {
+      chiGio = "Tuất";
+    } else {
+      chiGio = "Hợi";
+    }
+
+    // Ban ngày (Đán Quý): 05:00 đến 17:00 (Mão đến Thân)
+    // Ban đêm (Mộ Quý): 17:00 đến 05:00 sáng (Dậu đến Dần)
+    const isDaytime = (timeDecimal >= 5.0 && timeDecimal < 17.0);
+
+    const pad = (n) => String(n).padStart(2, '0');
+    const formatDT = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+    return {
+      civilDatetime: formatDT(date),
+      trueSolarDatetime: formatDT(trueSolarDate),
+      trueSolarDate,
+      eotMinutes: Math.round(eotMinutes * 100) / 100,
+      longitudeOffsetMinutes: Math.round(deltaLonMinutes * 100) / 100,
+      totalOffsetMinutes: Math.round(totalOffsetMinutes * 100) / 100,
+      chiGio,
+      isDaytime,
+      quyNhanType: isDaytime ? "Đán Quý (Ban ngày)" : "Mộ Quý (Ban đêm)"
+    };
+  }
+
   const LucNhamEngine = {
     DIA_CHI,
     THIEN_CAN,
@@ -145,6 +337,13 @@
     TEN_THAN_CUNG,
     QUY_NHAN_DAN_MO,
     SOLAR_TERM_TO_NGUYET_TUONG,
+    STANDARD_MERIDIANS,
+    CITY_LONGITUDES,
+
+    calculateEquationOfTime,
+    getDayOfYear,
+    getTrueSolarTime,
+    getChiGioChanThaiDuong,
 
     getNguyetTuong(tietKhi) {
       if (!tietKhi) return "Thìn";
@@ -337,8 +536,8 @@
     /**
      * Lập quẻ Đại Lục Nhâm toàn diện 8 lớp thông tin
      */
-    lapQue(options) {
-      const {
+    lapQue(options = {}) {
+      let {
         canNgay,
         chiNgay,
         chiGio,
@@ -349,8 +548,29 @@
         birthYear = 1982,
         currentYear = 2009,
         gioiTinh = "Nam",
-        chiThang = "Tuất"
+        chiThang = "Tuất",
+        date = null,
+        useTrueSolarTime = false,
+        longitude = null,
+        timezoneOffset = 7,
+        city = "HaNoi"
       } = options;
+
+      let solarTimeInfo = null;
+      if (date && (useTrueSolarTime || longitude !== null)) {
+        const targetLng = (longitude !== null && !isNaN(longitude))
+          ? Number(longitude)
+          : (CITY_LONGITUDES[city] ? CITY_LONGITUDES[city].lng : 105.85);
+        solarTimeInfo = this.getChiGioChanThaiDuong(date, targetLng, timezoneOffset);
+        if (useTrueSolarTime) {
+          if (!options.explicitChiGio) {
+            chiGio = solarTimeInfo.chiGio;
+          }
+          if (isDaytime === null) {
+            isDaytime = solarTimeInfo.isDaytime;
+          }
+        }
+      }
 
       // 1. Thiên Địa Bàn
       const thienBan = this.setupThienDiaBan(nguyetTuong, chiGio);
@@ -446,6 +666,8 @@
         banMenhChi: banMenh,
         canChiNamSinh: canChiNamSinh,
         currentYear,
+        chiNam: chiNam,
+        chiThang: chiThang,
         hanhNienChi: hanhNien,
         trachThan: trachMo[0],
         moThan: trachMo[1],
@@ -470,7 +692,8 @@
           lucThan: this.getLucThan(canNgay, matTruyen),
           nguHanh: NGU_HANH_CHI[matTruyen]
         },
-        cung12
+        cung12,
+        solarTimeInfo
       };
     }
   };

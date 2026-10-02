@@ -40,6 +40,17 @@
   let aiLoadingStepText = '';
   let collapsedSections = {};
 
+  // Trạng thái Phong Thủy Thái Ất Thần Kinh (Dương Trạch & Âm Trạch)
+  let currentFsSubMode = 'duong_trach'; // 'duong_trach' | 'am_trach'
+  let currentFsSittingDeg = 0.0;        // Tọa Sơn / Tọa Huyệt (0 - 360°)
+  let currentFsPropertyType = 'Biệt thự'; // Loại BĐS Dương trạch
+  let currentFsLaiLongDeg = 175.0;      // Hướng Lai Long Âm trạch
+  let currentFsThuyKhauDeg = 45.0;      // Hướng Thủy Khẩu Âm trạch
+  let currentFsTimingTask = 'dong_tho'; // 'dong_tho' | 'cat_noc' | 'nhap_trach' | 'ha_huyet' | 'ta_mo' | 'khai_truong' | 'mo_nuoc'
+  let isFsAiPolishing = false;
+  let fsAiPolishedText = null;
+  let fsAiErrorMessage = null;
+
   // 16 Cung theo chu vi Grid 5x5 (Thuận chiều kim đồng hồ từ Tốn)
   const GRID_CELLS_16 = [
     { pos: "Tốn", row: 1, col: 1, weight: 9 },
@@ -1178,6 +1189,492 @@
         background: #e0f2fe;
         color: #0369a1;
       }
+
+      /* ===================================================================== */
+      /* THÁI ẤT PHONG THỦY (FENG SHUI SPATIAL STYLES)                          */
+      /* ===================================================================== */
+      .thaiat-fengshui-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+        padding-bottom: 24px;
+      }
+      .fs-subnav-bar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 4px;
+      }
+      .fs-subnav-pill {
+        display: flex;
+        background: rgba(20, 2, 5, 0.95);
+        border: 1px solid rgba(245, 176, 65, 0.4);
+        border-radius: 8px;
+        padding: 2px;
+        width: 100%;
+        max-width: 440px;
+        gap: 4px;
+      }
+      body.theme-light .fs-subnav-pill {
+        background: #fdfaf3 !important;
+        border-color: #d97706 !important;
+      }
+      .fs-subnav-btn {
+        flex: 1;
+        padding: 7px 10px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.2s ease;
+      }
+      .fs-subnav-btn.active {
+        background: linear-gradient(135deg, rgba(245, 176, 65, 0.35), rgba(180, 83, 9, 0.35));
+        color: #fef08a;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      }
+      body.theme-light .fs-subnav-btn {
+        color: #64748b !important;
+      }
+      body.theme-light .fs-subnav-btn.active {
+        background: #d97706 !important;
+        color: #ffffff !important;
+      }
+      .fs-actions-bar {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding: 2px 0 4px;
+        scrollbar-width: none;
+      }
+      .fs-actions-bar::-webkit-scrollbar { display: none; }
+      .fs-action-btn {
+        flex: 1;
+        min-width: 72px;
+        padding: 6px 8px;
+        background: rgba(25, 3, 7, 0.85);
+        border: 1px solid rgba(245, 176, 65, 0.35);
+        border-radius: 6px;
+        color: #e2e8f0;
+        font-size: 10.5px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+      }
+      .fs-action-btn:hover {
+        background: rgba(245, 176, 65, 0.2);
+        border-color: #f5b041;
+        color: #fef08a;
+      }
+      body.theme-light .fs-action-btn {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        color: #1e293b !important;
+      }
+      body.theme-light .fs-action-btn:hover {
+        background: #f8fafc !important;
+        border-color: #d97706 !important;
+        color: #b45309 !important;
+      }
+      .fs-card {
+        background: rgba(20, 2, 5, 0.95);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      body.theme-light .fs-card {
+        background: #ffffff !important;
+        border-color: #e2e8f0 !important;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
+      }
+      .fs-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(245, 176, 65, 0.2);
+        padding-bottom: 5px;
+      }
+      body.theme-light .fs-card-header {
+        border-bottom-color: #f1f5f9 !important;
+      }
+      .fs-card-title {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--gold-primary, #f5b041);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      body.theme-light .fs-card-title {
+        color: #92400e !important;
+      }
+      .fs-badge {
+        font-size: 9px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      .fs-badge-great { background: rgba(34, 197, 94, 0.25); color: #86efac; border: 1px solid #16a34a; }
+      .fs-badge-good { background: rgba(56, 189, 248, 0.25); color: #7dd3fc; border: 1px solid #0284c7; }
+      .fs-badge-warn { background: rgba(245, 158, 11, 0.25); color: #fde047; border: 1px solid #d97706; }
+      .fs-badge-critical { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid #dc2626; animation: fs-pulse-red 2s infinite; }
+      .fs-badge-normal { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid #64748b; }
+
+      @keyframes fs-pulse-red {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+        50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15); }
+      }
+      body.theme-light .fs-badge-great { background: #dcfce7 !important; color: #15803d !important; border-color: #86efac !important; }
+      body.theme-light .fs-badge-good { background: #e0f2fe !important; color: #0369a1 !important; border-color: #7dd3fc !important; }
+      body.theme-light .fs-badge-warn { background: #fef3c7 !important; color: #b45309 !important; border-color: #fcd34d !important; }
+      body.theme-light .fs-badge-critical { background: #fee2e2 !important; color: #b91c1c !important; border-color: #fca5a5 !important; }
+      body.theme-light .fs-badge-normal { background: #f1f5f9 !important; color: #475569 !important; border-color: #cbd5e1 !important; }
+
+      .fs-compass-ctrl {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .fs-slider-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .fs-slider {
+        flex: 1;
+        accent-color: #f5b041;
+        cursor: pointer;
+      }
+      .fs-deg-input {
+        width: 64px;
+        background: rgba(10, 1, 3, 0.9);
+        border: 1px solid rgba(245, 176, 65, 0.4);
+        border-radius: 4px;
+        color: #fef08a;
+        font-weight: 800;
+        font-size: 11px;
+        text-align: center;
+        padding: 3px 2px;
+      }
+      body.theme-light .fs-deg-input {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+      .fs-readout-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        background: rgba(30, 6, 12, 0.8);
+        border-radius: 6px;
+        padding: 6px 8px;
+        border: 1px solid rgba(245, 176, 65, 0.2);
+      }
+      body.theme-light .fs-readout-row {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+      }
+      .fs-readout-item {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .fs-readout-lbl {
+        font-size: 9px;
+        color: #94a3b8;
+        font-weight: 700;
+      }
+      body.theme-light .fs-readout-lbl { color: #64748b !important; }
+      .fs-readout-val {
+        font-size: 11px;
+        font-weight: 800;
+        color: #f8fafc;
+      }
+      body.theme-light .fs-readout-val { color: #0f172a !important; }
+
+      .fs-master-score {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 0;
+      }
+      .fs-score-circle {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        border: 3px solid #f5b041;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(245, 176, 65, 0.15);
+        flex-shrink: 0;
+      }
+      body.theme-light .fs-score-circle {
+        border-color: #d97706 !important;
+        background: #fef3c7 !important;
+      }
+      .fs-score-num {
+        font-size: 18px;
+        font-weight: 900;
+        color: #fef08a;
+        line-height: 1;
+      }
+      body.theme-light .fs-score-num { color: #92400e !important; }
+      .fs-score-unit {
+        font-size: 8px;
+        color: #94a3b8;
+        font-weight: 700;
+      }
+      body.theme-light .fs-score-unit { color: #78350f !important; }
+      .fs-master-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .fs-master-thetran {
+        font-size: 11px;
+        font-weight: 800;
+        color: #f8fafc;
+      }
+      body.theme-light .fs-master-thetran { color: #1e293b !important; }
+      .fs-master-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .fs-bar-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 9.5px;
+      }
+      .fs-bar-lbl {
+        width: 80px;
+        color: #94a3b8;
+        font-weight: 700;
+      }
+      body.theme-light .fs-bar-lbl { color: #475569 !important; }
+      .fs-bar-track {
+        flex: 1;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      body.theme-light .fs-bar-track { background: #e2e8f0 !important; }
+      .fs-bar-fill {
+        height: 100%;
+        border-radius: 3px;
+      }
+      .fs-bar-fill-chu { background: linear-gradient(90deg, #10b981, #059669); }
+      .fs-bar-fill-khach { background: linear-gradient(90deg, #38bdf8, #0284c7); }
+      .fs-bar-fill-phuc { background: linear-gradient(90deg, #f59e0b, #d97706); }
+      .fs-bar-fill-an { background: linear-gradient(90deg, #a855f7, #7c3aed); }
+      .fs-bar-val {
+        width: 24px;
+        text-align: right;
+        font-weight: 800;
+        color: #e2e8f0;
+      }
+      body.theme-light .fs-bar-val { color: #0f172a !important; }
+
+      .fs-chips-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+      }
+      .fs-chip {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 6px;
+        background: rgba(30, 6, 12, 0.85);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 5px;
+        font-size: 9.5px;
+      }
+      body.theme-light .fs-chip {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+      }
+      .fs-chip-icon { font-size: 11px; }
+      .fs-chip-name { font-weight: 700; color: #94a3b8; }
+      body.theme-light .fs-chip-name { color: #64748b !important; }
+      .fs-chip-val { font-weight: 800; color: #fef08a; margin-left: auto; }
+      body.theme-light .fs-chip-val { color: #92400e !important; }
+
+      .fs-zoning-item {
+        background: rgba(30, 6, 12, 0.8);
+        border: 1px solid rgba(245, 176, 65, 0.2);
+        border-radius: 6px;
+        padding: 7px 9px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        font-size: 10px;
+      }
+      body.theme-light .fs-zoning-item {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+      }
+      .fs-zoning-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .fs-zoning-title { font-weight: 800; color: #fef08a; font-size: 10.5px; }
+      body.theme-light .fs-zoning-title { color: #92400e !important; }
+      .fs-zoning-desc { color: #cbd5e1; line-height: 1.35; }
+      body.theme-light .fs-zoning-desc { color: #334155 !important; }
+      .fs-zoning-remedy { color: #86efac; font-weight: 700; }
+      body.theme-light .fs-zoning-remedy { color: #15803d !important; }
+
+      .fs-remedy-item {
+        background: rgba(30, 6, 12, 0.8);
+        border-left: 3px solid #f5b041;
+        padding: 6px 8px;
+        border-radius: 0 5px 5px 0;
+        font-size: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      body.theme-light .fs-remedy-item {
+        background: #f8fafc !important;
+        border-left-color: #d97706 !important;
+      }
+      .fs-remedy-head { font-weight: 800; color: #f8fafc; }
+      body.theme-light .fs-remedy-head { color: #0f172a !important; }
+      .fs-remedy-body { color: #94a3b8; line-height: 1.35; }
+      body.theme-light .fs-remedy-body { color: #475569 !important; }
+
+      .fs-path-item {
+        background: rgba(35, 7, 10, 0.9);
+        border-left: 3px solid #ef4444;
+        padding: 6px 8px;
+        border-radius: 0 5px 5px 0;
+        font-size: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      body.theme-light .fs-path-item {
+        background: #fef2f2 !important;
+        border-left-color: #dc2626 !important;
+      }
+      .fs-path-title { font-weight: 800; color: #fca5a5; display: flex; justify-content: space-between; }
+      body.theme-light .fs-path-title { color: #991b1b !important; }
+      .fs-path-body { color: #cbd5e1; line-height: 1.35; }
+      body.theme-light .fs-path-body { color: #334155 !important; }
+
+      /* Modals */
+      .thaiat-fs-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(2px);
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .thaiat-fs-modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .thaiat-fs-modal {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 520px;
+        margin: 0 auto;
+        background: rgba(20, 2, 5, 0.98);
+        border-top: 2px solid #f5b041;
+        border-radius: 14px 14px 0 0;
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.85);
+        transform: translateY(100%);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 1001;
+        max-height: 84vh;
+        display: flex;
+        flex-direction: column;
+      }
+      body.theme-light .thaiat-fs-modal {
+        background: #ffffff !important;
+        border-top-color: #d97706 !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2) !important;
+        color: #1f2937 !important;
+      }
+      .thaiat-fs-modal.open,
+      .thaiat-fs-modal-overlay.open .thaiat-fs-modal { transform: translateY(0) !important; }
+      .thaiat-fs-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+      }
+      body.theme-light .thaiat-fs-modal-header {
+        border-bottom-color: #e5e7eb !important;
+      }
+      .thaiat-fs-modal-title {
+        font-weight: 800;
+        font-size: 13px;
+        color: #f5b041;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      body.theme-light .thaiat-fs-modal-title { color: #92400e !important; }
+      .thaiat-fs-modal-close {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0 4px;
+      }
+      .thaiat-fs-modal-body {
+        padding: 12px 14px;
+        overflow-y: auto;
+        flex: 1;
+        font-size: 11px;
+        line-height: 1.6;
+        color: #e2e8f0;
+        font-family: inherit;
+        white-space: pre-wrap;
+      }
+      body.theme-light .thaiat-fs-modal-body {
+        color: #1e293b !important;
+      }
+      .thaiat-fs-modal-footer {
+        padding: 8px 14px 12px;
+        border-top: 1px solid rgba(245, 176, 65, 0.2);
+        display: flex;
+        gap: 8px;
+      }
+      body.theme-light .thaiat-fs-modal-footer {
+        border-top-color: #e5e7eb !important;
+      }
     `;
     document.head.appendChild(styleEl);
   }
@@ -1198,8 +1695,8 @@
   function renderThaiAt(preserveScroll = false) {
     const container = document.getElementById('view-thaiat');
     if (!container) return;
-    const scrollEl = container.querySelector('.thaiat-view-wrap');
-    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
+    const wrap = container.querySelector('.thaiat-view-wrap');
+    const prevScrollY = preserveScroll ? ((wrap && wrap.scrollTop !== undefined) ? wrap.scrollTop : (container.scrollTop || (window.scrollY || document.documentElement.scrollTop))) : null;
     ensureStyles();
 
     if (global.NetaThaiAtEngine) {
@@ -1374,6 +1871,9 @@
               <button type="button" class="ucc-view-btn ${currentMainTab === 'analysis' ? 'active' : ''}" id="btn-thaiat-tab-analysis" title="Bản Luận Giải Chuyên Sâu">
                 📜 Luận Giải
               </button>
+              <button type="button" class="ucc-view-btn ${currentMainTab === 'fengshui' ? 'active' : ''}" id="btn-thaiat-tab-fengshui" title="Phong Thủy Không Gian 16 Thần Vị">
+                🏡 Phong Thủy
+              </button>
             </div>
             <button class="ucc-btn-submit" id="thaiat-btn-submit" title="Lập quẻ Thái Ất">
               🔮 Lập Quẻ
@@ -1381,7 +1881,7 @@
           </div>
         </div>
 
-        ${currentMainTab === 'analysis' ? renderThaiAtAnalysisHTML(keData, currentChart, luanData) : `
+        ${currentMainTab === 'analysis' ? renderThaiAtAnalysisHTML(keData, currentChart, luanData) : (currentMainTab === 'fengshui' ? renderThaiAtFengShuiHTML(keData, currentChart) : `
           <!-- 1. Master Overview Ribbon (Thái Ất Master Strip - Đưa lên trên) -->
           <div class="thaiat-master-strip">
             <div class="thaiat-stat-item">
@@ -1463,7 +1963,7 @@
               ${getPalaceAdviceHTML(selectedPalace, keData)}
             </div>
           </div>
-        `}
+        `)}
       </div>
     `;
 
@@ -1471,12 +1971,14 @@
 
     if (prevScrollY !== null) {
       requestAnimationFrame(() => {
-        const sc = container.querySelector('.thaiat-view-wrap');
+        const sc = container ? container.querySelector('.thaiat-view-wrap') : null;
         if (sc) {
           sc.scrollTop = prevScrollY;
-        } else {
-          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
         }
+        if (container) {
+          container.scrollTop = prevScrollY;
+        }
+        window.scrollTo({ top: prevScrollY, behavior: 'instant' });
       });
     }
   }
@@ -2405,6 +2907,695 @@
     renderThaiAt();
   }
 
+  // ==============================================================================
+  // CÁC HÀM RENDER & EVENT BINDING CHO PHONG THỦY THÁI ẤT THẦN KINH
+  // ==============================================================================
+  function renderTrachCatTimingContent(keData, taskType) {
+    if (!global.NetaThaiAtFengShuiEngine) return '';
+    const res = global.NetaThaiAtFengShuiEngine.evaluateFengShuiTiming(keData, taskType);
+    return `
+      <div style="margin-bottom: 8px; background: rgba(245, 176, 65, 0.1); border-left: 3px solid #f5b041; padding: 6px 8px; border-radius: 0 4px 4px 0; font-size: 10.5px;">
+        <strong style="color: #fef08a;">Nguyên tắc trạch cát:</strong>
+        <p style="margin: 2px 0 0; color: #cbd5e1; line-height: 1.35;">${res.taskGuide}</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        ${res.evaluatedHours.map(h => `
+          <div class="thaiat-tc-hour-card" style="background: rgba(30, 6, 12, 0.85); border: 1px solid rgba(245, 176, 65, 0.2); border-radius: 5px; padding: 6px 8px; display: flex; flex-direction: column; gap: 2px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <strong style="color: #fef08a; font-size: 11px;">${h.gio}</strong>
+              <span class="fs-badge ${h.suitBadge}">${h.suitLevel}</span>
+            </div>
+            <div style="color: #cbd5e1; font-size: 10px; line-height: 1.35;">${h.note}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderThaiAtFengShuiHTML(keData, chart) {
+    if (!global.NetaThaiAtFengShuiEngine) {
+      return `
+        <div class="thaiat-fengshui-wrap">
+          <div class="fs-card" style="text-align: center; padding: 24px 12px;">
+            <p style="color: #ef4444; font-weight: 800;">Hệ thống Thái Ất Phong Thủy Engine chưa sẵn sàng. Vui lòng tải lại trang.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    const fsEngine = global.NetaThaiAtFengShuiEngine;
+    const isDuong = (currentFsSubMode === 'duong_trach');
+
+    let asm = null;
+    if (isDuong) {
+      asm = fsEngine.assessDuongTrach(
+        chart,
+        currentFsSittingDeg,
+        currentFsPropertyType,
+        (currentKeType === 'gio' ? 'Kể Giờ' : 'Kể Năm'),
+        querentBirthYear,
+        (currentIsMale ? 'Nam' : 'Nữ')
+      );
+    } else {
+      asm = fsEngine.assessAmTrach(
+        chart,
+        currentFsSittingDeg,
+        currentFsLaiLongDeg,
+        currentFsThuyKhauDeg,
+        (currentKeType === 'gio' ? 'Kể Giờ' : 'Kể Năm')
+      );
+    }
+
+    const micro = fsEngine.analyzeDegreeMicro(currentFsSittingDeg);
+    const pk = micro.phanKim;
+    const xsl = micro.xuyenSonLong;
+    const diag = micro.microDiagnostic;
+
+    let voidBadgeClass = 'fs-badge-great';
+    let voidBadgeText = '✅ CHÍNH TUYẾN THUẦN KHÍ';
+    if (diag.isDaiKhongVong) {
+      voidBadgeClass = 'fs-badge-critical';
+      voidBadgeText = '🚨 ĐẠI KHÔNG VONG (Cực Hung)';
+    } else if (diag.isTieuKhongVong) {
+      voidBadgeClass = 'fs-badge-warn';
+      voidBadgeText = '⚠️ TIỂU KHÔNG VONG (Lệch Khí)';
+    }
+
+    const score = isDuong ? asm.diemPhongThuyTongThe : asm.tongDiemAmTrach;
+    let scoreBadgeClass = 'fs-badge-normal';
+    let scoreBadgeText = 'BÌNH HÒA';
+    if (score >= 85) { scoreBadgeClass = 'fs-badge-great'; scoreBadgeText = 'ĐẠI CÁT ĐẮC VẬN'; }
+    else if (score >= 70) { scoreBadgeClass = 'fs-badge-good'; scoreBadgeText = 'KHÁ TỐT BÌNH AN'; }
+    else if (score >= 50) { scoreBadgeClass = 'fs-badge-warn'; scoreBadgeText = 'TRUNG BÌNH CẦN TIẾT CHẾ'; }
+    else { scoreBadgeClass = 'fs-badge-critical'; scoreBadgeText = 'HUNG HIỂM CẦN HÓA GIẢI'; }
+
+    return `
+      <div class="thaiat-fengshui-wrap">
+        <!-- Sub-nav bar: Dương Trạch vs Âm Trạch -->
+        <div class="fs-subnav-bar">
+          <div class="fs-subnav-pill">
+            <button type="button" class="fs-subnav-btn ${isDuong ? 'active' : ''}" id="btn-thaiat-fs-mode-duong" title="Khảo sát Nhà ở, Biệt thự, Căn hộ, Văn phòng, Nhà xưởng">
+              🏡 Dương Trạch
+            </button>
+            <button type="button" class="fs-subnav-btn ${!isDuong ? 'active' : ''}" id="btn-thaiat-fs-mode-am" title="Khảo sát Huyệt mộ, Khu lăng mộ, Nghĩa trang tổ tộc">
+              🪦 Âm Trạch (Mộ Phần)
+            </button>
+          </div>
+        </div>
+
+        <!-- 5-Action Buttons Bar -->
+        <div class="fs-actions-bar">
+          <button type="button" class="fs-action-btn" id="btn-thaiat-fs-essay" title="Xem Báo Cáo Học Thuật Toàn Diện">
+            📜 Báo Cáo ${isDuong ? '8 Tầng' : '9 Tầng'}
+          </button>
+          <button type="button" class="fs-action-btn" id="btn-thaiat-fs-trachcat" title="Trạch Cát 12 Thời Thần">
+            ⏳ Trạch Cát
+          </button>
+          <button type="button" class="fs-action-btn" id="btn-thaiat-fs-download" title="Tải File Báo Cáo .md">
+            💾 Tải .md
+          </button>
+          <button type="button" class="fs-action-btn" id="btn-thaiat-fs-ai" title="AI Trau Chuốt & Tinh Chỉnh">
+            ✨ Biên Tập AI
+          </button>
+          <button type="button" class="fs-action-btn" id="btn-thaiat-fs-copy" title="Sao Chép Toàn Bộ Nội Dung">
+            📋 Sao Chép
+          </button>
+        </div>
+
+        <!-- Compass & Parameters Control Card -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>🧭</span>
+              <span>ĐỊNH VỊ TỌA HƯỚNG LA KINH THÁI ẤT</span>
+            </div>
+            <div class="fs-badge ${voidBadgeClass}">${voidBadgeText}</div>
+          </div>
+
+          <div class="fs-compass-ctrl">
+            <div class="fs-slider-row">
+              <span style="font-size: 10px; font-weight: 700; color: #94a3b8; width: 62px;">${isDuong ? 'TỌA SƠN' : 'TỌA HUYỆT'}:</span>
+              <input type="range" class="fs-slider" id="thaiat-fs-deg-slider" min="0" max="359.5" step="0.5" value="${currentFsSittingDeg}">
+              <input type="number" class="fs-deg-input" id="thaiat-fs-deg-input" min="0" max="359.9" step="0.1" value="${currentFsSittingDeg.toFixed(1)}">
+              <span style="font-size: 11px; font-weight: 800; color: #fef08a;">°</span>
+            </div>
+
+            <div class="fs-readout-row">
+              <div class="fs-readout-item">
+                <span class="fs-readout-lbl">${isDuong ? 'LƯNG NHÀ (TỌA SƠN)' : 'LƯNG MỘ (TỌA HUYỆT)'}</span>
+                <span class="fs-readout-val">Sơn ${asm.sittingMountain || asm.sitting_mountain} (${asm.sittingCung || asm.sitting_cung})</span>
+              </div>
+              <div class="fs-readout-item">
+                <span class="fs-readout-lbl">${isDuong ? 'MẶT TIỀN (HƯỚNG NHÀ)' : 'BIA MỘ (HƯỚNG MỘ)'}</span>
+                <span class="fs-readout-val">Sơn ${asm.facingMountain || asm.facing_mountain} (${asm.facingCung || asm.facing_cung})</span>
+              </div>
+            </div>
+
+            ${isDuong ? `
+              <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
+                <span style="font-size: 10px; font-weight: 700; color: #94a3b8; white-space: nowrap;">LOẠI BĐS:</span>
+                <select id="thaiat-fs-property-type" style="flex: 1; background: rgba(10, 1, 3, 0.9); border: 1px solid rgba(245, 176, 65, 0.4); border-radius: 4px; color: #fef08a; padding: 4px 6px; font-size: 10.5px; font-weight: 700;">
+                  <option value="Biệt thự" ${currentFsPropertyType === 'Biệt thự' ? 'selected' : ''}>Biệt thự nhà vườn</option>
+                  <option value="Nhà phố" ${currentFsPropertyType === 'Nhà phố' ? 'selected' : ''}>Nhà phố liền kề</option>
+                  <option value="Căn hộ chung cư" ${currentFsPropertyType === 'Căn hộ chung cư' ? 'selected' : ''}>Căn hộ chung cư</option>
+                  <option value="Văn phòng công ty" ${currentFsPropertyType === 'Văn phòng công ty' ? 'selected' : ''}>Văn phòng điều hành</option>
+                  <option value="Nhà xưởng sản xuất" ${currentFsPropertyType === 'Nhà xưởng sản xuất' ? 'selected' : ''}>Nhà xưởng công nghiệp</option>
+                </select>
+              </div>
+            ` : `
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px;">
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <span style="font-size: 9.5px; font-weight: 700; color: #94a3b8;">LAI LONG:</span>
+                  <input type="number" id="thaiat-fs-lailong-input" min="0" max="360" value="${currentFsLaiLongDeg}" style="width: 50px; background: rgba(10, 1, 3, 0.9); border: 1px solid rgba(245, 176, 65, 0.4); border-radius: 4px; color: #fef08a; font-size: 10px; text-align: center; padding: 2px;">
+                  <span style="font-size: 10px; color: #fef08a;">°</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <span style="font-size: 9.5px; font-weight: 700; color: #94a3b8;">THỦY KHẨU:</span>
+                  <input type="number" id="thaiat-fs-thuykhau-input" min="0" max="360" value="${currentFsThuyKhauDeg}" style="width: 50px; background: rgba(10, 1, 3, 0.9); border: 1px solid rgba(245, 176, 65, 0.4); border-radius: 4px; color: #fef08a; font-size: 10px; text-align: center; padding: 2px;">
+                  <span style="font-size: 10px; color: #fef08a;">°</span>
+                </div>
+              </div>
+            `}
+
+            <!-- Vi Phân 120 Phân Kim & 72 Xuyên Sơn Long Badge -->
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 9.5px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; padding: 4px 6px;">
+              <span style="color: #cbd5e1;">Phân kim #${pk.index}: <strong style="color: #fef08a;">${pk.canChi}</strong> [${pk.phanLoai}]</span>
+              <span style="color: #94a3b8;">Long #${xsl.index}: ${xsl.tinhChatLong}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Master Score & Balance Matrix Card -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>📊</span>
+              <span>${isDuong ? 'TỔNG QUAN KHÍ TRƯỜNG DƯƠNG TRẠCH' : 'TỔNG QUAN PHÚC ĐỨC ÂM PHẦN'}</span>
+            </div>
+            <div class="fs-badge ${scoreBadgeClass}">${scoreBadgeText}</div>
+          </div>
+
+          <div class="fs-master-score">
+            <div class="fs-score-circle">
+              <span class="fs-score-num">${score}</span>
+              <span class="fs-score-unit">/ 100 ĐIỂM</span>
+            </div>
+            <div class="fs-master-details">
+              <div class="fs-master-thetran">${isDuong ? asm.theTranChuKhach : asm.danhGiaLongHuyet}</div>
+              <div class="fs-master-bars">
+                ${isDuong ? `
+                  <div class="fs-bar-row">
+                    <span class="fs-bar-lbl">🛡️ Nhân Đinh (Chủ):</span>
+                    <div class="fs-bar-track"><div class="fs-bar-fill fs-bar-fill-chu" style="width: ${asm.diemNhanDinhSucKhoe}%;"></div></div>
+                    <span class="fs-bar-val">${asm.diemNhanDinhSucKhoe}</span>
+                  </div>
+                  <div class="fs-bar-row">
+                    <span class="fs-bar-lbl">⚔️ Tài Lộc (Khách):</span>
+                    <div class="fs-bar-track"><div class="fs-bar-fill fs-bar-fill-khach" style="width: ${asm.diemTaiLocNgoaiGiao}%;"></div></div>
+                    <span class="fs-bar-val">${asm.diemTaiLocNgoaiGiao}</span>
+                  </div>
+                ` : `
+                  <div class="fs-bar-row">
+                    <span class="fs-bar-lbl">✨ Phúc Khí Âm Đức:</span>
+                    <div class="fs-bar-track"><div class="fs-bar-fill fs-bar-fill-phuc" style="width: ${asm.diemAmDucPhucKhi}%;"></div></div>
+                    <span class="fs-bar-val">${asm.diemAmDucPhucKhi}</span>
+                  </div>
+                  <div class="fs-bar-row">
+                    <span class="fs-bar-lbl">📜 Hậu Duệ Khoa Bảng:</span>
+                    <div class="fs-bar-track"><div class="fs-bar-fill fs-bar-fill-khach" style="width: ${asm.diemHauDueKhoaBang}%;"></div></div>
+                    <span class="fs-bar-val">${asm.diemHauDueKhoaBang}</span>
+                  </div>
+                  <div class="fs-bar-row">
+                    <span class="fs-bar-lbl">🪦 An Lành Cốt Tủy:</span>
+                    <div class="fs-bar-track"><div class="fs-bar-fill fs-bar-fill-an" style="width: ${asm.diemAnLanhHaiCot}%;"></div></div>
+                    <span class="fs-bar-val">${asm.diemAnLanhHaiCot}</span>
+                  </div>
+                `}
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 10px; color: #cbd5e1; line-height: 1.4; border-top: 1px dashed rgba(245, 176, 65, 0.2); padding-top: 5px;">
+            ${isDuong ? asm.luanDoanTongThe : `Địa thế huyệt mộ kết hợp mạch khí Lai Long và dòng chảy Thủy Khẩu tạo nên trường khí ${score >= 70 ? 'tụ khí tàng phong ấm áp khô ráo' : 'cần được kè chắn và tiêu thoát nước ngầm kỹ lưỡng'}.`}
+          </div>
+        </div>
+
+        <!-- Key Cung Positions Grid -->
+        <div class="fs-chips-grid">
+          <div class="fs-chip">
+            <span class="fs-chip-icon">★</span>
+            <span class="fs-chip-name">Thái Ất:</span>
+            <span class="fs-chip-val">Cung ${asm.cungThaiAt}</span>
+          </div>
+          <div class="fs-chip">
+            <span class="fs-chip-icon">★</span>
+            <span class="fs-chip-name">Ngũ Phúc:</span>
+            <span class="fs-chip-val">Cung ${asm.cungNguPhuc}</span>
+          </div>
+          <div class="fs-chip">
+            <span class="fs-chip-icon">★</span>
+            <span class="fs-chip-name">Văn Xương:</span>
+            <span class="fs-chip-val">Cung ${asm.cungVanXuong}</span>
+          </div>
+          <div class="fs-chip">
+            <span class="fs-chip-icon">★</span>
+            <span class="fs-chip-name">Thần Hợp:</span>
+            <span class="fs-chip-val">Cung ${asm.cungThanHop}</span>
+          </div>
+          <div class="fs-chip" style="border-color: rgba(239, 68, 68, 0.4);">
+            <span class="fs-chip-icon" style="color: #ef4444;">▲</span>
+            <span class="fs-chip-name" style="color: #fca5a5;">Thủy Kích:</span>
+            <span class="fs-chip-val" style="color: #ef4444;">Cung ${asm.cungThuyKich}</span>
+          </div>
+          <div class="fs-chip" style="border-color: rgba(245, 158, 11, 0.4);">
+            <span class="fs-chip-icon" style="color: #f59e0b;">▲</span>
+            <span class="fs-chip-name" style="color: #fde047;">Kế Thần:</span>
+            <span class="fs-chip-val" style="color: #f59e0b;">Cung ${asm.cungKeThan}</span>
+          </div>
+        </div>
+
+        ${isDuong ? `
+          <!-- CARD: 8 Phân Khu Công Năng Kiến Trúc -->
+          <div class="fs-card">
+            <div class="fs-card-header">
+              <div class="fs-card-title">
+                <span>🏛️</span>
+                <span>QUY HOẠCH 8 PHÂN KHU CÔNG NĂNG KIẾN TRÚC</span>
+              </div>
+              <span style="font-size: 9.5px; color: #94a3b8;">Zoning Architecture</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              ${asm.zoningList.map(z => `
+                <div class="fs-zoning-item">
+                  <div class="fs-zoning-top">
+                    <span class="fs-zoning-title">${z.tenKhuVuc}</span>
+                    <span class="fs-badge ${z.trangThaiKhi.includes('Đại Cát') ? 'fs-badge-great' : (z.trangThaiKhi.includes('Ép Chế') ? 'fs-badge-critical' : 'fs-badge-good')}">${z.trangThaiKhi}</span>
+                  </div>
+                  <div class="fs-zoning-desc"><strong>Vị trí:</strong> Cung ${z.cungThaiAt} (${z.huongDiaLy} - Hành ${z.nguHanhKhuVuc})</div>
+                  <div class="fs-zoning-desc"><strong>Bố trí:</strong> ${z.chucNangPhuHop}</div>
+                  <div class="fs-zoning-remedy">💡 <strong>Giải pháp:</strong> ${z.giaiPhapKienTruc}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- CARD: 5 Kỹ Thuật Vật Lý Kiến Trúc & Vi Khí Hậu -->
+          <div class="fs-card">
+            <div class="fs-card-header">
+              <div class="fs-card-title">
+                <span>🌿</span>
+                <span>VẬT LÝ KIẾN TRÚC & VI KHÍ HẬU (KHÔNG MÊ TÍN)</span>
+              </div>
+              <span style="font-size: 9.5px; color: #86efac; font-weight: 700;">Rule 9 & Rule 12</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              ${asm.architecturalRemedies.map((r, idx) => `
+                <div class="fs-remedy-item">
+                  <span class="fs-remedy-head">${idx + 1}. ${r.hangMuc}</span>
+                  <span class="fs-remedy-body">${r.giaiPhap}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- CARD: Chồng Lớp Đa Trường Phái -->
+          <div class="fs-card">
+            <div class="fs-card-header">
+              <div class="fs-card-title">
+                <span>🔄</span>
+                <span>CHỒNG LỚP ĐA TRƯỜNG PHÁI: BÁT TRẠCH & VẬN 9</span>
+              </div>
+              <span style="font-size: 9.5px; color: #f5b041;">2024 - 2043</span>
+            </div>
+            ${asm.multiSchoolFusion && asm.multiSchoolFusion.batTrach ? `
+              <div style="background: rgba(30, 6, 12, 0.85); border-radius: 6px; padding: 6px 8px; font-size: 10px; display: flex; flex-direction: column; gap: 3px;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Gia chủ sinh năm <strong>${asm.multiSchoolFusion.batTrach.birthYear} (${asm.multiSchoolFusion.batTrach.gender})</strong>:</span>
+                  <span style="color: #fef08a; font-weight: 800;">Mệnh ${asm.multiSchoolFusion.batTrach.cungMenh} (${asm.multiSchoolFusion.batTrach.nhomMenh})</span>
+                </div>
+                <div>Hướng nhà gặp: <strong style="color: ${asm.multiSchoolFusion.batTrach.diemHoaHopMenh >= 80 ? '#86efac' : '#fca5a5'};">${asm.multiSchoolFusion.batTrach.duNienHuongNha.toUpperCase()}</strong> (${asm.multiSchoolFusion.batTrach.diemHoaHopMenh}/100 Điểm)</div>
+                <div style="color: #94a3b8; line-height: 1.35;">${asm.multiSchoolFusion.batTrach.danhGiaHoaHop}</div>
+              </div>
+            ` : ''}
+            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 10px;">
+              ${(asm.multiSchoolFusion && asm.multiSchoolFusion.tuongTacThaiAtHuyenKhong || []).map(t => `
+                <div style="border-left: 2px solid #38bdf8; padding-left: 6px; color: #cbd5e1;">
+                  <strong style="color: #7dd3fc;">${t.hangMuc}:</strong> ${t.tuongTac}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : `
+          <!-- CARD: Tứ Thú Sa Bàn Bảo Vệ Huyệt Mộ -->
+          <div class="fs-card">
+            <div class="fs-card-header">
+              <div class="fs-card-title">
+                <span>🛡️</span>
+                <span>TỨ THÚ SA BÀN BẢO VỆ HUYỆT MỘ</span>
+              </div>
+              <span style="font-size: 9.5px; color: #94a3b8;">Long Sa Huyệt Thủy</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 10px;">
+              <div style="background: rgba(30, 6, 12, 0.8); padding: 6px 8px; border-radius: 5px; border: 1px solid rgba(245, 176, 65, 0.2);">
+                <span style="color: #94a3b8; font-size: 9px; font-weight: 700;">🐢 HUYỀN VŨ (TỌA HẬU):</span>
+                <div style="color: #fef08a; font-weight: 800; margin-top: 2px;">${asm.tuThu.huyenVuToaHau}</div>
+              </div>
+              <div style="background: rgba(30, 6, 12, 0.8); padding: 6px 8px; border-radius: 5px; border: 1px solid rgba(245, 176, 65, 0.2);">
+                <span style="color: #94a3b8; font-size: 9px; font-weight: 700;">🦚 CHU TƯỚC (MINH ĐƯỜNG):</span>
+                <div style="color: #fef08a; font-weight: 800; margin-top: 2px;">${asm.tuThu.chuTuocMinhDuong}</div>
+              </div>
+              <div style="background: rgba(30, 6, 12, 0.8); padding: 6px 8px; border-radius: 5px; border: 1px solid rgba(245, 176, 65, 0.2);">
+                <span style="color: #94a3b8; font-size: 9px; font-weight: 700;">🐉 THANH LONG (TẢ - NAM ĐINH):</span>
+                <div style="color: #86efac; font-weight: 800; margin-top: 2px;">${asm.tuThu.thanhLongTa}</div>
+              </div>
+              <div style="background: rgba(30, 6, 12, 0.8); padding: 6px 8px; border-radius: 5px; border: 1px solid rgba(245, 176, 65, 0.2);">
+                <span style="color: #94a3b8; font-size: 9px; font-weight: 700;">🐅 BẠCH HỔ (HỮU - NỮ ĐINH):</span>
+                <div style="color: #7dd3fc; font-weight: 800; margin-top: 2px;">${asm.tuThu.bachHoHuu}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD: Chẩn Đoán 5 Biến Chứng Âm Phần -->
+          <div class="fs-card">
+            <div class="fs-card-header">
+              <div class="fs-card-title">
+                <span>⚠️</span>
+                <span>CHẨN ĐOÁN BIẾN CHỨNG ÂM PHẦN (TOMB PATHOLOGY)</span>
+              </div>
+              <span style="font-size: 9.5px; color: ${asm.pathologies.length > 0 ? '#ef4444' : '#86efac'}; font-weight: 800;">
+                ${asm.pathologies.length > 0 ? `Phát hiện ${asm.pathologies.length} nguy cơ` : 'Cốt tủy bình an'}
+              </span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              ${asm.pathologies.length > 0 ? asm.pathologies.map(p => `
+                <div class="fs-path-item">
+                  <div class="fs-path-title">
+                    <span>${p.tenBenhTrach}</span>
+                    <span class="fs-badge fs-badge-critical">${p.mucDoNguyHiem}</span>
+                  </div>
+                  <div class="fs-path-body"><strong>Dấu hiệu:</strong> ${p.dauHieuThucTe}</div>
+                  <div class="fs-path-body"><strong>Tác động:</strong> ${p.anhHuongConChau}</div>
+                  <div class="fs-path-body" style="color: #86efac;">🛠️ <strong>Xử lý kỹ thuật:</strong> ${p.bienPhapKyThuat}</div>
+                </div>
+              `).join('') : `
+                <div style="text-align: center; padding: 12px; color: #86efac; font-weight: 700; font-size: 10.5px;">
+                  ✨ Không phát hiện biến chứng nguy hiểm. Địa khí khô ráo, tĩnh tại và vững bền.
+                </div>
+              `}
+            </div>
+          </div>
+
+          <!-- CARD: 4 Kế Sách Địa Kỹ Thuật & Tôn Tạo -->
+          <div class="fs-card">
+            <div class="fs-card-header">
+              <div class="fs-card-title">
+                <span>🏗️</span>
+                <span>KẾ SÁCH ĐỊA KỸ THUẬT & TÔN TẠO HUYỆT MỘ</span>
+              </div>
+              <span style="font-size: 9.5px; color: #86efac; font-weight: 700;">Không Bùa Chú</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              ${asm.civilRemediationPlans.map((plan, idx) => `
+                <div class="fs-remedy-item">
+                  <span class="fs-remedy-head">${idx + 1}. ${plan.hangMuc}</span>
+                  <span class="fs-remedy-body">${plan.giaiPhap}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `}
+
+        <!-- CARD: Giờ Hoàng Kim Khởi Công / Nhập Trạch / An Táng -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>⏳</span>
+              <span>GIỜ HOÀNG KIM ${isDuong ? 'KHỞI CÔNG & NHẬP TRẠCH' : 'AN TÁNG & TẠ MỘ'}</span>
+            </div>
+            <span style="font-size: 9.5px; color: #f5b041;">12 Thời Thần</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; font-size: 10px;">
+            ${(isDuong ? asm.goldenHours : asm.goldenHoursBurial).map(g => `
+              <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); padding: 4px 6px; border-radius: 4px;">
+                <span style="color: #fef08a; font-weight: 800;">Giờ ${g.gio}</span>
+                <span class="fs-badge fs-badge-great">${g.trangThai}</span>
+                <span style="color: #cbd5e1; flex: 1; margin-left: 8px; text-align: right; font-size: 9.5px;">${g.khuyenNghi}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- MODAL: BÁO CÁO HỌC THUẬT TOÀN DIỆN -->
+        <div class="thaiat-fs-modal-overlay" id="thaiat-fs-essay-modal-overlay">
+          <div class="thaiat-fs-modal" id="thaiat-fs-essay-modal">
+            <div class="thaiat-fs-modal-header">
+              <div class="thaiat-fs-modal-title">
+                <span>📜</span>
+                <span>BÁO CÁO THẨM TRA ${isDuong ? 'DƯƠNG TRẠCH 8 TẦNG' : 'ÂM TRẠCH 9 TẦNG'}</span>
+              </div>
+              <button type="button" class="thaiat-fs-modal-close" id="btn-close-thaiat-essay-modal">&times;</button>
+            </div>
+            <div class="thaiat-fs-modal-body" id="thaiat-fs-essay-modal-body">
+              ${fsAiPolishedText || fsEngine.generateTaiyiFengShuiEssay(asm, currentFsSubMode)}
+            </div>
+            <div class="thaiat-fs-modal-footer">
+              <button type="button" class="ucc-btn-submit" id="btn-copy-thaiat-essay" style="flex: 1;">📋 Sao Chép Báo Cáo</button>
+              <button type="button" class="ucc-btn-now" id="btn-download-thaiat-essay" style="width: auto;">💾 Tải .md</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODAL: TRẠCH CÁT 12 THỜI THẦN -->
+        <div class="thaiat-fs-modal-overlay" id="thaiat-fs-trachcat-modal-overlay">
+          <div class="thaiat-fs-modal" id="thaiat-fs-trachcat-modal">
+            <div class="thaiat-fs-modal-header">
+              <div class="thaiat-fs-modal-title">
+                <span>⏳</span>
+                <span>TRẠCH CÁT 12 THỜI THẦN THÁI ẤT</span>
+              </div>
+              <button type="button" class="thaiat-fs-modal-close" id="btn-close-thaiat-trachcat-modal">&times;</button>
+            </div>
+            <div style="padding: 8px 14px 4px; border-bottom: 1px solid rgba(245, 176, 65, 0.2);">
+              <label style="font-size: 10px; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 4px;">CHỌN SỰ VỤ PHONG THỦY:</label>
+              <select id="thaiat-fs-timing-task" style="width: 100%; background: rgba(10, 1, 3, 0.9); border: 1px solid rgba(245, 176, 65, 0.4); border-radius: 4px; color: #fef08a; padding: 5px 8px; font-size: 11px; font-weight: 700;">
+                <option value="dong_tho" ${currentFsTimingTask === 'dong_tho' ? 'selected' : ''}>1. Động Thổ & Khởi Công Móng</option>
+                <option value="cat_noc" ${currentFsTimingTask === 'cat_noc' ? 'selected' : ''}>2. Cất Nóc & Thượng Lương</option>
+                <option value="nhap_trach" ${currentFsTimingTask === 'nhap_trach' ? 'selected' : ''}>3. Nhập Trạch & Dọn Vào Nhà Mới</option>
+                <option value="ha_huyet" ${currentFsTimingTask === 'ha_huyet' ? 'selected' : ''}>4. Hạ Huyệt & Cải Táng Mộ Phần</option>
+                <option value="ta_mo" ${currentFsTimingTask === 'ta_mo' ? 'selected' : ''}>5. Tạ Mộ & Khánh Thành Lăng Tẩm</option>
+                <option value="khai_truong" ${currentFsTimingTask === 'khai_truong' ? 'selected' : ''}>6. Khai Trương & Mở Cửa Kinh Doanh</option>
+                <option value="mo_nuoc" ${currentFsTimingTask === 'mo_nuoc' ? 'selected' : ''}>7. Mở Nước, Khoan Giếng & Thông Thủy</option>
+              </select>
+            </div>
+            <div class="thaiat-fs-modal-body" id="thaiat-fs-trachcat-modal-body" style="white-space: normal;">
+              ${renderTrachCatTimingContent(keData, currentFsTimingTask)}
+            </div>
+            <div class="thaiat-fs-modal-footer">
+              <button type="button" class="ucc-btn-now" id="btn-close-thaiat-trachcat-footer" style="flex: 1;">Đóng Cửa Sổ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindThaiAtFengShuiEvents(keData, chart) {
+    const fsEngine = global.NetaThaiAtFengShuiEngine;
+    if (!fsEngine) return;
+
+    // Sub-mode switch
+    const btnDuong = document.getElementById('btn-thaiat-fs-mode-duong');
+    const btnAm = document.getElementById('btn-thaiat-fs-mode-am');
+    if (btnDuong) {
+      btnDuong.onclick = () => {
+        currentFsSubMode = 'duong_trach';
+        renderThaiAt(true);
+      };
+    }
+    if (btnAm) {
+      btnAm.onclick = () => {
+        currentFsSubMode = 'am_trach';
+        renderThaiAt(true);
+      };
+    }
+
+    // Degree controls
+    const slider = document.getElementById('thaiat-fs-deg-slider');
+    const numInput = document.getElementById('thaiat-fs-deg-input');
+    if (slider) {
+      slider.oninput = (e) => {
+        const val = parseFloat(e.target.value) || 0;
+        currentFsSittingDeg = val;
+        if (numInput) numInput.value = val.toFixed(1);
+        renderThaiAt(true);
+      };
+    }
+    if (numInput) {
+      numInput.onchange = (e) => {
+        const val = parseFloat(e.target.value) || 0;
+        currentFsSittingDeg = ((val % 360) + 360) % 360;
+        if (slider) slider.value = currentFsSittingDeg;
+        renderThaiAt(true);
+      };
+    }
+
+    // Property Type
+    const propSel = document.getElementById('thaiat-fs-property-type');
+    if (propSel) {
+      propSel.onchange = (e) => {
+        currentFsPropertyType = e.target.value;
+        renderThaiAt(true);
+      };
+    }
+
+    // Lai Long & Thủy Khẩu
+    const laiLongInp = document.getElementById('thaiat-fs-lailong-input');
+    if (laiLongInp) {
+      laiLongInp.onchange = (e) => {
+        currentFsLaiLongDeg = parseFloat(e.target.value) || 0;
+        renderThaiAt(true);
+      };
+    }
+    const thuyKhauInp = document.getElementById('thaiat-fs-thuykhau-input');
+    if (thuyKhauInp) {
+      thuyKhauInp.onchange = (e) => {
+        currentFsThuyKhauDeg = parseFloat(e.target.value) || 0;
+        renderThaiAt(true);
+      };
+    }
+
+    // Modals
+    const essayOverlay = document.getElementById('thaiat-fs-essay-modal-overlay');
+    const trachcatOverlay = document.getElementById('thaiat-fs-trachcat-modal-overlay');
+
+    const btnEssay = document.getElementById('btn-thaiat-fs-essay');
+    if (btnEssay && essayOverlay) {
+      btnEssay.onclick = () => {
+        essayOverlay.classList.add('open');
+      };
+    }
+    const btnCloseEssay = document.getElementById('btn-close-thaiat-essay-modal');
+    if (btnCloseEssay && essayOverlay) {
+      btnCloseEssay.onclick = () => {
+        essayOverlay.classList.remove('open');
+      };
+    }
+    if (essayOverlay) {
+      essayOverlay.onclick = (e) => {
+        if (e.target === essayOverlay) essayOverlay.classList.remove('open');
+      };
+    }
+
+    const btnTrachcat = document.getElementById('btn-thaiat-fs-trachcat');
+    if (btnTrachcat && trachcatOverlay) {
+      btnTrachcat.onclick = () => {
+        trachcatOverlay.classList.add('open');
+      };
+    }
+    const btnCloseTrachcat = document.getElementById('btn-close-thaiat-trachcat-modal');
+    const btnCloseTrachcatFooter = document.getElementById('btn-close-thaiat-trachcat-footer');
+    if (btnCloseTrachcat && trachcatOverlay) {
+      btnCloseTrachcat.onclick = () => {
+        trachcatOverlay.classList.remove('open');
+      };
+    }
+    if (btnCloseTrachcatFooter && trachcatOverlay) {
+      btnCloseTrachcatFooter.onclick = () => {
+        trachcatOverlay.classList.remove('open');
+      };
+    }
+    if (trachcatOverlay) {
+      trachcatOverlay.onclick = (e) => {
+        if (e.target === trachcatOverlay) trachcatOverlay.classList.remove('open');
+      };
+    }
+
+    // Task select in Trạch Cát
+    const timingTaskSel = document.getElementById('thaiat-fs-timing-task');
+    if (timingTaskSel) {
+      timingTaskSel.onchange = (e) => {
+        currentFsTimingTask = e.target.value;
+        const bodyEl = document.getElementById('thaiat-fs-trachcat-modal-body');
+        if (bodyEl) bodyEl.innerHTML = renderTrachCatTimingContent(keData, currentFsTimingTask);
+      };
+    }
+
+    // Download .md
+    const getEssayText = () => {
+      const isD = (currentFsSubMode === 'duong_trach');
+      const assessment = isD
+        ? fsEngine.assessDuongTrach(chart, currentFsSittingDeg, currentFsPropertyType, (currentKeType === 'gio' ? 'Kể Giờ' : 'Kể Năm'), querentBirthYear, (currentIsMale ? 'Nam' : 'Nữ'))
+        : fsEngine.assessAmTrach(chart, currentFsSittingDeg, currentFsLaiLongDeg, currentFsThuyKhauDeg, (currentKeType === 'gio' ? 'Kể Giờ' : 'Kể Năm'));
+      return fsAiPolishedText || fsEngine.generateTaiyiFengShuiEssay(assessment, currentFsSubMode);
+    };
+
+    const downloadMd = () => {
+      const text = getEssayText();
+      const filename = `ThaiAt_PhongThuy_${currentFsSubMode}_${new Date().toISOString().slice(0, 10)}.md`;
+      const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    const copyEssay = () => {
+      const text = getEssayText();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Đã sao chép toàn văn Báo Cáo Phong Thủy Thái Ất vào Clipboard!');
+        }).catch(() => {
+          prompt('Sao chép thủ công:', text);
+        });
+      } else {
+        prompt('Sao chép thủ công:', text);
+      }
+    };
+
+    const btnDownload = document.getElementById('btn-thaiat-fs-download');
+    if (btnDownload) btnDownload.onclick = downloadMd;
+    const btnDownloadModal = document.getElementById('btn-download-thaiat-essay');
+    if (btnDownloadModal) btnDownloadModal.onclick = downloadMd;
+
+    const btnCopy = document.getElementById('btn-thaiat-fs-copy');
+    if (btnCopy) btnCopy.onclick = copyEssay;
+    const btnCopyModal = document.getElementById('btn-copy-thaiat-essay');
+    if (btnCopyModal) btnCopyModal.onclick = copyEssay;
+
+    // AI Polish
+    const btnAi = document.getElementById('btn-thaiat-fs-ai');
+    if (btnAi) {
+      btnAi.onclick = () => {
+        if (!global.NetaGeminiService || typeof global.NetaGeminiService.polishFengShuiEssay !== 'function') {
+          alert('Dịch vụ Gemini AI chưa sẵn sàng. Bạn có thể sử dụng bản luận giải gốc chất lượng cao.');
+          return;
+        }
+        btnAi.textContent = '⏳ Đang trau chuốt...';
+        btnAi.disabled = true;
+        const rawText = getEssayText();
+        global.NetaGeminiService.polishFengShuiEssay(rawText, 'thái_ất').then(res => {
+          btnAi.textContent = '✨ Biên Tập AI';
+          btnAi.disabled = false;
+          if (res && res.text) {
+            fsAiPolishedText = res.text;
+            if (essayOverlay) {
+              const body = document.getElementById('thaiat-fs-essay-modal-body');
+              if (body) body.textContent = fsAiPolishedText;
+              essayOverlay.classList.add('open');
+            }
+          }
+        }).catch(err => {
+          btnAi.textContent = '✨ Biên Tập AI';
+          btnAi.disabled = false;
+          alert('Không thể kết nối AI: ' + (err.message || 'Lỗi mạng'));
+        });
+      };
+    }
+  }
+
   function bindThaiAtEvents(keData, chart, luan) {
     const pad = n => String(n).padStart(2, '0');
 
@@ -2428,6 +3619,13 @@
     if (btnOpenLuan) {
       btnOpenLuan.onclick = () => {
         currentMainTab = 'analysis';
+        renderThaiAt(true);
+      };
+    }
+    const btnTabFengshui = document.getElementById('btn-thaiat-tab-fengshui');
+    if (btnTabFengshui) {
+      btnTabFengshui.onclick = () => {
+        currentMainTab = 'fengshui';
         renderThaiAt(true);
       };
     }
@@ -2741,6 +3939,10 @@
         });
       }
     }
+
+    if (currentMainTab === 'fengshui') {
+      bindThaiAtFengShuiEvents(keData, chart);
+    }
   }
 
   function inspectPalace(pos) {
@@ -2784,7 +3986,27 @@
     inspectPalace: inspectPalace,
     toggleSection: toggleSection,
     setLuanMode: setLuanMode,
-    dismissAiError: dismissAiError
+    dismissAiError: dismissAiError,
+    setMainTab: (tab) => {
+      currentMainTab = tab;
+      renderThaiAt(true);
+    },
+    setFsSubMode: (mode) => {
+      currentFsSubMode = mode;
+      renderThaiAt(true);
+    },
+    setFsDegree: (deg) => {
+      currentFsSittingDeg = ((deg % 360) + 360) % 360;
+      renderThaiAt(true);
+    },
+    getFsState: () => ({
+      mainTab: currentMainTab,
+      subMode: currentFsSubMode,
+      sittingDeg: currentFsSittingDeg,
+      propertyType: currentFsPropertyType,
+      laiLongDeg: currentFsLaiLongDeg,
+      thuyKhauDeg: currentFsThuyKhauDeg
+    })
   };
 
 })(typeof window !== 'undefined' ? window : this);

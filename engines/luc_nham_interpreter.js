@@ -1223,6 +1223,7 @@
 
     return {
       canNgay, chiNgay, chiGio, nguyetTuong, isDaytime, tenTong,
+      solarTimeInfo: chartData.solarTimeInfo,
       theDung: { canChiRel, canChiAdvice },
       tuThoi: { season, vuongTable, canKhi: vuongTable[hCan] || "Bình" },
       tamTruyenProcess: truyenProcess,
@@ -1249,6 +1250,9 @@
     let lines = [];
     lines.push("=== BÁO CÁO LUẬN GIẢI CHUYÊN SÂU LỤC NHÂM ĐẠI ĐỘN ===");
     lines.push(`Thời khắc: Ngày ${interp.canNgay} ${interp.chiNgay} · Giờ ${interp.chiGio} · Nguyệt Tướng ${interp.nguyetTuong}`);
+    if (interp.solarTimeInfo) {
+      lines.push(`Hiệu chỉnh Giờ Chân Thái Dương: ${interp.solarTimeInfo.trueSolarDatetime} (Độ lệch: ${interp.solarTimeInfo.totalOffsetMinutes >= 0 ? '+' : ''}${interp.solarTimeInfo.totalOffsetMinutes} phút, EOT: ${interp.solarTimeInfo.eotMinutes >= 0 ? '+' : ''}${interp.solarTimeInfo.eotMinutes}m, Kinh độ: ${interp.solarTimeInfo.longitudeOffsetMinutes >= 0 ? '+' : ''}${interp.solarTimeInfo.longitudeOffsetMinutes}m)`);
+    }
     lines.push(`Tông Môn: ${interp.tenTong} · Mùa: ${interp.tuThoi.season} (${interp.tuThoi.canKhi})`);
     lines.push(`Trục Thể Dụng: ${interp.theDung.canChiRel}`);
     lines.push(`Lời khuyên Thể Dụng: ${interp.theDung.canChiAdvice}`);

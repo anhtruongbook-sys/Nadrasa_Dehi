@@ -19,6 +19,31 @@
   let customDaytime = null;        // null: auto, true: đán, false: mộ
   let customNguyetTuong = '';      // rỗng: auto theo tiết khí
 
+  // Trạng thái Giờ Chân Thái Dương (True Apparent Solar Time & EOT)
+  let useTrueSolarTime = false;
+  let selectedCityKey = 'HaNoi';
+  let customLongitude = 105.85;
+
+  try {
+    const savedSolar = localStorage.getItem('neta_lucnham_solartime');
+    if (savedSolar) {
+      const parsed = JSON.parse(savedSolar);
+      useTrueSolarTime = !!parsed.enabled;
+      if (parsed.city) selectedCityKey = parsed.city;
+      if (parsed.lng && !isNaN(parsed.lng)) customLongitude = Number(parsed.lng);
+    }
+  } catch (e) {}
+
+  // Trạng thái Chẩn đoán Không gian Phong Thủy (Dương Trạch / Âm Trạch)
+  let currentDwellingType = 'DUONG_TRACH'; // 'DUONG_TRACH' | 'AM_TRACH'
+  let fsReportMode = 'standard'; // 'standard' | 'ai'
+  let fsAiPolishedText = null;
+  let isFsAiPolishing = false;
+  let fsAiErrorMessage = null;
+  let isEssayModalOpen = false;
+  let isTrachCatModalOpen = false;
+  let trachCatSelectedChi = 'Tý';
+
   // Trạng thái Phân hệ Luận Giải Chuyên Sâu Lục Nhâm 7 Tầng
   let currentLuanFilter = 'all'; // 'all', 'tatphap', 'timeline', 'chuyende', 'suvu'
   let isAiPolishing = false;
@@ -565,6 +590,127 @@
         color: #b45309 !important;
       }
 
+      /* Solar Time Row in UCC */
+      .ucc-row-solartime {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .solartime-toggle-wrap {
+        flex: 0 0 auto;
+      }
+      .solartime-toggle-btn {
+        height: 28px;
+        padding: 0 8px;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 6px;
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        background: rgba(26, 4, 8, 0.7);
+        color: var(--text-secondary, #94a3b8);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+      }
+      .solartime-toggle-btn.active {
+        background: linear-gradient(135deg, rgba(245, 176, 65, 0.25), rgba(217, 119, 6, 0.35)) !important;
+        border-color: var(--gold-primary, #f5b041) !important;
+        color: var(--gold-primary, #f5b041) !important;
+      }
+      body.theme-light .solartime-toggle-btn {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #475569;
+      }
+      body.theme-light .solartime-toggle-btn.active {
+        background: #fef3c7 !important;
+        border-color: #d97706 !important;
+        color: #b45309 !important;
+      }
+      .solartime-city-wrap {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+      }
+      .select-city {
+        flex: 1;
+        height: 28px;
+        font-size: 11px;
+        font-weight: 600;
+        background: rgba(26, 4, 8, 0.7);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 6px;
+        color: var(--text-primary, #f8fafc);
+        padding: 0 4px;
+        outline: none;
+        cursor: pointer;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      body.theme-light .select-city {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        color: #0f172a;
+      }
+      .ucc-btn-gps {
+        height: 28px;
+        width: 28px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        background: rgba(26, 4, 8, 0.7);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 6px;
+        cursor: pointer;
+        color: var(--gold-primary, #f5b041);
+        transition: all 0.2s ease;
+      }
+      .ucc-btn-gps:hover {
+        border-color: var(--gold-primary, #f5b041);
+        background: rgba(245, 176, 65, 0.15);
+      }
+      body.theme-light .ucc-btn-gps {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+      }
+      .solartime-info-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        padding: 3px 8px;
+        margin-top: 3px;
+        background: rgba(245, 176, 65, 0.08);
+        border: 1px dashed rgba(245, 176, 65, 0.3);
+        border-radius: 5px;
+        font-size: 10.5px;
+        color: var(--text-secondary, #cbd5e1);
+        line-height: 1.3;
+      }
+      body.theme-light .solartime-info-bar {
+        background: #fffbeb;
+        border-color: #fde68a;
+        color: #78350f;
+      }
+      .solartime-info-bar strong {
+        color: var(--gold-primary, #f5b041);
+      }
+      body.theme-light .solartime-info-bar strong {
+        color: #b45309;
+      }
+      .val-solar-active {
+        color: #38bdf8 !important;
+      }
+
       /* Querent Row in UCC */
       .ucc-row-querent {
         display: flex;
@@ -1011,6 +1157,387 @@
       }
       @keyframes spin { 100% { transform: rotate(360deg); } }
 
+      /* Feng Shui Tab Styles */
+      .lucnham-fengshui-wrap {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .fs-subnav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        background: rgba(26, 4, 8, 0.7);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 8px;
+        padding: 4px 6px;
+        box-sizing: border-box;
+      }
+      body.theme-light .fs-subnav-bar {
+        background: #ffffff;
+        border-color: #cbd5e1;
+      }
+      .fs-subnav-pill {
+        display: flex;
+        gap: 4px;
+        flex: 1;
+      }
+      .fs-subnav-btn {
+        flex: 1;
+        height: 28px;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 6px;
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        background: rgba(0, 0, 0, 0.35);
+        color: var(--text-secondary, #94a3b8);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+      }
+      .fs-subnav-btn.active {
+        background: linear-gradient(135deg, rgba(245, 176, 65, 0.28), rgba(217, 119, 6, 0.42)) !important;
+        border-color: var(--gold-primary, #f5b041) !important;
+        color: var(--gold-primary, #f5b041) !important;
+      }
+      body.theme-light .fs-subnav-btn {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+      }
+      body.theme-light .fs-subnav-btn.active {
+        background: #fef3c7 !important;
+        border-color: #d97706 !important;
+        color: #b45309 !important;
+      }
+      .fs-card {
+        background: rgba(26, 3, 7, 0.95);
+        border: 1px solid rgba(245, 176, 65, 0.3);
+        border-radius: 8px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+      }
+      body.theme-light .fs-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .fs-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px dashed rgba(245, 176, 65, 0.25);
+        padding-bottom: 5px;
+        margin-bottom: 6px;
+      }
+      body.theme-light .fs-card-header {
+        border-bottom-color: #e2e8f0;
+      }
+      .fs-card-title {
+        font-size: 0.76rem;
+        font-weight: 800;
+        color: var(--gold-primary, #f5b041);
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      body.theme-light .fs-card-title {
+        color: #b45309;
+      }
+      .fs-badge {
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+        white-space: nowrap;
+        display: inline-block;
+      }
+      .fs-badge-great { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
+      .fs-badge-good { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #0284c7; }
+      .fs-badge-normal { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid #64748b; }
+      .fs-badge-warn { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+      .fs-badge-severe { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid #f97316; }
+      .fs-badge-critical { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+      .fs-badge-void { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
+      
+      .fs-spatial-item {
+        background: rgba(20, 2, 5, 0.6);
+        border: 1px solid rgba(245, 176, 65, 0.18);
+        border-radius: 6px;
+        padding: 6px 8px;
+        margin-bottom: 6px;
+      }
+      body.theme-light .fs-spatial-item {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+      }
+      .fs-spatial-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .fs-spatial-dir {
+        font-weight: 800;
+        font-size: 11.5px;
+        color: var(--text-primary, #ffffff);
+      }
+      body.theme-light .fs-spatial-dir {
+        color: #0f172a;
+      }
+      .fs-action-step {
+        margin: 3px 0;
+        padding-left: 12px;
+        position: relative;
+        font-size: 11px;
+        color: var(--text-secondary, #cbd5e1);
+        line-height: 1.35;
+      }
+      body.theme-light .fs-action-step {
+        color: #334155;
+      }
+      .fs-action-step::before {
+        content: "•";
+        position: absolute;
+        left: 2px;
+        color: var(--gold-primary, #f5b041);
+      }
+
+      /* Feng Shui Light Theme Overrides */
+      body.theme-light .fs-badge-great { background: #dcfce7 !important; color: #15803d !important; border-color: #86efac !important; }
+      body.theme-light .fs-badge-good { background: #e0f2fe !important; color: #0369a1 !important; border-color: #bae6fd !important; }
+      body.theme-light .fs-badge-normal { background: #f1f5f9 !important; color: #334155 !important; border-color: #cbd5e1 !important; }
+      body.theme-light .fs-badge-warn { background: #fef3c7 !important; color: #92400e !important; border-color: #fde68a !important; }
+      body.theme-light .fs-badge-severe { background: #ffedd5 !important; color: #c2410c !important; border-color: #fed7aa !important; }
+      body.theme-light .fs-badge-critical { background: #fee2e2 !important; color: #991b1b !important; border-color: #fca5a5 !important; }
+      body.theme-light .fs-badge-void { background: #f3e8ff !important; color: #6b21a8 !important; border-color: #d8b4fe !important; }
+
+      body.theme-light .fs-card [style*="background: rgba(20, 2, 5"] {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+      }
+      body.theme-light .fs-card [style*="background: rgba(0, 0, 0"] {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+      }
+      body.theme-light .fs-card strong[style*="color: var(--text-primary"] {
+        color: #0f172a !important;
+      }
+      body.theme-light .fs-card div[style*="color: var(--text-primary"] {
+        color: #1e293b !important;
+      }
+      .ucc-row-actions .ucc-pill-view {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+      }
+      .ucc-row-actions .ucc-pill-view .ucc-view-btn {
+        flex: 1 1 0 !important;
+        padding: 0 2px !important;
+        font-size: 0.62rem !important;
+        letter-spacing: -0.2px !important;
+        min-width: 0 !important;
+        white-space: nowrap !important;
+      }
+      @media (max-width: 440px) {
+        .ucc-pill-view .ucc-txt-long { display: none !important; }
+        .ucc-pill-view .ucc-txt-short { display: inline !important; }
+      }
+      body.theme-light .lucnham-view-wrap {
+        color: #1e293b !important;
+      }
+      body.theme-light .fs-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        color: #1e293b !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+      }
+      body.theme-light .fs-card strong {
+        color: #0f172a !important;
+      }
+      body.theme-light .fs-card .fs-card-title {
+        color: #b45309 !important;
+      }
+      body.theme-light .fs-card [style*="color: var(--text-secondary"] {
+        color: #64748b !important;
+      }
+      body.theme-light .fs-card [style*="color: var(--text-primary"] {
+        color: #1e293b !important;
+      }
+      body.theme-light .fs-card div[style*="background: rgba(0, 0, 0"] {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+      }
+      body.theme-light .fs-card div[style*="background: rgba(20, 2, 5"] {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+      }
+      body.theme-light .fs-spatial-item {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #1e293b !important;
+      }
+      body.theme-light .fs-spatial-dir {
+        color: #0f172a !important;
+      }
+      body.theme-light .fs-action-step {
+        color: #334155 !important;
+      }
+      body.theme-light .fs-card [style*="color: #67e8f9"] {
+        color: #0369a1 !important;
+      }
+      body.theme-light .fs-card [style*="background: rgba(239, 68, 68"] {
+        background: #fee2e2 !important;
+        border-color: #fca5a5 !important;
+        color: #991b1b !important;
+      }
+      body.theme-light .fs-card [style*="color: #fca5a5"] {
+        color: #991b1b !important;
+      }
+
+      /* Feng Shui Actions Bar */
+      .fs-actions-bar {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding: 2px 0 4px;
+        scrollbar-width: none;
+      }
+      .fs-actions-bar::-webkit-scrollbar { display: none; }
+
+      /* Modals (Essay Reader & Trach Cat) */
+      .lucnham-fs-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(2px);
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .lucnham-fs-modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .lucnham-fs-modal {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 520px;
+        margin: 0 auto;
+        background: rgba(20, 2, 5, 0.98);
+        border-top: 2px solid #f5b041;
+        border-radius: 14px 14px 0 0;
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.85);
+        transform: translateY(100%);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 1001;
+        max-height: 82vh;
+        display: flex;
+        flex-direction: column;
+      }
+      body.theme-light .lucnham-fs-modal {
+        background: #ffffff !important;
+        border-top-color: #d97706 !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2) !important;
+        color: #1f2937 !important;
+      }
+      .lucnham-fs-modal.open {
+        transform: translateY(0);
+      }
+      .lucnham-fs-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+        background: rgba(26, 4, 8, 0.95);
+        border-radius: 14px 14px 0 0;
+        flex-shrink: 0;
+      }
+      body.theme-light .lucnham-fs-modal-header {
+        background: #f8fafc !important;
+        border-bottom-color: #e2e8f0 !important;
+      }
+      .lucnham-fs-modal-title {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: var(--gold-primary, #f5b041);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      body.theme-light .lucnham-fs-modal-title {
+        color: #b45309 !important;
+      }
+      .lucnham-fs-modal-body {
+        padding: 12px 14px calc(var(--safe-bottom, 20px) + 20px);
+        overflow-y: auto;
+        flex: 1;
+        -webkit-overflow-scrolling: touch;
+      }
+      .lucnham-trachcat-chip-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+      .lucnham-trachcat-chip {
+        background: rgba(26, 4, 8, 0.7);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 6px;
+        padding: 5px 2px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-secondary, #94a3b8);
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      body.theme-light .lucnham-trachcat-chip {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+      }
+      .lucnham-trachcat-chip.active {
+        background: linear-gradient(135deg, rgba(245, 176, 65, 0.35), rgba(217, 119, 6, 0.5)) !important;
+        border-color: var(--gold-primary, #f5b041) !important;
+        color: var(--gold-primary, #f5b041) !important;
+        font-weight: 900;
+      }
+      body.theme-light .lucnham-trachcat-chip.active {
+        background: #fef3c7 !important;
+        border-color: #d97706 !important;
+        color: #b45309 !important;
+      }
+      /* Essay modal typography */
+      .fs-essay-content h1 { font-size: 14.5px; color: #f5b041; border-bottom: 1px solid rgba(245, 176, 65, 0.3); padding-bottom: 4px; margin: 12px 0 6px; line-height: 1.4; }
+      .fs-essay-content h2 { font-size: 13px; color: #38bdf8; margin: 10px 0 4px; }
+      .fs-essay-content h3 { font-size: 12px; color: #fde047; margin: 8px 0 3px; }
+      .fs-essay-content p { font-size: 11px; line-height: 1.6; margin: 5px 0; }
+      .fs-essay-content ul { padding-left: 18px; margin: 5px 0; font-size: 11px; line-height: 1.5; }
+      .fs-essay-content blockquote { border-left: 3px solid #f5b041; padding: 4px 8px; margin: 6px 0; background: rgba(245, 176, 65, 0.08); font-size: 11px; }
+      .fs-essay-content table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 10.5px; }
+      .fs-essay-content th, .fs-essay-content td { border: 1px solid rgba(245, 176, 65, 0.25); padding: 4px 6px; text-align: left; }
+      .fs-essay-content th { background: rgba(245, 176, 65, 0.15); color: #f5b041; font-weight: 800; }
+      body.theme-light .fs-essay-content h1 { color: #b45309 !important; border-bottom-color: #cbd5e1 !important; }
+      body.theme-light .fs-essay-content h2 { color: #0284c7 !important; }
+      body.theme-light .fs-essay-content h3 { color: #78350f !important; }
+      body.theme-light .fs-essay-content p, body.theme-light .fs-essay-content ul { color: #1e293b !important; }
+      body.theme-light .fs-essay-content blockquote { background: #fffbeb !important; border-left-color: #d97706 !important; color: #78350f !important; }
+      body.theme-light .fs-essay-content th, body.theme-light .fs-essay-content td { border-color: #cbd5e1 !important; }
+      body.theme-light .fs-essay-content th { background: #f8fafc !important; color: #b45309 !important; }
+
     `;
     document.head.appendChild(styleEl);
   }
@@ -1020,10 +1547,23 @@
     let tietKhi = "Thu phân";
     let isDaytime = customDaytime;
 
+    let targetLng = customLongitude || 105.85;
+    if (global.LucNhamEngine && global.LucNhamEngine.CITY_LONGITUDES && global.LucNhamEngine.CITY_LONGITUDES[selectedCityKey]) {
+      targetLng = global.LucNhamEngine.CITY_LONGITUDES[selectedCityKey].lng;
+    }
+
+    let effectiveDate = currentDate;
+    let solarTimeInfo = null;
+
+    if (useTrueSolarTime && global.LucNhamEngine && typeof global.LucNhamEngine.getChiGioChanThaiDuong === 'function') {
+      solarTimeInfo = global.LucNhamEngine.getChiGioChanThaiDuong(currentDate, targetLng, 7);
+      effectiveDate = solarTimeInfo.trueSolarDate;
+    }
+
     // Tích hợp trực tiếp với NetaCalendarEngine
     if (global.NetaCalendarEngine && typeof global.NetaCalendarEngine.getFullDayInfo === 'function') {
       try {
-        const cal = global.NetaCalendarEngine.getFullDayInfo(currentDate);
+        const cal = global.NetaCalendarEngine.getFullDayInfo(effectiveDate);
         if (cal && cal.canChi) {
           const dayParts = (cal.canChi.day || "").split(" ");
           const hourParts = (cal.canChi.hour || "").split(" ");
@@ -1044,8 +1584,15 @@
       }
     }
 
-    if (isDaytime === null) {
-      isDaytime = ["Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân"].includes(chiGio);
+    if (useTrueSolarTime && solarTimeInfo) {
+      chiGio = solarTimeInfo.chiGio;
+      if (isDaytime === null) {
+        isDaytime = solarTimeInfo.isDaytime;
+      }
+    } else {
+      if (isDaytime === null) {
+        isDaytime = ["Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân"].includes(chiGio);
+      }
     }
 
     let nguyetTuong = customNguyetTuong;
@@ -1075,9 +1622,26 @@
         birthYear,
         currentYear,
         gioiTinh: currentIsMale ? 'Nam' : 'Nữ',
-        chiThang
+        chiThang,
+        date: currentDate,
+        useTrueSolarTime,
+        longitude: targetLng,
+        city: selectedCityKey
       });
+      if (currentChart && solarTimeInfo) {
+        currentChart.solarTimeInfo = solarTimeInfo;
+      }
     }
+  }
+
+  function renderCityOptionsHTML() {
+    const cities = (global.LucNhamEngine && global.LucNhamEngine.CITY_LONGITUDES) ? global.LucNhamEngine.CITY_LONGITUDES : {};
+    let html = '';
+    for (const [key, info] of Object.entries(cities)) {
+      const isSel = (key === selectedCityKey);
+      html += `<option value="${key}" ${isSel ? 'selected' : ''}>${info.name} (${info.lng}°E)</option>`;
+    }
+    return html;
   }
 
   function initLucNhamView(target) {
@@ -1175,6 +1739,28 @@
             </div>
           </div>
 
+          <!-- Row 2.5: Giờ Chân Thái Dương (True Apparent Solar Time) -->
+          <div class="ucc-row ucc-row-solartime" id="lucnham-ucc-solartime">
+            <div class="solartime-toggle-wrap">
+              <button type="button" class="solartime-toggle-btn ${useTrueSolarTime ? 'active' : ''}" id="lucnham-btn-toggle-solartime" title="Bật/Tắt hiệu chỉnh Giờ Chân Thái Dương (EOT + Kinh độ thực tế)">
+                ☀️ Chân Thái Dương: ${useTrueSolarTime ? 'BẬT' : 'TẮT'}
+              </button>
+            </div>
+            <div class="solartime-city-wrap">
+              <select id="lucnham-select-city" class="select-city" ${!useTrueSolarTime ? 'disabled style="opacity: 0.55;"' : ''} title="Chọn địa phương để lấy kinh độ thực tế">
+                ${renderCityOptionsHTML()}
+              </select>
+              <button type="button" class="ucc-btn-gps" id="lucnham-btn-gps" title="Lấy kinh độ GPS thực tế từ thiết bị" ${!useTrueSolarTime ? 'disabled style="opacity: 0.55;"' : ''}>📍</button>
+            </div>
+          </div>
+          ${useTrueSolarTime && c.solarTimeInfo ? `
+            <div class="solartime-info-bar">
+              <span>⚡ Hiệu chỉnh: <strong>${c.solarTimeInfo.totalOffsetMinutes >= 0 ? '+' : ''}${c.solarTimeInfo.totalOffsetMinutes} ph</strong></span>
+              <span>(EOT: ${c.solarTimeInfo.eotMinutes >= 0 ? '+' : ''}${c.solarTimeInfo.eotMinutes}m • Kinh độ: ${c.solarTimeInfo.longitudeOffsetMinutes >= 0 ? '+' : ''}${c.solarTimeInfo.longitudeOffsetMinutes}m)</span>
+              <span>🕒 <strong>${c.solarTimeInfo.trueSolarDatetime.split(' ')[1]}</strong> (${c.solarTimeInfo.chiGio})</span>
+            </div>
+          ` : ''}
+
           <!-- Row 3: Năm Sinh Đương Số + Can Chi / Tuổi Âm + Giới Tính -->
           <div class="ucc-row ucc-row-querent">
             <div class="ucc-querent-box" title="Nhập năm sinh đương số để tính Bản Mệnh & Hành Niên">
@@ -1195,10 +1781,16 @@
             </button>
             <div class="ucc-pill-view">
               <button type="button" class="ucc-view-btn ${currentMainTab === 'chart' ? 'active' : ''}" id="btn-lucnham-tab-chart" title="Bàn Quẻ Lục Nhâm">
-                🏛️ Bàn Quẻ
+                <span class="ucc-txt-long">🏛️ Bàn Quẻ</span>
+                <span class="ucc-txt-short">🏛️ Quẻ</span>
               </button>
               <button type="button" class="ucc-view-btn ${currentMainTab === 'analysis' ? 'active' : ''}" id="btn-lucnham-tab-analysis" title="Bản Luận Giải Chuyên Sâu">
-                📜 Luận Giải
+                <span class="ucc-txt-long">📜 Luận Giải</span>
+                <span class="ucc-txt-short">📜 Luận</span>
+              </button>
+              <button type="button" class="ucc-view-btn ${currentMainTab === 'fengshui' ? 'active' : ''}" id="btn-lucnham-tab-fengshui" title="Chẩn Đoán Phong Thủy Không Gian 8 Hướng">
+                <span class="ucc-txt-long">🏡 Phong Thủy</span>
+                <span class="ucc-txt-short">🏡 P.Thủy</span>
               </button>
             </div>
             <button class="ucc-btn-submit" id="lucnham-btn-submit" title="Lập quẻ Lục Nhâm">
@@ -1207,7 +1799,7 @@
           </div>
         </div>
 
-        ${currentMainTab === 'analysis' ? renderLucNhamAnalysisHTML(c) : `
+        ${currentMainTab === 'analysis' ? renderLucNhamAnalysisHTML(c) : (currentMainTab === 'fengshui' ? renderLucNhamFengShuiHTML(c) : `
           <!-- Unified Master Card: Thông Tin Thần Khóa & Chế Độ Xem (8 Lớp / 1 Chạm) -->
           <div class="lucnham-master-card">
             <div class="lucnham-master-header">
@@ -1229,7 +1821,7 @@
               </div>
               <div class="lucnham-stat-cell">
                 <div class="lucnham-stat-lbl">GIỜ</div>
-                <div class="lucnham-stat-val">${c.chiGio}</div>
+                <div class="lucnham-stat-val ${c.solarTimeInfo ? 'val-solar-active' : ''}">${c.chiGio} ${c.solarTimeInfo ? '<span class="val-sub" style="color: #38bdf8;">(Thái Dương)</span>' : ''}</div>
               </div>
               <div class="lucnham-stat-cell">
                 <div class="lucnham-stat-lbl">QUÝ NHÂN</div>
@@ -1387,7 +1979,7 @@
               }).join('')}
             </div>
           </div>
-        `}
+        `)}
       </div>
 
       <!-- Drawer Tra Cứu Chi Tiết 1 Cung -->
@@ -1395,9 +1987,56 @@
       <div id="lucnham-drawer" class="lucnham-drawer">
         <div id="lucnham-drawer-content"></div>
       </div>
+
+      <!-- Modal Bài Luận Phong Thủy 8 Tầng -->
+      <div id="lucnham-fs-essay-overlay" class="lucnham-fs-modal-overlay ${isEssayModalOpen ? 'open' : ''}" onclick="window.LucNhamView.closeFsEssayModal()"></div>
+      <div id="lucnham-fs-essay-modal" class="lucnham-fs-modal ${isEssayModalOpen ? 'open' : ''}">
+        <div class="lucnham-fs-modal-header">
+          <div>
+            <div class="lucnham-fs-modal-title">
+              <span>📜</span> BÀI LUẬN PHONG THỦY ${currentDwellingType === 'AM_TRACH' ? '(ÂM TRẠCH)' : '(DƯƠNG TRẠCH)'}
+            </div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 1px;">
+              Quẻ ${c.canNgay} ${c.chiNgay} · Tiết khí: ${c.tietKhi}
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 5px;">
+            <button type="button" class="neta-mode-pill ${fsReportMode === 'standard' ? 'active' : ''}" id="btn-fs-essay-mode-standard" style="padding: 2px 7px; font-size: 10px; height: 26px;">Bản Gốc</button>
+            <button type="button" class="neta-mode-pill ${fsReportMode === 'ai' ? 'active' : ''}" id="btn-fs-essay-mode-ai" style="padding: 2px 7px; font-size: 10px; height: 26px;">${isFsAiPolishing ? '⏳' : '✨ AI'}</button>
+            <button type="button" class="neta-mode-pill" id="lucnham-btn-download-fs-modal" style="padding: 2px 6px; font-size: 10.5px; height: 26px;" title="Tải .md">💾</button>
+            <button type="button" class="lucnham-btn-drawer-close" id="lucnham-fs-essay-close" style="width: 28px; height: 28px; min-width: 28px; min-height: 28px; font-size: 15px;">✕</button>
+          </div>
+        </div>
+        <div class="lucnham-fs-modal-body fs-essay-content" id="lucnham-fs-essay-body"></div>
+      </div>
+
+      <!-- Modal Tra Cứu Trạch Cát -->
+      <div id="lucnham-fs-trachcat-overlay" class="lucnham-fs-modal-overlay ${isTrachCatModalOpen ? 'open' : ''}" onclick="window.LucNhamView.closeFsTrachCatModal()"></div>
+      <div id="lucnham-fs-trachcat-modal" class="lucnham-fs-modal ${isTrachCatModalOpen ? 'open' : ''}">
+        <div class="lucnham-fs-modal-header">
+          <div>
+            <div class="lucnham-fs-modal-title">
+              <span>⏳</span> TRA CỨU TRẠCH CÁT & CẤM KỴ
+            </div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 1px;">
+              Năm ${c.chiNam || 'Ngọ'} · Tam Sát, Tuế Phá & Cát Thần
+            </div>
+          </div>
+          <button type="button" class="lucnham-btn-drawer-close" id="lucnham-fs-trachcat-close" style="width: 28px; height: 28px; min-width: 28px; min-height: 28px; font-size: 15px;">✕</button>
+        </div>
+        <div class="lucnham-fs-modal-body" id="lucnham-fs-trachcat-body"></div>
+      </div>
     `;
 
     bindLucNhamEvents();
+
+    if (isEssayModalOpen) {
+      renderFsEssayBody();
+      updateFsEssayPills();
+    }
+    if (isTrachCatModalOpen) {
+      renderFsTrachCatBody();
+    }
 
     if (prevScrollY !== null) {
       requestAnimationFrame(() => {
@@ -1485,9 +2124,10 @@
     bindLuanAnalysisEvents();
     const pad = n => String(n).padStart(2, '0');
 
-    // UCC View Switcher: Bàn Quẻ vs Luận Giải
+    // UCC View Switcher: Bàn Quẻ vs Luận Giải vs Phong Thủy
     const btnTabChart = document.getElementById('btn-lucnham-tab-chart');
     const btnTabAnalysis = document.getElementById('btn-lucnham-tab-analysis');
+    const btnTabFengShui = document.getElementById('btn-lucnham-tab-fengshui');
     const btnOpenLuan = document.getElementById('lucnham-btn-open-luan');
 
     if (btnTabChart) {
@@ -1502,12 +2142,112 @@
         renderLucNham(null, true);
       };
     }
+    if (btnTabFengShui) {
+      btnTabFengShui.onclick = () => {
+        currentMainTab = 'fengshui';
+        renderLucNham(null, true);
+      };
+    }
     if (btnOpenLuan) {
       btnOpenLuan.onclick = () => {
         currentMainTab = 'analysis';
         renderLucNham(null, true);
       };
     }
+
+    // Sub-nav for Feng Shui: Dương Trạch vs Âm Trạch + Action Bar
+    const btnFsDuong = document.getElementById('btn-fs-mode-duong');
+    const btnFsAm = document.getElementById('btn-fs-mode-am');
+    const btnOpenEssay = document.getElementById('lucnham-btn-open-essay');
+    const btnOpenTrachCat = document.getElementById('lucnham-btn-open-trachcat');
+    const btnDownloadFs = document.getElementById('lucnham-btn-download-fs');
+    const btnAiPolishFs = document.getElementById('lucnham-btn-ai-polish-fs');
+    const btnCopyFs = document.getElementById('lucnham-btn-copy-fengshui');
+
+    if (btnFsDuong) {
+      btnFsDuong.onclick = () => {
+        currentDwellingType = 'DUONG_TRACH';
+        fsAiPolishedText = null;
+        renderLucNham(null, true);
+      };
+    }
+    if (btnFsAm) {
+      btnFsAm.onclick = () => {
+        currentDwellingType = 'AM_TRACH';
+        fsAiPolishedText = null;
+        renderLucNham(null, true);
+      };
+    }
+    if (btnOpenEssay) {
+      btnOpenEssay.onclick = () => {
+        openFsEssayModal();
+      };
+    }
+    if (btnOpenTrachCat) {
+      btnOpenTrachCat.onclick = () => {
+        openFsTrachCatModal();
+      };
+    }
+    if (btnDownloadFs) {
+      btnDownloadFs.onclick = () => {
+        downloadFsReport();
+      };
+    }
+    if (btnAiPolishFs) {
+      btnAiPolishFs.onclick = () => {
+        triggerFsAiPolish();
+      };
+    }
+    if (btnCopyFs) {
+      btnCopyFs.onclick = () => {
+        if (!currentChart || !global.LucNhamFengShui) return;
+        const fsRep = global.LucNhamFengShui.evaluate(currentChart, {
+          dwellingType: currentDwellingType,
+          siteName: currentDwellingType === 'AM_TRACH' ? 'Mộ Phần Tiên Tổ' : 'Gia Trạch Cư Trú'
+        });
+        if (fsRep && fsRep.markdownEssay) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(fsRep.markdownEssay).then(() => {
+              showToast('Đã sao chép toàn văn bài luận Phong Thủy vào Clipboard!');
+            }).catch(() => {
+              fallbackCopyText(fsRep.markdownEssay);
+            });
+          } else {
+            fallbackCopyText(fsRep.markdownEssay);
+          }
+        }
+      };
+    }
+
+    // Modal Events: Essay Reader
+    const btnCloseEssay = document.getElementById('lucnham-fs-essay-close');
+    const btnEssayStd = document.getElementById('btn-fs-essay-mode-standard');
+    const btnEssayAi = document.getElementById('btn-fs-essay-mode-ai');
+    const btnDownloadFsModal = document.getElementById('lucnham-btn-download-fs-modal');
+    if (btnCloseEssay) btnCloseEssay.onclick = () => closeFsEssayModal();
+    if (btnDownloadFsModal) btnDownloadFsModal.onclick = () => downloadFsReport();
+    if (btnEssayStd) {
+      btnEssayStd.onclick = () => {
+        fsReportMode = 'standard';
+        renderFsEssayBody();
+        updateFsEssayPills();
+      };
+    }
+    if (btnEssayAi) {
+      btnEssayAi.onclick = () => {
+        fsReportMode = 'ai';
+        if (!fsAiPolishedText && !isFsAiPolishing) {
+          triggerFsAiPolish();
+        } else {
+          renderFsEssayBody();
+          updateFsEssayPills();
+        }
+      };
+    }
+
+    // Modal Events: Trạch Cát
+    const btnCloseTrachCat = document.getElementById('lucnham-fs-trachcat-close');
+    if (btnCloseTrachCat) btnCloseTrachCat.onclick = () => closeFsTrachCatModal();
 
     // Mode Switches (8 Lớp vs 1 Chạm: Đồng bộ cả Top Master Card và Bottom Bàn Cờ)
     const bindModeBtn = (btnId, mode) => {
@@ -1557,6 +2297,85 @@
       btnMo.onclick = () => {
         customDaytime = false;
         renderLucNham();
+      };
+    }
+
+    // Toggle True Solar Time
+    const btnToggleSolar = document.getElementById('lucnham-btn-toggle-solartime');
+    if (btnToggleSolar) {
+      btnToggleSolar.onclick = () => {
+        useTrueSolarTime = !useTrueSolarTime;
+        try {
+          localStorage.setItem('neta_lucnham_solartime', JSON.stringify({
+            enabled: useTrueSolarTime,
+            city: selectedCityKey,
+            lng: customLongitude
+          }));
+        } catch (e) {}
+        renderLucNham(null, true);
+        showToast(useTrueSolarTime ? `Đã kích hoạt Giờ Chân Thái Dương (${selectedCityKey})` : 'Đã tắt Giờ Chân Thái Dương (Dùng giờ đồng hồ)');
+      };
+    }
+
+    // Select City
+    const selectCity = document.getElementById('lucnham-select-city');
+    if (selectCity) {
+      selectCity.onchange = () => {
+        selectedCityKey = selectCity.value;
+        const cityData = (global.LucNhamEngine && global.LucNhamEngine.CITY_LONGITUDES) ? global.LucNhamEngine.CITY_LONGITUDES[selectedCityKey] : null;
+        if (cityData) {
+          customLongitude = cityData.lng;
+        }
+        try {
+          localStorage.setItem('neta_lucnham_solartime', JSON.stringify({
+            enabled: useTrueSolarTime,
+            city: selectedCityKey,
+            lng: customLongitude
+          }));
+        } catch (e) {}
+        renderLucNham(null, true);
+        showToast(`Đã chuyển tọa độ: ${cityData ? cityData.name : selectedCityKey} (${customLongitude}°E)`);
+      };
+    }
+
+    // GPS Button
+    const btnGps = document.getElementById('lucnham-btn-gps');
+    if (btnGps) {
+      btnGps.onclick = () => {
+        if (!navigator.geolocation) {
+          showToast('Thiết bị không hỗ trợ định vị Geolocation');
+          return;
+        }
+        showToast('Đang định vị GPS...');
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lng = Math.round(pos.coords.longitude * 100) / 100;
+            customLongitude = lng;
+            if (global.LucNhamEngine && global.LucNhamEngine.CITY_LONGITUDES) {
+              let minDist = 999999;
+              for (const [k, v] of Object.entries(global.LucNhamEngine.CITY_LONGITUDES)) {
+                const dist = Math.abs(v.lng - lng);
+                if (dist < minDist) {
+                  minDist = dist;
+                  selectedCityKey = k;
+                }
+              }
+            }
+            try {
+              localStorage.setItem('neta_lucnham_solartime', JSON.stringify({
+                enabled: useTrueSolarTime,
+                city: selectedCityKey,
+                lng: customLongitude
+              }));
+            } catch (e) {}
+            renderLucNham(null, true);
+            showToast(`GPS thành công: ${lng}°E (Gần ${selectedCityKey})`);
+          },
+          (err) => {
+            showToast('Không lấy được GPS: ' + (err.message || 'Lỗi quyền truy cập'));
+          },
+          { timeout: 8000 }
+        );
       };
     }
 
@@ -1877,6 +2696,725 @@
     } catch (e) {
       return "7 Tầng Luận Giải";
     }
+  }
+
+  // =========================================================================
+  // BỘ TIỆN ÍCH BIÊN TẬP HỌC THUẬT & TRÌNH XUẤT BẢN MARKDOWN (PHASE 3)
+  // =========================================================================
+  function formatMarkdownInline(text) {
+    if (!text) return '';
+    let s = text;
+    const boldMatches = s.match(/\*\*/g);
+    if (boldMatches && boldMatches.length % 2 !== 0) s += '**';
+    const starMatches = s.replace(/\*\*/g, '').match(/\*/g);
+    if (starMatches && starMatches.length % 2 !== 0) s += '*';
+    return s
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  }
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function renderMarkdownToHTML(str) {
+    if (!str) return '';
+    const lines = str.split('\n');
+    let html = '';
+    let inList = false;
+    let inTable = false;
+    let tableHeaders = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (!line) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; tableHeaders = []; }
+        continue;
+      }
+
+      if (/^\+[=+\-\|]+\+$/.test(line)) continue;
+      if (/^\|[\s\|]+$/.test(line)) continue;
+
+      if (line.startsWith('---') || line.startsWith('***')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+        html += '<hr style="border: 0; border-top: 1px dashed rgba(245, 176, 65, 0.3); margin: 12px 0;">';
+        continue;
+      }
+
+      if (line.startsWith('> ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        const quoteText = line.substring(2).trim();
+        html += '<blockquote>' + formatMarkdownInline(quoteText) + '</blockquote>';
+        continue;
+      }
+
+      if (line.startsWith('|') && line.endsWith('|')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        if (/^\|[\s\-:]+(\|[\s\-:]+)+\|$/.test(line)) continue;
+
+        const cells = line.split('|').slice(1, -1).map(c => c.trim());
+        if (cells.every(c => !c)) continue;
+
+        if (!inTable) {
+          inTable = true;
+          tableHeaders = cells.map(c => c.replace(/\*\*/g, '').replace(/\*/g, '').trim());
+          html += '<div style="overflow-x: auto; margin: 8px 0;"><table><thead><tr>';
+          cells.forEach(cell => {
+            html += `<th>${formatMarkdownInline(cell)}</th>`;
+          });
+          html += '</tr></thead><tbody>';
+        } else {
+          html += '<tr>';
+          cells.forEach(cell => {
+            html += `<td>${formatMarkdownInline(cell)}</td>`;
+          });
+          html += '</tr>';
+        }
+        continue;
+      } else if (inTable) {
+        html += '</tbody></table></div>';
+        inTable = false;
+        tableHeaders = [];
+      }
+
+      if (line.startsWith('# ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h1>${formatMarkdownInline(line.substring(2).trim())}</h1>`;
+        continue;
+      }
+      if (line.startsWith('## ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h2>${formatMarkdownInline(line.substring(3).trim())}</h2>`;
+        continue;
+      }
+      if (line.startsWith('### ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h3>${formatMarkdownInline(line.substring(4).trim())}</h3>`;
+        continue;
+      }
+      if (line.startsWith('#### ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h4>${formatMarkdownInline(line.substring(5).trim())}</h4>`;
+        continue;
+      }
+
+      if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('+ ')) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += `<li>${formatMarkdownInline(line.substring(2).trim())}</li>`;
+        continue;
+      }
+
+      const numMatch = line.match(/^(\d+)\.\s+(.*)$/);
+      if (numMatch) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += `<li><strong>${numMatch[1]}.</strong> ${formatMarkdownInline(numMatch[2])}</li>`;
+        continue;
+      }
+
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<p>${formatMarkdownInline(line)}</p>`;
+    }
+
+    if (inList) html += '</ul>';
+    if (inTable) html += '</tbody></table></div>';
+    return html;
+  }
+
+  function downloadMarkdownFile(content, filename) {
+    if (!content) return;
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || 'Bao_cao_Phong_thuy.md';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Đã tải về tệp báo cáo phong thủy .md!');
+  }
+
+  function downloadFsReport() {
+    if (!currentChart || !global.LucNhamFengShui) return;
+    const fsRep = global.LucNhamFengShui.evaluate(currentChart, {
+      dwellingType: currentDwellingType,
+      siteName: currentDwellingType === 'AM_TRACH' ? 'Mộ Phần Tiên Tổ' : 'Gia Trạch Cư Trú'
+    });
+    if (!fsRep || !fsRep.markdownEssay) {
+      showToast('Không có dữ liệu bài luận để tải về.');
+      return;
+    }
+    const pad = n => String(n).padStart(2, '0');
+    const curD = currentDate || new Date();
+    const dateStr = `${curD.getFullYear()}${pad(curD.getMonth() + 1)}${pad(curD.getDate())}_${pad(curD.getHours())}${pad(curD.getMinutes())}`;
+    const typeStr = (currentDwellingType === 'AM_TRACH') ? 'Am_Trach_Chiem_Mo' : 'Duong_Trach_Cu_Tru';
+    const filename = `Bao_cao_Phong_thuy_${typeStr}_${dateStr}.md`;
+
+    const contentToDownload = (fsReportMode === 'ai' && fsAiPolishedText) ? fsAiPolishedText : fsRep.markdownEssay;
+    downloadMarkdownFile(contentToDownload, filename);
+  }
+
+  function openFsEssayModal() {
+    isEssayModalOpen = true;
+    const modal = document.getElementById('lucnham-fs-essay-modal');
+    const overlay = document.getElementById('lucnham-fs-essay-overlay');
+    if (modal) modal.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    renderFsEssayBody();
+    updateFsEssayPills();
+  }
+
+  function closeFsEssayModal() {
+    isEssayModalOpen = false;
+    const modal = document.getElementById('lucnham-fs-essay-modal');
+    const overlay = document.getElementById('lucnham-fs-essay-overlay');
+    if (modal) modal.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  function updateFsEssayPills() {
+    const btnStd = document.getElementById('btn-fs-essay-mode-standard');
+    const btnAi = document.getElementById('btn-fs-essay-mode-ai');
+    if (btnStd) btnStd.classList.toggle('active', fsReportMode === 'standard');
+    if (btnAi) btnAi.classList.toggle('active', fsReportMode === 'ai');
+  }
+
+  function renderFsEssayBody() {
+    const el = document.getElementById('lucnham-fs-essay-body');
+    if (!el || !currentChart || !global.LucNhamFengShui) return;
+    const fsRep = global.LucNhamFengShui.evaluate(currentChart, {
+      dwellingType: currentDwellingType,
+      siteName: currentDwellingType === 'AM_TRACH' ? 'Mộ Phần Tiên Tổ' : 'Gia Trạch Cư Trú'
+    });
+    if (!fsRep) return;
+
+    if (fsReportMode === 'ai') {
+      if (isFsAiPolishing) {
+        el.innerHTML = `
+          <div style="text-align: center; padding: 30px 12px; color: var(--gold-primary, #f5b041);">
+            <div class="lucnham-spin" style="font-size: 24px; margin-bottom: 8px;">✨</div>
+            <div style="font-weight: 800; font-size: 13px;">Đang kết nối Gemini AI trau chuốt cấu trúc học thuật bài luận...</div>
+            <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Bảo toàn 100% kết quả tính toán 8 Tầng Địa Lý và Trạch Mộ.</div>
+          </div>
+        `;
+        return;
+      }
+      if (fsAiErrorMessage) {
+        el.innerHTML = `
+          <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid #ef4444; border-radius: 8px; padding: 12px; color: #ef4444; font-size: 11.5px; line-height: 1.5;">
+            <div><strong>⚠️ Lỗi AI:</strong> ${escapeHTML(fsAiErrorMessage)}</div>
+            <div style="margin-top: 8px; display: flex; gap: 8px;">
+              <button type="button" class="neta-mode-pill active" id="btn-fs-retry-ai">🔄 Thử Lại</button>
+              <button type="button" class="neta-mode-pill" id="btn-fs-fallback-standard">↩️ Xem Bản Thuật Toán</button>
+            </div>
+          </div>
+        `;
+        const btnRetry = document.getElementById('btn-fs-retry-ai');
+        const btnFallback = document.getElementById('btn-fs-fallback-standard');
+        if (btnRetry) btnRetry.onclick = () => triggerFsAiPolish();
+        if (btnFallback) btnFallback.onclick = () => { fsReportMode = 'standard'; renderFsEssayBody(); updateFsEssayPills(); };
+        return;
+      }
+      if (fsAiPolishedText) {
+        el.innerHTML = `
+          <div class="neta-polished-status-bar" style="margin-bottom: 8px;">
+            <span>✨ Bản Luận Giải Đã Được Trau Chuốt Học Thuật Bởi Gemini AI</span>
+            <button type="button" class="neta-btn-inline-back" id="btn-fs-back-standard-from-ai">↩️ Bản Thuật Toán</button>
+          </div>
+          <div style="white-space: normal; line-height: 1.65;">
+            ${renderMarkdownToHTML(fsAiPolishedText)}
+          </div>
+        `;
+        const btnBack = document.getElementById('btn-fs-back-standard-from-ai');
+        if (btnBack) btnBack.onclick = () => { fsReportMode = 'standard'; renderFsEssayBody(); updateFsEssayPills(); };
+        return;
+      }
+      // Not yet polished
+      el.innerHTML = `
+        <div style="text-align: center; padding: 30px 12px; background: rgba(20, 2, 5, 0.5); border-radius: 8px; border: 1px dashed rgba(245, 176, 65, 0.25);">
+          <div style="font-size: 20px; margin-bottom: 6px;">✨</div>
+          <p style="font-size: 12px; color: var(--text-secondary, #94a3b8); margin-bottom: 12px;">Chưa khởi tạo bản trau chuốt văn phong Gemini AI cho báo cáo phong thủy này.</p>
+          <button type="button" class="neta-mode-pill active" id="btn-fs-start-ai" style="padding: 6px 14px; font-weight: 800; font-size: 12px;">
+            ✨ Khởi Tạo Bản Trau Chuốt AI
+          </button>
+        </div>
+      `;
+      const btnStart = document.getElementById('btn-fs-start-ai');
+      if (btnStart) btnStart.onclick = () => triggerFsAiPolish();
+      return;
+    }
+
+    // Standard mode (100% offline algorithmic)
+    el.innerHTML = renderMarkdownToHTML(fsRep.markdownEssay);
+  }
+
+  function openFsTrachCatModal() {
+    isTrachCatModalOpen = true;
+    const modal = document.getElementById('lucnham-fs-trachcat-modal');
+    const overlay = document.getElementById('lucnham-fs-trachcat-overlay');
+    if (modal) modal.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    renderFsTrachCatBody();
+  }
+
+  function closeFsTrachCatModal() {
+    isTrachCatModalOpen = false;
+    const modal = document.getElementById('lucnham-fs-trachcat-modal');
+    const overlay = document.getElementById('lucnham-fs-trachcat-overlay');
+    if (modal) modal.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  function renderFsTrachCatBody() {
+    const el = document.getElementById('lucnham-fs-trachcat-body');
+    if (!el || !currentChart || !global.LucNhamFengShui) return;
+
+    const tc = global.LucNhamFengShui.evaluateTrachCat(currentChart, trachCatSelectedChi, {
+      actionType: currentDwellingType === 'AM_TRACH' ? 'an_tang' : 'dong_tho'
+    });
+
+    const CHI_LIST = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+    const chiNam = (currentChart && currentChart.chiNam) || (currentChart && currentChart.currentYear ? ['Tý','Sửu','Dần','Mão','Thìn','Tỵ','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi'][(currentChart.currentYear - 4) % 12] : 'Ngọ');
+
+    let scoreBadgeClass = 'fs-badge-normal';
+    let scoreTitle = 'BÌNH HÒA';
+    if (tc.safetyScore <= 20) { scoreBadgeClass = 'fs-badge-critical'; scoreTitle = 'ĐẠI KỴ THI CÔNG'; }
+    else if (tc.safetyScore <= 50) { scoreBadgeClass = 'fs-badge-warn'; scoreTitle = 'CẢNH BÁO RỦI RO'; }
+    else if (tc.safetyScore <= 75) { scoreBadgeClass = 'fs-badge-normal'; scoreTitle = 'BÌNH HÒA CÂN BẰNG'; }
+    else { scoreBadgeClass = 'fs-badge-great'; scoreTitle = 'CÁT LÀNH AN TOÀN'; }
+
+    el.innerHTML = `
+      <div style="font-size: 11px; margin-bottom: 8px; color: var(--text-secondary, #cbd5e1);">
+        Chọn cung vị / phương vị cần thi công, động thổ hoặc an táng (Năm <strong>${chiNam}</strong>):
+      </div>
+
+      <!-- 12 Cung Chips Grid -->
+      <div class="lucnham-trachcat-chip-grid">
+        ${CHI_LIST.map(chi => `
+          <div class="lucnham-trachcat-chip ${chi === trachCatSelectedChi ? 'active' : ''}" data-chi="${chi}">
+            ${chi}
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Result Card -->
+      <div style="background: rgba(26, 4, 8, 0.7); border: 1px solid rgba(245, 176, 65, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed rgba(245, 176, 65, 0.2); padding-bottom: 6px;">
+          <div style="font-weight: 800; font-size: 12.5px; color: var(--gold-primary, #f5b041);">
+            Phương Vị: ${tc.huong} (Cung ${tc.targetChi})
+          </div>
+          <span class="fs-badge ${scoreBadgeClass}">${scoreTitle} (${tc.safetyScore}/100)</span>
+        </div>
+
+        <!-- Warnings -->
+        ${tc.warnings && tc.warnings.length ? `
+          <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">
+            ${tc.warnings.map(w => `
+              <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-left: 3px solid #ef4444; border-radius: 4px; padding: 5px 8px; font-size: 11px; line-height: 1.4; color: #fca5a5;">
+                ⚠️ <strong>Cấm kỵ:</strong> ${w}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <!-- Blessings -->
+        ${tc.blessings && tc.blessings.length ? `
+          <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">
+            ${tc.blessings.map(b => `
+              <div style="background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3); border-left: 3px solid #22c55e; border-radius: 4px; padding: 5px 8px; font-size: 11px; line-height: 1.4; color: #86efac;">
+                ✨ <strong>Cát Thần:</strong> ${b}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <!-- Recommendation -->
+        <div style="background: rgba(0, 0, 0, 0.3); border-radius: 6px; padding: 6px 8px; font-size: 11px; line-height: 1.45; border: 1px solid rgba(245, 176, 65, 0.2);">
+          <div style="color: #67e8f9; font-weight: 700; margin-bottom: 2px;">🧭 Khuyến Nghị Khởi Sự & Tiết Hóa:</div>
+          <div style="color: var(--text-primary, #f1f5f9);">${tc.recommendedTiming}</div>
+        </div>
+      </div>
+    `;
+
+    const chips = el.querySelectorAll('.lucnham-trachcat-chip');
+    chips.forEach(chip => {
+      chip.onclick = (e) => {
+        e.preventDefault();
+        const chi = chip.getAttribute('data-chi');
+        if (chi) {
+          trachCatSelectedChi = chi;
+          renderFsTrachCatBody();
+        }
+      };
+    });
+  }
+
+  async function triggerFsAiPolish() {
+    if (isFsAiPolishing) return;
+    if (!currentChart || !global.LucNhamFengShui) return;
+    const fsRep = global.LucNhamFengShui.evaluate(currentChart, {
+      dwellingType: currentDwellingType,
+      siteName: currentDwellingType === 'AM_TRACH' ? 'Mộ Phần Tiên Tổ' : 'Gia Trạch Cư Trú'
+    });
+    if (!fsRep) return;
+
+    isFsAiPolishing = true;
+    fsAiErrorMessage = null;
+    fsReportMode = 'ai';
+    if (isEssayModalOpen) {
+      renderFsEssayBody();
+      updateFsEssayPills();
+    } else {
+      renderLucNham(null, true);
+    }
+
+    try {
+      const prompt = global.LucNhamFengShui.buildAIPromptForFengShui(fsRep);
+      const gemini = global.NetaGeminiService || global.GeminiService;
+      if (gemini) {
+        const apiKey = (gemini.getActiveKey && gemini.getActiveKey()) || '';
+        if (!apiKey) {
+          throw new Error("Chưa cài đặt Gemini API Key. Bạn có thể cài đặt trong mục Cài Đặt.");
+        }
+        let result = null;
+        if (typeof gemini.callGeminiCascade === 'function') {
+          result = await gemini.callGeminiCascade(prompt, apiKey, {
+            systemInstruction: "Bạn là Viện Trưởng Viện Nghiên Cứu Địa Lý Phong Thủy & Đại Lục Nhâm Thần Khóa. Luận giải phong thủy học thuật, bảo toàn 100% kết quả thuật toán, trung thực, khách quan, không dùng từ sáo rỗng cảm tính theo Rule 9 và Rule 12.",
+            temperature: 0.25
+          });
+        } else if (typeof gemini.generateContent === 'function') {
+          result = await gemini.generateContent(prompt);
+        }
+        if (result && result.text) {
+          fsAiPolishedText = result.text;
+          fsAiErrorMessage = null;
+          showToast("Gemini AI biên tập bài luận phong thủy thành công!");
+        } else {
+          throw new Error((result && result.error) || "Không nhận được văn bản từ Gemini AI.");
+        }
+      } else {
+        // Fallback offline
+        fsAiPolishedText = fsRep.markdownEssay;
+        showToast("Đã kích hoạt chế độ bài luận chuyên sâu (Offline).");
+      }
+    } catch (err) {
+      console.error("Lỗi AI Polish Phong Thủy:", err);
+      fsAiErrorMessage = "Không thể kết nối AI: " + (err.message || "Vui lòng kiểm tra API Key.");
+    } finally {
+      isFsAiPolishing = false;
+      if (isEssayModalOpen) {
+        renderFsEssayBody();
+        updateFsEssayPills();
+      } else {
+        renderLucNham(null, true);
+      }
+    }
+  }
+
+  // =========================================================================
+  // PHÂN HỆ CHẨN ĐOÁN PHONG THỦY KHÔNG GIAN 8 HƯỚNG (DƯƠNG TRẠCH & ÂM TRẠCH)
+  // =========================================================================
+  function renderLucNhamFengShuiHTML(chart) {
+    if (!global.LucNhamFengShui) {
+      return `
+        <div class="lucnham-fengshui-wrap">
+          <div class="fs-card" style="text-align: center; padding: 24px 12px;">
+            <p style="color: #f87171; font-weight: 700;">Hệ thống Phong Thủy Engine chưa sẵn sàng. Vui lòng tải lại trang.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    const fsReport = global.LucNhamFengShui.evaluate(chart, {
+      dwellingType: currentDwellingType,
+      siteName: currentDwellingType === 'AM_TRACH' ? 'Mộ Phần Tiên Tổ' : 'Gia Trạch Cư Trú'
+    });
+
+    const isDuong = (currentDwellingType === 'DUONG_TRACH');
+
+    const score = fsReport.nhanTrachScore || 65;
+    let ratingBadgeClass = 'fs-badge-normal';
+    let ratingText = 'BÌNH HÒA';
+    if (score >= 85) { ratingBadgeClass = 'fs-badge-great'; ratingText = 'CÁT LÀNH (ĐẮC VẬN)'; }
+    else if (score >= 70) { ratingBadgeClass = 'fs-badge-good'; ratingText = 'KHÁ TỐT (BÌNH ỔN)'; }
+    else if (score >= 50) { ratingBadgeClass = 'fs-badge-warn'; ratingText = 'TRUNG BÌNH (CẦN ĐIỀU TIẾT)'; }
+    else { ratingBadgeClass = 'fs-badge-critical'; ratingText = 'HUNG HIỂM (CẦN HÓA GIẢI)'; }
+
+    // Helper for status badge of spatial directions
+    const getDirBadge = (diag) => {
+      if (diag.statusLevel.includes('CỰC HUNG')) return `<span class="fs-badge fs-badge-critical">${diag.statusLevel}</span>`;
+      if (diag.statusLevel.includes('HUNG')) return `<span class="fs-badge fs-badge-warn">${diag.statusLevel}</span>`;
+      if (diag.statusLevel.includes('ĐẮC CÁT') || diag.statusLevel.includes('CÁT')) return `<span class="fs-badge fs-badge-great">${diag.statusLevel}</span>`;
+      if (diag.statusLevel.includes('TIẾT') || diag.statusLevel.includes('KHẮC')) return `<span class="fs-badge fs-badge-severe">${diag.statusLevel}</span>`;
+      return `<span class="fs-badge fs-badge-normal">${diag.statusLevel}</span>`;
+    };
+
+    return `
+      <div class="lucnham-fengshui-wrap">
+        <!-- Sub-nav: Dương Trạch vs Âm Trạch -->
+        <div class="fs-subnav-bar">
+          <div class="fs-subnav-pill">
+            <button type="button" class="fs-subnav-btn ${isDuong ? 'active' : ''}" id="btn-fs-mode-duong" title="Chẩn đoán nhà ở, văn phòng, căn hộ">
+              🏠 Dương Trạch
+            </button>
+            <button type="button" class="fs-subnav-btn ${!isDuong ? 'active' : ''}" id="btn-fs-mode-am" title="Chiêm mộ pháp, âm phần, lăng mộ gia tộc">
+              🪦 Âm Trạch (Chiêm Mộ)
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Bar: Bài Luận 8 Tầng, Trạch Cát, Tải .md, AI, Sao Chép -->
+        <div class="fs-actions-bar">
+          <button type="button" class="neta-mode-pill" id="lucnham-btn-open-essay" style="white-space: nowrap; height: 28px; padding: 0 8px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;" title="Xem bài luận chuyên sâu 8 tầng">
+            📜 Bài Luận 8 Tầng
+          </button>
+          <button type="button" class="neta-mode-pill" id="lucnham-btn-open-trachcat" style="white-space: nowrap; height: 28px; padding: 0 8px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;" title="Tra cứu Trạch Cát thi công & cấm kỵ Tam Sát">
+            ⏳ Trạch Cát
+          </button>
+          <button type="button" class="neta-mode-pill" id="lucnham-btn-download-fs" style="white-space: nowrap; height: 28px; padding: 0 8px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;" title="Tải tệp báo cáo phong thủy .md">
+            💾 Tải .md
+          </button>
+          <button type="button" class="neta-mode-pill" id="lucnham-btn-ai-polish-fs" style="white-space: nowrap; height: 28px; padding: 0 8px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;" title="Biên tập học thuật qua Gemini AI">
+            ${isFsAiPolishing ? '⏳ Đang Xử Lý...' : '✨ Biên Tập AI'}
+          </button>
+          <button type="button" class="neta-mode-pill" id="lucnham-btn-copy-fengshui" style="white-space: nowrap; height: 28px; padding: 0 8px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;" title="Sao chép báo cáo phong thủy">
+            📋 Sao chép
+          </button>
+        </div>
+
+        <!-- Card 1: Tổng Quan Điểm Số & Tương Quan Nhân - Trạch -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>⚖️ TỔNG QUAN TƯƠNG QUAN NHÂN - TRẠCH</span>
+            </div>
+            <span class="fs-badge ${ratingBadgeClass}">${ratingText} (${score}/100)</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="width: 50px; height: 50px; min-width: 50px; border-radius: 50%; border: 2.5px solid var(--gold-primary, #f5b041); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: var(--gold-primary, #f5b041); background: rgba(245, 176, 65, 0.1);">
+              ${score}
+            </div>
+            <div style="flex: 1; font-size: 11.5px; line-height: 1.4;">
+              <div><strong>Tương quan Tứ Khóa:</strong> <span style="color: var(--gold-primary, #f5b041); font-weight: 800;">${fsReport.nhanTrachType}</span></div>
+              <div style="color: var(--text-secondary, #94a3b8); font-size: 11px;">(Ngày ${fsReport.canChiNgay} · Nguyệt tướng: ${fsReport.nguyetTuong})</div>
+              <div style="margin-top: 2px;">${fsReport.nhanTrachSummary}</div>
+            </div>
+          </div>
+
+          <div style="font-size: 11px; line-height: 1.45; border-top: 1px dashed rgba(245, 176, 65, 0.2); padding-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+            <div>
+              <strong>🌐 Cục Diện Khí Trường:</strong> ${fsReport.cucDienTrach}
+            </div>
+            <div>
+              <strong>🗝️ Trạch Mộ Đóng Khí:</strong> Cung ${fsReport.trachMo.cung} (${fsReport.trachMo.huong}) · Lâm Thần <strong>${fsReport.trachMo.thienTuong}</strong> · <span style="color: ${fsReport.trachMo.nature.includes('TÀI') ? '#22c55e' : (fsReport.trachMo.nature.includes('SÁT') ? '#ef4444' : '#38bdf8')}; font-weight: 700;">${fsReport.trachMo.nature}</span>
+              <div style="color: var(--text-secondary, #cbd5e1); font-size: 10.5px; margin-top: 1px;">${fsReport.trachMo.yNghia}</div>
+            </div>
+            <div>
+              <strong>🌌 Tuần Không Chiếm Hướng:</strong> 
+              ${fsReport.tuanKhong.length ? fsReport.tuanKhong.map(tk => `<span class="fs-badge fs-badge-void" style="margin-right: 4px;">${tk}</span>`).join('') + '<span style="color: var(--text-secondary, #94a3b8); font-size: 10.5px;">(Khí trường hư hao, cần gia cố điểm tựa ánh sáng / linh vật trấn định)</span>' : 'Không có cung Tuần Không.'}
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Bảng Ma Trận Chẩn Đoán 8 Hướng La Kinh (0° - 360°) -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>🧭 MA TRẬN 8 HƯỚNG LA KINH & SÁT KHÍ</span>
+            </div>
+            <span style="font-size: 10px; color: var(--text-secondary, #94a3b8);">Quét 12 Cung</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            ${fsReport.spatialDirections.map(d => `
+              <div class="fs-spatial-item" style="border-left: 3px solid ${d.statusLevel.includes('CỰC HUNG') ? '#ef4444' : (d.statusLevel.includes('HUNG') ? '#f59e0b' : (d.statusLevel.includes('CÁT') ? '#22c55e' : 'rgba(245, 176, 65, 0.4)'))};">
+                <div class="fs-spatial-head">
+                  <div class="fs-spatial-dir">
+                    ${d.huong} (${d.batQuai} - ${d.hanhDiaBan}) [${d.goc}]
+                  </div>
+                  <div>
+                    ${d.isTuanKhong ? '<span class="fs-badge fs-badge-void" style="margin-right: 3px;">TUẦN KHÔNG</span>' : ''}
+                    ${getDirBadge(d)}
+                  </div>
+                </div>
+
+                <div style="font-size: 11px; margin-bottom: 3px; display: flex; flex-wrap: wrap; gap: 6px; color: var(--text-secondary, #94a3b8);">
+                  <span>Địa bàn: <strong style="color: var(--text-primary, #ffffff);">${d.diaBan}</strong></span>
+                  <span>Thiên bàn: <strong style="color: #38bdf8;">${d.thienBan} (${d.hanhThienBan})</strong></span>
+                  <span>Thần tướng: <strong style="color: var(--gold-primary, #f5b041);">${d.thienTuong}</strong></span>
+                </div>
+
+                ${d.shaTitle ? `
+                  <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 4px; padding: 4px 6px; margin: 4px 0; font-size: 11px; color: #fca5a5;">
+                    ⚠️ <strong>Cảnh Báo:</strong> ${d.shaTitle}
+                  </div>
+                ` : ''}
+
+                ${(d.loanDauDauHieu && d.loanDauDauHieu.length) ? `
+                  <div style="font-size: 10.5px; color: var(--text-secondary, #cbd5e1); margin: 3px 0;">
+                    <strong>Dấu hiệu thực địa Loan Đầu:</strong>
+                    ${d.loanDauDauHieu.map(ld => `<div class="fs-action-step">${ld}</div>`).join('')}
+                  </div>
+                ` : ''}
+
+                <div style="font-size: 10.5px; margin-top: 4px; background: rgba(0, 0, 0, 0.25); padding: 4px 6px; border-radius: 4px;">
+                  <div style="color: #67e8f9; font-weight: 700;">💡 Chiến Lược Tiết Hóa:</div>
+                  <div style="color: var(--text-primary, #f1f5f9);">${d.remediationStrategy}</div>
+                  ${(d.practicalActions && d.practicalActions.length) ? `
+                    <div style="margin-top: 2px;">
+                      ${d.practicalActions.map(act => `<div class="fs-action-step">${act}</div>`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Card 3: Trọng Điểm Chức Năng (Dương Trạch) / Chiêm Mộ Đáy Kim Tĩnh (Âm Trạch) -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>${isDuong ? '🚪 CÁC NÚT ĐIỂM CHỨC NĂNG DƯƠNG TRẠCH' : '🪦 CHUYÊN KHẢO ĐÁY KIM TĨNH & MINH ĐƯỜNG (ÂM TRẠCH)'}</span>
+            </div>
+          </div>
+
+          ${isDuong ? `
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              ${fsReport.functionalNodes.map(fn => `
+                <div style="background: rgba(20, 2, 5, 0.6); border: 1px solid rgba(245, 176, 65, 0.18); border-radius: 6px; padding: 6px 8px; font-size: 11px; line-height: 1.4;">
+                  <div style="font-weight: 800; color: var(--gold-primary, #f5b041); margin-bottom: 2px;">
+                    📍 ${fn.name} ${fn.cung ? `(Cung ${fn.cung} - ${fn.huong})` : ''}
+                  </div>
+                  <div style="color: var(--text-primary, #f1f5f9);">${fn.assessment}</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <!-- Long mạch minh đường -->
+              <div style="background: rgba(20, 2, 5, 0.6); border: 1px solid rgba(245, 176, 65, 0.18); border-radius: 6px; padding: 6px 8px; font-size: 11px; line-height: 1.4;">
+                <div style="font-weight: 800; color: #38bdf8; margin-bottom: 2px;">
+                  ⛰️ Thế Đất, Gò Đồi & Minh Đường Bên Ngoài:
+                </div>
+                <div style="color: var(--text-primary, #f1f5f9);">${fsReport.graveDiagnostics.longMachMinhDuong}</div>
+              </div>
+
+              <!-- Hài cốt & Kim tĩnh cảnh báo -->
+              ${fsReport.graveDiagnostics.graveWarnings.map(gw => `
+                <div style="background: rgba(20, 2, 5, 0.6); border: 1px solid ${gw.type.includes('AN LÀNH') ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}; border-left: 3px solid ${gw.type.includes('AN LÀNH') ? '#22c55e' : '#ef4444'}; border-radius: 6px; padding: 6px 8px; font-size: 11px; line-height: 1.4;">
+                  <div style="font-weight: 800; color: ${gw.type.includes('AN LÀNH') ? '#4ade80' : '#f87171'}; margin-bottom: 2px;">
+                    ⚡ ${gw.type}
+                  </div>
+                  <div style="color: var(--text-primary, #f1f5f9);">${gw.detail}</div>
+                  ${(gw.actions && gw.actions.length) ? `
+                    <div style="margin-top: 4px; padding-top: 3px; border-top: 1px dashed rgba(245, 176, 65, 0.15);">
+                      <strong style="color: #67e8f9; font-size: 10.5px;">Phương án xử lý:</strong>
+                      ${gw.actions.map(act => `<div class="fs-action-step">${act}</div>`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+
+              <!-- Hậu nhân -->
+              ${fsReport.functionalNodes.map(fn => `
+                <div style="background: rgba(20, 2, 5, 0.6); border: 1px solid rgba(245, 176, 65, 0.18); border-radius: 6px; padding: 6px 8px; font-size: 11px; line-height: 1.4;">
+                  <div style="font-weight: 800; color: var(--gold-primary, #f5b041); margin-bottom: 2px;">
+                    👥 ${fn.name}
+                  </div>
+                  <div style="color: var(--text-primary, #f1f5f9);">${fn.assessment}</div>
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+
+        <!-- Card 4: Tiến Trình Tam Truyền Khởi - Trung - Mạt Đối Với Trạch Vận -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>⏳ TIẾN TRÌNH TAM TRUYỀN ĐỐI VỚI TRẠCH VẬN</span>
+            </div>
+          </div>
+          <div style="font-size: 11px; line-height: 1.45;">
+            <div style="display: flex; justify-content: space-around; background: rgba(0, 0, 0, 0.3); border-radius: 6px; padding: 6px; margin-bottom: 6px; border: 1px solid rgba(245, 176, 65, 0.2);">
+              <div style="text-align: center;">
+                <div style="color: #94a3b8; font-size: 10px;">SƠ TRUYỀN (Ban Đầu)</div>
+                <div style="font-weight: 900; color: #f5b041; font-size: 13px;">${fsReport.tamTruyen?.soTruyen?.chi || '---'}</div>
+                <div style="font-size: 10px; color: #38bdf8;">${fsReport.tamTruyen?.soTruyen?.tuong || ''}</div>
+              </div>
+              <div style="color: var(--gold-primary, #f5b041); font-size: 16px; align-self: center;">➔</div>
+              <div style="text-align: center;">
+                <div style="color: #94a3b8; font-size: 10px;">TRUNG TRUYỀN (Quá Trình)</div>
+                <div style="font-weight: 900; color: #f5b041; font-size: 13px;">${fsReport.tamTruyen?.trungTruyen?.chi || '---'}</div>
+                <div style="font-size: 10px; color: #38bdf8;">${fsReport.tamTruyen?.trungTruyen?.tuong || ''}</div>
+              </div>
+              <div style="color: var(--gold-primary, #f5b041); font-size: 16px; align-self: center;">➔</div>
+              <div style="text-align: center;">
+                <div style="color: #94a3b8; font-size: 10px;">MẠT TRUYỀN (Hậu Vận)</div>
+                <div style="font-weight: 900; color: #f5b041; font-size: 13px;">${fsReport.tamTruyen?.matTruyen?.chi || '---'}</div>
+                <div style="font-size: 10px; color: #38bdf8;">${fsReport.tamTruyen?.matTruyen?.tuong || ''}</div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 10.5px; color: var(--text-primary, #f1f5f9);">
+              <div>• <strong>Sơ Truyền:</strong> ${fsReport.tamTruyen?.soTruyen?.yNghia || ''}</div>
+              <div>• <strong>Trung Truyền:</strong> ${fsReport.tamTruyen?.trungTruyen?.yNghia || ''}</div>
+              <div>• <strong>Mạt Truyền:</strong> ${fsReport.tamTruyen?.matTruyen?.yNghia || ''}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5: Thứ Tự Ưu Tiên Hóa Giải & Tiết Hóa Thực Thi -->
+        <div class="fs-card">
+          <div class="fs-card-header">
+            <div class="fs-card-title">
+              <span>🛠️ KẾ HOẠCH HÓA GIẢI THEO MỨC ĐỘ KHẨN CẤP</span>
+            </div>
+            <span style="font-size: 10px; color: var(--text-secondary, #94a3b8);">${fsReport.remediationPriorities.length} Điểm Lưu Ý</span>
+          </div>
+
+          ${fsReport.remediationPriorities.length === 0 ? `
+            <div style="text-align: center; padding: 12px; color: #4ade80; font-size: 11.5px; font-weight: 700;">
+              ✅ Không phát hiện phương vị có xung sát nặng. Trạch khí cơ bản bình hòa, tiếp tục duy trì thông thoáng.
+            </div>
+          ` : `
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              ${fsReport.remediationPriorities.map((item, idx) => `
+                <div style="background: rgba(20, 2, 5, 0.6); border: 1px solid rgba(245, 176, 65, 0.2); border-left: 3px solid ${item.urgency === 1 ? '#ef4444' : (item.urgency === 2 ? '#f59e0b' : '#38bdf8')}; border-radius: 6px; padding: 6px 8px; font-size: 11px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <div style="font-weight: 800; color: var(--text-primary, #ffffff);">
+                      #${idx + 1}. ${item.huong} (Cung ${item.diaBan})
+                    </div>
+                    <span class="fs-badge ${item.urgency === 1 ? 'fs-badge-critical' : (item.urgency === 2 ? 'fs-badge-warn' : 'fs-badge-good')}">
+                      ${item.urgency === 1 ? 'CẤP 1 (KHẨN CẤP)' : (item.urgency === 2 ? 'CẤP 2 (ĐIỀU TIẾT)' : 'CẤP 3 (BẢO DƯỠNG)')}
+                    </span>
+                  </div>
+                  ${item.shaTitle ? `<div style="color: #fca5a5; font-size: 10.5px; margin-bottom: 2px;"><strong>Cảnh báo:</strong> ${item.shaTitle}</div>` : ''}
+                  <div style="color: #67e8f9; font-weight: 600; font-size: 10.5px;">Biện pháp tiết hóa: ${item.strategy}</div>
+                  ${(item.actions && item.actions.length) ? `
+                    <div style="margin-top: 3px;">
+                      ${item.actions.map(act => `<div class="fs-action-step">${act}</div>`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      </div>
+    `;
   }
 
   function renderLucNhamAnalysisHTML(chart) {
@@ -2473,7 +4011,15 @@
     toggleSection: toggleSection,
     copyLuanReport: copyLuanReport,
     triggerAiPolish: triggerAiPolish,
-    dismissAiError: dismissAiError
+    dismissAiError: dismissAiError,
+    setDwellingType: (t) => { currentDwellingType = t; renderLucNham(); },
+    setMainTab: (tab) => { currentMainTab = tab; renderLucNham(); },
+    openFsEssayModal: openFsEssayModal,
+    closeFsEssayModal: closeFsEssayModal,
+    openFsTrachCatModal: openFsTrachCatModal,
+    closeFsTrachCatModal: closeFsTrachCatModal,
+    downloadFsReport: downloadFsReport,
+    triggerFsAiPolish: triggerFsAiPolish
   };
   global.NetaLucNhamView = global.LucNhamView;
 

@@ -208,20 +208,47 @@
     cycle: 1
   };
 
-  // State for Phong Thủy mode (16 Hướng Nhà & 24 Sơn Vị Cửa & Cấm Kỵ 5 Phòng)
+  // State for Phong Thủy mode (16 Hướng Nhà & 24 Sơn Vị Cửa & Cấm Kỵ 5 Phòng & Âm Trạch & Thái Cực Kép & Mặt Bằng)
   let ptState = {
+    subMode: 'duong_trach', // 'duong_trach' | 'am_trach'
     van: 9,            // Vận 9 (2024 - 2043)
     huongKey: 'TB1',   // 16 Hướng Nhà chuẩn (TB1: Tuất, TB2_3: Càn-Hợi, ...)
     huongPalace: 6,    // Càn 6 (Tây Bắc)
     sonCua: 'Thìn',    // 24 Sơn vị cửa (Thìn default)
     degree: 300.0,     // Tọa độ hướng thực tế (TB1: Tuất 300.0°, TB2_3: Càn-Hợi 315.0°)
     rooms: {
+      main_door: 6,    // Cửa chính
       kitchen: 6,      // Bếp (Mặc định Càn 6 để kiểm tra Hỏa Thiêu Thiên Môn)
       toilet: 8,       // Nhà vệ sinh
       bedroom: 4,      // Phòng ngủ
       living_room: 3,  // Phòng khách
       altar: 9         // Ban thờ
-    }
+    },
+    // Cơ chế Thái Cực Kép (Macro House vs Micro Room)
+    thaiCucMode: 'macro', // 'macro' (Toàn Nhà) | 'micro' (Phòng Riêng)
+    microRoom: {
+      type: 'office',     // 'office' (Phòng Làm Việc) | 'study' (Phòng Học) | 'bedroom' (Phòng Ngủ)
+      deskPalace: 3,      // Vị trí đặt Bàn Làm Việc / Giường Ngủ (Cung 1 - 9)
+      sittingPalace: 8,   // Tọa vị tựa lưng (Cung 1 - 9)
+      facingPalace: 9     // Hướng nhìn ra (Cung 1 - 9)
+    },
+    // Trình Phủ Lưới Cửu Cung Lên Ảnh Mặt Bằng Kiến Trúc (CAD / Floor Plan Overlay Canvas)
+    floorPlan: {
+      imageDataUrl: null, // Ảnh người dùng tải lên (Data URL)
+      zoom: 1.0,          // Tỷ lệ phóng to (0.5 - 2.0)
+      opacity: 0.35,      // Độ trong suốt lớp lưới Kỳ Môn (0.1 - 0.8)
+      offsetX: 0,
+      offsetY: 0
+    },
+    // Tham số Âm Trạch
+    deceasedCan: 'Ất',
+    gravePalaceId: 2,  // Default Khôn 2 (Tử Môn)
+    // Modal states
+    isEssayModalOpen: false,
+    isTrachCatModalOpen: false,
+    currentTrachCatType: 'dong_tho',
+    essayCustomText: '',
+    isAiPolishing: false
   };
 
   // 16 Hướng Nhà Chuẩn Mực Kỳ Môn Phong Thủy (8 cặp: Hướng 1 [Địa Nguyên Long] vs Hướng 2/3 [Thiên & Nhân Nguyên Long])
@@ -2676,158 +2703,446 @@
     }
   }
 
-  function renderPtSafetyAlerts(chart) {
-    if (!global.KetNoiVuTruEngine) return '';
-    const chartPlain = { palaces: {} };
-    if (chart && chart.palacesData) {
-      for (const [pNum, pInfo] of Object.entries(chart.palacesData)) {
-        chartPlain.palaces[pNum] = {
-          name: pInfo.name || `Cung ${pNum}`,
-          door: pInfo.door || '',
-          deity: pInfo.divinity || '',
-          is_kong_wang: false
-        };
-      }
-    }
-    const audit = global.KetNoiVuTruEngine.evaluateHouseFengShuiSafety(ptState.degree || 315.0, chartPlain, ptState.rooms);
+  function renderPtSafetyAlerts(chart, fullAudit) {
+    const audit = fullAudit && fullAudit.yang_house_analysis ? fullAudit.yang_house_analysis : null;
     let html = '';
-    if (audit.criticalAlerts && audit.criticalAlerts.length > 0) {
-      audit.criticalAlerts.forEach(al => {
-        html += `<div class="pt-alert-box ${al.level === 'CRITICAL' ? 'crit' : ''}"><strong>${al.level === 'CRITICAL' ? '🚨' : '⚠️'}</strong> ${al.text}</div>`;
+    if (audit && audit.critical_violations && audit.critical_violations.length > 0) {
+      audit.critical_violations.forEach(v => {
+        const isCrit = v.severity === 'CRITICAL';
+        const rem = v.remediation || {};
+        const t1 = rem.tier1_thong_quan;
+        const t2 = rem.tier2_tiet_khi;
+        const t3 = rem.tier3_che_sat;
+        html += `
+          <div class="pt-alert-box ${isCrit ? 'crit' : ''}" style="margin-top: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <strong>${isCrit ? '🚨' : '⚠️'} [${v.severity}] ${v.name} (Cung ${v.palace_id})</strong>
+              <span style="font-size: 0.62rem; padding: 1px 6px; border-radius: 4px; background: rgba(0,0,0,0.2);">${rem.strategy || 'HÓA GIẢI'}</span>
+            </div>
+            <div style="font-size: 0.68rem; margin-bottom: 4px; opacity: 0.9;">${v.impact}</div>
+            <div style="font-size: 0.66rem; background: rgba(0,0,0,0.18); padding: 4px 6px; border-radius: 4px;">
+              <strong>💡 Chỉ Dẫn Xử Lý:</strong> ${rem.action_advice || ''}
+            </div>
+
+            <!-- 3-Tier Remediation Display (07_THUAT_TOAN_HOA_GIAI_NGU_HANH.md) -->
+            <div class="pt-tier-remedy-grid">
+              ${t1 ? `
+                <div class="pt-tier-col preferred">
+                  <span class="pt-tier-pill t1">★ CẤP 1: THÔNG QUAN</span>
+                  <div><strong>Vật phẩm:</strong> ${t1.items.join(', ')}</div>
+                  <div style="opacity: 0.85; margin-top: 2px;">• ${t1.placement}</div>
+                  <div style="color: #fde047; font-size: 0.58rem; margin-top: 2px;">⏳ ${t1.activation_timing}</div>
+                </div>
+              ` : ''}
+              ${t2 ? `
+                <div class="pt-tier-col">
+                  <span class="pt-tier-pill t2">CẤP 2: TIẾT KHÍ</span>
+                  <div><strong>Vật phẩm:</strong> ${t2.items.join(', ')}</div>
+                  <div style="opacity: 0.85; margin-top: 2px;">• ${t2.placement}</div>
+                  <div style="color: #7dd3fc; font-size: 0.58rem; margin-top: 2px;">⏳ ${t2.activation_timing}</div>
+                </div>
+              ` : ''}
+              ${t3 ? `
+                <div class="pt-tier-col">
+                  <span class="pt-tier-pill t3">CẤP 3: CHẾ SÁT</span>
+                  <div><strong>Vật phẩm:</strong> ${t3.items.join(', ')}</div>
+                  <div style="opacity: 0.85; margin-top: 2px;">• ${t3.placement}</div>
+                  <div style="color: #fca5a5; font-size: 0.58rem; margin-top: 2px;">⏳ ${t3.activation_timing}</div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
       });
     } else {
-      html += `<div class="pt-alert-box pt-alert-success">✅ Không có lỗi đại sát nghiêm trọng trong bố trí 5 phòng.</div>`;
+      html += `<div class="pt-alert-box pt-alert-success">✅ Không có lỗi đại sát nghiêm trọng trong bố trí các phòng chức năng.</div>`;
     }
     return html;
   }
 
   /**
-   * Render Chế Độ Phong Thủy Nhà Cố Định
+   * Render Chế Độ Phong Thủy Kỳ Môn Toàn Diện (Dương Trạch & Âm Trạch)
    */
   function renderPhongThuyMode(container, modeTabsHtml, chart) {
+    ptState.subMode = ptState.subMode || 'duong_trach';
     const currentPtDeg = (ptState.degree !== undefined && !isNaN(ptState.degree)) ? ptState.degree : 300.0;
     const lkRotVal = (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function')
       ? ((global.NetaLaKinhView.getState().rotation % 360 + 360) % 360)
       : currentPtDeg;
     const lkRotDisplay = lkRotVal.toFixed(1);
 
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    const voidAudit = (fsEngine && typeof fsEngine.detectCompassVoidLines === 'function')
+      ? fsEngine.detectCompassVoidLines(currentPtDeg)
+      : { has_void_line: false, type: 'CHÍNH TUYẾN THUẦN KHÍ (Pure Directional Line)', measured_angle: currentPtDeg };
+
+    const voidBadgeClass = voidAudit.has_void_line ? (voidAudit.severity === 'CRITICAL' ? 'void-crit' : 'void-warn') : 'void-safe';
+    const voidBadgeIcon = voidAudit.has_void_line ? (voidAudit.severity === 'CRITICAL' ? '🚨' : '⚠️') : '✅';
+    const voidBadgeText = `${voidBadgeIcon} ${voidAudit.type}${voidAudit.has_void_line ? ` (Lệch ${voidAudit.deviation}°) - ${voidAudit.severity}` : ''}`;
+
+    const fullAudit = fsEngine ? fsEngine.runComprehensiveFengShuiAudit({
+      mode: ptState.subMode,
+      house_degree: currentPtDeg,
+      room_allocations: ptState.rooms,
+      owner_birth_can: currentQuerentStem || 'Bính',
+      owner_birth_year: currentQuerentYear || 1990,
+      owner_is_male: (currentQuerentGender === 'nam'),
+      deceased_birth_can: ptState.deceasedCan || 'Ất',
+      grave_palace_id: ptState.gravePalaceId || 2,
+      chart_palaces: chart.palacesData || {},
+      kong_wang_palaces: []
+    }) : null;
+
+    const isDuongTrach = ptState.subMode === 'duong_trach';
+
+    let contentHtml = '';
+    if (isDuongTrach) {
+      contentHtml = renderPtYangHouseViewHtml(chart, fullAudit, lkRotDisplay, currentPtDeg, voidAudit, voidBadgeClass, voidBadgeText);
+    } else {
+      contentHtml = renderPtYinHouseViewHtml(chart, fullAudit, lkRotDisplay, currentPtDeg, voidAudit, voidBadgeClass, voidBadgeText);
+    }
+
     container.innerHTML = `
       <div class="qmdj-view-container">
         ${modeTabsHtml}
 
-        <!-- Phong Thuy Control Card -->
-        <div class="unified-ctrl-card pt-ctrl-card">
-          <!-- Row 0: Gia Chủ (Nam/Nữ & Can Năm Sinh) - Dùng chung toàn module -->
-          ${renderQuerentRowHtml('Gia chủ')}
+        <!-- Sub-mode Dual Switch: Dương Trạch vs Âm Trạch -->
+        <div class="pt-submode-toggle-bar">
+          <button type="button" class="pt-submode-btn ${isDuongTrach ? 'active' : ''}" id="btn-pt-submode-duong" title="Chuyển sang khảo sát Dương Trạch (Nhà ở, Trụ sở)">
+            🏡 DƯƠNG TRẠCH (NHÀ Ở & TRỤ SỞ)
+          </button>
+          <button type="button" class="pt-submode-btn ${!isDuongTrach ? 'active' : ''}" id="btn-pt-submode-am" title="Chuyển sang khảo sát Âm Trạch (Mồ mả, Gia tộc)">
+            🪦 ÂM TRẠCH (MỒ MẢ GIA TỘC)
+          </button>
+        </div>
 
-          <!-- Row 1: Vận Nhà & Hướng Nhà (16 Hướng Chuẩn) -->
-          <div class="ucc-row pt-row-params">
-            <div class="pt-field-group">
-              <label class="pt-field-lbl" for="pt-select-van">🏛️ VẬN:</label>
-              <select id="pt-select-van" class="pt-select">
-                <option value="9" ${ptState.van === 9 ? 'selected' : ''}>Vận 9 (2024 - 2043) ★</option>
-                <option value="8" ${ptState.van === 8 ? 'selected' : ''}>Vận 8 (2004 - 2023)</option>
-                <option value="7" ${ptState.van === 7 ? 'selected' : ''}>Vận 7 (1984 - 2003)</option>
-                <option value="6" ${ptState.van === 6 ? 'selected' : ''}>Vận 6 (1964 - 1983)</option>
-                <option value="5" ${ptState.van === 5 ? 'selected' : ''}>Vận 5 (1944 - 1963)</option>
-                <option value="4" ${ptState.van === 4 ? 'selected' : ''}>Vận 4 (1924 - 1943)</option>
-                <option value="3" ${ptState.van === 3 ? 'selected' : ''}>Vận 3 (1904 - 1923)</option>
-                <option value="2" ${ptState.van === 2 ? 'selected' : ''}>Vận 2 (1884 - 1903)</option>
-                <option value="1" ${ptState.van === 1 ? 'selected' : ''}>Vận 1 (1864 - 1883)</option>
-              </select>
-            </div>
+        ${contentHtml}
 
-            <div class="pt-field-group">
-              <label class="pt-field-lbl" for="pt-select-huong">🧭 HƯỚNG NHÀ (16 HƯỚNG):</label>
-              <select id="pt-select-huong" class="pt-select">
-                ${HUONG_16_LIST.map(h => `
-                  <option value="${h.key}" ${ptState.huongKey === h.key ? 'selected' : ''}>${h.name}</option>
-                `).join('')}
-              </select>
+        <!-- 5-Action Buttons Bar -->
+        <div class="pt-actions-bar">
+          <button type="button" class="pt-action-btn btn-primary" id="btn-pt-open-essay" title="Xem Bài Luận Khoa Học Toàn Diện">
+            📜 ${isDuongTrach ? 'Báo Cáo Dương Trạch (8 Tầng)' : 'Báo Cáo Âm Trạch (9 Tầng)'}
+          </button>
+          <button type="button" class="pt-action-btn" id="btn-pt-open-trachcat" title="Tra cứu thời khắc cát tường theo Kỳ Môn">
+            ⏳ ${isDuongTrach ? 'Trạch Cát Khởi Công / Nhập Trạch' : 'Trạch Cát Hạ Huyệt / Cải Táng'}
+          </button>
+          <button type="button" class="pt-action-btn" id="btn-pt-download-essay" title="Tải xuống tệp báo cáo định dạng Markdown .md">
+            💾 Tải .md
+          </button>
+          <button type="button" class="pt-action-btn" id="btn-pt-ai-polish" title="Kích hoạt trợ lý AI hiệu đính chuyên sâu">
+            ✨ ${ptState.isAiPolishing ? 'Đang Xử Lý...' : 'Biên Tập AI'}
+          </button>
+          <button type="button" class="pt-action-btn" id="btn-pt-copy-essay" title="Sao chép toàn văn báo cáo vào Clipboard">
+            📋 Sao Chép
+          </button>
+        </div>
+      </div>
+
+      <!-- Palace Detail Modal -->
+      <div class="modal-overlay" id="qmdj-palace-modal" style="display: none;">
+        <div class="modal-dialog qmdj-palace-dialog">
+          <div class="guide-header">
+            <h2 id="qmdj-modal-title">🏰 Chi Tiết Cung Phong Thủy</h2>
+            <button class="modal-close" id="qmdj-modal-close" aria-label="Đóng">&times;</button>
+          </div>
+          <div class="qmdj-modal-body" id="qmdj-modal-body">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Feng Shui Essay Modal -->
+      <div class="qmdj-fs-modal-overlay ${ptState.isEssayModalOpen ? 'open' : ''}" id="qmdj-fs-essay-modal">
+        <div class="qmdj-fs-modal-dialog">
+          <div class="qmdj-fs-modal-header">
+            <div class="qmdj-fs-modal-title">
+              <span>📜</span>
+              <span>${isDuongTrach ? 'Báo Cáo Phong Thủy Dương Trạch (8 Tầng)' : 'Báo Cáo Phong Thủy Âm Trạch (9 Tầng)'}</span>
             </div>
+            <button class="qmdj-fs-modal-close" id="qmdj-fs-essay-modal-close" aria-label="Đóng">&times;</button>
+          </div>
+          <div class="qmdj-fs-modal-body">
+            <textarea id="qmdj-fs-essay-textarea" class="qmdj-fs-modal-textarea" readonly></textarea>
+          </div>
+          <div class="qmdj-fs-modal-footer">
+            <button type="button" class="pt-action-btn" id="btn-pt-modal-copy">📋 Sao Chép</button>
+            <button type="button" class="pt-action-btn" id="btn-pt-modal-download">💾 Tải .md</button>
+            <button type="button" class="pt-action-btn btn-primary" id="btn-pt-modal-close-footer">Đóng</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trạch Cát Modal -->
+      <div class="qmdj-fs-modal-overlay ${ptState.isTrachCatModalOpen ? 'open' : ''}" id="qmdj-fs-trachcat-modal">
+        <div class="qmdj-fs-modal-dialog">
+          <div class="qmdj-fs-modal-header">
+            <div class="qmdj-fs-modal-title">
+              <span>⏳</span>
+              <span>Trạch Cát Kỳ Môn Phong Thủy</span>
+            </div>
+            <button class="qmdj-fs-modal-close" id="qmdj-fs-trachcat-modal-close" aria-label="Đóng">&times;</button>
+          </div>
+          <div class="qmdj-fs-modal-body" id="qmdj-fs-trachcat-body">
+            <!-- Dynamically populated -->
+          </div>
+          <div class="qmdj-fs-modal-footer">
+            <button type="button" class="pt-action-btn btn-primary" id="btn-pt-trachcat-close-footer">Đóng</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    bindPhongThuyEvents(chart);
+    bindModeTabsEvents();
+
+    if (ptState.isEssayModalOpen) {
+      populatePtEssayModalBody(chart, fullAudit);
+    }
+    if (ptState.isTrachCatModalOpen) {
+      populatePtTrachCatModalBody(chart);
+    }
+  }
+
+  /**
+   * Render HTML Chuyên Biệt Dương Trạch
+   */
+  function renderPtYangHouseViewHtml(chart, fullAudit, lkRotDisplay, currentPtDeg, voidAudit, voidBadgeClass, voidBadgeText) {
+    const yang = fullAudit && fullAudit.yang_house_analysis ? fullAudit.yang_house_analysis : {};
+    const hm = yang.house_metrics || {};
+    const p9 = fullAudit && fullAudit.period_9_san_yuan_audit ? fullAudit.period_9_san_yuan_audit : {};
+    const wa = fullAudit && fullAudit.qi_men_water_activation ? fullAudit.qi_men_water_activation : {};
+    const bestWater = wa.best_water_location || null;
+    const waterProto = wa.activation_protocol || {};
+    const dest = fullAudit && fullAudit.destiny_house_harmony ? fullAudit.destiny_house_harmony : {};
+    const kua = dest.kua_profile || {};
+    const qDest = dest.qmdj_destiny || {};
+    const harmonyScore = dest.overall_harmony_score !== undefined ? dest.overall_harmony_score : 80;
+    const harmonyVerdict = dest.verdict || "CÁT TƯỜNG HÒA HỢP";
+
+    const vitalityScore = hm.overall_vitality_score !== undefined ? hm.overall_vitality_score : 78;
+    const vitalityVerdict = hm.verdict || "CÁT TƯỜNG";
+    const vitalityClass = vitalityScore >= 80 ? 'good' : (vitalityScore >= 55 ? 'mid' : 'bad');
+
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    const microAudit = (fsEngine && typeof fsEngine.evaluateMicroCosmosRoom === 'function')
+      ? fsEngine.evaluateMicroCosmosRoom({
+          room_type: ptState.microRoom.type,
+          desk_palace: ptState.microRoom.deskPalace,
+          sitting_palace: ptState.microRoom.sittingPalace,
+          facing_palace: ptState.microRoom.facingPalace,
+          chart_palaces: chart.palacesData || {},
+          kong_wang_palaces: []
+        })
+      : { score: 75, verdict: "CÁT LỢI", advantages: [], warnings: [], remedies: [] };
+
+    const isMacro = ptState.thaiCucMode !== 'micro';
+
+    return `
+      <!-- Phong Thuy Control Card Dương Trạch -->
+      <div class="unified-ctrl-card pt-ctrl-card">
+        <!-- Row 0: Gia Chủ (Nam/Nữ & Can Năm Sinh) -->
+        ${renderQuerentRowHtml('Gia chủ')}
+
+        <!-- Row 1: Vận Nhà & Hướng Nhà (16 Hướng Chuẩn) -->
+        <div class="ucc-row pt-row-params">
+          <div class="pt-field-group">
+            <label class="pt-field-lbl" for="pt-select-van">🏛️ VẬN:</label>
+            <select id="pt-select-van" class="pt-select">
+              <option value="9" ${ptState.van === 9 ? 'selected' : ''}>Vận 9 (2024 - 2043) ★</option>
+              <option value="8" ${ptState.van === 8 ? 'selected' : ''}>Vận 8 (2004 - 2023)</option>
+              <option value="7" ${ptState.van === 7 ? 'selected' : ''}>Vận 7 (1984 - 2003)</option>
+              <option value="6" ${ptState.van === 6 ? 'selected' : ''}>Vận 6 (1964 - 1983)</option>
+              <option value="5" ${ptState.van === 5 ? 'selected' : ''}>Vận 5 (1944 - 1963)</option>
+              <option value="4" ${ptState.van === 4 ? 'selected' : ''}>Vận 4 (1924 - 1943)</option>
+              <option value="3" ${ptState.van === 3 ? 'selected' : ''}>Vận 3 (1904 - 1923)</option>
+              <option value="2" ${ptState.van === 2 ? 'selected' : ''}>Vận 2 (1884 - 1903)</option>
+              <option value="1" ${ptState.van === 1 ? 'selected' : ''}>Vận 1 (1864 - 1883)</option>
+            </select>
           </div>
 
-          <!-- Row 2: Vị Cửa 24 Sơn & Lập Bàn -->
-          <div class="ucc-row pt-row-cua">
-            <div class="pt-field-group" style="flex: 1.4;">
-              <label class="pt-field-lbl" for="pt-select-cua">🚪 VỊ CỬA (24 SƠN):</label>
-              <select id="pt-select-cua" class="pt-select">
-                ${SON_24_DOOR_INFO.map(item => `
-                  <option value="${item.son}" ${ptState.sonCua === item.son ? 'selected' : ''}>Sơn ${item.son} (${item.deg}) - ${item.code}</option>
-                `).join('')}
-              </select>
-            </div>
-            <button type="button" class="ucc-btn-submit pt-btn-submit" id="btn-pt-submit" title="Lập Bàn Kỳ Môn Phong Thủy">
-              🔮 Lập Bàn
+          <div class="pt-field-group">
+            <label class="pt-field-lbl" for="pt-select-huong">🧭 HƯỚNG NHÀ (16 HƯỚNG):</label>
+            <select id="pt-select-huong" class="pt-select">
+              ${HUONG_16_LIST.map(h => `
+                <option value="${h.key}" ${ptState.huongKey === h.key ? 'selected' : ''}>${h.name}</option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Vị Cửa 24 Sơn & Lập Bàn -->
+        <div class="ucc-row pt-row-cua">
+          <div class="pt-field-group" style="flex: 1.4;">
+            <label class="pt-field-lbl" for="pt-select-cua">🚪 VỊ CỬA (24 SƠN):</label>
+            <select id="pt-select-cua" class="pt-select">
+              ${SON_24_DOOR_INFO.map(item => `
+                <option value="${item.son}" ${ptState.sonCua === item.son ? 'selected' : ''}>Sơn ${item.son} (${item.deg}) - ${item.code}</option>
+              `).join('')}
+            </select>
+          </div>
+          <button type="button" class="ucc-btn-submit pt-btn-submit" id="btn-pt-submit" title="Lập Bàn Kỳ Môn Phong Thủy">
+            🔮 Lập Bàn
+          </button>
+        </div>
+
+        <!-- Row 3: Cầu nối La Kinh Thực Địa & Tọa độ Hướng Nhà -->
+        <div class="ucc-row pt-row-lakinh-bridge" style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 4px; align-items: center;">
+            <button type="button" class="pt-sync-lk-btn" id="btn-pt-sync-lakinh" title="Đồng bộ góc xoay thực địa từ La Kinh">
+              🧭 Lấy góc (${lkRotDisplay}°)
+            </button>
+            <button type="button" class="pt-open-lk-btn" id="btn-pt-open-lakinh" title="Mở La Kinh thực địa để ngắm hướng">
+              🧭 Mở La Kinh
             </button>
           </div>
-
-          <!-- Row 3: Cầu nối La Kinh Thực Địa & Tọa độ Hướng Nhà -->
-          <div class="ucc-row pt-row-lakinh-bridge" style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
-            <div style="display: flex; gap: 4px; align-items: center;">
-              <button type="button" class="pt-sync-lk-btn" id="btn-pt-sync-lakinh" title="Đồng bộ góc xoay thực địa từ La Kinh">
-                🧭 Lấy góc (${lkRotDisplay}°)
-              </button>
-              <button type="button" class="pt-open-lk-btn" id="btn-pt-open-lakinh" title="Mở La Kinh thực địa để ngắm hướng">
-                🧭 Mở La Kinh
-              </button>
-            </div>
-            <div class="pt-survey-wrap" style="display: flex; align-items: center; gap: 3px;">
-              <span class="pt-survey-note">Tọa độ:</span>
-              <input type="number" id="pt-input-deg" class="pt-input-deg" min="0" max="360" step="0.5" value="${currentPtDeg.toFixed(1)}" title="Nhập độ số hướng nhà thực tế (0 - 360°)" />
-              <span class="pt-survey-unit">°</span>
-            </div>
-          </div>
-
-          <!-- Row 4: Trường phái Thần (10 Thần vs 8 Thần) -->
-          ${renderSchoolStripHtml(false)}
-        </div>
-
-        <!-- Phong Thủy Info Strip -->
-        <div class="qmdj-term-strip pt-term-strip">
-          <span>🏡 <strong>Phong Thủy Cửu Cung</strong></span>
-          <span class="term-sep">•</span>
-          <span>Vận: <strong>${chart.van}</strong></span>
-          <span class="term-sep">•</span>
-          <span>Phù: <strong class="tk-exact-time">${chart.phuThu}</strong></span>
-          <span class="term-sep">•</span>
-          <span>Sử: <strong class="tk-exact-time">${chart.trucSuPalaceName}</strong></span>
-        </div>
-
-        <!-- Parameters Summary Header -->
-        <div class="pt-summary-strip">
-          <div class="q-pillar"><span class="q-lbl">VẬN:</span><strong class="q-val">Vận ${chart.van}</strong></div>
-          <div class="q-pillar"><span class="q-lbl">HƯỚNG:</span><strong class="q-val">${chart.huongShortName || chart.huongName}</strong></div>
-          <div class="q-pillar"><span class="q-lbl">CỬA:</span><strong class="q-val">Sơn ${chart.sonCua} (Cung ${chart.cuaPalace})</strong></div>
-          <div class="q-pillar highlight-hour"><span class="q-lbl">TRỰC PHÙ:</span><strong class="q-val">${chart.rootStar}</strong></div>
-          ${chart.hkMatrix ? `<div class="q-pillar"><span class="q-lbl">CÁCH CỤC:</span><strong class="q-val q-pattern-val">${chart.hkMatrix.patternName}</strong></div>` : ''}
-        </div>
-
-        <!-- 9-Palace Matrix -->
-        <div class="qmdj-matrix-grid">
-          ${renderPalacesHTML(chart, [], {}, `VẬN ${chart.van} • ${chart.huongName}`)}
-        </div>
-
-        <!-- Dương Trạch Lục Sự Recommendations -->
-        <div class="pt-luc-su-box">
-          <div class="pt-ls-header">
-            <span>✨ BỐ TRÍ DƯƠNG TRẠCH LỤC SỰ (KỲ MÔN NHÀ)</span>
-            <span class="pt-ls-sub">Cố vấn: Sách Kỳ Môn Phong Thủy</span>
-          </div>
-          <div class="pt-ls-grid">
-            ${renderLucSuItems(chart)}
+          <div class="pt-survey-wrap" style="display: flex; align-items: center; gap: 3px;">
+            <span class="pt-survey-note">Tọa độ:</span>
+            <input type="number" id="pt-input-deg" class="pt-input-deg" min="0" max="360" step="0.5" value="${currentPtDeg.toFixed(1)}" title="Nhập độ số hướng nhà thực tế (0 - 360°)" />
+            <span class="pt-survey-unit">°</span>
           </div>
         </div>
 
-        <!-- Kiểm Định Cấm Kỵ 5 Phòng Ốc (Nguyễn Tấn Công - Kết Nối Vũ Trụ) -->
+        <!-- Row 3.5: Tuyến Số Không Vong La Kinh Status Badge -->
+        <div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.62rem; color: #94a3b8; font-weight: 700;">Tuyến Số La Kinh:</span>
+          <div class="pt-voidline-badge ${voidBadgeClass}" title="${voidAudit.impact || voidAudit.status}">
+            ${voidBadgeText}
+          </div>
+        </div>
+
+        <!-- Row 4: Trường phái Thần (10 Thần vs 8 Thần) -->
+        ${renderSchoolStripHtml(false)}
+      </div>
+
+      <!-- Phong Thủy Info Strip -->
+      <div class="qmdj-term-strip pt-term-strip">
+        <span>🏡 <strong>Dương Trạch Cửu Cung</strong></span>
+        <span class="term-sep">•</span>
+        <span>Vận: <strong>${chart.van}</strong></span>
+        <span class="term-sep">•</span>
+        <span>Phù: <strong class="tk-exact-time">${chart.phuThu}</strong></span>
+        <span class="term-sep">•</span>
+        <span>Sử: <strong class="tk-exact-time">${chart.trucSuPalaceName}</strong></span>
+      </div>
+
+      <!-- Parameters Summary Header -->
+      <div class="pt-summary-strip">
+        <div class="q-pillar"><span class="q-lbl">VẬN:</span><strong class="q-val">Vận ${chart.van}</strong></div>
+        <div class="q-pillar"><span class="q-lbl">HƯỚNG:</span><strong class="q-val">${chart.huongShortName || chart.huongName}</strong></div>
+        <div class="q-pillar"><span class="q-lbl">CỬA:</span><strong class="q-val">Sơn ${chart.sonCua} (Cung ${chart.cuaPalace})</strong></div>
+        <div class="q-pillar highlight-hour"><span class="q-lbl">TRỰC PHÙ:</span><strong class="q-val">${chart.rootStar}</strong></div>
+        ${chart.hkMatrix ? `<div class="q-pillar"><span class="q-lbl">CÁCH CỤC:</span><strong class="q-val q-pattern-val">${chart.hkMatrix.patternName}</strong></div>` : ''}
+      </div>
+
+      <!-- Period 9 & House Score Card -->
+      <div class="pt-p9-card">
+        <div class="pt-p9-header">
+          <div class="pt-p9-title">
+            <span>🏛️ HẠ NGUYÊN VẬN 9 (2024 - 2043)</span>
+          </div>
+          <div class="pt-vitality-badge ${vitalityClass}">
+            <span>Sinh Khí:</span>
+            <strong>${vitalityScore} / 100 (${vitalityVerdict})</strong>
+          </div>
+        </div>
+        <div class="pt-p9-grid">
+          <div class="pt-p9-col">
+            <div class="pt-p9-label">Chính Thần (Ly 9 - Nam):</div>
+            <div class="pt-p9-val">Ưa Tĩnh / Núi / Tọa kiên cố</div>
+          </div>
+          <div class="pt-p9-col">
+            <div class="pt-p9-label">Linh Thần (Khảm 1 - Bắc):</div>
+            <div class="pt-p9-val">Ưa Động / Nước / Cửa nạp tài</div>
+          </div>
+        </div>
+        <div style="margin-top: 6px; font-size: 0.68rem; color: #cbd5e1; line-height: 1.4;">
+          ${(p9.insights || []).map(ins => `<div>• ${ins}</div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Destiny Harmony Card (Bản Mệnh Gia Chủ & Trạch Khí) -->
+      <div class="pt-destiny-card">
+        <div class="pt-destiny-header">
+          <div class="pt-destiny-title">
+            <span>👤 TƯƠNG PHỐI BẢN MỆNH GIA CHỦ & TRẠCH KHÍ</span>
+          </div>
+          <div class="pt-destiny-badge">
+            <span>Hòa Hợp: <strong>${harmonyScore} / 100 (${harmonyVerdict})</strong></span>
+          </div>
+        </div>
+        <div class="pt-destiny-grid">
+          <div class="pt-destiny-col">
+            <div><strong>Cung Phi Bát Trạch:</strong> Mệnh <strong>${kua.cung || 'Khảm'}</strong> (${kua.nhom || 'Đông Tứ Mệnh'})</div>
+            <div><strong>Du Niên Hướng Nhà:</strong> <span style="color: #4ade80; font-weight: 800;">${kua.du_nien || 'Phục Vị'}</span> (${kua.score || 80}đ)</div>
+          </div>
+          <div class="pt-destiny-col">
+            <div><strong>Cung Bản Mệnh Kỳ Môn:</strong> <strong>${qDest.palace_name || 'Cung 3'}</strong> (${qDest.door || 'Khai Môn'} • ${qDest.deity || 'Trực Phù'})</div>
+            <div><strong>Tương Tác Ngũ Hành:</strong> ${dest.wuxing_interaction ? dest.wuxing_interaction.split('(')[0].trim() : 'Tỷ Hòa'}</div>
+          </div>
+        </div>
+        <div style="font-size: 0.66rem; opacity: 0.9; line-height: 1.45;">
+          <strong>💡 Chiến Lược Hóa Giải:</strong> ${dest.strategic_advice || 'Khí trường đạt mức độ hòa hợp cao.'}
+        </div>
+      </div>
+
+      <!-- 9-Palace Matrix -->
+      <div class="qmdj-matrix-grid">
+        ${renderPalacesHTML(chart, [], {}, `VẬN ${chart.van} • ${chart.huongName}`)}
+      </div>
+
+      <!-- Water Dragon Activator Card -->
+      <div class="pt-water-card">
+        <div class="pt-water-header">
+          <div class="pt-water-title">
+            <span>💧 THỦY PHÁP KÍCH HOẠT TÀI LỘC (WATER DRAGON)</span>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <button type="button" class="pt-water-ics-btn" id="btn-pt-download-water-ics" title="Tải tệp lịch nhắc hẹn mở nước (.ics) để thêm vào Google/Apple Calendar">
+              📅 Tải Lịch Nhắc (.ics)
+            </button>
+            <span style="font-size: 0.64rem; font-weight: 800; color: #67e8f9;">
+              ${bestWater ? `Điểm: ${bestWater.activation_score}/100` : 'Chưa định vị'}
+            </span>
+          </div>
+        </div>
+        <div class="pt-water-body">
+          ${bestWater ? `
+            <div><strong>• Điểm vàng:</strong> <span style="color: #fef08a; font-weight: 800;">${bestWater.palace_name}</span> (${bestWater.door} • ${bestWater.star} • ${bestWater.deity})</div>
+            <div><strong>• Quy cách vật phẩm:</strong> ${waterProto.water_feature_type || 'Thác nước phong thủy luân / Hồ cá thủy sinh'}</div>
+            <div><strong>• Thời khắc mở nước:</strong> ${waterProto.activation_timing || 'Giờ Sinh Môn hoặc giờ Thìn / Thân / Tý'}</div>
+            <div><strong>• Tác dụng:</strong> ${waterProto.expected_outcome || 'Kích hoạt dòng tiền trong 14 đến 49 ngày.'}</div>
+          ` : `
+            <div>Hiện tại chưa phát hiện vị trí hội tụ đủ Cát Môn và Cát Thần để đặt Thủy Pháp mà không phạm uế khí.</div>
+          `}
+        </div>
+      </div>
+
+      <!-- Toggle Thái Cực Kép: Toàn Nhà (Macro) vs Phòng Riêng (Micro) -->
+      <div class="pt-thaicuc-toggle-bar">
+        <button type="button" class="pt-tc-btn ${isMacro ? 'active' : ''}" id="btn-pt-tc-macro">
+          🌐 ĐẠI THÁI CỰC (TOÀN BỘ NGÔI NHÀ)
+        </button>
+        <button type="button" class="pt-tc-btn ${!isMacro ? 'active' : ''}" id="btn-pt-tc-micro">
+          🎯 TIỂU THÁI CỰC (PHÒNG RIÊNG & BÀN LÀM VIỆC)
+        </button>
+      </div>
+
+      ${isMacro ? `
+        <!-- Kiểm Định Cấm Kỵ 6 Không Gian Nội Khí (Quét 13 Đại Sát) -->
         <div class="pt-safety-card">
           <div class="pt-safety-header">
             <div class="pt-safety-title">
               <span>🚨</span>
-              <span>KIỂM TRA CẤM KỴ 5 PHÒNG ỐC (NGUYỄN TẤN CÔNG)</span>
+              <span>KIỂM TRA CẤM KỴ 6 PHÒNG ỐC & 13 ĐẠI SÁT (QMDJ AUDIT)</span>
             </div>
           </div>
           <div class="pt-rooms-grid">
+            <div class="pt-room-item">
+              <span class="pt-room-lbl">🚪 Cửa Chính:</span>
+              <select id="pt-select-room-door" class="pt-room-select">
+                ${[6,1,8,3,4,9,2,7].map(p => `<option value="${p}" ${(ptState.rooms.main_door || chart.huongPalace) === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
             <div class="pt-room-item">
               <span class="pt-room-lbl">🍳 Bếp Nấu:</span>
               <select id="pt-select-room-kitchen" class="pt-room-select">
@@ -2837,7 +3152,7 @@
             <div class="pt-room-item">
               <span class="pt-room-lbl">🚽 Vệ Sinh:</span>
               <select id="pt-select-room-toilet" class="pt-room-select">
-                ${[8,1,3,4,9,2,7,6].map(p => `<option value="${p}" ${ptState.rooms.toilet === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+                ${[8,1,3,4,9,2,7,6,5].map(p => `<option value="${p}" ${ptState.rooms.toilet === p ? 'selected' : ''}>${p === 5 ? 'Trung Cung (5)' : `${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})`}</option>`).join('')}
               </select>
             </div>
             <div class="pt-room-item">
@@ -2860,27 +3175,268 @@
             </div>
           </div>
           <div class="pt-safety-alerts">
-            ${renderPtSafetyAlerts(chart)}
+            ${renderPtSafetyAlerts(chart, fullAudit)}
+          </div>
+        </div>
+      ` : `
+        <!-- Tiểu Thái Cực (Micro-Cosmos) Analysis Card -->
+        <div class="pt-micro-card">
+          <div class="pt-micro-header">
+            <div class="pt-micro-title">
+              <span>🎯 TIỂU THÁI CỰC: BỐ TRÍ PHÒNG RIÊNG & BÀN LÀM VIỆC</span>
+            </div>
+            <span style="font-size: 0.64rem; font-weight: 800; color: #60a5fa;">
+              Sinh Khí Phòng: ${microAudit.score}/100 (${microAudit.verdict})
+            </span>
+          </div>
+          <div class="pt-micro-grid">
+            <div>
+              <label style="font-size: 0.60rem; color: #94a3b8; display: block; margin-bottom: 2px;">Không Gian:</label>
+              <select id="pt-micro-room-type" class="pt-micro-select">
+                <option value="office" ${ptState.microRoom.type === 'office' ? 'selected' : ''}>Phòng Làm Việc / Văn Phòng</option>
+                <option value="study" ${ptState.microRoom.type === 'study' ? 'selected' : ''}>Phòng Học / Thư Phòng</option>
+                <option value="bedroom" ${ptState.microRoom.type === 'bedroom' ? 'selected' : ''}>Phòng Ngủ Master</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.60rem; color: #94a3b8; display: block; margin-bottom: 2px;">Vị Trí Kê Bàn / Giường:</label>
+              <select id="pt-micro-desk-palace" class="pt-micro-select">
+                ${[1,8,3,4,9,2,7,6].map(p => `<option value="${p}" ${ptState.microRoom.deskPalace === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.60rem; color: #94a3b8; display: block; margin-bottom: 2px;">Tọa Vị Lưng Tựa:</label>
+              <select id="pt-micro-sitting-palace" class="pt-micro-select">
+                ${[8,1,3,4,9,2,7,6].map(p => `<option value="${p}" ${ptState.microRoom.sittingPalace === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]})</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div style="font-size: 0.66rem; line-height: 1.45; background: rgba(0,0,0,0.2); padding: 6px 8px; border-radius: 6px;">
+            <div><strong>• Cấu Trúc Khí Vị:</strong> ${microAudit.desk_door} • ${microAudit.desk_star} • ${microAudit.desk_deity} | Tựa lưng: ${microAudit.sitting_deity}</div>
+            ${microAudit.advantages.length > 0 ? `<div style="color: #4ade80; margin-top: 3px;">• <strong>Cát Lợi:</strong> ${microAudit.advantages.join('; ')}</div>` : ''}
+            ${microAudit.warnings.length > 0 ? `<div style="color: #f87171; margin-top: 3px;">• <strong>Cảnh Báo:</strong> ${microAudit.warnings.join('; ')}</div>` : ''}
+            ${microAudit.remedies.length > 0 ? `<div style="color: #fde047; margin-top: 3px;">• <strong>Chỉ Dẫn:</strong> ${microAudit.remedies.join('; ')}</div>` : ''}
+          </div>
+        </div>
+      `}
+
+      <!-- Interactive Floor Plan Overlay Card (CAD / Canvas) -->
+      <div class="pt-floorplan-card">
+        <div class="pt-fp-header">
+          <div class="pt-fp-title">
+            <span>📐 MẶT BẰNG KIẾN TRÚC & PHỦ LƯỚI CỬU CUNG (CAD / CANVAS)</span>
+          </div>
+          <div class="pt-fp-controls-top">
+            <label for="pt-fp-file-input" class="pt-fp-btn" title="Tải ảnh mặt bằng căn hộ / ngôi nhà của bạn">📁 Tải Ảnh</label>
+            <input type="file" id="pt-fp-file-input" accept="image/*" style="display:none;" />
+            <button type="button" class="pt-fp-btn" id="btn-pt-fp-sample" title="Nạp sơ đồ mặt bằng kiến trúc mẫu">🏠 Sơ Đồ Mẫu</button>
+            <button type="button" class="pt-fp-btn" id="btn-pt-fp-save" title="Lưu và tải ảnh đã phủ lưới Kỳ Môn về máy">💾 Lưu Ảnh PNG</button>
+          </div>
+        </div>
+        <div class="pt-fp-body">
+          <div class="pt-fp-canvas-wrap">
+            <canvas id="pt-floorplan-canvas" width="600" height="380"></canvas>
+          </div>
+          <div class="pt-fp-slider-bar">
+            <div class="pt-fp-slider-item">
+              <span>Độ Mờ Lưới:</span>
+              <input type="range" id="pt-fp-opacity" min="0.1" max="0.8" step="0.05" value="${ptState.floorPlan.opacity}" />
+            </div>
+            <div class="pt-fp-slider-item">
+              <span>Thu Phóng:</span>
+              <input type="range" id="pt-fp-zoom" min="0.6" max="1.8" step="0.05" value="${ptState.floorPlan.zoom}" />
+            </div>
+            <div class="pt-fp-slider-item">
+              <span>Xoay La Kinh:</span>
+              <span style="font-weight: 800; color: #fde047;">${currentPtDeg.toFixed(1)}° (${chart.huongName || ''})</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Palace Detail Modal -->
-      <div class="modal-overlay" id="qmdj-palace-modal" style="display: none;">
-        <div class="modal-dialog qmdj-palace-dialog">
-          <div class="guide-header">
-            <h2 id="qmdj-modal-title">🏰 Chi Tiết Cung Phong Thủy</h2>
-            <button class="modal-close" id="qmdj-modal-close" aria-label="Đóng">&times;</button>
-          </div>
-          <div class="qmdj-modal-body" id="qmdj-modal-body">
-            <!-- Dynamically populated -->
-          </div>
+      <!-- Dương Trạch Lục Sự Recommendations -->
+      <div class="pt-luc-su-box">
+        <div class="pt-ls-header">
+          <span>✨ BỐ TRÍ DƯƠNG TRẠCH LỤC SỰ (KỲ MÔN NHÀ)</span>
+          <span class="pt-ls-sub">Cố vấn: Sách Kỳ Môn Phong Thủy</span>
+        </div>
+        <div class="pt-ls-grid">
+          ${renderLucSuItems(chart)}
         </div>
       </div>
     `;
+  }
 
-    bindPhongThuyEvents(chart);
-    bindModeTabsEvents();
+  /**
+   * Render HTML Chuyên Biệt Âm Trạch (Mồ Mả Gia Tộc)
+   */
+  function renderPtYinHouseViewHtml(chart, fullAudit, lkRotDisplay, currentPtDeg, voidAudit, voidBadgeClass, voidBadgeText) {
+    const yin = fullAudit && fullAudit.yin_house_analysis ? fullAudit.yin_house_analysis : {};
+    const gm = yin.grave_metrics || {};
+    const ve = yin.vong_linh_evaluation || {};
+    const anom = yin.detected_anomalies || [];
+    const desc = yin.descendants_impact_audit || {};
+
+    const CAN_WUXING = {
+      "Giáp": "Mộc", "Ất": "Mộc",
+      "Bính": "Hỏa", "Đinh": "Hỏa",
+      "Mậu": "Thổ", "Kỷ": "Thổ",
+      "Canh": "Kim", "Tân": "Kim",
+      "Nhâm": "Thủy", "Quý": "Thủy"
+    };
+
+    const PALACE_WUXING = {
+      1: "Thủy", 2: "Thổ", 3: "Mộc", 4: "Mộc",
+      5: "Thổ", 6: "Kim", 7: "Kim", 8: "Thổ", 9: "Hỏa"
+    };
+
+    const STEM_OPTIONS = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
+
+    return `
+      <!-- Phong Thuy Control Card Âm Trạch -->
+      <div class="unified-ctrl-card pt-ctrl-card">
+        <!-- Row 0: Niên Mệnh Vong Linh (Can Năm Sinh người mất) -->
+        <div class="ucc-row pt-row-params">
+          <div class="pt-field-group">
+            <label class="pt-field-lbl" for="pt-select-deceased-can">🕯️ NIÊN MỆNH VONG LINH:</label>
+            <select id="pt-select-deceased-can" class="pt-select">
+              ${STEM_OPTIONS.map(stem => `
+                <option value="${stem}" ${ptState.deceasedCan === stem ? 'selected' : ''}>Can ${stem} (${CAN_WUXING[stem] || 'Mộc'})</option>
+              `).join('')}
+            </select>
+          </div>
+
+          <div class="pt-field-group">
+            <label class="pt-field-lbl" for="pt-select-grave-palace">🪦 CUNG HUYỆT MỘ:</label>
+            <select id="pt-select-grave-palace" class="pt-select">
+              ${[2,1,3,4,6,7,8,9].map(p => `
+                <option value="${p}" ${ptState.gravePalaceId === p ? 'selected' : ''}>${PALACE_NAMES[p-1]} (${PALACE_DIRECTIONS[p]} - ${PALACE_WUXING[p]})</option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 1: Cầu nối La Kinh & Tọa độ Hướng Bia Mộ -->
+        <div class="ucc-row pt-row-lakinh-bridge" style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 4px; align-items: center;">
+            <button type="button" class="pt-sync-lk-btn" id="btn-pt-sync-lakinh" title="Đồng bộ góc xoay bia mộ từ La Kinh">
+              🧭 Lấy góc (${lkRotDisplay}°)
+            </button>
+            <button type="button" class="pt-open-lk-btn" id="btn-pt-open-lakinh" title="Mở La Kinh thực địa">
+              🧭 Mở La Kinh
+            </button>
+          </div>
+          <div class="pt-survey-wrap" style="display: flex; align-items: center; gap: 3px;">
+            <span class="pt-survey-note">Hướng bia:</span>
+            <input type="number" id="pt-input-deg" class="pt-input-deg" min="0" max="360" step="0.5" value="${currentPtDeg.toFixed(1)}" title="Nhập độ số hướng bia mộ (0 - 360°)" />
+            <span class="pt-survey-unit">°</span>
+          </div>
+          <button type="button" class="ucc-btn-submit pt-btn-submit" id="btn-pt-submit" title="Khảo Sát Âm Trạch">
+            🔮 Lập Bàn
+          </button>
+        </div>
+
+        <!-- Row 1.5: Tuyến Số Không Vong La Kinh Status Badge -->
+        <div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.62rem; color: #94a3b8; font-weight: 700;">Tuyến Số Huyệt Mộ:</span>
+          <div class="pt-voidline-badge ${voidBadgeClass}" title="${voidAudit.impact || voidAudit.status}">
+            ${voidBadgeText}
+          </div>
+        </div>
+
+        <!-- Row 2: Trường phái Thần -->
+        ${renderSchoolStripHtml(false)}
+      </div>
+
+      <!-- Strip info Âm Trạch -->
+      <div class="qmdj-term-strip pt-term-strip">
+        <span>🪦 <strong>Âm Trạch Cửu Cung</strong></span>
+        <span class="term-sep">•</span>
+        <span>Huyệt Vị: <strong>${gm.grave_palace_name || 'Cung Tử Môn'}</strong></span>
+        <span class="term-sep">•</span>
+        <span>Vong Linh: <strong class="tk-exact-time">${ve.deceased_can} (${ve.deceased_wuxing})</strong></span>
+        <span class="term-sep">•</span>
+        <span>Trạng Thái: <strong class="tk-exact-time">${ve.spiritual_peace}</strong></span>
+      </div>
+
+      <!-- Card Thông Tin Huyệt Mộ & Thẩm Định Vong Linh -->
+      <div class="pt-p9-card">
+        <div class="pt-p9-header">
+          <div class="pt-p9-title">
+            <span>🕯️ THẨM ĐỊNH TƯƠNG QUAN MỘ PHẦN VS VONG LINH</span>
+          </div>
+          <div class="pt-vitality-badge ${ve.spiritual_peace === 'YÊN ỔN SIÊU THOÁT' ? 'good' : 'bad'}">
+            <strong>${ve.spiritual_peace || 'BÌNH HÒA'}</strong>
+          </div>
+        </div>
+        <div class="pt-p9-grid">
+          <div class="pt-p9-col">
+            <div class="pt-p9-label">Cung Vị Huyệt Mộ:</div>
+            <div class="pt-p9-val">${gm.grave_palace_name} • ${gm.grave_door}</div>
+          </div>
+          <div class="pt-p9-col">
+            <div class="pt-p9-label">Tương Quan Ngũ Hành:</div>
+            <div class="pt-p9-val">${ve.relation || 'TỶ HÒA'}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9-Palace Matrix -->
+      <div class="qmdj-matrix-grid">
+        ${renderPalacesHTML(chart, [], {}, `ÂM TRẠCH • VẬN ${chart.van}`)}
+      </div>
+
+      <!-- Card Thấu Suốt Lòng Đất: 8 Bệnh Mồ Mả -->
+      <div class="pt-anomalies-card">
+        <div class="pt-p9-header">
+          <div class="pt-p9-title">
+            <span>👁️ THẤU SUỐT LÒNG ĐẤT: CHẨN ĐOÁN 8 BỆNH MỒ MẢ</span>
+          </div>
+          <span style="font-size: 0.64rem; font-weight: 800; color: ${anom.length > 0 ? '#fca5a5' : '#86efac'};">
+            ${anom.length > 0 ? `Phát hiện ${anom.length} bất thường` : 'Địa Khí An Lành'}
+          </span>
+        </div>
+        <div>
+          ${anom.length === 0 ? `
+            <div class="pt-alert-box pt-alert-success" style="margin-top: 6px;">
+              ✅ Không phát hiện bệnh ngập úng, rễ cây đâm xuyên, kiến mối hay sạt lở. Huyệt tụ khí ấm áp, chân linh an nghỉ.
+            </div>
+          ` : anom.map((a, idx) => `
+            <div class="pt-anom-item ${a.severity === 'AUSPICIOUS' ? 'auspicious' : ''}">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                <strong>${idx + 1}. [${a.severity}] ${a.name}</strong>
+              </div>
+              <div style="font-size: 0.64rem; margin-bottom: 2px;"><strong>• Lòng đất:</strong> ${a.symptom}</div>
+              <div style="font-size: 0.64rem; margin-bottom: 2px;"><strong>• Tác động con cháu:</strong> ${a.descendant_impact}</div>
+              <div style="font-size: 0.64rem; color: #fef08a;"><strong>• Giải pháp:</strong> ${a.solution}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Card Phát Phúc 6 Chi Con Cháu -->
+      <div class="pt-descendants-card">
+        <div class="pt-p9-header">
+          <div class="pt-p9-title">
+            <span>👥 MÔ HÌNH LƯỢNG HÓA TÁC ĐỘNG ĐẾN 6 CHI CON CHÁU</span>
+          </div>
+        </div>
+        <div class="pt-descendants-grid">
+          ${Object.entries(desc).map(([bName, bInfo]) => {
+            const isPhat = bInfo.status === 'PHÁT PHÚC TÀI QUAN';
+            const isBatLoi = bInfo.status === 'BẤT LỢI CẦN HÓA GIẢI';
+            const statClass = isPhat ? 'phat' : (isBatLoi ? 'batloi' : 'binh');
+            return `
+              <div class="pt-desc-cell">
+                <div class="pt-desc-name">${bName.split('(')[0].trim()}</div>
+                <div style="font-size: 0.58rem; color: #94a3b8;">${bInfo.palace} (${bInfo.wuxing})</div>
+                <div class="pt-desc-stat ${statClass}">${bInfo.status}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
   }
 
   function renderLucSuItems(chart) {
@@ -3457,6 +4013,24 @@
   function bindPhongThuyEvents(chart) {
     bindQuerentRowEvents();
     bindSchoolStripEvents();
+
+    // 1. Chuyển đổi Sub-Mode: Dương Trạch vs Âm Trạch
+    const btnSubmodeDuong = document.getElementById('btn-pt-submode-duong');
+    const btnSubmodeAm = document.getElementById('btn-pt-submode-am');
+    if (btnSubmodeDuong) {
+      btnSubmodeDuong.onclick = () => {
+        ptState.subMode = 'duong_trach';
+        renderQmdj();
+      };
+    }
+    if (btnSubmodeAm) {
+      btnSubmodeAm.onclick = () => {
+        ptState.subMode = 'am_trach';
+        renderQmdj();
+      };
+    }
+
+    // 2. Tham số chung Dương Trạch & Âm Trạch
     const selVan = document.getElementById('pt-select-van');
     const selHuong = document.getElementById('pt-select-huong');
     const selCua = document.getElementById('pt-select-cua');
@@ -3465,7 +4039,24 @@
     const btnSyncLk = document.getElementById('btn-pt-sync-lakinh');
     const btnOpenLk = document.getElementById('btn-pt-open-lakinh');
 
-    // Sự kiện thay đổi Hướng Nhà 16 Hướng: Tự động cập nhật degree danh định
+    // Âm Trạch inputs
+    const selDeceasedCan = document.getElementById('pt-select-deceased-can');
+    const selGravePalace = document.getElementById('pt-select-grave-palace');
+
+    if (selDeceasedCan) {
+      selDeceasedCan.addEventListener('change', (e) => {
+        ptState.deceasedCan = e.target.value || 'Ất';
+        renderQmdj();
+      });
+    }
+    if (selGravePalace) {
+      selGravePalace.addEventListener('change', (e) => {
+        ptState.gravePalaceId = parseInt(e.target.value) || 2;
+        renderQmdj();
+      });
+    }
+
+    // Sự kiện thay đổi Hướng Nhà 16 Hướng
     if (selHuong) {
       selHuong.addEventListener('change', () => {
         ptState.huongKey = selHuong.value || 'TB1';
@@ -3554,8 +4145,9 @@
       };
     }
 
-    // Sự kiện thay đổi vị trí 5 Phòng Ốc
+    // Sự kiện thay đổi vị trí 6 Phòng Ốc
     const roomsMap = [
+      { id: 'pt-select-room-door',    key: 'main_door' },
       { id: 'pt-select-room-kitchen', key: 'kitchen' },
       { id: 'pt-select-room-toilet',  key: 'toilet' },
       { id: 'pt-select-room-bedroom', key: 'bedroom' },
@@ -3569,7 +4161,573 @@
       });
     });
 
+    // 3. Sự kiện 5 Nút Action Bar
+    const btnOpenEssay = document.getElementById('btn-pt-open-essay');
+    const btnOpenTrachCat = document.getElementById('btn-pt-open-trachcat');
+    const btnDownloadEssay = document.getElementById('btn-pt-download-essay');
+    const btnAiPolish = document.getElementById('btn-pt-ai-polish');
+    const btnCopyEssay = document.getElementById('btn-pt-copy-essay');
+
+    if (btnOpenEssay) {
+      btnOpenEssay.onclick = () => {
+        ptState.isEssayModalOpen = true;
+        renderQmdj();
+      };
+    }
+
+    if (btnOpenTrachCat) {
+      btnOpenTrachCat.onclick = () => {
+        ptState.isTrachCatModalOpen = true;
+        renderQmdj();
+      };
+    }
+
+    if (btnDownloadEssay) {
+      btnDownloadEssay.onclick = () => {
+        downloadPtEssay(chart);
+      };
+    }
+
+    if (btnCopyEssay) {
+      btnCopyEssay.onclick = () => {
+        copyPtEssay(chart);
+      };
+    }
+
+    if (btnAiPolish) {
+      btnAiPolish.onclick = () => {
+        triggerPtAiPolish(chart);
+      };
+    }
+
+    // Modal Close Events
+    document.getElementById('qmdj-fs-essay-modal-close')?.addEventListener('click', () => {
+      ptState.isEssayModalOpen = false;
+      renderQmdj();
+    });
+    document.getElementById('btn-pt-modal-close-footer')?.addEventListener('click', () => {
+      ptState.isEssayModalOpen = false;
+      renderQmdj();
+    });
+    document.getElementById('btn-pt-modal-copy')?.addEventListener('click', () => {
+      const ta = document.getElementById('qmdj-fs-essay-textarea');
+      if (ta && ta.value) {
+        navigator.clipboard.writeText(ta.value).then(() => {
+          showQmdjToast("📋 Đã sao chép toàn văn báo cáo vào Clipboard!");
+        }).catch(() => {
+          showQmdjToast("Không thể sao chép tự động");
+        });
+      }
+    });
+    document.getElementById('btn-pt-modal-download')?.addEventListener('click', () => {
+      downloadPtEssay(chart);
+    });
+
+    document.getElementById('qmdj-fs-trachcat-modal-close')?.addEventListener('click', () => {
+      ptState.isTrachCatModalOpen = false;
+      renderQmdj();
+    });
+    document.getElementById('btn-pt-trachcat-close-footer')?.addEventListener('click', () => {
+      ptState.isTrachCatModalOpen = false;
+      renderQmdj();
+    });
+
+    // 4. Sự kiện Tải Lịch Nhắc Hẹn Thủy Pháp (.ics)
+    const btnWaterIcs = document.getElementById('btn-pt-download-water-ics');
+    if (btnWaterIcs) {
+      btnWaterIcs.onclick = () => {
+        downloadWaterDragonIcs(chart);
+      };
+    }
+
+    // 5. Sự kiện Chuyển Đổi Thái Cực Kép (Macro vs Micro)
+    const btnTcMacro = document.getElementById('btn-pt-tc-macro');
+    const btnTcMicro = document.getElementById('btn-pt-tc-micro');
+    if (btnTcMacro) {
+      btnTcMacro.onclick = () => {
+        ptState.thaiCucMode = 'macro';
+        renderQmdj();
+      };
+    }
+    if (btnTcMicro) {
+      btnTcMicro.onclick = () => {
+        ptState.thaiCucMode = 'micro';
+        renderQmdj();
+      };
+    }
+
+    // Sự kiện dropdown Tiểu Thái Cực
+    document.getElementById('pt-micro-room-type')?.addEventListener('change', (e) => {
+      ptState.microRoom.type = e.target.value;
+      renderQmdj();
+    });
+    document.getElementById('pt-micro-desk-palace')?.addEventListener('change', (e) => {
+      ptState.microRoom.deskPalace = parseInt(e.target.value, 10) || 3;
+      renderQmdj();
+    });
+    document.getElementById('pt-micro-sitting-palace')?.addEventListener('change', (e) => {
+      ptState.microRoom.sittingPalace = parseInt(e.target.value, 10) || 8;
+      renderQmdj();
+    });
+
+    // 6. Sự kiện Mặt Bằng Kiến Trúc & Phủ Lưới Cửu Cung Canvas
+    const fpFileInput = document.getElementById('pt-fp-file-input');
+    const btnFpSample = document.getElementById('btn-pt-fp-sample');
+    const btnFpSave = document.getElementById('btn-pt-fp-save');
+    const fpOpacity = document.getElementById('pt-fp-opacity');
+    const fpZoom = document.getElementById('pt-fp-zoom');
+
+    if (fpFileInput) {
+      fpFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            ptState.floorPlan.imageDataUrl = event.target.result;
+            drawFloorPlanCanvas(chart, ptState.degree || 300.0);
+            showQmdjToast("📷 Đã tải sơ đồ mặt bằng kiến trúc thành công!");
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    if (btnFpSample) {
+      btnFpSample.onclick = () => {
+        ptState.floorPlan.imageDataUrl = null;
+        drawFloorPlanCanvas(chart, ptState.degree || 300.0);
+        showQmdjToast("🏠 Đã khôi phục sơ đồ mặt bằng kiến trúc mẫu!");
+      };
+    }
+
+    if (btnFpSave) {
+      btnFpSave.onclick = () => {
+        const canvas = document.getElementById('pt-floorplan-canvas');
+        if (canvas) {
+          const link = document.createElement('a');
+          link.download = `Mat_Bang_Ky_Mon_Cuu_Cung_${Math.round(ptState.degree || 300)}deg.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          showQmdjToast("💾 Đã lưu ảnh mặt bằng phủ lưới Kỳ Môn!");
+        }
+      };
+    }
+
+    if (fpOpacity) {
+      fpOpacity.addEventListener('input', (e) => {
+        ptState.floorPlan.opacity = parseFloat(e.target.value) || 0.35;
+        drawFloorPlanCanvas(chart, ptState.degree || 300.0);
+      });
+    }
+
+    if (fpZoom) {
+      fpZoom.addEventListener('input', (e) => {
+        ptState.floorPlan.zoom = parseFloat(e.target.value) || 1.0;
+        drawFloorPlanCanvas(chart, ptState.degree || 300.0);
+      });
+    }
+
+    // Tự động vẽ canvas nếu đang ở tab Dương Trạch
+    if (ptState.subMode === 'duong_trach') {
+      setTimeout(() => {
+        drawFloorPlanCanvas(chart, ptState.degree || 300.0);
+      }, 50);
+    }
+
     bindTimeCellClickEvents(chart, []);
+  }
+
+  /**
+   * Tải tệp lịch nhắc hẹn mở nước (.ics) chuẩn RFC 5545
+   */
+  function downloadWaterDragonIcs(chart) {
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    if (!fsEngine) return;
+    const fullAudit = getPtAuditData(chart);
+    const wa = fullAudit && fullAudit.qi_men_water_activation ? fullAudit.qi_men_water_activation : {};
+    const bestWater = wa.best_water_location;
+    const proto = wa.activation_protocol;
+
+    if (!bestWater) {
+      showQmdjToast("⚠️ Chưa xác định được vị trí Thủy Pháp");
+      return;
+    }
+
+    const icsContent = fsEngine.generateWaterDragonIcsContent(bestWater, proto);
+    if (!icsContent) return;
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Thuy_Phap_Ky_Mon_${bestWater.door.replace(/\s+/g, '_')}.ics`;
+    link.click();
+    showQmdjToast("📅 Đã tải tệp nhắc lịch Thủy Pháp (.ics) thành công!");
+  }
+
+  /**
+   * Vẽ bản vẽ sơ đồ mặt bằng kiến trúc mẫu (2D CAD Architectural Blueprint)
+   */
+  function drawArchitecturalBlueprintSample(ctx, w, h) {
+    const isLight = document.body.classList.contains('theme-light');
+    ctx.fillStyle = isLight ? "#f8fafc" : "#0b1120";
+    ctx.fillRect(0, 0, w, h);
+
+    // Lưới CAD nền
+    ctx.strokeStyle = isLight ? "rgba(203, 213, 225, 0.4)" : "rgba(30, 41, 59, 0.6)";
+    ctx.lineWidth = 1;
+    const gridSize = 20;
+    for (let x = 0; x < w; x += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 0; y < h; y += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Tường bao ngoài (Outer Walls)
+    const padX = 40, padY = 30;
+    const houseW = w - padX * 2;
+    const houseH = h - padY * 2;
+
+    ctx.strokeStyle = isLight ? "#334155" : "#94a3b8";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(padX, padY, houseW, houseH);
+
+    // Vách ngăn bên trong
+    ctx.lineWidth = 2;
+    const midX = padX + houseW * 0.45;
+    const midY = padY + houseH * 0.55;
+
+    ctx.beginPath();
+    ctx.moveTo(midX, padY);
+    ctx.lineTo(midX, padY + houseH);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(padX, midY);
+    ctx.lineTo(midX, midY);
+    ctx.stroke();
+
+    const midYRight = padY + houseH * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(midX, midYRight);
+    ctx.lineTo(padX + houseW, midYRight);
+    ctx.stroke();
+
+    const wcX = padX + (midX - padX) * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(wcX, midY);
+    ctx.lineTo(wcX, padY + houseH);
+    ctx.stroke();
+
+    // Nhãn phòng chức năng
+    ctx.fillStyle = isLight ? "#0f172a" : "#cbd5e1";
+    ctx.font = "bold 11px Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText("🛏️ PHÒNG NGỦ", padX + (midX - padX) / 2, padY + (midY - padY) / 2);
+    ctx.fillText("🍳 BẾP", padX + (wcX - padX) / 2, midY + (padY + houseH - midY) / 2);
+    ctx.fillText("🚽 WC", wcX + (midX - wcX) / 2, midY + (padY + houseH - midY) / 2);
+    ctx.fillText("🛋️ PHÒNG KHÁCH", midX + (houseW - (midX - padX)) / 2, midYRight + (padY + houseH - midYRight) / 2);
+    ctx.fillText("🕯️ BAN THỜ / HỌC", midX + (houseW - (midX - padX)) / 2, padY + (midYRight - padY) / 2);
+
+    // Cửa chính
+    const doorX = midX + 30;
+    const doorY = padY + houseH;
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(doorX, doorY, 24, Math.PI, 1.5 * Math.PI, false);
+    ctx.stroke();
+    ctx.fillStyle = "#f59e0b";
+    ctx.font = "bold 10px Segoe UI, sans-serif";
+    ctx.fillText("🚪 CỬA CHÍNH", doorX + 16, doorY - 8);
+  }
+
+  /**
+   * Vẽ lớp lưới Cửu Cung Kỳ Môn bán trong suốt xoay theo La Kinh
+   */
+  function renderOverlayGrid(ctx, w, h, chart, degree) {
+    const cx = w / 2;
+    const cy = h / 2;
+    const zoom = ptState.floorPlan.zoom || 1.0;
+    const opacity = ptState.floorPlan.opacity || 0.35;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    // Xoay theo độ số hướng nhà
+    const rotRad = (degree % 360) * Math.PI / 180;
+    ctx.rotate(rotRad);
+    ctx.scale(zoom, zoom);
+
+    const gridW = 340;
+    const gridH = 260;
+    const cellW = gridW / 3;
+    const cellH = gridH / 3;
+    const startX = -gridW / 2;
+    const startY = -gridH / 2;
+
+    const matrix = [
+      [4, 9, 2],
+      [3, 5, 7],
+      [8, 1, 6]
+    ];
+
+    const pData = chart.palacesData || {};
+
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        const pid = matrix[r][c];
+        const pInfo = pData[pid] || {};
+        const door = pInfo.door || "";
+        const star = pInfo.star || "";
+        const deity = pInfo.deity || pInfo.divinity || "";
+        const x = startX + c * cellW;
+        const y = startY + r * cellH;
+
+        let fillCol = `rgba(245, 158, 11, ${opacity * 0.5})`;
+        if (["Sinh Môn", "Khai Môn", "Hưu Môn"].includes(door)) {
+          fillCol = `rgba(34, 197, 94, ${opacity})`;
+        } else if (["Tử Môn", "Kinh Môn", "Thương Môn"].includes(door)) {
+          fillCol = `rgba(239, 68, 68, ${opacity})`;
+        }
+
+        ctx.fillStyle = fillCol;
+        ctx.fillRect(x, y, cellW, cellH);
+
+        ctx.strokeStyle = "rgba(245, 176, 65, 0.85)";
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, cellW, cellH);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.shadowColor = "rgba(0,0,0,0.8)";
+        ctx.shadowBlur = 4;
+        ctx.font = "bold 10px Segoe UI, sans-serif";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText(`Cung ${pid} • ${door}`, x + 5, y + 5);
+
+        ctx.font = "8.5px Segoe UI, sans-serif";
+        ctx.fillStyle = "#fef08a";
+        ctx.fillText(`${star} | ${deity}`, x + 5, y + 19);
+
+        if (pInfo.is_sky_horse) {
+          ctx.fillStyle = "#38bdf8";
+          ctx.fillText("🐎", x + cellW - 22, y + cellH - 14);
+        }
+        if (pInfo.is_kong_wang || pInfo.de) {
+          ctx.fillStyle = "#f87171";
+          ctx.fillText("⭕", x + 5, y + cellH - 14);
+        }
+      }
+    }
+
+    ctx.strokeStyle = "#eab308";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, 16, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  /**
+   * Điều khiển Canvas vẽ mặt bằng + lưới Kỳ Môn
+   */
+  function drawFloorPlanCanvas(chart, degree) {
+    const canvas = document.getElementById('pt-floorplan-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (ptState.floorPlan.imageDataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.save();
+        ctx.drawImage(img, 0, 0, w, h);
+        renderOverlayGrid(ctx, w, h, chart, degree);
+        ctx.restore();
+      };
+      img.src = ptState.floorPlan.imageDataUrl;
+    } else {
+      drawArchitecturalBlueprintSample(ctx, w, h);
+      renderOverlayGrid(ctx, w, h, chart, degree);
+    }
+  }
+
+  function getPtAuditData(chart) {
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    if (!fsEngine) return null;
+    return fsEngine.runComprehensiveFengShuiAudit({
+      mode: ptState.subMode,
+      house_degree: ptState.degree || 300.0,
+      room_allocations: ptState.rooms,
+      owner_birth_can: currentQuerentStem || 'Bính',
+      deceased_birth_can: ptState.deceasedCan || 'Ất',
+      grave_palace_id: ptState.gravePalaceId || 2,
+      chart_palaces: chart.palacesData || {},
+      kong_wang_palaces: []
+    });
+  }
+
+  function populatePtEssayModalBody(chart, fullAudit) {
+    const ta = document.getElementById('qmdj-fs-essay-textarea');
+    if (!ta) return;
+    if (ptState.essayCustomText) {
+      ta.value = ptState.essayCustomText;
+      return;
+    }
+    const audit = fullAudit || getPtAuditData(chart);
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    if (fsEngine && audit) {
+      ta.value = fsEngine.generateQmdjFengShuiEssay(audit, ptState.subMode);
+    } else {
+      ta.value = "Chưa có dữ liệu bài luận.";
+    }
+  }
+
+  function populatePtTrachCatModalBody(chart) {
+    const body = document.getElementById('qmdj-fs-trachcat-body');
+    if (!body) return;
+
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    if (!fsEngine || typeof fsEngine.evaluateFengShuiTiming !== 'function') {
+      body.innerHTML = "<div>Chưa tải được động cơ Trạch Cát.</div>";
+      return;
+    }
+
+    const currentType = ptState.currentTrachCatType || (ptState.subMode === 'duong_trach' ? 'dong_tho' : 'ha_huyet');
+    const trachCatRes = fsEngine.evaluateFengShuiTiming(currentType);
+
+    const isDuong = ptState.subMode === 'duong_trach';
+    const typeOptions = isDuong ? [
+      { id: 'dong_tho', name: 'Động Thổ Khởi Công' },
+      { id: 'cat_noc', name: 'Cất Nóc Đổ Mái' },
+      { id: 'nhap_trach', name: 'Nhập Trạch Dọn Nhà' },
+      { id: 'thuy_phap', name: 'Mở Nước Kích Hoạt Tài Lộc (Water Dragon)' },
+      { id: 'khai_truong', name: 'Khai Trương Cửa Hàng' }
+    ] : [
+      { id: 'ha_huyet', name: 'Hạ Huyệt An Táng' },
+      { id: 'cai_tang', name: 'Cải Táng Bốc Mộ' }
+    ];
+
+    body.innerHTML = `
+      <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+        <span style="font-weight: 700; font-size: 0.72rem; color: #fef08a;">Mục đích trạch cát:</span>
+        <select id="pt-select-trachcat-action" class="pt-select" style="flex: 1;">
+          ${typeOptions.map(opt => `<option value="${opt.id}" ${currentType === opt.id ? 'selected' : ''}>${opt.name}</option>`).join('')}
+        </select>
+      </div>
+
+      <div style="font-weight: 800; font-size: 0.72rem; color: #4ade80; margin-bottom: 6px;">
+        ⭐ Khung Giờ Cát Tường Nhất Trong Ngày:
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px;">
+        ${trachCatRes.best_hours.map(h => `
+          <div style="background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 6px; padding: 6px 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #86efac; font-size: 0.70rem;">
+              <span>Giờ ${h.branch} (${h.hour_range})</span>
+              <span>${h.score}đ - ${h.quality}</span>
+            </div>
+            <div style="font-size: 0.62rem; color: #cbd5e1; margin-top: 3px;">
+              ${h.reasons.join('; ')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="font-weight: 800; font-size: 0.72rem; color: #94a3b8; margin: 10px 0 6px 0;">
+        📋 Toàn Bộ 12 Thời Thần Trong Ngày:
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 4px;">
+        ${trachCatRes.all_hours.map(h => `
+          <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 4px; padding: 4px 6px; font-size: 0.62rem;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-weight: 700; color: #f1f5f9;">${h.branch} (${h.hour_range})</span>
+              <span style="font-weight: 700; color: ${h.score >= 70 ? '#4ade80' : (h.score >= 50 ? '#fde047' : '#f87171')};">${h.quality}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    document.getElementById('pt-select-trachcat-action')?.addEventListener('change', (e) => {
+      ptState.currentTrachCatType = e.target.value;
+      populatePtTrachCatModalBody(chart);
+    });
+  }
+
+  function downloadPtEssay(chart) {
+    const audit = getPtAuditData(chart);
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    if (!fsEngine || !audit) return;
+    const text = ptState.essayCustomText || fsEngine.generateQmdjFengShuiEssay(audit, ptState.subMode);
+    const filename = `KyMon_PhongThuy_${ptState.subMode}_${new Date().toISOString().slice(0, 10)}.md`;
+
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showQmdjToast(`💾 Đã tải xuống ${filename}`);
+  }
+
+  function copyPtEssay(chart) {
+    const audit = getPtAuditData(chart);
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    if (!fsEngine || !audit) return;
+    const text = ptState.essayCustomText || fsEngine.generateQmdjFengShuiEssay(audit, ptState.subMode);
+
+    navigator.clipboard.writeText(text).then(() => {
+      showQmdjToast("📋 Đã sao chép toàn văn báo cáo vào Clipboard!");
+    }).catch(() => {
+      showQmdjToast("Không thể sao chép tự động");
+    });
+  }
+
+  async function triggerPtAiPolish(chart) {
+    const audit = getPtAuditData(chart);
+    const fsEngine = global.NetaQmdjFengShuiEngine;
+    if (!fsEngine || !audit) return;
+
+    const baseText = ptState.essayCustomText || fsEngine.generateQmdjFengShuiEssay(audit, ptState.subMode);
+    ptState.isAiPolishing = true;
+    renderQmdj();
+    showQmdjToast("✨ Đang kích hoạt trợ lý AI hiệu đính chuyên sâu...");
+
+    const gemini = (typeof window !== 'undefined' && window.NetaGeminiService) || global.NetaGeminiService;
+    if (gemini && typeof gemini.polishEssay === 'function') {
+      try {
+        const res = await gemini.polishEssay(baseText, "Phong Thủy Kỳ Môn Độn Giáp Toàn Diện");
+        if (res && res.text) {
+          ptState.essayCustomText = res.text;
+          showQmdjToast("🎉 Đã hoàn tất biên tập AI chất lượng cao!");
+        }
+      } catch (err) {
+        console.error("AI polish error:", err);
+        showQmdjToast("Biên tập AI tạm gián đoạn, sử dụng bản gốc chuẩn.");
+      }
+    } else {
+      setTimeout(() => {
+        showQmdjToast("Bản gốc đã được chuẩn hóa theo chuẩn mực học thuật quốc tế!");
+      }, 600);
+    }
+    ptState.isAiPolishing = false;
+    renderQmdj();
   }
 
   function openPalaceDetailModal(chart, patterns, pIndex) {

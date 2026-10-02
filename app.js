@@ -1171,15 +1171,26 @@
   function applyTheme(theme, notify = true) {
     currentTheme = theme;
     localStorage.setItem('neta_theme', theme);
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (theme === 'light') {
       document.body.classList.add('theme-light');
-      if (themeIcon) themeIcon.textContent = '🌙';
-      if (btnTheme) btnTheme.title = 'Chuyển sang giao diện Tối';
+      document.body.classList.remove('theme-dark');
+      if (themeIcon) themeIcon.textContent = '☀️';
+      if (btnTheme) {
+        btnTheme.title = 'Giao diện Sáng (Chạm để chuyển sang Tối)';
+        btnTheme.setAttribute('aria-label', 'Chuyển sang giao diện Tối');
+      }
+      if (metaThemeColor) metaThemeColor.setAttribute('content', '#fbf7ee');
       if (notify) showToast('☀️ Đã chuyển sang giao diện Sáng');
     } else {
       document.body.classList.remove('theme-light');
-      if (themeIcon) themeIcon.textContent = '☀️';
-      if (btnTheme) btnTheme.title = 'Chuyển sang giao diện Sáng';
+      document.body.classList.add('theme-dark');
+      if (themeIcon) themeIcon.textContent = '🌙';
+      if (btnTheme) {
+        btnTheme.title = 'Giao diện Tối (Chạm để chuyển sang Sáng)';
+        btnTheme.setAttribute('aria-label', 'Chuyển sang giao diện Sáng');
+      }
+      if (metaThemeColor) metaThemeColor.setAttribute('content', '#1a0003');
       if (notify) showToast('🌙 Đã chuyển sang giao diện Tối');
     }
   }

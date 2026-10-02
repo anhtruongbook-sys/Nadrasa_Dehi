@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v14.0
-const CACHE_NAME = 'neta-poker-v14.0';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v14.2
+const CACHE_NAME = 'neta-poker-v14.2';
 
 const CORE_ASSETS = [
   './',
@@ -26,9 +26,14 @@ const CORE_ASSETS = [
   'engines/calendar_engine.js',
   'engines/smart_picker.js',
   'engines/qmdj_engine.js',
+  'engines/qmdj_fengshui.js',
   'engines/thai_at_engine.js',
+  'engines/thai_at_interpreter.js',
+  'engines/thai_at_fengshui.js',
   'modules/thai_at_view.js',
   'engines/luc_nham_engine.js',
+  'engines/luc_nham_interpreter.js',
+  'engines/luc_nham_fengshui.js',
   'modules/luc_nham_view.js',
   'engines/bazi_engine.js',
   'engines/tuvi_engine.js',

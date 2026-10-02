@@ -1376,6 +1376,12 @@ body {
    ============================================================ */
 body.theme-light {
   --text-color: #2c3e50;
+  --text-primary: #1a0e05;
+  --text-secondary: #4a3525;
+  --text-muted: #786450;
+  --bg-primary: #fbf7ee;
+  --bg-secondary: #f4ede1;
+  --bg-card: rgba(255, 253, 249, 0.96);
   background: radial-gradient(circle at 50% 20%, #fdfbf7 0%, #f4ede1 55%, #e6d8c5 100%);
   color: #1a0e05;
 }
@@ -18452,3 +18458,883 @@ body.theme-light .qmdj-toast {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+
+/* ==============================================================================
+   KỲ MÔN ĐỘN GIÁP PHONG THỦY TOÀN DIỆN (DƯƠNG TRẠCH & ÂM TRẠCH) - STYLES
+   ============================================================================== */
+
+/* Sub-mode Toggle Bar */
+.pt-submode-toggle-bar {
+  display: flex;
+  width: 100%;
+  gap: 6px;
+  margin-bottom: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 176, 65, 0.2);
+}
+body.theme-light .pt-submode-toggle-bar {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.pt-submode-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.pt-submode-btn:hover {
+  color: #f7dc6f;
+  background: rgba(245, 176, 65, 0.1);
+}
+.pt-submode-btn.active {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.3), rgba(180, 83, 9, 0.5));
+  border-color: #f59e0b;
+  color: #fef08a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+body.theme-light .pt-submode-btn {
+  color: #64748b;
+}
+body.theme-light .pt-submode-btn:hover {
+  color: #b45309;
+  background: rgba(245, 176, 65, 0.15);
+}
+body.theme-light .pt-submode-btn.active {
+  background: #fff;
+  border-color: #d97706;
+  color: #b45309;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Void Line Badge */
+.pt-voidline-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+  transition: all 0.2s ease;
+}
+.pt-voidline-badge.void-safe {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+}
+.pt-voidline-badge.void-warn {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fcd34d;
+}
+.pt-voidline-badge.void-crit {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
+  animation: pulseCrit 2s infinite ease-in-out;
+}
+@keyframes pulseCrit {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 8px 2px rgba(239, 68, 68, 0.6); }
+}
+body.theme-light .pt-voidline-badge.void-safe {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+}
+body.theme-light .pt-voidline-badge.void-warn {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #b45309;
+}
+body.theme-light .pt-voidline-badge.void-crit {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+/* Period 9 & House Score Card */
+.pt-p9-card {
+  background: linear-gradient(135deg, rgba(30, 20, 10, 0.7), rgba(20, 15, 30, 0.8));
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+body.theme-light .pt-p9-card {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+.pt-p9-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.2);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+body.theme-light .pt-p9-header {
+  border-bottom-color: #e2e8f0;
+}
+.pt-p9-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #fef08a;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+body.theme-light .pt-p9-title {
+  color: #b45309;
+}
+.pt-vitality-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.pt-vitality-badge.good {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid #22c55e;
+  color: #86efac;
+}
+.pt-vitality-badge.mid {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid #f59e0b;
+  color: #fde047;
+}
+.pt-vitality-badge.bad {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+}
+body.theme-light .pt-vitality-badge.good {
+  background: #dcfce7;
+  color: #166534;
+}
+body.theme-light .pt-vitality-badge.mid {
+  background: #fef3c7;
+  color: #92400e;
+}
+body.theme-light .pt-vitality-badge.bad {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.pt-p9-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 6px;
+}
+@media (max-width: 600px) {
+  .pt-p9-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pt-p9-col {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+body.theme-light .pt-p9-col {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+.pt-p9-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+body.theme-light .pt-p9-label {
+  color: #64748b;
+}
+.pt-p9-val {
+  font-size: 0.70rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+body.theme-light .pt-p9-val {
+  color: #1e293b;
+}
+
+/* Water Dragon Activator Card */
+.pt-water-card {
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.25), rgba(8, 47, 73, 0.4));
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+body.theme-light .pt-water-card {
+  background: #ecfeff;
+  border-color: #a5f3fc;
+}
+.pt-water-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.25);
+  padding-bottom: 5px;
+  margin-bottom: 6px;
+}
+body.theme-light .pt-water-header {
+  border-bottom-color: #cffafe;
+}
+.pt-water-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #67e8f9;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+body.theme-light .pt-water-title {
+  color: #0e7490;
+}
+.pt-water-body {
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+body.theme-light .pt-water-body {
+  color: #334155;
+}
+
+/* Âm Trạch Anomalies & Descendants Cards */
+.pt-anomalies-card, .pt-descendants-card {
+  background: rgba(20, 20, 30, 0.65);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+body.theme-light .pt-anomalies-card,
+body.theme-light .pt-descendants-card {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+.pt-anom-item {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin-top: 6px;
+  font-size: 0.68rem;
+  color: #fecaca;
+}
+body.theme-light .pt-anom-item {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+.pt-anom-item.auspicious {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #bbf7d0;
+}
+body.theme-light .pt-anom-item.auspicious {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.pt-descendants-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+}
+@media (max-width: 600px) {
+  .pt-descendants-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pt-desc-cell {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 5px 6px;
+  text-align: center;
+}
+body.theme-light .pt-desc-cell {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+.pt-desc-name {
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+body.theme-light .pt-desc-name {
+  color: #0f172a;
+}
+.pt-desc-stat {
+  font-size: 0.58rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.pt-desc-stat.phat {
+  color: #4ade80;
+}
+.pt-desc-stat.batloi {
+  color: #f87171;
+}
+.pt-desc-stat.binh {
+  color: #94a3b8;
+}
+body.theme-light .pt-desc-stat.phat {
+  color: #16a34a;
+}
+body.theme-light .pt-desc-stat.batloi {
+  color: #dc2626;
+}
+body.theme-light .pt-desc-stat.binh {
+  color: #64748b;
+}
+
+/* Feng Shui Action Buttons Bar */
+.pt-actions-bar {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.pt-action-btn {
+  flex: 1;
+  min-width: 110px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 0.70rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  background: rgba(30, 20, 10, 0.6);
+  color: #fef08a;
+}
+.pt-action-btn:hover {
+  background: rgba(245, 176, 65, 0.2);
+  border-color: #f59e0b;
+}
+body.theme-light .pt-action-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+body.theme-light .pt-action-btn:hover {
+  background: #f8fafc;
+  border-color: #b45309;
+  color: #b45309;
+}
+.pt-action-btn.btn-primary {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.4), rgba(180, 83, 9, 0.6));
+  border-color: #f59e0b;
+}
+body.theme-light .pt-action-btn.btn-primary {
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #92400e;
+}
+
+/* Modals */
+.qmdj-fs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 99990;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+.qmdj-fs-modal-overlay.open {
+  display: flex;
+}
+.qmdj-fs-modal-dialog {
+  background: #1e1b18;
+  border: 1px solid rgba(245, 176, 65, 0.4);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+}
+body.theme-light .qmdj-fs-modal-dialog {
+  background: #ffffff;
+  border-color: #d97706;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+.qmdj-fs-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(245, 176, 65, 0.25);
+  background: rgba(0, 0, 0, 0.2);
+}
+body.theme-light .qmdj-fs-modal-header {
+  background: #f8fafc;
+  border-bottom-color: #e2e8f0;
+}
+.qmdj-fs-modal-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #fef08a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+body.theme-light .qmdj-fs-modal-title {
+  color: #b45309;
+}
+.qmdj-fs-modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.qmdj-fs-modal-close:hover {
+  color: #f87171;
+}
+.qmdj-fs-modal-body {
+  padding: 12px 14px;
+  overflow-y: auto;
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: #f1f5f9;
+}
+body.theme-light .qmdj-fs-modal-body {
+  color: #1e293b;
+}
+.qmdj-fs-modal-textarea {
+  width: 100%;
+  height: 380px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: 6px;
+  padding: 10px;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.72rem;
+  color: #f8fafc;
+  resize: vertical;
+  box-sizing: border-box;
+}
+body.theme-light .qmdj-fs-modal-textarea {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+.qmdj-fs-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 14px;
+  border-top: 1px solid rgba(245, 176, 65, 0.2);
+  background: rgba(0, 0, 0, 0.15);
+}
+body.theme-light .qmdj-fs-modal-footer {
+  background: #f8fafc;
+  border-top-color: #e2e8f0;
+}
+
+/* ==========================================================================
+   NETA LIGHT - ENHANCED QMDJ FENG SHUI SUITE (3 TIERS, DESTINY, MICRO, CANVAS)
+   ========================================================================== */
+
+/* 1. Destiny Harmony Card */
+.pt-destiny-card {
+  background: linear-gradient(135deg, rgba(88, 28, 135, 0.25), rgba(49, 10, 100, 0.4));
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+body.theme-light .pt-destiny-card {
+  background: #faf5ff;
+  border-color: #d8b4fe;
+}
+.pt-destiny-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.25);
+  padding-bottom: 5px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+body.theme-light .pt-destiny-header {
+  border-bottom-color: #e9d5ff;
+}
+.pt-destiny-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #c084fc;
+}
+body.theme-light .pt-destiny-title {
+  color: #7e22ce;
+}
+.pt-destiny-badge {
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(168, 85, 247, 0.2);
+  color: #e9d5ff;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+body.theme-light .pt-destiny-badge {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border-color: #c084fc;
+}
+.pt-destiny-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  font-size: 0.66rem;
+  margin-bottom: 6px;
+}
+@media (max-width: 600px) {
+  .pt-destiny-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pt-destiny-col {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+body.theme-light .pt-destiny-col {
+  background: #ffffff;
+  border-color: #f3e8ff;
+}
+
+/* 2. Water Dragon ICS Button */
+.pt-water-ics-btn {
+  background: rgba(6, 182, 212, 0.2);
+  border: 1px solid #06b6d4;
+  color: #a5f3fc;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.pt-water-ics-btn:hover {
+  background: rgba(6, 182, 212, 0.35);
+  color: #ffffff;
+}
+body.theme-light .pt-water-ics-btn {
+  background: #cffafe;
+  border-color: #0891b2;
+  color: #0e7490;
+}
+body.theme-light .pt-water-ics-btn:hover {
+  background: #a5f3fc;
+}
+
+/* 3. 3-Tier Remediation Display */
+.pt-tier-remedy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 5px;
+}
+@media (max-width: 640px) {
+  .pt-tier-remedy-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pt-tier-col {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+body.theme-light .pt-tier-col {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+.pt-tier-col.preferred {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+body.theme-light .pt-tier-col.preferred {
+  border-color: #d97706;
+  background: #fffbeb;
+}
+.pt-tier-pill {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+.pt-tier-pill.t1 { background: #d97706; color: #fff; }
+.pt-tier-pill.t2 { background: #0284c7; color: #fff; }
+.pt-tier-pill.t3 { background: #dc2626; color: #fff; }
+
+/* 4. Macro vs Micro Thai Cuc Toggle Bar */
+.pt-thaicuc-toggle-bar {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+}
+.pt-tc-btn {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  background: rgba(0, 0, 0, 0.25);
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+}
+.pt-tc-btn:hover {
+  background: rgba(245, 176, 65, 0.15);
+  color: #fef08a;
+}
+.pt-tc-btn.active {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.4), rgba(180, 83, 9, 0.5));
+  border-color: #f59e0b;
+  color: #fef08a;
+}
+body.theme-light .pt-tc-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+body.theme-light .pt-tc-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+body.theme-light .pt-tc-btn.active {
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #92400e;
+}
+
+/* 5. Micro-Cosmos Card */
+.pt-micro-card {
+  background: rgba(20, 25, 35, 0.7);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+body.theme-light .pt-micro-card {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+.pt-micro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  padding-bottom: 5px;
+  margin-bottom: 6px;
+}
+body.theme-light .pt-micro-header {
+  border-bottom-color: #dbeafe;
+}
+.pt-micro-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #60a5fa;
+}
+body.theme-light .pt-micro-title {
+  color: #1d4ed8;
+}
+.pt-micro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+@media (max-width: 600px) {
+  .pt-micro-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pt-micro-select {
+  width: 100%;
+  font-size: 0.68rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  color: #e2e8f0;
+}
+body.theme-light .pt-micro-select {
+  background: #ffffff;
+  border-color: #93c5fd;
+  color: #1e293b;
+}
+
+/* 6. Interactive Floor Plan Overlay Card */
+.pt-floorplan-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+body.theme-light .pt-floorplan-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+.pt-fp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+body.theme-light .pt-fp-header {
+  border-bottom-color: #e2e8f0;
+}
+.pt-fp-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+body.theme-light .pt-fp-title {
+  color: #0f172a;
+}
+.pt-fp-controls-top {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.pt-fp-btn {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  background: rgba(30, 20, 10, 0.5);
+  color: #fef08a;
+  transition: all 0.15s ease;
+}
+.pt-fp-btn:hover {
+  background: rgba(245, 176, 65, 0.2);
+  border-color: #f59e0b;
+}
+body.theme-light .pt-fp-btn {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+body.theme-light .pt-fp-btn:hover {
+  background: #f1f5f9;
+  color: #b45309;
+  border-color: #b45309;
+}
+.pt-fp-canvas-wrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+  position: relative;
+}
+body.theme-light .pt-fp-canvas-wrap {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+#pt-floorplan-canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.pt-fp-slider-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  padding: 4px 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+body.theme-light .pt-fp-slider-bar {
+  background: #f1f5f9;
+}
+.pt-fp-slider-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.62rem;
+  color: #94a3b8;
+}
+body.theme-light .pt-fp-slider-item {
+  color: #475569;
+}
+.pt-fp-slider-item input[type="range"] {
+  width: 80px;
+  height: 4px;
+  accent-color: #f59e0b;
+}
+
