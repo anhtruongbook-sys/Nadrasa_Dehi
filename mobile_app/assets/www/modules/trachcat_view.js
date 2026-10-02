@@ -473,6 +473,7 @@
           <div class="tc-gc-left">
             <span class="tc-gc-label">${personLabel}:</span>
             <input type="number" id="tc-input-year" class="tc-gc-input-year" min="1920" max="2050" value="${state.personYear}">
+            <span class="tc-gc-tag tc-tag-canchi">${state.personCanChi}${ageText ? ` (${ageText})` : ''}</span>
           </div>
           <div class="ucc-pill-gender tc-mini-gender">
             <button type="button" class="ucc-gender-btn ${state.isMale ? 'active male' : ''}" id="tc-btn-male">Nam</button>
@@ -480,9 +481,8 @@
           </div>
         </div>
         <div class="tc-gc-row-meta">
-          <span class="tc-gc-tag tc-tag-canchi">${state.personCanChi}${ageText ? ` (${ageText})` : ''}</span>
           ${napAm ? `<span class="tc-gc-tag tc-tag-napam">${napAm}</span>` : ''}
-          ${cungPhi ? `<span class="tc-gc-tag tc-tag-cung">Cung ${cungPhi.name} (${cungPhi.group})</span>` : ''}
+          ${cungPhi ? `<span class="tc-gc-tag tc-tag-cung">${cungPhi.symbol || ''} Cung ${cungPhi.name} (${cungPhi.group})</span>` : ''}
           ${isBuilding && yearSuit && yearSuit.tam_tai.is_tam_tai ? `<span class="tc-gc-tag tc-tag-bad">Tam Tai</span>` : ''}
           ${isBuilding && yearSuit && yearSuit.kim_lau.is_kim_lau ? `<span class="tc-gc-tag tc-tag-bad">Kim Lâu</span>` : ''}
         </div>

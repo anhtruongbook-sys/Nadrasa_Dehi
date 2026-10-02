@@ -76,16 +76,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.48
-          name: "Neta Light v2.8.48 (Tối Ưu Giao Diện Trạch Cát: Gia Chủ 2 Dòng & Phân Tách Tiêu Chí / Kết Quả)"
+          tag_name: v2.8.49
+          name: "Neta Light v2.8.49 (Hoàn Thiện Gia Chủ 2 Dòng: Đưa Can Chi & Tuổi Lên Dòng Trên)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.48
-            - **Chuẩn Hóa Khung Gia Chủ Chuẩn Đúng 2 Dòng**:
-              + Rút gọn tiêu đề nhãn thành `Gia chủ:`, `Người mất:`, `Cô dâu:` giúp đưa trọn vẹn ô nhập năm sinh và nút chọn giới tính `[ Nam | Nữ ]` lên Dòng 1 (không bị rớt dòng).
-              + Dòng 2 chứa các thẻ Can Chi, Nạp Âm Mệnh, Cung Phi ngắn gọn, chống ngắt quãng hay tràn màn hình.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.49
+            - **Cải Tiến Khung Gia Chủ 2 Dòng Hài Hòa & Cân Đối**:
+              + **Dòng 1**: Bố trí trọn vẹn `Gia chủ: [ 1990 ] [ Canh Ngọ (37t) ]` và nút chọn `[ Nam | Nữ ]` sát bên phải, lấp đầy khoảng trống dư thừa và cân bằng màn hình.
+              + **Dòng 2**: Dành riêng cho thẻ Nạp Âm Mệnh (`Lộ Bàng Thổ`) và Cung Phi Bát Trạch (`Cung Khảm (Đông Tứ Mệnh)`), hoàn toàn không bị rớt dòng hay tràn viền.
             - **Tổ Chức Giao Diện Khoa Học: Tiêu Chí Ở Trên - Kết Quả Ở Dưới**:
-              + Toàn bộ khu vực setup/tiêu chí lựa chọn (mục việc, ngày giờ, gia chủ, tọa sơn và trường phái) gom gọn gàng 100% trong panel điều khiển ở phía trên.
-              + Toàn bộ kết quả tra cứu, thẻ ngày cát lành, giờ hoàng đạo và phân tích sao trực được bố trí tách biệt rõ ràng ở nửa dưới, không bị lẫn lộn vào nội dung setup.
+              + Toàn bộ khu vực setup/tiêu chí lựa chọn gom gọn gàng 100% trong panel điều khiển ở phía trên.
+              + Toàn bộ kết quả tra cứu, thẻ ngày cát lành, giờ hoàng đạo và phân tích sao trực được bố trí tách biệt rõ ràng ở nửa dưới.
             - **Trọng Tâm Tìm Ngày Tốt Cát Lành Trong Tháng (Instant Good Days Scanner)**:
               + Mặc định vào tab `✨ Tìm Ngày Tốt`, tự động quét và hiển thị tức thì.
               + **Bộ chuyển đổi chế độ kép linh hoạt (Dual Mode Switcher)**: Cho phép chuyển đổi tức thì giữa `[🔍 Thẩm Định Ngày Giờ Cụ Thể]` và `[📅 Tìm Ngày Tốt Trong Tháng]`.
