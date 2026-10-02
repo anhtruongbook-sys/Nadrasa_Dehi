@@ -665,6 +665,9 @@
           </button>
         </div>
 
+        <!-- Lớp phủ mờ đóng bảng điều khiển khi bấm ra ngoài -->
+        <div id="lakinh-sheet-backdrop" class="lakinh-sheet-backdrop" title="Chạm ra ngoài để đóng bảng điều khiển"></div>
+
         <!-- 3. Bảng Điều Khiển Dạng Bottom Sheet -->
         <div id="lakinh-bottom-sheet">
           <div class="sheet-handle-bar" id="sheet-handle"></div>
@@ -3989,10 +3992,12 @@ function updateQmdjStrategicLayer() {
   // Quản lý Bottom Sheet
   function openBottomSheet() {
     const sheet = document.getElementById('lakinh-bottom-sheet');
+    const backdrop = document.getElementById('lakinh-sheet-backdrop');
     const dockTools = document.getElementById('lakinh-dock-tools');
     if (sheet) {
       sheet.classList.add('open');
       state.isSheetOpen = true;
+      if (backdrop) backdrop.classList.add('open');
       if (dockTools) dockTools.classList.add('active');
       if (state.isRayActive) updateSightingRay();
     }
@@ -4000,10 +4005,12 @@ function updateQmdjStrategicLayer() {
 
   function closeBottomSheet() {
     const sheet = document.getElementById('lakinh-bottom-sheet');
+    const backdrop = document.getElementById('lakinh-sheet-backdrop');
     const dockTools = document.getElementById('lakinh-dock-tools');
     if (sheet) {
       sheet.classList.remove('open');
       state.isSheetOpen = false;
+      if (backdrop) backdrop.classList.remove('open');
       if (dockTools) dockTools.classList.remove('active');
       if (state.isRayActive) updateSightingRay();
     }
@@ -6222,6 +6229,32 @@ function updateQmdjStrategicLayer() {
 
     const sheetHandle = document.getElementById('sheet-handle');
     if (sheetHandle) sheetHandle.addEventListener('click', closeBottomSheet);
+
+    // Chạm/Bấm ra ngoài vùng bảng điều khiển để tự động đóng
+    const sheetBackdrop = document.getElementById('lakinh-sheet-backdrop');
+    if (sheetBackdrop) {
+      const handleBackdropDismiss = (e) => {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        closeBottomSheet();
+      };
+      sheetBackdrop.addEventListener('click', handleBackdropDismiss);
+      sheetBackdrop.addEventListener('touchend', handleBackdropDismiss);
+    }
+
+    // Bắt sự kiện chạm/bấm ra ngoài bảng điều khiển trên document khi đang mở
+    document.addEventListener('pointerdown', (e) => {
+      if (!state.isSheetOpen) return;
+      const sheetEl = document.getElementById('lakinh-bottom-sheet');
+      const dockToolsEl = document.getElementById('lakinh-dock-tools');
+      if (sheetEl && (sheetEl === e.target || sheetEl.contains(e.target))) return;
+      if (dockToolsEl && (dockToolsEl === e.target || dockToolsEl.contains(e.target))) return;
+      // Tránh đóng nhầm nếu đang tương tác modal con
+      if (e.target && e.target.closest && e.target.closest('.lakinh-modal-container, .modal-backdrop, .swal2-container, #hk-flyout-modal, #lakinh-tamhop-modal, #lakinh-projects-modal')) return;
+      closeBottomSheet();
+    }, { capture: true });
 
     // Chuyển đổi mẫu Đĩa La Kinh / Thước Lập Cực
     const btnPlateThuoc = document.getElementById('btn-plate-thuoc');
