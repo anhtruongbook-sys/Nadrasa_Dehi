@@ -1340,16 +1340,9 @@
       }
     }
 
-    // Xoay mặt bằng kiến trúc đồng bộ theo địa hình bản đồ (Terrain-Locked Floor Plan)
-    const planWrapper = document.getElementById('lakinh-floorplan-wrapper');
-    if (planWrapper && state.planImageSrc) {
-      if (state.isPlanLockedToTerrain) {
-        // Góc hiển thị trên màn hình = Hướng nhà thực địa - Góc la bàn/bản đồ
-        const visualRot = ((state.planTerrainRotation - rounded) % 360 + 360) % 360;
-        planWrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${visualRot}deg) scale(${state.planScale})`;
-      } else {
-        planWrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${state.planRotation}deg) scale(${state.planScale})`;
-      }
+    // Xoay / đồng bộ mặt bằng kiến trúc theo la bàn & địa hình
+    if (state.planImageSrc) {
+      updateFloorPlanTransform();
     }
 
     const btnPlanRotMatch = document.getElementById('btn-plan-rot-match');
@@ -1778,7 +1771,17 @@
       ? (((state.planTerrainRotation - state.rotation) % 360 + 360) % 360)
       : state.planRotation;
 
-    if (state.isPlanGeoAnchored && state.planAnchorCoords) {
+    if (state.isPlanGeoAnchored) {
+      if (!state.planAnchorCoords) {
+        if (state.importedParcel && state.importedParcel.centroid) {
+          state.planAnchorCoords = [state.importedParcel.centroid.lat, state.importedParcel.centroid.lng];
+        } else if (mapInstance) {
+          const c = mapInstance.getCenter();
+          state.planAnchorCoords = [c.lat, c.lng];
+        } else {
+          state.planAnchorCoords = [...state.centerCoords];
+        }
+      }
       updateFloorPlanGeoPos();
     } else {
       wrapper.style.transform = `translate(${state.planOffsetX}px, ${state.planOffsetY}px) rotate(${visualRot}deg) scale(${state.planScale})`;
@@ -1889,7 +1892,13 @@
       state.isPlanLockedToTerrain = true;
       state.isPlanGeoAnchored = true;
 
-      if (mapInstance) {
+      if (state.importedParcel && state.importedParcel.centroid) {
+        state.planAnchorCoords = [state.importedParcel.centroid.lat, state.importedParcel.centroid.lng];
+        state.planBaseZoom = (mapInstance && mapInstance.getZoom()) || 19;
+        if (mapInstance) {
+          mapInstance.setView(state.planAnchorCoords, state.planBaseZoom, { animate: false });
+        }
+      } else if (mapInstance) {
         const c = mapInstance.getCenter();
         state.planAnchorCoords = [c.lat, c.lng];
         state.planBaseZoom = mapInstance.getZoom() || 19;
@@ -6493,6 +6502,8 @@ function updateQmdjStrategicLayer() {
           banner.style.display = 'none';
           banner.classList.add('is-hidden');
         }
+        syncFloorPlanDomParent();
+        updateFloorPlanTransform();
         showLaKinhToast('🗑️ Đã xóa bỏ thửa đất khỏi La Kinh');
       });
     }
