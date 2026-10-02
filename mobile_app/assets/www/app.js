@@ -123,10 +123,16 @@
       subtitle: 'Xem Ngày Đại Cát • Trạng Trình & Đổng Công',
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
+    },
+    diachinh: {
+      name: 'ĐỊA CHÍNH & SỔ ĐỎ',
+      subtitle: 'Tọa Độ VN-2000 & Ranh Đất La Kinh',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'tamthuc', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'phaphanh', 'dichhoc'];
+  const ALL_MODES = ['neta', 'poker', 'tamthuc', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'diachinh', 'phaphanh', 'dichhoc'];
 
 
   // DOM Elements
@@ -285,6 +291,7 @@
     const viewPhapHanh = document.getElementById('view-phaphanh');
     const viewDichHoc = document.getElementById('view-dichhoc');
     const viewTrachCat = document.getElementById('view-trachcat');
+    const viewDiaChinh = document.getElementById('view-diachinh');
 
     const viewsMap = {
       neta: viewCards,
@@ -299,6 +306,7 @@
       trachcat: viewTrachCat,
       tarot: viewTarot,
       lakinh: viewLaKinh,
+      diachinh: viewDiaChinh,
       phaphanh: viewPhapHanh,
       dichhoc: viewDichHoc
     };
@@ -372,8 +380,10 @@
       const render = () => { if (window.NetaDichHocView) window.NetaDichHocView.render(); };
       render(); setTimeout(render, 150);
     } else if (mode === 'trachcat') {
-
       const render = () => { if (window.NetaTrachCatView) window.NetaTrachCatView.init(); };
+      render(); setTimeout(render, 150);
+    } else if (mode === 'diachinh') {
+      const render = () => { if (window.NetaDiaChinhView) window.NetaDiaChinhView.init(); };
       render(); setTimeout(render, 150);
     }
 

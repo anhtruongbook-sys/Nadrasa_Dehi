@@ -76,10 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.52
-          name: "Neta Light v2.8.52 (Bộ Chọn Ngày Giờ Âm Dương Thống Nhất & Chống Tràn Viền Tuyệt Đối)"
+          tag_name: v2.8.53
+          name: "Neta Light v2.8.53 (Địa Chính & Sổ Đỏ VN-2000 • Đồng Bộ La Kinh Lập Cực 36 Tầng)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.52
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.53
+            - **Phân Hệ Mới: Địa Chính & Sổ Đỏ (VN-2000 to WGS-84 & Google Earth)**:
+              + Bóc tách và chuyển đổi tọa độ VN-2000 (X Northing, Y Easting) sang WGS-84 kinh vĩ độ chuẩn xác theo thuật toán Bursa-Wolf 7 tham số trắc địa.
+              + CSDL 63 Tỉnh Thành Việt Nam với Kinh tuyến trục chuẩn Bộ Tài nguyên & Môi trường (TT 25/2014/TT-BTNMT).
+              + Tự động tính toán diện tích thửa đất ($m^2$ và sào Bắc Bộ), chu vi và tọa độ trọng tâm (Tim Thửa Đất / Centroid).
+              + Phân tích góc phương vị trắc địa (Azimuth) và quy nạp chính xác vào 24 Sơn Vị La Kinh Phong Thủy kèm Bát Quái và Ngũ Hành.
+              + Trực quan hóa mặt bằng hình học khu đất chuẩn tỉ lệ 1:1 bằng SVG kèm kim chỉ Bắc và hồng tâm tim đất.
+              + **Cầu nối 1-chạm `[🧭 ĐƯA VÀO LA KINH LẬP CỰC]`**: Tự động chuyển màn hình sang La Kinh Vệ Tinh, bay bản đồ đến tim thửa đất (Zoom 19), vẽ ranh đất đa giác màu hổ phách, gán nhãn 24 sơn vị từng cạnh ranh và KHÓA TÂM THƯỚC LẬP CỰC 36 TẦNG TRỰC TIẾP LÊN TIM THỬA ĐẤT.
+              + Hỗ trợ xuất file KML nạp trực tiếp vào Google Earth và xuất bảng dữ liệu tọa độ CSV cho Excel.
+              + Thiết kế giao diện sang trọng, thích ứng 100% Mobile Ergonomics, hoàn hảo trên cả Dark Theme và Light Theme.
             - **Chuẩn Hóa Bộ Chọn Ngày & Giờ Thống Nhất (Unified Control Card)**:
               + Tích hợp đầy đủ nút gạt chuyển đổi `[ ☀️ Dương | 🌙 Âm ]` độc lập chuẩn xác 100%.
               + Tận dụng động cơ thiên văn `NetaCalendarEngine` chuyển đổi qua lại giữa Âm lịch và Dương lịch hai chiều theo thuật toán Hồ Ngọc Đức GMT+7.

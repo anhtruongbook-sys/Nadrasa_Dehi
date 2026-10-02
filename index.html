@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="assets/lakinh/lakinh.css?v=9.6">
   <link rel="stylesheet" href="assets/dichhoc/dichhoc.css?v=1.1">
   <link rel="stylesheet" href="assets/trachcat/trachcat.css?v=2.2">
+  <link rel="stylesheet" href="assets/diachinh/diachinh.css?v=1.0">
 
   <link rel="stylesheet" href="styles.css?v=8.8">
   <link rel="stylesheet" href="phap_hanh.css?v=1.0">
@@ -118,6 +119,11 @@
           <span class="dropdown-icon">🧭</span>
           <span class="dropdown-name">La Kinh Vệ Tinh (36 Tầng)</span>
           <span class="dropdown-check" id="check-mode-lakinh" style="opacity: 0;">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-diachinh" data-mode="diachinh">
+          <span class="dropdown-icon">📐</span>
+          <span class="dropdown-name">Địa Chính &amp; Sổ Đỏ (VN-2000)</span>
+          <span class="dropdown-check" id="check-mode-diachinh" style="opacity: 0;">✓</span>
         </div>
 
         <div class="dropdown-divider"></div>
@@ -306,6 +312,11 @@
     <!-- View Module: La Kinh Vệ Tinh 36 Tầng -->
     <div id="view-lakinh" class="app-module-view" style="display: none;">
       <!-- Dynamically rendered by modules/lakinh_view.js -->
+    </div>
+
+    <!-- View Module: Địa Chính & Sổ Đỏ (VN-2000) -->
+    <div id="view-diachinh" class="app-module-view" style="display: none;">
+      <!-- Dynamically rendered by modules/diachinh_view.js -->
     </div>
 
     <!-- View Module: Pháp Hành Nadrasa Dehi -->
@@ -544,6 +555,8 @@
   <script src="engines/trachcat_data.js?v=2.2"></script>
   <script src="engines/trach_nhat_engine.js?v=2.2"></script>
   <script src="modules/trachcat_view.js?v=2.3"></script>
+  <script src="engines/diachinh_engine.js?v=1.0"></script>
+  <script src="modules/diachinh_view.js?v=1.0"></script>
   <script src="app.js?v=9.0"></script>
 </body>
 </html>

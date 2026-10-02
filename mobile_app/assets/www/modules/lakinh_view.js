@@ -987,6 +987,9 @@
             <button id="sheet-btn-centroid" class="lakinh-action-btn secondary">
               📐 Vẽ Ranh Đất / Tìm Tim Nhà
             </button>
+            <button id="sheet-btn-vn2000" class="lakinh-action-btn gold" style="background: linear-gradient(135deg, rgba(245, 176, 65, 0.2) 0%, rgba(217, 119, 6, 0.25) 100%); border-color: rgba(245, 176, 65, 0.5); color: #f5b041;">
+              🗺️ Nhập Tọa Độ Sổ Đỏ (VN-2000)
+            </button>
           </div>
 
           <!-- Nhóm KỲ MÔN CHIẾN LƯỢC TÁC QUYẾT (PHASE 3) -->
@@ -4132,6 +4135,105 @@ function updateQmdjStrategicLayer() {
     }
   }
 
+  // Chuyển giao và hiển thị ranh thửa đất từ tọa độ VN-2000 vào bản đồ La Kinh Vệ Tinh
+  function importParcelFromVN2000(parcelData) {
+    if (!parcelData || !parcelData.vertices || parcelData.vertices.length < 3) return;
+
+    if (!mapInstance) {
+      renderLaKinh();
+    }
+
+    if (!polygonLayerGroup && mapInstance) {
+      polygonLayerGroup = L.layerGroup().addTo(mapInstance);
+    }
+
+    if (polygonLayerGroup) {
+      polygonLayerGroup.clearLayers();
+    }
+
+    const latLngs = parcelData.vertices.map(v => [v.lat, v.lng]);
+    state.polygonPoints = latLngs.map(pt => L.latLng(pt[0], pt[1]));
+
+    // 1. Vẽ ranh thửa đất đa giác trên nền bản đồ vệ tinh
+    if (polygonLayerGroup) {
+      L.polygon(latLngs, {
+        color: '#f59e0b',
+        weight: 3,
+        fillColor: '#f59e0b',
+        fillOpacity: 0.2,
+        dashArray: null
+      }).addTo(polygonLayerGroup);
+
+      // 2. Vẽ các đỉnh mốc ranh với số thứ tự
+      parcelData.vertices.forEach(v => {
+        L.marker([v.lat, v.lng], {
+          icon: L.divIcon({
+            className: 'dc-map-vertex-marker',
+            html: `<div style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;background:#0f172a;border:2px solid #f59e0b;border-radius:50%;color:#fbbf24;font-size:11px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,0.8);">${v.id}</div>`,
+            iconSize: [22, 22],
+            iconAnchor: [11, 11]
+          })
+        }).bindPopup(`<div style="font-size:12px;color:#0f172a;padding:2px;"><b>Mốc ${v.id}</b><br>X: ${v.x.toFixed(2)} m<br>Y: ${v.y.toFixed(2)} m<br>WGS84: ${v.lat.toFixed(6)}°, ${v.lng.toFixed(6)}°</div>`).addTo(polygonLayerGroup);
+      });
+
+      // 3. Hiển thị thông số cạnh (chiều dài & 24 sơn vị) tại trung điểm mỗi cạnh
+      if (parcelData.edges && parcelData.edges.length > 0) {
+        parcelData.edges.forEach(e => {
+          const vFrom = parcelData.vertices.find(v => String(v.id) === String(e.from));
+          const vTo = parcelData.vertices.find(v => String(v.id) === String(e.to));
+          if (vFrom && vTo) {
+            const midLat = (vFrom.lat + vTo.lat) / 2;
+            const midLng = (vFrom.lng + vTo.lng) / 2;
+            const sonName = e.sonVi ? e.sonVi.name : e.huong;
+            L.marker([midLat, midLng], {
+              icon: L.divIcon({
+                className: 'dc-map-edge-marker',
+                html: `<div style="background:rgba(15,10,25,0.85);border:1px solid #f59e0b;border-radius:4px;padding:1px 5px;color:#f8fafc;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.6);text-align:center;">
+                  <span style="color:#38bdf8;">${e.lengthM.toFixed(1)}m</span> • <span style="color:#facc15;">${sonName} (${e.bearingDeg.toFixed(0)}°)</span>
+                </div>`,
+                iconAnchor: [45, 10]
+              })
+            }).addTo(polygonLayerGroup);
+          }
+        });
+      }
+
+      // 4. Đặt tâm Thước Lập Cực 36 Tầng ngay tại Tim Thửa Đất (Centroid)
+      const centroid = parcelData.centroid;
+      if (centroid) {
+        const areaFmt = parcelData.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 });
+        L.marker([centroid.lat, centroid.lng], {
+          icon: L.divIcon({
+            className: 'custom-centroid-marker',
+            html: `<div style="display:inline-flex;align-items:center;background:none;border:none;">
+              <span style="font-size:20px;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.9));">🎯</span>
+              <span style="color:#ef4444;font-size:11px;font-weight:900;white-space:nowrap;margin-left:3px;background:rgba(0,0,0,0.75);padding:1px 5px;border-radius:3px;text-shadow:0 1px 2px #000;">${areaFmt} m²</span>
+            </div>`,
+            iconSize: [80, 24],
+            iconAnchor: [10, 12]
+          })
+        }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px;">
+          🎯 <b>Tim Thửa Đất</b>: ${parcelData.parcelName || 'VN-2000'}<br>
+          Diện tích: ${areaFmt} m²<br>
+          Chu vi: ${parcelData.perimeterM.toFixed(1)} m<br>
+          Tọa độ: ${centroid.lat.toFixed(6)}°, ${centroid.lng.toFixed(6)}°
+        </div>`).addTo(polygonLayerGroup);
+
+        state.centerCoords = [centroid.lat, centroid.lng];
+        state.planAnchorCoords = [centroid.lat, centroid.lng];
+        state.isPlanGeoAnchored = true;
+
+        if (mapInstance) {
+          mapInstance.setView([centroid.lat, centroid.lng], 19, { animate: true });
+          setTimeout(() => {
+            mapInstance.invalidateSize();
+            mapInstance.panTo([centroid.lat, centroid.lng]);
+          }, 200);
+        }
+      }
+    }
+  }
+
   // Phân tích cú pháp tọa độ GPS linh hoạt
   function parseCoordinates(input) {
     if (!input) return null;
@@ -6813,6 +6915,16 @@ function updateQmdjStrategicLayer() {
       });
     }
 
+    const btnVn2000 = document.getElementById('sheet-btn-vn2000');
+    if (btnVn2000) {
+      btnVn2000.addEventListener('click', () => {
+        closeBottomSheet();
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('diachinh');
+        }
+      });
+    }
+
     const btnSave = document.getElementById('sheet-btn-save');
     if (btnSave) btnSave.addEventListener('click', saveCurrentProject);
 
@@ -8339,6 +8451,7 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     updateFloorPlanTransform: updateFloorPlanTransform,
     syncFloorPlanDomParent: syncFloorPlanDomParent,
     updateFloorPlanGeoPos: updateFloorPlanGeoPos,
+    importParcelFromVN2000: importParcelFromVN2000,
     storage: LakinhStorage,
     getState: () => state
   };
