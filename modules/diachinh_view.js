@@ -776,14 +776,17 @@
       dcLayers = {
         googleSat: L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
           maxZoom: 22,
-          subdomains: '0123'
+          subdomains: '0123',
+          crossOrigin: true
         }),
         esriSat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          maxZoom: 19
+          maxZoom: 19,
+          crossOrigin: true
         }),
         googleRoad: L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
           maxZoom: 22,
-          subdomains: '0123'
+          subdomains: '0123',
+          crossOrigin: true
         })
       };
 

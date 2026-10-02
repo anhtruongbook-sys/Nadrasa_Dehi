@@ -1760,6 +1760,17 @@
         bgColor = isLight ? '#fdfbf7' : '#0a0d18';
         captureScale = 2;
         captureHeight = targetElement.scrollHeight || null;
+      } else if (currentDeckMode === 'diachinh') {
+        const wrap = document.querySelector('.dc-container') || document.getElementById('view-diachinh');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#f1f5f9' : '#0a0610';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-diachinh');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
       } else {
         targetElement = document.getElementById('card-arena-container') || appContainer;
       }
@@ -2033,9 +2044,35 @@
           });
         }
 
+        // Xử lý riêng cho Địa Chính: mở rộng chiều cao, unconstrain container và căn chỉnh lề
+        if (currentDeckMode === 'diachinh') {
+          const vDc = clonedDoc.getElementById('view-diachinh');
+          if (vDc) {
+            vDc.style.setProperty('height', 'auto', 'important');
+            vDc.style.setProperty('max-height', 'none', 'important');
+            vDc.style.setProperty('overflow', 'visible', 'important');
+            vDc.style.setProperty('overflow-y', 'visible', 'important');
+            vDc.style.setProperty('padding', '12px 10px 30px 10px', 'important');
+            vDc.style.setProperty('background', bgColor, 'important');
+            vDc.scrollTop = 0;
+          }
+          const cDc = clonedDoc.querySelector('.dc-container');
+          if (cDc) {
+            cDc.style.setProperty('height', 'auto', 'important');
+            cDc.style.setProperty('max-height', 'none', 'important');
+            cDc.style.setProperty('overflow', 'visible', 'important');
+            cDc.style.setProperty('overflow-y', 'visible', 'important');
+            cDc.style.setProperty('padding', '6px 8px 24px 8px', 'important');
+            cDc.style.setProperty('background', bgColor, 'important');
+          }
+          if (clonedDoc.defaultView) {
+            clonedDoc.defaultView.scrollTo(0, 0);
+          }
+        }
+
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #view-tuvi, #view-bazi, #view-qmdj, #view-calendar, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, .tuvi-analysis-container, .tuvi-full-report-wrap, .bazi-analysis-container, .bazi-full-report-wrap, #app-container, #app-body'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #view-tuvi, #view-bazi, #view-qmdj, #view-calendar, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, .tuvi-analysis-container, .tuvi-full-report-wrap, .bazi-analysis-container, .bazi-full-report-wrap, #view-diachinh, .dc-container, #dc-results-area, #app-container, #app-body'
         );
         scrollViews.forEach(v => {
           v.style.setProperty('contain', 'none', 'important');
@@ -2157,6 +2194,7 @@
       else if (currentDeckMode === 'lakinh') modeName = 'LaKinh_VeTinh';
       else if (currentDeckMode === 'phaphanh') modeName = 'PhapHanh_NadrasaDehi';
       else if (currentDeckMode === 'dichhoc') modeName = 'BocQue_DichLy';
+      else if (currentDeckMode === 'diachinh') modeName = 'DiaChinh_SoDo_VN2000';
 
       const filename = `${modeName}_${dateStr}.png`;
 
