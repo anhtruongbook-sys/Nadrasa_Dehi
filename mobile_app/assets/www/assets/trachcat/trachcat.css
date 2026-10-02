@@ -647,83 +647,110 @@
   gap: 6px;
 }
 
-.tc-quick-tasks-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 6px;
+/* Quick Tasks Bar - Horizontal Scrollable Chips */
+.tc-quick-tasks-section {
+  width: 100%;
+  margin-bottom: 6px;
 }
 
-@media (max-width: 480px) {
-  .tc-quick-tasks-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.tc-quick-tasks-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 2px 6px 2px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tc-quick-pill {
-  display: flex;
+  flex-shrink: 0;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 5px;
+  height: 30px;
+  padding: 0 10px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: #f1f5f9;
+  border-radius: 15px;
+  color: #cbd5e1;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
+  white-space: nowrap;
 }
 
 .tc-quick-pill:hover {
-  background: rgba(245, 158, 11, 0.2);
-  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
   color: #fef08a;
-  transform: translateY(-1px);
 }
 
 .tc-quick-pill.active {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-  border-color: #fbbf24;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #fde047;
+  font-weight: 700;
+  box-shadow: 0 1px 6px rgba(245, 158, 11, 0.2);
 }
 
 .tc-quick-pill-icon {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   line-height: 1;
 }
 
-/* Construction Task Guide Box */
-.tc-task-guide-box {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(180, 83, 9, 0.18) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  border-left: 4px solid #f59e0b;
+/* Collapsible Construction Task Guide */
+.tc-guide-collapse {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px dashed rgba(245, 158, 11, 0.3);
   border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-  font-size: 0.76rem;
-  line-height: 1.45;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
   color: #fef08a;
+  transition: all 0.2s ease;
 }
 
-.tc-task-guide-title {
-  font-weight: 800;
-  color: #fbbf24;
-  margin-bottom: 4px;
+.tc-guide-collapse[open] {
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.tc-guide-summary {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #fbbf24;
+  user-select: none;
+  list-style: none;
 }
 
-.tc-task-guide-list {
-  margin: 0;
-  padding-left: 18px;
+.tc-guide-summary::-webkit-details-marker {
+  display: none;
+}
+
+.tc-guide-arrow {
+  font-size: 0.8rem;
+  transition: transform 0.2s ease;
+}
+
+.tc-guide-collapse[open] .tc-guide-arrow {
+  transform: rotate(180deg);
+}
+
+.tc-guide-list {
+  margin: 6px 0 2px 0;
+  padding-left: 16px;
   color: #e2e8f0;
+  line-height: 1.45;
 }
 
-.tc-task-guide-list li {
-  margin-bottom: 2px;
+.tc-guide-list li {
+  margin-bottom: 3px;
 }
 
 /* La Kinh Bridge & Tọa Sơn Row */
@@ -1892,16 +1919,16 @@ body.theme-light .tc-tt-rules-footer {
    CHẾ ĐỘ THẨM ĐỊNH NGÀY GIỜ CỤ THỂ (SPECIFIC DATE & TIME EVALUATOR)
    ========================================================================== */
 
-/* Mode Switcher Tabs */
+/* Mode Switcher Tabs - Sleek Segmented Pill */
 .tc-view-modes {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   width: 100%;
-  margin-bottom: 4px;
-  background: rgba(15, 10, 24, 0.65);
-  padding: 5px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 215, 0, 0.18);
+  margin-bottom: 6px;
+  background: rgba(10, 6, 18, 0.7);
+  padding: 3px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
   box-sizing: border-box;
 }
 
@@ -1910,17 +1937,18 @@ body.theme-light .tc-tt-rules-footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 9px;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 17px;
   border: 1px solid transparent;
   background: transparent;
   color: #94a3b8;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   user-select: none;
+  white-space: nowrap;
 }
 
 .tc-view-mode-btn:hover {
@@ -1929,14 +1957,10 @@ body.theme-light .tc-tt-rules-footer {
 }
 
 .tc-view-mode-btn.active {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #ffffff;
-  border-color: #fbbf24;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
-}
-
-.tc-vmode-icon {
-  font-size: 1.05rem;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.28) 0%, rgba(180, 83, 9, 0.38) 100%);
+  color: #fef08a;
+  border-color: rgba(245, 158, 11, 0.55);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* Specific Mode Date & Hour Form */
@@ -2509,6 +2533,54 @@ body.theme-light .tc-nearby-card {
 
 body.theme-light .tc-nearby-canchi {
   color: #475569 !important;
+}
+
+body.theme-light .tc-view-modes {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.theme-light .tc-view-mode-btn {
+  color: #64748b !important;
+}
+
+body.theme-light .tc-view-mode-btn.active {
+  background: #ffffff !important;
+  color: #b45309 !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-light .tc-quick-pill {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+body.theme-light .tc-quick-pill:hover {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #f59e0b !important;
+}
+
+body.theme-light .tc-quick-pill.active {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #b45309 !important;
+}
+
+body.theme-light .tc-guide-collapse {
+  background: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #78350f !important;
+}
+
+body.theme-light .tc-guide-summary {
+  color: #92400e !important;
+}
+
+body.theme-light .tc-guide-list {
+  color: #334155 !important;
 }
 
 

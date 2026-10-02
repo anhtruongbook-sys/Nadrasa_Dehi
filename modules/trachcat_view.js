@@ -13,7 +13,7 @@
 
   const state = {
     viewMode: 'specific', // 'specific' (Thẩm định ngày giờ cụ thể) | 'month' (Tìm ngày tốt trong tháng)
-    taskId: 'MUC_05', // Động thổ mặc định
+    taskId: 'CHUNG', // Việc Chung mặc định
     category: 'Tất cả',
     searchTerm: '',
     personYear: 1990,
@@ -57,14 +57,14 @@
   ];
 
   const CORE_TASKS = [
+    { id: 'CHUNG', name: 'Việc Chung', icon: '🌟', category: 'Tổng Quát', desc: 'Xem ngày giờ tốt cho mọi việc nói chung' },
     { id: 'MUC_05', name: 'Động Thổ', icon: '🏗️', category: 'Xây dựng', desc: 'Động đất, ban nền, đặt móng' },
     { id: 'MUC_04', name: 'Cất Nóc', icon: '🏠', category: 'Xây dựng', desc: 'Lợp nhà, che mái, làm nóc, đổ trần' },
     { id: 'MUC_15', name: 'Nhập Trạch', icon: '🏡', category: 'Nhà ở', desc: 'Về nhà mới, chuyển chỗ ở, an cư' },
     { id: 'MUC_37', name: 'Khai Trương', icon: '🏪', category: 'Giao thương', desc: 'Mở cửa hàng, khai trương, mở kho' },
     { id: 'MUC_22', name: 'Cưới Hỏi', icon: '💍', category: 'Hôn nhân', desc: 'Cưới gả, kết hôn, nạp thái' },
     { id: 'MUC_31', name: 'Xuất Hành', icon: '🚗', category: 'Đi lại', desc: 'Xuất hành, đi xa, đi buôn' },
-    { id: 'MUC_28', name: 'An Táng', icon: '⚰️', category: 'Tang lễ', desc: 'An táng, chôn cất, hạ táng' },
-    { id: 'CHUNG', name: 'Việc Chung', icon: '🌟', category: 'Tổng Quát', desc: 'Xem ngày giờ tốt cho mọi việc nói chung' }
+    { id: 'MUC_28', name: 'An Táng', icon: '⚰️', category: 'Tang lễ', desc: 'An táng, chôn cất, hạ táng' }
   ];
 
   const SON_24_LIST = [
@@ -111,67 +111,56 @@
   }
 
   function renderTaskGuideHTML(taskId) {
+    let title = '';
+    let items = [];
     if (taskId === 'MUC_05') {
-      return `
-        <div class="tc-task-guide-box">
-          <div class="tc-task-guide-title">🏗️ NGUYÊN TẮC TRẠCH NHẬT ĐỘNG THỔ (KHỞI CÔNG BAN NỀN, ĐẶT MÓNG)</div>
-          <ul class="tc-task-guide-list">
-            <li><strong>15 Ngày cát căn bản:</strong> Giáp Tý, Giáp Dần, Giáp Thìn, Giáp Thân, Bính Tý, Bính Thân, Mậu Dần, Mậu Thìn, Kỷ Sửu, Kỷ Mùi, Canh Dần, Canh Thân, Tân Hợi, Quý Sửu, Quý Mùi.</li>
-            <li><strong>⚠️ 3 Ngày đại kỵ động thổ:</strong> Quý Mùi, Ất Mùi, Mậu Ngọ (Hệ thống đã tự động lọc bỏ).</li>
-            <li><strong>Cấm kỵ phương vị:</strong> Tuyệt đối không động thổ trên phương vị Thái Tuế của năm và phương Tam Sát.</li>
-            <li><strong>Tọa Sơn nhà:</strong> Bắt buộc bấm <em>"🧭 Lấy Tọa Từ La Kinh"</em> bên dưới để tự động kiểm tra Trực Xung Tọa Sơn và Tam Sát.</li>
-            <li><strong>Hạn gia chủ:</strong> Nếu phạm Tam Tai, Kim Lâu, Hoang Ốc xấu thì nên làm thủ tục <em>mượn tuổi</em> người thân hợp tuổi khởi sự.</li>
-          </ul>
-        </div>
-      `;
+      title = 'Nguyên tắc Động Thổ';
+      items = [
+        'Chọn ngày có trực Thành, Khai; tránh trực Phá, Bế, Nguy.',
+        'Hệ thống tự động lọc bỏ 3 ngày đại kỵ: Quý Mùi, Ất Mùi, Mậu Ngọ.',
+        'Tránh động thổ phương vị Thái Tuế và Tam Sát.',
+        'Phối hợp Tọa Sơn nhà qua nút "Lấy Tọa Từ La Kinh" để kiểm tra trực xung.'
+      ];
     } else if (taskId === 'MUC_04') {
-      return `
-        <div class="tc-task-guide-box">
-          <div class="tc-task-guide-title">🏠 NGUYÊN TẮC TRẠCH NHẬT CẤT NÓC (LÀM NÓC, GÁC ĐÒN DÔNG, ĐỔ MÁI, LỢP NHÀ)</div>
-          <ul class="tc-task-guide-list">
-            <li><strong>Bành Tổ Bách Kỵ:</strong> Ngày Ngọ kỵ lợp nhà, làm nóc (<em>"Ngọ bất thiêm cái, ốc chủ cánh trương"</em>).</li>
-            <li><strong>Trực & Sao cát:</strong> Ưu tiên Trực Định, Thành, Khai; kỵ các sao hung: Tinh, Quỷ, Liễu, Ngưu.</li>
-            <li><strong>Tọa Sơn:</strong> Ngày cất nóc tuyệt đối không được xung khắc với phương vị Tọa của ngôi nhà.</li>
-          </ul>
-        </div>
-      `;
+      title = 'Nguyên tắc Cất Nóc';
+      items = [
+        'Kỵ ngày Ngọ theo Bành Tổ ("Ngọ bất thiêm cái, ốc chủ cánh trương").',
+        'Ưu tiên Trực Định, Thành, Khai; tránh sao Tinh, Quỷ, Liễu, Ngưu.',
+        'Tránh ngày trực xung với Tọa Sơn ngôi nhà.'
+      ];
     } else if (taskId === 'MUC_15') {
-      return `
-        <div class="tc-task-guide-box">
-          <div class="tc-task-guide-title">🏡 NGUYÊN TẮC TRẠCH NHẬT NHẬP TRẠCH (VỀ NHÀ MỚI, CHUYỂN CHỖ Ở, AN CƯ)</div>
-          <ul class="tc-task-guide-list">
-            <li><strong>21 Ngày cát căn bản:</strong> Chọn các ngày có trực Thành, Khai; tránh trực Phá, Bế, Nguy.</li>
-            <li><strong>Trực xung Tọa Sơn & Tuổi:</strong> Tránh ngày xung với tuổi gia chủ và trực xung Tọa Sơn La Kinh.</li>
-            <li><strong>Kỳ Môn Độn Giáp:</strong> Cung Sinh Môn không được lâm Tuần Không, không khắc Can Ngày.</li>
-          </ul>
-        </div>
-      `;
+      title = 'Nguyên tắc Nhập Trạch';
+      items = [
+        'Ưu tiên ngày Trực Thành, Khai; tránh ngày trực xung bản mệnh gia chủ.',
+        'Cung Sinh Môn Kỳ Môn không phạm Tuần Không, không khắc Can Ngày.'
+      ];
     } else if (taskId === 'MUC_28') {
-      return `
-        <div class="tc-task-guide-box">
-          <div class="tc-task-guide-title">⚰️ NGUYÊN TẮC TRẠCH NHẬT AN TÁNG / CHÔN CẤT (ÂM TRẠCH)</div>
-          <ul class="tc-task-guide-list">
-            <li><strong>Tuổi căn cứ gốc:</strong> Bắt buộc căn cứ theo tuổi và bản mệnh của <strong>Người đã khuất (Người mất)</strong> để tránh ngày Trực Xung Địa Chi, tránh ngày xung khắc Ngũ hành bản mệnh.</li>
-            <li><strong>Tuổi phối hợp:</strong> Ngày giờ hạ huyệt/chôn cất kiêng trực xung với tuổi của <strong>Trưởng nam (Chủ tang)</strong>.</li>
-            <li><strong>Cấm kỵ ngày hung âm phần:</strong> Tuyệt đối tránh ngày Trùng Tang, Tam Tang, Thập Ác Đại Bại, Sát Chủ Âm Phần, Bạch Hổ nhập mộ.</li>
-            <li><strong>Không tính hạn làm nhà:</strong> Hạn Kim Lâu và Hoang Ốc (làm nhà) <em>tuyệt đối không áp dụng cho tang lễ</em>.</li>
-            <li><strong>Tọa Sơn Mộ Phần:</strong> Hướng đặt mộ / Tọa huyệt mộ cần đồng khí hoặc tương sinh với Bản Mệnh người mất.</li>
-          </ul>
-        </div>
-      `;
+      title = 'Nguyên tắc An Táng';
+      items = [
+        'Tính theo tuổi Người Mất, tránh ngày trực xung Địa Chi bản mệnh.',
+        'Tránh ngày Trùng Tang, Tam Tang, Sát Chủ Âm Phần.',
+        'Hạn Kim Lâu và Hoang Ốc không áp dụng cho tang lễ.'
+      ];
     } else if (taskId === 'MUC_22') {
-      return `
-        <div class="tc-task-guide-box">
-          <div class="tc-task-guide-title">💍 NGUYÊN TẮC TRẠCH NHẬT CƯỚI HỎI (HÔN NHÂN ĐẠI SỰ)</div>
-          <ul class="tc-task-guide-list">
-            <li><strong>Tuổi trọng tâm:</strong> Cổ nhân định lệ <em>"Lấy vợ xem tuổi đàn bà"</em> — Hạn Kim Lâu cưới gả bắt buộc tính theo tuổi mụ của <strong>Cô dâu</strong> (chọn "♀ Nữ", tuổi chia 9 dư 1, 3, 6, 8 là phạm Kim Lâu).</li>
-            <li><strong>Ngày cát hôn nhân:</strong> Ưu tiên ngày Bất Tương, Thiên Hỷ, Nguyệt Đức, Trực Định, Trực Thành; sao Bích, Phòng, Tâm.</li>
-            <li><strong>Ngày đại kỵ:</strong> Tránh ngày Tam Nương, Nguyệt Kỵ, Cô Thần Quả Tú, Ly Sào, Không Vong. Không tính hạn Hoang Ốc làm nhà.</li>
-          </ul>
-        </div>
-      `;
+      title = 'Nguyên tắc Cưới Hỏi';
+      items = [
+        'Tính Kim Lâu theo tuổi mụ Cô dâu (chọn Nữ).',
+        'Ưu tiên ngày Bất Tương, Thiên Hỷ; tránh Tam Nương, Nguyệt Kỵ.'
+      ];
     }
-    return '';
+    if (!title) return '';
+
+    return `
+      <details class="tc-guide-collapse">
+        <summary class="tc-guide-summary">
+          <span>ℹ️ ${title}</span>
+          <span class="tc-guide-arrow">▾</span>
+        </summary>
+        <ul class="tc-guide-list">
+          ${items.map(it => `<li>${it}</li>`).join('')}
+        </ul>
+      </details>
+    `;
   }
 
   const NAP_AM_MAP = {
@@ -517,16 +506,9 @@
     return `
       <!-- 1. Panel Nhập Thông Tin Thẩm Định -->
       <div class="tc-panel">
-        <div class="tc-panel-title">
-          <span>🔍 THẨM ĐỊNH NGÀY GIỜ CỤ THỂ</span>
-        </div>
-
-        <!-- Đại Sự Trọng Điểm (Quick Shortcuts) -->
+        <!-- Sự vụ (Chọn Nhanh) -->
         <div class="tc-quick-tasks-section">
-          <div class="tc-quick-tasks-label">
-            <span>⚡ ĐẠI SỰ TRỌNG ĐIỂM (CHỌN NHANH)</span>
-          </div>
-          <div class="tc-quick-tasks-grid">
+          <div class="tc-quick-tasks-bar">
             ${CORE_TASKS.map(ct => `
               <div class="tc-quick-pill ${state.taskId === ct.id ? 'active' : ''}" data-task-id="${ct.id}" data-cat="${ct.category}" title="${ct.desc}">
                 <span class="tc-quick-pill-icon">${ct.icon}</span>
@@ -535,12 +517,12 @@
             `).join('')}
             <div class="tc-quick-pill ${!CORE_TASKS.some(ct => ct.id === state.taskId) ? 'active' : ''}" data-action="all-tasks" title="Xem toàn bộ 83 mục việc Trạng Trình">
               <span class="tc-quick-pill-icon">📜</span>
-              <span>83 Việc Khác...</span>
+              <span>83 Việc...</span>
             </div>
           </div>
         </div>
 
-        <!-- Thuyết minh nguyên tắc Trạch Nhật khi chọn việc xây dựng / nhà ở -->
+        <!-- Thuyết minh nguyên tắc Trạch Nhật (Collapsible) -->
         ${renderTaskGuideHTML(state.taskId)}
 
         <!-- Phân loại mục việc (Chỉ hiện khi tìm 83 việc) -->
@@ -968,16 +950,9 @@
     return `
       <!-- 1. Bộ lọc công việc & Gia chủ -->
       <div class="tc-panel">
-        <div class="tc-panel-title">
-          <span>🧭 TRẠCH CÁT (TÌM NGÀY ĐẠI CÁT TRONG THÁNG)</span>
-        </div>
-
-        <!-- Đại Sự Trọng Điểm (Quick Shortcuts) -->
+        <!-- Sự vụ (Chọn Nhanh) -->
         <div class="tc-quick-tasks-section">
-          <div class="tc-quick-tasks-label">
-            <span>⚡ ĐẠI SỰ TRỌNG ĐIỂM (CHỌN NHANH)</span>
-          </div>
-          <div class="tc-quick-tasks-grid">
+          <div class="tc-quick-tasks-bar">
             ${CORE_TASKS.map(ct => `
               <div class="tc-quick-pill ${state.taskId === ct.id ? 'active' : ''}" data-task-id="${ct.id}" data-cat="${ct.category}" title="${ct.desc}">
                 <span class="tc-quick-pill-icon">${ct.icon}</span>
@@ -986,12 +961,12 @@
             `).join('')}
             <div class="tc-quick-pill ${!CORE_TASKS.some(ct => ct.id === state.taskId) ? 'active' : ''}" data-action="all-tasks" title="Xem toàn bộ 83 mục việc Trạng Trình">
               <span class="tc-quick-pill-icon">📜</span>
-              <span>83 Việc Khác...</span>
+              <span>83 Việc...</span>
             </div>
           </div>
         </div>
 
-        <!-- Thuyết minh nguyên tắc Trạch Nhật khi chọn việc xây dựng / nhà ở -->
+        <!-- Thuyết minh nguyên tắc Trạch Nhật (Collapsible) -->
         ${renderTaskGuideHTML(state.taskId)}
 
         <!-- Phân loại mục việc -->
@@ -1195,12 +1170,10 @@
         <!-- Bộ chuyển đổi chế độ (Mode Switcher) -->
         <div class="tc-view-modes">
           <button type="button" class="tc-view-mode-btn ${state.viewMode === 'specific' ? 'active' : ''}" data-vmode="specific">
-            <span class="tc-vmode-icon">🔍</span>
-            <span>Thẩm Định Ngày Giờ Cụ Thể</span>
+            <span>🔍 Thẩm Định 1 Ngày</span>
           </button>
           <button type="button" class="tc-view-mode-btn ${state.viewMode === 'month' ? 'active' : ''}" data-vmode="month">
-            <span class="tc-vmode-icon">📅</span>
-            <span>Tìm Ngày Tốt Trong Tháng</span>
+            <span>📅 Tìm Trong Tháng</span>
           </button>
         </div>
 
