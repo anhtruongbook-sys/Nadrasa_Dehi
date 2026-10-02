@@ -1889,7 +1889,7 @@ body.theme-light .btn-confirm-cancel {
 
 /* Theme Light cho Header & Dropdown Siêu Gọn */
 body.theme-light .app-header {
-  background: rgba(253, 248, 240, 0.96);
+  background: #fdfbf7 !important;
   border-bottom: 1px solid rgba(184, 134, 11, 0.35);
   box-shadow: 0 2px 10px rgba(60, 30, 10, 0.08);
 }

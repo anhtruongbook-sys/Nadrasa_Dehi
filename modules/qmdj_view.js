@@ -18,8 +18,14 @@
   let currentBanMenhIsMale = true;
   let currentQuerentGender = 'nam'; // 'nam' | 'nu'
   let currentQuerentMode = 'birth_year'; // 'birth_year' (Can Năm Sinh người hỏi) | 'hour' (Can Giờ/Ngày)
-  let currentQuerentYear = 1990;
-  let currentQuerentStem = 'Canh';
+  let currentQuerentYear = 1979;
+  let currentQuerentStem = 'Kỷ';
+  try {
+    const savedY = localStorage.getItem('neta_user_birth_year');
+    if (savedY && /^\d{4}$/.test(savedY) && savedY !== '1990') {
+      currentQuerentYear = parseInt(savedY, 10);
+    }
+  } catch (_) {}
 
   const CAN_LIST = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
 
@@ -27,7 +33,7 @@
     if (global.KetNoiVuTruEngine && typeof global.KetNoiVuTruEngine.getStemChiFromYear === 'function') {
       return global.KetNoiVuTruEngine.getStemChiFromYear(y);
     }
-    const year = parseInt(y, 10) || 1990;
+    const year = parseInt(y, 10) || 1979;
     const yOffset = year - 4;
     const ganIdx = ((yOffset % 10) + 10) % 10;
     const zhiIdx = ((yOffset % 12) + 12) % 12;
@@ -2790,8 +2796,8 @@
       mode: ptState.subMode,
       house_degree: currentPtDeg,
       room_allocations: ptState.rooms,
-      owner_birth_can: currentQuerentStem || 'Bính',
-      owner_birth_year: currentQuerentYear || 1990,
+      owner_birth_can: currentQuerentStem || 'Kỷ',
+      owner_birth_year: currentQuerentYear || 1979,
       owner_is_male: (currentQuerentGender === 'nam'),
       deceased_birth_can: ptState.deceasedCan || 'Ất',
       grave_palace_id: ptState.gravePalaceId || 2,

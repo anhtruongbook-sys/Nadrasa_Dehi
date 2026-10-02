@@ -17,14 +17,20 @@
 
   // Trạng thái Chủ Sự & Bản Mệnh người hỏi
   let querentRole = 'chu';     // 'chu' (🛡️ Phe Chủ) | 'khach' (⚔️ Phe Khách)
-  let querentBirthYear = 1990; // Năm sinh người hỏi để đối chiếu thần vị ngự cung tuổi
+  let querentBirthYear = 1979; // Năm sinh người hỏi để đối chiếu thần vị ngự cung tuổi (Kỷ Mùi 1979)
+  try {
+    const savedY = localStorage.getItem('neta_user_birth_year');
+    if (savedY && /^\d{4}$/.test(savedY) && savedY !== '1990') {
+      querentBirthYear = parseInt(savedY, 10);
+    }
+  } catch (_) {}
 
   const CAN_NAMES = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
   const CHI_NAMES = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
 
   function getCanChiYear(year) {
     let y = parseInt(year, 10);
-    if (isNaN(y) || y < 1900 || y > 2100) y = 1990;
+    if (isNaN(y) || y < 1900 || y > 2100) y = 1979;
     const can = CAN_NAMES[(y + 6) % 10];
     const chi = CHI_NAMES[(y + 8) % 12];
     return { can, chi, canChi: `${can} ${chi}` };

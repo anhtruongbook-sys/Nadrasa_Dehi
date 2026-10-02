@@ -76,20 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.50
-          name: "Neta Light v2.8.50 (Tinh Chỉnh Giao Diện Thẩm Định: Thu Gọn Nút Bấm & Bố Cục 2 Cột Song Hành)"
+          tag_name: v2.8.51
+          name: "Neta Light v2.8.51 (Khắc Phục Tương Phản Toàn Diện & Mặc Định Gia Chủ 1979 Kỷ Mùi)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.50
-            - **Loại Bỏ Nút To Đùng & Tinh Gọn Nút Hành Động**:
-              + Tinh chỉnh nút `⚡ Thẩm Định Ngày Giờ Này` xuống chiều cao thanh mảnh 36px, font chữ Title Case tinh tế (0.84rem), dải màu hổ phách sang trọng, hòa hợp tuyệt đối với tổng thể.
-              + Tự động cập nhật kết quả thẩm định tức thì khi người dùng thay đổi ngày, giờ hoặc bấm chọn nhanh.
-            - **Thu Gọn Bộ Chọn Ngày & Khung Giờ Thành 2 Cột Song Hành**:
-              + Bố trí Ngày khởi sự (cùng micro-chip `Nay`/`Mai`) và Khung giờ (cùng micro-chip `Giờ này`) song hành 2 cột cân đối, tiết kiệm hơn 80px chiều cao màn hình.
-            - **Căn Thẳng Hàng Thẻ Kết Luận & Điểm Số**:
-              + Tiêu đề Cát/Hung và huy hiệu điểm số (`53/100đ`) được xếp thẳng hàng ngang tinh tế, gọn gàng.
-            - **Bảo Toàn Chuẩn Chỉ Khung Gia Chủ 2 Dòng**:
-              + Dòng 1: `Gia chủ: [ 1990 ] [ Canh Ngọ (37t) ]` + `[ Nam | Nữ ]`.
-              + Dòng 2: `[ Lộ Bàng Thổ ] [ ☵ Cung Khảm (Đông Tứ Mệnh) ]`.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.51
+            - **Mặc Định Gia Chủ Sinh Năm 1979 Kỷ Mùi Toàn Bộ Ứng Dụng**:
+              + Tự động cập nhật năm sinh mặc định 1979 (Kỷ Mùi - 48 tuổi mụ) trên toàn bộ hệ thống (Trạch Cát, Lục Nhâm, Kỳ Môn, Thái Ất).
+              + Bản mệnh chuẩn xác: Nạp Âm Thiên Thượng Hỏa (Lửa trên trời), Cung Phi Bát Trạch: Cung Chấn (Đông Tứ Mệnh).
+              + Tự động di chuyển (migrate) dữ liệu mặc định cũ 1990 sang 1979 trong bộ nhớ lưu trữ cục bộ.
+            - **Khắc Phục Toàn Diện Độ Tương Phản (Chống Lóa & Chống Lẫn Màu Nền 100%)**:
+              + **Nút Chọn Giờ Này**: Đổi sang viền và chữ hổ phách đậm (`#92400e`), nền kem sáng (`#fffbeb`), đọc rõ nét 100% trên nền sáng.
+              + **Nút Chuyển Sang (Gợi ý Ngày Đại Cát)**: Đổi sang viền và chữ xanh lục bảo đậm (`#065f46`), nền ngọc bích nhạt (`#dcfce7`), loại bỏ hoàn toàn hiện tượng chữ chìm không đọc được.
+              + **Huy Hiệu Badges & Thông Số Cát Hung**: Tối ưu độ đậm nét của chữ và màu nền cho Trực, Sao, Đổng Công, Bành Tổ, Lục Nhâm, Khổng Minh.
+              + **Header Ứng Dụng Chống Xuyên Thấu**: Nền Header chuyển sang màu đặc `#fdfbf7` ở theme sáng, chống hiện tượng chữ bị đè lẫn khi cuộn trang.
+              + Dòng 1: `Gia chủ: [ 1979 ] [ Kỷ Mùi (48t) ]` + `[ Nam | Nữ ]`.
+              + Dòng 2: `[ Thiên Thượng Hỏa ] [ ☳ Cung Chấn (Đông Tứ Mệnh) ]`.
               + **Bộ chuyển đổi chế độ kép linh hoạt (Dual Mode Switcher)**: Cho phép chuyển đổi tức thì giữa `[🔍 Thẩm Định Ngày Giờ Cụ Thể]` và `[📅 Tìm Ngày Tốt Trong Tháng]`.
               + **Đánh giá thời điểm chi tiết**: Nhập ngày Dương lịch cụ thể (hỗ trợ nút nhanh `Hôm nay`, `Ngày mai`), chọn 12 khung giờ chi hoặc nút `[🕒 Giờ Hiện Tại]`.
               + **Kết luận dứt khoát (Verdict & Score 0-100)**: Phán quyết rõ ràng `✅ ĐẠI CÁT`, `🟢 CÁT LÀNH`, `🟡 BÌNH HÒA`, `❌ HUNG SÁT` kèm Veto Guardrails an toàn (xung tọa sơn, xung bản mệnh, sát chủ, đổng công đại hung).

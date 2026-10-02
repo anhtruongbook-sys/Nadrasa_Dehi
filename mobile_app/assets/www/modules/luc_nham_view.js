@@ -15,7 +15,13 @@
   let selectedBox = 'Tỵ';           // Địa bàn đang chọn
   let isLunarMode = false;
   let currentIsMale = true;
-  let currentQuerentBirthYear = 1990; // Năm sinh mặc định của đương số
+  let currentQuerentBirthYear = 1979; // Năm sinh mặc định của đương số (Kỷ Mùi 1979)
+  try {
+    const savedY = localStorage.getItem('neta_user_birth_year');
+    if (savedY && /^\d{4}$/.test(savedY) && savedY !== '1990') {
+      currentQuerentBirthYear = parseInt(savedY, 10);
+    }
+  } catch (_) {}
   let customDaytime = null;        // null: auto, true: đán, false: mộ
   let customNguyetTuong = '';      // rỗng: auto theo tiết khí
 

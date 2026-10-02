@@ -16,8 +16,8 @@
     taskId: 'CHUNG', // Việc Chung mặc định
     category: 'Tất cả',
     searchTerm: '',
-    personYear: 1990,
-    personCanChi: 'Canh Ngọ',
+    personYear: 1979,
+    personCanChi: 'Kỷ Mùi',
     isMale: true,
     deathYear: (new Date()).getFullYear(),
     deathMonthLunar: 8,
@@ -358,11 +358,14 @@
     const container = document.getElementById('view-trachcat');
     if (!container) return;
 
-    // Tự động nhận diện năm sinh và giới tính nếu có lưu trong localStorage
+    // Tự động nhận diện năm sinh và giới tính nếu có lưu trong localStorage (Mặc định 1979 Kỷ Mùi)
     try {
       const savedYear = localStorage.getItem('neta_user_birth_year');
-      if (savedYear && /^\d{4}$/.test(savedYear)) {
+      if (savedYear && /^\d{4}$/.test(savedYear) && savedYear !== '1990') {
         state.personYear = parseInt(savedYear, 10);
+      } else {
+        state.personYear = 1979;
+        try { localStorage.setItem('neta_user_birth_year', '1979'); } catch (_) {}
       }
       const savedGender = localStorage.getItem('neta_user_gender');
       if (savedGender === 'female' || savedGender === '0' || savedGender === 'false') {
@@ -728,7 +731,7 @@
             </div>
             <div class="tc-diag-item">
               <span class="tc-diag-item-lbl">Đổng Công:</span>
-              <span class="tc-diag-item-val" style="color: ${res.dong_cong && (res.dong_cong.rating === 'Đại Kiết' || res.dong_cong.rating === 'Thứ Kiết') ? '#10b981' : (res.dong_cong && res.dong_cong.rating === 'Đại Hung' ? '#ef4444' : '#f59e0b')}; font-weight: 700;">
+              <span class="tc-diag-item-val ${res.dong_cong && (res.dong_cong.rating === 'Đại Kiết' || res.dong_cong.rating === 'Thứ Kiết') ? 'tc-val-good' : (res.dong_cong && res.dong_cong.rating === 'Đại Hung' ? 'tc-val-bad' : 'tc-val-warn')}">
                 ${res.dong_cong ? res.dong_cong.rating : 'Bình'}
               </span>
             </div>
@@ -743,7 +746,7 @@
             ${res.tc16 && res.tc16.banh_to_ky ? `
               <div class="tc-diag-item">
                 <span class="tc-diag-item-lbl">Bành Tổ:</span>
-                <span class="tc-diag-item-val" style="color: #ef4444; font-size: 0.74rem;">${res.tc16.banh_to_ky}</span>
+                <span class="tc-diag-item-val tc-val-bad" style="font-size: 0.74rem;">${res.tc16.banh_to_ky}</span>
               </div>
             ` : ''}
             <div class="tc-diag-item">
@@ -780,13 +783,13 @@
             </div>
             <div class="tc-diag-item">
               <span class="tc-diag-item-lbl">9 Bậc Trạng Trình:</span>
-              <span class="tc-diag-item-val" style="color: ${curHour && curHour.rank <= 2 ? '#10b981' : (curHour && curHour.rank >= 7 ? '#ef4444' : '#f59e0b')}; font-weight: 700;">
+              <span class="tc-diag-item-val ${curHour && curHour.rank <= 2 ? 'tc-val-good' : (curHour && curHour.rank >= 7 ? 'tc-val-bad' : 'tc-val-warn')}">
                 ${curHour ? curHour.recommendation : ''}
               </span>
             </div>
             <div class="tc-diag-item">
               <span class="tc-diag-item-lbl">Ngũ Bất Ngộ Thời:</span>
-              <span class="tc-diag-item-val" style="color: ${curHour && curHour.is_five_disharmony ? '#ef4444' : '#10b981'};">
+              <span class="tc-diag-item-val ${curHour && curHour.is_five_disharmony ? 'tc-val-bad' : 'tc-val-good'}">
                 ${curHour && curHour.is_five_disharmony ? '⚠️ Phạm Thất Sát' : '✓ Không phạm'}
               </span>
             </div>
@@ -857,11 +860,11 @@
 
       <!-- Gợi ý Ngày Cát Gần Nhất (nếu ngày hiện tại điểm thấp < 65) -->
       ${res.nearby_better_days && res.nearby_better_days.length > 0 ? `
-        <div class="tc-panel" style="margin-top: 10px; border-color: rgba(52, 211, 153, 0.35);">
-          <div class="tc-panel-title" style="color: #34d399;">
+        <div class="tc-panel tc-nearby-panel" style="margin-top: 10px;">
+          <div class="tc-panel-title tc-nearby-title">
             <span>💡 GỢI Ý NGÀY ĐẠI CÁT GẦN NHẤT THAY THẾ</span>
           </div>
-          <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 8px;">
+          <div class="tc-nearby-sub">
             Vì ngày ${res.solar_date} chưa đạt chuẩn tối ưu (${res.score}đ), bạn có thể cân nhắc đổi sang các ngày tốt tiếp theo sau:
           </div>
           <div class="tc-nearby-grid">
@@ -870,7 +873,7 @@
                 <div class="tc-nearby-info">
                   <span class="tc-nearby-date">📅 ${nb.solar_date} (${nb.total_score}đ)</span>
                   <span class="tc-nearby-canchi">Âm: ${nb.lunar_date} • ${nb.can_chi_day} (Trực ${nb.truc_name})</span>
-                  <span style="font-size: 0.72rem; color: #f59e0b;">Giờ tốt: Giờ ${nb.best_hour ? nb.best_hour.hour_chi : 'Hoàng Đạo'}</span>
+                  <span class="tc-nearby-best-hour">Giờ tốt: Giờ ${nb.best_hour ? nb.best_hour.hour_chi : 'Hoàng Đạo'}</span>
                 </div>
                 <button type="button" class="tc-btn-switch-day" data-date="${nb.solar_date}">
                   Chuyển Sang
