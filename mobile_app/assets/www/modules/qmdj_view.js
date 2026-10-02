@@ -842,15 +842,21 @@
     const domains = global.KetNoiVuTruEngine.FORECAST_DOMAINS;
 
     const dayStr = formatPillarCanChi(chart.date);
+    const dayParts = (dayStr || '').split(' ').filter(Boolean);
+    const dayCan = dayParts[0] || '';
+    const dayChi = dayParts[1] || '';
     const hourStr = formatPillarCanChi(chart.hour);
-    const dayCan = (dayStr || '').split(' ')[0] || '';
-    const hourCan = (hourStr || '').split(' ')[0] || '';
+    const hourParts = (hourStr || '').split(' ').filter(Boolean);
+    const hourCan = hourParts[0] || '';
+    const hourChi = hourParts[1] || '';
 
     // Chuẩn hóa cấu trúc chart plain cho forecast engine
     const chartPlain = {
       round: chart.round || 1,
       day_can: dayCan,
+      day_chi: dayChi,
       hour_can: hourCan,
+      hour_chi: hourChi,
       day_palace: 1,
       hour_palace: 9,
       palaces: {}
@@ -870,6 +876,13 @@
         ? global.KetNoiVuTruEngine.allocate10Deities(roundVal > 0 ? 'Dương Độn' : 'Âm Độn', chiefPalaceNum)
         : {};
 
+      const GIAP_LEADER_MAP = {
+        'Tý': 'Mậu', 'Tuất': 'Kỷ', 'Thân': 'Canh',
+        'Ngọ': 'Tân', 'Thìn': 'Nhâm', 'Dần': 'Quý'
+      };
+      const targetDayStem = (dayCan === 'Giáp') ? (GIAP_LEADER_MAP[dayChi] || 'Mậu') : dayCan;
+      const targetHourStem = (hourCan === 'Giáp') ? (GIAP_LEADER_MAP[hourChi] || 'Mậu') : hourCan;
+
       chart.box.flat().forEach(p => {
         if (!p) return;
         const pIdx = p.index;
@@ -881,27 +894,34 @@
         const hcs = Array.isArray(p.getHCS(true)) ? p.getHCS(true).map(translate) : [translate(p.getHCS(true))];
         const ecs = Array.isArray(p.getECS(true)) ? p.getECS(true).map(translate) : [translate(p.getECS(true))];
 
-        const hCan = hcs[0] || '';
-        if (hCan === dayCan) chartPlain.day_palace = pNum;
-        if (hCan === hourCan) chartPlain.hour_palace = pNum;
+        const cleanHcs = hcs.map(s => String(s || '').replace(/\s*\([^)]*\)/g, '').trim()).filter(Boolean);
+        const cleanEcs = ecs.map(s => String(s || '').replace(/\s*\([^)]*\)/g, '').trim()).filter(Boolean);
+
+        if (cleanHcs.includes(targetDayStem)) chartPlain.day_palace = pNum;
+        if (cleanHcs.includes(targetHourStem)) chartPlain.hour_palace = pNum;
 
         chartPlain.palaces[pNum] = {
           name: PALACE_NAMES[pIdx] || `Cung ${pNum}`,
           door: door,
-          star: stars[0] || '',
+          star: stars.join(' + ') || '',
+          stars: stars,
           deity: divinity,
-          heaven_stem: hCan,
-          earth_stem: ecs[0] || '',
+          heaven_stem: cleanHcs.join('/'),
+          heaven_stems: cleanHcs,
+          earth_stem: cleanEcs.join('/'),
+          earth_stems: cleanEcs,
           is_kong_wang: !!p.de,
           is_sky_horse: !!p.hs
         };
       });
     }
 
+    const querentStemChi = getQuerentStemChi(currentQuerentYear);
     const querentOptions = {
       mode: currentQuerentMode,
       year: currentQuerentYear,
-      stem: currentQuerentStem,
+      stem: currentQuerentStem || querentStemChi.stem,
+      branch: querentStemChi.branch,
       gender: currentQuerentGender
     };
 

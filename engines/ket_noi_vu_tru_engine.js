@@ -434,17 +434,43 @@
     { key: 'childbirth', name: '👶 Sinh Nở & Con Cái' }
   ];
 
+  const GIAP_LEADER_MAP = {
+    'Tý': 'Mậu', 'Tuất': 'Kỷ', 'Thân': 'Canh',
+    'Ngọ': 'Tân', 'Thìn': 'Nhâm', 'Dần': 'Quý'
+  };
+
+  function getLeaderStem(stem, branch) {
+    if (stem !== 'Giáp') return stem;
+    if (!branch) return 'Mậu';
+    return GIAP_LEADER_MAP[branch] || 'Mậu';
+  }
+
   function runOmniForecast(domainKey, chartData, querentOptions = {}) {
     if (!chartData || !chartData.palaces) return null;
     const palaces = chartData.palaces;
 
     const findPalaceWith = (field, val) => {
+      if (!val) return null;
       for (const [pId, pInfo] of Object.entries(palaces)) {
-        if (pInfo[field] === val || (Array.isArray(pInfo[field]) && pInfo[field].includes(val))) {
+        if (!pInfo) continue;
+        const targetVal = pInfo[field];
+        if (targetVal === val) return Number(pId);
+        if (Array.isArray(targetVal) && targetVal.includes(val)) return Number(pId);
+        if (typeof targetVal === 'string') {
+          const parts = targetVal.split(/[\s,/+]+/).filter(Boolean);
+          if (parts.includes(val)) return Number(pId);
+        }
+        if (field === 'heaven_stem' && Array.isArray(pInfo.heaven_stems) && pInfo.heaven_stems.includes(val)) {
+          return Number(pId);
+        }
+        if (field === 'earth_stem' && Array.isArray(pInfo.earth_stems) && pInfo.earth_stems.includes(val)) {
+          return Number(pId);
+        }
+        if (field === 'star' && Array.isArray(pInfo.stars) && pInfo.stars.includes(val)) {
           return Number(pId);
         }
       }
-      return 1;
+      return null;
     };
 
     // 1. Xác định Cung Chủ Thể (Người Hỏi)
@@ -454,29 +480,43 @@
 
     if (querentMode === 'birth_year') {
       let stem = querentOptions.stem;
+      let branch = querentOptions.branch;
       if (!stem && querentOptions.year) {
-        stem = getStemChiFromYear(querentOptions.year).stem;
+        const sc = getStemChiFromYear(querentOptions.year);
+        stem = sc.stem;
+        branch = sc.branch;
       }
       stem = stem || 'Giáp';
       const gStr = querentOptions.gender ? (querentOptions.gender === 'nam' ? 'Nam ♂' : 'Nữ ♀') : '';
       querentLabel = `Can Năm Sinh: ${stem}${querentOptions.year ? ` (${querentOptions.year}${gStr ? ' ' + gStr : ''})` : (gStr ? ` (${gStr})` : '')}`;
 
-      // Giáp trong Kỳ Môn ẩn dưới Lục Nghi (mặc định Giáp Tý ẩn Mậu hoặc Cung Trực Phù)
+      // BẮT BUỘC 100% LẤY THEO THIÊN BÀN (THIÊN THỜI / ĐỘNG THÁI HIỆN TẠI):
       if (stem === 'Giáp') {
-        subjP = findPalaceWith('deity', 'Trực Phù') || findPalaceWith('heaven_stem', 'Mậu');
+        const leaderStem = getLeaderStem('Giáp', branch);
+        const pFound = findPalaceWith('heaven_stem', leaderStem);
+        subjP = (pFound !== null) ? pFound : (findPalaceWith('deity', 'Trực Phù') || 1);
       } else {
-        subjP = findPalaceWith('heaven_stem', stem);
-        if (!subjP || subjP === 1) {
-          subjP = findPalaceWith('earth_stem', stem) || 1;
+        // Can khác: Tìm chính xác trên Can Thiên Bàn
+        const pFound = findPalaceWith('heaven_stem', stem);
+        if (pFound !== null) {
+          subjP = pFound;
+        } else {
+          subjP = findPalaceWith('deity', 'Trực Phù') || 1;
         }
       }
     } else {
-      // Mặc định: Nhật Can (Can Ngày) hoặc Cung 1
+      // Mặc định: Nhật Can (Can Ngày)
       const dayCan = chartData.day_can || '';
+      const dayChi = chartData.day_chi || '';
       if (dayCan) {
-        subjP = (dayCan === 'Giáp')
-          ? (findPalaceWith('deity', 'Trực Phù') || findPalaceWith('heaven_stem', 'Mậu'))
-          : findPalaceWith('heaven_stem', dayCan);
+        if (dayCan === 'Giáp') {
+          const leaderStem = getLeaderStem('Giáp', dayChi);
+          const pFound = findPalaceWith('heaven_stem', leaderStem);
+          subjP = (pFound !== null) ? pFound : (findPalaceWith('deity', 'Trực Phù') || chartData.day_palace || 1);
+        } else {
+          const pFound = findPalaceWith('heaven_stem', dayCan);
+          subjP = (pFound !== null) ? pFound : (chartData.day_palace || 1);
+        }
         querentLabel = `Nhật Can (Can Ngày): ${dayCan}`;
       } else {
         subjP = chartData.day_palace || 1;
