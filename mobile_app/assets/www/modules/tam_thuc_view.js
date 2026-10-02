@@ -243,42 +243,43 @@
 
         <!-- 1. UNIFIED CONTROL CARD (UCC) -->
         <div class="tamthuc-ucc-card">
-          <!-- Hàng 1: Ngày giờ & Điều hướng thời gian -->
+          <!-- Hàng 1: Ngày giờ (bấm mở lịch) & Điều hướng thời gian -->
           <div class="ucc-row ucc-row-date">
-            <div class="ucc-time-display-pill">
+            <label class="ucc-time-display-pill" id="tamthuc-pill-cal" title="Chạm để mở bảng chọn Ngày & Giờ">
               <span class="ucc-cal-icon">📅</span>
               <span class="ucc-datetime-val">${formatDisplayDate(currentDate)}</span>
-              <span class="ucc-term-tag">${rep.solar_term}</span>
-            </div>
+              <input type="datetime-local" id="tamthuc-picker-datetime" value="${dStr}T${pad(sHour)}:${pad(sMin)}" class="native-hidden-date">
+            </label>
             <div class="ucc-quick-nav-btns">
               <button type="button" class="ucc-q-btn" id="btn-tamthuc-sub-hour" title="Lùi 1 Giờ">-1h</button>
               <button type="button" class="ucc-q-btn" id="btn-tamthuc-add-hour" title="Tiến 1 Giờ">+1h</button>
-              <button type="button" class="ucc-q-btn" id="btn-tamthuc-now" title="Về thời điểm hiện tại">⏱️ Hiện Tại</button>
-              <label class="ucc-q-btn btn-cal-picker-label" title="Chọn thời gian chính xác">
-                📅
-                <input type="datetime-local" id="tamthuc-picker-datetime" value="${dStr}T${pad(sHour)}:${pad(sMin)}" class="native-hidden-date">
-              </label>
+              <button type="button" class="ucc-q-btn ucc-btn-now" id="btn-tamthuc-now" title="Về thời điểm hiện tại">⚡ Giờ thực</button>
             </div>
           </div>
 
-          <!-- Hàng 2: Tứ Trụ & Chọn Vị Thế -->
+          <!-- Hàng 2: Tiết Khí & Tứ Trụ Thời Điểm -->
           <div class="ucc-row ucc-row-pillars">
+            <span class="ucc-term-tag">🌿 ${rep.solar_term}</span>
             <div class="ucc-pillars-text">
               <span class="pillar-label">Tứ Trụ:</span>
-              <strong class="pillar-val">${rep.four_pillars}</strong>
-            </div>
-            <div class="ucc-role-selector">
-              <span class="role-label">Vị Thế:</span>
-              <button type="button" class="role-btn ${currentRole === 'Chủ' ? 'active chu' : ''}" id="btn-role-chu" title="Phe Chủ: Chủ động, người khởi sự">🛡️ Chủ</button>
-              <button type="button" class="role-btn ${currentRole === 'Khách' ? 'active khach' : ''}" id="btn-role-khach" title="Phe Khách: Bị động, đối tác, ngoại cảnh">⚔️ Khách</button>
+              <strong class="pillar-val">${(rep.four_pillars || '').replace(/\s*-\s*/g, ' • ')}</strong>
             </div>
           </div>
 
-          <!-- Hàng 3: Ô Nhập Câu Hỏi & Tự Động Bắt Lĩnh Vực -->
+          <!-- Hàng 3: Chọn Vị Thế Chiến Lược -->
+          <div class="ucc-row ucc-row-role">
+            <div class="ucc-role-selector">
+              <span class="role-label">Vị Thế:</span>
+              <button type="button" class="role-btn ${currentRole === 'Chủ' ? 'active chu' : ''}" id="btn-role-chu" title="Phe Chủ: Chủ động, người khởi sự">🛡️ Phe Chủ</button>
+              <button type="button" class="role-btn ${currentRole === 'Khách' ? 'active khach' : ''}" id="btn-role-khach" title="Phe Khách: Bị động, ngoại cảnh">⚔️ Phe Khách</button>
+            </div>
+          </div>
+
+          <!-- Hàng 4: Ô Nhập Câu Hỏi & Tự Động Bắt Lĩnh Vực -->
           <div class="ucc-row ucc-row-query">
             <div class="tamthuc-query-input-wrap">
               <span class="query-icon">🔍</span>
-              <input type="text" id="tamthuc-query-input" class="tamthuc-query-input" placeholder="Nhập sự việc cần chiêm đoán (ví dụ: bổ nhiệm, mua đất, hợp đồng, phẫu thuật...)" value="${currentQuery}">
+              <input type="text" id="tamthuc-query-input" class="tamthuc-query-input" placeholder="Nhập sự việc cần chiêm đoán (hợp đồng, bổ nhiệm, đầu tư...)" value="${currentQuery}">
               ${currentQuery ? `<button type="button" class="btn-clear-query" id="btn-clear-query">✕</button>` : ''}
             </div>
             <button type="button" class="ucc-btn-submit" id="btn-tamthuc-run" title="Thực hiện chiêm đoán Tam Thức">
@@ -648,6 +649,19 @@
     const btnAddHour = container.querySelector('#btn-tamthuc-add-hour');
     const btnNow = container.querySelector('#btn-tamthuc-now');
     const picker = container.querySelector('#tamthuc-picker-datetime');
+    const pillCal = container.querySelector('#tamthuc-pill-cal');
+
+    if (pillCal && picker) {
+      pillCal.onclick = (e) => {
+        if (e.target !== picker && typeof picker.showPicker === 'function') {
+          try {
+            picker.showPicker();
+          } catch (err) {
+            // fallback handled by native label
+          }
+        }
+      };
+    }
 
     if (btnSubHour) {
       btnSubHour.onclick = () => {
