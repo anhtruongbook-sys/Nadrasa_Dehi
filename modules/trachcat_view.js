@@ -293,43 +293,132 @@
       displayYear = state.deathYear || solY;
     }
 
-    const ttRes = eng.calculateTrungTang({
-      birthYear: state.personYear,
-      deathYear: state.deathYear || solY,
-      deathMonthLunar: state.deathMonthLunar || 8,
-      deathDayLunar: state.deathDayLunar || 15,
-      deathHourChi: state.deathHourChi || 'Ngọ',
-      isMale: state.isMale
-    });
+    const currentDeathYear = state.deathYear || solY;
+    const isDeathBeforeBirth = currentDeathYear < state.personYear;
+    const rawTuoiTho = currentDeathYear - state.personYear + 1;
+    const gender_text = state.isMale ? 'Nam' : 'Nữ';
 
-    if (!ttRes || !ttRes.is_applicable) {
-      return `
-        <div class="tc-trungtang-box">
-          <div class="tc-trungtang-header">
-            <div class="tc-trungtang-title">
-              <span>⚰️ TRA CỨU TRÙNG TANG - NHẬP MỘ - THIÊN DI</span>
+    let ttRes = null;
+    if (!isDeathBeforeBirth && rawTuoiTho >= 10) {
+      ttRes = eng.calculateTrungTang({
+        birthYear: state.personYear,
+        deathYear: currentDeathYear,
+        deathMonthLunar: state.deathMonthLunar || 8,
+        deathDayLunar: state.deathDayLunar || 15,
+        deathHourChi: state.deathHourChi || 'Ngọ',
+        isMale: state.isMale
+      });
+    }
+
+    const tuoi_tho = (ttRes && ttRes.tuoi_tho) ? ttRes.tuoi_tho : rawTuoiTho;
+
+    let subtitleAgeText = '';
+    if (isDeathBeforeBirth) {
+      subtitleAgeText = `⚠️ Năm mất (${currentDeathYear}) trước năm sinh (${state.personYear})`;
+    } else if (tuoi_tho < 10) {
+      subtitleAgeText = `hưởng dương ${tuoi_tho} tuổi (dưới 10 tuổi)`;
+    } else {
+      subtitleAgeText = `hưởng thọ ${tuoi_tho} tuổi`;
+    }
+
+    let resultHTML = '';
+    if (ttRes && ttRes.is_applicable) {
+      const { summary, pillars, counts } = ttRes;
+
+      let summaryStatusClass = 'tc-tt-summary-neutral';
+      let summaryIcon = '☁️';
+      if (summary.has_nhap_mo) {
+        summaryStatusClass = 'tc-tt-summary-good';
+        summaryIcon = '🌸';
+      } else if (summary.is_severe) {
+        summaryStatusClass = 'tc-tt-summary-severe';
+        summaryIcon = '⚠️';
+      } else if (counts.trung_tang > 0) {
+        summaryStatusClass = 'tc-tt-summary-warn';
+        summaryIcon = '⚠️';
+      }
+
+      resultHTML = `
+        <!-- Kết quả 4 Trụ: Năm - Tháng - Ngày - Giờ -->
+        <div class="tc-tt-pillars-grid">
+          ${[
+            { key: 'nam', label: 'Trụ Năm', data: pillars.nam },
+            { key: 'thang', label: 'Trụ Tháng', data: pillars.thang },
+            { key: 'ngay', label: 'Trụ Ngày', data: pillars.ngay },
+            { key: 'gio', label: 'Trụ Giờ', data: pillars.gio }
+          ].map(p => `
+            <div class="tc-tt-pillar-card ${p.data.nature}">
+              <div class="tc-tt-pillar-head">
+                <span class="tc-tt-pillar-label">${p.label}</span>
+                <span class="tc-tt-pillar-chi">Cung ${p.data.chi}</span>
+              </div>
+              <div class="tc-tt-pillar-status ${p.data.badge_class}">
+                <span>${p.data.icon}</span>
+                <span>${p.data.type}</span>
+              </div>
+              <div class="tc-tt-pillar-meaning">${p.data.meaning}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Bảng Tổng Kết & Luận Giải Hóa Giải -->
+        <div class="tc-tt-summary-card ${summaryStatusClass}">
+          <div class="tc-tt-summary-head">
+            <div class="tc-tt-summary-badge">
+              <span class="tc-tt-sum-icon">${summaryIcon}</span>
+              <span class="tc-tt-sum-title">${summary.title}</span>
+            </div>
+            <div class="tc-tt-counts-chips">
+              <span class="tc-badge tc-badge-good">🌸 Nhập Mộ: ${counts.nhap_mo}</span>
+              <span class="tc-badge tc-badge-info">☁️ Thiên Di: ${counts.thien_di}</span>
+              <span class="tc-badge ${counts.trung_tang > 0 ? 'tc-badge-bad' : 'tc-badge-good'}">⚠️ Trùng Tang: ${counts.trung_tang}</span>
             </div>
           </div>
-          <div style="font-size: 0.8rem; color: #94a3b8; padding: 10px;">
-            ${ttRes ? ttRes.message : 'Dữ liệu tuổi không áp dụng (tuổi thọ tối thiểu từ 10 tuổi trở lên).'}
+
+          <div class="tc-tt-summary-body">
+            ${summary.desc}
+          </div>
+
+          <div class="tc-tt-rules-footer">
+            <div class="tc-tt-rules-line">
+              ⚖️ <strong>Quy luật bấm tay cổ nhân:</strong>
+              ${gender_text === 'Nam' ? 'Nam khởi 10 tuổi tại Dần (đếm thuận chiều kim đồng hồ)' : 'Nữ khởi 10 tuổi tại Thân (đếm nghịch chiều kim đồng hồ)'} → Cung Năm → tiếp cung sau tính Tháng 1 → tiếp cung sau tính Ngày 1 → tiếp cung sau tính Giờ Tý.
+            </div>
+            <div class="tc-tt-rules-line">
+              ✨ <strong>Khẩu quyết phong thủy:</strong> Tứ Sinh (Dần - Thân - Tị - Hợi) là <strong>Trùng Tang</strong> | Tứ Mộ (Thìn - Tuất - Sửu - Mùi) là <strong>Nhập Mộ</strong> (đại cát) | Tứ Chính (Tý - Ngọ - Mão - Dậu) là <strong>Thiên Di</strong> (bình hòa).
+              <em>"Nhập Mộ thắng Trùng Tang"</em> — chỉ cần có 1 Nhập Mộ là vong linh an nghỉ, mồ yên mả đẹp.
+            </div>
           </div>
         </div>
       `;
-    }
-
-    const { summary, pillars, counts, tuoi_tho, gender_text } = ttRes;
-
-    let summaryStatusClass = 'tc-tt-summary-neutral';
-    let summaryIcon = '☁️';
-    if (summary.has_nhap_mo) {
-      summaryStatusClass = 'tc-tt-summary-good';
-      summaryIcon = '🌸';
-    } else if (summary.is_severe) {
-      summaryStatusClass = 'tc-tt-summary-severe';
-      summaryIcon = '⚠️';
-    } else if (counts.trung_tang > 0) {
-      summaryStatusClass = 'tc-tt-summary-warn';
-      summaryIcon = '⚠️';
+    } else if (isDeathBeforeBirth) {
+      resultHTML = `
+        <div class="tc-tt-alert-card" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 12px; margin-top: 8px;">
+          <div style="font-weight: 700; color: #ef4444; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>⚠️ Năm mất (${currentDeathYear}) trước Năm sinh (${state.personYear})</span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary, #94a3b8); line-height: 1.5;">
+            Thời điểm mất không thể xảy ra trước năm sinh của vong linh. Quý bạn có thể chỉnh lại <strong>Năm mất</strong> ở ô trên hoặc bấm nút dưới để đặt lại năm hiện tại.
+          </div>
+          <button type="button" id="btn-tt-reset-current-year" class="tc-micro-chip" style="margin-top: 8px; padding: 6px 12px; cursor: pointer; background: #ef4444; color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 0.78rem;">
+            ↺ Đặt lại Năm mất ${new Date().getFullYear()}
+          </button>
+        </div>
+      `;
+    } else {
+      resultHTML = `
+        <div class="tc-tt-alert-card" style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 8px; padding: 12px; margin-top: 8px;">
+          <div style="font-weight: 700; color: #eab308; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>ℹ️ Người mất dưới 10 tuổi (${tuoi_tho} tuổi)</span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary, #94a3b8); line-height: 1.5;">
+            Theo phong thủy âm trạch và tập quán cổ truyền, người mất dưới 10 tuổi (hoặc trẻ nhỏ) tâm thức thuần khiết vô nhiễm, khi quy tiên không tính Trùng Tang - Nhập Mộ - Thiên Di.
+          </div>
+          <button type="button" id="btn-tt-reset-current-year" class="tc-micro-chip" style="margin-top: 8px; padding: 6px 12px; cursor: pointer; background: #eab308; color: #000; border: none; border-radius: 6px; font-weight: 700; font-size: 0.78rem;">
+            ↺ Đặt lại Năm mất ${new Date().getFullYear()}
+          </button>
+        </div>
+      `;
     }
 
     return `
@@ -339,7 +428,7 @@
             <span>🕯️ TRA CỨU TRÙNG TANG - NHẬP MỘ - THIÊN DI (ÂM TRẠCH)</span>
           </div>
           <span class="tc-trungtang-sub">
-            Căn cứ tuổi người mất (${gender_text}, sinh năm ${state.personYear}, hưởng thọ ${tuoi_tho} tuổi) &amp; 4 trụ thời điểm lâm chung.<br>
+            Căn cứ tuổi người mất (${gender_text}, sinh năm ${state.personYear}, ${subtitleAgeText}) &amp; 4 trụ thời điểm lâm chung.<br>
             <span style="display:inline-block; margin-top:4px; font-weight:600; color:var(--text-accent, #38bdf8);">
               ☀️ Dương: ${pad(solD)}/${pad(solM)}/${solY} ${pad(curHourVal)}:${pad(curMinVal)} ⇄ 🌙 Âm: Ngày ${pad(state.deathDayLunar)}/${pad(state.deathMonthLunar)}/${state.deathYear} (Giờ ${state.deathHourChi})
             </span>
@@ -398,57 +487,7 @@
           </div>
         </div>
 
-        <!-- Kết quả 4 Trụ: Năm - Tháng - Ngày - Giờ -->
-        <div class="tc-tt-pillars-grid">
-          ${[
-            { key: 'nam', label: 'Trụ Năm', data: pillars.nam },
-            { key: 'thang', label: 'Trụ Tháng', data: pillars.thang },
-            { key: 'ngay', label: 'Trụ Ngày', data: pillars.ngay },
-            { key: 'gio', label: 'Trụ Giờ', data: pillars.gio }
-          ].map(p => `
-            <div class="tc-tt-pillar-card ${p.data.nature}">
-              <div class="tc-tt-pillar-head">
-                <span class="tc-tt-pillar-label">${p.label}</span>
-                <span class="tc-tt-pillar-chi">Cung ${p.data.chi}</span>
-              </div>
-              <div class="tc-tt-pillar-status ${p.data.badge_class}">
-                <span>${p.data.icon}</span>
-                <span>${p.data.type}</span>
-              </div>
-              <div class="tc-tt-pillar-meaning">${p.data.meaning}</div>
-            </div>
-          `).join('')}
-        </div>
-
-        <!-- Bảng Tổng Kết & Luận Giải Hóa Giải -->
-        <div class="tc-tt-summary-card ${summaryStatusClass}">
-          <div class="tc-tt-summary-head">
-            <div class="tc-tt-summary-badge">
-              <span class="tc-tt-sum-icon">${summaryIcon}</span>
-              <span class="tc-tt-sum-title">${summary.title}</span>
-            </div>
-            <div class="tc-tt-counts-chips">
-              <span class="tc-badge tc-badge-good">🌸 Nhập Mộ: ${counts.nhap_mo}</span>
-              <span class="tc-badge tc-badge-info">☁️ Thiên Di: ${counts.thien_di}</span>
-              <span class="tc-badge ${counts.trung_tang > 0 ? 'tc-badge-bad' : 'tc-badge-good'}">⚠️ Trùng Tang: ${counts.trung_tang}</span>
-            </div>
-          </div>
-
-          <div class="tc-tt-summary-body">
-            ${summary.desc}
-          </div>
-
-          <div class="tc-tt-rules-footer">
-            <div class="tc-tt-rules-line">
-              ⚖️ <strong>Quy luật bấm tay cổ nhân:</strong>
-              ${gender_text === 'Nam' ? 'Nam khởi 10 tuổi tại Dần (đếm thuận chiều kim đồng hồ)' : 'Nữ khởi 10 tuổi tại Thân (đếm nghịch chiều kim đồng hồ)'} → Cung Năm → tiếp cung sau tính Tháng 1 → tiếp cung sau tính Ngày 1 → tiếp cung sau tính Giờ Tý.
-            </div>
-            <div class="tc-tt-rules-line">
-              ✨ <strong>Khẩu quyết phong thủy:</strong> Tứ Sinh (Dần - Thân - Tị - Hợi) là <strong>Trùng Tang</strong> | Tứ Mộ (Thìn - Tuất - Sửu - Mùi) là <strong>Nhập Mộ</strong> (đại cát) | Tứ Chính (Tý - Ngọ - Mão - Dậu) là <strong>Thiên Di</strong> (bình hòa).
-              <em>"Nhập Mộ thắng Trùng Tang"</em> — chỉ cần có 1 Nhập Mộ là vong linh an nghỉ, mồ yên mả đẹp.
-            </div>
-          </div>
-        </div>
+        ${resultHTML}
       </div>
     `;
   }
@@ -1880,6 +1919,11 @@
         if (!isNaN(val) && val >= 1920 && val <= 2050 && val !== state.personYear) {
           state.personYear = val;
           try { localStorage.setItem('neta_user_birth_year', String(val)); } catch (_) {}
+          if (state.deathYear < state.personYear) {
+            state.deathYear = new Date().getFullYear();
+            state.deathDate = new Date();
+            syncDeathFromSolar();
+          }
           runSpecificEvaluation();
           runEvaluation();
           render();
@@ -2118,6 +2162,16 @@
       btnTTNextHour.onclick = () => {
         state.deathHour = (state.deathHour + 2) % 24;
         state.deathHourChi = getChiFromHour(state.deathHour);
+        render(true);
+      };
+    }
+
+    const btnResetTTYear = document.getElementById('btn-tt-reset-current-year');
+    if (btnResetTTYear) {
+      btnResetTTYear.onclick = () => {
+        state.deathYear = new Date().getFullYear();
+        state.deathDate = new Date();
+        syncDeathFromSolar();
         render(true);
       };
     }
