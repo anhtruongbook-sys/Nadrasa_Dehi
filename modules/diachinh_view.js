@@ -106,10 +106,8 @@
             <div class="dc-textarea-tools">
               <button type="button" class="dc-tool-btn" id="dc-btn-paste">📋 Dán Tọa Độ</button>
               <button type="button" class="dc-tool-btn" id="dc-btn-clear">🗑️ Xóa</button>
-              <label class="dc-tool-btn" style="margin-bottom:0;cursor:pointer;">
-                📁 Nạp File (.txt, .csv)
-                <input type="file" id="dc-file-input" accept=".txt,.csv,.kml" style="display:none;">
-              </label>
+              <button type="button" class="dc-tool-btn" id="dc-btn-upload">📁 Nạp File (Excel, CSV, TXT)</button>
+              <input type="file" id="dc-file-input" accept=".xlsx,.xls,.csv,.txt" style="display:none;">
             </div>
           </div>
 
@@ -468,6 +466,8 @@
       });
     }
 
+    const btnUpload = document.getElementById('dc-btn-upload');
+
     // Nút Xóa
     if (btnClear) {
       btnClear.addEventListener('click', () => {
@@ -478,21 +478,30 @@
       });
     }
 
-    // Nạp file .txt, .csv
+    // Nạp file (Excel .xlsx, .xls, .csv, .txt)
+    if (btnUpload) {
+      btnUpload.addEventListener('click', () => {
+        // Kiểm tra nếu chạy trên Android Flutter WebView có NativeBridge
+        if (window.NativeBridge && typeof window.NativeBridge.postMessage === 'function') {
+          try {
+            window.NativeBridge.postMessage(JSON.stringify({ action: 'pickDataFile' }));
+            return;
+          } catch (e) {
+            console.warn('NativeBridge pickDataFile failed, falling back to file input:', e);
+          }
+        }
+        if (fileInput) {
+          fileInput.value = '';
+          fileInput.click();
+        }
+      });
+    }
+
     if (fileInput) {
       fileInput.addEventListener('change', (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const content = evt.target.result;
-          if (textareaCoords) textareaCoords.value = content;
-          state.coordText = content;
-          reprocessAndRefresh();
-          showToast(`Đã nạp file: ${file.name}`);
-        };
-        reader.readAsText(file, 'utf-8');
+        handleIncomingFile(file);
       });
     }
 
@@ -524,6 +533,112 @@
       });
     }
   }
+
+  // Xử lý nạp tệp từ Web File Input hoặc kéo thả
+  function handleIncomingFile(file) {
+    if (!file) return;
+    const name = file.name || 'tap_tin_toa_do';
+    const lower = name.toLowerCase();
+
+    if (lower.endsWith('.xlsx') || lower.endsWith('.xls')) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const buffer = evt.target.result;
+          applyParsedExcel(buffer, name);
+        } catch (err) {
+          showToast('⚠️ Lỗi đọc tệp Excel: ' + (err.message || String(err)));
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      // .csv, .txt
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const content = evt.target.result;
+        applyParsedText(content, name);
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+  }
+
+  // Áp dụng kết quả bóc tách từ Excel
+  function applyParsedExcel(dataOrBase64, filename) {
+    const engine = global.NetaDiaChinhEngine;
+    if (!engine || typeof engine.parseExcelData !== 'function') {
+      showToast('⚠️ Chưa sẵn sàng module phân tích Excel.');
+      return;
+    }
+    const res = engine.parseExcelData(dataOrBase64, filename);
+    if (!res.success) {
+      showToast('⚠️ ' + (res.error || 'Không đọc được dữ liệu từ tệp Excel'));
+      return;
+    }
+
+    if (res.provinceKey) {
+      state.provinceKey = res.provinceKey;
+      const selProvince = document.getElementById('dc-select-province');
+      if (selProvince) selProvince.value = res.provinceKey;
+      const curProv = engine.getProvince(state.provinceKey);
+      const badge = document.getElementById('dc-badge-ktt-display');
+      if (badge && curProv) {
+        badge.textContent = `KTT: ${curProv.ktt}°00' (${curProv.zone3 ? '3°' : '6°'})`;
+      }
+    }
+
+    if (res.parcelName) {
+      state.parcelName = res.parcelName;
+      const inputParcelName = document.getElementById('dc-input-parcel-name');
+      if (inputParcelName) inputParcelName.value = res.parcelName;
+    }
+
+    const textareaCoords = document.getElementById('dc-textarea-coords');
+    if (textareaCoords) textareaCoords.value = res.coordText;
+    state.coordText = res.coordText;
+
+    reprocessAndRefresh();
+    showToast(`✅ Đã nạp thành công ${res.pointCount} mốc từ Excel: ${filename}`);
+  }
+
+  // Áp dụng nội dung văn bản thuần (.txt, .csv)
+  function applyParsedText(content, filename) {
+    const textareaCoords = document.getElementById('dc-textarea-coords');
+    if (textareaCoords) textareaCoords.value = content;
+    state.coordText = content;
+    if (!state.parcelName && filename) {
+      state.parcelName = filename.replace(/\.(txt|csv)$/i, '').replace(/[_-]/g, ' ').trim();
+      const inputParcelName = document.getElementById('dc-input-parcel-name');
+      if (inputParcelName) inputParcelName.value = state.parcelName;
+    }
+    reprocessAndRefresh();
+    showToast(`✅ Đã nạp dữ liệu từ: ${filename}`);
+  }
+
+  // Nhận dữ liệu từ Native Android App qua Channel pickDataFile
+  window._onNativeDataFileReceived = function(data) {
+    if (!data) return;
+    try {
+      const fileData = typeof data === 'string' ? JSON.parse(data) : data;
+      const fileName = fileData.filename || 'tap_tin_toa_do.xlsx';
+      const base64Str = fileData.base64 || '';
+      if (!base64Str) return;
+
+      const lower = fileName.toLowerCase();
+      if (lower.endsWith('.xlsx') || lower.endsWith('.xls') || !lower.includes('.')) {
+        applyParsedExcel(base64Str, fileName);
+      } else {
+        const binaryString = atob(base64Str);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const text = new TextDecoder('utf-8').decode(bytes);
+        applyParsedText(text, fileName);
+      }
+    } catch (e) {
+      showToast('⚠️ Lỗi nạp tệp từ thiết bị: ' + (e.message || String(e)));
+    }
+  };
 
   // Tải mẫu thửa đất
   function loadSample(sampleKey) {

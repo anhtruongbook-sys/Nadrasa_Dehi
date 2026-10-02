@@ -231,6 +231,16 @@ class _NetaLightWebViewScreenState extends State<NetaLightWebViewScreen> {
             debugPrint('Error in pickFloorPlan: $e');
             _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi chọn ảnh mặt bằng: $e');");
           }
+        } else if (action == 'pickDataFile') {
+          try {
+            final String? res = await _platform.invokeMethod<String>('pickDataFile');
+            if (res != null && res.isNotEmpty) {
+              _controller.runJavaScript("if (typeof window._onNativeDataFileReceived === 'function') window._onNativeDataFileReceived($res);");
+            }
+          } catch (e) {
+            debugPrint('Error in pickDataFile: $e');
+            _controller.runJavaScript("if (typeof showToast === 'function') showToast('⚠️ Lỗi chọn tệp: $e');");
+          }
         } else if (action == 'getLocation') {
           try {
             final locResult = await _platform.invokeMethod('getLocation');

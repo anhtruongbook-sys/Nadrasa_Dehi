@@ -76,18 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.55
-          name: "Neta Light v2.8.55 (Giao Diện Địa Chính Sạch Sẽ • Bỏ Toàn Bộ Mẫu Thử)"
+          tag_name: v2.8.56
+          name: "Neta Light v2.8.56 (Nạp File Excel Tọa Độ VN-2000 • SheetJS & Android Native File Bridge)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.55
-            - **Loại Bỏ Hoàn Toàn Dữ Liệu Mẫu Thử (Clean Minimalist UI)**:
-              + Bỏ hàng chip chọn mẫu thử (Hà Nội, TP.HCM, Đà Nẵng, Chương Mỹ).
-              + Trống hoàn toàn trường tên thửa đất và danh sách tọa độ, sẵn sàng để người dùng nhập/dán dữ liệu thực tế.
-              + Bảng thông báo rỗng tinh tế, chỉ dẫn chuẩn xác cách dán mốc tọa độ VN-2000 từ sổ đỏ.
-              + Tinh chỉnh hàng nút tác vụ `[📥 KML Earth]`, `[📊 Bảng CSV]`, `[📍 Google Maps]` vừa khít 100% trên màn hình điện thoại không bị tràn viền hay mất chữ.
-            - **Khắc phục triệt để lỗi tài nguyên CSS trên điện thoại**:
-              + Bổ sung khai báo tài nguyên `assets/www/assets/diachinh/` vào `pubspec.yaml` để Flutter SDK đóng gói 100% tệp giao diện vào bản cài APK.
-              + Tích hợp trực tiếp bộ style CSS hoàn chỉnh vào `styles.css` gốc, bảo đảm giao diện hiển thị chuẩn xác, sang trọng 100% trong mọi trường hợp.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.56
+            - **Hỗ Trợ Toàn Diện Nạp File Excel (.xlsx, .xls) Trực Tiếp**:
+              + Tích hợp thư viện SheetJS (xlsx.full.min.js) chạy hoàn toàn 100% Offline trên điện thoại không cần internet.
+              + Tự động nhận diện cấu trúc bảng tọa độ địa chính từ sổ đỏ (cột X, Y, Northing, Easting, Đỉnh, Điểm mốc, STT).
+              + Tự động nhận diện Tỉnh / Thành phố từ tiêu đề hoặc metadata tệp Excel và tự động chuyển đổi kinh tuyến trục KTT tương ứng.
+              + Tự động lọc bỏ các hàng phụ chú (chu vi, diện tích, tim đất, Google Maps).
+            - **Khắc phục triệt để lỗi nạp file trên Android WebView**:
+              + Xây dựng Native File Bridge (`pickDataFile`) qua Android Intent `ACTION_GET_CONTENT` chọn tệp hệ thống hỗ trợ cả `.xlsx`, `.xls`, `.csv`, `.txt`.
+              + Trả dữ liệu base64 trực tiếp vào WebView qua `window._onNativeDataFileReceived`, không phụ thuộc vào WebChromeClient.
+              + Hỗ trợ dán trực tiếp bảng dữ liệu sao chép từ Excel vào ô nhập với bộ chuẩn hóa số đa năng (hỗ trợ cả dấu chấm hàng nghìn và dấu phẩy thập phân kiểu Việt Nam).
               + Tối ưu hiển thị responsive trên các dòng điện thoại: tinh chỉnh kích thước ô nhập tọa độ, xếp tầng thông minh các trường nhập liệu và căn chỉnh 3 nút tác vụ xuất file trên cùng 1 hàng.
             - **Phân Hệ Mới: Địa Chính & Sổ Đỏ (VN-2000 to WGS-84 & Google Earth)**:
               + Bóc tách và chuyển đổi tọa độ VN-2000 (X Northing, Y Easting) sang WGS-84 kinh vĩ độ chuẩn xác theo thuật toán Bursa-Wolf 7 tham số trắc địa.

@@ -303,12 +303,37 @@
       const numbers = [];
       let name = '';
 
+      function cleanNumToken(str) {
+        if (!str) return NaN;
+        let s = String(str).trim().replace(/[^\d.,\-+]/g, '');
+        if (!s) return NaN;
+        if (s.includes('.') && s.includes(',')) {
+          if (s.lastIndexOf(',') > s.lastIndexOf('.')) {
+            s = s.replace(/\./g, '').replace(',', '.');
+          } else {
+            s = s.replace(/,/g, '');
+          }
+        } else if (s.includes(',')) {
+          const parts = s.split(',');
+          if (parts.length === 2 && parts[1].length <= 6) {
+            s = s.replace(',', '.');
+          } else {
+            s = s.replace(/,/g, '');
+          }
+        } else if (s.includes('.')) {
+          const dots = s.split('.');
+          if (dots.length > 2) {
+            s = dots.join('');
+          }
+        }
+        return parseFloat(s);
+      }
+
       tokens.forEach(tok => {
-        const normTok = tok.replace(',', '.');
-        const val = parseFloat(normTok);
-        if (!isNaN(val)) {
+        const val = cleanNumToken(tok);
+        if (!isNaN(val) && /[\d]/.test(tok)) {
           numbers.push(val);
-        } else if (!name) {
+        } else if (!name && !/^(đỉnh|điểm|mốc|stt|x|y|northing|easting)$/i.test(tok.trim())) {
           name = tok;
         }
       });
@@ -799,6 +824,215 @@
 </kml>`;
   }
 
+  /**
+   * Phân tích tệp Excel (.xlsx, .xls) hoặc mảng nhị phân ArrayBuffer / Uint8Array / Base64
+   * Trích xuất tọa độ VN-2000 / WGS-84, nhận diện tỉnh thành & tên thửa đất
+   * @param {ArrayBuffer|Uint8Array|string} inputData - Dữ liệu nhị phân hoặc chuỗi base64
+   * @param {string} [filename] - Tên tệp gốc để fallback đặt tên thửa đất
+   * @returns {{ success: boolean, coordText: string, provinceKey: string|null, parcelName: string, pointCount: number, error?: string }}
+   */
+  function parseExcelData(inputData, filename = '') {
+    const XLSXLib = (typeof XLSX !== 'undefined') ? XLSX : (typeof window !== 'undefined' ? window.XLSX : null);
+    if (!XLSXLib) {
+      return { success: false, error: 'Thư viện SheetJS (XLSX) chưa được tải.' };
+    }
+
+    try {
+      let workbook;
+      if (typeof inputData === 'string') {
+        const cleanB64 = inputData.includes(',') ? inputData.split(',')[1] : inputData;
+        workbook = XLSXLib.read(cleanB64, { type: 'base64' });
+      } else {
+        workbook = XLSXLib.read(inputData, { type: 'array' });
+      }
+
+      if (!workbook || !workbook.SheetNames || workbook.SheetNames.length === 0) {
+        return { success: false, error: 'Tệp Excel không chứa bảng tính (sheet) nào.' };
+      }
+
+      // Ưu tiên sheet có tên liên quan đến tọa độ hoặc sheet đầu tiên
+      let targetSheetName = workbook.SheetNames[0];
+      for (const sName of workbook.SheetNames) {
+        const lower = sName.toLowerCase();
+        if (lower.includes('nhap_toa_do') || lower.includes('toa do') || lower.includes('tọa độ') || lower.includes('ranh')) {
+          targetSheetName = sName;
+          break;
+        }
+      }
+
+      const worksheet = workbook.Sheets[targetSheetName];
+      const jsonRows = XLSXLib.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+      if (!jsonRows || jsonRows.length === 0) {
+        return { success: false, error: 'Bảng tính rỗng, không có dữ liệu dòng.' };
+      }
+
+      // 1. Quét tìm Tỉnh/Thành phố và Tên Thửa Đất từ metadata các dòng đầu
+      let detectedProvince = '';
+      let detectedParcelName = '';
+
+      for (let r = 0; r < Math.min(20, jsonRows.length); r++) {
+        const row = jsonRows[r];
+        if (!Array.isArray(row)) continue;
+        for (let c = 0; c < row.length; c++) {
+          const val = String(row[c]).trim().toLowerCase();
+          if (val.includes('tỉnh') || val.includes('thành phố') || val.includes('tp.') || val.includes('province')) {
+            const nextVal = String(row[c + 1] || row[c + 2] || '').trim();
+            for (const pName in PROVINCES_DATA) {
+              if (pName.toLowerCase() === nextVal.toLowerCase() || nextVal.toLowerCase().includes(pName.toLowerCase()) || val.includes(pName.toLowerCase())) {
+                detectedProvince = pName;
+                break;
+              }
+            }
+          }
+          if (val.includes('tên thửa') || val.includes('thửa số') || val.includes('thửa đất') || val.includes('địa điểm') || val.includes('dự án')) {
+            const nextVal = String(row[c + 1] || row[c + 2] || '').trim();
+            if (nextVal && !detectedParcelName) {
+              detectedParcelName = nextVal;
+            } else if (!detectedParcelName && String(row[c]).trim().length > 3) {
+              detectedParcelName = String(row[c]).trim();
+            }
+          }
+        }
+      }
+
+      // 2. Nhận diện các cột
+      function isXCol(cell) {
+        const c = String(cell).trim().toLowerCase();
+        return c === 'x' || c.startsWith('x_') || c.startsWith('x ') || c.startsWith('x(') ||
+               c.includes('x_vn2000') || c.includes('x vn2000') || c.includes('toạ độ x') || 
+               c.includes('tọa độ x') || c.includes('northing') || /\bx\b/.test(c);
+      }
+      function isYCol(cell) {
+        const c = String(cell).trim().toLowerCase();
+        return c === 'y' || c.startsWith('y_') || c.startsWith('y ') || c.startsWith('y(') ||
+               c.includes('y_vn2000') || c.includes('y vn2000') || c.includes('toạ độ y') || 
+               c.includes('tọa độ y') || c.includes('easting') || /\by\b/.test(c);
+      }
+      function isNameCol(cell) {
+        const c = String(cell).trim().toLowerCase();
+        return c.includes('điểm') || c.includes('mốc') || c.includes('stt') || c.includes('đỉnh') || c.includes('point') || c === 'tên' || c === 'name';
+      }
+
+      const junkKeywords = [
+        'kinh tuyến', 'kinh tuyen', 'chu vi', 'diện tích', 'dien tich', 
+        'tọa độ tâm', 'toa do tam', 'google maps', 'báo cáo', 'bao cao',
+        'tên thửa đất', 'ten thua dat', 'tỉnh / thành phố', 'tinh / thanh pho',
+        'số đỉnh mốc', 'so dinh moc', 'bảng kê tọa độ'
+      ];
+
+      // 3. Quét tìm hàng tiêu đề chứa cột Điểm, X, Y
+      let headerRow = -1;
+      let colX = -1, colY = -1, colName = -1;
+
+      for (let r = 0; r < Math.min(30, jsonRows.length); r++) {
+        const row = jsonRows[r];
+        if (!Array.isArray(row)) continue;
+        let foundX = -1, foundY = -1, foundName = -1;
+        row.forEach((cell, idx) => {
+          if (isXCol(cell) && foundX === -1) foundX = idx;
+          else if (isYCol(cell) && foundY === -1) foundY = idx;
+          else if (isNameCol(cell) && foundName === -1) foundName = idx;
+        });
+
+        if (foundX !== -1 && foundY !== -1) {
+          headerRow = r;
+          colX = foundX;
+          colY = foundY;
+          colName = foundName;
+          break;
+        }
+      }
+
+      const extractedLines = [];
+
+      if (headerRow !== -1 && colX !== -1 && colY !== -1) {
+        for (let r = headerRow + 1; r < jsonRows.length; r++) {
+          const row = jsonRows[r];
+          if (!row || row.length <= Math.max(colX, colY)) continue;
+          const rowStr = row.map(c => String(c).toLowerCase()).join(' ');
+          if (junkKeywords.some(kw => rowStr.includes(kw))) continue;
+
+          const rawX = String(row[colX]).replace(/\s+/g, '').replace(',', '.');
+          const rawY = String(row[colY]).replace(/\s+/g, '').replace(',', '.');
+          const xVal = parseFloat(rawX);
+          const yVal = parseFloat(rawY);
+          const nameVal = colName !== -1 && row[colName] !== '' && row[colName] !== undefined
+                          ? String(row[colName]).trim()
+                          : (extractedLines.length + 1).toString();
+
+          if (!isNaN(xVal) && !isNaN(yVal)) {
+            const isValidVn2000 = (xVal > 10000 && yVal > 10000);
+            const isValidWgs = (xVal >= 8 && xVal <= 24 && yVal >= 101 && yVal <= 111) ||
+                               (yVal >= 8 && yVal <= 24 && xVal >= 101 && xVal <= 111);
+            if (isValidVn2000 || isValidWgs) {
+              extractedLines.push(`${nameVal}  ${xVal}  ${yVal}`);
+            }
+          }
+        }
+      } else {
+        // Fallback: Quét các dòng có ít nhất 2 số hợp lệ
+        for (let r = 0; r < jsonRows.length; r++) {
+          const row = jsonRows[r];
+          if (!Array.isArray(row)) continue;
+          const rowStr = row.map(c => String(c).toLowerCase()).join(' ');
+          if (junkKeywords.some(kw => rowStr.includes(kw))) continue;
+
+          const nums = [];
+          let rowName = '';
+          for (let c = 0; c < row.length; c++) {
+            const rawCell = String(row[c]).trim();
+            const num = parseFloat(rawCell.replace(/\s+/g, '').replace(',', '.'));
+            if (!isNaN(num) && /^-?\d+(\.\d+)?$/.test(rawCell.replace(/\s+/g, '').replace(',', '.'))) {
+              nums.push(num);
+            } else if (!rowName && rawCell) {
+              rowName = rawCell;
+            }
+          }
+
+          if (nums.length >= 2) {
+            let pName = rowName;
+            let c1, c2;
+            if (nums.length >= 3 && nums[0] < 500) {
+              pName = pName || String(Math.floor(nums[0]));
+              c1 = nums[1];
+              c2 = nums[2];
+            } else {
+              pName = pName || String(extractedLines.length + 1);
+              c1 = nums[0];
+              c2 = nums[1];
+            }
+
+            const isValidVn2000 = (c1 > 10000 && c2 > 10000);
+            const isValidWgs = (c1 >= 8 && c1 <= 24 && c2 >= 101 && c2 <= 111) ||
+                               (c2 >= 8 && c2 <= 24 && c1 >= 101 && c1 <= 111);
+            if (isValidVn2000 || isValidWgs) {
+              extractedLines.push(`${pName}  ${c1}  ${c2}`);
+            }
+          }
+        }
+      }
+
+      if (extractedLines.length === 0) {
+        return { success: false, error: 'Không tìm thấy cột hoặc cặp tọa độ hợp lệ trong tệp Excel.' };
+      }
+
+      if (!detectedParcelName && filename) {
+        detectedParcelName = filename.replace(/\.(xlsx|xls|csv|txt)$/i, '').replace(/[_-]/g, ' ').trim();
+      }
+
+      return {
+        success: true,
+        coordText: extractedLines.join('\n'),
+        provinceKey: detectedProvince || null,
+        parcelName: detectedParcelName || '',
+        pointCount: extractedLines.length
+      };
+    } catch (err) {
+      return { success: false, error: 'Lỗi đọc tệp Excel: ' + (err.message || String(err)) };
+    }
+  }
+
   // Export Engine API
   const NetaDiaChinhEngine = {
     PROVINCES_DATA,
@@ -806,6 +1040,7 @@
     vn2000ToWgs84,
     wgs84ToVn2000,
     parseCoordinatesText,
+    parseExcelData,
     calculatePolygonArea,
     calculateCentroid,
     calculateEdges,

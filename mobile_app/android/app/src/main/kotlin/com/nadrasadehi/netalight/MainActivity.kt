@@ -42,7 +42,9 @@ class MainActivity: FlutterActivity() {
     private val LOCATION_REQ_CODE = 2001
     private val PICK_IMAGE_REQ = 4001
     private val TAKE_PHOTO_REQ = 4002
+    private val PICK_DATA_FILE_REQ = 4003
     private var pendingImageResult: MethodChannel.Result? = null
+    private var pendingDataFileResult: MethodChannel.Result? = null
     private var pendingLocationResult: MethodChannel.Result? = null
 
     // Native Hardware Compass Sensors
@@ -273,6 +275,27 @@ class MainActivity: FlutterActivity() {
                         pendingImageResult = null
                     }
                 }
+                "pickDataFile" -> {
+                    pendingDataFileResult = result
+                    try {
+                        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                            type = "*/*"
+                            val mimeTypes = arrayOf(
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                "application/vnd.ms-excel",
+                                "text/csv",
+                                "text/plain",
+                                "application/octet-stream"
+                            )
+                            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                        }
+                        startActivityForResult(Intent.createChooser(intent, "Chọn tệp tọa độ (Excel, CSV, TXT)"), PICK_DATA_FILE_REQ)
+                    } catch (e: Exception) {
+                        result.error("ERROR", e.localizedMessage, null)
+                        pendingDataFileResult = null
+                    }
+                }
                 "checkLocationPermission" -> {
                     val hasPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     result.success(hasPerm)
@@ -449,6 +472,47 @@ class MainActivity: FlutterActivity() {
 
                 val json = JSONArray(results).toString()
                 cb.success(json)
+            } catch (e: Exception) {
+                cb.error("ERROR", e.localizedMessage, null)
+            }
+        } else if (requestCode == PICK_DATA_FILE_REQ) {
+            val cb = pendingDataFileResult
+            pendingDataFileResult = null
+            if (cb == null) return
+
+            if (resultCode != Activity.RESULT_OK || data == null) {
+                cb.success("")
+                return
+            }
+
+            try {
+                val uri = data.data
+                if (uri == null) {
+                    cb.success("")
+                    return
+                }
+
+                var fileName = "tap_tin_toa_do"
+                val cursor = contentResolver.query(uri, null, null, null, null)
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val nameIndex = it.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                        if (nameIndex != -1) {
+                            fileName = it.getString(nameIndex) ?: "tap_tin_toa_do"
+                        }
+                    }
+                }
+
+                val inputStream = contentResolver.openInputStream(uri)
+                val bytes = inputStream?.readBytes() ?: ByteArray(0)
+                inputStream?.close()
+
+                val b64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                val obj = org.json.JSONObject().apply {
+                    put("filename", fileName)
+                    put("base64", b64)
+                }
+                cb.success(obj.toString())
             } catch (e: Exception) {
                 cb.error("ERROR", e.localizedMessage, null)
             }
