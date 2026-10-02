@@ -128,12 +128,8 @@
             </div>
           </div>
 
-          <!-- Nhóm Nút Tác Vụ Chính -->
+          <!-- Nhóm Nút Xuất Tệp & Bản Đồ Ngoài -->
           <div class="dc-action-group">
-            <button type="button" class="dc-btn-primary-lakinh" id="dc-btn-go-lakinh">
-              <span>🧭</span>
-              <span>Đưa Vào La Kinh Lập Cực</span>
-            </button>
             <div class="dc-btn-grid">
               <button type="button" class="dc-btn-secondary" id="dc-btn-export-kml">
                 <span>📥</span>
@@ -269,6 +265,14 @@
         <!-- Khung Sơ Đồ Hình Học SVG (Tỉ lệ 1:1) -->
         <div id="dc-svg-container" class="dc-preview-container ${state.isNumbersVisible === false ? 'hide-parcel-numbers' : ''}" style="${state.viewMode === 'svg' ? 'display:flex;' : 'display:none;'}">
           ${svgContent}
+        </div>
+
+        <!-- Nút Đưa Vào La Kinh Lập Cực: Đặt ở dưới bản đồ khu đất và thuộc ô bản đồ vệ tinh & ranh thửa đất -->
+        <div class="dc-map-action-wrap" style="margin-top: 10px;">
+          <button type="button" class="dc-btn-primary-lakinh" id="dc-btn-go-lakinh" title="Đưa ranh thửa đất vào La Kinh Vệ Tinh để lập cực phong thủy">
+            <span>🧭</span>
+            <span>Đưa Vào La Kinh Lập Cực</span>
+          </button>
         </div>
       </div>
 
@@ -1094,6 +1098,13 @@
           dcCurrentLayer.addTo(dcMapInstance);
         };
       });
+    }
+
+    const btnGoLaKinh = document.getElementById('dc-btn-go-lakinh');
+    if (btnGoLaKinh) {
+      btnGoLaKinh.onclick = () => {
+        importToLaKinh();
+      };
     }
   }
 
