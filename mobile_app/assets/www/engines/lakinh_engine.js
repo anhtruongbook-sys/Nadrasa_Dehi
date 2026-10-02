@@ -737,39 +737,51 @@
   function calculatePolygonCentroid(latlngs) {
     if (!latlngs || latlngs.length < 3) return null;
 
-    let area = 0.0;
-    let cx = 0.0;
-    let cy = 0.0;
-
     const n = latlngs.length;
+    const refLat = latlngs[0].lat;
+    const refLng = latlngs[0].lng !== undefined ? latlngs[0].lng : latlngs[0].lon;
+    const cosLat = Math.cos((refLat * Math.PI) / 180.0);
+
+    let area = 0.0;
+    let cEast = 0.0;
+    let cNorth = 0.0;
+
     for (let i = 0; i < n; i++) {
       const j = (i + 1) % n;
-      const xi = latlngs[i].lng;
-      const yi = latlngs[i].lat;
-      const xj = latlngs[j].lng;
-      const yj = latlngs[j].lat;
+      const lngI = latlngs[i].lng !== undefined ? latlngs[i].lng : latlngs[i].lon;
+      const lngJ = latlngs[j].lng !== undefined ? latlngs[j].lng : latlngs[j].lon;
+      const xi = (lngI - refLng) * cosLat;
+      const yi = latlngs[i].lat - refLat;
+      const xj = (lngJ - refLng) * cosLat;
+      const yj = latlngs[j].lat - refLat;
 
       const factor = (xi * yj - xj * yi);
       area += factor;
-      cx += (xi + xj) * factor;
-      cy += (yi + yj) * factor;
+      cEast += (xi + xj) * factor;
+      cNorth += (yi + yj) * factor;
     }
 
     area = area / 2.0;
-    if (Math.abs(area) < 1e-12) return null;
+    if (Math.abs(area) < 1e-15) {
+      const avgLat = latlngs.reduce((s, p) => s + p.lat, 0) / n;
+      const avgLng = latlngs.reduce((s, p) => s + (p.lng !== undefined ? p.lng : p.lon), 0) / n;
+      return { lat: avgLat, lng: avgLng, areaM2: 0 };
+    }
 
-    cx = cx / (6.0 * area);
-    cy = cy / (6.0 * area);
+    cEast = cEast / (6.0 * area);
+    cNorth = cNorth / (6.0 * area);
+
+    const clat = refLat + cNorth;
+    const clng = refLng + (cEast / cosLat);
 
     // Tính diện tích xấp xỉ ra mét vuông (quy đổi từ độ kinh vĩ tại vĩ độ trung bình)
-    const midLatRad = (cy * Math.PI) / 180.0;
     const mPerDegLat = 111132.92;
-    const mPerDegLng = 111412.84 * Math.cos(midLatRad);
+    const mPerDegLng = 111412.84 * cosLat;
     const areaSqM = Math.abs(area) * mPerDegLat * mPerDegLng;
 
     return {
-      lat: cy,
-      lng: cx,
+      lat: clat,
+      lng: clng,
       areaM2: Math.round(areaSqM * 10) / 10
     };
   }

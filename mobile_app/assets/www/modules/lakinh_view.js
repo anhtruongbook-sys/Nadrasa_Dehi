@@ -4305,6 +4305,20 @@ function updateQmdjStrategicLayer() {
     state.importedParcel = parcelData;
     state.isPlanGeoAnchored = true;
 
+    // Tính lại tọa độ trọng tâm (Centroid) chính xác 100% từ các đỉnh góc
+    if (global.NetaLaKinhEngine && typeof global.NetaLaKinhEngine.calculatePolygonCentroid === 'function') {
+      const accurateCentroid = global.NetaLaKinhEngine.calculatePolygonCentroid(parcelData.vertices);
+      if (accurateCentroid) {
+        parcelData.centroid = {
+          lat: accurateCentroid.lat,
+          lng: accurateCentroid.lng,
+          lon: accurateCentroid.lng,
+          x: parcelData.centroid ? parcelData.centroid.x : 0,
+          y: parcelData.centroid ? parcelData.centroid.y : 0
+        };
+      }
+    }
+
     if (!mapInstance) {
       renderLaKinh();
     }
@@ -6418,13 +6432,24 @@ function updateQmdjStrategicLayer() {
     if (btnParcelCenter) {
       btnParcelCenter.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (state.importedParcel && state.importedParcel.centroid) {
-          const c = state.importedParcel.centroid;
-          state.centerCoords = [c.lat, c.lng];
-          if (mapInstance) {
-            mapInstance.setView([c.lat, c.lng], 19, { animate: true });
+        if (state.importedParcel) {
+          let c = state.importedParcel.centroid;
+          if (global.NetaLaKinhEngine && state.importedParcel.vertices && state.importedParcel.vertices.length >= 3) {
+            const acc = global.NetaLaKinhEngine.calculatePolygonCentroid(state.importedParcel.vertices);
+            if (acc) {
+              c = { lat: acc.lat, lng: acc.lng, lon: acc.lng };
+              state.importedParcel.centroid = c;
+            }
           }
-          showLaKinhToast('🎯 Đã định vị chính tâm thửa đất');
+          if (c && c.lat && c.lng) {
+            state.centerCoords = [c.lat, c.lng];
+            if (mapInstance) {
+              mapInstance.setView([c.lat, c.lng], mapInstance.getZoom() || 19, { animate: true });
+            }
+            showLaKinhToast('🎯 Đã định vị chính tâm thửa đất');
+          } else {
+            showLaKinhToast('Chưa có thông tin tâm thửa đất');
+          }
         } else {
           showLaKinhToast('Chưa có thông tin tâm thửa đất');
         }

@@ -493,52 +493,72 @@
       };
     }
 
-    // Centroid giải tích đa giác phẳng
-    let signedArea = 0.0;
-    let cx = 0.0;
-    let cy = 0.0;
     const n = pts.length;
+
+    // 1. Tọa độ phẳng VN-2000 (X = Northing, Y = Easting)
+    // Dùng hệ tọa độ tương đối (trừ điểm gốc ref) để triệt tiêu 100% lỗi mất chữ số có nghĩa (Catastrophic Cancellation)
+    const refX = pts[0].x !== undefined ? pts[0].x : 0;
+    const refY = pts[0].y !== undefined ? pts[0].y : 0;
+
+    let signedArea = 0.0;
+    let cu = 0.0; // Easting offset
+    let cv = 0.0; // Northing offset
 
     for (let i = 0; i < n; i++) {
       const j = (i + 1) % n;
-      const x0 = pts[i].y; // Trục hoành Easting
-      const y0 = pts[i].x; // Trục tung Northing
-      const x1 = pts[j].y;
-      const y1 = pts[j].x;
-      const a = (x0 * y1 - x1 * y0);
+      const u0 = (pts[i].y !== undefined ? pts[i].y : 0) - refY; // Easting tương đối
+      const v0 = (pts[i].x !== undefined ? pts[i].x : 0) - refX; // Northing tương đối
+      const u1 = (pts[j].y !== undefined ? pts[j].y : 0) - refY;
+      const v1 = (pts[j].x !== undefined ? pts[j].x : 0) - refX;
+      const a = (u0 * v1 - u1 * v0);
       signedArea += a;
-      cx += (x0 + x1) * a;
-      cy += (y0 + y1) * a;
+      cu += (u0 + u1) * a;
+      cv += (v0 + v1) * a;
     }
 
     signedArea *= 0.5;
+    let finalX, finalY;
     if (Math.abs(signedArea) < 1e-7) {
-      // Trường hợp các điểm thẳng hàng, lấy trung bình cộng
-      const avgLat = pts.reduce((s, p) => s + p.lat, 0) / n;
-      const avgLon = pts.reduce((s, p) => s + p.lon, 0) / n;
-      const avgX = pts.reduce((s, p) => s + p.x, 0) / n;
-      const avgY = pts.reduce((s, p) => s + p.y, 0) / n;
-      return { lat: avgLat, lon: avgLon, x: avgX, y: avgY };
+      finalX = pts.reduce((s, p) => s + (p.x || 0), 0) / n;
+      finalY = pts.reduce((s, p) => s + (p.y || 0), 0) / n;
+    } else {
+      cu = cu / (6.0 * signedArea);
+      cv = cv / (6.0 * signedArea);
+      finalY = refY + cu; // Easting
+      finalX = refX + cv; // Northing
     }
 
-    cx = cx / (6.0 * signedArea); // Easting centroid
-    cy = cy / (6.0 * signedArea); // Northing centroid
+    // 2. Tọa độ địa lý WGS-84 (Lat, Lon / Lng)
+    // Dùng hệ tọa độ tương đối chiếu cục bộ (nhân cos(refLat)) để đạt độ chính xác cỡ milimet
+    const refLat = pts[0].lat;
+    const refLon = pts[0].lng !== undefined ? pts[0].lng : pts[0].lon;
+    const cosLat = Math.cos((refLat * Math.PI) / 180.0);
 
-    // Cũng tính centroid cho lat/lon (hỗ trợ cả trường lon và lng)
-    let clat = 0.0, clon = 0.0, geoArea = 0.0;
+    let geoArea = 0.0;
+    let cEast = 0.0;
+    let cNorth = 0.0;
+
     for (let i = 0; i < n; i++) {
       const j = (i + 1) % n;
       const lonI = pts[i].lng !== undefined ? pts[i].lng : pts[i].lon;
       const lonJ = pts[j].lng !== undefined ? pts[j].lng : pts[j].lon;
-      const a = (lonI * pts[j].lat - lonJ * pts[i].lat);
+      const xi = (lonI - refLon) * cosLat;
+      const yi = pts[i].lat - refLat;
+      const xj = (lonJ - refLon) * cosLat;
+      const yj = pts[j].lat - refLat;
+      const a = (xi * yj - xj * yi);
       geoArea += a;
-      clon += (lonI + lonJ) * a;
-      clat += (pts[i].lat + pts[j].lat) * a;
+      cEast += (xi + xj) * a;
+      cNorth += (yi + yj) * a;
     }
+
     geoArea *= 0.5;
-    if (Math.abs(geoArea) > 1e-9) {
-      clat = clat / (6.0 * geoArea);
-      clon = clon / (6.0 * geoArea);
+    let clat, clon;
+    if (Math.abs(geoArea) > 1e-15) {
+      cEast = cEast / (6.0 * geoArea);
+      cNorth = cNorth / (6.0 * geoArea);
+      clat = refLat + cNorth;
+      clon = refLon + (cEast / cosLat);
     } else {
       clat = pts.reduce((s, p) => s + p.lat, 0) / n;
       clon = pts.reduce((s, p) => s + (p.lng !== undefined ? p.lng : p.lon), 0) / n;
@@ -548,8 +568,8 @@
       lat: clat,
       lon: clon,
       lng: clon,
-      x: cy,
-      y: cx
+      x: finalX,
+      y: finalY
     };
   }
 
