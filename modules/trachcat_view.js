@@ -11,8 +11,12 @@
 (function (global) {
   'use strict';
 
+  const pad = (n) => String(n).padStart(2, '0');
+
   const state = {
     viewMode: 'month', // 'month' (Tìm ngày tốt trong tháng - mặc định) | 'specific' (Thẩm định ngày giờ cụ thể)
+    isLunarMode: false, // Thẩm định ngày giờ cụ thể: false (Dương lịch) | true (Âm lịch)
+    monthIsLunar: false, // Tìm ngày tốt trong tháng: false (Tháng Dương) | true (Tháng Âm)
     taskId: 'CHUNG', // Việc Chung mặc định
     category: 'Tất cả',
     searchTerm: '',
@@ -441,10 +445,24 @@
 
     const y = state.selectedYear;
     const m = state.selectedMonth; // 1-12
-    const daysInMonth = new Date(y, m, 0).getDate();
+    let startDate, endDate;
 
-    const startDate = new Date(y, m - 1, 1);
-    const endDate = new Date(y, m - 1, daysInMonth);
+    if (state.monthIsLunar && global.NetaCalendarEngine && global.NetaCalendarEngine.lunar2Solar) {
+      const s1 = global.NetaCalendarEngine.lunar2Solar(1, m, y, false, 7);
+      const s2 = global.NetaCalendarEngine.lunar2Solar(30, m, y, false, 7) || global.NetaCalendarEngine.lunar2Solar(29, m, y, false, 7);
+      if (s1 && s2) {
+        startDate = new Date(s1.year, s1.month - 1, s1.day, 0, 0, 0);
+        endDate = new Date(s2.year, s2.month - 1, s2.day, 23, 59, 59);
+      } else {
+        const daysInMonth = new Date(y, m, 0).getDate();
+        startDate = new Date(y, m - 1, 1);
+        endDate = new Date(y, m - 1, daysInMonth);
+      }
+    } else {
+      const daysInMonth = new Date(y, m, 0).getDate();
+      startDate = new Date(y, m - 1, 1);
+      endDate = new Date(y, m - 1, daysInMonth);
+    }
 
     state.results = eng.evaluatePeriod({
       taskId: state.taskId,
@@ -466,7 +484,7 @@
   }
 
   function renderGiaChuStripHTML(isFuneral, isMarriage, isBuilding, isGeneral, yearSuit, cungPhi, napAm) {
-    const personLabel = isFuneral ? 'Người mất' : (isMarriage ? 'Cô dâu' : 'Gia chủ');
+    const personLabel = isFuneral ? 'Vong' : (isMarriage ? 'Tuổi dâu' : 'Gia chủ');
     const ageNum = yearSuit ? yearSuit.age_lunar : '';
     const ageText = ageNum ? `${ageNum}t` : '';
 
@@ -518,7 +536,32 @@
       ? eng.calculateBatTrach(cungPhi.number, state.mountainSittingDeg)
       : null;
 
-    const curDateStr = state.specificDateStr || (state.specificDate ? `${state.specificDate.getFullYear()}-${String(state.specificDate.getMonth() + 1).padStart(2, '0')}-${String(state.specificDate.getDate()).padStart(2, '0')}` : '');
+    let targetDate = state.specificDate || new Date();
+    if (state.specificDateStr) {
+      const parts = state.specificDateStr.split('-');
+      if (parts.length === 3) {
+        targetDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 12, 0, 0);
+      }
+    }
+    const curYear = targetDate.getFullYear();
+    const curMonth = targetDate.getMonth() + 1;
+    const curDay = targetDate.getDate();
+
+    let displayDay = curDay;
+    let displayMonth = curMonth;
+    let displayYear = curYear;
+
+    if (state.isLunarMode && global.NetaCalendarEngine && global.NetaCalendarEngine.solar2Lunar) {
+      const lunar = global.NetaCalendarEngine.solar2Lunar(curDay, curMonth, curYear);
+      if (lunar) {
+        displayDay = lunar.day;
+        displayMonth = lunar.month;
+        displayYear = lunar.year;
+      }
+    }
+
+    const curDateStr = `${curYear}-${pad(curMonth)}-${pad(curDay)}`;
+    const curH = targetDate.getHours() || 12;
 
     return `
       <!-- PHẦN 1: BỘ TIÊU CHÍ VÀ CẤU HÌNH (SETUP PANEL Ở TRÊN CÙNG) -->
@@ -553,37 +596,44 @@
           </select>
         </div>
 
-        <!-- 2. Chọn Ngày và Khung Giờ Cụ Thể (2 Cột Siêu Tinh Gọn) -->
-        <div class="tc-datetime-grid">
-          <div class="tc-dt-col">
-            <div class="tc-dt-head">
-              <label class="tc-label tc-label-sm">📅 Ngày khởi sự</label>
-              <div class="tc-dt-chips">
-                <button type="button" class="tc-micro-chip" id="tc-btn-today" title="Hôm nay">Nay</button>
-                <button type="button" class="tc-micro-chip" id="tc-btn-tomorrow" title="Ngày mai">Mai</button>
-              </div>
+        <!-- 2. Chọn Ngày và Khung Giờ Cụ Thể (Chuẩn Unified Control Card của App) -->
+        <div class="unified-ctrl-card">
+          <!-- Row 1: Lịch Dương/Âm + Ô nhập Ngày / Tháng / Năm + ⚡Năm + 📅 Picker -->
+          <div class="ucc-row ucc-row-date">
+            <div class="ucc-pill-cal">
+              <button type="button" class="ucc-pill-btn ${!state.isLunarMode ? 'active' : ''}" id="tc-btn-solar" title="Xem theo Dương lịch">☀️ Dương</button>
+              <button type="button" class="ucc-pill-btn ${state.isLunarMode ? 'active' : ''}" id="tc-btn-lunar" title="Xem theo Âm lịch">🌙 Âm</button>
             </div>
-            <div class="tc-date-input-wrap">
-              <input type="date" id="tc-input-specific-date" class="tc-input-date" value="${curDateStr}">
+            <div class="ucc-date-box" id="tc-ucc-date-box" title="Nhập ngày tháng hoặc chạm nút lịch để chọn">
+              <input type="number" id="tc-input-day" class="num-box num-day" min="1" max="31" value="${displayDay}" placeholder="Ngày">
+              <span class="num-slash">/</span>
+              <input type="number" id="tc-input-month" class="num-box num-month" min="1" max="12" value="${displayMonth}" placeholder="Tháng">
+              <span class="num-slash">/</span>
+              <input type="number" id="tc-input-year-date" class="num-box num-year" min="1900" max="2100" value="${displayYear}" placeholder="Năm">
+              <button type="button" class="ucc-btn-year" id="tc-btn-quick-year" title="Chọn Thập niên & Năm siêu tốc">⚡Năm</button>
+              <label class="btn-picker-cal" id="tc-btn-native-cal" title="Mở bảng chọn Ngày & Giờ">
+                📅
+                <input type="datetime-local" id="tc-date-picker" value="${curDateStr}T${pad(curH)}:00" class="native-hidden-date">
+              </label>
             </div>
           </div>
 
-          <div class="tc-dt-col">
-            <div class="tc-dt-head">
-              <label class="tc-label tc-label-sm">⏰ Khung giờ</label>
-              <div class="tc-dt-chips">
-                <button type="button" class="tc-micro-chip" id="tc-btn-cur-hour" title="Khung giờ hiện tại">Giờ này</button>
-              </div>
-            </div>
-            <div>
-              <select id="tc-select-specific-hour" class="tc-select-hour">
-                <option value="">-- Tự chọn tốt nhất --</option>
+          <!-- Row 2: Can Chi Giờ + Quick Chips (Nay, Mai, Giờ này) -->
+          <div class="ucc-row ucc-row-time">
+            <div class="ucc-time-box" style="flex: 1 1 auto; min-width: 0;">
+              <select id="tc-select-specific-hour" class="select-canchi" style="width: 100%; border: none; background: transparent; outline: none; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                <option value="">-- Tự chọn Giờ Hoàng Đạo tốt nhất --</option>
                 ${CHI_HOURS.map(h => `
                   <option value="${h.chi}" ${state.specificHourChi === h.chi ? 'selected' : ''}>
                     Giờ ${h.label}
                   </option>
                 `).join('')}
               </select>
+            </div>
+            <div class="tc-dt-chips" style="flex-shrink: 0; display: flex; gap: 3px;">
+              <button type="button" class="tc-micro-chip" id="tc-btn-today" title="Hôm nay">Nay</button>
+              <button type="button" class="tc-micro-chip" id="tc-btn-tomorrow" title="Ngày mai">Mai</button>
+              <button type="button" class="tc-micro-chip" id="tc-btn-cur-hour" title="Khung giờ hiện tại">Giờ này</button>
             </div>
           </div>
         </div>
@@ -921,15 +971,6 @@
       ? eng.calculateBatTrach(cungPhi.number, state.mountainSittingDeg)
       : null;
 
-    let personLabel = 'Năm sinh gia chủ (Dương lịch)';
-    if (isFuneral) {
-      personLabel = 'Năm sinh Người Mất / Âm trạch (Dương lịch)';
-    } else if (isMarriage) {
-      personLabel = 'Năm sinh Cô dâu / Hôn nhân (Dương lịch)';
-    } else if (!isBuilding && !isGeneral) {
-      personLabel = 'Năm sinh Chủ sự / Người thực hiện (Dương lịch)';
-    }
-
     const ageText = isFuneral
       ? `Tuổi: ${state.personCanChi} (Hưởng thọ ${yearSuit ? yearSuit.age_lunar : ''} tuổi)`
       : `Tuổi: ${state.personCanChi} (${yearSuit ? yearSuit.age_lunar : ''} tuổi mụ)`;
@@ -976,10 +1017,14 @@
         <div class="tc-month-navigator">
           <button type="button" class="tc-month-nav-btn" id="tc-btn-prev-month" title="Tháng trước">◀</button>
           <div class="tc-month-nav-center">
-            <div class="tc-month-nav-label">Tháng ${state.selectedMonth} / ${state.selectedYear}</div>
+            <div class="tc-month-nav-label">Tháng ${state.selectedMonth}${state.monthIsLunar ? ' (Âm lịch)' : ''} / ${state.selectedYear}</div>
             <div class="tc-month-nav-sub">${state.results && state.results.days ? state.results.days.length : 0} ngày đại cát tuyển chọn</div>
           </div>
           <button type="button" class="tc-month-nav-btn" id="tc-btn-next-month" title="Tháng sau">▶</button>
+          <div class="ucc-pill-cal tc-month-cal-pill" style="margin-left: 6px;">
+            <button type="button" class="ucc-pill-btn ${!state.monthIsLunar ? 'active' : ''}" id="tc-btn-month-solar" title="Xem theo tháng Dương lịch">☀️ DL</button>
+            <button type="button" class="ucc-pill-btn ${state.monthIsLunar ? 'active' : ''}" id="tc-btn-month-lunar" title="Xem theo tháng Âm lịch">🌙 ÂL</button>
+          </div>
         </div>
 
         <!-- 4. Tiêu chí nâng cao (Gấp gọn trong Drawer) -->
@@ -1373,14 +1418,128 @@
       };
     });
 
-    // Specific Date Input
-    const inputSpecDate = document.getElementById('tc-input-specific-date');
-    if (inputSpecDate) {
-      inputSpecDate.onchange = (e) => {
-        state.specificDateStr = e.target.value;
+    // Solar / Lunar Mode Switch Buttons
+    const btnSolar = document.getElementById('tc-btn-solar');
+    const btnLunar = document.getElementById('tc-btn-lunar');
+    if (btnSolar) {
+      btnSolar.onclick = () => {
+        if (state.isLunarMode) {
+          state.isLunarMode = false;
+          render(true);
+        }
+      };
+    }
+    if (btnLunar) {
+      btnLunar.onclick = () => {
+        if (!state.isLunarMode) {
+          state.isLunarMode = true;
+          render(true);
+        }
+      };
+    }
+
+    // Date inputs (Day, Month, Year)
+    const inputDay = document.getElementById('tc-input-day');
+    const inputMonth = document.getElementById('tc-input-month');
+    const inputYearDate = document.getElementById('tc-input-year-date');
+
+    const handleDateInputsChange = () => {
+      if (!inputDay || !inputMonth || !inputYearDate) return;
+      const d = Math.min(31, Math.max(1, parseInt(inputDay.value, 10) || 1));
+      const m = Math.min(12, Math.max(1, parseInt(inputMonth.value, 10) || 1));
+      let y = parseInt(inputYearDate.value, 10) || 2026;
+      if (global.NetaSmartPicker && y < 100) {
+        y = global.NetaSmartPicker.parseSmartYear(y);
+        inputYearDate.value = y;
+      }
+      y = Math.min(2100, Math.max(1900, y));
+
+      if (state.isLunarMode && global.NetaCalendarEngine && global.NetaCalendarEngine.lunar2Solar) {
+        const solar = global.NetaCalendarEngine.lunar2Solar(d, m, y, false, 7);
+        if (solar) {
+          state.specificDate = new Date(solar.year, solar.month - 1, solar.day, 12, 0, 0);
+          state.specificDateStr = `${solar.year}-${pad(solar.month)}-${pad(solar.day)}`;
+        }
+      } else {
+        state.specificDate = new Date(y, m - 1, d, 12, 0, 0);
+        state.specificDateStr = `${y}-${pad(m)}-${pad(d)}`;
+      }
+      runSpecificEvaluation();
+      render(true);
+    };
+
+    [inputDay, inputMonth, inputYearDate].forEach(inp => {
+      if (inp) {
+        inp.addEventListener('change', handleDateInputsChange);
+      }
+    });
+
+    // Auto-advance with NetaSmartPicker
+    if (global.NetaSmartPicker && inputDay && inputMonth && inputYearDate) {
+      global.NetaSmartPicker.setupAutoAdvance({
+        dayInput: inputDay,
+        monthInput: inputMonth,
+        yearInput: inputYearDate,
+        onSubmit: () => { handleDateInputsChange(); }
+      });
+    }
+
+    // Quick Year Jumper Modal (⚡Năm)
+    const btnQuickYear = document.getElementById('tc-btn-quick-year');
+    if (btnQuickYear && inputYearDate) {
+      btnQuickYear.onclick = (e) => {
+        e.preventDefault();
+        if (global.NetaSmartPicker) {
+          global.NetaSmartPicker.openYearJumperModal(inputYearDate.value, (newYear) => {
+            inputYearDate.value = newYear;
+            handleDateInputsChange();
+          });
+        }
+      };
+    }
+
+    // Native Date Picker (📅)
+    const nativePicker = document.getElementById('tc-date-picker');
+    if (nativePicker) {
+      nativePicker.addEventListener('change', () => {
+        if (!nativePicker.value) return;
+        const [dPart, tPart] = nativePicker.value.split('T');
+        const [y, m, d] = dPart.split('-').map(Number);
+        state.isLunarMode = false;
+        state.specificDate = new Date(y, m - 1, d, 12, 0, 0);
+        state.specificDateStr = `${y}-${pad(m)}-${pad(d)}`;
+        if (tPart) {
+          const [h] = tPart.split(':').map(Number);
+          const CHI_HOURS_MAP = ['Tý', 'Sửu', 'Sửu', 'Dần', 'Dần', 'Mão', 'Mão', 'Thìn', 'Thìn', 'Tị', 'Tị', 'Ngọ', 'Ngọ', 'Mùi', 'Mùi', 'Thân', 'Thân', 'Dậu', 'Dậu', 'Tuất', 'Tuất', 'Hợi', 'Hợi', 'Tý'];
+          state.specificHourChi = CHI_HOURS_MAP[h] || state.specificHourChi;
+        }
         runSpecificEvaluation();
         render(true);
+      });
+
+      const pickerLabel = document.getElementById('tc-btn-native-cal');
+      const dateBox = document.getElementById('tc-ucc-date-box');
+      const triggerWheelPicker = (e) => {
+        if (e && e.target === nativePicker) return;
+        if (e) e.preventDefault();
+        const curD = state.specificDate || new Date();
+        nativePicker.value = `${curD.getFullYear()}-${pad(curD.getMonth() + 1)}-${pad(curD.getDate())}T12:00`;
+        if (typeof nativePicker.showPicker === 'function') {
+          nativePicker.showPicker();
+        } else {
+          nativePicker.click();
+        }
       };
+      if (pickerLabel) {
+        pickerLabel.onclick = triggerWheelPicker;
+      }
+      if (dateBox) {
+        dateBox.addEventListener('click', (e) => {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            triggerWheelPicker(e);
+          }
+        });
+      }
     }
 
     // Quick Date Buttons
@@ -1389,7 +1548,7 @@
       btnToday.onclick = () => {
         const now = new Date();
         state.specificDate = now;
-        state.specificDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        state.specificDateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
         runSpecificEvaluation();
         render(true);
       };
@@ -1400,7 +1559,7 @@
       btnTomorrow.onclick = () => {
         const tom = new Date(Date.now() + 86400000);
         state.specificDate = tom;
-        state.specificDateStr = `${tom.getFullYear()}-${String(tom.getMonth() + 1).padStart(2, '0')}-${String(tom.getDate()).padStart(2, '0')}`;
+        state.specificDateStr = `${tom.getFullYear()}-${pad(tom.getMonth() + 1)}-${pad(tom.getDate())}`;
         runSpecificEvaluation();
         render(true);
       };
@@ -1759,6 +1918,28 @@
         }
         runEvaluation();
         render(true);
+      };
+    }
+
+    // Month Lunar / Solar Mode Switch Buttons
+    const btnMonthSolar = document.getElementById('tc-btn-month-solar');
+    const btnMonthLunar = document.getElementById('tc-btn-month-lunar');
+    if (btnMonthSolar) {
+      btnMonthSolar.onclick = () => {
+        if (state.monthIsLunar) {
+          state.monthIsLunar = false;
+          runEvaluation();
+          render(true);
+        }
+      };
+    }
+    if (btnMonthLunar) {
+      btnMonthLunar.onclick = () => {
+        if (!state.monthIsLunar) {
+          state.monthIsLunar = true;
+          runEvaluation();
+          render(true);
+        }
       };
     }
 

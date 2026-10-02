@@ -2653,7 +2653,7 @@ body.theme-light .tc-guide-list {
   gap: 12px !important;
 }
 
-/* Gia Chủ Compact Strip - BẮT BUỘC ĐÚNG 2 DÒNG */
+/* Gia Chủ Compact Strip - BẮT BUỘC ĐÚNG 2 DÒNG KHÔNG TRÀN VIỀN */
 .tc-gc-compact-strip {
   display: flex !important;
   flex-direction: column !important;
@@ -2661,10 +2661,12 @@ body.theme-light .tc-guide-list {
   background: rgba(255, 255, 255, 0.03) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 10px !important;
-  padding: 6px 10px !important;
+  padding: 6px 8px !important;
   margin-top: 2px !important;
   width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 .tc-gc-row-top {
@@ -2673,18 +2675,22 @@ body.theme-light .tc-guide-list {
   justify-content: space-between !important;
   flex-wrap: nowrap !important;
   width: 100% !important;
+  gap: 4px !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 .tc-gc-left {
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
-  flex-shrink: 0 !important;
+  gap: 4px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
 }
 
 .tc-gc-label {
-  font-size: 0.8rem !important;
+  font-size: 0.76rem !important;
   font-weight: 700 !important;
   color: #94a3b8 !important;
   white-space: nowrap !important;
@@ -2692,23 +2698,24 @@ body.theme-light .tc-guide-list {
 }
 
 .tc-gc-input-year {
-  width: 66px !important;
-  height: 26px !important;
+  width: 54px !important;
+  height: 24px !important;
   background: rgba(15, 10, 25, 0.85) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: 6px !important;
-  padding: 2px 6px !important;
-  font-size: 0.88rem !important;
+  padding: 1px 4px !important;
+  font-size: 0.82rem !important;
   font-weight: 700 !important;
   color: #fbbf24 !important;
   text-align: center !important;
   outline: none !important;
   box-sizing: border-box !important;
+  flex-shrink: 0 !important;
 }
 
 .tc-mini-gender {
   height: 24px !important;
-  padding: 2px !important;
+  padding: 1px !important;
   margin-left: auto !important;
   flex-shrink: 0 !important;
   display: flex !important;
@@ -2716,8 +2723,8 @@ body.theme-light .tc-guide-list {
 
 .tc-mini-gender .ucc-gender-btn {
   height: 20px !important;
-  padding: 0 8px !important;
-  font-size: 0.72rem !important;
+  padding: 0 6px !important;
+  font-size: 0.7rem !important;
   line-height: 20px !important;
 }
 
@@ -2741,13 +2748,20 @@ body.theme-light .tc-guide-list {
 .tc-gc-tag {
   font-size: 0.72rem !important;
   font-weight: 600 !important;
-  padding: 2px 7px !important;
+  padding: 2px 6px !important;
   border-radius: 5px !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
+}
+
+.tc-tag-canchi {
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
 }
 
 .tc-tag-canchi {
@@ -3175,6 +3189,158 @@ body.theme-light .tc-badge-info {
   border: 1px solid #7dd3fc !important;
   font-weight: 800 !important;
 }
+
+/* Trạch Cát Unified Control Card Overrides & Enhancements */
+#view-trachcat .unified-ctrl-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+  padding: 6px 8px !important;
+  border-radius: 10px !important;
+}
+
+#view-trachcat .ucc-row-date,
+#view-trachcat .ucc-row-time {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#view-trachcat .ucc-pill-cal {
+  flex-shrink: 0 !important;
+  height: 24px !important;
+  padding: 1px !important;
+}
+
+#view-trachcat .ucc-pill-cal .ucc-pill-btn {
+  height: 20px !important;
+  padding: 0 5px !important;
+  font-size: 0.65rem !important;
+  line-height: 20px !important;
+}
+
+#view-trachcat .ucc-date-box {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 2px !important;
+  padding: 1px 4px !important;
+  box-sizing: border-box !important;
+}
+
+#view-trachcat .ucc-date-box .num-box {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  text-align: center !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  box-sizing: border-box !important;
+}
+
+#view-trachcat .ucc-date-box .num-day,
+#view-trachcat .ucc-date-box .num-month {
+  width: 20px !important;
+}
+
+#view-trachcat .ucc-date-box .num-year {
+  width: 38px !important;
+}
+
+#view-trachcat .ucc-date-box .num-slash {
+  font-size: 0.72rem !important;
+  opacity: 0.5;
+  padding: 0 !important;
+}
+
+#view-trachcat .ucc-btn-year {
+  height: 20px !important;
+  padding: 0 3px !important;
+  font-size: 0.62rem !important;
+  line-height: 20px !important;
+  margin-left: 2px !important;
+  flex-shrink: 0 !important;
+}
+
+#view-trachcat .btn-picker-cal {
+  cursor: pointer !important;
+  font-size: 0.8rem !important;
+  padding: 0 2px !important;
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+}
+
+body.theme-light #view-trachcat .ucc-date-box {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.theme-light #view-trachcat .ucc-date-box .num-box {
+  color: #0f172a !important;
+}
+
+#view-trachcat .select-canchi {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  outline: none !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  background: transparent !important;
+}
+
+#view-trachcat .tc-month-cal-pill {
+  flex-shrink: 0 !important;
+  height: 24px !important;
+  padding: 1px !important;
+}
+
+#view-trachcat .tc-month-cal-pill .ucc-pill-btn {
+  height: 20px !important;
+  padding: 0 6px !important;
+  font-size: 0.68rem !important;
+  line-height: 20px !important;
+}
+
+body.theme-light #view-trachcat .unified-ctrl-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-light #view-trachcat .select-canchi {
+  color: #0f172a !important;
+}
+
+body.theme-light #view-trachcat .select-canchi option {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+body:not(.theme-light) #view-trachcat .select-canchi option {
+  background: #180d28 !important;
+  color: #f1f5f9 !important;
+}
+
+body.theme-light #view-trachcat .tc-micro-chip {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+body.theme-light #view-trachcat .tc-micro-chip:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
 
 
 

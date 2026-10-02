@@ -76,23 +76,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.51
-          name: "Neta Light v2.8.51 (Khắc Phục Tương Phản Toàn Diện & Mặc Định Gia Chủ 1979 Kỷ Mùi)"
+          tag_name: v2.8.52
+          name: "Neta Light v2.8.52 (Bộ Chọn Ngày Giờ Âm Dương Thống Nhất & Chống Tràn Viền Tuyệt Đối)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.51
-            - **Mặc Định Gia Chủ Sinh Năm 1979 Kỷ Mùi Toàn Bộ Ứng Dụng**:
-              + Tự động cập nhật năm sinh mặc định 1979 (Kỷ Mùi - 48 tuổi mụ) trên toàn bộ hệ thống (Trạch Cát, Lục Nhâm, Kỳ Môn, Thái Ất).
-              + Bản mệnh chuẩn xác: Nạp Âm Thiên Thượng Hỏa (Lửa trên trời), Cung Phi Bát Trạch: Cung Chấn (Đông Tứ Mệnh).
-              + Tự động di chuyển (migrate) dữ liệu mặc định cũ 1990 sang 1979 trong bộ nhớ lưu trữ cục bộ.
-            - **Khắc Phục Toàn Diện Độ Tương Phản (Chống Lóa & Chống Lẫn Màu Nền 100%)**:
-              + **Nút Chọn Giờ Này**: Đổi sang viền và chữ hổ phách đậm (`#92400e`), nền kem sáng (`#fffbeb`), đọc rõ nét 100% trên nền sáng.
-              + **Nút Chuyển Sang (Gợi ý Ngày Đại Cát)**: Đổi sang viền và chữ xanh lục bảo đậm (`#065f46`), nền ngọc bích nhạt (`#dcfce7`), loại bỏ hoàn toàn hiện tượng chữ chìm không đọc được.
-              + **Huy Hiệu Badges & Thông Số Cát Hung**: Tối ưu độ đậm nét của chữ và màu nền cho Trực, Sao, Đổng Công, Bành Tổ, Lục Nhâm, Khổng Minh.
-              + **Header Ứng Dụng Chống Xuyên Thấu**: Nền Header chuyển sang màu đặc `#fdfbf7` ở theme sáng, chống hiện tượng chữ bị đè lẫn khi cuộn trang.
-              + Dòng 1: `Gia chủ: [ 1979 ] [ Kỷ Mùi (48t) ]` + `[ Nam | Nữ ]`.
-              + Dòng 2: `[ Thiên Thượng Hỏa ] [ ☳ Cung Chấn (Đông Tứ Mệnh) ]`.
-              + **Bộ chuyển đổi chế độ kép linh hoạt (Dual Mode Switcher)**: Cho phép chuyển đổi tức thì giữa `[🔍 Thẩm Định Ngày Giờ Cụ Thể]` và `[📅 Tìm Ngày Tốt Trong Tháng]`.
-              + **Đánh giá thời điểm chi tiết**: Nhập ngày Dương lịch cụ thể (hỗ trợ nút nhanh `Hôm nay`, `Ngày mai`), chọn 12 khung giờ chi hoặc nút `[🕒 Giờ Hiện Tại]`.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.52
+            - **Chuẩn Hóa Bộ Chọn Ngày & Giờ Thống Nhất (Unified Control Card)**:
+              + Tích hợp đầy đủ nút gạt chuyển đổi `[ ☀️ Dương | 🌙 Âm ]` độc lập chuẩn xác 100%.
+              + Tận dụng động cơ thiên văn `NetaCalendarEngine` chuyển đổi qua lại giữa Âm lịch và Dương lịch hai chiều theo thuật toán Hồ Ngọc Đức GMT+7.
+              + Tự động nhảy ô thông minh `NetaSmartPicker.setupAutoAdvance` (gõ 2 số năm sinh tự động điền 19xx, gõ ngày tháng tự nhảy ô).
+              + Hỗ trợ nút nhảy Thập niên & Năm siêu tốc `[ ⚡Năm ]` và nút kích hoạt bảng chọn ngày giờ gốc của hệ điều hành di động `[ 📅 ]`.
+              + Thanh chọn khung giờ Can Chi Hoàng Đạo 12 giờ kèm các phím tắt siêu tốc: `[Nay]`, `[Mai]`, `[Giờ này]`.
+              + Chế độ Tìm ngày tốt trong tháng bổ sung bộ gạt `[ ☀️ DL | 🌙 ÂL ]` để tìm ngày đại cát theo cả tháng Âm lịch hoặc Dương lịch.
+            - **Khắc Phục Hoàn Toàn Lỗi Tràn Viền Trên Mọi Kích Thước Màn Hình (Zero-Overflow)**:
+              + Tối ưu hóa flex layout và rút ngắn nhãn hiển thị linh hoạt (`Vong:` đối với tang lễ, `Tuổi dâu:` đối với cưới hỏi, `Gia chủ:` đối với việc chung).
+              + Giới hạn kích thước và bảo đảm độ co giãn tự nhiên của ô nhập năm sinh (`54px`), thẻ Can Chi và nút chuyển Nam / Nữ.
+              + Không còn hiện tượng tràn mép phải trên các thiết bị màn hình nhỏ (320px - 360px).
+            - **Mặc định toàn ứng dụng gia chủ sinh năm 1979 Kỷ Mùi**:
+              + Tự động bảo lưu và nạp tuổi Kỷ Mùi (Thiên Thượng Hỏa, Cung Chấn) trên toàn bộ các công cụ Trạch Cát, Lục Nhâm, Kỳ Môn, Thái Ất.
               + **Kết luận dứt khoát (Verdict & Score 0-100)**: Phán quyết rõ ràng `✅ ĐẠI CÁT`, `🟢 CÁT LÀNH`, `🟡 BÌNH HÒA`, `❌ HUNG SÁT` kèm Veto Guardrails an toàn (xung tọa sơn, xung bản mệnh, sát chủ, đổng công đại hung).
               + **Bảng đối soát trực quan Ngày vs Giờ & Pros/Cons**: Chi tiết từng điểm cộng/trừ theo Đổng Công, Bách Trạch Trạng Trình, 16 Tiêu Chí Cát Thần, Thần Sát trực giờ, Khắc Ứng Cửu Tinh.
               + **Khung Giờ Hoàng Đạo Tối Ưu & Gợi Ý 2 Ngày Tốt Gần Nhất**: 1-chạm đổi giờ hoàng đạo hoặc chọn ngày đại cát thay thế khi ngày khảo sát phạm hung.
