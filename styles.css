@@ -21326,5 +21326,309 @@ body.theme-light .ai-modal-box {
   color: #1e1b4b;
 }
 
+/* ==============================================================================
+   TAM THỨC OPTIMAL TIMING RECOMMENDATIONS CARD (KHUNG GIỜ HOÀNG KIM)
+   ============================================================================== */
+.tamthuc-timing-card {
+  background: linear-gradient(135deg, rgba(32, 14, 46, 0.92) 0%, rgba(18, 6, 26, 0.98) 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.6);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.18);
+  backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+body.theme-light .tamthuc-timing-card {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #d97706;
+  box-shadow: 0 4px 16px rgba(180, 83, 9, 0.15);
+}
+
+.timing-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.timing-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timing-header-icon {
+  font-size: 1.35rem;
+}
+
+.timing-header-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fef08a;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+body.theme-light .timing-header-title {
+  color: #78350f;
+}
+
+.timing-header-subtitle {
+  font-size: 0.70rem;
+  color: #cbd5e1;
+}
+
+body.theme-light .timing-header-subtitle {
+  color: #64748b;
+}
+
+.timing-count-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.22);
+  color: #fef08a;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  white-space: nowrap;
+}
+
+body.theme-light .timing-count-pill {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #d97706;
+}
+
+.timing-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timing-item-card {
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.timing-item-card.rank-1 {
+  border-color: rgba(245, 158, 11, 0.65);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+body.theme-light .timing-item-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+body.theme-light .timing-item-card.rank-1 {
+  border-color: #d97706;
+  background: #ffffff;
+}
+
+.timing-item-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.timing-rank-tag {
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #1e092b;
+  padding: 2px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.timing-time-info {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.timing-primary-time {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fef08a;
+  line-height: 1.25;
+}
+
+body.theme-light .timing-primary-time {
+  color: #92400e;
+}
+
+.timing-secondary-time {
+  font-size: 0.70rem;
+  color: #94a3b8;
+}
+
+body.theme-light .timing-secondary-time {
+  color: #64748b;
+}
+
+.timing-score-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.timing-score-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.timing-score-num {
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: #f59e0b;
+}
+
+body.theme-light .timing-score-num {
+  color: #b45309;
+}
+
+.timing-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 480px) {
+  .timing-pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+.timing-pillar-cell {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 5px 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  box-sizing: border-box;
+}
+
+body.theme-light .timing-pillar-cell {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.tp-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.tp-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tp-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+body.theme-light .tp-label {
+  color: #64748b;
+}
+
+.tp-text {
+  font-size: 0.70rem;
+  color: #e2e8f0;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+body.theme-light .tp-text {
+  color: #1e293b;
+}
+
+.timing-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-timing-apply {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-timing-apply:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.btn-timing-apply:active {
+  transform: scale(0.97);
+}
+
+.btn-timing-ics {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fef08a;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-timing-ics:hover {
+  background: rgba(245, 158, 11, 0.3);
+  border-color: #f59e0b;
+}
+
+body.theme-light .btn-timing-ics {
+  background: #f1f5f9;
+  color: #b45309;
+  border-color: #f59e0b;
+}
+
+body.theme-light .btn-timing-ics:hover {
+  background: #fef3c7;
+}
+
 
 

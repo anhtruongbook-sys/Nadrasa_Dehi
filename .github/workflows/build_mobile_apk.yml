@@ -76,14 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.43
-          name: "Neta Light v2.8.43 (Tinh Chỉnh Giao Diện Cân Đối 100%, Loại Bỏ Ô Thừa & Chống Tràn Chữ Mobile)"
+          tag_name: v2.8.44
+          name: "Neta Light v2.8.44 (Bộ Quét Khung Giờ Hoàng Kim Tam Tài Top 3-5 Thời Điểm & Xuất Lịch .ics)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.43
-            - **Khôi Phục Trọn Vẹn Tính Tinh Tế & Cân Xứng Của Kỳ Môn, Thái Ất, Lục Nhâm**:
-              + **Loại bỏ triệt để các ô nút liên kết chéo chắp vá**: Gỡ bỏ nút chèn thô vào thanh điều hướng khiến bố cục bị bẻ gãy, trả lại sự thanh thoát nguyên bản cho từng phân hệ.
-              + **Kỳ Môn Độn Giáp**: Khôi phục lưới 6 phân hệ (2 hàng x 3 cột) cân đối tuyệt đối (`🔮 Dương` • `🌙 Âm` • `🏡 P.Thủy` / `⚔️ Quyết` • `🧘 Thiền` • `👤 Mệnh`), triệt tiêu hàng thứ 3 đơn độc và các ô trống thừa thãi.
-              + **Thái Ất Thần Kinh & Lục Nhâm Đại Độn**: Toàn bộ thanh hành động (`⚡ Giờ thực` | `🏛️ Đồ / Quẻ • 📜 Luận • 🏡 P.Thủy` | `🔮 Lập Quẻ`) được cố định 100% trên một dòng duy nhất (`flex-wrap: nowrap !important;`), không còn hiện tượng nút Lập Quẻ bị rớt xuống dòng riêng hay chữ bị đè chồng lấn lên nhau.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.44
+            - **Đột Phá: Tính Năng Tuyển Chọn Khung Giờ Hoàng Kim Tam Tài (Optimal Timing Scanner)**:
+              + **Tự động nhận diện câu hỏi thời điểm**: Hệ thống tự động phát hiện khi người dùng hỏi *"Khi nào", "Bao giờ", "Ngày nào", "Giờ nào", "Thời điểm nào nên..."*.
+              + **Bóc tách dải thời gian thông minh**: Tự động nhận diện khung thời gian cụ thể được đề cập trong câu hỏi (ví dụ: *"trong tuần tới"*, *"tháng 11"*, *"từ ngày 5 đến ngày 12"*, *"ngày mai"*, *"cuối tuần"*) hoặc quét tự động 14 ngày tới.
+              + **Động cơ quét & xếp hạng siêu tốc**: Quét hàng chục khung giờ khả dụng, tính toán điểm số tổng hợp Tam Thức và chỉ số đồng thuận Tam Tài $C_{3T}$, chọn lọc ra **TOP 3 - 5 thời điểm ĐẠI CÁT nhất**.
+              + **Thẻ giao diện tương tác 1-chạm (`tamthuc-timing-card`)**: Hiển thị bảng xếp hạng rõ ràng với nhãn Can Chi, Dương lịch, điểm số, tóm tắt 3 trụ cột (Thiên Thời Thái Ất • Địa Lợi Kỳ Môn • Nhân Sự Lục Nhâm).
+              + **Nút 1-chạm `[⏱️ Áp Dụng Giờ Này]`**: Tự động chuyển toàn bộ Trận Đồ Tam Thức sang thời điểm đắc lợi đã chọn để người dùng khảo sát chi tiết.
+              + **Nút xuất lịch nhắc hẹn `[📅 Xuất Lịch (.ics)]`**: Tự động tải tệp lịch tiêu chuẩn RFC 5545 để người dùng thêm ngay vào Google Calendar / Apple Calendar.
+            - **Giao Diện Hoàn Hảo, Không Tràn Viền, Đồng Bộ Tuyệt Đối**:
+              + Tối ưu hiển thị responsive đa kích thước màn hình điện thoại (<= 430px), màu sắc sang trọng đồng nhất cho cả Dark Theme và Light Theme.
             - **Tối Giản Văn Bản (Responsive Short Text)**:
               + Tự động kích hoạt nhãn văn bản rút gọn tinh tế trên mọi màn hình điện thoại (<= 430px), tối ưu không gian hiển thị và độ thoáng đãng thị giác.
             - **Tích Hợp Lớp Phủ Kính Mờ Độc Lập Toàn Màn Hình (Backdrop Blur Overlay)**:

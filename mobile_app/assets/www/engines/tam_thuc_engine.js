@@ -1299,6 +1299,224 @@
   }
 
   // ==============================================================================
+  // 4.6. BỘ QUÉT NGÀY GIỜ HOÀNG KIM TAM TÀI (OPTIMAL TIMING SCANNER)
+  // ==============================================================================
+
+  function parseTimeWindowFromQuery(query, baseDate = new Date()) {
+    const q = String(query || '').trim();
+    const qClean = removeVietnameseTones(q.toLowerCase());
+
+    const timingKeywords = [
+      'khi nao', 'bao gio', 'ngay nao', 'gio nao', 'thoi diem nao', 'luc nao', 
+      'thang may', 'ngay tot', 'gio tot', 'chon ngay', 'xem ngay', 'thoi gian nao', 
+      'ngay dep', 'gio dep', 'ngay nao tot', 'gio nao tot', 'ngay nao nen',
+      'luc nao nen', 'thoi diem nao nen', 'ngay gio nao'
+    ];
+    const isTimingQuery = timingKeywords.some(kw => qClean.includes(kw));
+
+    if (!isTimingQuery) {
+      return { isTimingQuery: false };
+    }
+
+    let startDate = new Date(baseDate.getTime());
+    let endDate = new Date(baseDate.getTime());
+    let label = '';
+    let isSingleDay = false;
+
+    // 1. Dải ngày cụ thể: "từ ngày X đến ngày Y", "từ X/M đến Y/M"
+    const rangeMatch = qClean.match(/tu\s+(?:ngay\s+)?(\d{1,2})(?:\/(\d{1,2}))?\s+den\s+(?:ngay\s+)?(\d{1,2})(?:\/(\d{1,2}))?/);
+    if (rangeMatch) {
+      const d1 = parseInt(rangeMatch[1], 10);
+      const m1 = rangeMatch[2] ? parseInt(rangeMatch[2], 10) - 1 : baseDate.getMonth();
+      const d2 = parseInt(rangeMatch[3], 10);
+      const m2 = rangeMatch[4] ? parseInt(rangeMatch[4], 10) - 1 : m1;
+      startDate = new Date(baseDate.getFullYear(), m1, d1, 6, 0, 0);
+      endDate = new Date(baseDate.getFullYear(), m2, d2, 22, 0, 0);
+      if (endDate < startDate) endDate.setFullYear(endDate.getFullYear() + 1);
+      const pad = n => String(n).padStart(2, '0');
+      label = `${pad(d1)}/${pad(m1 + 1)} đến ${pad(d2)}/${pad(m2 + 1)}`;
+    } else if (qClean.includes('hom nay')) {
+      startDate.setHours(baseDate.getHours(), 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+      label = `Hôm nay (${startDate.getDate()}/${startDate.getMonth() + 1})`;
+      isSingleDay = true;
+    } else if (qClean.includes('ngay mai')) {
+      startDate.setDate(startDate.getDate() + 1);
+      startDate.setHours(6, 0, 0, 0);
+      endDate = new Date(startDate.getTime());
+      endDate.setHours(22, 0, 0, 0);
+      label = `Ngày mai (${startDate.getDate()}/${startDate.getMonth() + 1})`;
+      isSingleDay = true;
+    } else if (qClean.includes('cuoi tuan')) {
+      const day = baseDate.getDay();
+      const diffToSat = (6 - day + 7) % 7 || 7;
+      startDate.setDate(baseDate.getDate() + diffToSat);
+      startDate.setHours(6, 0, 0, 0);
+      endDate = new Date(startDate.getTime() + 24 * 3600 * 1000);
+      endDate.setHours(22, 0, 0, 0);
+      label = 'Cuối tuần này';
+    } else if (qClean.includes('tuan toi') || qClean.includes('tuan sau')) {
+      startDate.setDate(baseDate.getDate() + (7 - baseDate.getDay() + 1));
+      startDate.setHours(6, 0, 0, 0);
+      endDate = new Date(startDate.getTime() + 6 * 24 * 3600 * 1000);
+      endDate.setHours(22, 0, 0, 0);
+      label = 'Tuần tới';
+    } else {
+      const monthMatch = qClean.match(/thang\s+(\d{1,2})/);
+      if (monthMatch) {
+        const targetMonth = parseInt(monthMatch[1], 10) - 1;
+        let targetYear = baseDate.getFullYear();
+        if (targetMonth < baseDate.getMonth()) targetYear++;
+        startDate = new Date(targetYear, targetMonth, 1, 6, 0, 0);
+        endDate = new Date(targetYear, targetMonth + 1, 0, 22, 0, 0);
+        label = `Tháng ${targetMonth + 1}/${targetYear}`;
+      } else {
+        const nDaysMatch = qClean.match(/(\d{1,2})\s+ngay\s+toi/);
+        const days = nDaysMatch ? parseInt(nDaysMatch[1], 10) : 14;
+        startDate.setHours(6, 0, 0, 0);
+        endDate.setDate(baseDate.getDate() + days);
+        endDate.setHours(22, 0, 0, 0);
+        label = `${days} ngày tới`;
+      }
+    }
+
+    return { isTimingQuery: true, startDate, endDate, label, isSingleDay };
+  }
+
+  function scanOptimalTamThucTimings(query, domainCode = "D01", role = "Chủ", baseDate = new Date(), options = {}) {
+    const tw = parseTimeWindowFromQuery(query, baseDate);
+    if (!tw.isTimingQuery) return null;
+
+    const hoursList = tw.isSingleDay ? [
+      { h: 1, label: 'Sửu (01:00 - 03:00)' },
+      { h: 3, label: 'Dần (03:00 - 05:00)' },
+      { h: 5, label: 'Mão (05:00 - 07:00)' },
+      { h: 7, label: 'Thìn (07:00 - 09:00)' },
+      { h: 9, label: 'Tỵ (09:00 - 11:00)' },
+      { h: 11, label: 'Ngọ (11:00 - 13:00)' },
+      { h: 13, label: 'Mùi (13:00 - 15:00)' },
+      { h: 15, label: 'Thân (15:00 - 17:00)' },
+      { h: 17, label: 'Dậu (17:00 - 19:00)' },
+      { h: 19, label: 'Tuất (19:00 - 21:00)' },
+      { h: 21, label: 'Hợi (21:00 - 23:00)' }
+    ] : [
+      { h: 7, label: 'Thìn (07:00 - 09:00)' },
+      { h: 9, label: 'Tỵ (09:00 - 11:00)' },
+      { h: 11, label: 'Ngọ (11:00 - 13:00)' },
+      { h: 13, label: 'Mùi (13:00 - 15:00)' },
+      { h: 15, label: 'Thân (15:00 - 17:00)' },
+      { h: 17, label: 'Dậu (17:00 - 19:00)' },
+      { h: 19, label: 'Tuất (19:00 - 21:00)' }
+    ];
+
+    const pad = n => String(n).padStart(2, '0');
+    const candidates = [];
+    const startDayTime = new Date(tw.startDate.getFullYear(), tw.startDate.getMonth(), tw.startDate.getDate()).getTime();
+    const endDayTime = new Date(tw.endDate.getFullYear(), tw.endDate.getMonth(), tw.endDate.getDate()).getTime();
+    const dayStep = 24 * 3600 * 1000;
+
+    for (let t = startDayTime; t <= endDayTime; t += dayStep) {
+      const curDay = new Date(t);
+      for (const hr of hoursList) {
+        const dt = new Date(curDay.getFullYear(), curDay.getMonth(), curDay.getDate(), hr.h, 30, 0);
+        if (dt < tw.startDate || dt > tw.endDate) continue;
+
+        const res = synthesizeTamThuc(dt, domainCode, role, { query: query, skipTimingScan: true });
+        const sb = res.score_breakdown;
+        const harmonic = sb.weighted_total_score * (1 + sb.consensus_index / 200);
+
+        const taHighlight = res.layer2_thai_at.key_finding ? res.layer2_thai_at.key_finding.split('.')[0] : 'Thái Ất Thiên Thời';
+        const kmHighlight = res.layer3_ky_mon.key_finding ? res.layer3_ky_mon.key_finding.split('.')[0] : 'Kỳ Môn Địa Lợi';
+        const lnHighlight = res.layer4_luc_nham.key_finding ? res.layer4_luc_nham.key_finding.split('.')[0] : 'Lục Nhâm Nhân Sự';
+
+        const solarStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)}/${dt.getFullYear()}`;
+        const dateIso = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+
+        candidates.push({
+          date: dt,
+          date_str: dateIso,
+          solar_date_display: solarStr,
+          can_chi_hour: `Giờ ${hr.label}`,
+          can_chi_day: res.four_pillars ? res.four_pillars.split(' - ')[2] : '',
+          score: sb.weighted_total_score,
+          consensus: sb.consensus_index,
+          harmonic: harmonic,
+          classification: sb.classification.split(' ')[0],
+          classification_full: sb.classification,
+          pillars_summary: {
+            thai_at: taHighlight,
+            ky_mon: kmHighlight,
+            luc_nham: lnHighlight
+          }
+        });
+      }
+    }
+
+    candidates.sort((a, b) => b.harmonic - a.harmonic);
+
+    const selected = [];
+    const dayCount = {};
+
+    for (const c of candidates) {
+      const dayKey = c.solar_date_display;
+      if (!tw.isSingleDay && dayCount[dayKey] >= 2) continue;
+
+      dayCount[dayKey] = (dayCount[dayKey] || 0) + 1;
+      selected.push(c);
+      c.rank = selected.length;
+      if (selected.length >= 5) break;
+    }
+
+    return {
+      is_timing_query: true,
+      time_window_label: tw.label,
+      total_slots_scanned: candidates.length,
+      recommendations: selected
+    };
+  }
+
+  function generateTamThucIcsContent(rec, query) {
+    if (!rec || !rec.date) return null;
+
+    const start = new Date(rec.date);
+    const end = new Date(start.getTime() + 2 * 3600 * 1000);
+    const now = new Date();
+
+    const pad = n => String(n).padStart(2, '0');
+    const formatIcsDate = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
+
+    const dtStart = formatIcsDate(start);
+    const dtEnd = formatIcsDate(end);
+    const dtStamp = formatIcsDate(now);
+
+    const title = query ? `Khung Giờ Hoàng Kim Tam Thức: ${query}` : `Khung Giờ Hoàng Kim Tam Thức - ${rec.can_chi_hour}`;
+    const desc = `Khung giờ: ${rec.can_chi_hour} (${rec.solar_date_display}, ${rec.can_chi_day}).\\nĐiểm số: ${rec.score}đ (Đồng thuận ${rec.consensus.toFixed(1)}% - ${rec.classification_full}).\\n- Thiên Thời: ${rec.pillars_summary.thai_at}.\\n- Địa Lợi: ${rec.pillars_summary.ky_mon}.\\n- Nhân Sự: ${rec.pillars_summary.luc_nham}.\\nHệ thống Neta Light - Tam Thức Chiêm Đoán.`;
+
+    return [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Neta Light//Tam Thuc Optimal Timing//VI",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `UID:tamthuc-time-${Date.now()}@netalight.app`,
+      `DTSTAMP:${dtStamp}`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `SUMMARY:🌟 ${title}`,
+      `DESCRIPTION:${desc}`,
+      "STATUS:CONFIRMED",
+      "BEGIN:VALARM",
+      "TRIGGER:-PT30M",
+      "ACTION:DISPLAY",
+      "DESCRIPTION:Nhắc nhở: Sắp đến khung giờ Hoàng Kim Tam Thức trong 30 phút tới!",
+      "END:VALARM",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+  }
+
+  // ==============================================================================
   // 5. BỘ TỔNG HỢP TOÀN DIỆN XUYÊN TAM THỨC (SYNTHESIZER)
   // ==============================================================================
   function synthesizeTamThuc(dateInput, queryOrDomain = "D01", role = "Chủ", options = {}) {
@@ -1534,6 +1752,15 @@
       consensus
     ) : null;
 
+    let optimalTimings = null;
+    if (!options.skipTimingScan && userQuery) {
+      try {
+        optimalTimings = scanOptimalTamThucTimings(userQuery, domainCode, role, dt, options);
+      } catch (e) {
+        console.warn("TamThuc: scanOptimalTamThucTimings warning:", e);
+      }
+    }
+
     let summaryText = `Đối với vấn đề ${domainCfg.name} của vị thế ${role}: Kết quả đạt mức ${classification}. Chỉ số đồng thuận đạt ${consensus.toFixed(1)}%. ${pattern}`;
     if (specificResolution) {
       summaryText = `[Giải đáp: "${userQuery}"]: ${specificResolution.verdict_title}. ${specificResolution.verdict_rationale}`;
@@ -1555,6 +1782,7 @@
       domain_name: domainCfg.name,
       user_query: userQuery,
       query_resolution: specificResolution,
+      optimal_timings: optimalTimings,
       role: role,
       score_breakdown: scoreBreakdown,
       layer1_overview: layer1,
@@ -1577,6 +1805,17 @@
         md.push("# BÁO CÁO CHIÊM ĐOÁN TAM THỨC");
         md.push(`**Lĩnh Vực:** [${domainCode}] ${domainCfg.name} | **Vị Thế:** ${role}\n`);
         
+        if (optimalTimings && optimalTimings.is_timing_query && optimalTimings.recommendations && optimalTimings.recommendations.length > 0) {
+          md.push("## 🗓️ KHUNG GIỜ HOÀNG KIM TAM TÀI (TOP LỰA CHỌN ĐẮC LỢI)");
+          md.push(`> **Khoảng thời gian khảo sát:** *${optimalTimings.time_window_label}* (Đã quét ${optimalTimings.total_slots_scanned} khung giờ)\n`);
+          md.push("| Hạng | Khung Giờ Can Chi | Dương Lịch | Điểm Số | Đồng Thuận C_3T | Đánh Giá Tam Tài |");
+          md.push("| :---: | :--- | :---: | :---: | :---: | :--- |");
+          for (const r of optimalTimings.recommendations) {
+            md.push(`| **#${r.rank}** | **${r.can_chi_hour}** (${r.can_chi_day}) | ${r.solar_date_display} | \`${r.score.toFixed(1)}đ\` | \`${r.consensus.toFixed(1)}%\` | **${r.classification}** (Thiên: ${r.pillars_summary.thai_at} • Địa: ${r.pillars_summary.ky_mon} • Nhân: ${r.pillars_summary.luc_nham}) |`);
+          }
+          md.push("");
+        }
+
         if (specificResolution) {
           md.push("## QUYẾT NGHỊ CHIÊM ĐOÁN THEO CÂU HỎI");
           md.push(`> **Câu hỏi người dùng:** *"${specificResolution.raw_query}"*`);
@@ -1628,7 +1867,7 @@
         md.push(`- **Tên Cách Cục Tam Truyền:** ${evalLn.details.cach_cuc}`);
         md.push(`- **Tam Truyền Diễn Tiến:** Sơ Truyền (${evalLn.details.so_truyen}) -> Trung Truyền (${evalLn.details.trung_truyen}) -> Mạt Truyền (${evalLn.details.mat_truyen})`);
         md.push(`- **Tình Trạng Tứ Khóa (Can Chi Tương Phối):** ${evalLn.details.tu_khoa_status}`);
-        md.push(`- **Thần Sát / Thiên Tướng TrỢ Mệnh:** ${evalLn.details.than_tuong_analysis}`);
+        md.push(`- **Thần Sát / Thiên Tướng Trợ Mệnh:** ${evalLn.details.than_tuong_analysis}`);
         md.push(`- **Ý Nghĩa Vi Mô:** ${evalLn.details.detailed_analysis}\n`);
 
         md.push("## TẦNG 5: CHIẾN LƯỢC HÀNH ĐỘNG TỐI ƯU HÓA (ACTION PLAN)");
@@ -1673,6 +1912,9 @@
     removeVietnameseTones,
     detectDomainFromQuery,
     analyzeSpecificQuery,
+    parseTimeWindowFromQuery,
+    scanOptimalTamThucTimings,
+    generateTamThucIcsContent,
     computeThaiAtCore,
     plotFullChartKetNoiVuTru,
     evaluateThaiAt,

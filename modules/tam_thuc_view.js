@@ -311,6 +311,75 @@
           </div>
         </div>
 
+        ${(rep.optimal_timings && rep.optimal_timings.is_timing_query && rep.optimal_timings.recommendations && rep.optimal_timings.recommendations.length > 0) ? `
+        <!-- 2.4 BẢNG KHUNG GIỜ HOÀNG KIM TAM TÀI (OPTIMAL TIMING RECOMMENDATIONS) -->
+        <div class="tamthuc-timing-card">
+          <div class="timing-card-header">
+            <div class="timing-header-left">
+              <span class="timing-header-icon">🗓️</span>
+              <div>
+                <div class="timing-header-title">TOP KHUNG GIỜ HOÀNG KIM TAM TÀI</div>
+                <div class="timing-header-subtitle">
+                  Dải quét: <strong>${escapeHtml(rep.optimal_timings.time_window_label)}</strong> • Đã phân tích <strong>${rep.optimal_timings.total_slots_scanned}</strong> thời điểm
+                </div>
+              </div>
+            </div>
+            <span class="timing-count-pill">${rep.optimal_timings.recommendations.length} LỰA CHỌN</span>
+          </div>
+
+          <div class="timing-items-list">
+            ${rep.optimal_timings.recommendations.map(r => `
+              <div class="timing-item-card rank-${r.rank}">
+                <div class="timing-item-top">
+                  <div class="timing-rank-tag">#${r.rank}</div>
+                  <div class="timing-time-info">
+                    <div class="timing-primary-time">${escapeHtml(r.can_chi_hour)}</div>
+                    <div class="timing-secondary-time">${escapeHtml(r.solar_date_display)} (${escapeHtml(r.can_chi_day)})</div>
+                  </div>
+                  <div class="timing-score-wrap">
+                    <span class="timing-score-badge badge-${r.classification.toLowerCase()}">${r.classification}</span>
+                    <span class="timing-score-num">${r.score.toFixed(1)}đ</span>
+                  </div>
+                </div>
+
+                <div class="timing-pillars-grid">
+                  <div class="timing-pillar-cell">
+                    <span class="tp-icon">🌤️</span>
+                    <div class="tp-body">
+                      <span class="tp-label">Thiên Thời</span>
+                      <span class="tp-text">${escapeHtml(r.pillars_summary.thai_at)}</span>
+                    </div>
+                  </div>
+                  <div class="timing-pillar-cell">
+                    <span class="tp-icon">⛰️</span>
+                    <div class="tp-body">
+                      <span class="tp-label">Địa Lợi</span>
+                      <span class="tp-text">${escapeHtml(r.pillars_summary.ky_mon)}</span>
+                    </div>
+                  </div>
+                  <div class="timing-pillar-cell">
+                    <span class="tp-icon">👥</span>
+                    <div class="tp-body">
+                      <span class="tp-label">Nhân Sự</span>
+                      <span class="tp-text">${escapeHtml(r.pillars_summary.luc_nham)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="timing-item-actions">
+                  <button type="button" class="btn-timing-apply" data-time="${r.date_str}" data-label="${escapeHtml(r.can_chi_hour + ' • ' + r.solar_date_display)}">
+                    ⏱️ Áp Dụng Giờ Này
+                  </button>
+                  <button type="button" class="btn-timing-ics" data-rank="${r.rank}">
+                    📅 Xuất Lịch (.ics)
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
         ${rep.query_resolution ? `
         <!-- 2.5 QUYẾT NGHỊ CHIÊM ĐOÁN THEO CÂU HỎI (QUESTION INTENT RESOLUTION) -->
         <div class="tamthuc-query-resolution-card">
@@ -746,6 +815,47 @@ ${qr ? qr.optimal_window : currentReport.layer5_action_strategy.timing_strategy}
         }
       };
     }
+
+    // 3.6 Xử lý Áp Dụng & Xuất Lịch Khung Giờ Hoàng Kim
+    container.querySelectorAll('.btn-timing-apply').forEach(btn => {
+      btn.onclick = () => {
+        const timeStr = btn.getAttribute('data-time');
+        const label = btn.getAttribute('data-label') || '';
+        if (timeStr) {
+          currentDate = new Date(timeStr);
+          if (typeof global.showToast === 'function') {
+            global.showToast(`⏱️ Đã chuyển Trận Đồ sang: ${label}!`);
+          }
+          render(container);
+        }
+      };
+    });
+
+    container.querySelectorAll('.btn-timing-ics').forEach(btn => {
+      btn.onclick = () => {
+        const rank = parseInt(btn.getAttribute('data-rank'), 10);
+        if (currentReport && currentReport.optimal_timings && currentReport.optimal_timings.recommendations) {
+          const rec = currentReport.optimal_timings.recommendations.find(r => r.rank === rank);
+          if (rec && global.NetaTamThucEngine && typeof global.NetaTamThucEngine.generateTamThucIcsContent === 'function') {
+            const icsData = global.NetaTamThucEngine.generateTamThucIcsContent(rec, currentQuery);
+            if (icsData) {
+              const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `TamThuc_HoangKim_${rec.date_str.replace(/[:T-]/g, '_')}.ics`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              if (typeof global.showToast === 'function') {
+                global.showToast('📅 Đã tải lịch nhắc hẹn Tam Thức (.ics) thành công!');
+              }
+            }
+          }
+        }
+      };
+    });
 
     // 4. Domain pills
     container.querySelectorAll('.domain-pill-card[data-domain]').forEach(btn => {
