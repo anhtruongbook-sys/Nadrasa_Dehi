@@ -76,13 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.41
-          name: "Neta Light v2.8.41 (Chuẩn Hóa Danh Xưng Tam Thức, Khắc Phục Menu Bị Che & Luận Giải Sâu Theo Câu Hỏi)"
+          tag_name: v2.8.42
+          name: "Neta Light v2.8.42 (Tái Thiết Kế Menu Đối Xứng Tràn Viền Mobile & Lớp Kính Mờ Backdrop Blur Cao Cấp)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.41
-            - **Khắc Phục Hoàn Toàn Lỗi Menu Bị Che (Dropdown Menu Stacking Context Collision)**:
-              + Nâng cấp cấp độ phân lớp `z-index: 10000` cho `.app-header` và `z-index: 10001` cho `.deck-dropdown-menu`.
-              + Tăng khoảng đệm đáy (`padding-bottom: calc(var(--safe-bottom, 16px) + 75px)`) và chiều cao tối đa (`max-height: calc(100dvh - 50px)`), đảm bảo menu nổi hoàn toàn bên trên thanh điều khiển đáy (`.app-controls`), hiển thị trọn vẹn 100% tất cả các mục (Trạch Cát, La Kinh, Pháp Hành, Bốc Quẻ Dịch Lý) mà không bao giờ bị che khuất.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.42
+            - **Tái Thiết Kế Hoàn Toàn Menu Chuyển Bộ Bài Đối Xứng Tràn Viền (Full-Width Symmetrical Mobile Menu)**:
+              + Khắc phục triệt để hiện tượng menu co cụm lệch trái để lộ khoảng trống thừa bên phải: Menu tự động trải rộng cân xứng tuyệt đối (`left: 8px; right: 8px; width: auto; max-width: 480px`), bo góc mềm mại 16px viền vàng kim vương giả.
+              + Căn chỉnh bố cục hoàn mỹ: Tên phân hệ tự động mở rộng dàn hàng đều (`flex: 1`), biểu tượng dấu tích hoạt động căn lề phải sắc nét (`margin-left: auto`).
+            - **Tích Hợp Lớp Phủ Kính Mờ Độc Lập Toàn Màn Hình (Backdrop Blur Overlay)**:
+              + Bổ sung lớp nền mờ `deck-dropdown-backdrop` (`z-index: 9000`) làm tối và mờ sâu (`backdrop-filter: blur(8px)`) toàn bộ nội dung phía dưới khi mở menu.
+              + Triệt tiêu hoàn toàn hiện tượng nền lá bài hay nút điều khiển lộ thô ra ngoài viền menu, đồng thời hỗ trợ chạm bất kỳ đâu bên ngoài để đóng menu mượt mà.
+            - **Tối Ưu Hiển Thị Đồng Bộ Đa Giao Diện**:
+              + Tương thích hoàn hảo cả Chế độ Tối (Dark Theme - nền nhung đỏ đen huyền bí) và Chế độ Sáng (Light Theme - nền kem ngà chữ huyết dụ sang trọng).
             - **Chuẩn Hóa Danh Xưng Ngắn Gọn: "Tam Thức"**:
               + Tối giản danh xưng trên toàn bộ giao diện: thay thế các cụm từ dài dòng thành **"Tam Thức"** (Tiêu đề Header, Dropdown menu, thông báo Toast, tên file ảnh chụp, và nút liên kết chéo `[⚡ Tam Thức]` tại Kỳ Môn, Thái Ất, Lục Nhâm).
             - **Đột Phá Nâng Cấp Luận Giải Chuyên Sâu Trực Diện Theo Câu Hỏi Người Dùng (Specific Query Resolution)**:

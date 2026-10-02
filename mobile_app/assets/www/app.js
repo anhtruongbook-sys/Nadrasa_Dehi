@@ -134,6 +134,7 @@
   const tabModePoker = document.getElementById('tab-mode-poker');
   const deckSelectorTrigger = document.getElementById('deck-selector-trigger');
   const deckDropdown = document.getElementById('deck-dropdown');
+  const deckDropdownBackdrop = document.getElementById('deck-dropdown-backdrop');
   const deckArrow = document.getElementById('deck-arrow');
   const checkDeckNeta = document.getElementById('check-deck-neta');
   const checkDeckPoker = document.getElementById('check-deck-poker');
@@ -236,12 +237,17 @@
     }, 1200);
   }
 
+  function closeDropdown() {
+    if (deckDropdown) deckDropdown.style.display = 'none';
+    if (deckSelectorTrigger) deckSelectorTrigger.classList.remove('open');
+    if (deckDropdownBackdrop) deckDropdownBackdrop.classList.remove('active');
+  }
+
   // Switch between All App Modes (Neta, Poker, QMDJ, Bazi, TuVi, Calendar)
   function switchAppMode(mode) {
     if (!MODULE_CONFIG[mode]) return;
     if (currentDeckMode === mode) {
-      if (deckDropdown) deckDropdown.style.display = 'none';
-      if (deckSelectorTrigger) deckSelectorTrigger.classList.remove('open');
+      closeDropdown();
       return;
     }
     currentDeckMode = mode;
@@ -316,8 +322,7 @@
     }
 
     // Close dropdown menu
-    if (deckDropdown) deckDropdown.style.display = 'none';
-    if (deckSelectorTrigger) deckSelectorTrigger.classList.remove('open');
+    closeDropdown();
 
     // If it's a card deck, run card reset & guide logic
     if (cfg.isCardDeck) {
@@ -1326,9 +1331,12 @@
       deckSelectorTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = deckDropdown.style.display === 'block';
-        deckDropdown.style.display = isOpen ? 'none' : 'block';
-        deckSelectorTrigger.classList.toggle('open', !isOpen);
-        if (!isOpen) {
+        if (isOpen) {
+          closeDropdown();
+        } else {
+          deckDropdown.style.display = 'block';
+          deckSelectorTrigger.classList.add('open');
+          if (deckDropdownBackdrop) deckDropdownBackdrop.classList.add('active');
           const activeItem = deckDropdown.querySelector('.deck-dropdown-item.active');
           if (activeItem) {
             setTimeout(() => {
@@ -1338,10 +1346,16 @@
         }
       });
 
+      if (deckDropdownBackdrop) {
+        deckDropdownBackdrop.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeDropdown();
+        });
+      }
+
       document.addEventListener('click', (e) => {
         if (!deckSelectorTrigger.contains(e.target) && !deckDropdown.contains(e.target)) {
-          deckDropdown.style.display = 'none';
-          deckSelectorTrigger.classList.remove('open');
+          closeDropdown();
         }
       });
     }
