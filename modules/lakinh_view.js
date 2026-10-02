@@ -1099,6 +1099,75 @@
       return;
     }
 
+    // Tự động bù trừ góc xoay container #lakinh-map (Heading-Up) cho bộ máy kéo rê (L.Draggable)
+    // Giúp thao tác kéo rê bản đồ (pan) trên màn hình luôn bám sát 100% hướng ngón tay, không bị ngược
+    if (typeof L !== 'undefined' && L.Draggable && !L.Draggable._netaRotationPatched) {
+      L.Draggable._netaRotationPatched = true;
+      const origOnMove = L.Draggable.prototype._onMove;
+      L.Draggable.prototype._onMove = function(t) {
+        if (!this._enabled) return;
+
+        const mapEl = document.getElementById('lakinh-map');
+        let angleDeg = 0;
+        if (mapEl && this._element && (this._element === mapEl || mapEl.contains(this._element))) {
+          const transform = mapEl.style.transform || '';
+          const m = transform.match(/rotate\(([-0-9.]+)deg\)/);
+          if (m) angleDeg = parseFloat(m[1]) || 0;
+        }
+
+        if (Math.abs(angleDeg) > 0.001) {
+          if (t.touches && t.touches.length > 1) {
+            this._moved = true;
+            return;
+          }
+
+          const touch = (t.touches && t.touches.length === 1) ? t.touches[0] : t;
+          const rawOffset = (new L.Point(touch.clientX, touch.clientY))._subtract(this._startPoint);
+
+          if (!rawOffset.x && !rawOffset.y) return;
+          if (Math.abs(rawOffset.x) + Math.abs(rawOffset.y) < this.options.clickTolerance) return;
+
+          rawOffset.x /= this._parentScale.x;
+          rawOffset.y /= this._parentScale.y;
+
+          // Xoay vector di chuyển một góc -angleDeg để bù trừ chuyển vị ngược chiều
+          const rad = (-angleDeg) * Math.PI / 180;
+          const cos = Math.cos(rad);
+          const sin = Math.sin(rad);
+          const rotX = rawOffset.x * cos - rawOffset.y * sin;
+          const rotY = rawOffset.x * sin + rawOffset.y * cos;
+          const rotatedOffset = new L.Point(rotX, rotY);
+
+          if (typeof L.DomEvent !== 'undefined' && L.DomEvent.stop) {
+            L.DomEvent.stop(t);
+          }
+
+          if (!this._moved) {
+            this.fire('dragstart');
+            this._moved = true;
+            if (typeof L.DomUtil !== 'undefined' && L.DomUtil.addClass) {
+              L.DomUtil.addClass(document.body, 'leaflet-dragging');
+            }
+            this._lastTarget = t.target || t.srcElement;
+            if (window.SVGElementInstance && this._lastTarget instanceof window.SVGElementInstance) {
+              this._lastTarget = this._lastTarget.correspondingUseElement;
+            }
+            if (typeof L.DomUtil !== 'undefined' && L.DomUtil.addClass) {
+              L.DomUtil.addClass(this._lastTarget, 'leaflet-drag-target');
+            }
+          }
+
+          this._newPos = this._startPos.add(rotatedOffset);
+          this._moving = true;
+          this._lastEvent = t;
+          this._updatePosition();
+          return;
+        }
+
+        return origOnMove.call(this, t);
+      };
+    }
+
     try {
       if (mapInstance) {
         mapInstance.remove();
