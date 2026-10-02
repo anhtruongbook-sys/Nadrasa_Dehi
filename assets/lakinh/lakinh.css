@@ -2376,6 +2376,30 @@ body.light-theme .fl-plan-scale-chip {
   background: rgba(30, 41, 59, 0.6);
 }
 
+.fl-parcel-btn.hide-btn {
+  border-color: #64748b;
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.7);
+}
+
+.fl-parcel-btn.hide-btn:hover {
+  background: rgba(100, 116, 139, 0.35);
+  color: #ffffff;
+}
+
+#lakinh-top-panel .lakinh-float-btn#lakinh-btn-parcel-quick.parcel-banner-hidden {
+  background: rgba(245, 158, 11, 0.25) !important;
+  border-color: #f59e0b !important;
+  color: #fbbf24 !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4) !important;
+}
+
+body.light-theme #lakinh-top-panel .lakinh-float-btn#lakinh-btn-parcel-quick.parcel-banner-hidden {
+  background: #fef3c7 !important;
+  border-color: #d97706 !important;
+  color: #b45309 !important;
+}
+
 /* Ẩn tức thì toàn bộ mốc đỉnh, kích thước cạnh và nhãn diện tích ranh đất */
 #lakinh-map.hide-parcel-numbers .dc-map-vertex-marker,
 #lakinh-map.hide-parcel-numbers .dc-map-edge-marker,

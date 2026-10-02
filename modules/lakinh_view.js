@@ -59,6 +59,7 @@
     polygonPoints: [],
     importedParcel: null,
     isParcelNumbersVisible: true, // Ẩn / Hiện số thứ tự mốc và kích thước cạnh ranh đất VN-2000
+    isParcelBannerVisible: true, // Ẩn / Hiện thanh nổi bảng kê tọa độ thửa đất VN-2000
     declination: -1.34,
     centerElevation: 19.0,
     centerCoords: [21.028511, 105.854167], // Mặc định Hà Nội
@@ -246,7 +247,7 @@
         <!-- Stack Gom Nhóm Các Mini Capsule & Floating HUD (Không Che La Kinh) -->
         <div id="lakinh-hud-capsule-stack">
           <!-- Thanh Nổi Thông Tin & Điều Khiển Thửa Đất VN-2000 -->
-          <div id="lakinh-parcel-banner" class="lakinh-floating-parcel-bar ${state.importedParcel ? '' : 'is-hidden'}" style="${state.importedParcel ? 'display: flex;' : 'display: none;'}">
+          <div id="lakinh-parcel-banner" class="lakinh-floating-parcel-bar ${(state.importedParcel && state.isParcelBannerVisible !== false) ? '' : 'is-hidden'}" style="${(state.importedParcel && state.isParcelBannerVisible !== false) ? 'display: flex;' : 'display: none;'}">
             <div class="fl-parcel-left">
               <span class="fl-parcel-icon">🗺️</span>
               <span class="fl-parcel-title" id="fl-parcel-title">${state.importedParcel ? escapeHTML(state.importedParcel.parcelName || 'Thửa Đất') : 'Thửa Đất'}</span>
@@ -267,6 +268,9 @@
               </button>
               <button type="button" class="fl-parcel-btn clear-btn" id="btn-lakinh-parcel-clear" title="Xóa bỏ thửa đất khỏi La Kinh">
                 🗑️<span class="fl-btn-lbl"> Bỏ Đất</span>
+              </button>
+              <button type="button" class="fl-parcel-btn hide-btn" id="btn-lakinh-parcel-hide" title="Ẩn thanh bảng kê tọa độ (bật lại bằng nút 🗺️ trên thanh công cụ hoặc chạm vào thửa đất)">
+                ✕<span class="fl-btn-lbl"> Ẩn</span>
               </button>
             </div>
           </div>
@@ -545,6 +549,9 @@
               </button>
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-plan-quick" title="Bản vẽ mặt bằng kiến trúc">
                 📐
+              </button>
+              <button class="lakinh-float-btn icon-only ${state.importedParcel ? (state.isParcelBannerVisible !== false ? 'active' : 'parcel-banner-hidden') : ''}" id="lakinh-btn-parcel-quick" title="${state.importedParcel ? (state.isParcelBannerVisible !== false ? 'Ẩn thanh bảng kê tọa độ thửa đất' : 'Hiện thanh bảng kê tọa độ thửa đất') : 'Bảng kê tọa độ ranh thửa đất'}" style="${state.importedParcel ? 'display: inline-flex;' : 'display: none;'}">
+                <span id="lakinh-top-parcel-icon">${state.importedParcel && state.isParcelBannerVisible === false ? '🙈' : '🗺️'}</span>
               </button>
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-ray-quick" title="Bật/tắt tia ngắm phân kim">
                 🎯
@@ -900,6 +907,26 @@
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Nhóm RANH THỬA ĐẤT & BẢNG KÊ TỌA ĐỘ VN-2000 -->
+          <div class="sheet-control-group" id="sheet-group-parcel" style="${state.importedParcel ? '' : 'display: none;'}">
+            <div class="sheet-control-label">
+              <span>🗺️ Ranh Thửa Đất (VN-2000)</span>
+              <span class="val" id="sheet-val-parcel-status">${state.importedParcel ? (state.isParcelBannerVisible !== false ? 'Đang hiện thanh' : 'Đã ẩn thanh') : 'Chưa có thửa đất'}</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+              <button type="button" class="lakinh-action-btn ${state.isParcelBannerVisible !== false ? 'secondary' : 'primary'}" id="sheet-btn-toggle-parcel-banner">
+                ${state.isParcelBannerVisible !== false ? '🙈 Ẩn Thanh Bảng Kê' : '🗺️ Hiện Thanh Bảng Kê'}
+              </button>
+              <button type="button" class="lakinh-action-btn secondary" id="sheet-btn-toggle-parcel-nums">
+                ${state.isParcelNumbersVisible !== false ? '🏷️ Ẩn Số Mốc Ranh' : '🏷️ Hiện Số Mốc Ranh'}
+              </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <button type="button" class="lakinh-step-btn" id="sheet-btn-parcel-center">🎯 Về Tâm Đất</button>
+              <button type="button" class="lakinh-step-btn" id="sheet-btn-parcel-fit">🔍 Vừa Khung Đất</button>
             </div>
           </div>
 
@@ -4307,6 +4334,73 @@ function updateQmdjStrategicLayer() {
     }
   }
 
+  // Bật / Tắt hiển thị pill thanh nổi bảng kê tọa độ thửa đất VN-2000
+  function setParcelBannerVisibility(visible, showToastMessage = true) {
+    if (visible !== undefined) {
+      state.isParcelBannerVisible = !!visible;
+    } else {
+      state.isParcelBannerVisible = !state.isParcelBannerVisible;
+    }
+
+    const banner = document.getElementById('lakinh-parcel-banner');
+    const topBtn = document.getElementById('lakinh-btn-parcel-quick');
+    const topIcon = document.getElementById('lakinh-top-parcel-icon');
+    const sheetVal = document.getElementById('sheet-val-parcel-status');
+    const sheetBtn = document.getElementById('sheet-btn-toggle-parcel-banner');
+
+    if (!state.importedParcel) {
+      if (banner) {
+        banner.style.display = 'none';
+        banner.classList.add('is-hidden');
+      }
+      if (topBtn) topBtn.style.display = 'none';
+      if (sheetVal) sheetVal.textContent = 'Chưa có thửa đất';
+      return;
+    }
+
+    if (topBtn) topBtn.style.display = 'inline-flex';
+
+    if (state.isParcelBannerVisible) {
+      if (banner) {
+        banner.style.display = 'flex';
+        banner.classList.remove('is-hidden');
+      }
+      if (topBtn) {
+        topBtn.classList.remove('parcel-banner-hidden');
+        topBtn.classList.add('active');
+        topBtn.title = 'Ẩn thanh bảng kê tọa độ thửa đất';
+      }
+      if (topIcon) topIcon.textContent = '🗺️';
+      if (sheetVal) sheetVal.textContent = 'Đang hiện thanh';
+      if (sheetBtn) {
+        sheetBtn.className = 'lakinh-action-btn secondary';
+        sheetBtn.innerHTML = '🙈 Ẩn Thanh Bảng Kê';
+      }
+      if (showToastMessage) {
+        showLaKinhToast('🗺️ Đã hiện thanh bảng kê tọa độ');
+      }
+    } else {
+      if (banner) {
+        banner.style.display = 'none';
+        banner.classList.add('is-hidden');
+      }
+      if (topBtn) {
+        topBtn.classList.remove('active');
+        topBtn.classList.add('parcel-banner-hidden');
+        topBtn.title = 'Hiện thanh bảng kê tọa độ thửa đất';
+      }
+      if (topIcon) topIcon.textContent = '🙈';
+      if (sheetVal) sheetVal.textContent = 'Đã ẩn thanh';
+      if (sheetBtn) {
+        sheetBtn.className = 'lakinh-action-btn primary';
+        sheetBtn.innerHTML = '🗺️ Hiện Thanh Bảng Kê';
+      }
+      if (showToastMessage) {
+        showLaKinhToast('🙈 Đã ẩn thanh bảng kê tọa độ (chạm 🗺️ trên thanh công cụ để mở lại)');
+      }
+    }
+  }
+
   // Chuyển giao và hiển thị ranh thửa đất từ tọa độ VN-2000 vào bản đồ La Kinh Vệ Tinh
   function importParcelFromVN2000(parcelData) {
     if (!parcelData || !parcelData.vertices || parcelData.vertices.length < 3) return;
@@ -4344,6 +4438,7 @@ function updateQmdjStrategicLayer() {
     state.polygonPoints = latLngs.map(pt => L.latLng(pt[0], pt[1]));
 
     // Cập nhật banner thửa đất nổi trong HUD capsule stack
+    state.isParcelBannerVisible = true;
     const pBanner = document.getElementById('lakinh-parcel-banner');
     const pTitle = document.getElementById('fl-parcel-title');
     const pArea = document.getElementById('fl-parcel-area');
@@ -4356,15 +4451,41 @@ function updateQmdjStrategicLayer() {
       pArea.textContent = parcelData.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' m²';
     }
 
+    // Cập nhật nút top bar và bottom sheet group
+    const topParcelBtn = document.getElementById('lakinh-btn-parcel-quick');
+    const topParcelIcon = document.getElementById('lakinh-top-parcel-icon');
+    if (topParcelBtn) {
+      topParcelBtn.style.display = 'inline-flex';
+      topParcelBtn.classList.add('active');
+      topParcelBtn.classList.remove('parcel-banner-hidden');
+      topParcelBtn.title = 'Ẩn thanh bảng kê tọa độ thửa đất';
+      if (topParcelIcon) topParcelIcon.textContent = '🗺️';
+    }
+    const sheetParcelGroup = document.getElementById('sheet-group-parcel');
+    if (sheetParcelGroup) sheetParcelGroup.style.display = '';
+    const sheetValParcel = document.getElementById('sheet-val-parcel-status');
+    if (sheetValParcel) sheetValParcel.textContent = 'Đang hiện thanh';
+    const sheetBtnParcel = document.getElementById('sheet-btn-toggle-parcel-banner');
+    if (sheetBtnParcel) {
+      sheetBtnParcel.className = 'lakinh-action-btn secondary';
+      sheetBtnParcel.innerHTML = '🙈 Ẩn Thanh Bảng Kê';
+    }
+
     // 1. Vẽ ranh thửa đất đa giác trên nền bản đồ vệ tinh
     if (polygonLayerGroup) {
-      L.polygon(latLngs, {
+      const poly = L.polygon(latLngs, {
         color: '#f59e0b',
         weight: 3,
         fillColor: '#f59e0b',
         fillOpacity: 0.2,
         dashArray: null
       }).addTo(polygonLayerGroup);
+
+      poly.on('click', () => {
+        if (!state.isParcelBannerVisible) {
+          setParcelBannerVisibility(true, true);
+        }
+      });
 
       // 2. Vẽ các đỉnh mốc ranh với số thứ tự / tên mốc (1, 2, 3... hoặc M1, M2...)
       parcelData.vertices.forEach((v, idx) => {
@@ -4374,6 +4495,8 @@ function updateQmdjStrategicLayer() {
           ? `<div class="lakinh-v-pin">${escapeHTML(rawLabel)}</div>`
           : `<div class="lakinh-v-pin"><span class="prefix">M</span>${escapeHTML(rawLabel)}</div>`;
 
+        const xStr = (v.x !== undefined && v.x !== null) ? v.x.toFixed(2) : '-';
+        const yStr = (v.y !== undefined && v.y !== null) ? v.y.toFixed(2) : '-';
         L.marker([v.lat, v.lng], {
           icon: L.divIcon({
             className: 'dc-map-vertex-marker',
@@ -4382,7 +4505,7 @@ function updateQmdjStrategicLayer() {
             iconAnchor: [14, 12]
           }),
           zIndexOffset: 3500 // Luôn nổi lên trên nhãn cạnh và polygon fill
-        }).bindPopup(`<div style="font-size:12px;color:#0f172a;padding:2px;"><b>Mốc ${escapeHTML(rawLabel)}</b><br>X: ${v.x.toFixed(2)} m<br>Y: ${v.y.toFixed(2)} m<br>WGS84: ${v.lat.toFixed(6)}°, ${v.lng.toFixed(6)}°</div>`).addTo(polygonLayerGroup);
+        }).bindPopup(`<div style="font-size:12px;color:#0f172a;padding:2px;"><b>Mốc ${escapeHTML(rawLabel)}</b><br>X: ${xStr} m<br>Y: ${yStr} m<br>WGS84: ${v.lat.toFixed(6)}°, ${v.lng.toFixed(6)}°</div>`).addTo(polygonLayerGroup);
       });
 
       // 3. Hiển thị thông số cạnh (chiều dài & 24 sơn vị) tại trung điểm mỗi cạnh
@@ -4426,7 +4549,7 @@ function updateQmdjStrategicLayer() {
         }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px;">
           🎯 <b>Tim Thửa Đất</b>: ${escapeHTML(parcelData.parcelName || 'VN-2000')}<br>
           Diện tích: ${areaFmt} m²<br>
-          Chu vi: ${parcelData.perimeterM.toFixed(1)} m<br>
+          Chu vi: ${(parcelData.perimeterM !== undefined && parcelData.perimeterM !== null) ? parcelData.perimeterM.toFixed(1) : '-'} m<br>
           Tọa độ: ${centroid.lat.toFixed(6)}°, ${centroid.lng.toFixed(6)}°
         </div>`).addTo(polygonLayerGroup);
 
@@ -5375,6 +5498,7 @@ function updateQmdjStrategicLayer() {
         declination: state.declination,
         importedParcel: state.importedParcel ? JSON.parse(JSON.stringify(state.importedParcel)) : null,
         isParcelNumbersVisible: state.isParcelNumbersVisible !== false,
+        isParcelBannerVisible: state.isParcelBannerVisible !== false,
         floorPlan: state.planImageSrc ? {
           imageSrc: state.planImageSrc,
           anchorCoords: state.planAnchorCoords || [state.centerCoords[0], state.centerCoords[1]],
@@ -5547,15 +5671,24 @@ function updateQmdjStrategicLayer() {
     if (item.importedParcel && item.importedParcel.vertices && item.importedParcel.vertices.length >= 3) {
       state.importedParcel = item.importedParcel;
       state.isParcelNumbersVisible = item.isParcelNumbersVisible !== false;
+      state.isParcelBannerVisible = item.isParcelBannerVisible !== false;
       importParcelFromVN2000(item.importedParcel);
+      if (item.isParcelBannerVisible === false) {
+        setParcelBannerVisibility(false, false);
+      }
     } else if (polygonLayerGroup && !item.importedParcel) {
       state.importedParcel = null;
+      state.isParcelBannerVisible = false;
       polygonLayerGroup.clearLayers();
       const banner = document.getElementById('lakinh-parcel-banner');
       if (banner) {
         banner.style.display = 'none';
         banner.classList.add('is-hidden');
       }
+      const topBtn = document.getElementById('lakinh-btn-parcel-quick');
+      if (topBtn) topBtn.style.display = 'none';
+      const sheetGrp = document.getElementById('sheet-group-parcel');
+      if (sheetGrp) sheetGrp.style.display = 'none';
     }
 
     // 1. Bay bản đồ đến tọa độ
@@ -6492,6 +6625,7 @@ function updateQmdjStrategicLayer() {
       btnParcelClear.addEventListener('click', (e) => {
         e.stopPropagation();
         state.importedParcel = null;
+        state.isParcelBannerVisible = false;
         state.polygonPoints = [];
         state.isPlanGeoAnchored = false;
         if (polygonLayerGroup) {
@@ -6502,11 +6636,58 @@ function updateQmdjStrategicLayer() {
           banner.style.display = 'none';
           banner.classList.add('is-hidden');
         }
+        const topBtn = document.getElementById('lakinh-btn-parcel-quick');
+        if (topBtn) topBtn.style.display = 'none';
+        const sheetGrp = document.getElementById('sheet-group-parcel');
+        if (sheetGrp) sheetGrp.style.display = 'none';
         syncFloorPlanDomParent();
         updateFloorPlanTransform();
         showLaKinhToast('🗑️ Đã xóa bỏ thửa đất khỏi La Kinh');
       });
     }
+
+    const btnParcelHide = document.getElementById('btn-lakinh-parcel-hide');
+    if (btnParcelHide) {
+      btnParcelHide.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setParcelBannerVisibility(false, true);
+      });
+    }
+
+    const btnTopParcel = document.getElementById('lakinh-btn-parcel-quick');
+    if (btnTopParcel) {
+      btnTopParcel.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!state.importedParcel) {
+          showLaKinhToast('Chưa có ranh thửa đất trên La Kinh');
+          return;
+        }
+        setParcelBannerVisibility(!state.isParcelBannerVisible, true);
+      });
+    }
+
+    const sheetBtnToggleBanner = document.getElementById('sheet-btn-toggle-parcel-banner');
+    if (sheetBtnToggleBanner) {
+      sheetBtnToggleBanner.addEventListener('click', () => {
+        setParcelBannerVisibility(!state.isParcelBannerVisible, true);
+      });
+    }
+
+    const sheetBtnToggleNums = document.getElementById('sheet-btn-toggle-parcel-nums');
+    if (sheetBtnToggleNums) {
+      sheetBtnToggleNums.addEventListener('click', () => {
+        setParcelNumbersVisibility(!state.isParcelNumbersVisible, true);
+        sheetBtnToggleNums.innerHTML = state.isParcelNumbersVisible !== false ? '🏷️ Ẩn Số Mốc Ranh' : '🏷️ Hiện Số Mốc Ranh';
+      });
+    }
+
+    document.getElementById('sheet-btn-parcel-center')?.addEventListener('click', () => {
+      document.getElementById('btn-lakinh-parcel-center')?.click();
+    });
+
+    document.getElementById('sheet-btn-parcel-fit')?.addEventListener('click', () => {
+      document.getElementById('btn-lakinh-parcel-fit')?.click();
+    });
 
     const flBtnPan = document.getElementById('fl-btn-plan-pan');
     if (flBtnPan) {
@@ -8776,10 +8957,12 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     syncFloorPlanDomParent: syncFloorPlanDomParent,
     updateFloorPlanGeoPos: updateFloorPlanGeoPos,
     importParcelFromVN2000: importParcelFromVN2000,
+    setParcelBannerVisibility: setParcelBannerVisibility,
     storage: LakinhStorage,
     getState: () => state
   };
 
   global.NetaLaKinhView = NetaLaKinhView;
+  global.NetaLaKinh = NetaLaKinhView;
 
 })(typeof window !== 'undefined' ? window : this);
