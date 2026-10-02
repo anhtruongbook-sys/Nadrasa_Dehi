@@ -101,18 +101,21 @@
         <div class="cal-grid-body">
     `;
 
+    const now = new Date();
+    const isCurrentMonth = (year === now.getFullYear() && month === (now.getMonth() + 1));
+
     matrix.forEach(week => {
       week.forEach((cell, idx) => {
         if (!cell) {
           html += `<div class="cal-cell empty"></div>`;
         } else {
-          const isToday = isSameDay(new Date(cell.solarYear, cell.solarMonth - 1, cell.solarDay), new Date());
-          const isSelected = cell.solarDay === selectedDay;
+          const isToday = isSameDay(new Date(cell.solarYear, cell.solarMonth - 1, cell.solarDay), now);
+          const isSelected = isCurrentMonth ? isToday : (cell.solarDay === selectedDay);
           const isSunday = idx === 6;
           const isSpecial = cell.isSpecial; // Mùng 1 hoặc Rằm
 
           html += `
-            <div class="cal-cell ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${isSunday ? 'sunday' : ''}" data-day="${cell.solarDay}">
+            <div class="cal-cell ${isToday ? 'today' : ''} ${isSelected && !isToday ? 'selected' : ''} ${isSunday ? 'sunday' : ''}" data-day="${cell.solarDay}">
               <div class="cal-solar-num">${cell.solarDay}</div>
               <div class="cal-lunar-num ${isSpecial ? 'special-lunar' : ''}">
                 ${cell.lunarDay === 1 ? `${cell.lunarDay}/${cell.lunarMonth}` : cell.lunarDay}
@@ -277,11 +280,18 @@
     const btnTabDay = document.getElementById('btn-cal-tab-day');
     const btnToday = document.getElementById('btn-cal-today');
 
+    function switchToMonthMode() {
+      currentCalendarMode = 'month';
+      const now = new Date();
+      // Nếu đang xem ở tháng/năm hiện tại, tự động chuyển về Hôm nay để không lưu vết đánh dấu ngày cũ đã xem
+      if (currentSelectedDate.getFullYear() === now.getFullYear() && currentSelectedDate.getMonth() === now.getMonth()) {
+        currentSelectedDate = now;
+      }
+      renderCalendar();
+    }
+
     if (btnTabMonth) {
-      btnTabMonth.onclick = () => {
-        currentCalendarMode = 'month';
-        renderCalendar();
-      };
+      btnTabMonth.onclick = switchToMonthMode;
     }
     if (btnTabDay) {
       btnTabDay.onclick = () => {
@@ -444,10 +454,7 @@
     // Back to Month button from Day Bloc
     const btnBackMonth = document.getElementById('btn-back-month');
     if (btnBackMonth) {
-      btnBackMonth.onclick = () => {
-        currentCalendarMode = 'month';
-        renderCalendar();
-      };
+      btnBackMonth.onclick = switchToMonthMode;
     }
 
     // View Bloc Detail button
