@@ -2348,6 +2348,30 @@ body.light-theme .fl-plan-scale-chip {
   color: #ffffff;
 }
 
+.fl-parcel-btn.toggle-num-btn {
+  border-color: #a855f7;
+  color: #d8b4fe;
+  background: rgba(168, 85, 247, 0.15);
+}
+
+.fl-parcel-btn.toggle-num-btn:hover {
+  background: rgba(168, 85, 247, 0.3);
+  color: #ffffff;
+}
+
+.fl-parcel-btn.toggle-num-btn.is-off {
+  border-color: #64748b;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.6);
+}
+
+/* Ẩn tức thì toàn bộ mốc đỉnh, kích thước cạnh và nhãn diện tích ranh đất */
+#lakinh-map.hide-parcel-numbers .dc-map-vertex-marker,
+#lakinh-map.hide-parcel-numbers .dc-map-edge-marker,
+#lakinh-map.hide-parcel-numbers .custom-centroid-marker {
+  display: none !important;
+}
+
 /* Loại bỏ hoàn toàn viền trắng/hộp trắng mặc định của Leaflet cho các mốc ranh đất */
 .dc-map-vertex-marker,
 .dc-point-divicon,

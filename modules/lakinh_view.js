@@ -58,6 +58,7 @@
     isHudDetailOpen: false,
     polygonPoints: [],
     importedParcel: null,
+    isParcelNumbersVisible: true, // Ẩn / Hiện số thứ tự mốc và kích thước cạnh ranh đất VN-2000
     declination: -1.34,
     centerElevation: 19.0,
     centerCoords: [21.028511, 105.854167], // Mặc định Hà Nội
@@ -124,7 +125,7 @@
     try {
       if (!container.querySelector('#lakinh-map')) {
         container.innerHTML = `
-        <div id="lakinh-map"></div>
+        <div id="lakinh-map" class="${state.isParcelNumbersVisible === false ? 'hide-parcel-numbers' : ''}"></div>
 
         <!-- Lớp Bản Vẽ Mặt Bằng Kiến Trúc (Nằm dưới La Kinh, Tâm Trùng Tâm La Kinh 100%) -->
         <div id="lakinh-floorplan-container">
@@ -252,6 +253,9 @@
               <span class="fl-parcel-area" id="fl-parcel-area">${state.importedParcel && state.importedParcel.areaM2 ? state.importedParcel.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' m²' : ''}</span>
             </div>
             <div class="fl-parcel-right">
+              <button type="button" class="fl-parcel-btn toggle-num-btn ${state.isParcelNumbersVisible !== false ? 'active' : 'is-off'}" id="btn-lakinh-parcel-toggle-nums" title="${state.isParcelNumbersVisible !== false ? 'Ẩn số mốc và kích thước cạnh' : 'Hiện số mốc và kích thước cạnh'}">
+                <span id="fl-parcel-toggle-icon">${state.isParcelNumbersVisible !== false ? '🏷️' : '🙈'}</span><span class="fl-btn-lbl" id="fl-parcel-toggle-lbl"> ${state.isParcelNumbersVisible !== false ? 'Số' : 'Ẩn'}</span>
+              </button>
               <button type="button" class="fl-parcel-btn center-btn" id="btn-lakinh-parcel-center" title="Quay về tâm thửa đất">
                 🎯<span class="fl-btn-lbl"> Về Tâm Đất</span>
               </button>
@@ -4248,6 +4252,49 @@ function updateQmdjStrategicLayer() {
     }
   }
 
+  // Bật / Tắt hiển thị số thứ tự mốc (M1..Mn), kích thước cạnh và diện tích ranh đất
+  function setParcelNumbersVisibility(visible, showToastMessage = true) {
+    state.isParcelNumbersVisible = !!visible;
+    const mapEl = document.getElementById('lakinh-map');
+    const btn = document.getElementById('btn-lakinh-parcel-toggle-nums');
+    const icon = document.getElementById('fl-parcel-toggle-icon');
+    const lbl = document.getElementById('fl-parcel-toggle-lbl');
+
+    if (mapEl) {
+      if (state.isParcelNumbersVisible) {
+        mapEl.classList.remove('hide-parcel-numbers');
+      } else {
+        mapEl.classList.add('hide-parcel-numbers');
+      }
+    }
+
+    if (btn) {
+      if (state.isParcelNumbersVisible) {
+        btn.classList.add('active');
+        btn.classList.remove('is-off');
+        btn.title = 'Ẩn số mốc và kích thước cạnh';
+      } else {
+        btn.classList.remove('active');
+        btn.classList.add('is-off');
+        btn.title = 'Hiện số mốc và kích thước cạnh';
+      }
+    }
+    if (icon) {
+      icon.textContent = state.isParcelNumbersVisible ? '🏷️' : '🙈';
+    }
+    if (lbl) {
+      lbl.textContent = state.isParcelNumbersVisible ? ' Số' : ' Ẩn';
+    }
+
+    if (showToastMessage) {
+      if (state.isParcelNumbersVisible) {
+        showLaKinhToast('🏷️ Đã hiển thị số mốc và kích thước ranh đất');
+      } else {
+        showLaKinhToast('🙈 Đã ẩn các số trên sơ đồ đất (chỉ giữ ranh đa giác)');
+      }
+    }
+  }
+
   // Chuyển giao và hiển thị ranh thửa đất từ tọa độ VN-2000 vào bản đồ La Kinh Vệ Tinh
   function importParcelFromVN2000(parcelData) {
     if (!parcelData || !parcelData.vertices || parcelData.vertices.length < 3) return;
@@ -4370,6 +4417,9 @@ function updateQmdjStrategicLayer() {
         }
       }
     }
+
+    // Áp dụng trạng thái ẩn / hiện số mốc và kích thước cạnh theo tùy chọn người dùng
+    setParcelNumbersVisibility(state.isParcelNumbersVisible !== false, false);
   }
 
   // Phân tích cú pháp tọa độ GPS linh hoạt
@@ -6323,6 +6373,14 @@ function updateQmdjStrategicLayer() {
     }
 
     // Sự kiện thanh điều khiển thửa đất nổi (VN-2000)
+    const btnParcelToggleNums = document.getElementById('btn-lakinh-parcel-toggle-nums');
+    if (btnParcelToggleNums) {
+      btnParcelToggleNums.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setParcelNumbersVisibility(!state.isParcelNumbersVisible, true);
+      });
+    }
+
     const btnParcelCenter = document.getElementById('btn-lakinh-parcel-center');
     if (btnParcelCenter) {
       btnParcelCenter.addEventListener('click', (e) => {

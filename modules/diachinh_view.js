@@ -17,7 +17,8 @@
     isInitialized: false,
     viewMode: 'map', // 'map' or 'svg'
     currentLayerKey: 'googleSat', // 'googleSat', 'esriSat', 'googleRoad'
-    isPointsLocked: true // Mặc định khóa điểm để di chuyển bản đồ tự do, mở khóa để kéo mốc
+    isPointsLocked: true, // Mặc định khóa điểm để di chuyển bản đồ tự do, mở khóa để kéo mốc
+    isNumbersVisible: true // Ẩn / Hiện số thứ tự mốc, kích thước cạnh và diện tích ranh đất
   };
 
   let dcMapInstance = null;
@@ -237,11 +238,18 @@
 
         <!-- Thanh công cụ bản đồ: Khóa mốc & 3 Chế độ bản đồ vệ tinh -->
         <div class="dc-map-toolbar-row">
-          <!-- Nút Khóa / Mở Khóa Điểm -->
-          <button type="button" class="dc-tool-btn dc-btn-lock ${state.isPointsLocked ? '' : 'is-unlocked'}" id="dc-btn-toggle-lock" title="Chạm để mở khóa di chuyển mốc tọa độ trên bản đồ">
-            <span class="lock-icon" id="dc-lock-icon">${state.isPointsLocked ? '🔒' : '🔓'}</span>
-            <span class="lock-text" id="dc-lock-text">${state.isPointsLocked ? 'Khóa Điểm' : 'Mở Khóa (Di Điểm)'}</span>
-          </button>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <!-- Nút Khóa / Mở Khóa Điểm -->
+            <button type="button" class="dc-tool-btn dc-btn-lock ${state.isPointsLocked ? '' : 'is-unlocked'}" id="dc-btn-toggle-lock" title="Chạm để mở khóa di chuyển mốc tọa độ trên bản đồ">
+              <span class="lock-icon" id="dc-lock-icon">${state.isPointsLocked ? '🔒' : '🔓'}</span>
+              <span class="lock-text" id="dc-lock-text">${state.isPointsLocked ? 'Khóa Điểm' : 'Mở Khóa (Di Điểm)'}</span>
+            </button>
+            <!-- Nút Ẩn / Hiện Số Thứ Tự Mốc & Kích Thước -->
+            <button type="button" class="dc-btn-toggle-nums ${state.isNumbersVisible !== false ? 'active' : 'is-off'}" id="dc-btn-toggle-nums" title="Ẩn / Hiện số thứ tự mốc và kích thước cạnh">
+              <span id="dc-nums-icon">${state.isNumbersVisible !== false ? '🏷️' : '🙈'}</span>
+              <span id="dc-nums-text">${state.isNumbersVisible !== false ? 'Số' : 'Ẩn'}</span>
+            </button>
+          </div>
           <!-- 3 Chế Độ Bản Đồ Vệ Tinh -->
           <div class="dc-map-layer-switcher" id="dc-map-layer-switcher">
             <button type="button" class="dc-layer-btn ${state.currentLayerKey === 'googleSat' ? 'active' : ''}" data-layer="googleSat" title="Ảnh vệ tinh Google Hybrid">Vệ Tinh</button>
@@ -252,14 +260,14 @@
 
         <!-- Khung Bản Đồ Leaflet -->
         <div id="dc-map-container" class="dc-map-container" style="${state.viewMode === 'svg' ? 'display:none;' : 'display:block;'}">
-          <div id="dc-leaflet-map"></div>
+          <div id="dc-leaflet-map" class="${state.isNumbersVisible === false ? 'hide-parcel-numbers' : ''}"></div>
           <div id="dc-drag-hint" class="dc-map-drag-hint" style="${state.isPointsLocked ? 'display:none;' : 'display:block;'}">
             💡 Đang mở khóa: Chạm và kéo các mốc ranh để tinh chỉnh tọa độ trực tiếp trên bản đồ
           </div>
         </div>
 
         <!-- Khung Sơ Đồ Hình Học SVG (Tỉ lệ 1:1) -->
-        <div id="dc-svg-container" class="dc-preview-container" style="${state.viewMode === 'svg' ? 'display:flex;' : 'display:none;'}">
+        <div id="dc-svg-container" class="dc-preview-container ${state.isNumbersVisible === false ? 'hide-parcel-numbers' : ''}" style="${state.viewMode === 'svg' ? 'display:flex;' : 'display:none;'}">
           ${svgContent}
         </div>
       </div>
@@ -745,6 +753,10 @@
       }
     }
 
+    if (mapEl) {
+      mapEl.classList.toggle('hide-parcel-numbers', state.isNumbersVisible === false);
+    }
+
     if (!dcMapInstance) {
       const p = state.currentParcel;
       const initialCenter = (p && p.centroid) ? [p.centroid.lat, p.centroid.lng] : [21.0285, 105.854];
@@ -1026,6 +1038,28 @@
       };
     }
 
+    const btnToggleNums = document.getElementById('dc-btn-toggle-nums');
+    if (btnToggleNums) {
+      btnToggleNums.onclick = () => {
+        state.isNumbersVisible = !state.isNumbersVisible;
+        const dcMap = document.getElementById('dc-leaflet-map');
+        const dcSvg = document.getElementById('dc-svg-container');
+        const icon = document.getElementById('dc-nums-icon');
+        const text = document.getElementById('dc-nums-text');
+        if (dcMap) {
+          dcMap.classList.toggle('hide-parcel-numbers', !state.isNumbersVisible);
+        }
+        if (dcSvg) {
+          dcSvg.classList.toggle('hide-parcel-numbers', !state.isNumbersVisible);
+        }
+        btnToggleNums.classList.toggle('active', state.isNumbersVisible);
+        btnToggleNums.classList.toggle('is-off', !state.isNumbersVisible);
+        if (icon) icon.textContent = state.isNumbersVisible ? '🏷️' : '🙈';
+        if (text) text.textContent = state.isNumbersVisible ? 'Số' : 'Ẩn';
+        showToast(state.isNumbersVisible ? '🏷️ Đã hiển thị số mốc và kích thước' : '🙈 Đã ẩn các số (chỉ giữ ranh đất)');
+      };
+    }
+
     if (btnViewMode) {
       btnViewMode.onclick = () => {
         state.viewMode = state.viewMode === 'map' ? 'svg' : 'map';
@@ -1084,6 +1118,14 @@
 
   // Đưa ranh thửa đất vào La Kinh Vệ Tinh (Lập Cực Phong Thủy)
   function importToLaKinh() {
+    if (!state.currentParcel || !state.currentParcel.vertices || state.currentParcel.vertices.length < 3) {
+      const textarea = document.getElementById('dc-textarea-coords');
+      if (textarea && textarea.value.trim()) {
+        state.coordText = textarea.value.trim();
+        reprocessAndRefresh();
+      }
+    }
+
     if (!state.currentParcel || !state.currentParcel.vertices || state.currentParcel.vertices.length < 3) {
       showToast('Vui lòng nhập tối thiểu 3 mốc tọa độ để tạo thửa đất');
       return;

@@ -22263,6 +22263,42 @@ body.theme-light .btn-timing-ics:hover {
   display: none !important;
 }
 
+.dc-btn-toggle-nums {
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.15);
+  color: #d8b4fe;
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.dc-btn-toggle-nums.is-off {
+  background: rgba(30, 41, 59, 0.6);
+  color: #94a3b8;
+  border-color: #64748b;
+}
+
+/* Ẩn các mốc số, kích thước và nhãn diện tích ranh đất */
+#dc-leaflet-map.hide-parcel-numbers .dc-point-divicon,
+#dc-leaflet-map.hide-parcel-numbers .dc-edge-divicon,
+#dc-leaflet-map.hide-parcel-numbers .dc-centroid-divicon,
+#dc-leaflet-map.hide-parcel-numbers .dc-map-vertex-marker,
+#dc-leaflet-map.hide-parcel-numbers .dc-map-edge-marker,
+#dc-leaflet-map.hide-parcel-numbers .custom-centroid-marker,
+#dc-svg-container.hide-parcel-numbers text,
+#lakinh-map.hide-parcel-numbers .dc-map-vertex-marker,
+#lakinh-map.hide-parcel-numbers .dc-map-edge-marker,
+#lakinh-map.hide-parcel-numbers .custom-centroid-marker {
+  display: none !important;
+}
+
 .dc-map-drag-hint {
   position: absolute;
   bottom: 8px;
