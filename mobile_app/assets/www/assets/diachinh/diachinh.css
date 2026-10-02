@@ -270,11 +270,13 @@
 .dc-btn-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dc-btn-secondary {
-  padding: 8px 6px;
+  padding: 8px 3px;
   border-radius: 7px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -285,9 +287,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   transition: all 0.2s ease;
   white-space: nowrap;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .dc-btn-secondary:hover {
@@ -645,3 +649,20 @@ body.theme-light #view-diachinh .dc-vertices-table tr:hover td {
 body.theme-light #view-diachinh .dc-edge-badge {
   color: #0284c7 !important;
 }
+
+.dc-empty-title {
+  color: #facc15;
+}
+
+.dc-empty-desc {
+  color: #94a3b8;
+}
+
+body.theme-light #view-diachinh .dc-empty-title {
+  color: #b45309 !important;
+}
+
+body.theme-light #view-diachinh .dc-empty-desc {
+  color: #475569 !important;
+}
+

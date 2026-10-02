@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.54
-          name: "Neta Light v2.8.54 (Fix Đóng Gói CSS Phân Hệ Địa Chính VN-2000 & Đồng Bộ La Kinh)"
+          tag_name: v2.8.55
+          name: "Neta Light v2.8.55 (Giao Diện Địa Chính Sạch Sẽ • Bỏ Toàn Bộ Mẫu Thử)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.54
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.55
+            - **Loại Bỏ Hoàn Toàn Dữ Liệu Mẫu Thử (Clean Minimalist UI)**:
+              + Bỏ hàng chip chọn mẫu thử (Hà Nội, TP.HCM, Đà Nẵng, Chương Mỹ).
+              + Trống hoàn toàn trường tên thửa đất và danh sách tọa độ, sẵn sàng để người dùng nhập/dán dữ liệu thực tế.
+              + Bảng thông báo rỗng tinh tế, chỉ dẫn chuẩn xác cách dán mốc tọa độ VN-2000 từ sổ đỏ.
+              + Tinh chỉnh hàng nút tác vụ `[📥 KML Earth]`, `[📊 Bảng CSV]`, `[📍 Google Maps]` vừa khít 100% trên màn hình điện thoại không bị tràn viền hay mất chữ.
             - **Khắc phục triệt để lỗi tài nguyên CSS trên điện thoại**:
               + Bổ sung khai báo tài nguyên `assets/www/assets/diachinh/` vào `pubspec.yaml` để Flutter SDK đóng gói 100% tệp giao diện vào bản cài APK.
               + Tích hợp trực tiếp bộ style CSS hoàn chỉnh vào `styles.css` gốc, bảo đảm giao diện hiển thị chuẩn xác, sang trọng 100% trong mọi trường hợp.

@@ -10,8 +10,8 @@
   let containerEl = null;
 
   const state = {
-    provinceKey: 'hanoi',
-    parcelName: 'Thửa Đất Hà Nội',
+    provinceKey: 'Hà Nội',
+    parcelName: '',
     coordText: '',
     currentParcel: null,
     isInitialized: false
@@ -28,19 +28,10 @@
       .replace(/'/g, '&#39;');
   }
 
-  // Khởi tạo và thiết lập dữ liệu mẫu mặc định
+  // Khởi tạo giao diện sạch (không nạp mẫu thử)
   function init(container) {
     containerEl = container || document.getElementById('view-diachinh');
     if (!containerEl) return;
-
-    if (!state.coordText && global.NetaDiaChinhEngine && global.NetaDiaChinhEngine.SAMPLE_PARCELS) {
-      const hnSample = global.NetaDiaChinhEngine.SAMPLE_PARCELS['hanoi'];
-      if (hnSample) {
-        state.provinceKey = hnSample.provinceKey;
-        state.parcelName = hnSample.name;
-        state.coordText = hnSample.text;
-      }
-    }
 
     render();
     state.isInitialized = true;
@@ -62,7 +53,7 @@
     const provList = engine.getAllProvinces();
     const curProv = engine.getProvince(state.provinceKey) || { name: 'Hà Nội', ktt: 105.0 };
 
-    // Tự động phân tích thửa đất nếu đã có dữ liệu
+    // Tự động phân tích thửa đất nếu đã có dữ liệu người dùng nhập
     if (!state.currentParcel && state.coordText) {
       try {
         state.currentParcel = engine.processParcel(state.coordText, state.provinceKey, state.parcelName);
@@ -84,15 +75,6 @@
             <div class="dc-badge-ktt" id="dc-badge-ktt-display">KTT: ${curProv.ktt}°00' (3°)</div>
           </div>
 
-          <!-- Thanh chọn mẫu nhanh -->
-          <div class="dc-samples-bar">
-            <span style="font-size:0.74rem;color:#94a3b8;flex-shrink:0;">Thử mẫu:</span>
-            <button type="button" class="dc-sample-chip" data-sample="hanoi">Hà Nội (Mẫu)</button>
-            <button type="button" class="dc-sample-chip" data-sample="hcm">TP. Hồ Chí Minh</button>
-            <button type="button" class="dc-sample-chip" data-sample="danang">Đà Nẵng</button>
-            <button type="button" class="dc-sample-chip" data-sample="chuongmy">Chương Mỹ (HN)</button>
-          </div>
-
           <!-- Tỉnh/Thành & Tên Thửa -->
           <div class="dc-row">
             <div class="dc-col" style="flex: 1.2;">
@@ -107,7 +89,7 @@
             </div>
             <div class="dc-col" style="flex: 1;">
               <label class="dc-label" for="dc-input-parcel-name">Tên Thửa / Ký Hiệu</label>
-              <input type="text" id="dc-input-parcel-name" class="dc-input" value="${escapeHTML(state.parcelName)}" placeholder="VD: Thửa 12, Tờ 5">
+              <input type="text" id="dc-input-parcel-name" class="dc-input" value="${escapeHTML(state.parcelName)}" placeholder="Nhập tên thửa, số tờ, số thửa (VD: Thửa 12, Tờ 5)">
             </div>
           </div>
 
@@ -115,11 +97,11 @@
           <div class="dc-col" style="margin-bottom: 8px;">
             <label class="dc-label" for="dc-textarea-coords">Bảng Liệt Kê Tọa Độ Góc Ranh (X - Y hoặc Đỉnh X Y)</label>
             <div class="dc-textarea-container">
-              <textarea id="dc-textarea-coords" class="dc-textarea" placeholder="Nhập tọa độ VN-2000 từ sổ đỏ hoặc trích lục bản đồ:
-1  2320145.20  589410.50
-2  2320150.80  589435.10
-3  2320120.40  589440.20
-4  2320115.10  589415.80">${escapeHTML(state.coordText)}</textarea>
+              <textarea id="dc-textarea-coords" class="dc-textarea" placeholder="Dán hoặc nhập danh sách tọa độ VN-2000 từ sổ đỏ (X, Y hoặc Đỉnh X Y):
+1   2320145.20   587632.10
+2   2320180.50   587655.40
+3   2320160.20   587702.80
+...">${escapeHTML(state.coordText)}</textarea>
             </div>
             <div class="dc-textarea-tools">
               <button type="button" class="dc-tool-btn" id="dc-btn-paste">📋 Dán Tọa Độ</button>
@@ -140,11 +122,11 @@
             <div class="dc-btn-grid">
               <button type="button" class="dc-btn-secondary" id="dc-btn-export-kml">
                 <span>📥</span>
-                <span>Tải KML (G-Earth)</span>
+                <span>KML Earth</span>
               </button>
               <button type="button" class="dc-btn-secondary" id="dc-btn-export-csv">
                 <span>📊</span>
-                <span>Xuất Bảng CSV</span>
+                <span>Bảng CSV</span>
               </button>
               <button type="button" class="dc-btn-secondary" id="dc-btn-open-gmaps">
                 <span>📍</span>
@@ -169,10 +151,12 @@
   function renderResultsHTML(parcel) {
     if (!parcel || !parcel.vertices || parcel.vertices.length < 3) {
       return `
-        <div class="dc-panel" style="text-align:center;padding:24px;color:#94a3b8;">
-          <div style="font-size:2rem;margin-bottom:6px;">📐</div>
-          <div style="font-size:0.9rem;font-weight:600;">Chưa có dữ liệu ranh thửa đất</div>
-          <div style="font-size:0.78rem;margin-top:4px;">Vui lòng nhập tối thiểu 3 điểm mốc tọa độ VN-2000 hoặc chọn mẫu ở trên.</div>
+        <div class="dc-panel" style="text-align:center;padding:30px 16px;">
+          <div style="font-size:2.2rem;margin-bottom:8px;">📐</div>
+          <div style="font-size:0.95rem;font-weight:700;" class="dc-empty-title">Chưa Có Dữ Liệu Tọa Độ Thửa Đất</div>
+          <div style="font-size:0.8rem;margin-top:6px;line-height:1.5;" class="dc-empty-desc">
+            Vui lòng dán hoặc nhập tối thiểu 3 điểm mốc tọa độ VN-2000 (X - Y) từ Giấy chứng nhận quyền sử dụng đất (Sổ đỏ) hoặc nạp từ tệp.
+          </div>
         </div>
       `;
     }
@@ -511,15 +495,6 @@
         reader.readAsText(file, 'utf-8');
       });
     }
-
-    // Chọn mẫu nhanh
-    const sampleChips = document.querySelectorAll('.dc-sample-chip');
-    sampleChips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        const sampleKey = chip.getAttribute('data-sample');
-        loadSample(sampleKey);
-      });
-    });
 
     // 1-Click: ĐƯA VÀO LA KINH LẬP CỰC
     if (btnGoLaKinh) {

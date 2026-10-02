@@ -622,17 +622,18 @@
   // 6. XỬ LÝ TOÀN DIỆN THỬA ĐẤT (MASTER WORKFLOW)
   // ==========================================
   function processParcel(arg1 = {}, arg2, arg3) {
-    let name = "Thửa đất khảo sát", province = "Hà Nội", rawText = "", k0 = SCALE_FACTOR_3DEG;
+    let name = "", province = "Hà Nội", rawText = "", k0 = SCALE_FACTOR_3DEG;
     if (typeof arg1 === 'object' && arg1 !== null) {
-      name = arg1.name || arg1.parcelName || "Thửa đất khảo sát";
+      name = arg1.name || arg1.parcelName || "";
       province = arg1.province || "Hà Nội";
       rawText = arg1.rawText || arg1.coordText || arg1.text || "";
       k0 = arg1.k0 || SCALE_FACTOR_3DEG;
     } else if (typeof arg1 === 'string') {
       rawText = arg1;
       province = arg2 || "Hà Nội";
-      name = arg3 || "Thửa đất khảo sát";
+      name = arg3 || "";
     }
+    if (!name) name = "Thửa Đất";
 
     const provObj = getProvince(province);
     const provData = PROVINCES_DATA[provObj.name] || PROVINCES_DATA["Hà Nội"];
@@ -798,49 +799,10 @@
 </kml>`;
   }
 
-  // ==========================================
-  // 8. CÁC THỬA ĐẤT MẪU ĐIỂN HÌNH
-  // ==========================================
-  const SAMPLE_PARCELS = {
-    hanoi: {
-      name: "Thửa Đất Mẫu 1 (Hà Nội - Đống Đa)",
-      province: "Hà Nội",
-      text: `1\t2320145.200\t587632.100
-2\t2320180.500\t587655.400
-3\t2320160.200\t587702.800
-4\t2320118.000\t587680.000`
-    },
-    hcm: {
-      name: "Thửa Đất Mẫu 2 (TP. Hồ Chí Minh - Quận 1)",
-      province: "Hồ Chí Minh",
-      text: `1\t1191942.500\t603797.800
-2\t1191985.200\t603815.400
-3\t1191968.100\t603862.900
-4\t1191918.300\t603840.100`
-    },
-    danang: {
-      name: "Thửa Đất Mẫu 3 (Đà Nẵng - Sơn Trà)",
-      province: "Đà Nẵng",
-      text: `1\t1777410.200\t541620.300
-2\t1777465.800\t541638.100
-3\t1777450.400\t541689.500
-4\t1777395.100\t541671.200`
-    },
-    chuongmy: {
-      name: "Sổ Đỏ Thực Tế (Chương Mỹ - Hà Nội)",
-      province: "Hà Nội",
-      text: `1\t2306712.35\t573120.48
-2\t2306735.60\t573132.80
-3\t2306728.15\t573150.25
-4\t2306705.40\t573138.90`
-    }
-  };
-
   // Export Engine API
   const NetaDiaChinhEngine = {
     PROVINCES_DATA,
     SON_24_BEARING,
-    SAMPLE_PARCELS,
     vn2000ToWgs84,
     wgs84ToVn2000,
     parseCoordinatesText,
