@@ -88,6 +88,16 @@
     window.lakinhState = state;
   }
 
+  function escapeHTML(str) {
+    if (typeof str !== 'string') return str == null ? '' : String(str);
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function getPlateSrc(type) {
     if (type === 'thuoc_lap_cuc') {
       return (window.LAKINH_BASE64_DATA && window.LAKINH_BASE64_DATA['thuoc_lap_cuc.png'])
@@ -234,6 +244,26 @@
 
         <!-- Stack Gom Nhóm Các Mini Capsule & Floating HUD (Không Che La Kinh) -->
         <div id="lakinh-hud-capsule-stack">
+          <!-- Thanh Nổi Thông Tin & Điều Khiển Thửa Đất VN-2000 -->
+          <div id="lakinh-parcel-banner" class="lakinh-floating-parcel-bar ${state.importedParcel ? '' : 'is-hidden'}" style="${state.importedParcel ? 'display: flex;' : 'display: none;'}">
+            <div class="fl-parcel-left">
+              <span class="fl-parcel-icon">🗺️</span>
+              <span class="fl-parcel-title" id="fl-parcel-title">${state.importedParcel ? escapeHTML(state.importedParcel.parcelName || 'Thửa Đất') : 'Thửa Đất'}</span>
+              <span class="fl-parcel-area" id="fl-parcel-area">${state.importedParcel && state.importedParcel.areaM2 ? state.importedParcel.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' m²' : ''}</span>
+            </div>
+            <div class="fl-parcel-right">
+              <button type="button" class="fl-parcel-btn center-btn" id="btn-lakinh-parcel-center" title="Quay về tâm thửa đất">
+                🎯<span class="fl-btn-lbl"> Về Tâm Đất</span>
+              </button>
+              <button type="button" class="fl-parcel-btn fit-btn" id="btn-lakinh-parcel-fit" title="Thu phóng vừa khít trọn vẹn thửa đất">
+                🔍<span class="fl-btn-lbl"> Vừa Khung</span>
+              </button>
+              <button type="button" class="fl-parcel-btn clear-btn" id="btn-lakinh-parcel-clear" title="Xóa bỏ thửa đất khỏi La Kinh">
+                🗑️<span class="fl-btn-lbl"> Bỏ Đất</span>
+              </button>
+            </div>
+          </div>
+
           <!-- 0. Thanh Điều Khiển Nổi Thu Phóng & Dịch Tâm Mặt Bằng Trên Màn Hình -->
           <div id="lakinh-plan-pan-banner" class="lakinh-floating-plan-bar is-hidden" style="display: none;">
             <div class="fl-plan-left">
@@ -1232,6 +1262,13 @@
 
     // Đồng bộ DOM container mặt bằng vào pane bản đồ nếu đã ghim đất
     syncFloorPlanDomParent();
+
+    // Tự động khôi phục và vẽ lại thửa đất VN-2000 nếu đã tồn tại trong state
+    if (state.importedParcel && state.importedParcel.vertices && state.importedParcel.vertices.length >= 3) {
+      setTimeout(() => {
+        importParcelFromVN2000(state.importedParcel);
+      }, 60);
+    }
 
     // Cập nhật thông số vị trí ban đầu
     updateLocationHUD(state.centerCoords[0], state.centerCoords[1]);
@@ -4233,6 +4270,19 @@ function updateQmdjStrategicLayer() {
     const latLngs = parcelData.vertices.map(v => [v.lat, v.lng]);
     state.polygonPoints = latLngs.map(pt => L.latLng(pt[0], pt[1]));
 
+    // Cập nhật banner thửa đất nổi trong HUD capsule stack
+    const pBanner = document.getElementById('lakinh-parcel-banner');
+    const pTitle = document.getElementById('fl-parcel-title');
+    const pArea = document.getElementById('fl-parcel-area');
+    if (pBanner) {
+      pBanner.style.display = 'flex';
+      pBanner.classList.remove('is-hidden');
+    }
+    if (pTitle) pTitle.textContent = parcelData.parcelName || 'Thửa Đất';
+    if (pArea && parcelData.areaM2) {
+      pArea.textContent = parcelData.areaM2.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' m²';
+    }
+
     // 1. Vẽ ranh thửa đất đa giác trên nền bản đồ vệ tinh
     if (polygonLayerGroup) {
       L.polygon(latLngs, {
@@ -4243,23 +4293,30 @@ function updateQmdjStrategicLayer() {
         dashArray: null
       }).addTo(polygonLayerGroup);
 
-      // 2. Vẽ các đỉnh mốc ranh với số thứ tự
-      parcelData.vertices.forEach(v => {
+      // 2. Vẽ các đỉnh mốc ranh với số thứ tự / tên mốc (1, 2, 3... hoặc M1, M2...)
+      parcelData.vertices.forEach((v, idx) => {
+        const rawLabel = String(v.name || v.id || (idx + 1)).trim();
+        const hasPrefix = /^(m|đ|p)/i.test(rawLabel);
+        const pinHtml = hasPrefix
+          ? `<div class="lakinh-v-pin">${escapeHTML(rawLabel)}</div>`
+          : `<div class="lakinh-v-pin"><span class="prefix">M</span>${escapeHTML(rawLabel)}</div>`;
+
         L.marker([v.lat, v.lng], {
           icon: L.divIcon({
             className: 'dc-map-vertex-marker',
-            html: `<div style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;background:#0f172a;border:2px solid #f59e0b;border-radius:50%;color:#fbbf24;font-size:11px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,0.8);">${v.id}</div>`,
-            iconSize: [22, 22],
-            iconAnchor: [11, 11]
-          })
-        }).bindPopup(`<div style="font-size:12px;color:#0f172a;padding:2px;"><b>Mốc ${v.id}</b><br>X: ${v.x.toFixed(2)} m<br>Y: ${v.y.toFixed(2)} m<br>WGS84: ${v.lat.toFixed(6)}°, ${v.lng.toFixed(6)}°</div>`).addTo(polygonLayerGroup);
+            html: pinHtml,
+            iconSize: [28, 24],
+            iconAnchor: [14, 12]
+          }),
+          zIndexOffset: 3500 // Luôn nổi lên trên nhãn cạnh và polygon fill
+        }).bindPopup(`<div style="font-size:12px;color:#0f172a;padding:2px;"><b>Mốc ${escapeHTML(rawLabel)}</b><br>X: ${v.x.toFixed(2)} m<br>Y: ${v.y.toFixed(2)} m<br>WGS84: ${v.lat.toFixed(6)}°, ${v.lng.toFixed(6)}°</div>`).addTo(polygonLayerGroup);
       });
 
       // 3. Hiển thị thông số cạnh (chiều dài & 24 sơn vị) tại trung điểm mỗi cạnh
       if (parcelData.edges && parcelData.edges.length > 0) {
         parcelData.edges.forEach(e => {
-          const vFrom = parcelData.vertices.find(v => String(v.id) === String(e.from));
-          const vTo = parcelData.vertices.find(v => String(v.id) === String(e.to));
+          const vFrom = parcelData.vertices.find(v => String(v.id) === String(e.from) || String(v.name) === String(e.from));
+          const vTo = parcelData.vertices.find(v => String(v.id) === String(e.to) || String(v.name) === String(e.to));
           if (vFrom && vTo) {
             const midLat = (vFrom.lat + vTo.lat) / 2;
             const midLng = (vFrom.lng + vTo.lng) / 2;
@@ -4267,11 +4324,12 @@ function updateQmdjStrategicLayer() {
             L.marker([midLat, midLng], {
               icon: L.divIcon({
                 className: 'dc-map-edge-marker',
-                html: `<div style="background:rgba(15,10,25,0.85);border:1px solid #f59e0b;border-radius:4px;padding:1px 5px;color:#f8fafc;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.6);text-align:center;">
+                html: `<div style="background:rgba(15,10,25,0.9);border:1px solid #f59e0b;border-radius:4px;padding:1px 5px;color:#f8fafc;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.6);text-align:center;">
                   <span style="color:#38bdf8;">${e.lengthM.toFixed(1)}m</span> • <span style="color:#facc15;">${sonName} (${e.bearingDeg.toFixed(0)}°)</span>
                 </div>`,
                 iconAnchor: [45, 10]
-              })
+              }),
+              zIndexOffset: 1500
             }).addTo(polygonLayerGroup);
           }
         });
@@ -4286,13 +4344,14 @@ function updateQmdjStrategicLayer() {
             className: 'custom-centroid-marker',
             html: `<div style="display:inline-flex;align-items:center;background:none;border:none;">
               <span style="font-size:20px;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.9));">🎯</span>
-              <span style="color:#ef4444;font-size:11px;font-weight:900;white-space:nowrap;margin-left:3px;background:rgba(0,0,0,0.75);padding:1px 5px;border-radius:3px;text-shadow:0 1px 2px #000;">${areaFmt} m²</span>
+              <span style="color:#ef4444;font-size:11px;font-weight:900;white-space:nowrap;margin-left:3px;background:rgba(0,0,0,0.85);padding:1px 6px;border-radius:4px;border:1px solid #ef4444;text-shadow:0 1px 2px #000;">${areaFmt} m²</span>
             </div>`,
-            iconSize: [80, 24],
+            iconSize: [85, 24],
             iconAnchor: [10, 12]
-          })
+          }),
+          zIndexOffset: 2500
         }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px;">
-          🎯 <b>Tim Thửa Đất</b>: ${parcelData.parcelName || 'VN-2000'}<br>
+          🎯 <b>Tim Thửa Đất</b>: ${escapeHTML(parcelData.parcelName || 'VN-2000')}<br>
           Diện tích: ${areaFmt} m²<br>
           Chu vi: ${parcelData.perimeterM.toFixed(1)} m<br>
           Tọa độ: ${centroid.lat.toFixed(6)}°, ${centroid.lng.toFixed(6)}°
@@ -6260,6 +6319,57 @@ function updateQmdjStrategicLayer() {
         updateFloorPlanTransform();
         saveFloorPlanState();
         showLaKinhToast('📱 Đã đưa về tỉ lệ chuẩn 100%');
+      });
+    }
+
+    // Sự kiện thanh điều khiển thửa đất nổi (VN-2000)
+    const btnParcelCenter = document.getElementById('btn-lakinh-parcel-center');
+    if (btnParcelCenter) {
+      btnParcelCenter.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (state.importedParcel && state.importedParcel.centroid) {
+          const c = state.importedParcel.centroid;
+          state.centerCoords = [c.lat, c.lng];
+          if (mapInstance) {
+            mapInstance.setView([c.lat, c.lng], 19, { animate: true });
+          }
+          showLaKinhToast('🎯 Đã định vị chính tâm thửa đất');
+        } else {
+          showLaKinhToast('Chưa có thông tin tâm thửa đất');
+        }
+      });
+    }
+
+    const btnParcelFit = document.getElementById('btn-lakinh-parcel-fit');
+    if (btnParcelFit) {
+      btnParcelFit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (state.importedParcel && state.importedParcel.vertices && mapInstance) {
+          const b = L.latLngBounds(state.importedParcel.vertices.map(v => [v.lat, v.lng]));
+          if (b.isValid()) {
+            mapInstance.fitBounds(b, { padding: [50, 50], animate: true });
+            showLaKinhToast('🔍 Đã thu phóng vừa trọn vẹn ranh thửa đất');
+          }
+        }
+      });
+    }
+
+    const btnParcelClear = document.getElementById('btn-lakinh-parcel-clear');
+    if (btnParcelClear) {
+      btnParcelClear.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.importedParcel = null;
+        state.polygonPoints = [];
+        state.isPlanGeoAnchored = false;
+        if (polygonLayerGroup) {
+          polygonLayerGroup.clearLayers();
+        }
+        const banner = document.getElementById('lakinh-parcel-banner');
+        if (banner) {
+          banner.style.display = 'none';
+          banner.classList.add('is-hidden');
+        }
+        showLaKinhToast('🗑️ Đã xóa bỏ thửa đất khỏi La Kinh');
       });
     }
 

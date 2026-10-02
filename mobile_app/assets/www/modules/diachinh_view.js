@@ -1084,18 +1084,28 @@
       return;
     }
 
-    // 1. Chuyển sang La Kinh trước để container được hiển thị và có kích thước thực
+    // 1. Gán trực tiếp vào lakinhState để dữ liệu thửa đất được bảo toàn vĩnh viễn
+    if (global.lakinhState) {
+      global.lakinhState.importedParcel = state.currentParcel;
+      global.lakinhState.polygonPoints = state.currentParcel.vertices.map(v => [v.lat, v.lng]);
+      global.lakinhState.isPlanGeoAnchored = true;
+    }
+
+    // 2. Chuyển sang La Kinh để container được hiển thị và có kích thước thực
     if (typeof window.switchAppMode === 'function') {
       window.switchAppMode('lakinh');
     }
 
-    // 2. Chuyển giao và nạp thửa đất vào La Kinh
+    // 3. Nạp ngay và đặt timeout an toàn sau khi chu trình render kép của switchAppMode hoàn tất
+    if (global.NetaLaKinhView && typeof global.NetaLaKinhView.importParcelFromVN2000 === 'function') {
+      global.NetaLaKinhView.importParcelFromVN2000(state.currentParcel);
+    }
     setTimeout(() => {
       if (global.NetaLaKinhView && typeof global.NetaLaKinhView.importParcelFromVN2000 === 'function') {
         global.NetaLaKinhView.importParcelFromVN2000(state.currentParcel);
       }
       showToast(`Đã đưa thửa đất vào La Kinh: ${state.currentParcel.parcelName || 'VN-2000'}`);
-    }, 120);
+    }, 400);
   }
 
   // Xuất file KML cho Google Earth

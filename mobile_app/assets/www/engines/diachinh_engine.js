@@ -1033,10 +1033,39 @@
     }
   }
 
+  // CSDL Mẫu Thửa Đất Tiêu Chuẩn 63 Tỉnh Thành
+  const SAMPLE_PARCELS = {
+    hanoi_sample: {
+      name: "Thửa Đất Mẫu Hà Nội (Hoàn Kiếm)",
+      provinceKey: "Hà Nội",
+      text: `1  2324500.50  588600.20
+2  2324525.80  588635.40
+3  2324505.10  588660.80
+4  2324480.00  588625.60`
+    },
+    hcm_sample: {
+      name: "Thửa Đất Mẫu TP.HCM (Quận 1)",
+      provinceKey: "Hồ Chí Minh",
+      text: `1  1192100.00  605200.00
+2  1192120.00  605230.00
+3  1192100.00  605250.00
+4  1192080.00  605220.00`
+    },
+    danang_sample: {
+      name: "Thửa Đất Mẫu Đà Nẵng (Hải Châu)",
+      provinceKey: "Đà Nẵng",
+      text: `1  1774300.00  545200.00
+2  1774325.00  545230.00
+3  1774300.00  545255.00
+4  1774275.00  545225.00`
+    }
+  };
+
   // Export Engine API
   const NetaDiaChinhEngine = {
     PROVINCES_DATA,
     SON_24_BEARING,
+    SAMPLE_PARCELS,
     vn2000ToWgs84,
     wgs84ToVn2000,
     parseCoordinatesText,

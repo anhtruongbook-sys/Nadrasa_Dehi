@@ -22567,3 +22567,149 @@ body.theme-light #view-diachinh .dc-empty-desc {
   color: #475569 !important;
 }
 
+/* ==========================================================================
+   LA KINH - PARCEL FLOATING BAR & HIGH-CONTRAST VERTEX MARKERS
+   ========================================================================== */
+.dc-map-vertex-marker,
+.dc-point-divicon,
+.dc-map-edge-marker,
+.custom-centroid-marker,
+.dc-edge-divicon,
+.dc-centroid-divicon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.lakinh-floating-parcel-bar {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  z-index: 31;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid #f59e0b;
+  border-radius: 12px;
+  padding: 3px 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75), 0 0 12px rgba(245, 158, 11, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  overflow-x: auto;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.lakinh-floating-parcel-bar.is-hidden,
+.lakinh-floating-parcel-bar[style*="display: none"] {
+  display: none !important;
+}
+
+.fl-parcel-left, .fl-parcel-right {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.fl-parcel-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.fl-parcel-title {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #f59e0b;
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fl-parcel-area {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 4px;
+  padding: 1px 4px;
+  white-space: nowrap;
+}
+
+.fl-parcel-btn {
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.fl-parcel-btn:hover {
+  background: rgba(245, 158, 11, 0.25);
+  color: #ffffff;
+}
+
+.fl-parcel-btn:active {
+  transform: scale(0.95);
+}
+
+.fl-parcel-btn.center-btn {
+  border-color: #38bdf8;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.fl-parcel-btn.fit-btn {
+  border-color: #f59e0b;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.fl-parcel-btn.clear-btn {
+  border-color: #ef4444;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.lakinh-v-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  background: #0f172a;
+  border: 2px solid #f59e0b;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 8px rgba(245, 158, 11, 0.6);
+  white-space: nowrap;
+  text-align: center;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.lakinh-v-pin span.prefix {
+  color: #38bdf8;
+  font-size: 9px;
+  margin-right: 1.5px;
+  font-weight: 900;
+}
+
+
