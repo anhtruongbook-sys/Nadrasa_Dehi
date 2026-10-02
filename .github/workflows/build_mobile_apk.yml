@@ -76,10 +76,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.53
-          name: "Neta Light v2.8.53 (Địa Chính & Sổ Đỏ VN-2000 • Đồng Bộ La Kinh Lập Cực 36 Tầng)"
+          tag_name: v2.8.54
+          name: "Neta Light v2.8.54 (Fix Đóng Gói CSS Phân Hệ Địa Chính VN-2000 & Đồng Bộ La Kinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.53
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.54
+            - **Khắc phục triệt để lỗi tài nguyên CSS trên điện thoại**:
+              + Bổ sung khai báo tài nguyên `assets/www/assets/diachinh/` vào `pubspec.yaml` để Flutter SDK đóng gói 100% tệp giao diện vào bản cài APK.
+              + Tích hợp trực tiếp bộ style CSS hoàn chỉnh vào `styles.css` gốc, bảo đảm giao diện hiển thị chuẩn xác, sang trọng 100% trong mọi trường hợp.
+              + Tối ưu hiển thị responsive trên các dòng điện thoại: tinh chỉnh kích thước ô nhập tọa độ, xếp tầng thông minh các trường nhập liệu và căn chỉnh 3 nút tác vụ xuất file trên cùng 1 hàng.
             - **Phân Hệ Mới: Địa Chính & Sổ Đỏ (VN-2000 to WGS-84 & Google Earth)**:
               + Bóc tách và chuyển đổi tọa độ VN-2000 (X Northing, Y Easting) sang WGS-84 kinh vĩ độ chuẩn xác theo thuật toán Bursa-Wolf 7 tham số trắc địa.
               + CSDL 63 Tỉnh Thành Việt Nam với Kinh tuyến trục chuẩn Bộ Tài nguyên & Môi trường (TT 25/2014/TT-BTNMT).

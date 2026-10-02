@@ -15,7 +15,7 @@
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  padding: 10px 12px 100px 12px;
+  padding: 8px 10px 100px 10px;
   background: radial-gradient(circle at 50% 10%, rgba(30, 20, 45, 0.6) 0%, rgba(10, 6, 16, 0.95) 100%);
   color: #e2e8f0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -24,22 +24,22 @@
 
 .dc-container {
   width: 100%;
-  max-width: 720px;
+  max-width: 680px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   box-sizing: border-box;
 }
 
 /* Glassmorphism Panels */
 .dc-panel {
-  background: rgba(22, 17, 34, 0.85);
+  background: rgba(22, 17, 34, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 215, 0, 0.2);
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.35);
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
@@ -47,51 +47,52 @@
 }
 
 .dc-panel-title {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #facc15;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .dc-panel-title .title-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .dc-badge-ktt {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 6px;
   background: rgba(245, 158, 11, 0.2);
   color: #f59e0b;
   border: 1px solid rgba(245, 158, 11, 0.35);
   text-transform: none;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 /* Chips Bar (Mẫu thửa đất) */
 .dc-samples-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 10px;
+  padding-bottom: 3px;
+  margin-bottom: 8px;
   -webkit-overflow-scrolling: touch;
 }
 
 .dc-samples-bar::-webkit-scrollbar {
-  height: 4px;
+  height: 3px;
 }
 
 .dc-samples-bar::-webkit-scrollbar-thumb {
@@ -101,10 +102,10 @@
 
 .dc-sample-chip {
   flex-shrink: 0;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 20px;
+  padding: 4px 8px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.14);
   color: #cbd5e1;
@@ -122,22 +123,29 @@
 /* Form Controls */
 .dc-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 8px;
   width: 100%;
   box-sizing: border-box;
+}
+
+@media (max-width: 520px) {
+  .dc-row {
+    flex-direction: column;
+    gap: 6px;
+  }
 }
 
 .dc-col {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
 }
 
 .dc-label {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: #94a3b8;
   text-transform: uppercase;
@@ -149,9 +157,9 @@
   width: 100%;
   background: rgba(15, 10, 25, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 0.85rem;
+  border-radius: 7px;
+  padding: 7px 9px;
+  font-size: 0.82rem;
   color: #f8fafc;
   outline: none;
   box-sizing: border-box;
@@ -179,14 +187,14 @@
 
 .dc-textarea {
   width: 100%;
-  height: 140px;
+  height: 95px;
   background: rgba(15, 10, 25, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 10px 12px;
+  border-radius: 7px;
+  padding: 8px 10px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 0.82rem;
-  line-height: 1.45;
+  font-size: 0.8rem;
+  line-height: 1.4;
   color: #38bdf8;
   outline: none;
   box-sizing: border-box;
@@ -198,12 +206,12 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 5px;
 }
 
 .dc-tool-btn {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   padding: 4px 8px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.08);
@@ -212,7 +220,7 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   transition: all 0.15s ease;
 }
 
@@ -225,33 +233,33 @@
 .dc-action-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin-top: 4px;
 }
 
 .dc-btn-primary-lakinh {
   width: 100%;
-  padding: 12px 16px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 9px;
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
   border: 1px solid #fbbf24;
   color: #0f172a;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
   transition: all 0.2s ease;
 }
 
 .dc-btn-primary-lakinh:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
 }
 
@@ -262,28 +270,22 @@
 .dc-btn-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-@media (max-width: 500px) {
-  .dc-btn-grid {
-    grid-template-columns: 1fr;
-  }
+  gap: 6px;
 }
 
 .dc-btn-secondary {
-  padding: 9px 12px;
-  border-radius: 8px;
+  padding: 8px 6px;
+  border-radius: 7px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #e2e8f0;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
@@ -296,13 +298,13 @@
 
 /* Parcel Hero Stats Card */
 .dc-hero-card {
-  background: linear-gradient(135deg, rgba(30, 20, 50, 0.9) 0%, rgba(18, 12, 32, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(30, 20, 50, 0.92) 0%, rgba(18, 12, 32, 0.96) 100%);
   border: 1px solid rgba(245, 158, 11, 0.35);
   border-radius: 12px;
-  padding: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   box-sizing: border-box;
 }
 
@@ -310,18 +312,18 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dc-hero-name {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 800;
   color: #fbbf24;
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .dc-hero-location {
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   color: #94a3b8;
   margin-top: 2px;
 }
@@ -332,7 +334,7 @@
 }
 
 .dc-hero-area-val {
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 900;
   color: #10b981;
   line-height: 1.1;
@@ -340,7 +342,7 @@
 }
 
 .dc-hero-area-unit {
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #6ee7b7;
 }
@@ -348,12 +350,12 @@
 .dc-hero-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 10px;
+  padding-top: 8px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
   .dc-hero-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -363,22 +365,22 @@
   display: flex;
   flex-direction: column;
   background: rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  padding: 6px 8px;
+  border-radius: 7px;
+  padding: 5px 7px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dc-stat-label {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: #94a3b8;
   text-transform: uppercase;
 }
 
 .dc-stat-val {
-  font-size: 0.86rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #f8fafc;
-  margin-top: 2px;
+  margin-top: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -387,10 +389,10 @@
 /* SVG Shape Preview */
 .dc-preview-container {
   width: 100%;
-  height: 200px;
+  height: 180px;
   background: rgba(10, 6, 18, 0.7);
   border: 1px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -407,7 +409,7 @@
 .dc-table-wrapper {
   width: 100%;
   overflow-x: auto;
-  border-radius: 8px;
+  border-radius: 7px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   -webkit-overflow-scrolling: touch;
 }
@@ -415,7 +417,7 @@
 .dc-edges-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   text-align: left;
 }
 
@@ -423,13 +425,13 @@
   background: rgba(30, 20, 45, 0.9);
   color: #facc15;
   font-weight: 700;
-  padding: 8px 10px;
+  padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   white-space: nowrap;
 }
 
 .dc-edges-table td {
-  padding: 7px 10px;
+  padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: #e2e8f0;
   white-space: nowrap;
@@ -448,11 +450,11 @@
 .dc-son-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
+  gap: 3px;
+  padding: 2px 5px;
   border-radius: 4px;
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
 }
 
 .dc-son-kim { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
@@ -465,7 +467,7 @@
 .dc-vertices-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-family: ui-monospace, Menlo, Consolas, monospace;
 }
 
@@ -473,13 +475,13 @@
   background: rgba(30, 20, 45, 0.9);
   color: #facc15;
   font-weight: 700;
-  padding: 7px 8px;
+  padding: 6px 7px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   white-space: nowrap;
 }
 
 .dc-vertices-table td {
-  padding: 6px 8px;
+  padding: 5px 7px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: #cbd5e1;
   white-space: nowrap;
@@ -497,7 +499,7 @@ body.theme-light #view-diachinh {
 body.theme-light #view-diachinh .dc-panel {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06) !important;
 }
 
 body.theme-light #view-diachinh .dc-panel-title {
