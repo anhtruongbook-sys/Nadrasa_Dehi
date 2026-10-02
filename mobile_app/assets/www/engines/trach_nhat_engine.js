@@ -124,9 +124,41 @@
 
     calculateDayBaseScore(taskId, dayCanChi, saoName, trucName, goodSpirits = [], badSpirits = []) {
       const task = this.tasks_map[taskId];
-      if (!task) throw new Error(`Không tìm thấy mục việc ${taskId}`);
-
       const details = [];
+
+      if (taskId === 'CHUNG' || taskId === 'ALL' || taskId === 'BACH_SU' || !task) {
+        let score = 5;
+        details.push(`Công việc chung / Bách sự: 5 bậc`);
+        if (saoName) {
+          const tuInfo = this.tu_map[saoName];
+          if (tuInfo && tuInfo.nature === "Kiết") {
+            score += 1;
+            details.push(`Sao ${saoName} (kiết tinh): +1 bậc`);
+          } else if (tuInfo && tuInfo.nature === "Hung") {
+            score -= 1;
+            details.push(`Sao ${saoName} (hung tinh): -1 bậc`);
+          }
+        }
+        if (trucName) {
+          const goodChuc = ["Kiến", "Trừ", "Định", "Chấp", "Nguy", "Thành", "Khai"];
+          const badChuc = ["Mãn", "Bình", "Phá", "Thu", "Bế"];
+          if (goodChuc.includes(trucName)) {
+            score += 1;
+            details.push(`Trực ${trucName} (cát trực): +1 bậc`);
+          } else if (badChuc.includes(trucName)) {
+            score -= 1;
+            details.push(`Trực ${trucName} (hung trực): -1 bậc`);
+          }
+        }
+        return {
+          day_can_chi: dayCanChi,
+          is_base_good_day: true,
+          base_score: 5,
+          final_base_score: score,
+          details: details
+        };
+      }
+
       const isBase = (task.base_good_days || []).includes(dayCanChi);
       if (!isBase) {
         return {
@@ -1039,6 +1071,20 @@
       if (!query) return this.tasks[0] || null;
       const q = String(query).trim().toLowerCase();
 
+      if (q === 'chung' || q === 'all' || q === 'bach_su' || q.includes('việc chung') || q.includes('bách sự')) {
+        return {
+          id: 'CHUNG',
+          number: 0,
+          name: 'Việc Chung / Bách Sự',
+          category: 'Tổng Quát',
+          base_good_days: Object.keys(this.hoa_giap_map || {}),
+          good_chuc: ["Kiến", "Trừ", "Định", "Chấp", "Nguy", "Thành", "Khai"],
+          bad_chuc: ["Mãn", "Bình", "Phá", "Thu", "Bế"],
+          good_stars: ["Giác", "Phòng", "Vĩ", "Cơ", "Đẩu", "Bích", "Lâu", "Vị", "Tất", "Trương", "Dực", "Chẩn"],
+          bad_stars: ["Cang", "Đê", "Tâm", "Ngưu", "Nữ", "Hư", "Nguy", "Thất", "Chủy", "Sâm", "Tỉnh", "Quỷ", "Liễu", "Tinh"]
+        };
+      }
+
       const aliases = {
         "nhập trạch": "MUC_15", "về nhà mới": "MUC_15", "dọn nhà": "MUC_15",
         "động thổ": "MUC_05", "ban nền": "MUC_05", "khởi công": "MUC_05",
@@ -1182,7 +1228,7 @@
           }
 
           // Kiểm tra kỵ sát đặc thù theo Mục việc
-          if (task.id === 'MUC_05') {
+          if (task && task.id === 'MUC_05') {
             // Động thổ: 3 ngày đại kỵ Quý Mùi, Ất Mùi, Mậu Ngọ
             if (["Quý Mùi", "Ất Mùi", "Mậu Ngọ"].includes(canChiDay)) {
               isFolkHung = true; folkHungReasons.push(`Đại kỵ động thổ theo Trạng Trình (${canChiDay})`);
@@ -1199,7 +1245,8 @@
         let trinhRes = null;
         let isTrinhBase = false;
         try {
-          trinhRes = this.evaluateDayForPerson(task.id, canChiDay, personCanChi, saoName, trucName);
+          const taskIdToEval = task ? task.id : 'CHUNG';
+          trinhRes = this.evaluateDayForPerson(taskIdToEval, canChiDay, personCanChi, saoName, trucName);
           isTrinhBase = trinhRes.is_base_good_day;
         } catch (_) {}
 
@@ -1207,7 +1254,8 @@
         // - Ngày tốt theo Trạng Trình (nằm trong base_good_days) HOẶC Đổng Công Đại Kiết/Thứ Kiết
         // - KHÔNG phạm Đổng Công Đại Hung
         // - KHÔNG phạm Đại hung sát dân gian (nếu bật lọc)
-        const isQualified = (!isFolkHung) && (!isDcDaiHung) && (isTrinhBase || dcRating === "Đại Kiết" || dcRating === "Thứ Kiết");
+        const isGeneral = (!task || task.id === 'CHUNG');
+        const isQualified = (!isFolkHung) && (!isDcDaiHung) && (isTrinhBase || dcRating === "Đại Kiết" || dcRating === "Thứ Kiết" || (isGeneral && dcRating === "Bình"));
 
         if (isQualified && trinhRes) {
           let totalScore = trinhRes.final_score;
@@ -1217,15 +1265,15 @@
           else if (dcRating === "Thứ Hung") totalScore -= 1;
 
           // Quy tắc răn kỵ bổ sung theo từng mục việc
-          if (task.id === 'MUC_04' && dayChi === 'Ngọ') {
+          if (task && task.id === 'MUC_04' && dayChi === 'Ngọ') {
             totalScore -= 2;
             trinhRes.details.push("Bành Tổ Bách Kỵ: Ngày Ngọ kỵ lợp nhà, cất nóc ('Ngọ bất thiêm cái, ốc chủ cánh trương') (-2 bậc)");
           }
-          if (task.id === 'MUC_22' && dayChi === 'Hợi') {
+          if (task && task.id === 'MUC_22' && dayChi === 'Hợi') {
             totalScore -= 2;
             trinhRes.details.push("Bành Tổ Bách Kỵ: Ngày Hợi kỵ cưới gả ('Hợi bất giá thú, tất chủ phân trương') (-2 bậc)");
           }
-          if (task.id === 'MUC_37' && canChiDay.startsWith('Giáp')) {
+          if (task && task.id === 'MUC_37' && canChiDay.startsWith('Giáp')) {
             totalScore -= 1;
             trinhRes.details.push("Bành Tổ Bách Kỵ: Ngày Giáp kỵ mở kho, khai trương ('Giáp bất khai thương, chủ vật hao vong') (-1 bậc)");
           }

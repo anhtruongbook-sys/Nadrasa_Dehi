@@ -12,7 +12,7 @@
   'use strict';
 
   const state = {
-    viewMode: 'specific', // 'specific' (Thẩm định ngày giờ cụ thể) | 'month' (Tìm ngày tốt trong tháng)
+    viewMode: 'month', // 'month' (Tìm ngày tốt trong tháng - mặc định) | 'specific' (Thẩm định ngày giờ cụ thể)
     taskId: 'CHUNG', // Việc Chung mặc định
     category: 'Tất cả',
     searchTerm: '',
@@ -948,9 +948,9 @@
     const personChi = (state.personCanChi.split(' ')[1]) || '';
 
     return `
-      <!-- 1. Bộ lọc công việc & Gia chủ -->
-      <div class="tc-panel">
-        <!-- Sự vụ (Chọn Nhanh) -->
+      <!-- 1. Bộ lọc công việc & Gia chủ gọn gàng, tinh tế -->
+      <div class="tc-panel tc-compact-panel">
+        <!-- Hàng chọn việc nhanh (Horizontal Scrollable) -->
         <div class="tc-quick-tasks-section">
           <div class="tc-quick-tasks-bar">
             ${CORE_TASKS.map(ct => `
@@ -966,19 +966,12 @@
           </div>
         </div>
 
-        <!-- Thuyết minh nguyên tắc Trạch Nhật (Collapsible) -->
+        <!-- Hướng dẫn mục việc (Rút gọn) -->
         ${renderTaskGuideHTML(state.taskId)}
 
-        <!-- Phân loại mục việc -->
-        <div class="tc-cat-chips" style="${state.taskId === 'CHUNG' ? 'display:none;' : ''}">
-          ${CATEGORIES.map(cat => `
-            <div class="tc-cat-chip ${state.category === cat ? 'active' : ''}" data-cat="${cat}">${cat}</div>
-          `).join('')}
-        </div>
-
-        <!-- Thanh tìm kiếm & Dropdown 83 việc -->
+        <!-- Thanh tìm kiếm 83 việc (ẩn khi là Việc Chung) -->
         <div class="tc-task-selector-row" style="${state.taskId === 'CHUNG' ? 'display:none;' : ''}">
-          <input type="text" id="tc-search-task" class="tc-search-input" placeholder="🔍 Tìm mục việc (VD: Động thổ, Cất nóc, Nhập trạch, Cưới gả...)" value="${state.searchTerm}">
+          <input type="text" id="tc-search-task" class="tc-search-input" placeholder="🔍 Tìm nhanh 83 mục việc..." value="${state.searchTerm}">
           <select id="tc-select-task" class="tc-select">
             <option value="CHUNG" ${state.taskId === 'CHUNG' ? 'selected' : ''}>[🌟] Việc Chung / Bách Sự</option>
             ${filteredTasks.map(t => `
@@ -987,168 +980,99 @@
           </select>
         </div>
 
-        <!-- Thông tin gia chủ & Năm tuổi -->
-        <div class="tc-grid-2">
-          <div class="tc-field">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-              <label class="tc-label" style="margin-bottom: 0;">${personLabel}</label>
-              <div class="ucc-pill-gender" style="height: 26px; padding: 2px;">
-                <button type="button" class="ucc-gender-btn ${state.isMale ? 'active male' : ''}" id="tc-btn-male" style="height: 22px; padding: 0 8px; font-size: 0.72rem;">♂ Nam</button>
-                <button type="button" class="ucc-gender-btn ${!state.isMale ? 'active female' : ''}" id="tc-btn-female" style="height: 22px; padding: 0 8px; font-size: 0.72rem;">♀ Nữ</button>
-              </div>
+        <!-- Thông tin gia chủ tinh tế (1 dòng thống nhất) -->
+        <div class="tc-gc-compact-strip">
+          <div class="tc-gc-row-top">
+            <span class="tc-gc-label">${personLabel}:</span>
+            <input type="number" id="tc-input-year" class="tc-gc-input-year" min="1920" max="2050" value="${state.personYear}">
+            <div class="ucc-pill-gender tc-mini-gender">
+              <button type="button" class="ucc-gender-btn ${state.isMale ? 'active male' : ''}" id="tc-btn-male">Nam</button>
+              <button type="button" class="ucc-gender-btn ${!state.isMale ? 'active female' : ''}" id="tc-btn-female">Nữ</button>
             </div>
-            <div class="tc-input-row">
-              <input type="number" id="tc-input-year" class="tc-input" min="1920" max="2050" value="${state.personYear}" placeholder="Nhập năm sinh (VD: 1944)...">
-            </div>
-            <div class="tc-person-badges">
-              <span class="tc-badge tc-badge-info">${ageText}</span>
-              ${napAm ? `
-                <span class="tc-badge" style="background: rgba(168, 85, 247, 0.15); color: #9333ea; border: 1px solid rgba(168, 85, 247, 0.35); font-weight: 700;">
-                  Mệnh: ${napAm}
-                </span>
-              ` : ''}
-              ${cungPhi ? `
-                <span class="tc-badge" style="background: rgba(14, 165, 233, 0.15); color: #0284c7; border: 1px solid rgba(14, 165, 233, 0.35); font-weight: 700;">
-                  ${cungPhi.symbol} Cung ${cungPhi.name} (${cungPhi.element} • ${cungPhi.group})
-                </span>
-              ` : ''}
-
-              ${isFuneral ? `
-                <span class="tc-badge tc-badge-good" title="Tang lễ không tính hạn làm nhà">✓ Tang lễ không tính Kim Lâu / Hoang Ốc</span>
-                <span class="tc-badge tc-badge-warn">Kỵ ngày trực xung ${personChi}</span>
-              ` : (isMarriage ? `
-                <span class="tc-badge ${yearSuit && yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
-                  ${yearSuit && yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
-                </span>
-                ${yearSuit ? `
-                  <span class="tc-badge ${yearSuit.kim_lau.is_kim_lau ? 'tc-badge-bad' : 'tc-badge-good'}">
-                    ${yearSuit.kim_lau.is_kim_lau ? `⚠️ Kim Lâu (${yearSuit.kim_lau.type})` : '✓ Không Kim Lâu'}
-                  </span>
-                ` : ''}
-              ` : (isBuilding ? `
-                ${yearSuit ? `
-                  <span class="tc-badge ${yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
-                    ${yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
-                  </span>
-                  <span class="tc-badge ${yearSuit.kim_lau.is_kim_lau ? 'tc-badge-bad' : 'tc-badge-good'}">
-                    ${yearSuit.kim_lau.is_kim_lau ? `⚠️ Kim Lâu (${yearSuit.kim_lau.type})` : '✓ Không Kim Lâu'}
-                  </span>
-                  <span class="tc-badge ${yearSuit.hoang_oc.is_good ? 'tc-badge-good' : 'tc-badge-bad'}">
-                    ${yearSuit.hoang_oc.cung_name} (${yearSuit.hoang_oc.is_good ? 'Tốt' : 'Xấu'})
-                  </span>
-                ` : ''}
-              ` : `
-                ${yearSuit ? `
-                  <span class="tc-badge ${yearSuit.tam_tai.is_tam_tai ? 'tc-badge-bad' : 'tc-badge-good'}">
-                    ${yearSuit.tam_tai.is_tam_tai ? '⚠️ Phạm Tam Tai' : '✓ Không Tam Tai'}
-                  </span>
-                ` : ''}
-              `))}
-            </div>
-
-            ${isFuneral ? `
-              <div style="font-size: 0.72rem; color: #0284c7; margin-top: 5px; line-height: 1.4; background: rgba(14, 165, 233, 0.08); padding: 6px 10px; border-radius: 6px; border: 1px dashed rgba(14, 165, 233, 0.35);">
-                ⚰️ <strong>Phép xem ngày Tang lễ / An táng theo phong thủy Âm trạch:</strong>
-                <div style="margin-top: 2px;">• <strong>Căn cứ số 1:</strong> Tuổi &amp; Bản mệnh của <strong>Người đã khuất</strong> để chọn ngày không Trực Xung Địa Chi (${personChi}), tránh ngày xung ngũ hành, kiêng ngày Trùng Tang, Tam Tang, Thập Ác Đại Bại, Sát Chủ Âm Phần.</div>
-                <div style="margin-top: 1px;">• <strong>Bất biến:</strong> Tang lễ tuyệt đối <em>không tính hạn Kim Lâu và Hoang Ốc</em>.</div>
-              </div>
-            ` : (isMarriage ? `
-              <div style="font-size: 0.72rem; color: #9333ea; margin-top: 5px; line-height: 1.4; background: rgba(168, 85, 247, 0.08); padding: 6px 10px; border-radius: 6px; border: 1px dashed rgba(168, 85, 247, 0.35);">
-                💍 <strong>Phép xem ngày Cưới hỏi / Hôn nhân:</strong>
-                <div style="margin-top: 2px;">• Cổ nhân định lệ <em>"Lấy vợ xem tuổi đàn bà"</em> — Hạn Kim Lâu cưới gả tính theo tuổi mụ của <strong>Cô dâu</strong> (vui lòng chọn "♀ Nữ").</div>
-                <div style="margin-top: 1px;">• Kiêng ngày Tam Nương, Nguyệt Kỵ, Cô Thần, Quả Tú. Hôn nhân <em>không tính hạn Hoang Ốc</em>.</div>
-              </div>
-            ` : (isBuilding && yearSuit && (!yearSuit.overall_good_for_building) ? `
-              <div style="font-size: 0.72rem; color: #f59e0b; margin-top: 4px; line-height: 1.35;">
-                💡 <em>Lưu ý: Gia chủ phạm hạn làm nhà trong năm (Tam Tai/Kim Lâu/Hoang Ốc). Nếu làm nhà / động thổ nên mượn tuổi người thân hợp tuổi đứng tên khởi sự.</em>
-              </div>
-            ` : ''))}
           </div>
-
-          <!-- Tọa Sơn Nhà & Liên kết La Kinh -->
-          <div class="tc-field">
-            <label class="tc-label">${isFuneral ? 'Tọa Sơn Mộ Phần / Huyệt Mộ (Âm Trạch - Phối La Kinh)' : (isBuilding ? 'Tọa Sơn Nhà / Công Trình (Dương Trạch - Phối La Kinh)' : 'Tọa Sơn Hướng Vị (Phối Hợp La Kinh)')}</label>
-            <div class="tc-lakinh-bridge-row">
-              <button type="button" class="tc-btn-get-lakinh" id="tc-btn-get-lakinh" title="Đọc độ số Tọa Sơn từ đĩa La Kinh Vệ Tinh">
-                🧭 Lấy Tọa Từ La Kinh
-              </button>
-              <select id="tc-select-24son" class="tc-select-24son" title="Chọn nhanh 24 Sơn Vị phong thủy">
-                <option value="">-- Chọn 24 Sơn Vị --</option>
-                ${SON_24_LIST.map(s => `
-                  <option value="${s.deg}" ${state.mountainSittingDeg != null && Math.abs(state.mountainSittingDeg - s.deg) < 7.5 ? 'selected' : ''}>
-                    Sơn ${s.name} (${s.deg}° - ${s.dir})
-                  </option>
-                `).join('')}
-              </select>
-            </div>
-            <div class="tc-input-row" style="margin-top: 4px;">
-              <input type="number" id="tc-input-deg" class="tc-input" min="0" max="359.9" step="0.1" placeholder="Nhập độ số (0° - 359°)..." value="${state.mountainSittingDeg != null ? state.mountainSittingDeg : ''}">
-              <button type="button" class="tc-badge tc-badge-warn" id="tc-btn-clear-deg" style="cursor: pointer;" title="Bỏ chọn tọa sơn">✕ Xóa</button>
-            </div>
-            ${state.mountainSittingDeg != null ? `
-              <div class="tc-mountain-active-card">
-                <div>🏡 <strong>${isFuneral ? 'Tọa Mộ' : 'Tọa Sơn'}: ${state.mountainSittingDeg}°</strong> ${batTrach ? `• <strong>${isFuneral ? 'Hướng Mộ' : 'Hướng Nhà'}: ${batTrach.facing_deg}° (${batTrach.facing_name})</strong>` : ''}</div>
-                ${batTrach && cungPhi ? `
-                  <div style="margin-top: 4px; font-size: 0.75rem;">
-                    Bát Trạch ${isFuneral ? 'mộ phần' : 'gia chủ'} (${state.isMale ? 'Nam' : 'Nữ'} ${cungPhi.name} • ${cungPhi.group}): 
-                    <span style="font-weight: 800; color: ${batTrach.is_good ? '#10b981' : '#ef4444'};">
-                      ${batTrach.is_good ? '✓' : '⚠️'} Cung ${batTrach.du_nien} (${batTrach.rating})
-                    </span>
-                  </div>
-                ` : ''}
-              </div>
-            ` : `
-              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">
-                💡 <em>Bấm "Lấy Tọa Từ La Kinh" để nạp ngay hướng ${isFuneral ? 'mộ phần' : 'nhà'} đang đo trên bản đồ.</em>
-              </div>
-            `}
+          <div class="tc-gc-row-meta">
+            <span class="tc-gc-tag tc-tag-canchi">${state.personCanChi} (${yearSuit ? yearSuit.age_lunar : ''}t)</span>
+            ${napAm ? `<span class="tc-gc-tag tc-tag-napam">${napAm}</span>` : ''}
+            ${cungPhi ? `<span class="tc-gc-tag tc-tag-cung">${cungPhi.symbol} Cung ${cungPhi.name} (${cungPhi.group})</span>` : ''}
+            ${isBuilding && yearSuit ? `
+              <span class="tc-gc-tag ${yearSuit.tam_tai.is_tam_tai ? 'tc-tag-bad' : 'tc-tag-good'}">
+                ${yearSuit.tam_tai.is_tam_tai ? '⚠️ Tam Tai' : '✓ Ko Tam Tai'}
+              </span>
+              <span class="tc-gc-tag ${yearSuit.kim_lau.is_kim_lau ? 'tc-tag-bad' : 'tc-tag-good'}">
+                ${yearSuit.kim_lau.is_kim_lau ? `⚠️ Kim Lâu` : '✓ Ko Kim Lâu'}
+              </span>
+            ` : ''}
           </div>
         </div>
 
         <!-- Trùng Tang / Nhập Mộ / Thiên Di (Khi chọn mục việc Tang lễ / An táng) -->
         ${isFuneral ? renderTrungTangSection() : ''}
 
-        <!-- Lựa chọn tháng -->
-        <div style="margin-top: 10px;">
-          <label class="tc-label">Chọn Tháng Dương Lịch (Năm ${state.selectedYear})</label>
-          <div class="tc-months-grid">
-            ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => `
-              <div class="tc-month-pill ${state.selectedMonth === m ? 'active' : ''}" data-month="${m}">Tháng ${m}</div>
-            `).join('')}
+        <!-- Thanh điều hướng tháng sang trọng (Luxury Month Navigator) -->
+        <div class="tc-month-navigator">
+          <button type="button" class="tc-month-nav-btn" id="tc-btn-prev-month" title="Tháng trước">◀</button>
+          <div class="tc-month-nav-center">
+            <div class="tc-month-nav-label">Tháng ${state.selectedMonth} / ${state.selectedYear}</div>
+            <div class="tc-month-nav-sub">${state.results && state.results.days ? state.results.days.length : 0} ngày đại cát tuyển chọn</div>
           </div>
+          <button type="button" class="tc-month-nav-btn" id="tc-btn-next-month" title="Tháng sau">▶</button>
         </div>
 
-        <!-- Toggles Trường Phái -->
-        <div class="tc-toggles-row">
-          <label class="tc-toggle-label">
-            <input type="checkbox" id="tc-chk-trinh" ${state.schools.enable_trinh ? 'checked' : ''}> Trạng Trình (83 việc)
-          </label>
-          <label class="tc-toggle-label">
-            <input type="checkbox" id="tc-chk-dongcong" ${state.schools.enable_dong_cong ? 'checked' : ''}> Đổng Công Tuyển Trạch
-          </label>
-          <label class="tc-toggle-label">
-            <input type="checkbox" id="tc-chk-folk" ${state.schools.enable_folk_filter ? 'checked' : ''}> Lọc Sát Dân Gian (Tam Nương, Thọ Tử, Nguyệt Kỵ)
-          </label>
-          <label class="tc-toggle-label">
-            <input type="checkbox" id="tc-chk-tc16" ${state.schools.enable_16_criteria ? 'checked' : ''}> 16 Tiêu Chí Cát Thần
-          </label>
-          <label class="tc-toggle-label" title="Huyền Không Đại Quái 64 Quẻ: Quái Khí, Quái Vận, Hợp Thập, Hà Đồ & Tọa Sơn">
-            <input type="checkbox" id="tc-chk-xkdg" ${state.schools.enable_xkdg ? 'checked' : ''}> ☯ Huyền Không Đại Quái (64 Quẻ)
-          </label>
-          <label class="tc-toggle-label" title="Kỳ Môn Chiến Lược: 5 Quy Tắc Vàng & 76 Cách Cục, Tam Thắng, Thiên Mã">
-            <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Chiến Lược &amp; Tác Quyết
-          </label>
-        </div>
+        <!-- Tùy chọn nâng cao (Gấp gọn) -->
+        <details class="tc-advanced-drawer">
+          <summary class="tc-advanced-summary">
+            <span>⚙️ Tùy chọn nâng cao (Tọa Sơn, 6 Trường Phái)</span>
+            <span class="tc-advanced-arrow">▾</span>
+          </summary>
+          <div class="tc-advanced-body">
+            <!-- Tọa Sơn Nhà & Liên kết La Kinh -->
+            <div class="tc-field" style="margin-bottom: 8px;">
+              <label class="tc-label">${isFuneral ? 'Tọa Sơn Mộ Phần (Âm Trạch)' : (isBuilding ? 'Tọa Sơn Nhà / Công Trình (Dương Trạch)' : 'Tọa Sơn Hướng Vị')}</label>
+              <div class="tc-lakinh-bridge-row">
+                <button type="button" class="tc-btn-get-lakinh" id="tc-btn-get-lakinh" title="Đọc độ số Tọa Sơn từ đĩa La Kinh Vệ Tinh">
+                  🧭 Lấy Tọa Từ La Kinh
+                </button>
+                <select id="tc-select-24son" class="tc-select-24son" title="Chọn nhanh 24 Sơn Vị phong thủy">
+                  <option value="">-- Chọn 24 Sơn Vị --</option>
+                  ${SON_24_LIST.map(s => `
+                    <option value="${s.deg}" ${state.mountainSittingDeg != null && Math.abs(state.mountainSittingDeg - s.deg) < 7.5 ? 'selected' : ''}>
+                      Sơn ${s.name} (${s.deg}° - ${s.dir})
+                    </option>
+                  `).join('')}
+                </select>
+              </div>
+              <div class="tc-input-row" style="margin-top: 4px;">
+                <input type="number" id="tc-input-deg" class="tc-input" min="0" max="359.9" step="0.1" placeholder="Nhập độ số (0° - 359°)..." value="${state.mountainSittingDeg != null ? state.mountainSittingDeg : ''}">
+                <button type="button" class="tc-badge tc-badge-warn" id="tc-btn-clear-deg" style="cursor: pointer;" title="Bỏ chọn tọa sơn">✕ Xóa</button>
+              </div>
+            </div>
 
-        <!-- Nút tra cứu -->
-        <div style="margin-top: 14px;">
-          <button type="button" id="tc-btn-run" class="tc-btn-search">
-            ⚡ TRA CỨU NGÀY ĐẠI CÁT
-          </button>
-        </div>
+            <!-- Toggles Trường Phái -->
+            <div class="tc-toggles-row">
+              <label class="tc-toggle-label">
+                <input type="checkbox" id="tc-chk-trinh" ${state.schools.enable_trinh ? 'checked' : ''}> Trạng Trình (83 việc)
+              </label>
+              <label class="tc-toggle-label">
+                <input type="checkbox" id="tc-chk-dongcong" ${state.schools.enable_dong_cong ? 'checked' : ''}> Đổng Công Tuyển Trạch
+              </label>
+              <label class="tc-toggle-label">
+                <input type="checkbox" id="tc-chk-folk" ${state.schools.enable_folk_filter ? 'checked' : ''}> Lọc Sát Dân Gian (Tam Nương, Thọ Tử, Nguyệt Kỵ)
+              </label>
+              <label class="tc-toggle-label">
+                <input type="checkbox" id="tc-chk-tc16" ${state.schools.enable_16_criteria ? 'checked' : ''}> 16 Tiêu Chí Cát Thần
+              </label>
+              <label class="tc-toggle-label" title="Huyền Không Đại Quái 64 Quẻ: Quái Khí, Quái Vận, Hợp Thập, Hà Đồ & Tọa Sơn">
+                <input type="checkbox" id="tc-chk-xkdg" ${state.schools.enable_xkdg ? 'checked' : ''}> ☯ Huyền Không Đại Quái (64 Quẻ)
+              </label>
+              <label class="tc-toggle-label" title="Kỳ Môn Chiến Lược: 5 Quy Tắc Vàng & 76 Cách Cục, Tam Thắng, Thiên Mã">
+                <input type="checkbox" id="tc-chk-qimen" ${state.schools.enable_qimen ? 'checked' : ''}> 🔮 Kỳ Môn Chiến Lược &amp; Tác Quyết
+              </label>
+            </div>
+          </div>
+        </details>
       </div>
 
-      <!-- 2. Kết quả tra cứu -->
+      <!-- 2. Danh sách ngày đại cát trong tháng (Tự động hiển thị lập tức) -->
       ${renderResultsHTML()}
     `;
   }
@@ -1169,15 +1093,15 @@
       <div class="tc-container">
         <!-- Bộ chuyển đổi chế độ (Mode Switcher) -->
         <div class="tc-view-modes">
+          <button type="button" class="tc-view-mode-btn ${state.viewMode === 'month' ? 'active' : ''}" data-vmode="month">
+            <span>✨ Tìm Ngày Tốt</span>
+          </button>
           <button type="button" class="tc-view-mode-btn ${state.viewMode === 'specific' ? 'active' : ''}" data-vmode="specific">
             <span>🔍 Thẩm Định 1 Ngày</span>
           </button>
-          <button type="button" class="tc-view-mode-btn ${state.viewMode === 'month' ? 'active' : ''}" data-vmode="month">
-            <span>📅 Tìm Trong Tháng</span>
-          </button>
         </div>
 
-        ${state.viewMode === 'specific' ? renderSpecificModeHTML() : renderMonthModeHTML()}
+        ${state.viewMode === 'month' ? renderMonthModeHTML() : renderSpecificModeHTML()}
       </div>
     `;
 
@@ -1840,7 +1764,36 @@
       };
     }
 
-    // Month pills
+    // Month Navigator (◀ / ▶)
+    const btnPrevMonth = document.getElementById('tc-btn-prev-month');
+    if (btnPrevMonth) {
+      btnPrevMonth.onclick = () => {
+        if (state.selectedMonth === 1) {
+          state.selectedMonth = 12;
+          state.selectedYear -= 1;
+        } else {
+          state.selectedMonth -= 1;
+        }
+        runEvaluation();
+        render(true);
+      };
+    }
+
+    const btnNextMonth = document.getElementById('tc-btn-next-month');
+    if (btnNextMonth) {
+      btnNextMonth.onclick = () => {
+        if (state.selectedMonth === 12) {
+          state.selectedMonth = 1;
+          state.selectedYear += 1;
+        } else {
+          state.selectedMonth += 1;
+        }
+        runEvaluation();
+        render(true);
+      };
+    }
+
+    // Month pills (nếu có)
     document.querySelectorAll('.tc-month-pill').forEach(el => {
       el.onclick = () => {
         const m = parseInt(el.getAttribute('data-month'), 10);
