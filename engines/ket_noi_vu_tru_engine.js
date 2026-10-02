@@ -856,5 +856,8 @@
   };
 
   global.KetNoiVuTruEngine = KetNoiVuTruEngine;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = KetNoiVuTruEngine;
+  }
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : globalThis);

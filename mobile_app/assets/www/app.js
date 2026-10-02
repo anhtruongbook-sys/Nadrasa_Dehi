@@ -51,6 +51,12 @@
       guideTitle: '♠️ Tra Cứu Quân Bài Tây (Poker)',
       isCardDeck: true
     },
+    tamthuc: {
+      name: 'XUYÊN TAM THỨC',
+      subtitle: 'Thái Ất • Kỳ Môn • Lục Nhâm',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
+    },
     qmdj: {
       name: 'KỲ MÔN ĐỘN GIÁP',
       subtitle: 'Bàn 9 Cung & Tiết Khí',
@@ -120,7 +126,7 @@
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'phaphanh', 'dichhoc'];
+  const ALL_MODES = ['neta', 'poker', 'tamthuc', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'phaphanh', 'dichhoc'];
 
 
   // DOM Elements
@@ -261,6 +267,7 @@
 
     // Toggle View Containers
     const viewCards = document.getElementById('view-cards');
+    const viewTamThuc = document.getElementById('view-tamthuc');
     const viewQmdj = document.getElementById('view-qmdj');
     const viewThaiAt = document.getElementById('view-thaiat');
     const viewLucNham = document.getElementById('view-lucnham');
@@ -276,6 +283,7 @@
     const viewsMap = {
       neta: viewCards,
       poker: viewCards,
+      tamthuc: viewTamThuc,
       qmdj: viewQmdj,
       thaiat: viewThaiAt,
       lucnham: viewLucNham,
@@ -320,6 +328,9 @@
       if (guideSearchInput) guideSearchInput.value = '';
       resetDeck();
       renderGuideList();
+    } else if (mode === 'tamthuc') {
+      const render = () => { if (window.NetaTamThucView) window.NetaTamThucView.render(); };
+      render(); setTimeout(render, 150);
     } else if (mode === 'calendar') {
       const render = () => { if (window.NetaCalendarView) window.NetaCalendarView.render(); };
       render(); setTimeout(render, 150);
@@ -1629,7 +1640,18 @@
       let captureScale = 3;
       let captureHeight = null;
 
-      if (currentDeckMode === 'lucnham') {
+      if (currentDeckMode === 'tamthuc') {
+        const wrap = document.querySelector('.tamthuc-view-container') || document.getElementById('view-tamthuc');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#080811';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-tamthuc');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
+      } else if (currentDeckMode === 'lucnham') {
         const wrap = document.querySelector('.lucnham-view-wrap') || document.getElementById('view-lucnham');
         targetElement = wrap || appContainer;
         bgColor = isLight ? '#fdfbf7' : '#140205';
@@ -2099,7 +2121,8 @@
       const now = new Date();
       const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
       let modeName = 'NetaLight';
-      if (currentDeckMode === 'poker') modeName = 'Poker';
+      if (currentDeckMode === 'tamthuc') modeName = 'XuyenTamThuc';
+      else if (currentDeckMode === 'poker') modeName = 'Poker';
       else if (currentDeckMode === 'qmdj') modeName = 'KyMonDonGiap';
       else if (currentDeckMode === 'thaiat') modeName = 'ThaiAtThanKinh';
       else if (currentDeckMode === 'lucnham') modeName = 'LucNham_DaiDon';

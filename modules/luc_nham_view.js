@@ -1792,6 +1792,10 @@
                 <span class="ucc-txt-long">🏡 Phong Thủy</span>
                 <span class="ucc-txt-short">🏡 P.Thủy</span>
               </button>
+              <button type="button" class="ucc-view-btn btn-cross-tamthuc" id="btn-lucnham-cross-tamthuc" title="Đối chiếu tổng hợp Xuyên Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
+                <span class="ucc-txt-long">⚡ Tam Thức</span>
+                <span class="ucc-txt-short">⚡ 3T</span>
+              </button>
             </div>
             <button class="ucc-btn-submit" id="lucnham-btn-submit" title="Lập quẻ Lục Nhâm">
               🔮 Lập Quẻ
@@ -2152,6 +2156,17 @@
       btnOpenLuan.onclick = () => {
         currentMainTab = 'analysis';
         renderLucNham(null, true);
+      };
+    }
+    const btnCross = document.getElementById('btn-lucnham-cross-tamthuc');
+    if (btnCross) {
+      btnCross.onclick = () => {
+        if (window.NetaTamThucView && typeof window.NetaTamThucView.setDate === 'function') {
+          window.NetaTamThucView.setDate(currentDate);
+        }
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('tamthuc');
+        }
       };
     }
 

@@ -794,6 +794,9 @@
         <button type="button" class="qmdj-tab-btn ${currentQmdjMode === 'banmenh' ? 'active' : ''}" data-mode="banmenh">
           👤 Bản Mệnh
         </button>
+        <button type="button" class="qmdj-tab-btn btn-cross-tamthuc" id="btn-qmdj-cross-tamthuc" title="Đối chiếu tổng hợp Xuyên Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm)">
+          ⚡ Xuyên Tam Thức
+        </button>
       </div>
     `;
 
@@ -3751,6 +3754,18 @@
         }
       };
     });
+
+    const btnCross = document.getElementById('btn-qmdj-cross-tamthuc');
+    if (btnCross) {
+      btnCross.onclick = () => {
+        if (window.NetaTamThucView && typeof window.NetaTamThucView.setDate === 'function') {
+          window.NetaTamThucView.setDate(currentQmdjDate);
+        }
+        if (typeof window.switchAppMode === 'function') {
+          window.switchAppMode('tamthuc');
+        }
+      };
+    }
   }
 
   function bindTimeCellClickEvents(chart, patterns) {

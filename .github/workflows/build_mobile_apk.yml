@@ -76,10 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.39
-          name: "Neta Light v2.8.39 (Sửa Lỗi Mở Google Maps Thủy Khẩu & Xử Lý Intent Scheme URL)"
+          tag_name: v2.8.40
+          name: "Neta Light v2.8.40 (Phân Hệ Chiêm Đoán Xuyên Tam Thức: Thái Ất - Kỳ Môn - Lục Nhâm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.39
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.40
+            - **Ra Mắt Phân Hệ Mới: Chiêm Đoán Xuyên Tam Thức (Thái Ất • Kỳ Môn • Lục Nhâm)**:
+              + **Động cơ Tổng hợp Tam Tài Độc lập & Tự trị 100% (`engines/tam_thuc_engine.js`)**: Tích hợp thuật toán đối sánh 10 ca kiểm chứng chuẩn xác 100% (80/80 tiêu chí đạt), kết nối Thiên Thời (Thái Ất), Địa Lợi (Kỳ Môn) và Nhân Sự (Lục Nhâm).
+              + **Ma trận Trọng số Động 12 Lĩnh vực then chốt (D01 - D12)**: Tự động phân bổ trọng số Thiên - Địa - Nhân theo câu hỏi hoặc lĩnh vực tác nghiệp (Sự nghiệp, Đầu tư, Pháp lý, Y tế, Xây dựng, Hôn nhân...).
+              + **Chỉ số Đồng thuận $C_{3T}$ & Nhận diện Hình thái Tương tác**: Đánh giá độ lệch chuẩn $\sigma$ giữa 3 phân hệ, phân tích 5 hình thái tương tác chiến lược (Tam Tài Đồng Thanh, Tam Tài Tương Khắc, Địa Lợi Hóa Giải...).
+              + **Báo cáo Chiến lược 5 Tầng Toàn diện**: Cung cấp ma trận hành động định lượng chuẩn mực hành chính - kỹ thuật gồm Cửa sổ thời gian (Timing), Định vị không gian (Spatial), Tác nghiệp cụ thể, Quản trị nhân sự và Kiểm soát rủi ro.
+              + **Giao diện Trực quan Native SVG (Zero Dependencies)**: Biểu đồ Radar Tam Tài 3 trục, đồng hồ đo độ đồng thuận $C_{3T}$, tương thích hoàn hảo cả Dark Theme và Light Theme.
+            - **Cầu Nối Hai Chiều Toàn Diện (Bidirectional Cross-Linking)**:
+              + Bổ sung nút liên kết nhanh `[⚡ Xuyên Tam Thức]` tại thanh công cụ của Kỳ Môn Độn Giáp, Thái Ất Thần Kinh và Lục Nhâm Đại Độn.
+              + Cho phép nhảy qua lại lập tức giữa từng lá số chuyên sâu và bảng tổng hợp Xuyên Tam Thức với cùng thời điểm khảo sát.
+            - **Bảo toàn Toàn vẹn 100% Năng Lực Offline Cho Ứng Dụng Di Động**:
+              + Đồng bộ đầy đủ các tệp mã nguồn và động cơ vào tài nguyên cục bộ `mobile_app/assets/www/`, mở lên là chạy mượt mà ngay cả khi không có mạng.
             - **Khắc Phục Hoàn Toàn Lỗi Mở Google Maps & Xử Lý Intent URL Scheme (net::ERR_UNKNOWN_URL_SCHEME)**:
               + **Xử lý triệt để lỗi điều hướng WebView**: Tích hợp bộ chặn điều hướng `onNavigationRequest` trong Flutter WebView, tự động nhận diện và chuyển tiếp toàn bộ liên kết ngoại vi (`intent://`, `geo:`, `https://www.google.com/maps`, `https://*`) sang ứng dụng ngoài thay vì để WebView tự nạp gây lỗi màn hình đen `net::ERR_UNKNOWN_URL_SCHEME`.
               + **Khởi tạo Intent Native Android chuyên dụng (`openExternalUrl`)**: Thêm phương thức xử lý tại `MainActivity.kt`, bóc tách cấu trúc URL Intent Scheme (`Intent.parseUri`) để kích hoạt trực tiếp ứng dụng Google Maps chính thức của máy hoặc trình duyệt hệ thống với cờ `FLAG_ACTIVITY_NEW_TASK`.

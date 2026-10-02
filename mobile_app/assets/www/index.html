@@ -60,6 +60,11 @@
 
         <div class="dropdown-divider"></div>
         <div class="dropdown-section-title">TAM THỨC &amp; LẬP LÁ SỐ</div>
+        <div class="deck-dropdown-item" id="tab-mode-tamthuc" data-mode="tamthuc">
+          <span class="dropdown-icon">🔮</span>
+          <span class="dropdown-name">Xuyên Tam Thức (Tổng Hợp)</span>
+          <span class="dropdown-check" id="check-mode-tamthuc" style="opacity: 0;">✓</span>
+        </div>
         <div class="deck-dropdown-item" id="tab-mode-qmdj" data-mode="qmdj">
           <span class="dropdown-icon">🔮</span>
           <span class="dropdown-name">Kỳ Môn Độn Giáp</span>
@@ -234,6 +239,11 @@
           </button>
         </div>
       </footer>
+    </div>
+
+    <!-- View Module: Xuyên Tam Thức (Thái Ất - Kỳ Môn - Lục Nhâm) -->
+    <div id="view-tamthuc" class="app-module-view" style="display: none;">
+      <!-- Dynamically rendered by modules/tam_thuc_view.js -->
     </div>
 
     <!-- View Module: Kỳ Môn Độn Giáp -->
@@ -510,6 +520,8 @@
   <script src="engines/luc_nham_interpreter.js?v=1.0"></script>
   <script src="engines/luc_nham_fengshui.js?v=1.0"></script>
   <script src="modules/luc_nham_view.js?v=1.0"></script>
+  <script src="engines/tam_thuc_engine.js?v=1.0"></script>
+  <script src="modules/tam_thuc_view.js?v=1.0"></script>
   <script src="engines/gemini_service.js?v=3.6"></script>
   <script src="engines/bazi_engine.js?v=7.6"></script>
   <script src="engines/bazi_interpreter.js?v=1.1"></script>
