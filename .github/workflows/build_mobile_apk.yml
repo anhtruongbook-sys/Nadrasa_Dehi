@@ -76,10 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.61
-          name: "Neta Light v2.8.61 (Mở Thủy Khẩu & Lai Long Trực Tiếp Trên Bản Đồ La Kinh, Tia Ngắm Laser & Nút Nổi Minh Đường)"
+          tag_name: v2.8.62
+          name: "Neta Light v2.8.62 (Chuẩn Hóa Nút Nổi Minh Đường Mini Chip, Tích Hợp Nút Đóng ✕ & Tùy Chọn Ẩn Hiện Linh Hoạt)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.61
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.62
+            - **Chuẩn Hóa Nút Nổi Minh Đường Mini Chip Công Thái Học**:
+              + **Dời Vị Trí Về Góc Dưới Phải (`bottom: 74px; right: 14px`)**: Giải phóng hoàn toàn thanh HUD đo đạc độ số trên cùng, không che khuất Sơn hướng, Tam Hợp hay Huyền Không Đại Quái.
+              + **Thiết Kế Mini Capsule / Chip Siêu Nhỏ Gọn**: Chiều cao chỉ 26px, viền kính mờ tinh tế, kích thước nhỏ gọn vừa vặn ngón tay cái khi dùng điện thoại một tay.
+              + **Tích Hợp Nút Đóng `[✕]` Trực Tiếp**: Cho phép người dùng chạm vào dấu `✕` để ẩn ngay lập tức nút nổi khỏi màn hình, mở rộng tầm nhìn 100% thoáng mắt để soi thực địa.
+              + **Cơ Chế Ẩn / Hiện Linh Hoạt**:
+                * Chạm nút dock `🌊 Quét Cục` ở thanh công cụ dưới để mở lại bảng Minh Đường ngay lập tức và khôi phục nút nổi.
+                * Bổ sung nút chuyển đổi `[👁️ Nút nổi: Đang Hiện / Đang Ẩn]` ngay trong Modal Khảo sát Minh Đường.
+                * Bổ sung nút `[🔄 Quét Lại Cao Độ]` trong modal để quét lại tọa độ mới bất kỳ lúc nào.
             - **Định Vị & Mở Trực Tiếp Thủy Khẩu / Lai Long Trên Bản Đồ La Kinh**:
               + **Nút Thao Tác Nhanh 1-Chạm**: Bổ sung trực tiếp `[💧 Xem Thủy Khẩu trên Bản Đồ]` (xanh dương) và `[⛰️ Xem Lai Long trên Bản Đồ]` (vàng hổ phách) cho từng cấp Minh Đường trong bảng khảo sát DEM.
               + **Cơ Chế FlyTo Mượt Mà**: Tự động đóng modal khảo sát và kích hoạt hiệu ứng Leaflet `flyTo` mượt mà đến tọa độ thực địa với mức phóng đại cao (`zoom = 16`).
