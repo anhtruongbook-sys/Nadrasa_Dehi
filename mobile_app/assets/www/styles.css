@@ -19728,6 +19728,13 @@ body.theme-light .role-btn {
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
 }
 
+.role-btn.active.deity {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  color: #fff !important;
+  border-color: #c4b5fd !important;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4) !important;
+}
+
 .tamthuc-ucc-card .ucc-row-query {
   display: flex !important;
   align-items: center !important;

@@ -21,6 +21,7 @@
   let currentDate = new Date();
   let currentDomainCode = 'D01';
   let currentRole = 'Chủ';
+  let currentDeitySchool = '10thần';
   let currentQuery = '';
   let currentReport = null;
 
@@ -59,7 +60,10 @@
           currentDomainCode = targetDomain;
         }
       }
-      currentReport = global.NetaTamThucEngine.synthesizeTamThuc(currentDate, targetDomain, currentRole, { query: q });
+      currentReport = global.NetaTamThucEngine.synthesizeTamThuc(currentDate, targetDomain, currentRole, {
+        query: q,
+        deitySchool: currentDeitySchool
+      });
       if (currentReport && currentReport.domain_code) {
         currentDomainCode = currentReport.domain_code;
       }
@@ -266,12 +270,17 @@
             </div>
           </div>
 
-          <!-- Hàng 3: Chọn Vị Thế Chiến Lược -->
+          <!-- Hàng 3: Chọn Vị Thế Chiến Lược & Phái Bát Thần / Thập Thần -->
           <div class="ucc-row ucc-row-role">
             <div class="ucc-role-selector">
               <span class="role-label">Vị Thế:</span>
               <button type="button" class="role-btn ${currentRole === 'Chủ' ? 'active chu' : ''}" id="btn-role-chu" title="Phe Chủ: Chủ động, người khởi sự">🛡️ Phe Chủ</button>
               <button type="button" class="role-btn ${currentRole === 'Khách' ? 'active khach' : ''}" id="btn-role-khach" title="Phe Khách: Bị động, ngoại cảnh">⚔️ Phe Khách</button>
+            </div>
+            <div class="ucc-deity-selector" style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+              <span class="role-label">Bàn Thần:</span>
+              <button type="button" class="role-btn ${currentDeitySchool === '10thần' ? 'active deity' : ''}" id="btn-deity-10than" title="10 Thần (Cửu Cung - Nguyễn Tấn Công)">10 Thần</button>
+              <button type="button" class="role-btn ${currentDeitySchool === '8thần' ? 'active deity' : ''}" id="btn-deity-8than" title="8 Thần Truyền Thống">8 Thần</button>
             </div>
           </div>
 
@@ -530,23 +539,42 @@
           <div class="pillar-detail-card pillar-km">
             <div class="p-card-header">
               <div class="p-card-title"><span class="icon">🔮</span> ĐỊA LỢI • KỲ MÔN ĐỘN GIÁP</div>
-              <div class="p-card-badge">${l3.cuc}</div>
+              <div class="p-card-badge">${l3.cuc} • ${l3.deity_school || (currentDeitySchool === '10thần' ? '10 Thần' : '8 Thần')}</div>
             </div>
             <div class="p-card-body">
               <div class="p-info-row">
                 <span class="label">Trực Phù / Trực Sử:</span>
                 <strong class="val">Trực Phù = ${l3.truc_phu} | Trực Sử = ${l3.truc_su}</strong>
               </div>
+              ${l3.target1 ? `
+              <div class="p-info-row">
+                <span class="label">${l3.target1.roleName || l3.target1.targetLabel || 'Dụng Thần 1'}:</span>
+                <span class="val highlight">${l3.target1.name} [${l3.target1.direction || ''}] (${l3.target1.element || ''}) • Môn: ${l3.target1.door || ''}, Tinh: ${l3.target1.star || ''}, Thần: ${l3.target1.deity || ''}${l3.target1.isKongWang ? ' <span class="badge-kw" style="background:#ef4444;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;">Tuần Không</span>' : ''}</span>
+              </div>
+              ` : `
               <div class="p-info-row">
                 <span class="label">Cung Dụng Thần:</span>
                 <span class="val">${l3.palace_name} (${l3.formation})</span>
               </div>
+              `}
+              ${l3.target2 ? `
+              <div class="p-info-row">
+                <span class="label">${l3.target2.roleName || l3.target2.targetLabel || 'Dụng Thần 2'}:</span>
+                <span class="val highlight">${l3.target2.name} [${l3.target2.direction || ''}] (${l3.target2.element || ''}) • Môn: ${l3.target2.door || ''}, Tinh: ${l3.target2.star || ''}, Thần: ${l3.target2.deity || ''}${l3.target2.isKongWang ? ' <span class="badge-kw" style="background:#ef4444;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;">Tuần Không</span>' : ''}</span>
+              </div>
+              ` : ''}
+              ${l3.subject ? `
+              <div class="p-info-row">
+                <span class="label">Cung Bản Mệnh:</span>
+                <span class="val">${l3.subject.name} [${l3.subject.direction || ''}] (${l3.subject.element || ''}) • Can: ${l3.subject.heavenStem || ''}, Môn: ${l3.subject.door || ''}, Tinh: ${l3.subject.star || ''}, Thần: ${l3.subject.deity || ''}</span>
+              </div>
+              ` : ''}
               <div class="p-info-row">
                 <span class="label">Phương Vị Cát Lợi:</span>
                 <span class="val highlight">${l3.auspicious_directions}</span>
               </div>
               <div class="p-info-desc">
-                ${l3.detailed_analysis}
+                ${l3.detailed_analysis ? l3.detailed_analysis.replace(/\n\n/g, '<br><br>') : ''}
               </div>
               <div class="p-card-action">
                 <button type="button" class="btn-goto-module" id="btn-goto-qmdj">🔮 Mở Bàn Cờ 9 Cung Kỳ Môn ➔</button>
@@ -706,6 +734,26 @@
       btnKhach.onclick = () => {
         if (currentRole !== 'Khách') {
           currentRole = 'Khách';
+          render(container);
+        }
+      };
+    }
+
+    // 2.5 Deity School Selector (10 Thần vs 8 Thần)
+    const btnD10 = container.querySelector('#btn-deity-10than');
+    const btnD8 = container.querySelector('#btn-deity-8than');
+    if (btnD10) {
+      btnD10.onclick = () => {
+        if (currentDeitySchool !== '10thần') {
+          currentDeitySchool = '10thần';
+          render(container);
+        }
+      };
+    }
+    if (btnD8) {
+      btnD8.onclick = () => {
+        if (currentDeitySchool !== '8thần') {
+          currentDeitySchool = '8thần';
           render(container);
         }
       };

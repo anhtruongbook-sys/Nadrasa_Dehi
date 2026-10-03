@@ -436,7 +436,7 @@
     };
   }
 
-  function plotFullChartKetNoiVuTru(solarTerm, dayCan, dayChi, hourCan, hourChi) {
+  function plotFullChartKetNoiVuTru(solarTerm, dayCan, dayChi, hourCan, hourChi, deitySchool = "8thần") {
     const cucInfo = computeZhiRunJu(solarTerm, dayCan, dayChi);
     const dun = cucInfo.dun_type;
     const ju = cucInfo.ju_number;
@@ -456,7 +456,7 @@
     const xunInfo = XUN_SHOU_MAP[pair] || ["Mậu", "Tý", ["Tuất", "Hợi"]];
     const hourStemLeader = xunInfo[0];
     const hourXunBranch = xunInfo[1];
-    const kongWang = xunInfo[2];
+    const kongWang = xunInfo[2] || [];
 
     let leadPalace = 2;
     for (const pid of Object.keys(earthPlate)) {
@@ -485,10 +485,19 @@
     const shiftStars = ((idxDest - idxOrig) % 8 + 8) % 8;
 
     const starsInPalaces = {};
+    const heavenStemsInPalaces = {};
     for (let i = 0; i < PALACE_ORDER_CLOCKWISE.length; i++) {
       const pOrig = PALACE_ORDER_CLOCKWISE[i];
       const pDest = PALACE_ORDER_CLOCKWISE[(i + shiftStars) % 8];
-      starsInPalaces[pDest] = STAR_ORIGIN_PALACE[pOrig];
+      const star = STAR_ORIGIN_PALACE[pOrig];
+      starsInPalaces[pDest] = star;
+
+      const hStem = earthPlate[pOrig];
+      const stems = [hStem];
+      if (star === "Thiên Nhuế" && earthPlate[5]) {
+        stems.push(earthPlate[5]);
+      }
+      heavenStemsInPalaces[pDest] = stems;
     }
 
     const hourStep = ((DIA_CHI.indexOf(hourChi) - DIA_CHI.indexOf(hourXunBranch)) % 12 + 12) % 12;
@@ -511,13 +520,31 @@
       doorsInPalaces[pDest] = DOOR_ORIGIN_PALACE[pOrig];
     }
 
-    const deitiesInPalaces = {};
-    const deityList = (dun === "Dương Độn") ? DEITIES_YANG_ORDER : DEITIES_YIN_ORDER;
-    const startDeityIdx = PALACE_ORDER_CLOCKWISE.indexOf(targetHourPalace);
-    for (let i = 0; i < deityList.length; i++) {
-      const pId = PALACE_ORDER_CLOCKWISE[(startDeityIdx + i) % 8];
-      deitiesInPalaces[pId] = deityList[i];
+    // Phân bổ Thần (Hỗ trợ 10 Thần Nguyễn Tấn Công và 8 Thần cổ điển)
+    let deitiesInPalaces = {};
+    const knEngine = global.KetNoiVuTruEngine || (typeof require !== 'undefined' ? (function() { try { return require('./ket_noi_vu_tru_engine'); } catch(e){ return null; } })() : null);
+
+    if (deitySchool === '10thần' && knEngine && typeof knEngine.allocate10Deities === 'function') {
+      deitiesInPalaces = knEngine.allocate10Deities(dun, targetHourPalace) || {};
+    } else {
+      const deityList = (dun === "Dương Độn") ? DEITIES_YANG_ORDER : DEITIES_YIN_ORDER;
+      const startDeityIdx = PALACE_ORDER_CLOCKWISE.indexOf(targetHourPalace);
+      for (let i = 0; i < deityList.length; i++) {
+        const pId = PALACE_ORDER_CLOCKWISE[(startDeityIdx + i) % 8];
+        deitiesInPalaces[pId] = deityList[i];
+      }
     }
+
+    const PALACE_BRANCHES = {
+      1: ['Tý'], 2: ['Mùi', 'Thân'], 3: ['Mão'], 4: ['Thìn', 'Tỵ'],
+      6: ['Tuất', 'Hợi'], 7: ['Dậu'], 8: ['Sửu', 'Dần'], 9: ['Ngọ']
+    };
+
+    let horseBranch = 'Thân';
+    if (['Thân', 'Tý', 'Thìn'].includes(hourChi)) horseBranch = 'Dần';
+    else if (['Dần', 'Ngọ', 'Tuất'].includes(hourChi)) horseBranch = 'Thân';
+    else if (['Tỵ', 'Dậu', 'Sửu'].includes(hourChi)) horseBranch = 'Hợi';
+    else if (['Hợi', 'Mão', 'Mùi'].includes(hourChi)) horseBranch = 'Tỵ';
 
     const palaceNames = {
       1: "Khảm (Chính Bắc)", 2: "Khôn (Tây Nam)", 3: "Chấn (Chính Đông)", 4: "Tốn (Đông Nam)",
@@ -525,31 +552,78 @@
     };
 
     const palaces = {};
+    let dayPalace = 1;
+    let hourPalace = targetHourPalace;
+
     for (let pid = 1; pid <= 9; pid++) {
       if (pid === 5) {
         palaces[pid] = {
           name: palaceNames[5],
           door: "-",
           star: "Thiên Cầm",
+          stars: ["Thiên Cầm"],
           deity: "-",
-          is_kong_wang: false
+          heaven_stem: earthPlate[5] || "Mậu",
+          heaven_stems: [earthPlate[5] || "Mậu"],
+          earth_stem: earthPlate[5] || "Mậu",
+          earth_stems: [earthPlate[5] || "Mậu"],
+          is_kong_wang: false,
+          is_sky_horse: false
         };
         continue;
       }
+      const branches = PALACE_BRANCHES[pid] || [];
+      const isKW = Array.isArray(kongWang) && kongWang.some(b => branches.includes(b));
+      const isHorse = branches.includes(horseBranch);
+      const hStems = heavenStemsInPalaces[pid] || [earthPlate[pid]];
+      const starName = starsInPalaces[pid] || "-";
+
       palaces[pid] = {
         name: palaceNames[pid],
         door: doorsInPalaces[pid] || "-",
-        star: starsInPalaces[pid] || "-",
+        star: starName,
+        stars: [starName],
         deity: deitiesInPalaces[pid] || "-",
-        is_kong_wang: false
+        heaven_stem: hStems.join('/'),
+        heaven_stems: hStems,
+        earth_stem: earthPlate[pid] || "-",
+        earth_stems: [earthPlate[pid] || "-"],
+        is_kong_wang: isKW,
+        is_sky_horse: isHorse
       };
+
+      if (hStems.includes(dayCan)) {
+        dayPalace = pid;
+      }
+    }
+
+    if (dayCan === "Giáp") {
+      const dayPair = `${dayCan} ${dayChi}`;
+      const dayXun = XUN_SHOU_MAP[dayPair] || ["Mậu", "Tý", []];
+      for (let pid = 1; pid <= 9; pid++) {
+        if (palaces[pid].heaven_stems && palaces[pid].heaven_stems.includes(dayXun[0])) {
+          dayPalace = pid;
+          break;
+        }
+      }
     }
 
     return {
       cuc: `${dun} ${ju} Cục (${solarTerm})`,
+      dun_type: dun,
+      ju_number: ju,
       lead_star: leadStar,
       envoy_door: envoyDoor,
+      lead_palace: leadPalace,
+      chief_palace: targetHourPalace,
       kong_wang: kongWang,
+      day_can: dayCan,
+      day_chi: dayChi,
+      hour_can: hourCan,
+      hour_chi: hourChi,
+      day_palace: dayPalace,
+      hour_palace: hourPalace,
+      deity_school: deitySchool,
       palaces
     };
   }
@@ -625,8 +699,82 @@
     };
   }
 
-  // --- 3.4. ĐÁNH GIÁ ĐIỂM SỐ KỲ MÔN (S_K) ---
-  function evaluateKyMon(kmData, role = "Chủ", domainCode = "D01", solarTerm = "Thu Phân") {
+  // --- 3.4. ĐÁNH GIÁ ĐIỂM SỐ KỲ MÔN (S_K) - HỖ TRỢ ĐA DỤNG THẦN & 10 THẦN ---
+  function evaluateKyMon(kmData, role = "Chủ", domainCode = "D01", solarTerm = "Thu Phân", options = {}) {
+    const knEngine = global.KetNoiVuTruEngine || (typeof require !== 'undefined' ? (function() { try { return require('./ket_noi_vu_tru_engine'); } catch(e){ return null; } })() : null);
+
+    const DOMAIN_MAP = {
+      D01: 'career', D02: 'wealth', D03: 'marriage', D04: 'medical',
+      D05: 'real_estate', D06: 'lawsuit', D07: 'contract', D08: 'exam',
+      D09: 'career', D10: 'debt', D11: 'lost_item', D12: 'missing_user'
+    };
+    const omniKey = DOMAIN_MAP[domainCode] || 'career';
+    const querentOptions = {
+      mode: options.querentMode || 'hour',
+      year: options.birthYear || 1985,
+      stem: options.querentStem,
+      branch: options.querentBranch,
+      gender: options.gender || 'nam'
+    };
+
+    let omniRes = null;
+    if (knEngine && typeof knEngine.runOmniForecast === 'function') {
+      try {
+        omniRes = knEngine.runOmniForecast(omniKey, kmData, querentOptions);
+      } catch (e) {
+        console.warn("TamThuc: KetNoiVuTruEngine runOmniForecast warning:", e);
+      }
+    }
+
+    if (omniRes) {
+      const t1 = omniRes.primaryTargetInfo || {};
+      const t2 = omniRes.secondaryTargetInfo || null;
+      const subj = omniRes.subjectInfo || {};
+
+      let formationText = `Môn [${t1.door || ''}] + Tinh [${t1.star || ''}] + Thần [${t1.deity || ''}]`;
+      if (t2) {
+        formationText += ` | Đối trọng [${t2.roleName || t2.targetLabel}]: ${t2.door} + ${t2.star} + ${t2.deity}`;
+      }
+
+      let palaceDesc = `${t1.name} [${t1.roleName || t1.targetLabel || 'Dụng Thần'}]`;
+      if (t2) {
+        palaceDesc += ` & ${t2.name} [${t2.roleName || t2.targetLabel}]`;
+      }
+
+      const stripHtml = (s) => (s ? String(s).replace(/<[^>]*>/g, '').trim() : '');
+
+      let detailedNotes = [];
+      if (omniRes.layers?.hostGuest) {
+        detailedNotes.push(stripHtml(omniRes.layers.hostGuest));
+      }
+      if (omniRes.layers?.specialStates) {
+        detailedNotes.push(stripHtml(omniRes.layers.specialStates));
+      }
+      if (omniRes.layers?.strategy) {
+        detailedNotes.push(stripHtml(omniRes.layers.strategy));
+      }
+
+      return {
+        score: omniRes.score,
+        details: {
+          cuc: kmData.cuc || `Kỳ Môn (${solarTerm})`,
+          deity_school: kmData.deity_school === '10thần' ? '10 Thần (Nguyễn Tấn Công)' : '8 Thần',
+          truc_phu: kmData.lead_star || kmData.truc_phu || "",
+          truc_su: kmData.envoy_door || kmData.truc_su || "",
+          palace_name: palaceDesc,
+          target1: t1,
+          target2: t2,
+          subject: subj,
+          omniForecast: omniRes,
+          formation: formationText,
+          auspicious_directions: omniRes.layers?.direction ? stripHtml(omniRes.layers.direction) : `Phương vị cung ${t1.name} và hướng Trực Phù.`,
+          key_finding: `${omniRes.domainName}: ${omniRes.relationship} (${omniRes.verdict})`,
+          detailed_analysis: detailedNotes.join("\n\n")
+        }
+      };
+    }
+
+    // Fallback nếu không có KetNoiVuTruEngine
     let target_door = "Sinh Môn";
     if (["D01", "D09", "D06"].includes(domainCode)) {
       target_door = "Khai Môn";
@@ -706,6 +854,7 @@
       score: Math.round(score * 10) / 10,
       details: {
         cuc: kmData.cuc || `Kỳ Môn (${solarTerm})`,
+        deity_school: kmData.deity_school === '10thần' ? '10 Thần (Nguyễn Tấn Công)' : '8 Thần',
         truc_phu: kmData.lead_star || kmData.truc_phu || "",
         truc_su: kmData.envoy_door || kmData.truc_su || "",
         palace_name: targetPalaceName,
@@ -1197,6 +1346,9 @@
       } else if (isFinance) {
         verdictTitle = "QUYẾT NGHỊ: NÊN GIẢI NGÂN / MỞ RỘNG ĐẦU TƯ";
         verdictRationale = `Dòng tiền sinh lời đắc cách, chu kỳ tài chính đang ở pha tích lũy tăng trưởng, tỷ lệ rủi ro thấp.`;
+      } else if (isHealth) {
+        verdictTitle = "QUYẾT NGHỊ: CÁT TƯỜNG - GẶP THẦY GẶP THUỐC, BỆNH TẬT MAU KHỎI";
+        verdictRationale = `Tam Thức đồng thuận cao (${weightedScore.toFixed(1)}/100). Điềm báo thân tâm an lạc, gặp đúng thầy đúng thuốc, tà khí suy vi chính khí hồi phục.`;
       } else {
         verdictTitle = "QUYẾT NGHỊ: NÊN THỰC HIỆN KẾ HOẠCH";
         verdictRationale = `Tam Tài tương hợp, mức độ đồng thuận cao (${consensus.toFixed(1)}%), ngoại cảnh và nội lực đều thuận lợi.`;
@@ -1212,6 +1364,9 @@
       } else if (isFinance) {
         verdictTitle = "QUYẾT NGHỊ: THẬN TRỌNG GIỮ TIỀN - KHÔNG VAY NỢ ĐÒN BẨY";
         verdictRationale = `Thị trường có dấu hiệu phân kỳ, chỉ nên giải ngân từng phần nhỏ để thăm dò, không nên tất tay.`;
+      } else if (isHealth) {
+        verdictTitle = "QUYẾT NGHỊ: CẦN KIÊN TRÌ ĐIỀU TRỊ - THEO DÕI SÁT DIỄN BIẾN";
+        verdictRationale = `Tổng điểm ở mức bình hòa (${weightedScore.toFixed(1)}/100). Bệnh và thuốc đang trong thế cầm cự hoặc mầm bệnh tiềm ẩn, cần tuân thủ nghiêm ngặt phác đồ và tái khám định kỳ.`;
       } else {
         verdictTitle = "QUYẾT NGHỊ: CẦN THẬN TRỌNG - CHỜ THỜI CƠ RÕ RÀNG";
         verdictRationale = `Các hệ thống có độ phân kỳ, các yếu tố ngoại cảnh còn biến động khó lường.`;
@@ -1227,6 +1382,9 @@
       } else if (isFinance) {
         verdictTitle = "QUYẾT NGHỊ: ĐÌNH CHỈ GIẢI NGÂN - BẢO TOÀN VỐN";
         verdictRationale = `Nguy cơ thua lỗ hoặc đọng vốn kéo dài rất cao, áp lực dòng tiền vĩ mô đang siết chặt.`;
+      } else if (isHealth) {
+        verdictTitle = "QUYẾT NGHỊ: CẢNH BÁO BỆNH TRỌNG - CẦN ĐỔI THẦY ĐỔI PHÁC ĐỒ";
+        verdictRationale = `Khí số suy vi (${weightedScore.toFixed(1)}/100). Mầm bệnh khắc chế bản mệnh hoặc tà khí nhập thân dai dẳng, cần tham vấn ý kiến chuyên gia tuyến trên.`;
       } else {
         verdictTitle = "QUYẾT NGHỊ: TẠM DỪNG / THAY ĐỔI PHƯƠNG ÁN";
         verdictRationale = `Khí số nghịch chuyển, hành động lúc này dễ dẫn đến hao tổn tài lực và tinh thần.`;
@@ -1244,11 +1402,28 @@
       p1Desc = `Toán Khách (${khachToan}) lớn hơn Toán Chủ (${chuToan}). Đối phương hoặc bên bán đang ở thế áp đảo giữ giá. Bạn không nên để lộ sự nóng vội kẻo bị ép giá hoặc rơi vào thế bị động.`;
     }
 
-    let p2Title = "🧭 Về Địa Thế, Phong Thủy & Không Gian (Kỳ Môn)";
+    let p2Title = isHealth ? "🧭 Về Phương Vị Chữa Bệnh & Trận Đồ Y Dược (Kỳ Môn)" : "🧭 Về Địa Thế, Phong Thủy & Không Gian (Kỳ Môn)";
     let p2Desc = "";
-    if (isLandOrProperty) {
+    if (isHealth && kmDetails.target1 && kmDetails.target2) {
+      const t1 = kmDetails.target1;
+      const t2 = kmDetails.target2;
+      const subj = kmDetails.subject;
+      p2Desc = `Dụng Thần Kép: ${t1.roleName || 'Mầm Bệnh'} ngự tại ${t1.name} [${t1.direction || ''}] (${t1.element || ''}) gặp Môn [${t1.door}], Tinh [${t1.star}], Thần [${t1.deity}]${t1.isKongWang ? ' (Lâm Tuần Không: điềm báo bệnh suy tàn/bệnh giả mau lành)' : ''}. ` +
+               `Đối trọng ${t2.roleName || 'Thầy Thuốc & Y Dược'} tại ${t2.name} [${t2.direction || ''}] (${t2.element || ''}) gặp Môn [${t2.door}], Tinh [${t2.star}], Thần [${t2.deity}]${t2.isKongWang ? ' (Lâm Tuần Không)' : ''}. ` +
+               (subj ? `Cung Bản Mệnh người hỏi tại ${subj.name} [${subj.direction || ''}] (${subj.element || ''}). ` : '') +
+               (kmDetails.detailed_analysis ? `${kmDetails.detailed_analysis.split('\n')[0]} ` : '') +
+               `Phương vị tìm kiếm thầy thuốc và dưỡng bệnh tối ưu: ${kmDetails.auspicious_directions}.`;
+    } else if (isLandOrProperty) {
       p2Desc = `Dụng thần Bất động sản (Sinh Môn) và Thổ trạch (Cửu Địa) kết hợp tại ${kmDetails.palace_name} với cách cục '${kmDetails.formation}'. Phương vị đón sinh khí: ${kmDetails.auspicious_directions}. ` +
                (geoEntity ? `Đối chiếu địa bàn ${geoEntity} ứng hợp với ${geoPalace}, cho thấy vị trí này đang hưởng nguồn sinh khí tương hỗ.` : `Cần đối chiếu hướng đất với phương vị cát lợi để nạp khí.`);
+    } else if (kmDetails.target1) {
+      const t1 = kmDetails.target1;
+      const t2 = kmDetails.target2;
+      const subj = kmDetails.subject;
+      p2Desc = `Trận đồ 9 cung Kỳ Môn ghi nhận Dụng thần [${t1.roleName || t1.targetLabel || 'Chính'}] tại ${t1.name} [${t1.direction || ''}] (${t1.door} + ${t1.star} + ${t1.deity}${t1.isKongWang ? ' - Tuần Không' : ''})` +
+               (t2 ? `, Đối trọng [${t2.roleName || t2.targetLabel}] tại ${t2.name} [${t2.direction || ''}] (${t2.door} + ${t2.star} + ${t2.deity}${t2.isKongWang ? ' - Tuần Không' : ''})` : '') +
+               (subj ? `. Cung Bản Mệnh tại ${subj.name} [${subj.direction || ''}]` : '') +
+               `. Phương vị cát lợi hành động: ${kmDetails.auspicious_directions}.`;
     } else {
       p2Desc = `Trận đồ 9 cung Kỳ Môn ghi nhận Trực Phù tại ${kmDetails.truc_phu}, Trực Sử tại ${kmDetails.truc_su}. Không gian triển khai tối ưu nhất là hướng ${kmDetails.auspicious_directions}.`;
     }
@@ -1275,6 +1450,10 @@
       actionSteps.push("Chuẩn bị hồ sơ năng lực và thành tích cụ thể, có số liệu minh chứng thuyết phục.");
       actionSteps.push("Tham vấn ý kiến của người đỡ đầu hoặc cấp trên trực tiếp trước khi công khai nguyện vọng.");
       actionSteps.push("Giữ kín thông tin cho đến khi có quyết định chính thức.");
+    } else if (isHealth) {
+      actionSteps.push("Tham khảo ý kiến chuyên gia y tế, tuân thủ đúng phác đồ điều trị và toa thuốc của bác sĩ chuyên khoa.");
+      actionSteps.push("Nghỉ ngơi điều dưỡng, có thể ưu tiên tìm kiếm bệnh viện/phòng khám hoặc thầy thuốc ở phương vị cát lợi (ví dụ: Tây Bắc / Đông Nam) để gia tăng hiệu quả điều trị.");
+      actionSteps.push("Giữ tâm lý lạc quan, điều hòa chế độ dinh dưỡng dưỡng sinh; tái khám đúng hẹn để theo dõi mầm bệnh.");
     } else {
       actionSteps.push("Kiểm soát chặt chẽ các cam kết bằng văn bản có giá trị pháp lý rõ ràng.");
       actionSteps.push("Phân bổ ngân sách theo từng cột mốc nghiệm thu, không giải ngân một lần.");
@@ -1589,14 +1768,23 @@
     const evalTa = evaluateThaiAt(taCore, role, domainCode);
 
     // 4. Kích hoạt Kỳ Môn (Native Zhi Run Plotter - Chuẩn Kết Nối Vũ Trụ)
+    const deitySchool = options.deitySchool || "10thần";
+    const querentOptions = {
+      querentRole: role,
+      birthYearCan: options.birthYearCan || options.querentYearCan || "",
+      birthYear: options.birthYear || 1985,
+      gender: options.querentGender || options.gender || "nam",
+      querentMode: options.querentMode || "hour"
+    };
     const kmCore = plotFullChartKetNoiVuTru(
       solarTerm,
       fourPillars.dayCan,
       fourPillars.dayChi,
       fourPillars.hourCan || "Giáp",
-      fourPillars.hourChi || "Tý"
+      fourPillars.hourChi || "Tý",
+      deitySchool
     );
-    const evalKm = evaluateKyMon(kmCore, role, domainCode, solarTerm);
+    const evalKm = evaluateKyMon(kmCore, role, domainCode, solarTerm, querentOptions);
 
     // 5. Kích hoạt Lục Nhâm
     const nguyetTuong = SOLAR_TERM_TO_NGUYET_TUONG[solarTerm] || "Thìn";
