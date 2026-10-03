@@ -76,10 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.64
-          name: "Neta Light v2.8.64 (Tối Ưu Mobile Ergonomics, Đồng Bộ Sáng/Tối WCAG AAA & Cuộn Mượt Mà Module Địa Lý Khảo Sát)"
+          tag_name: v2.8.65
+          name: "Neta Light v2.8.65 (Khắc Phục Toàn Diện CSS WebView Android, Đóng Gói 3 Tầng CSS & Hoàn Thiện Giao Diện Địa Lý Khảo Sát)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.64
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.65
+            - **Khắc Phục Triệt Để Lỗi Thiếu CSS WebView Trên Android**:
+              + Bổ sung khai báo thư mục `assets/www/assets/dialy/` trong `pubspec.yaml` để Flutter đóng gói đầy đủ `dialy.css` vào file APK.
+              + Tích hợp trực tiếp toàn bộ bộ CSS Địa Lý Khảo Sát vào file chính `styles.css`.
+              + Nhúng thêm cơ chế tự động Fallback CSS nội suy ngay trong `modules/dialy_view.js` (Bảo đảm 100% không bao giờ bị mất CSS).
+            - **Đồng Bộ Hoàn Hảo Giao Diện Sáng / Tối (Light & Dark Theme)**:
+              + Chuẩn hóa màu sắc theo quy chuẩn Giấy Lụa Hoàng Gia Neta Light (`theme-light`), tương phản cao WCAG AAA.
+              + Tối ưu chế độ Tối (`dark mode`) huyền bí, sang trọng phương Đông.
+            - **Tối Ưu Giao Diện & Công Thái Học Di Động (Mobile Ergonomics)**:
+              + Khắc phục hoàn toàn lỗi không kéo lên kéo xuống được màn hình (`overflow-y: auto`, `touch-action: pan-y`).
+              + Tinh giản Sticky Header siêu mỏng gọn, không che khuất màn hình; các nút bo tròn thanh thoát, dễ bấm.
+              + Segmented Tab Switcher dạng iOS mượt mà, chuyển đổi tức thì giữa Tam Hợp & Huyền Không Đại Quái.
             - **Đồng Bộ Hoàn Hảo Giao Diện Sáng / Tối (Light & Dark Theme)**:
               + Chuẩn hóa màu sắc theo quy chuẩn Giấy Lụa Hoàng Gia Neta Light (`theme-light`), tương phản cao WCAG AAA.
               + Tối ưu chế độ Tối (`dark mode`) huyền bí, sang trọng phương Đông.
