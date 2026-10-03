@@ -76,10 +76,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.63
-          name: "Neta Light v2.8.63 (Ra Mắt Module Địa Lý Khảo Sát Độc Lập 2 Tab, Nâng Cấp 120 Phân Kim, 72 Thấu Địa & Nắn Hướng Vi Mô)"
+          tag_name: v2.8.64
+          name: "Neta Light v2.8.64 (Tối Ưu Mobile Ergonomics, Đồng Bộ Sáng/Tối WCAG AAA & Cuộn Mượt Mà Module Địa Lý Khảo Sát)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.63
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.64
+            - **Đồng Bộ Hoàn Hảo Giao Diện Sáng / Tối (Light & Dark Theme)**:
+              + Chuẩn hóa màu sắc theo quy chuẩn Giấy Lụa Hoàng Gia Neta Light (`theme-light`), tương phản cao WCAG AAA.
+              + Tối ưu chế độ Tối (`dark mode`) huyền bí, sang trọng phương Đông.
+            - **Tối Ưu Giao Diện & Công Thái Học Di Động (Mobile Ergonomics)**:
+              + Khắc phục hoàn toàn lỗi không kéo lên kéo xuống được màn hình (`overflow-y: auto`, `touch-action: pan-y`).
+              + Tinh giản Sticky Header siêu mỏng gọn, không che khuất màn hình; các nút bo tròn thanh thoát, dễ bấm.
+              + Segmented Tab Switcher dạng iOS mượt mà, chuyển đổi tức thì giữa Tam Hợp & Huyền Không Đại Quái.
+            - **Tính Năng Chuyên Sâu Địa Lý Khảo Sát**:
+              + Micro-Steering nắn hướng vi mô né Tuyến Không Vong.
+              + 120 Phân Kim, 72 Thấu Địa, 60 Xuyên Sơn, 12 Cung Trường Sinh, 64 Quẻ & 384 Hào Phân Kim.
             - **Ra Mắt Module Độc Lập 'ĐỊA LÝ KHẢO SÁT' (Tam Hợp & Đại Quái)**:
               + Tổ chức 2 Tab chuyên sâu: Tab 1 (Tam Hợp Phái & Địa Mạo DEM) và Tab 2 (Huyền Không Đại Quái 64 Quẻ & 384 Hào).
               + Thẻ Tóm Tắt Đối Sánh Nhất Thể (Master Parity Bar) hiển thị song song kết luận cả hai phái ở đầu trang.
