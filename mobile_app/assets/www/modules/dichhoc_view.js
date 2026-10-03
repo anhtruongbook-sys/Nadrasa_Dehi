@@ -23,6 +23,11 @@
     currentReportMode: 'standard', // 'standard' | 'ai'
     aiErrorMessage: null,
     aiPolishedText: null,
+
+    // 0. Lăng Kính Phong Thủy Lục Hào (Zero-Recasting)
+    activeLens: 'suvu', // 'suvu' | 'phongthuy'
+    fengShuiMode: 'DUONG_TRACH', // 'DUONG_TRACH' | 'AM_TRACH'
+    fengShuiResult: null,
     
     // 1. Phân hệ Lục Hào Nạp Giáp
     lucHao: {
@@ -48,6 +53,7 @@
     state.aiErrorMessage = null;
     state.currentReportMode = 'standard';
     state.lucHao2Result = null;
+    state.fengShuiResult = null;
   }
 
   // Web Audio API mô phỏng tiếng kim loại tiền đồng cổ va chạm leng keng & lắc ống tre
@@ -808,6 +814,202 @@
   }
 
   // =========================================================================
+  // 4b. RENDER LĂNG KÍNH PHONG THỦY LỤC HÀO (ZERO-RECASTING INVARIANT)
+  // =========================================================================
+  function renderPhongThuySection(curResult) {
+    if (!curResult) return '<div class="dh-phongthuy-empty">Vui lòng gieo quẻ Lục Hào để khảo sát phong thủy.</div>';
+    const ptEngine = global.NetaLucHaoPhongThuyEngine;
+    if (!ptEngine || typeof ptEngine.analyzeExistingHex !== 'function') {
+      return '<div class="dh-phongthuy-empty">Đang nạp động cơ Lục Hào Phong Thủy...</div>';
+    }
+
+    const mode = state.fengShuiMode || 'DUONG_TRACH';
+    const ptRes = ptEngine.analyzeExistingHex(curResult, mode, {
+      propertyAddress: state.purpose || 'Công trình khảo sát',
+      orientation: 'Tọa Hướng theo quẻ'
+    });
+
+    if (!ptRes) {
+      return '<div class="dh-phongthuy-empty">Không thể phân tích dữ liệu phong thủy từ quẻ hiện tại.</div>';
+    }
+
+    state.fengShuiResult = ptRes;
+    const isDuongTrach = (mode === 'DUONG_TRACH');
+    const dt = ptRes.duong_trach;
+    const at = ptRes.am_trach;
+    const hzList = ptRes.hazards || [];
+    const remList = ptRes.remedies || [];
+
+    return `
+      <div class="dh-phongthuy-container">
+        <!-- 1. Thanh chuyển đổi Dương Trạch / Âm Trạch -->
+        <div class="pt-mode-nav-bar">
+          <div class="pt-mode-title-wrap">
+            <span class="pt-mode-icon">🏛️</span>
+            <div>
+              <div class="pt-mode-main-title">KHẢO SÁT & CHẨN ĐOÁN PHONG THỦY LỤC HÀO</div>
+              <div class="pt-mode-subtitle">Kế thừa 100% kết quả quẻ vừa gieo • Không lập lại quẻ (Zero-Recasting)</div>
+            </div>
+          </div>
+          <div class="pt-mode-pill-group">
+            <button type="button" class="pt-mode-btn ${isDuongTrach ? 'active' : ''}" id="btn-pt-mode-duongtrach">
+              🏠 Dương Trạch (Nhà Ở)
+            </button>
+            <button type="button" class="pt-mode-btn ${!isDuongTrach ? 'active' : ''}" id="btn-pt-mode-amtrach">
+              🪦 Âm Trạch (Mồ Mả)
+            </button>
+          </div>
+        </div>
+
+        ${isDuongTrach && dt ? `
+          <!-- 2. Thẻ Tương Quan Trục Trạch - Nhân -->
+          <div class="pt-card pt-trach-nhan-card">
+            <div class="pt-card-header">
+              <div class="pt-ch-left">
+                <span class="pt-ch-icon">⚖️</span>
+                <span class="pt-ch-title">TƯƠNG QUAN TRỤC TRẠCH VỊ (HÀO 2) & NHÂN VỊ (HÀO 5)</span>
+              </div>
+              <span class="pt-badge-grade ${dt.trach_nhan.grade.toLowerCase()}">${dt.trach_nhan.title}</span>
+            </div>
+            <div class="pt-card-body">
+              <div class="pt-tn-meta-row">
+                <div class="pt-tn-col"><strong>Hào 2 [Trạch Vị]:</strong> Ngũ hành ${dt.trach_nhan.element_h2} (Gian nhà chính, bếp ăn, phòng ngủ)</div>
+                <div class="pt-tn-col"><strong>Hào 5 [Nhân Vị]:</strong> Ngũ hành ${dt.trach_nhan.element_h5} (Gia chủ, người ở, phòng khách)</div>
+              </div>
+              <div class="pt-tn-desc">
+                ${dt.trach_nhan.description}
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Ma Trận 6 Bộ Vị Không Gian Kiến Trúc -->
+          <div class="pt-card pt-spatial-card">
+            <div class="pt-card-header">
+              <div class="pt-ch-left">
+                <span class="pt-ch-icon">📐</span>
+                <span class="pt-ch-title">MA TRẬN 6 BỘ VỊ KHÔNG GIAN NỘI NGOẠI THẤT</span>
+              </div>
+              <span class="pt-badge-info">Từ Mái Nhà (Hào 6) ➔ Nền Móng (Hào 1)</span>
+            </div>
+            <div class="pt-card-body">
+              <div class="pt-spatial-stack">
+                ${(dt.spatial_rows || []).slice().reverse().map(row => `
+                  <div class="pt-spatial-item ${row.is_moving ? 'item-moving' : ''}">
+                    <div class="psi-left">
+                      <div class="psi-pos-badge">Hào ${row.position}</div>
+                      <div class="psi-name">${row.name}</div>
+                      <div class="psi-canchi">${row.hao_can_chi}${row.is_moving ? ' <strong class="tag-dong">ĐỘNG</strong>' : ''}${row.is_tuan_khong ? ' <span class="tag-tk">Tuần Không</span>' : ''}</div>
+                      <div class="psi-meta">${row.luc_thu} lâm ${row.luc_than}</div>
+                    </div>
+                    <div class="psi-right">
+                      <div class="psi-eval ${row.eval_class}">${row.evaluation}</div>
+                      <div class="psi-desc">${row.detail_note || (row.is_moving ? row.defective_meaning : row.prosperous_meaning)}</div>
+                      <div class="psi-scope"><small>Nội thất: ${row.interior} • Ngoại cảnh: ${row.exterior}</small></div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Chẩn Đoán Sát Khí Kiến Trúc Hiện Đại -->
+          <div class="pt-card pt-hazard-card">
+            <div class="pt-card-header">
+              <div class="pt-ch-left">
+                <span class="pt-ch-icon">⚠️</span>
+                <span class="pt-ch-title">CHẨN ĐOÁN SÁT KHÍ KIẾN TRÚC HIỆN ĐẠI</span>
+              </div>
+              <span class="pt-badge-count ${hzList.length > 0 ? 'has-hazards' : ''}">${hzList.length} CẢNH BÁO</span>
+            </div>
+            <div class="pt-card-body">
+              ${hzList.length > 0 ? `
+                <div class="pt-hazard-list">
+                  ${hzList.map((hz, idx) => `
+                    <div class="pt-hazard-item">
+                      <div class="phi-title">${idx + 1}. ${hz.name}</div>
+                      <div class="phi-impact"><strong>Tác động:</strong> ${hz.impact}</div>
+                      <div class="phi-remedy"><strong>Biện pháp hóa giải:</strong> ${hz.remedy}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : `
+                <div class="pt-hazard-clean">
+                  <span class="clean-icon">✨</span>
+                  <div class="clean-text">Trường khí ngôi nhà đạt trạng thái tàng phong tụ khí, không phát hiện xung sát kiến trúc nghiêm trọng (Thương sát, Thiên trảm sát, Hỏa sát, Thang máy xung...).</div>
+                </div>
+              `}
+            </div>
+          </div>
+
+          <!-- 5. Phương Án Hóa Giải & Bố Trí Ngũ Hành -->
+          <div class="pt-card pt-remedy-card">
+            <div class="pt-card-header">
+              <div class="pt-ch-left">
+                <span class="pt-ch-icon">🛡️</span>
+                <span class="pt-ch-title">PHƯƠNG ÁN HÓA GIẢI & BỐ TRÍ NGŨ HÀNH</span>
+              </div>
+              <span class="pt-badge-info">${remList.length} GIẢI PHÁP</span>
+            </div>
+            <div class="pt-card-body">
+              <div class="pt-remedy-list">
+                ${remList.map((rem, idx) => `
+                  <div class="pt-remedy-item">
+                    <div class="pri-top">
+                      <span class="pri-num">Mục ${idx + 1}</span>
+                      <span class="pri-title">${rem.title}</span>
+                      <span class="pri-badge pri-${rem.priority.toLowerCase()}">Ưu tiên: ${rem.priority}</span>
+                    </div>
+                    <div class="pri-mech"><strong>Cơ chế:</strong> ${rem.mechanism}</div>
+                    <div class="pri-action"><strong>Biện pháp thực thi:</strong> ${rem.action}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${!isDuongTrach && at ? `
+          <!-- Phần Âm Trạch -->
+          <div class="pt-card pt-trach-nhan-card">
+            <div class="pt-card-header">
+              <div class="pt-ch-left">
+                <span class="pt-ch-icon">🪦</span>
+                <span class="pt-ch-title">KHẢO SÁT HUYỆT MỘ & ÂM TRẠCH</span>
+              </div>
+              <span class="pt-badge-grade ${at.huyet_class === 'status-good' ? 'cat' : 'hung'}">${at.huyet_trang_thai}</span>
+            </div>
+            <div class="pt-card-body">
+              <div class="pt-spatial-stack">
+                ${(at.spatial_rows || []).slice().reverse().map(row => `
+                  <div class="pt-spatial-item ${row.is_moving ? 'item-moving' : ''}">
+                    <div class="psi-left">
+                      <div class="psi-pos-badge">Hào ${row.position}</div>
+                      <div class="psi-name">${row.name}</div>
+                      <div class="psi-canchi">${row.hao_can_chi}${row.is_moving ? ' <strong class="tag-dong">ĐỘNG</strong>' : ''}${row.is_tuan_khong ? ' <span class="tag-tk">Tuần Không</span>' : ''}</div>
+                      <div class="psi-meta">${row.luc_thu} lâm ${row.luc_than}</div>
+                    </div>
+                    <div class="psi-right">
+                      <div class="psi-scope"><small>${row.spatial_element}</small></div>
+                      <div class="psi-desc">${row.is_moving ? row.defective_meaning : row.prosperous_meaning}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- 6. Nút Sao Chép Báo Cáo Phong Thủy -->
+        <div class="pt-action-bar">
+          <button type="button" class="btn-copy-pt-report" id="btn-copy-pt-report">
+            📋 Sao Chép Báo Cáo Phong Thủy (.md)
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
   // 5. RENDER BẢN QUẺ & PHÂN TÍCH LỤC HÀO NẠP GIÁP TOÀN DIỆN (THEO ĐÚNG TAB)
   // =========================================================================
   function renderResultSection() {
@@ -981,7 +1183,7 @@
       </div>
     `;
 
-    // Nếu là Lục Hào: Liền mạch từ trên xuống (Bảng I -> Bảng II -> Thoán từ -> Toàn văn luận giải)
+    // Nếu là Lục Hào: Liền mạch từ trên xuống (Bảng I -> Bảng II -> Thoán từ -> Lăng Kính Chọn Luận Đoán Sự Vụ HOẶC Khảo Sát Phong Thủy Lục Hào)
     if (isLucHao) {
       return `
         <div class="dh-main-result-card" id="dh-capture-target">
@@ -994,8 +1196,18 @@
           <!-- C. THOÁN TỪ KINH DỊCH CHUẨN XÁC -->
           ${renderThoanTu()}
 
-          <!-- D. BẢN TOÀN VĂN LUẬN GIẢI KINH DỊCH LỤC HÀO -->
-          ${renderReportReader()}
+          <!-- D. BỘ CHỌN LĂNG KÍNH: SỰ VỤ (8 BƯỚC) VS KHẢO SÁT PHONG THỦY (TRẠCH - NHÂN & 6 HÀO VỊ) -->
+          <div class="dh-lens-selector-row">
+            <button type="button" class="dh-lens-btn ${state.activeLens === 'phongthuy' ? '' : 'active'}" id="btn-lens-suvu">
+              📜 Luận Đoán Sự Vụ (8 Bước Dịch Lý)
+            </button>
+            <button type="button" class="dh-lens-btn ${state.activeLens === 'phongthuy' ? 'active' : ''}" id="btn-lens-phongthuy">
+              🏛️ Khảo Sát Phong Thủy Lục Hào (Trạch - Nhân & 6 Hào Vị)
+            </button>
+          </div>
+
+          <!-- E. NỘI DUNG LUẬN GIẢI THEO LĂNG KÍNH ĐÃ CHỌN -->
+          ${state.activeLens === 'phongthuy' ? renderPhongThuySection(curResult) : renderReportReader()}
         </div>
       `;
     }
@@ -2034,6 +2246,55 @@
           }
           render();
           if (global.showToast) global.showToast('📅 Đã cập nhật thời gian chiêm quẻ!');
+        }
+      };
+    }
+
+    // 6. Xử lý chuyển đổi lăng kính Sự Vụ vs Phong Thủy Lục Hào
+    const btnLensSuvu = document.getElementById('btn-lens-suvu');
+    if (btnLensSuvu) {
+      btnLensSuvu.onclick = () => {
+        state.activeLens = 'suvu';
+        render();
+      };
+    }
+
+    const btnLensPhongThuy = document.getElementById('btn-lens-phongthuy');
+    if (btnLensPhongThuy) {
+      btnLensPhongThuy.onclick = () => {
+        state.activeLens = 'phongthuy';
+        render();
+      };
+    }
+
+    // Xử lý chuyển đổi chế độ Phong thủy: Dương trạch vs Âm trạch
+    const btnPtDuongTrach = document.getElementById('btn-pt-mode-duongtrach');
+    if (btnPtDuongTrach) {
+      btnPtDuongTrach.onclick = () => {
+        state.fengShuiMode = 'DUONG_TRACH';
+        render();
+      };
+    }
+
+    const btnPtAmTrach = document.getElementById('btn-pt-mode-amtrach');
+    if (btnPtAmTrach) {
+      btnPtAmTrach.onclick = () => {
+        state.fengShuiMode = 'AM_TRACH';
+        render();
+      };
+    }
+
+    // Nút sao chép báo cáo phong thủy
+    const btnCopyPtReport = document.getElementById('btn-copy-pt-report');
+    if (btnCopyPtReport) {
+      btnCopyPtReport.onclick = () => {
+        const text = state.fengShuiMarkdown || '';
+        if (text) {
+          navigator.clipboard.writeText(text).then(() => {
+            if (global.showToast) global.showToast('📋 Đã sao chép báo cáo Phong Thủy Lục Hào vào Clipboard!');
+          }).catch(() => {
+            if (global.showToast) global.showToast('Không thể sao chép tự động.');
+          });
         }
       };
     }
