@@ -76,10 +76,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.60
-          name: "Neta Light v2.8.60 (Cao Độ Vệ Tinh DEM 24 Sơn, Ghim Lai Long & Cầu Nối Tam Hợp 1-Chạm)"
+          tag_name: v2.8.61
+          name: "Neta Light v2.8.61 (Mở Thủy Khẩu & Lai Long Trực Tiếp Trên Bản Đồ La Kinh, Tia Ngắm Laser & Nút Nổi Minh Đường)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.60
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.61
+            - **Định Vị & Mở Trực Tiếp Thủy Khẩu / Lai Long Trên Bản Đồ La Kinh**:
+              + **Nút Thao Tác Nhanh 1-Chạm**: Bổ sung trực tiếp `[💧 Xem Thủy Khẩu trên Bản Đồ]` (xanh dương) và `[⛰️ Xem Lai Long trên Bản Đồ]` (vàng hổ phách) cho từng cấp Minh Đường trong bảng khảo sát DEM.
+              + **Cơ Chế FlyTo Mượt Mà**: Tự động đóng modal khảo sát và kích hoạt hiệu ứng Leaflet `flyTo` mượt mà đến tọa độ thực địa với mức phóng đại cao (`zoom = 16`).
+              + **Tia Ngắm Laser Thông Minh (Dynamic Sightline)**: Tự động vẽ đường ngắm Laser nét đứt phát sáng nối từ tâm trạch tới vị trí Thủy Khẩu / Lai Long.
+              + **Tự Động Mở Marker Popup**: Tự động bật mở bong bóng thông tin chi tiết của điểm khảo sát (Cao độ thực tế, độ chênh cao $\Delta H$, khoảng cách, phương vị độ số, Sơn hướng và Phân kim).
+              + **Nút Trôi Nổi Công Thái Học `[📋 Bảng Minh Đường]`**: Xuất hiện cố định góc trên bên phải màn hình sau khi xem bản đồ, cho phép người dùng mở lại bảng số liệu bất cứ lúc nào chỉ với 1 chạm mà không cần quét lại.
             - **Nâng Cấp Đột Phá Động Cơ Cao Độ Số Vệ Tinh DEM Google Earth (Open-Meteo)**:
               + **Cơ chế Batching / Chunking 80 điểm**: Khắc phục triệt để lỗi HTTP 400 Bad Request do quá tải URL, tải song song 100% dữ liệu cao độ thực tế từ vệ tinh SRTM / Google Earth cho mọi tọa độ.
               + **Quét trọn vẹn 24 Sơn Hướng (Bước nhảy 15.0°)**: Phủ kín cả 12 Địa Chi, 8 Thiên Can và 4 Tứ Duy Càn - Khôn - Cấn - Tốn, không bỏ sót bất kỳ phương vị nào.
