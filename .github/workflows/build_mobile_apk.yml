@@ -76,10 +76,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.59
-          name: "Neta Light v2.8.59 (Tối Ưu Hiệu Năng Vòng Đời, Chống Hao Pin Ngầm & Bộ Đệm Ảnh LRU)"
+          tag_name: v2.8.60
+          name: "Neta Light v2.8.60 (Cao Độ Vệ Tinh DEM 24 Sơn, Ghim Lai Long & Cầu Nối Tam Hợp 1-Chạm)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.59
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.60
+            - **Nâng Cấp Đột Phá Động Cơ Cao Độ Số Vệ Tinh DEM Google Earth (Open-Meteo)**:
+              + **Cơ chế Batching / Chunking 80 điểm**: Khắc phục triệt để lỗi HTTP 400 Bad Request do quá tải URL, tải song song 100% dữ liệu cao độ thực tế từ vệ tinh SRTM / Google Earth cho mọi tọa độ.
+              + **Quét trọn vẹn 24 Sơn Hướng (Bước nhảy 15.0°)**: Phủ kín cả 12 Địa Chi, 8 Thiên Can và 4 Tứ Duy Càn - Khôn - Cấn - Tốn, không bỏ sót bất kỳ phương vị nào.
+              + **Ghim Marker & Link Vệ Tinh Cho Lai Long**: Cắm ghim Marker biểu tượng Ngọn Núi ⛰️ màu vàng hổ phách trên bản đồ Leaflet định vị đỉnh mạch khí Lai Long, bổ sung liên kết 1-chạm mở trực tiếp trên Google Maps / Google Earth.
+            - **Chuẩn Hóa Thuật Toán & Tích Hợp Tiện Ích Tam Hợp Phái**:
+              + **Mở khóa Tứ Đại Cục Động**: Loại bỏ hoàn toàn hardcode "Ất Thìn", mở rộng kiểm tra Mộ Khố cho toàn bộ 4 Cục lớn (Thủy Cục, Hỏa Cục, Kim Cục, Mộc Cục).
+              + **Đồng bộ chuẩn 12 Song Sơn Dương Công (Mộ - Tuyệt - Thai)**: Triệt tiêu 100% xung đột định Cục giữa các phân hệ la kinh và tam hợp.
+              + **Nhận diện đầy đủ 6 Đại Cục Thủy Pháp Thực Chiến**: Chính Sinh Hướng, Chính Vượng Hướng, Lâm Quan Hướng, Tự Sinh Hướng (Tuyệt xứ phùng sinh), Tự Vượng Hướng (Hóa Tử vi Vượng), Dưỡng Hướng (Quý Cục xuất Tuyệt).
+              + **Dải Gợi Ý Hướng Cát 1-Chạm (Auto-Recommend & Rotate)**: Tự động phân tích Thủy Khẩu và hiển thị các nút chọn hướng cát lợi (Chính Vượng Hướng, Chính Sinh Hướng...); chạm vào nút là La Kinh tự động xoay và đánh giá tức thì.
+              + **Cầu Nối 1-Chạm Giữa Minh Đường Vệ Tinh và Tam Hợp**: Nút chuyển giao toàn bộ thông số cao độ và góc Thủy Khẩu thực địa vào bảng thẩm định Tam Hợp chỉ bằng 1 thao tác.
             - **Tối Ưu Hiệu Năng Vòng Đời & Triệt Tiêu Hao Pin Ngầm (Battery Leak Prevention)**:
               + **Cơ chế Thu hồi Cảm biến La Bàn Phần Cứng (Sensor Auto-Teardown & Resume)**: Tự động ngắt hoàn toàn kết nối phần cứng và gỡ bỏ event listeners khi rời khỏi La Kinh hoặc khi ứng dụng chuyển trạng thái ẩn (`document.hidden`); tự phục hồi kết nối mượt mà khi quay lại.
               + **Bộ Thu Hồi Timer Tập Trung**: Tự động hủy interval (`breathTimer`) chu kỳ nhịp thở 4-7-8 khi chuyển khỏi module Kỳ Môn hoặc khi khóa màn hình.
