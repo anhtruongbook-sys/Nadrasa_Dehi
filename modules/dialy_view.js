@@ -21,8 +21,65 @@
     curHkdqFilterKhi: 'all',
     demCoords: { lat: 20.5242, lng: 106.1099 },
     demResult: null,
-    isDemLoading: false
+    isDemLoading: false,
+    inputGpsText: '',
+    profileViewTab: 'longitudinal' // 'longitudinal' | 'transverse' | 'radar'
   };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function getLaKinhCoordsAndRotation() {
+    let lat = 20.5242;
+    let lng = 106.1099;
+    let rot = state.curHuongDeg;
+
+    if (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function') {
+      try {
+        const lkState = global.NetaLaKinhView.getState();
+        if (typeof lkState.rotation === 'number') rot = lkState.rotation;
+        if (lkState.userLocation && typeof lkState.userLocation[0] === 'number') {
+          lat = lkState.userLocation[0];
+          lng = lkState.userLocation[1];
+        } else if (lkState.centerCoords && typeof lkState.centerCoords[0] === 'number') {
+          lat = lkState.centerCoords[0];
+          lng = lkState.centerCoords[1];
+        }
+      } catch (e) {
+        console.warn('getLaKinhCoords warning:', e);
+      }
+    }
+    if ((!lat || !lng) && global.mapInstance && typeof global.mapInstance.getCenter === 'function') {
+      try {
+        const c = global.mapInstance.getCenter();
+        if (c && typeof c.lat === 'number') {
+          lat = c.lat;
+          lng = c.lng;
+        }
+      } catch (e) {}
+    }
+    return { lat, lng, rotation: rot };
+  }
+
+  function getEffectiveCoords() {
+    if (state.inputGpsText && state.inputGpsText.trim()) {
+      if (global.TamLongEngine && typeof global.TamLongEngine.parseGpsOrMapsUrl === 'function') {
+        const parsed = global.TamLongEngine.parseGpsOrMapsUrl(state.inputGpsText);
+        if (parsed) {
+          return { lat: parsed.lat, lng: parsed.lng, isFromInput: true };
+        }
+      }
+    }
+    const lk = getLaKinhCoordsAndRotation();
+    return { lat: lk.lat, lng: lk.lng, isFromInput: false };
+  }
 
   function normalizeDeg(deg) {
     return ((deg % 360) + 360) % 360;
@@ -197,6 +254,12 @@
     const tkDeg = normalizeDeg(state.curThuyKhauDeg);
     const toaDeg = normalizeDeg(deg + 180.0);
 
+    // Xác định tọa độ thực tế: nếu người dùng nhập thì ưu tiên, nếu không thì lấy từ La Kinh
+    const effCoords = getEffectiveCoords();
+    state.demCoords.lat = effCoords.lat;
+    state.demCoords.lng = effCoords.lng;
+    const lkCoords = getLaKinhCoordsAndRotation();
+
     // Tính toán Tầm Long Điểm Huyệt & Loan Đầu Vi Địa Mạo Số
     const tamLongData = global.TamLongEngine ? global.TamLongEngine.analyzeLoanDau({
       lat: state.demCoords.lat,
@@ -308,7 +371,7 @@
         <!-- ================= NỘI DUNG CHÍNH (THEO TAB) ================= -->
         <div class="dialy-content-body">
           ${state.curActiveTab === 'tamlong'
-            ? renderTamLongTabHtml({ deg, toaDeg, huongSon, toaSon, tamLongData, thuyPhap, pk120 })
+            ? renderTamLongTabHtml({ deg, toaDeg, huongSon, toaSon, tamLongData, thuyPhap, pk120, effCoords, lkCoords })
             : (state.curActiveTab === 'tamhop'
                 ? renderTamHopTabHtml({ deg, tkDeg, toaDeg, huongSon, toaSon, thuyPhap, pk120, thauDia72, xuyenSon60, xuyenSon72, tamSat, thaiTue, hoangTuyen, batSat, tamCat, tu28, tamLongData })
                 : renderHkdqTabHtml({ deg, hkdq, tamLongData })
@@ -335,28 +398,284 @@
     }
   }
 
+  // --- ĐỒ GIẢI TRỰC QUAN HÓA MẶT CẮT TRẮC DIỆN & TỨ TƯỢNG (SVG NATIVE) ---
+  function renderLongitudinalSvg(profile, centerElev, toaDeg, huongDeg) {
+    if (!profile || profile.length === 0) {
+      return `<div style="text-align:center; padding: 18px; font-size: 0.70rem; color: #94a3b8;">Chưa có dữ liệu trắc diện dọc</div>`;
+    }
+    const W = 520;
+    const H = 185;
+    const padL = 42;
+    const padR = 24;
+    const padT = 24;
+    const padB = 32;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    const minX = -600;
+    const maxX = 600;
+    const elevs = profile.map(p => p.elev);
+    let minE = Math.min(...elevs, centerElev);
+    let maxE = Math.max(...elevs, centerElev);
+    const spanE = Math.max(maxE - minE, 8.0);
+    const yMin = minE - spanE * 0.15;
+    const yMax = maxE + spanE * 0.25;
+
+    const mapX = (d) => padL + ((d - minX) / (maxX - minX)) * plotW;
+    const mapY = (e) => padT + plotH - ((e - yMin) / (yMax - yMin)) * plotH;
+
+    const pts = [...profile].sort((a, b) => a.distM - b.distM);
+
+    let polyPoints = `${mapX(minX)},${padT + plotH}`;
+    pts.forEach(p => {
+      polyPoints += ` ${mapX(p.distM).toFixed(1)},${mapY(p.elev).toFixed(1)}`;
+    });
+    polyPoints += ` ${mapX(maxX)},${padT + plotH}`;
+
+    let linePath = `M ${mapX(pts[0].distM).toFixed(1)} ${mapY(pts[0].elev).toFixed(1)}`;
+    for (let i = 1; i < pts.length; i++) {
+      linePath += ` L ${mapX(pts[i].distM).toFixed(1)} ${mapY(pts[i].elev).toFixed(1)}`;
+    }
+
+    const centerX = mapX(0);
+
+    return `
+      <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="longGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0284c7" stop-opacity="0.45" />
+            <stop offset="100%" stop-color="#0f172a" stop-opacity="0.1" />
+          </linearGradient>
+        </defs>
+
+        <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+        
+        <polygon points="${polyPoints}" fill="url(#longGrad)" />
+        <path d="${linePath}" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linejoin="round" />
+
+        <line x1="${centerX}" y1="${padT}" x2="${centerX}" y2="${padT + plotH}" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,3" opacity="0.7" />
+
+        ${pts.map(p => {
+          const px = mapX(p.distM);
+          const py = mapY(p.elev);
+          if (p.isCenter) {
+            return `
+              <circle cx="${px}" cy="${py}" r="5.5" fill="#f59e0b" stroke="#ffffff" stroke-width="1.8" />
+              <text x="${px}" y="${py - 9}" fill="#facc15" font-size="8.5" font-weight="900" text-anchor="middle">📍 Huyệt (${p.elev.toFixed(1)}m)</text>
+            `;
+          }
+          return `
+            <circle cx="${px}" cy="${py}" r="3" fill="#38bdf8" stroke="#ffffff" stroke-width="1" />
+            <text x="${px}" y="${py - 5}" fill="#cbd5e1" font-size="7" font-weight="700" text-anchor="middle">${p.elev.toFixed(1)}m</text>
+          `;
+        }).join('')}
+
+        <text x="${padL}" y="${padT + plotH + 14}" fill="#f87171" font-size="7.5" font-weight="800" text-anchor="start">⛰️ Hậu Huyền Vũ (${toaDeg.toFixed(0)}°)</text>
+        <text x="${centerX}" y="${padT + plotH + 14}" fill="#facc15" font-size="8" font-weight="800" text-anchor="middle">0m (Huyệt)</text>
+        <text x="${W - padR}" y="${padT + plotH + 14}" fill="#38bdf8" font-size="7.5" font-weight="800" text-anchor="end">💧 Chu Tước (${huongDeg.toFixed(0)}°)</text>
+
+        <text x="${padL - 4}" y="${padT + 4}" fill="#94a3b8" font-size="7" text-anchor="end">${maxE.toFixed(1)}m</text>
+        <text x="${padL - 4}" y="${padT + plotH}" fill="#94a3b8" font-size="7" text-anchor="end">${minE.toFixed(1)}m</text>
+      </svg>
+    `;
+  }
+
+  function renderTransverseSvg(profile, centerElev, huongDeg) {
+    if (!profile || profile.length === 0) {
+      return `<div style="text-align:center; padding: 18px; font-size: 0.70rem; color: #94a3b8;">Chưa có dữ liệu trắc diện ngang</div>`;
+    }
+    const W = 520;
+    const H = 185;
+    const padL = 42;
+    const padR = 24;
+    const padT = 24;
+    const padB = 32;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    const minX = -600;
+    const maxX = 600;
+    const elevs = profile.map(p => p.elev);
+    let minE = Math.min(...elevs, centerElev);
+    let maxE = Math.max(...elevs, centerElev);
+    const spanE = Math.max(maxE - minE, 8.0);
+    const yMin = minE - spanE * 0.15;
+    const yMax = maxE + spanE * 0.25;
+
+    const mapX = (d) => padL + ((d - minX) / (maxX - minX)) * plotW;
+    const mapY = (e) => padT + plotH - ((e - yMin) / (yMax - yMin)) * plotH;
+
+    const pts = [...profile].sort((a, b) => a.distM - b.distM);
+
+    let polyPoints = `${mapX(minX)},${padT + plotH}`;
+    pts.forEach(p => {
+      polyPoints += ` ${mapX(p.distM).toFixed(1)},${mapY(p.elev).toFixed(1)}`;
+    });
+    polyPoints += ` ${mapX(maxX)},${padT + plotH}`;
+
+    let linePath = `M ${mapX(pts[0].distM).toFixed(1)} ${mapY(pts[0].elev).toFixed(1)}`;
+    for (let i = 1; i < pts.length; i++) {
+      linePath += ` L ${mapX(pts[i].distM).toFixed(1)} ${mapY(pts[i].elev).toFixed(1)}`;
+    }
+
+    const centerX = mapX(0);
+
+    return `
+      <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="transGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#10b981" stop-opacity="0.4" />
+            <stop offset="100%" stop-color="#0f172a" stop-opacity="0.1" />
+          </linearGradient>
+        </defs>
+
+        <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+        
+        <polygon points="${polyPoints}" fill="url(#transGrad)" />
+        <path d="${linePath}" fill="none" stroke="#4ade80" stroke-width="2.2" stroke-linejoin="round" />
+
+        <line x1="${centerX}" y1="${padT}" x2="${centerX}" y2="${padT + plotH}" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,3" opacity="0.7" />
+
+        ${pts.map(p => {
+          const px = mapX(p.distM);
+          const py = mapY(p.elev);
+          if (p.isCenter) {
+            return `
+              <circle cx="${px}" cy="${py}" r="5.5" fill="#f59e0b" stroke="#ffffff" stroke-width="1.8" />
+              <text x="${px}" y="${py - 9}" fill="#facc15" font-size="8.5" font-weight="900" text-anchor="middle">📍 Huyệt (${p.elev.toFixed(1)}m)</text>
+            `;
+          }
+          return `
+            <circle cx="${px}" cy="${py}" r="3" fill="#4ade80" stroke="#ffffff" stroke-width="1" />
+            <text x="${px}" y="${py - 5}" fill="#cbd5e1" font-size="7" font-weight="700" text-anchor="middle">${p.elev.toFixed(1)}m</text>
+          `;
+        }).join('')}
+
+        <text x="${padL}" y="${padT + plotH + 14}" fill="#4ade80" font-size="7.5" font-weight="800" text-anchor="start">🐉 Tả Thanh Long (-600m)</text>
+        <text x="${centerX}" y="${padT + plotH + 14}" fill="#facc15" font-size="8" font-weight="800" text-anchor="middle">0m (Huyệt)</text>
+        <text x="${W - padR}" y="${padT + plotH + 14}" fill="#fbbf24" font-size="7.5" font-weight="800" text-anchor="end">🐅 Hữu Bạch Hổ (+600m)</text>
+
+        <text x="${padL - 4}" y="${padT + 4}" fill="#94a3b8" font-size="7" text-anchor="end">${maxE.toFixed(1)}m</text>
+        <text x="${padL - 4}" y="${padT + plotH}" fill="#94a3b8" font-size="7" text-anchor="end">${minE.toFixed(1)}m</text>
+      </svg>
+    `;
+  }
+
+  function renderRadarSvg(radarDirs, centerElev) {
+    if (!radarDirs || radarDirs.length === 0) {
+      return `<div style="text-align:center; padding: 18px; font-size: 0.70rem; color: #94a3b8;">Chưa có dữ liệu radar Tứ Tượng</div>`;
+    }
+    const W = 320;
+    const H = 240;
+    const cx = W / 2;
+    const cy = 120;
+    const maxR = 80;
+
+    const deltas = radarDirs.map(d => Math.abs(d.deltaElev));
+    const maxDelta = Math.max(...deltas, 4.0);
+
+    const pts = radarDirs.map(d => {
+      const rad = ((d.bearing - 90.0) * Math.PI) / 180.0;
+      const normVal = Math.max(Math.min((d.deltaElev + maxDelta) / (2 * maxDelta), 1.0), 0.15);
+      const r = normVal * maxR;
+      return {
+        x: cx + r * Math.cos(rad),
+        y: cy + r * Math.sin(rad),
+        labelX: cx + (maxR + 16) * Math.cos(rad),
+        labelY: cy + (maxR + 16) * Math.sin(rad),
+        ...d
+      };
+    });
+
+    const polyStr = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
+    return `
+      <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="radarGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.2" />
+            <stop offset="100%" stop-color="#10b981" stop-opacity="0.45" />
+          </radialGradient>
+        </defs>
+
+        <circle cx="${cx}" cy="${cy}" r="${maxR * 0.25}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+        <circle cx="${cx}" cy="${cy}" r="${maxR * 0.50}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+        <circle cx="${cx}" cy="${cy}" r="${maxR * 0.75}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+        <circle cx="${cx}" cy="${cy}" r="${maxR}" fill="none" stroke="rgba(245,176,65,0.3)" stroke-width="1.2" />
+
+        ${pts.map(p => {
+          const rad = ((p.bearing - 90.0) * Math.PI) / 180.0;
+          const ax = cx + maxR * Math.cos(rad);
+          const ay = cy + maxR * Math.sin(rad);
+          return `<line x1="${cx}" y1="${cy}" x2="${ax}" y2="${ay}" stroke="rgba(255,255,255,0.15)" stroke-width="1" />`;
+        }).join('')}
+
+        <polygon points="${polyStr}" fill="url(#radarGrad)" stroke="#38bdf8" stroke-width="1.8" />
+        <circle cx="${cx}" cy="${cy}" r="3" fill="#f59e0b" />
+
+        ${pts.map(p => `
+          <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.8" fill="#38bdf8" stroke="#ffffff" stroke-width="1" />
+          <text x="${p.labelX.toFixed(1)}" y="${p.labelY.toFixed(1) + 3}" fill="#cbd5e1" font-size="7" font-weight="700" text-anchor="middle">
+            ${p.icon}${p.name}
+          </text>
+        `).join('')}
+      </svg>
+    `;
+  }
+
   // Render HTML cho Tab: Tầm Long Điểm Huyệt & Tứ Tượng Loan Đầu
   function renderTamLongTabHtml(data) {
-    const { deg, toaDeg, huongSon, toaSon, tamLongData, thuyPhap, pk120 } = data;
+    const { deg, toaDeg, huongSon, toaSon, tamLongData, thuyPhap, pk120, effCoords, lkCoords } = data;
     if (!tamLongData) {
       return `<div style="text-align: center; color: #94a3b8; padding: 20px;">Đang tải dữ liệu Tầm Long Điểm Huyệt...</div>`;
     }
 
-    const { centerElev, tuTuong, weiPercent, tpi, hinhTheHuyet, theNuoc, laiLong, thuyKhau, score, xepHang, xepHangClass, luopan } = tamLongData;
+    const { centerElev, tuTuong, weiPercent, tpi, hinhTheHuyet, theNuoc, laiLong, thuyKhau, score, xepHang, xepHangClass, luopan, profiles, radar8Dirs } = tamLongData;
+    const lkLat = lkCoords ? lkCoords.lat : 20.5242;
+    const lkLng = lkCoords ? lkCoords.lng : 106.1099;
+    const isFromCustom = effCoords && effCoords.isFromInput;
 
     return `
-      <!-- 1. ĐỊA MẠO SỐ & QUÉT DEM THỰC ĐỊA -->
+      <!-- 1. ĐỊA MẠO SỐ & TỌA ĐỘ GPS KHẢO SÁT -->
       <div class="dialy-card-section">
         <div class="dialy-card-title">
-          <span>🏔️ 1. Địa Mạo Số &amp; Cao Độ DEM Thực Địa</span>
-          <button type="button" class="dialy-btn-sm dialy-btn-primary" id="dialy-btn-scan-dem" ${state.isDemLoading ? 'disabled' : ''} style="font-size: 0.65rem; padding: 2px 8px;">
-            ${state.isDemLoading ? '⏳ Đang Quét DEM...' : '🔄 Quét DEM Vệ Tinh'}
-          </button>
+          <span>🏔️ 1. Khảo Sát Tọa Độ &amp; Địa Hình Số (DEM)</span>
+          <span class="dialy-badge ${isFromCustom ? 'blue' : 'gold'}" style="font-size: 0.65rem;">
+            ${isFromCustom ? '📍 Tùy Chỉnh' : '🧭 Từ La Kinh'}
+          </span>
+        </div>
+
+        <!-- Ô NHẬP LINK GOOGLE MAPS HOẶC TỌA ĐỘ GPS -->
+        <div class="dialy-gps-input-wrap">
+          <div class="dialy-gps-input-row">
+            <input type="text" id="dialy-gps-input" class="dialy-gps-input"
+              placeholder="🧭 Đang dùng tọa độ La Kinh (${lkLat.toFixed(5)}°, ${lkLng.toFixed(5)}°)..."
+              value="${escapeHtml(state.inputGpsText || '')}"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            ${state.inputGpsText ? `
+              <button type="button" id="dialy-btn-gps-clear" class="dialy-gps-clear-btn" title="Xóa để quay về tọa độ La Kinh">✕</button>
+            ` : ''}
+          </div>
+
+          <div class="dialy-gps-btn-group">
+            <button type="button" id="dialy-btn-get-lakinh" class="dialy-gps-act-btn" title="Lấy tọa độ tâm bản đồ và góc xoay từ La Kinh">
+              🧭 Lấy từ La Kinh
+            </button>
+            <button type="button" id="dialy-btn-get-gps" class="dialy-gps-act-btn" title="Bắt tọa độ vệ tinh GPS máy">
+              📍 GPS Thực địa
+            </button>
+            <button type="button" id="dialy-btn-scan-dem" class="dialy-gps-act-btn primary" ${state.isDemLoading ? 'disabled' : ''} title="Tải dữ liệu cao độ thực tế và phân tích địa mạo">
+              ${state.isDemLoading ? '⏳ Đang Quét...' : '⚡ Phân Tích DEM'}
+            </button>
+          </div>
         </div>
 
         <div class="dialy-data-row">
-          <span class="dialy-label">Tọa Độ Trắc Địa:</span>
+          <span class="dialy-label">Tọa Độ Đang Áp Dụng:</span>
           <strong class="dialy-value">${state.demCoords.lat.toFixed(5)}°N, ${state.demCoords.lng.toFixed(5)}°E</strong>
+          <span style="font-size: 0.65rem; color: #94a3b8; margin-left: 4px;">(${isFromCustom ? 'Từ ô nhập' : 'Tự động từ La Kinh'})</span>
         </div>
 
         <div class="dialy-data-row">
@@ -380,6 +699,46 @@
               ${thuyKhau ? `${thuyKhau.sonThienBan || 'Trũng'} (${thuyKhau.elevation.toFixed(1)}m • ${thuyKhau.deltaElev.toFixed(1)}m)` : 'Đang khảo sát'}
             </div>
             <div style="font-size: 0.60rem; color: #94a3b8;">Cự ly: ${thuyKhau ? thuyKhau.distanceM : 0}m • Tụ thủy xuất khẩu</div>
+          </div>
+        </div>
+
+        <!-- KHUNG ĐỒ GIẢI TRỰC QUAN (PROFILES & RADAR) -->
+        <div class="dialy-profile-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.72rem; font-weight: 800; color: #f5b041;">
+              📐 Đồ Giải Trắc Diện &amp; Tứ Tượng Thực Địa
+            </span>
+            <span style="font-size: 0.62rem; color: #94a3b8;">
+              Phạm vi ±600m
+            </span>
+          </div>
+
+          <div class="dialy-profile-tab-bar">
+            <button type="button" class="dialy-profile-tab-btn ${state.profileViewTab === 'longitudinal' ? 'active' : ''}" data-tab="longitudinal" title="Trắc diện dọc (Hậu Huyền Vũ - Tiền Chu Tước)">
+              📈 Trắc Dọc
+            </button>
+            <button type="button" class="dialy-profile-tab-btn ${state.profileViewTab === 'transverse' ? 'active' : ''}" data-tab="transverse" title="Trắc diện ngang (Tả Thanh Long - Hữu Bạch Hổ)">
+              📊 Trắc Ngang
+            </button>
+            <button type="button" class="dialy-profile-tab-btn ${state.profileViewTab === 'radar' ? 'active' : ''}" data-tab="radar" title="Lược đồ Radar che chắn Tứ Tượng 8 hướng">
+              🕸️ Radar Tứ Tượng
+            </button>
+          </div>
+
+          <div class="dialy-svg-wrap">
+            ${state.profileViewTab === 'longitudinal'
+              ? renderLongitudinalSvg(profiles ? profiles.longitudinal : null, centerElev, toaDeg, deg)
+              : (state.profileViewTab === 'transverse'
+                ? renderTransverseSvg(profiles ? profiles.transverse : null, centerElev, deg)
+                : renderRadarSvg(radar8Dirs, centerElev))}
+          </div>
+
+          <div style="font-size: 0.62rem; color: #94a3b8; line-height: 1.35; padding: 2px 4px;">
+            ${state.profileViewTab === 'longitudinal'
+              ? '<b>Trắc diện dọc</b>: Khảo sát sống long từ Hậu Tọa Sơn Huyền Vũ qua Chân Huyệt tụ khí xuống Tiền Chu Tước Minh Đường.'
+              : (state.profileViewTab === 'transverse'
+                ? '<b>Trắc diện ngang</b>: Khảo sát độ ôm bọc và cân đối giữa cánh tay Tả Thanh Long (bên trái) và Hữu Bạch Hổ (bên phải).'
+                : '<b>Lược đồ Radar</b>: Đo lường độ nâng cao che chở gió hại 8 phương (WEI) và góc mở đón vượng khí quang minh.')}
           </div>
         </div>
       </div>
@@ -950,6 +1309,81 @@
       };
     }
 
+    // --- KHẢO SÁT GPS & BẢN ĐỒ VỆ TINH ---
+    const inGps = document.getElementById('dialy-gps-input');
+    if (inGps) {
+      inGps.oninput = (e) => {
+        state.inputGpsText = e.target.value;
+        const clearBtn = document.getElementById('dialy-btn-gps-clear');
+        if (clearBtn) clearBtn.style.display = state.inputGpsText ? 'block' : 'none';
+      };
+      inGps.onchange = (e) => {
+        state.inputGpsText = e.target.value;
+        render();
+      };
+    }
+
+    const btnGpsClear = document.getElementById('dialy-btn-gps-clear');
+    if (btnGpsClear) {
+      btnGpsClear.onclick = () => {
+        state.inputGpsText = '';
+        const lk = getLaKinhCoordsAndRotation();
+        state.demCoords = { lat: lk.lat, lng: lk.lng };
+        if (typeof showToast === 'function') showToast('🧭 Đã quay về dùng tọa độ từ La Kinh');
+        render();
+      };
+    }
+
+    const btnGetLk = document.getElementById('dialy-btn-get-lakinh');
+    if (btnGetLk) {
+      btnGetLk.onclick = () => {
+        state.inputGpsText = '';
+        const lk = getLaKinhCoordsAndRotation();
+        state.curHuongDeg = lk.rotation;
+        state.demCoords = { lat: lk.lat, lng: lk.lng };
+        if (typeof showToast === 'function') {
+          showToast(`🧭 Đã lấy tọa độ La Kinh (${lk.lat.toFixed(5)}°, ${lk.lng.toFixed(5)}°) & hướng ${lk.rotation.toFixed(1)}°`);
+        }
+        render();
+      };
+    }
+
+    const btnGetGps = document.getElementById('dialy-btn-get-gps');
+    if (btnGetGps) {
+      btnGetGps.onclick = () => {
+        if (!navigator.geolocation) {
+          if (typeof showToast === 'function') showToast('⚠️ Thiết bị không hỗ trợ cảm biến GPS');
+          return;
+        }
+        if (typeof showToast === 'function') showToast('🛰️ Đang kết nối vệ tinh GPS...');
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = +pos.coords.latitude.toFixed(6);
+            const lng = +pos.coords.longitude.toFixed(6);
+            state.inputGpsText = `${lat}, ${lng}`;
+            state.demCoords = { lat, lng };
+            if (typeof showToast === 'function') showToast(`📍 Đã định vị GPS: ${lat}°, ${lng}°`);
+            render();
+          },
+          (err) => {
+            console.warn('GPS error:', err);
+            if (typeof showToast === 'function') showToast(`⚠️ Không lấy được GPS: ${err.message || 'Lỗi cảm biến'}`);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      };
+    }
+
+    container.querySelectorAll('.dialy-profile-tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        const tab = btn.dataset.tab;
+        if (tab && state.profileViewTab !== tab) {
+          state.profileViewTab = tab;
+          render();
+        }
+      };
+    });
+
     // Quét DEM Thực Địa (Open-Meteo DEM API)
     const btnScanDem = document.getElementById('dialy-btn-scan-dem');
     if (btnScanDem) {
@@ -957,6 +1391,10 @@
         state.isDemLoading = true;
         render();
         try {
+          const eff = getEffectiveCoords();
+          state.demCoords.lat = eff.lat;
+          state.demCoords.lng = eff.lng;
+
           if (global.TamLongEngine && typeof global.TamLongEngine.scanAndAnalyze === 'function') {
             const res = await global.TamLongEngine.scanAndAnalyze(state.demCoords.lat, state.demCoords.lng, state.curHuongDeg);
             state.demResult = {

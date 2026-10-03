@@ -578,6 +578,70 @@
         xepHangClass = "warn";
       }
 
+      // 11. Xây dựng dữ liệu Đồ Giải Mặt Cắt Trắc Diện (Longitudinal & Transverse Profiles)
+      const elevDaiSitting = this._getElevationAtBearing(samplesByTier.dai, toaDeg, +(centerElev + 6.0).toFixed(1));
+      const elevTrungSitting = this._getElevationAtBearing(samplesByTier.trung, toaDeg, +(centerElev + 3.0).toFixed(1));
+      const elevTieuSitting = this._getElevationAtBearing(samplesByTier.tieu, toaDeg, +(centerElev + 0.8).toFixed(1));
+
+      const elevTieuFacing = this._getElevationAtBearing(samplesByTier.tieu, headingDeg, +(centerElev - 0.5).toFixed(1));
+      const elevTrungFacing = this._getElevationAtBearing(samplesByTier.trung, headingDeg, +(centerElev - 2.0).toFixed(1));
+      const elevDaiFacing = this._getElevationAtBearing(samplesByTier.dai, headingDeg, +(centerElev - 4.5).toFixed(1));
+
+      const longitudinalProfile = [
+        { distM: -600, elev: elevDaiSitting, label: 'Đại Cục Tọa Sơn', code: 'dai_sitting', isCenter: false },
+        { distM: -180, elev: elevTrungSitting, label: 'Trung Cục Huyền Vũ', code: 'trung_sitting', isCenter: false },
+        { distM: -30, elev: elevTieuSitting, label: 'Hậu Thềm', code: 'tieu_sitting', isCenter: false },
+        { distM: 0, elev: centerElev, label: 'Chân Huyệt (Tâm)', code: 'center', isCenter: true },
+        { distM: 30, elev: elevTieuFacing, label: 'Tiền Thềm', code: 'tieu_facing', isCenter: false },
+        { distM: 180, elev: elevTrungFacing, label: 'Minh Đường', code: 'trung_facing', isCenter: false },
+        { distM: 600, elev: elevDaiFacing, label: 'Đại Minh Đường', code: 'dai_facing', isCenter: false }
+      ];
+
+      // Mặt cắt trắc diện ngang (Tả Thanh Long -> Tâm Huyệt -> Hữu Bạch Hổ)
+      const elevDaiLeft = this._getElevationAtBearing(samplesByTier.dai, leftDeg, +(centerElev + 4.5).toFixed(1));
+      const elevTrungLeft = this._getElevationAtBearing(samplesByTier.trung, leftDeg, +(centerElev + 2.2).toFixed(1));
+      const elevTieuLeft = this._getElevationAtBearing(samplesByTier.tieu, leftDeg, +(centerElev + 0.6).toFixed(1));
+
+      const elevTieuRight = this._getElevationAtBearing(samplesByTier.tieu, rightDeg, +(centerElev + 0.3).toFixed(1));
+      const elevTrungRight = this._getElevationAtBearing(samplesByTier.trung, rightDeg, +(centerElev + 1.2).toFixed(1));
+      const elevDaiRight = this._getElevationAtBearing(samplesByTier.dai, rightDeg, +(centerElev + 2.8).toFixed(1));
+
+      const transverseProfile = [
+        { distM: -600, elev: elevDaiLeft, label: 'Tả Sa Ngoại', code: 'dai_left', isCenter: false },
+        { distM: -180, elev: elevTrungLeft, label: 'Tả Thanh Long', code: 'trung_left', isCenter: false },
+        { distM: -30, elev: elevTieuLeft, label: 'Tả Giáp', code: 'tieu_left', isCenter: false },
+        { distM: 0, elev: centerElev, label: 'Chân Huyệt (Tâm)', code: 'center', isCenter: true },
+        { distM: 30, elev: elevTieuRight, label: 'Hữu Giáp', code: 'tieu_right', isCenter: false },
+        { distM: 180, elev: elevTrungRight, label: 'Hữu Bạch Hổ', code: 'trung_right', isCenter: false },
+        { distM: 600, elev: elevDaiRight, label: 'Hữu Sa Ngoại', code: 'dai_right', isCenter: false }
+      ];
+
+      // Lược đồ Radar Tứ Tượng 8 Hướng (WEI Radar)
+      const dirs8 = [
+        { name: 'Bắc', brg: 0.0, icon: '⬆️' },
+        { name: 'Đông Bắc', brg: 45.0, icon: '↗️' },
+        { name: 'Đông', brg: 90.0, icon: '➡️' },
+        { name: 'Đông Nam', brg: 135.0, icon: '↘️' },
+        { name: 'Nam', brg: 180.0, icon: '⬇️' },
+        { name: 'Tây Nam', brg: 225.0, icon: '↙️' },
+        { name: 'Tây', brg: 270.0, icon: '⬅️' },
+        { name: 'Tây Bắc', brg: 315.0, icon: '↖️' }
+      ];
+
+      const radar8Dirs = dirs8.map(d => {
+        const e = this._getElevationAtBearing(samplesByTier.trung, d.brg, centerElev);
+        const delta = +(e - centerElev).toFixed(1);
+        const horizonAngle = +(Math.atan2(delta, 180.0) * (180.0 / Math.PI)).toFixed(1);
+        return {
+          name: d.name,
+          bearing: d.brg,
+          icon: d.icon,
+          elevation: e,
+          deltaElev: delta,
+          horizonAngle
+        };
+      });
+
       return {
         coords: { lat, lng },
         headingDeg,
@@ -612,8 +676,59 @@
             thauDia: tdSitting
           },
           steering
-        }
+        },
+        profiles: {
+          longitudinal: longitudinalProfile,
+          transverse: transverseProfile
+        },
+        radar8Dirs
       };
+    }
+
+    /**
+     * Bóc tách vĩ độ, kinh độ từ chuỗi nhập (URL Google Maps hoặc Tọa độ số)
+     */
+    static parseGpsOrMapsUrl(input) {
+      if (!input || typeof input !== 'string') return null;
+      input = input.trim();
+      if (!input) return null;
+
+      // 1. Google maps URL matching
+      const urlCoordRegex = /[@?&/](?:place\/|loc:|q=|ll=|center=)?(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/i;
+      const matchUrl = input.match(urlCoordRegex);
+      if (matchUrl) {
+        const lat = parseFloat(matchUrl[1]);
+        const lng = parseFloat(matchUrl[2]);
+        if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+          return { lat: +lat.toFixed(6), lng: +lng.toFixed(6), source: 'url' };
+        }
+      }
+
+      // 2. Raw decimal coordinates: "12.569941, 109.213615" or "12.569941 109.213615"
+      const rawCoordRegex = /^(-?\d{1,2}(?:\.\d+)?)[,\s;]+(-?\d{1,3}(?:\.\d+)?)$/;
+      const matchRaw = input.match(rawCoordRegex);
+      if (matchRaw) {
+        const lat = parseFloat(matchRaw[1]);
+        const lng = parseFloat(matchRaw[2]);
+        if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+          return { lat: +lat.toFixed(6), lng: +lng.toFixed(6), source: 'raw' };
+        }
+      }
+
+      // 3. DMS (Degrees Minutes Seconds) or with N/S/E/W: e.g. "12°34'11.8"N 109°12'49.0"E"
+      const dmsRegex = /(\d+)[°\s]+(\d+)['\s]+([\d.]+)?["\s]*([NS])[,\s]+(\d+)[°\s]+(\d+)['\s]+([\d.]+)?["\s]*([EW])/i;
+      const matchDms = input.match(dmsRegex);
+      if (matchDms) {
+        let lat = parseInt(matchDms[1], 10) + parseInt(matchDms[2], 10)/60 + (parseFloat(matchDms[3])||0)/3600;
+        if (matchDms[4].toUpperCase() === 'S') lat = -lat;
+        let lng = parseInt(matchDms[5], 10) + parseInt(matchDms[6], 10)/60 + (parseFloat(matchDms[7])||0)/3600;
+        if (matchDms[8].toUpperCase() === 'W') lng = -lng;
+        if (!isNaN(lat) && !isNaN(lng)) {
+          return { lat: +lat.toFixed(6), lng: +lng.toFixed(6), source: 'dms' };
+        }
+      }
+
+      return null;
     }
 
     /**

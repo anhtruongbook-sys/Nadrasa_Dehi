@@ -1069,4 +1069,183 @@ body.theme-light .hao-role-box .role-box-desc {
   font-weight: 600 !important;
 }
 
+/* ============================================================
+   GPS / GOOGLE MAPS INPUT BAR & TERRAIN VISUALIZATION
+   ============================================================ */
+.dialy-gps-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0 8px 0;
+}
+
+.dialy-gps-input-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.dialy-gps-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(245, 176, 65, 0.35);
+  border-radius: 8px;
+  padding: 8px 32px 8px 10px;
+  font-size: 0.74rem;
+  color: #f1f5f9;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dialy-gps-input:focus {
+  border-color: #f5b041;
+  box-shadow: 0 0 0 2px rgba(245, 176, 65, 0.25);
+}
+
+.dialy-gps-clear-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+}
+
+.dialy-gps-btn-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
+  gap: 5px;
+}
+
+.dialy-gps-act-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 6px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  transition: all 0.2s;
+}
+
+.dialy-gps-act-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.dialy-gps-act-btn.primary {
+  background: linear-gradient(135deg, #b45309, #d97706);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.35);
+}
+
+/* Visualization Card */
+.dialy-profile-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 10px;
+  padding: 8px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialy-profile-tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+}
+
+.dialy-profile-tab-btn {
+  flex: 1;
+  padding: 5px 4px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-size: 0.66rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.dialy-profile-tab-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+}
+
+.dialy-svg-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 0;
+}
+
+.dialy-svg-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Light Theme Overrides */
+body.theme-light .dialy-gps-input {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+body.theme-light .dialy-gps-input:focus {
+  border-color: #b45309 !important;
+  box-shadow: 0 0 0 2px rgba(180, 83, 9, 0.2) !important;
+}
+
+body.theme-light .dialy-gps-act-btn {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+body.theme-light .dialy-gps-act-btn.primary {
+  background: linear-gradient(135deg, #b45309, #d97706) !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .dialy-profile-card {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.theme-light .dialy-profile-tab-btn {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+body.theme-light .dialy-profile-tab-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .dialy-svg-wrap {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+
 
