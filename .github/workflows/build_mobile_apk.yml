@@ -76,11 +76,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.69
-          name: "Neta Light v2.8.69 (Tích Hợp Tầm Long Điểm Huyệt, Địa Mạo Vệ Tinh DEM & Tối Ưu Mobile Ổn Định 100%)"
+          tag_name: v2.8.70
+          name: "Neta Light v2.8.70 (Tích Hợp Phân Hệ Xin Đài Âm Dương Cổ Truyền - Tam Bất Quá Tam • Tiền Cổ Đĩa Sứ)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.69
-            - **Tích Hợp Đột Phá Động Cơ 'Tầm Long Điểm Huyệt' Vào Module Địa Lý Khảo Sát**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.70
+            - **Tích Hợp Phân Hệ 'Xin Đài Âm Dương' (Cổ Truyền) Vào Vị Trí Số 3 Menu**:
+              + Bố trí chuẩn mực ở vị trí số 3 ngay sau Neta Light và Bài Tây trong nhóm Bốc Bài & Thỉnh Ý Cát Hung.
+              + Trực quan hóa đĩa sứ hoa lam truyền thống và 2 đồng xu cổ Càn Long Thông Bảo (Mặt Dương chữ Càn Long, Mặt Âm hình Rồng).
+              + Âm thanh va chạm đĩa sứ chân thực chạy hoàn toàn ngoại tuyến 100% (Offline Base64 Sound Engine).
+              + Phản hồi xúc giác (Haptic Multi-tier Vibration) rung chân thực theo từng nhịp rơi đồng xu vào lòng đĩa.
+              + 3 bối cảnh nghi lễ kinh điển: Hạ Lễ / Hóa Vàng, Lễ Chùa / Đền, Việc Đại Sự đi kèm bài khấn tâm thành chuẩn thức.
+              + 3 kết quả xác thực: Nhất Âm Nhất Dương (Đài Nhất), Lưỡng Dương (Đài Cười), Lưỡng Âm (Bế Đài).
+              + Giữ vững nguyên lý 'Tam Bất Quá Tam' (tối đa 3 lần gieo) và thuật toán ngẫu nhiên bảo mật phần cứng CSPRNG.
+              + Hỗ trợ chụp ảnh màn hình siêu nét chuẩn mực 2.5x lưu trực tiếp vào bộ nhớ máy.
+            - **Tích Hợp Động Cơ 'Tầm Long Điểm Huyệt' Vào Module Địa Lý Khảo Sát**:
               + Tự động bóc tách độ mạo số thực địa qua mô hình số độ cao DEM (Digital Elevation Model).
               + Xác định chính xác 4 hình thái Huyệt trường kinh điển: Oa Huyệt (Trũng trạch tụ thủy), Kiềm Huyệt (Khóa khí vững chãi), Nhũ Huyệt (Sinh khí tụ đình), Đột Huyệt (Gò nổi bình dương).
               + Phân tích chỉ số Tụ Khí Tàng Phong (WEI - Wind Exposure Index) của Tứ Tượng Hộ Vệ: Hậu Huyền Vũ, Tiền Chu Tước, Tả Thanh Long, Hữu Bạch Hổ.
