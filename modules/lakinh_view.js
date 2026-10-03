@@ -3845,6 +3845,11 @@ function updateQmdjStrategicLayer() {
         if (activeTier && activeTier.thuyKhau && activeTier.thuyKhau.analysis) {
           state.tamHopThuyKhauDeg = activeTier.thuyKhau.analysis.bearing;
         }
+        if (activeTier && activeTier.laiLong && activeTier.laiLong.analysis) {
+          state.tamHopLaiLongDeg = activeTier.laiLong.analysis.bearing;
+          state.tamHopLaiLongSon = activeTier.laiLong.analysis.son;
+          state.tamHopLaiLongData = activeTier.laiLong;
+        }
         openTamHopModal(state.rotation);
       };
     }
@@ -8429,6 +8434,11 @@ function updateQmdjStrategicLayer() {
       const tamCat = global.TamHopEngine.get_quy_nhan_loc_ma(curCanChu, curChiChu);
       const maHinhThe = global.TamHopEngine.phan_tich_hinh_the_ma(curChiChu, tamCat.dich_ma, curMoTaSa || 'ngọn đồi hình yên ngựa');
       const xuyenSon72 = global.TamHopEngine.get_72_xuyen_son_long(curHuongDeg);
+      const thauDia72 = global.TamHopEngine.get_72_thau_dia_long ? global.TamHopEngine.get_72_thau_dia_long(curHuongDeg) : null;
+      const xuyenSon60 = global.TamHopEngine.get_60_xuyen_son_long ? global.TamHopEngine.get_60_xuyen_son_long(curHuongDeg) : null;
+      const laiLongDeg = (state.tamHopLaiLongDeg !== undefined && state.tamHopLaiLongDeg !== null) ? state.tamHopLaiLongDeg : null;
+      const laiLongThauDia = (laiLongDeg !== null && global.TamHopEngine.get_72_thau_dia_long) ? global.TamHopEngine.get_72_thau_dia_long(laiLongDeg) : null;
+      const laiLongXuyenSon = (laiLongDeg !== null && global.TamHopEngine.get_60_xuyen_son_long) ? global.TamHopEngine.get_60_xuyen_son_long(laiLongDeg) : null;
       const vongTS = global.TamHopEngine.get_vong_truong_sinh(thuyPhap.cuc_name, thuyPhap.chieu_quay);
 
       const nhanBan = global.TamHopEngine.get_son_from_degree(curHuongDeg, 'nhan_ban');
@@ -8783,27 +8793,91 @@ function updateQmdjStrategicLayer() {
               </div>
             </div>
 
-            <!-- PHẦN 5: 120 PHÂN KIM VI MÔ -->
+            <!-- PHẦN 5: 120 PHÂN KIM VI MÔ & THẨM ĐỊNH KHÍ TUYẾN -->
             <div class="tamhop-section-title">
-              <span>💎 5. 120 Phân Kim Vi Mô</span>
+              <span>💎 5. 120 Phân Kim Vi Mô & Long Mạch Thực Địa</span>
             </div>
             <div class="tamhop-field-group">
+              <!-- 120 Phân Kim -->
               <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
-                <span style="color: #94a3b8;">Vị Trí Phân Kim (${curHuongDeg.toFixed(1)}°):</span>
-                <strong style="color: #38bdf8;">${pk120.phan_kim_type}</strong>
+                <span style="color: #94a3b8;">120 Phân Kim (${curHuongDeg.toFixed(1)}°):</span>
+                <strong style="color: #38bdf8;">${pk120.phan_kim_type} • Nạp Âm: ${pk120.nap_am || 'Chưa định'}</strong>
               </div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; margin-bottom: 6px;">
                 <span style="color: #94a3b8;">Tính Chất Khí Tuyến:</span>
                 <span class="tamhop-badge ${pk120.duoc_phep_lay ? 'green' : 'red'}">
                   ${pk120.tinh_chat}
                 </span>
               </div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.76rem;">
-                <span style="color: #94a3b8;">72 Xuyên Sơn Long:</span>
-                <span style="color: ${xuyenSon72.is_quy_giap_khong_vong ? '#f87171' : '#4ade80'}; font-weight: 700;">
-                  Long thứ ${xuyenSon72.long_index_72} • ${xuyenSon72.danh_gia.split('(')[0]}
-                </span>
+
+              ${!pk120.duoc_phep_lay ? `
+                <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px;">
+                  <div style="font-size: 0.74rem; color: #fca5a5; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                    ⚠️ CẢNH BÁO TUYẾN KHÔNG VONG / QUY GIÁP SÁT
+                  </div>
+                  <div style="font-size: 0.70rem; color: #fecaca; margin-top: 2px; line-height: 1.35;">
+                    ${(pk120.steering && pk120.steering.warning) ? pk120.steering.warning : (pk120.khuyen_nghi || 'Khí suy bại, tuyệt tự thoái tài. Cần nắn chỉnh phân kim sang cung Vượng / Tướng.')}
+                  </div>
+                  ${(pk120.steering && pk120.steering.recommended_heading !== undefined && pk120.steering.recommended_heading !== null) ? `
+                    <button type="button" class="btn-micro-steering-apply" data-target-deg="${pk120.steering.recommended_heading}" style="margin-top: 6px; width: 100%; padding: 6px 10px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; font-size: 0.76rem; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 6px rgba(16,185,129,0.3);">
+                      🎯 Nắn Hướng Vi Mô: Xoay ${(pk120.steering.delta_angle !== undefined && pk120.steering.delta_angle > 0) ? '+' : ''}${pk120.steering.delta_angle !== undefined ? pk120.steering.delta_angle.toFixed(1) : ''}° Sang ${pk120.steering.target_phan_kim || ''} (${pk120.steering.recommended_heading.toFixed(1)}° - Cát Khí)
+                    </button>
+                  ` : ''}
+                </div>
+              ` : `
+                <div style="background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 6px; padding: 5px 8px; margin-bottom: 8px; font-size: 0.72rem; color: #86efac;">
+                  ✨ Phân kim đắc khí cát lợi (${pk120.tinh_chat}), âm dương tương tế, nhân tài hưng vượng.
+                </div>
+              `}
+
+              <!-- 72 Thấu Địa Long & 60 Xuyên Sơn Long -->
+              <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px; margin-top: 4px;">
+                ${thauDia72 ? `
+                  <div style="display: flex; justify-content: space-between; font-size: 0.74rem; margin-bottom: 4px;">
+                    <span style="color: #94a3b8;">72 Thấu Địa Long:</span>
+                    <strong style="color: ${thauDia72.is_bao_chau ? '#4ade80' : '#f87171'};">
+                      ${thauDia72.ten_long || thauDia72.phan_vi || ''} • ${thauDia72.danh_gia}
+                    </strong>
+                  </div>
+                  <div style="font-size: 0.68rem; color: #cbd5e1; margin-bottom: 6px; font-style: italic;">
+                    ${thauDia72.mo_ta}
+                  </div>
+                ` : ''}
+                ${xuyenSon60 ? `
+                  <div style="display: flex; justify-content: space-between; font-size: 0.74rem; margin-bottom: 4px;">
+                    <span style="color: #94a3b8;">60 Xuyên Sơn Long:</span>
+                    <strong style="color: #38bdf8;">
+                      Long thứ ${xuyenSon60.index_60 || xuyenSon60.long_index}/60: ${xuyenSon60.can_chi} (${xuyenSon60.nap_am}) • ${xuyenSon60.khi || xuyenSon60.thuan_khi || ''}
+                    </strong>
+                  </div>
+                ` : ''}
+                <div style="display: flex; justify-content: space-between; font-size: 0.74rem;">
+                  <span style="color: #94a3b8;">72 Xuyên Sơn Long (Quy Giáp):</span>
+                  <span style="color: ${xuyenSon72.is_quy_giap_khong_vong ? '#f87171' : '#4ade80'}; font-weight: 700;">
+                    Long thứ ${xuyenSon72.long_index_72} • ${xuyenSon72.danh_gia.split('(')[0]}
+                  </span>
+                </div>
               </div>
+
+              <!-- Lai Long Thực Địa DEM (nếu có dữ liệu vệ tinh) -->
+              ${laiLongDeg !== null ? `
+                <div style="margin-top: 8px; border-top: 1px solid rgba(56,189,248,0.25); padding-top: 6px; background: rgba(14,165,233,0.08); border-radius: 6px; padding: 6px 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+                    <span style="color: #38bdf8; font-weight: 700;">⛰️ Lai Long DEM Thực Địa:</span>
+                    <b style="color: #f1f5f9;">Phương ${state.tamHopLaiLongSon || ''} (${laiLongDeg.toFixed(1)}°)</b>
+                  </div>
+                  ${laiLongThauDia ? `
+                    <div style="font-size: 0.70rem; color: #94a3b8; margin-top: 3px;">
+                      Thấu Địa Lai Long: <span style="color: ${laiLongThauDia.is_bao_chau ? '#4ade80' : '#f87171'}; font-weight: 600;">${laiLongThauDia.ten_long || laiLongThauDia.phan_vi || ''} (${laiLongThauDia.danh_gia})</span>
+                    </div>
+                  ` : ''}
+                  ${laiLongXuyenSon ? `
+                    <div style="font-size: 0.70rem; color: #94a3b8; margin-top: 2px;">
+                      Khí Mạch Lai Long: <span style="color: #cbd5e1;">${laiLongXuyenSon.can_chi} • Nạp Âm ${laiLongXuyenSon.nap_am} (${laiLongXuyenSon.khi || laiLongXuyenSon.thuan_khi || ''})</span>
+                    </div>
+                  ` : ''}
+                </div>
+              ` : ''}
             </div>
 
             <!-- PHẦN 6: TAM CÁT THẦN TRỢ & TIÊU SA -->
@@ -8952,6 +9026,22 @@ function updateQmdjStrategicLayer() {
             renderModal();
             if (typeof showLaKinhToast === 'function') {
               showLaKinhToast(`🎯 Đã xoay La Kinh về: ${deg}°`);
+            }
+          }
+        });
+      });
+
+      // Nút nắn hướng vi mô 1-chạm (Micro-Steering) né Tuyến Không Vong
+      modalBox.querySelectorAll('.btn-micro-steering-apply').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const deg = parseFloat(btn.getAttribute('data-target-deg'));
+          if (!isNaN(deg)) {
+            curHuongDeg = deg;
+            state.rotation = deg;
+            if (typeof updateCompassHeading === 'function') updateCompassHeading();
+            renderModal();
+            if (typeof showLaKinhToast === 'function') {
+              showLaKinhToast(`🎯 Đã nắn hướng vi mô sang: ${deg.toFixed(1)}° (Cát Phân Kim)`);
             }
           }
         });

@@ -1309,52 +1309,202 @@
       return TamHopEngine.get_quy_nhan_loc_ma(can_chu, chi_chu);
     }
 
+    // Bảng 60 Hoa Giáp Nạp Âm chuẩn xác
+    static HOA_GIAP_NAP_AM = {
+      "Giáp Tý": "Hải Trung Kim", "Ất Sửu": "Hải Trung Kim",
+      "Bính Dần": "Lư Trung Hỏa", "Đinh Mão": "Lư Trung Hỏa",
+      "Mậu Thìn": "Đại Lâm Mộc", "Kỷ Tỵ": "Đại Lâm Mộc",
+      "Canh Ngọ": "Lộ Bàng Thổ", "Tân Mùi": "Lộ Bàng Thổ",
+      "Nhâm Thân": "Kiếm Phong Kim", "Quý Dậu": "Kiếm Phong Kim",
+      "Giáp Tuất": "Sơn Đầu Hỏa", "Ất Hợi": "Sơn Đầu Hỏa",
+      "Bính Tý": "Giản Hạ Thủy", "Đinh Sửu": "Giản Hạ Thủy",
+      "Mậu Dần": "Thành Đầu Thổ", "Kỷ Mão": "Thành Đầu Thổ",
+      "Canh Thìn": "Bạch Lạp Kim", "Tân Tỵ": "Bạch Lạp Kim",
+      "Nhâm Ngọ": "Dương Liễu Mộc", "Quý Mùi": "Dương Liễu Mộc",
+      "Giáp Thân": "Tuyền Trung Thủy", "Ất Dậu": "Tuyền Trung Thủy",
+      "Bính Tuất": "Ốc Thượng Thổ", "Đinh Hợi": "Ốc Thượng Thổ",
+      "Mậu Tý": "Tích Lịch Hỏa", "Kỷ Sửu": "Tích Lịch Hỏa",
+      "Canh Dần": "Tùng Bách Mộc", "Tân Mão": "Tùng Bách Mộc",
+      "Nhâm Thìn": "Trường Lưu Thủy", "Quý Tỵ": "Trường Lưu Thủy",
+      "Giáp Ngọ": "Sa Trung Kim", "Ất Mùi": "Sa Trung Kim",
+      "Bính Thân": "Sơn Hạ Hỏa", "Đinh Dậu": "Sơn Hạ Hỏa",
+      "Mậu Tuất": "Bình Địa Mộc", "Kỷ Hợi": "Bình Địa Mộc",
+      "Canh Tý": "Bích Thượng Thổ", "Tân Sửu": "Bích Thượng Thổ",
+      "Nhâm Dần": "Kim Bạch Kim", "Quý Mão": "Kim Bạch Kim",
+      "Giáp Thìn": "Phú Đăng Hỏa", "Ất Tỵ": "Phú Đăng Hỏa",
+      "Bính Ngọ": "Thiên Hà Thủy", "Đinh Mùi": "Thiên Hà Thủy",
+      "Mậu Thân": "Đại Trạch Thổ", "Kỷ Dậu": "Đại Trạch Thổ",
+      "Canh Tuất": "Thoa Xuyến Kim", "Tân Hợi": "Thoa Xuyến Kim",
+      "Nhâm Tý": "Tang Đố Mộc", "Quý Sửu": "Tang Đố Mộc",
+      "Giáp Dần": "Đại Khê Thủy", "Ất Mão": "Đại Khê Thủy",
+      "Bính Thìn": "Sa Trung Thổ", "Đinh Tỵ": "Sa Trung Thổ",
+      "Mậu Ngọ": "Thích Lịch Hỏa", "Kỷ Mùi": "Thích Lịch Hỏa",
+      "Canh Thân": "Thạch Lựu Mộc", "Tân Dậu": "Thạch Lựu Mộc",
+      "Nhâm Tuất": "Đại Hải Thủy", "Quý Hợi": "Đại Hải Thủy"
+    };
+
+    // Danh sách 60 Hoa Giáp tuần hoàn
+    static HOA_GIAP_LIST = [
+      "Giáp Tý", "Ất Sửu", "Bính Dần", "Đinh Mão", "Mậu Thìn", "Kỷ Tỵ", "Canh Ngọ", "Tân Mùi", "Nhâm Thân", "Quý Dậu",
+      "Giáp Tuất", "Ất Hợi", "Bính Tý", "Đinh Sửu", "Mậu Dần", "Kỷ Mão", "Canh Thìn", "Tân Tỵ", "Nhâm Ngọ", "Quý Mùi",
+      "Giáp Thân", "Ất Dậu", "Bính Tuất", "Đinh Hợi", "Mậu Tý", "Kỷ Sửu", "Canh Dần", "Tân Mão", "Nhâm Thìn", "Quý Tỵ",
+      "Giáp Ngọ", "Ất Mùi", "Bính Thân", "Đinh Dậu", "Mậu Tuất", "Kỷ Hợi", "Canh Tý", "Tân Sửu", "Nhâm Dần", "Quý Mão",
+      "Giáp Thìn", "Ất Tỵ", "Bính Ngọ", "Đinh Mùi", "Mậu Thân", "Kỷ Dậu", "Canh Tuất", "Tân Hợi", "Nhâm Tý", "Quý Sửu",
+      "Giáp Dần", "Ất Mão", "Bính Thìn", "Đinh Tỵ", "Mậu Ngọ", "Kỷ Mùi", "Canh Thân", "Tân Dậu", "Nhâm Tuất", "Quý Hợi"
+    ];
+
+    // =========================================================================
+    // NÂNG CẤP CHUYÊN SÂU: 120 PHÂN KIM VI MÔ & THUẬT TOÁN LÁI HƯỚNG NÉ KHÔNG VONG
+    // =========================================================================
     static get_120_phan_kim(deg) {
       deg = normalizeDeg(deg);
       const son_info = TamHopEngine.get_son_from_degree(deg, "dia_ban");
+      const matchedSon = SON_24.find(s => s.name === son_info.son_name) || SON_24[0];
+
       let rel_deg = 0.0;
       if (son_info.son_name === "Tý") {
-        rel_deg = normalizeDeg(deg - 352.5);
+        rel_deg = (deg >= 352.5) ? (deg - 352.5) : (deg + 7.5);
       } else {
-        let matched = null;
-        for (let i = 0; i < SON_24.length; i++) {
-          if (SON_24[i].name === son_info.son_name) {
-            matched = SON_24[i];
-            break;
-          }
-        }
-        rel_deg = deg - matched.deg_start;
+        rel_deg = deg - matchedSon.deg_start;
       }
+      if (rel_deg < 0) rel_deg += 360.0;
+      rel_deg = rel_deg % 15.0;
 
-      const pk_index = Math.floor(rel_deg / 3.0) + 1; // 1 to 5
-      const pk_names = [
-        "Giáp/Ất (Phân Kim 1)",
-        "Bính/Đinh (Phân Kim 2)",
-        "Mậu/Kỷ (Phân Kim 3)",
-        "Canh/Tân (Phân Kim 4)",
-        "Nhâm/Quý (Phân Kim 5)"
-      ];
+      const slot = Math.min(Math.max(Math.floor(rel_deg / 3.0), 0), 4); // 0, 1, 2, 3, 4
+      const pk_index = slot + 1; // 1, 2, 3, 4, 5
+
+      // 12 Cặp Song Sơn nạp Can Chi chuẩn Dương Công La Kinh
+      const songSonMap = {
+        "Nhâm": { chi: "Tý", is_yang: true },  "Tý": { chi: "Tý", is_yang: true },
+        "Quý": { chi: "Sửu", is_yang: false }, "Sửu": { chi: "Sửu", is_yang: false },
+        "Cấn": { chi: "Dần", is_yang: true },  "Dần": { chi: "Dần", is_yang: true },
+        "Giáp": { chi: "Mão", is_yang: false }, "Mão": { chi: "Mão", is_yang: false },
+        "Ất": { chi: "Thìn", is_yang: true },  "Thìn": { chi: "Thìn", is_yang: true },
+        "Tốn": { chi: "Tỵ", is_yang: false },  "Tỵ": { chi: "Tỵ", is_yang: false },
+        "Bính": { chi: "Ngọ", is_yang: true }, "Ngọ": { chi: "Ngọ", is_yang: true },
+        "Đinh": { chi: "Mùi", is_yang: false }, "Mùi": { chi: "Mùi", is_yang: false },
+        "Khôn": { chi: "Thân", is_yang: true }, "Thân": { chi: "Thân", is_yang: true },
+        "Canh": { chi: "Dậu", is_yang: false }, "Dậu": { chi: "Dậu", is_yang: false },
+        "Tân": { chi: "Tuất", is_yang: true }, "Tuất": { chi: "Tuất", is_yang: true },
+        "Càn": { chi: "Hợi", is_yang: false }, "Hợi": { chi: "Hợi", is_yang: false }
+      };
+
+      const ssInfo = songSonMap[son_info.son_name] || { chi: son_info.son_name, is_yang: true };
+      const stems = ssInfo.is_yang
+        ? ["Giáp", "Bính", "Mậu", "Canh", "Nhâm"]
+        : ["Ất", "Đinh", "Kỷ", "Tân", "Quý"];
+
+      const can = stems[slot];
+      const can_chi = `${can} ${ssInfo.chi}`;
+      const nap_am = TamHopEngine.HOA_GIAP_NAP_AM[can_chi] || "Ngũ Hành Khí";
+
+      const pk_start = normalizeDeg(matchedSon.deg_start + slot * 3.0);
+      const pk_end = normalizeDeg(pk_start + 3.0);
+      const pk_center = normalizeDeg(pk_start + 1.5);
 
       let tinh_chat = "";
+      let danh_gia = "";
       let is_good = false;
-      if (pk_index === 2 || pk_index === 4) {
-        tinh_chat = "TUYẾN CHÂU BẢO (Vượng Tướng - Đại Cát)";
+      let badge_type = "hung";
+
+      if (slot === 1) { // Bính hoặc Đinh
+        tinh_chat = `VƯỢNG (${can} Phân Kim - Vượng Tài Hiển Vinh)`;
+        danh_gia = "CÁT (DÙNG ĐƯỢC - PHƯƠNG ÁN 2)";
         is_good = true;
-      } else if (pk_index === 3) {
-        tinh_chat = "QUY SÁT / KHÔNG VONG (Đại Hung - Tránh dùng)";
+        badge_type = "green";
+      } else if (slot === 3) { // Canh hoặc Tân
+        tinh_chat = `TƯỚNG (${can} Phân Kim - Vượng Nhân Đinh Phú Quý)`;
+        danh_gia = "ĐẠI CÁT (TỐI ƯU NHẤT - PHƯƠNG ÁN 1)";
+        is_good = true;
+        badge_type = "gold";
+      } else if (slot === 2) { // Mậu hoặc Kỷ
+        tinh_chat = `QUY GIÁP SÁT / ĐẠI KHÔNG VONG (${can} Phân Kim - Chính Trung)`;
+        danh_gia = "ĐẠI HUNG (TUYỆT ĐỐI TRÁNH)";
         is_good = false;
-      } else {
-        tinh_chat = "CÔ HƯ (Khí Suy - Không Nên Lấy)";
+        badge_type = "red";
+      } else if (slot === 0) { // Giáp hoặc Ất
+        tinh_chat = `CÔ (${can} Phân Kim - Cô Dương / Bất Lợi Nhân Đinh)`;
+        danh_gia = "HUNG (BỎ)";
         is_good = false;
+        badge_type = "orange";
+      } else { // Nhâm hoặc Quý
+        tinh_chat = `HƯ (${can} Phân Kim - Khí Hư Thoái Tán Tài Lộc)`;
+        danh_gia = "HUNG (BỎ)";
+        is_good = false;
+        badge_type = "orange";
+      }
+
+      // Thuật toán Lái Hướng Vi Mô (Micro-Steering Né Không Vong)
+      const targetSlot3Center = normalizeDeg(matchedSon.deg_start + 3 * 3.0 + 1.5); // Tâm Canh/Tân (Slot 3)
+      const targetSlot1Center = normalizeDeg(matchedSon.deg_start + 1 * 3.0 + 1.5); // Tâm Bính/Đinh (Slot 1)
+
+      let delta3 = targetSlot3Center - deg;
+      if (delta3 > 180) delta3 -= 360;
+      if (delta3 < -180) delta3 += 360;
+
+      let delta1 = targetSlot1Center - deg;
+      if (delta1 > 180) delta1 -= 360;
+      if (delta1 < -180) delta1 += 360;
+
+      let bestTargetDeg = targetSlot3Center;
+      let bestDelta = delta3;
+      let bestTargetCanChi = `${stems[3]} ${ssInfo.chi}`;
+      let bestTargetRole = "Khí Tướng (Đại Cát)";
+
+      if (Math.abs(delta1) < Math.abs(delta3)) {
+        bestTargetDeg = targetSlot1Center;
+        bestDelta = delta1;
+        bestTargetCanChi = `${stems[1]} ${ssInfo.chi}`;
+        bestTargetRole = "Khí Vượng (Cát Tường)";
+      }
+
+      const distToBorder = Math.min(
+        Math.abs(deg - matchedSon.deg_start),
+        Math.abs(deg - (matchedSon.deg_start + 15.0))
+      );
+      const is_border_khong_vong = distToBorder <= 0.75;
+      const border_type = is_border_khong_vong
+        ? ((matchedSon.deg_start % 45 === 22.5 || (matchedSon.deg_start + 15.0) % 45 === 22.5) ? "ĐẠI KHÔNG VONG" : "TIỂU KHÔNG VONG")
+        : "NONE";
+
+      let steering_warning = "";
+      if (is_border_khong_vong) {
+        steering_warning = `CẢNH BÁO: Hướng đo sát vạch ranh giới (${distToBorder.toFixed(2)}°) phạm ${border_type}!`;
+      } else if (slot === 2) {
+        steering_warning = `CẢNH BÁO: Rơi vào chính giữa Sơn phạm ${can} Phân Kim (Quy Giáp Sát / Không Vong)!`;
+      } else if (!is_good) {
+        steering_warning = `LƯU Ý: Phân kim ${can_chi} thuộc tuyến Cô Hư, khí suy thoái.`;
       }
 
       return {
         degree: deg,
         son_name: son_info.son_name,
+        chi_nap_am: ssInfo.chi,
+        is_yang: ssInfo.is_yang,
         phan_kim_index: pk_index,
-        phan_kim_type: pk_names[Math.min(pk_index - 1, 4)],
+        slot_index: slot,
+        can: can,
+        can_chi: can_chi,
+        nap_am: nap_am,
+        phan_kim_type: `${can_chi} (Phân Kim ${pk_index} - Khí ${stems[slot]})`,
         tinh_chat: tinh_chat,
-        duoc_phep_lay: is_good
+        danh_gia: danh_gia,
+        duoc_phep_lay: is_good,
+        badge_type: badge_type,
+        range: [pk_start, pk_end],
+        center: pk_center,
+        steering: {
+          needs_steering: !is_good || is_border_khong_vong,
+          is_border_khong_vong: is_border_khong_vong,
+          border_type: border_type,
+          warning: steering_warning,
+          recommended_heading: bestTargetDeg,
+          delta_angle: +bestDelta.toFixed(2),
+          target_phan_kim: bestTargetCanChi,
+          target_role: bestTargetRole,
+          target_nap_am: TamHopEngine.HOA_GIAP_NAP_AM[bestTargetCanChi] || "",
+          direction_text: bestDelta > 0 ? `Xoay sang PHẢI +${bestDelta.toFixed(2)}°` : `Xoay sang TRÁI ${bestDelta.toFixed(2)}°`
+        }
       };
     }
     get_120_phan_kim(deg) {
@@ -1365,6 +1515,103 @@
     }
     kiem_tra_120_phan_kim(deg) {
       return TamHopEngine.get_120_phan_kim(deg);
+    }
+
+    // =========================================================================
+    // NÂNG CẤP: 72 THẤU ĐỊA LONG (KHÍ ĐẤT NỀN MÓNG - BẢO CHÂU VS SAI THÁC LONG)
+    // =========================================================================
+    static get_72_thau_dia_long(deg) {
+      deg = normalizeDeg(deg);
+      const son_info = TamHopEngine.get_son_from_degree(deg, "dia_ban");
+      const matchedSon = SON_24.find(s => s.name === son_info.son_name) || SON_24[0];
+
+      let rel_deg = 0.0;
+      if (son_info.son_name === "Tý") {
+        rel_deg = (deg >= 352.5) ? (deg - 352.5) : (deg + 7.5);
+      } else {
+        rel_deg = deg - matchedSon.deg_start;
+      }
+      if (rel_deg < 0) rel_deg += 360.0;
+      rel_deg = rel_deg % 15.0;
+
+      const slot = Math.min(Math.max(Math.floor(rel_deg / 5.0), 0), 2); // 0, 1, 2
+      const slot_start = normalizeDeg(matchedSon.deg_start + slot * 5.0);
+      const slot_end = normalizeDeg(slot_start + 5.0);
+
+      const global_idx = Math.floor(deg / 5.0) + 1;
+
+      if (slot === 1) {
+        return {
+          degree: deg,
+          son_name: son_info.son_name,
+          long_index_72: global_idx,
+          slot_in_son: 2,
+          ten_long: `Trung Long ${son_info.son_name}`,
+          phan_loai: "SAI_THAC",
+          is_bao_chau: false,
+          danh_gia: "ĐẠI HUNG (Sai Thác Long / Đại Không Vong - Nhị khí phân tranh, bất lợi)",
+          mo_ta: "Đoạn 5° giữa Sơn thuộc Sai Thác Long, khí đất hỗn loạn không tụ.",
+          range: [slot_start, slot_end]
+        };
+      } else if (slot === 0) {
+        return {
+          degree: deg,
+          son_name: son_info.son_name,
+          long_index_72: global_idx,
+          slot_in_son: 1,
+          ten_long: `Tiền Long ${son_info.son_name}`,
+          phan_loai: "BAO_CHAU",
+          is_bao_chau: true,
+          danh_gia: "CÁT (Bảo Châu Long - Sinh Khí Hội Tụ)",
+          mo_ta: "Đoạn 5° đầu Sơn thuộc Bảo Châu Long, đón sinh khí quý nhân phò trợ.",
+          range: [slot_start, slot_end]
+        };
+      } else {
+        return {
+          degree: deg,
+          son_name: son_info.son_name,
+          long_index_72: global_idx,
+          slot_in_son: 3,
+          ten_long: `Hậu Long ${son_info.son_name}`,
+          phan_loai: "BAO_CHAU",
+          is_bao_chau: true,
+          danh_gia: "ĐẠI CÁT (Bảo Châu Long - Tướng Tinh Đắc Vị)",
+          mo_ta: "Đoạn 5° cuối Sơn thuộc Bảo Châu Long, tướng tinh đắc vị phú quý song toàn.",
+          range: [slot_start, slot_end]
+        };
+      }
+    }
+    get_72_thau_dia_long(deg) {
+      return TamHopEngine.get_72_thau_dia_long(deg);
+    }
+
+    // =========================================================================
+    // NÂNG CẤP: 60 XUYÊN SƠN LONG (6°/PHÂN VỊ - KHÍ THUẦN ÂM / DƯƠNG & NẠP ÂM)
+    // =========================================================================
+    static get_60_xuyen_son_long(deg) {
+      deg = normalizeDeg(deg);
+      const idx = Math.floor(deg / 6.0) % 60;
+      const can_chi = TamHopEngine.HOA_GIAP_LIST[idx];
+      const nap_am = TamHopEngine.HOA_GIAP_NAP_AM[can_chi] || "Ngũ Hành Khí";
+      const start = idx * 6.0;
+      const end = start + 6.0;
+      const center = start + 3.0;
+      const is_yang_khi = (idx % 2 === 0);
+
+      return {
+        degree: deg,
+        index_60: idx + 1,
+        can_chi: can_chi,
+        nap_am: nap_am,
+        khi: is_yang_khi ? "Thuần Khí Dương" : "Thuần Khí Âm",
+        start: start,
+        end: end,
+        center: center,
+        danh_gia: `Xuyên Sơn Long thứ ${idx + 1} (${can_chi} • ${nap_am} • ${is_yang_khi ? 'Dương Khí' : 'Âm Khí'})`
+      };
+    }
+    get_60_xuyen_son_long(deg) {
+      return TamHopEngine.get_60_xuyen_son_long(deg);
     }
   }
 
