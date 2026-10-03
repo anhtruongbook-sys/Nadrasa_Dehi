@@ -76,10 +76,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.68
-          name: "Neta Light v2.8.68 (Khôi Phục 100% CSDL Nguyên Bản Excel HKĐQ 3 Khóa HNT: Bài 14 Ứng Kỳ Năm Phát & Bài 15 Ứng Nhân Người Phát)"
+          tag_name: v2.8.69
+          name: "Neta Light v2.8.69 (Tích Hợp Tầm Long Điểm Huyệt, Địa Mạo Vệ Tinh DEM & Tối Ưu Mobile Ổn Định 100%)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.68
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.69
+            - **Tích Hợp Đột Phá Động Cơ 'Tầm Long Điểm Huyệt' Vào Module Địa Lý Khảo Sát**:
+              + Tự động bóc tách độ mạo số thực địa qua mô hình số độ cao DEM (Digital Elevation Model).
+              + Xác định chính xác 4 hình thái Huyệt trường kinh điển: Oa Huyệt (Trũng trạch tụ thủy), Kiềm Huyệt (Khóa khí vững chãi), Nhũ Huyệt (Sinh khí tụ đình), Đột Huyệt (Gò nổi bình dương).
+              + Phân tích chỉ số Tụ Khí Tàng Phong (WEI - Wind Exposure Index) của Tứ Tượng Hộ Vệ: Hậu Huyền Vũ, Tiền Chu Tước, Tả Thanh Long, Hữu Bạch Hổ.
+              + Tính toán độ chênh cao $\Delta H$, khoảng cách, phương vị độ số và góc nắn hướng vi mô (Micro-Steering) tối ưu.
+              + Bù góc từ thiên thực tế theo mô hình World Magnetic Model (WMM).
+            - **Khắc Phục Triệt Để 100% Lỗi Chuyển Module & Đơ Menu Trên Di Động**:
+              + Bảo vệ hàm khởi tạo bản đồ Leaflet an toàn, không bao giờ gây gián đoạn luồng chuyển đổi giao diện khi bản đồ ở trạng thái ẩn.
+              + Bổ sung cơ chế xử lý cảm ứng nhạy bén (Touch Slop & Touch End Delegation) cho menu phân hệ trên màn hình cảm ứng di động.
+            - **Nâng Cấp Hiệu Năng & Khả Năng Hoạt Động Ngoại Tuyến (Offline PWA & Service Worker v14.4)**:
+              + Tối ưu chiến lược nạp tài nguyên mạng và lưu đệm nội bộ theo từng lô nhỏ (batch chunking), loại bỏ nguy cơ nghẽn kết nối.
             - **Khôi Phục Chuẩn Xác 100% CSDL Excel Huyền Không Đại Quái Thầy Hạnh Nhật Tấn**:
               + Loại bỏ hoàn toàn mọi thuật toán suy diễn tự phát. Khôi phục nguyên bản 100% dữ liệu gốc từ file Excel `HKĐQ- 3 Khóa HNT.xlsx`.
               + **Ứng kỳ Năm phát (Bài 14)**: Lấy chuẩn xác Can Chi tại Hào Biến (Hào Thế) của từng Quẻ Chủ trong 64 quẻ (ví dụ Quẻ Bát Thuần Chấn: Năm Canh Tý).
