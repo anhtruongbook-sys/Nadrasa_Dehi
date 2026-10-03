@@ -1687,8 +1687,8 @@
   function renderLucNham(targetContainer, preserveScroll = false) {
     const container = targetContainer || document.getElementById('view-lucnham');
     if (!container) return;
-    const scrollEl = container.querySelector('.lucnham-view-wrap');
-    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
+    const scrollEl = container.querySelector('.lucnham-view-wrap') || container;
+    const prevScrollY = preserveScroll ? (scrollEl.scrollTop || (container.scrollTop || 0)) : null;
     ensureStyles();
     computeChart();
 
@@ -2061,7 +2061,7 @@
       </div>
     `;
 
-    bindLucNhamEvents();
+    bindLucNhamEvents(container);
 
     if (isEssayModalOpen) {
       renderFsEssayBody();
@@ -2076,10 +2076,15 @@
         const sc = container.querySelector('.lucnham-view-wrap');
         if (sc) {
           sc.scrollTop = prevScrollY;
-        } else {
-          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+        if (container) {
+          container.scrollTop = prevScrollY;
         }
       });
+    } else {
+      if (container) container.scrollTop = 0;
+      const sc = container.querySelector('.lucnham-view-wrap');
+      if (sc) sc.scrollTop = 0;
     }
   }
 
@@ -2153,7 +2158,7 @@
     `;
   }
 
-  function bindLucNhamEvents() {
+  function bindLucNhamEvents(container) {
     bindLuanAnalysisEvents();
     const pad = n => String(n).padStart(2, '0');
 
@@ -2165,26 +2170,34 @@
 
     if (btnTabChart) {
       btnTabChart.onclick = () => {
-        currentMainTab = 'chart';
-        renderLucNham(null, true);
+        if (currentMainTab !== 'chart') {
+          currentMainTab = 'chart';
+          renderLucNham(container, false);
+        }
       };
     }
     if (btnTabAnalysis) {
       btnTabAnalysis.onclick = () => {
-        currentMainTab = 'analysis';
-        renderLucNham(null, true);
+        if (currentMainTab !== 'analysis') {
+          currentMainTab = 'analysis';
+          renderLucNham(container, false);
+        }
       };
     }
     if (btnTabFengShui) {
       btnTabFengShui.onclick = () => {
-        currentMainTab = 'fengshui';
-        renderLucNham(null, true);
+        if (currentMainTab !== 'fengshui') {
+          currentMainTab = 'fengshui';
+          renderLucNham(container, false);
+        }
       };
     }
     if (btnOpenLuan) {
       btnOpenLuan.onclick = () => {
-        currentMainTab = 'analysis';
-        renderLucNham(null, true);
+        if (currentMainTab !== 'analysis') {
+          currentMainTab = 'analysis';
+          renderLucNham(container, false);
+        }
       };
     }
 

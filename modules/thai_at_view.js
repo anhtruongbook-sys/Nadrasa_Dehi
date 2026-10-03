@@ -2002,9 +2002,8 @@
 
   function renderThaiAt(preserveScroll = false) {
     const container = document.getElementById('view-thaiat');
-    if (!container) return;
-    const wrap = container.querySelector('.thaiat-view-wrap');
-    const prevScrollY = preserveScroll ? ((wrap && wrap.scrollTop !== undefined) ? wrap.scrollTop : (container.scrollTop || (window.scrollY || document.documentElement.scrollTop))) : null;
+    const wrap = container ? (container.querySelector('.thaiat-view-wrap') || container) : null;
+    const prevScrollY = preserveScroll ? (wrap ? wrap.scrollTop : (container.scrollTop || 0)) : null;
     ensureStyles();
 
     if (global.NetaThaiAtEngine) {
@@ -2280,7 +2279,6 @@
         if (container) {
           container.scrollTop = prevScrollY;
         }
-        window.scrollTo({ top: prevScrollY, behavior: 'instant' });
       });
     }
   }
@@ -4093,27 +4091,35 @@
 
     if (btnTabChart) {
       btnTabChart.onclick = () => {
-        currentMainTab = 'chart';
-        renderThaiAt(true);
+        if (currentMainTab !== 'chart') {
+          currentMainTab = 'chart';
+          renderThaiAt(false);
+        }
       };
     }
     if (btnTabAnalysis) {
       btnTabAnalysis.onclick = () => {
-        currentMainTab = 'analysis';
-        renderThaiAt(true);
+        if (currentMainTab !== 'analysis') {
+          currentMainTab = 'analysis';
+          renderThaiAt(false);
+        }
       };
     }
     if (btnOpenLuan) {
       btnOpenLuan.onclick = () => {
-        currentMainTab = 'analysis';
-        renderThaiAt(true);
+        if (currentMainTab !== 'analysis') {
+          currentMainTab = 'analysis';
+          renderThaiAt(false);
+        }
       };
     }
     const btnTabFengshui = document.getElementById('btn-thaiat-tab-fengshui');
     if (btnTabFengshui) {
       btnTabFengshui.onclick = () => {
-        currentMainTab = 'fengshui';
-        renderThaiAt(true);
+        if (currentMainTab !== 'fengshui') {
+          currentMainTab = 'fengshui';
+          renderThaiAt(false);
+        }
       };
     }
 

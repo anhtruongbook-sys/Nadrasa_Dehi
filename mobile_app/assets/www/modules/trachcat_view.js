@@ -1229,8 +1229,8 @@
   function render(preserveScroll = false) {
     const container = document.getElementById('view-trachcat');
     if (!container) return;
-    const scrollEl = container.querySelector('.tc-container');
-    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
+    const scrollEl = container.querySelector('.tc-container') || container;
+    const prevScrollY = preserveScroll ? (scrollEl.scrollTop || (container.scrollTop || 0)) : null;
 
     const eng = getEngine();
     if (!eng) {
@@ -1261,8 +1261,9 @@
         const sc = container.querySelector('.tc-container');
         if (sc) {
           sc.scrollTop = prevScrollY;
-        } else {
-          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+        if (container) {
+          container.scrollTop = prevScrollY;
         }
       });
     }
@@ -1782,19 +1783,15 @@
       btn.onclick = () => {
         const dateStr = btn.getAttribute('data-date'); // "DD/MM/YYYY"
         if (dateStr) {
-          const parts = dateStr.split('/');
-          const d = parseInt(parts[0], 10);
-          const m = parseInt(parts[1], 10);
-          const y = parseInt(parts[2], 10);
-          state.specificDate = new Date(y, m - 1, d);
-          state.specificDateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-          runSpecificEvaluation();
-          render();
-          setTimeout(() => {
-            const hero = document.querySelector('.tc-spec-hero');
-            if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 50);
-          if (global.showToast) global.showToast(`📅 Đã chuyển sang ngày ${dateStr}!`);
+           const parts = dateStr.split('/');
+           const d = parseInt(parts[0], 10);
+           const m = parseInt(parts[1], 10);
+           const y = parseInt(parts[2], 10);
+           state.specificDate = new Date(y, m - 1, d);
+           state.specificDateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+           runSpecificEvaluation();
+           render(true);
+           if (global.showToast) global.showToast(`📅 Đã chuyển sang ngày ${dateStr}!`);
         }
       };
     });
@@ -1824,7 +1821,7 @@
           state.searchTerm = '';
           runSpecificEvaluation();
           runEvaluation();
-          render();
+          render(true);
         }
       };
     });
@@ -1838,7 +1835,7 @@
         try { localStorage.setItem('neta_lakinh_sitting', String(deg)); } catch (_) {}
         runSpecificEvaluation();
         runEvaluation();
-        render();
+        render(true);
         if (global.showToast) global.showToast(`🧭 Đã nạp Tọa Sơn ${deg}° từ La Kinh!`);
       };
     }
@@ -1854,7 +1851,7 @@
           try { localStorage.setItem('neta_lakinh_sitting', String(deg)); } catch (_) {}
           runSpecificEvaluation();
           runEvaluation();
-          render();
+          render(true);
           if (global.showToast) global.showToast(`🧭 Đã khóa Tọa Sơn ${deg}°!`);
         }
       };
@@ -1872,7 +1869,7 @@
         }
         runSpecificEvaluation();
         runEvaluation();
-        render();
+        render(true);
       };
     });
 
@@ -1908,7 +1905,7 @@
         state.taskId = e.target.value;
         runSpecificEvaluation();
         runEvaluation();
-        render();
+        render(true);
       };
     }
 

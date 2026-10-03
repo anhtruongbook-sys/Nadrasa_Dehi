@@ -211,9 +211,11 @@
   }
 
   // --- RENDER MAIN VIEW ---
-  function render(container) {
+  function render(container, preserveScroll = false) {
     const target = container || document.getElementById('view-tamthuc');
     if (!target) return;
+    const scEl = target.querySelector('.tamthuc-view-container');
+    const prevScrollY = preserveScroll ? (scEl ? scEl.scrollTop : (target.scrollTop || 0)) : null;
 
     const rep = computeReport();
     if (!rep) {
@@ -676,6 +678,17 @@
     `;
 
     bindEvents(target);
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = target.querySelector('.tamthuc-view-container');
+        if (sc) {
+          sc.scrollTop = prevScrollY;
+        } else {
+          target.scrollTop = prevScrollY;
+        }
+      });
+    }
   }
 
   // --- GẮN SỰ KIỆN TƯƠNG TÁC ---
@@ -702,19 +715,19 @@
     if (btnSubHour) {
       btnSubHour.onclick = () => {
         currentDate.setHours(currentDate.getHours() - 1);
-        render(container);
+        render(container, true);
       };
     }
     if (btnAddHour) {
       btnAddHour.onclick = () => {
         currentDate.setHours(currentDate.getHours() + 1);
-        render(container);
+        render(container, true);
       };
     }
     if (btnNow) {
       btnNow.onclick = () => {
         currentDate = new Date();
-        render(container);
+        render(container, true);
       };
     }
     if (picker) {
@@ -722,7 +735,7 @@
         const val = e.target.value;
         if (val) {
           currentDate = new Date(val);
-          render(container);
+          render(container, true);
         }
       };
     }
@@ -734,7 +747,7 @@
       btnChu.onclick = () => {
         if (currentRole !== 'Chủ') {
           currentRole = 'Chủ';
-          render(container);
+          render(container, true);
         }
       };
     }
@@ -742,7 +755,7 @@
       btnKhach.onclick = () => {
         if (currentRole !== 'Khách') {
           currentRole = 'Khách';
-          render(container);
+          render(container, true);
         }
       };
     }
@@ -754,7 +767,7 @@
       btnD10.onclick = () => {
         if (currentDeitySchool !== '10thần') {
           currentDeitySchool = '10thần';
-          render(container);
+          render(container, true);
         }
       };
     }
@@ -762,7 +775,7 @@
       btnD8.onclick = () => {
         if (currentDeitySchool !== '8thần') {
           currentDeitySchool = '8thần';
-          render(container);
+          render(container, true);
         }
       };
     }
@@ -798,20 +811,20 @@
       queryInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           currentQuery = queryInput.value.trim();
-          render(container);
+          render(container, true);
         }
       });
     }
     if (btnRun) {
       btnRun.onclick = () => {
         if (queryInput) currentQuery = queryInput.value.trim();
-        render(container);
+        render(container, true);
       };
     }
     if (btnClear) {
       btnClear.onclick = () => {
         currentQuery = '';
-        render(container);
+        render(container, true);
       };
     }
 
@@ -933,7 +946,7 @@ ${qr ? qr.optimal_window : currentReport.layer5_action_strategy.timing_strategy}
         const dCode = btn.getAttribute('data-domain');
         currentDomainCode = dCode;
         currentQuery = '';
-        render(container);
+        render(container, true);
       };
     });
 

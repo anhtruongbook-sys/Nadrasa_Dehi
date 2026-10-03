@@ -347,8 +347,8 @@
   function render(preserveScroll = false) {
     const container = document.getElementById('view-dichhoc');
     if (!container) return;
-    const scrollEl = container.querySelector('.dichhoc-container');
-    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
+    const scrollEl = container.querySelector('.dichhoc-container') || container;
+    const prevScrollY = preserveScroll ? (scrollEl.scrollTop || (container.scrollTop || 0)) : null;
 
     // Tự động khởi tạo kết quả Mai Hoa nếu chưa có
     if (!state.maiHoa.result) {
@@ -448,8 +448,9 @@
         const sc = container.querySelector('.dichhoc-container');
         if (sc) {
           sc.scrollTop = prevScrollY;
-        } else {
-          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+        }
+        if (container) {
+          container.scrollTop = prevScrollY;
         }
       });
     }
@@ -1967,7 +1968,7 @@
       tabLucHao.onclick = () => {
         if (state.method === 'luchao') return;
         state.method = 'luchao';
-        render();
+        render(false);
       };
     }
 
@@ -1978,7 +1979,7 @@
         if (state.method === 'maihoa') return;
         state.method = 'maihoa';
         chayLapQueMaiHoa();
-        render();
+        render(false);
       };
     }
 

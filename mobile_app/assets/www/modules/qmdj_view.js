@@ -761,8 +761,8 @@
   function renderQmdj(preserveScroll = false) {
     const container = document.getElementById('view-qmdj');
     if (!container) return;
-    const scrollEl = container.querySelector('.qmdj-view-container');
-    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
+    const scrollEl = container.querySelector('.qmdj-view-container') || container;
+    const prevScrollY = preserveScroll ? (scrollEl.scrollTop || 0) : null;
 
     const data = computeQmdjChart(currentQmdjDate);
     if (!data || !data.chart) {
@@ -823,11 +823,9 @@
 
     if (prevScrollY !== null) {
       requestAnimationFrame(() => {
-        const sc = container.querySelector('.qmdj-view-container');
+        const sc = container.querySelector('.qmdj-view-container') || container;
         if (sc) {
           sc.scrollTop = prevScrollY;
-        } else {
-          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
         }
       });
     }
@@ -4150,13 +4148,13 @@
     if (btnSubmodeDuong) {
       btnSubmodeDuong.onclick = () => {
         ptState.subMode = 'duong_trach';
-        renderQmdj();
+        renderQmdj(true);
       };
     }
     if (btnSubmodeAm) {
       btnSubmodeAm.onclick = () => {
         ptState.subMode = 'am_trach';
-        renderQmdj();
+        renderQmdj(true);
       };
     }
 
@@ -4176,13 +4174,13 @@
     if (selDeceasedCan) {
       selDeceasedCan.addEventListener('change', (e) => {
         ptState.deceasedCan = e.target.value || 'Ất';
-        renderQmdj();
+        renderQmdj(true);
       });
     }
     if (selGravePalace) {
       selGravePalace.addEventListener('change', (e) => {
         ptState.gravePalaceId = parseInt(e.target.value) || 2;
-        renderQmdj();
+        renderQmdj(true);
       });
     }
 
@@ -4195,7 +4193,7 @@
           ptState.huongPalace = hObj.palace;
           ptState.degree = hObj.deg;
         }
-        renderQmdj();
+        renderQmdj(true);
       });
     }
 
@@ -4287,7 +4285,7 @@
     roomsMap.forEach(r => {
       document.getElementById(r.id)?.addEventListener('change', (e) => {
         ptState.rooms[r.key] = parseInt(e.target.value) || 1;
-        renderQmdj();
+        renderQmdj(true);
       });
     });
 
@@ -4301,14 +4299,14 @@
     if (btnOpenEssay) {
       btnOpenEssay.onclick = () => {
         ptState.isEssayModalOpen = true;
-        renderQmdj();
+        renderQmdj(true);
       };
     }
 
     if (btnOpenTrachCat) {
       btnOpenTrachCat.onclick = () => {
         ptState.isTrachCatModalOpen = true;
-        renderQmdj();
+        renderQmdj(true);
       };
     }
 
@@ -4333,11 +4331,11 @@
     // Modal Close Events
     document.getElementById('qmdj-fs-essay-modal-close')?.addEventListener('click', () => {
       ptState.isEssayModalOpen = false;
-      renderQmdj();
+      renderQmdj(true);
     });
     document.getElementById('btn-pt-modal-close-footer')?.addEventListener('click', () => {
       ptState.isEssayModalOpen = false;
-      renderQmdj();
+      renderQmdj(true);
     });
     document.getElementById('btn-pt-modal-copy')?.addEventListener('click', () => {
       const ta = document.getElementById('qmdj-fs-essay-textarea');
@@ -4355,11 +4353,11 @@
 
     document.getElementById('qmdj-fs-trachcat-modal-close')?.addEventListener('click', () => {
       ptState.isTrachCatModalOpen = false;
-      renderQmdj();
+      renderQmdj(true);
     });
     document.getElementById('btn-pt-trachcat-close-footer')?.addEventListener('click', () => {
       ptState.isTrachCatModalOpen = false;
-      renderQmdj();
+      renderQmdj(true);
     });
 
     // 4. Sự kiện Tải Lịch Nhắc Hẹn Thủy Pháp (.ics)
@@ -4376,28 +4374,28 @@
     if (btnTcMacro) {
       btnTcMacro.onclick = () => {
         ptState.thaiCucMode = 'macro';
-        renderQmdj();
+        renderQmdj(true);
       };
     }
     if (btnTcMicro) {
       btnTcMicro.onclick = () => {
         ptState.thaiCucMode = 'micro';
-        renderQmdj();
+        renderQmdj(true);
       };
     }
 
     // Sự kiện dropdown Tiểu Thái Cực
     document.getElementById('pt-micro-room-type')?.addEventListener('change', (e) => {
       ptState.microRoom.type = e.target.value;
-      renderQmdj();
+      renderQmdj(true);
     });
     document.getElementById('pt-micro-desk-palace')?.addEventListener('change', (e) => {
       ptState.microRoom.deskPalace = parseInt(e.target.value, 10) || 3;
-      renderQmdj();
+      renderQmdj(true);
     });
     document.getElementById('pt-micro-sitting-palace')?.addEventListener('change', (e) => {
       ptState.microRoom.sittingPalace = parseInt(e.target.value, 10) || 8;
-      renderQmdj();
+      renderQmdj(true);
     });
 
     // 6. Sự kiện Mặt Bằng Kiến Trúc & Phủ Lưới Cửu Cung Canvas

@@ -124,10 +124,10 @@
   }
 
   function renderTuVi(preserveScroll = false) {
-    const scrollEl = document.querySelector('#view-tuvi .tuvi-view-container');
-    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
     const container = document.getElementById('view-tuvi');
     if (!container) return;
+    const scrollEl = container.querySelector('.tuvi-view-container') || container;
+    const prevScrollY = preserveScroll ? (scrollEl.scrollTop || 0) : null;
 
     const chart = computeTuViChart();
     if (!chart) {
@@ -273,13 +273,15 @@
 
     if (prevScrollY !== null) {
       requestAnimationFrame(() => {
-        const sc = document.querySelector('#view-tuvi .tuvi-view-container');
+        const sc = document.querySelector('#view-tuvi .tuvi-view-container') || container;
         if (sc) {
           sc.scrollTop = prevScrollY;
-        } else {
-          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
         }
       });
+    } else {
+      if (container) container.scrollTop = 0;
+      const sc = document.querySelector('#view-tuvi .tuvi-view-container');
+      if (sc) sc.scrollTop = 0;
     }
   }
 
@@ -1446,20 +1448,26 @@
     const btnAnalysis = document.getElementById('btn-tuvi-mode-analysis');
     if (btnGrid) {
       btnGrid.onclick = () => {
-        currentViewMode = 'grid';
-        renderTuVi();
+        if (currentViewMode !== 'grid') {
+          currentViewMode = 'grid';
+          renderTuVi(false);
+        }
       };
     }
     if (btnList) {
       btnList.onclick = () => {
-        currentViewMode = 'list';
-        renderTuVi();
+        if (currentViewMode !== 'list') {
+          currentViewMode = 'list';
+          renderTuVi(false);
+        }
       };
     }
     if (btnAnalysis) {
       btnAnalysis.onclick = () => {
-        currentViewMode = 'analysis';
-        renderTuVi();
+        if (currentViewMode !== 'analysis') {
+          currentViewMode = 'analysis';
+          renderTuVi(false);
+        }
       };
     }
 
@@ -1558,15 +1566,19 @@
     const btnTabDash = document.getElementById('btn-tuvi-tab-dashboard');
     if (btnTabDash) {
       btnTabDash.onclick = () => {
-        currentAnalysisSubTab = 'dashboard';
-        renderTuVi(true);
+        if (currentAnalysisSubTab !== 'dashboard') {
+          currentAnalysisSubTab = 'dashboard';
+          renderTuVi(false);
+        }
       };
     }
     const btnTabFull = document.getElementById('btn-tuvi-tab-full-report');
     if (btnTabFull) {
       btnTabFull.onclick = () => {
-        currentAnalysisSubTab = 'full-report';
-        renderTuVi(true);
+        if (currentAnalysisSubTab !== 'full-report') {
+          currentAnalysisSubTab = 'full-report';
+          renderTuVi(false);
+        }
       };
     }
 
@@ -1597,14 +1609,35 @@
           }
         });
 
-        // 3. Cuộn mượt và trực tiếp đến nội dung đã chọn (không bao giờ nhảy lên đầu trang)
+        // 3. Cuộn mượt và trực tiếp đến nội dung đã chọn (block: 'nearest' không đẩy filter bar ra ngoài)
         const filterBar = document.querySelector('.tuvi-palace-filter-bar');
         const targetCard = (val !== 'ALL')
           ? document.querySelector(`.tuvi-palace-treatise-card[data-palace-name="${val}"]`)
           : null;
         const scrollTarget = (val !== 'ALL' && targetCard) ? targetCard : filterBar;
         if (scrollTarget) {
-          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      };
+    });
+
+    // TOC Navigation Pills: Bắt sự kiện cuộn nội bộ mượt mà không nhảy URL hash
+    document.querySelectorAll('.tuvi-report-toc-pill').forEach(a => {
+      a.onclick = (e) => {
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const targetId = href.substring(1);
+          const targetEl = document.getElementById(targetId);
+          const sc = document.querySelector('#view-tuvi .tuvi-view-container');
+          if (targetEl && sc) {
+            const scRect = sc.getBoundingClientRect();
+            const elRect = targetEl.getBoundingClientRect();
+            const targetScrollTop = sc.scrollTop + (elRect.top - scRect.top) - 10;
+            sc.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+          } else if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
         }
       };
     });

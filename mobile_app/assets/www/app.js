@@ -342,49 +342,34 @@
       resetDeck();
       renderGuideList();
     } else if (mode === 'tamthuc') {
-      const render = () => { if (window.NetaTamThucView) window.NetaTamThucView.render(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaTamThucView) window.NetaTamThucView.render();
     } else if (mode === 'calendar') {
-      const render = () => { if (window.NetaCalendarView) window.NetaCalendarView.render(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaCalendarView) window.NetaCalendarView.render();
     } else if (mode === 'qmdj') {
-      const render = () => { if (window.NetaQMDJView) window.NetaQMDJView.render(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaQMDJView) window.NetaQMDJView.render();
     } else if (mode === 'thaiat') {
-      const render = () => { if (window.NetaThaiAtView) window.NetaThaiAtView.render(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaThaiAtView) window.NetaThaiAtView.render();
     } else if (mode === 'lucnham') {
-      const render = () => {
-        if (window.LucNhamView) {
-          const container = document.getElementById('view-lucnham');
-          window.LucNhamView.render(container);
-        }
-      };
-      render(); setTimeout(render, 150);
+      if (window.LucNhamView) {
+        const container = document.getElementById('view-lucnham');
+        window.LucNhamView.render(container);
+      }
     } else if (mode === 'bazi') {
-      const render = () => { if (window.NetaBaziView) window.NetaBaziView.render(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaBaziView) window.NetaBaziView.render();
     } else if (mode === 'tuvi') {
-      const render = () => { if (window.NetaTuViView) window.NetaTuViView.render(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaTuViView) window.NetaTuViView.render();
     } else if (mode === 'tarot') {
-      const render = () => { if (window.NetaTarotView) window.NetaTarotView.render(); };
-      render(); setTimeout(render, 150); setTimeout(render, 350);
+      if (window.NetaTarotView) window.NetaTarotView.render();
     } else if (mode === 'lakinh') {
-      const render = () => { if (window.NetaLaKinhView) window.NetaLaKinhView.render(); };
-      render(); setTimeout(render, 150); setTimeout(render, 350);
+      if (window.NetaLaKinhView) window.NetaLaKinhView.render();
     } else if (mode === 'phaphanh') {
-      const render = () => { if (window.PhapHanhModule) window.PhapHanhModule.renderLessons(); };
-      render(); setTimeout(render, 150);
+      if (window.PhapHanhModule) window.PhapHanhModule.renderLessons();
     } else if (mode === 'dichhoc') {
-      const render = () => { if (window.NetaDichHocView) window.NetaDichHocView.render(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaDichHocView) window.NetaDichHocView.render();
     } else if (mode === 'trachcat') {
-      const render = () => { if (window.NetaTrachCatView) window.NetaTrachCatView.init(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaTrachCatView) window.NetaTrachCatView.init();
     } else if (mode === 'diachinh') {
-      const render = () => { if (window.NetaDiaChinhView) window.NetaDiaChinhView.init(); };
-      render(); setTimeout(render, 150);
+      if (window.NetaDiaChinhView) window.NetaDiaChinhView.init();
     }
 
     playBellChime();

@@ -20,9 +20,11 @@
     renderCalendar();
   }
 
-  function renderCalendar() {
+  function renderCalendar(preserveScroll = false) {
     const container = document.getElementById('view-calendar');
     if (!container) return;
+    const scrollEl = container.querySelector('.calendar-module-container') || container;
+    const prevScrollY = preserveScroll ? (scrollEl.scrollTop || (container.scrollTop || 0)) : null;
 
     const y = currentSelectedDate.getFullYear();
     const m = currentSelectedDate.getMonth() + 1; // 1-12
@@ -87,6 +89,13 @@
     `;
 
     bindCalendarEvents(y, m);
+
+    if (prevScrollY !== null) {
+      requestAnimationFrame(() => {
+        const sc = container.querySelector('.calendar-module-container') || container;
+        if (sc) sc.scrollTop = prevScrollY;
+      });
+    }
   }
 
   function renderMonthGridHTML(year, month, selectedDay) {
@@ -302,7 +311,7 @@
     if (btnToday) {
       btnToday.onclick = () => {
         currentSelectedDate = new Date();
-        renderCalendar();
+        renderCalendar(true);
       };
     }
 
@@ -320,7 +329,7 @@
       btnSolar.onclick = () => {
         if (isCalLunarMode) {
           isCalLunarMode = false;
-          renderCalendar();
+          renderCalendar(true);
         }
       };
     }
@@ -328,7 +337,7 @@
       btnLunar.onclick = () => {
         if (!isCalLunarMode) {
           isCalLunarMode = true;
-          renderCalendar();
+          renderCalendar(true);
         }
       };
     }
@@ -426,7 +435,7 @@
         } else {
           currentSelectedDate = new Date(currentSelectedDate.getTime() - 86400000);
         }
-        renderCalendar();
+        renderCalendar(true);
       };
     }
     if (btnNext) {
@@ -436,7 +445,7 @@
         } else {
           currentSelectedDate = new Date(currentSelectedDate.getTime() + 86400000);
         }
-        renderCalendar();
+        renderCalendar(true);
       };
     }
 

@@ -596,6 +596,17 @@
     const container = document.getElementById('view-tarot');
     if (!container) return;
 
+    const subview = container.querySelector('#tarot-subview-container');
+    if (subview) {
+      container.querySelectorAll('.tarot-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === currentSubTab);
+      });
+      subview.innerHTML = renderCurrentSubView();
+      subview.scrollTop = 0;
+      bindTarotEvents(container);
+      return;
+    }
+
     container.innerHTML = `
       <div class="tarot-module-wrapper">
         <!-- Sub-Nav Header -->
@@ -2079,7 +2090,7 @@
           if (areAllCardsFlipped()) {
             setTimeout(() => {
               const rep = document.getElementById('tarot-report-section');
-              if (rep) rep.scrollIntoView({ behavior: 'smooth' });
+              if (rep) rep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 300);
           }
         }
@@ -2096,7 +2107,7 @@
         renderTarot();
         setTimeout(() => {
           const rep = document.getElementById('tarot-report-section');
-          if (rep) rep.scrollIntoView({ behavior: 'smooth' });
+          if (rep) rep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 300);
       });
     }
@@ -2400,7 +2411,7 @@
           renderTarot();
           setTimeout(() => {
             const rep = document.getElementById('tarot-report-section');
-            if (rep) rep.scrollIntoView({ behavior: 'smooth' });
+            if (rep) rep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }, 200);
         }
       });

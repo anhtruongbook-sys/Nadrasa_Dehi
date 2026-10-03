@@ -909,10 +909,10 @@
   }
 
   function renderBazi(preserveScroll = false) {
-    const scrollEl = document.querySelector('#view-bazi .bazi-view-container');
-    const prevScrollY = preserveScroll ? (scrollEl ? scrollEl.scrollTop : (window.scrollY || document.documentElement.scrollTop)) : null;
     const container = document.getElementById('view-bazi');
     if (!container) return;
+    const scrollEl = container.querySelector('.bazi-view-container') || container;
+    const prevScrollY = preserveScroll ? (scrollEl.scrollTop || 0) : null;
 
     const chart = computeBaziChart();
     if (!chart) {
@@ -1126,11 +1126,9 @@
 
       if (prevScrollY !== null) {
         requestAnimationFrame(() => {
-          const sc = document.querySelector('#view-bazi .bazi-view-container');
+          const sc = document.querySelector('#view-bazi .bazi-view-container') || container;
           if (sc) {
             sc.scrollTop = prevScrollY;
-          } else {
-            window.scrollTo({ top: prevScrollY, behavior: 'instant' });
           }
         });
       }
@@ -1314,11 +1312,9 @@
 
     if (prevScrollY !== null) {
       requestAnimationFrame(() => {
-        const sc = document.querySelector('#view-bazi .bazi-view-container');
+        const sc = document.querySelector('#view-bazi .bazi-view-container') || container;
         if (sc) {
           sc.scrollTop = prevScrollY;
-        } else {
-          window.scrollTo({ top: prevScrollY, behavior: 'instant' });
         }
       });
     }
@@ -1580,14 +1576,18 @@
 
     if (btnModeChart) {
       btnModeChart.onclick = () => {
-        currentViewMode = 'chart';
-        renderBazi();
+        if (currentViewMode !== 'chart') {
+          currentViewMode = 'chart';
+          renderBazi(false);
+        }
       };
     }
     if (btnModeAnalysis) {
       btnModeAnalysis.onclick = () => {
-        currentViewMode = 'analysis';
-        renderBazi();
+        if (currentViewMode !== 'analysis') {
+          currentViewMode = 'analysis';
+          renderBazi(false);
+        }
       };
     }
 
@@ -1597,14 +1597,18 @@
 
     if (btnTabDashboard) {
       btnTabDashboard.onclick = () => {
-        currentAnalysisSubTab = 'dashboard';
-        renderBazi(true);
+        if (currentAnalysisSubTab !== 'dashboard') {
+          currentAnalysisSubTab = 'dashboard';
+          renderBazi(false);
+        }
       };
     }
     if (btnTabFullReport) {
       btnTabFullReport.onclick = () => {
-        currentAnalysisSubTab = 'report';
-        renderBazi(true);
+        if (currentAnalysisSubTab !== 'report') {
+          currentAnalysisSubTab = 'report';
+          renderBazi(false);
+        }
       };
     }
 
@@ -1627,13 +1631,34 @@
           card.style.display = isShow ? '' : 'none';
         });
 
-        // Smooth scroll directly to selected card or filter bar
+        // Smooth scroll directly to selected card or filter bar (block: 'nearest' không đẩy filter bar ra ngoài)
         const scrollTarget = topic !== 'ALL'
           ? (document.getElementById(`topic-card-${topic}`) || pill.closest('.bazi-topic-filter-bar'))
           : pill.closest('.bazi-topic-filter-bar');
 
         if (scrollTarget) {
-          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      };
+    });
+
+    // TOC Navigation Pills: Bắt sự kiện cuộn nội bộ mượt mà không nhảy URL hash
+    document.querySelectorAll('.bazi-report-toc-pill').forEach(a => {
+      a.onclick = (e) => {
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const targetId = href.substring(1);
+          const targetEl = document.getElementById(targetId);
+          const sc = document.querySelector('#view-bazi .bazi-view-container');
+          if (targetEl && sc) {
+            const scRect = sc.getBoundingClientRect();
+            const elRect = targetEl.getBoundingClientRect();
+            const targetScrollTop = sc.scrollTop + (elRect.top - scRect.top) - 10;
+            sc.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+          } else if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
         }
       };
     });
