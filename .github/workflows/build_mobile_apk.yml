@@ -76,10 +76,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.57
-          name: "Neta Light v2.8.57 (Kỳ Môn Đa Dụng Thần & Bàn Thần 10 Thần / 8 Thần Tam Thức)"
+          tag_name: v2.8.58
+          name: "Neta Light v2.8.58 (Thái Ất La Kinh 60 FPS & Quy Hoạch 8 Phân Khu Động 5 Loại Hình BĐS)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.57
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.58
+            - **Nâng Cấp Đột Phá Thanh Trượt La Kinh Thái Ất 60 FPS**:
+              + Tách biệt hoàn toàn luồng cập nhật DOM tức thời (Live Decoupled Readouts) khỏi tác vụ tính toán chuyên sâu; kéo thanh trượt mượt mà 60 FPS không giật lag.
+              + Bổ sung hàng nút vi chỉnh góc công thái học trên di động: `[-5°]`, `[-1°]`, `[-0.5°]`, `[+0.5°]`, `[+1°]`, `[+5°]`.
+              + Bổ sung dải 8 nút chọn nhanh phương vị bát quái 1 chạm: Bắc 0°, ĐB 45°, Đông 90°, ĐN 135°, Nam 180°, TN 225°, Tây 270°, TB 315°.
+            - **Quy Hoạch Động 8 Phân Khu Kiến Trúc & 5 Giải Pháp Vi Khí Hậu Chuẩn Xác Cho 5 Loại Hình BĐS**:
+              + **Căn hộ chung cư**: Loại bỏ 100% các khái niệm không phù hợp (gầm cầu thang, cầu thang bộ, bể phốt ngầm); thay bằng ban thờ treo tường / vách CNC phòng khách, ban công / logia đối lưu, phễu thu sàn bẫy nước xi-phông chống trào ngược mùi hộp gen kỹ thuật tòa nhà.
+              + **Văn phòng công ty**: Chuẩn hóa không gian sảnh lễ tân, ban thờ Thần Tài đón khách, Pantry nhân viên, phòng Lãnh đạo & bàn Chủ tịch/Giám đốc, phòng kế toán két tài chính, phòng họp R&D, cụm WC & phòng server IT.
+              + **Nhà xưởng sản xuất**: Chuẩn hóa bến dock xuất nhập container, ban thờ Tiền Chủ, căng-tin công nhân, phòng điều hành quản đốc, kho pallet thành phẩm, phòng KCS/Lab, cửa trời thông gió mái nóc (Ridge vent), trạm xử lý nước thải.
+              + **Biệt thự & Nhà phố**: Bố trí đại môn sân vườn hồ cá Koi, gian thờ gia tiên tầng tum/thượng, bếp khô đảo bếp + bếp ướt ngoài trời, phòng ngủ master suite, cầu thang giếng trời thông tầng, bể tự hoại khép kín.
             - **Đồng Bộ Hoàn Toàn Thuật Toán Kỳ Môn Sang Phân Hệ Tam Thức**:
               + **Cơ Chế Đa Dụng Thần (2 Dụng Thần Đối Trọng + Cung Bản Mệnh)**: Hiển thị đầy đủ Mầm Bệnh (Thiên Nhuế) vs Thầy Thuốc & Y Dược (Thiên Tâm/Ất) vs Bản Mệnh Can Ngày.
               + **Chuẩn Hóa Ngũ Hành Sinh Khắc Chiêm Bệnh**: Cung Bệnh sinh Bản Mệnh là thế "Bệnh Nhập Thân" (Bệnh mãn tính, bám sâu khó dứt - ĐẠI HUNG), người thắng bệnh (cát lợi), thầy thuốc khắc mầm bệnh (dược đáo bệnh trừ).
