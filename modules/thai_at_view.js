@@ -1286,13 +1286,15 @@
       }
       .thaiat-role-btn.active-chu {
         background: linear-gradient(135deg, #10b981, #059669);
-        color: #ffffff;
+        background-color: #059669 !important;
+        color: #ffffff !important;
         font-weight: 800;
         box-shadow: 0 1px 4px rgba(16, 185, 129, 0.3);
       }
       .thaiat-role-btn.active-khach {
         background: linear-gradient(135deg, #0284c7, #0369a1);
-        color: #ffffff;
+        background-color: #0369a1 !important;
+        color: #ffffff !important;
         font-weight: 800;
         box-shadow: 0 1px 4px rgba(2, 132, 199, 0.3);
       }

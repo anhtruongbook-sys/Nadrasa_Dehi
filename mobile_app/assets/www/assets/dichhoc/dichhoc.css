@@ -519,6 +519,7 @@ body.theme-light .dh-tube-svg {
 
 .dh-tube-badge {
   background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  background-color: #b45309 !important;
   border: 1px solid #f59e0b;
   color: #ffffff;
   font-size: 0.62rem;

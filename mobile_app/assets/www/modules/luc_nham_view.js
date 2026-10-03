@@ -100,6 +100,7 @@
         margin: 0 auto;
         padding: 4px 6px calc(var(--safe-bottom, 20px) + 90px);
         box-sizing: border-box;
+        overflow-x: hidden;
         color: var(--text-primary, #f8fafc);
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
@@ -595,6 +596,18 @@
       body.theme-light .lucnham-drawer [style*="color: var(--gold-primary"] {
         color: #b45309 !important;
       }
+      body.theme-light .lucnham-view-wrap [style*="color: var(--gold-primary"],
+      body.theme-light .lucnham-view-wrap [style*="color: #f5b041"],
+      body.theme-light .lucnham-view-wrap [style*="color:#f5b041"],
+      body.theme-light .lucnham-view-wrap [style*="color: #ffd700"],
+      body.theme-light .lucnham-view-wrap [style*="color:#ffd700"],
+      body.theme-light #lucnham-btn-gps {
+        color: #b45309 !important;
+      }
+      body.theme-light .lucnham-view-wrap [style*="color: #34d399"],
+      body.theme-light .lucnham-view-wrap [style*="color:#34d399"] {
+        color: #047857 !important;
+      }
 
       /* Solar Time Row in UCC */
       .ucc-row-solartime {
@@ -603,9 +616,14 @@
         justify-content: space-between;
         gap: 6px;
         margin-top: 4px;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
       .solartime-toggle-wrap {
         flex: 0 0 auto;
+        max-width: 100%;
       }
       .solartime-toggle-btn {
         height: 28px;
@@ -641,11 +659,15 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        flex: 1;
+        flex: 1 1 180px;
         min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
       }
       .select-city {
-        flex: 1;
+        flex: 1 1 0%;
+        min-width: 0;
+        width: 0;
         height: 28px;
         font-size: 11px;
         font-weight: 600;
@@ -659,6 +681,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        box-sizing: border-box;
       }
       body.theme-light .select-city {
         background: #ffffff;
@@ -666,6 +689,7 @@
         color: #0f172a;
       }
       .ucc-btn-gps {
+        flex: 0 0 28px;
         height: 28px;
         width: 28px;
         padding: 0;
@@ -679,6 +703,7 @@
         cursor: pointer;
         color: var(--gold-primary, #f5b041);
         transition: all 0.2s ease;
+        box-sizing: border-box;
       }
       .ucc-btn-gps:hover {
         border-color: var(--gold-primary, #f5b041);
@@ -811,11 +836,13 @@
         color: #64748b;
       }
       .ucc-danmo-btn.active.dan {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
+        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+        background-color: #d97706 !important;
         color: #ffffff !important;
       }
       .ucc-danmo-btn.active.mo {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+        background-color: #4f46e5 !important;
         color: #ffffff !important;
       }
 
@@ -2078,14 +2105,14 @@
         <div class="lucnham-cung-cell ${isActive ? 'lucnham-cung-active' : ''}" onclick="window.LucNhamView.selectPalace('${b.diaBan}')">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; font-size: 9px;">
             <span style="font-weight: 800; color: #94a3b8;">${b.diaBan}</span>
-            <span class="lucnham-cell-thientuong" style="font-size: 8px; font-weight: 700; max-width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <span class="lucnham-cell-thientuong" style="font-size: 8.5px; font-weight: 700; max-width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
               ${b.thienTuong}
             </span>
           </div>
           <div class="lucnham-cell-thienban" style="text-align: center; font-size: 15px; font-weight: 900; margin: 2px 0;">
             ${b.thienBan}
           </div>
-          <div style="display: flex; justify-content: space-between; font-size: 8px; color: #94a3b8;">
+          <div style="display: flex; justify-content: space-between; font-size: 8.5px; color: #94a3b8;">
             <span>${b.lucThan.split(' ')[0]}</span>
             <span>${tagHtml}</span>
           </div>
@@ -2099,22 +2126,22 @@
         <!-- Dòng 1: Thiên bàn & Tags -->
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; border-bottom: 1px solid rgba(245, 176, 65, 0.2); padding-bottom: 1px;">
           <span class="lucnham-cell-thienban" style="font-weight: 900;">${b.thienBan}</span>
-          <div style="font-size: 8px; line-height: 1;">${tagHtml}</div>
+          <div style="font-size: 8.5px; line-height: 1;">${tagHtml}</div>
         </div>
         <!-- Dòng 2: Thiên tướng -->
         <div class="lucnham-cell-thientuong" style="font-size: 8.5px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
           ${b.thienTuong}
         </div>
         <!-- Dòng 3: Sao Thái Tuế -->
-        <div class="lucnham-cell-sub" style="font-size: 7.5px; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        <div class="lucnham-cell-sub" style="font-size: 8.5px; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
           ${b.saoThaiTue || '---'}
         </div>
         <!-- Dòng 4: Vòng Kiến Trừ -->
-        <div class="lucnham-cell-sub" style="font-size: 7.5px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        <div class="lucnham-cell-sub" style="font-size: 8.5px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
           ${b.saoKienTru || '---'}
         </div>
         <!-- Dòng 5: Thần Sát Phụ -->
-        <div style="font-size: 7px; color: #f43f5e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        <div style="font-size: 8px; color: #f43f5e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; box-sizing: border-box;" title="${satStr}">
           ${satStr || '---'}
         </div>
         <!-- Dòng 6: Thần Cung & Địa Bàn -->
