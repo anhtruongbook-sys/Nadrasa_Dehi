@@ -76,23 +76,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.67
-          name: "Neta Light v2.8.67 (Tinh Gọn Header Topbar, Chuẩn Hóa Thuật Toán 384 Hào HKDQ Xác Định Năm/Người Phát & Tương Phản WCAG AAA)"
+          tag_name: v2.8.68
+          name: "Neta Light v2.8.68 (Khôi Phục 100% CSDL Nguyên Bản Excel HKĐQ 3 Khóa HNT: Bài 14 Ứng Kỳ Năm Phát & Bài 15 Ứng Nhân Người Phát)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.67
-            - **Tinh Gọn Header & Loại Bỏ Nút Trùng Lặp**:
-              + Gỡ bỏ hoàn toàn nút chụp ảnh phụ thừa khỏi thanh điều khiển Địa Lý Khảo Sát, dùng chung nút Camera 📷 Topbar toàn hệ thống, giải phóng diện tích hiển thị trên mobile.
-            - **Chuẩn Hóa Thuật Toán 384 Hào Huyền Không Đại Quái (Zero Unassigned Invariant)**:
-              + Khắc phục triệt để lỗi "Chưa định" ở Năm phát và Người phát của các hào vi phân 0.9375°.
-              + **Năm phát**: Tự động tính toán theo Địa Chi của Hào và Tam Hợp Cục (Thân-Tý-Thìn, Dần-Ngọ-Tuất, Hợi-Mão-Mùi, Tỵ-Dậu-Sửu) kết hợp Niên Vận của Quẻ.
-              + **Người phát**: Suy luận chính xác theo Lục Thân (Thê Tài, Tử Tôn, Quan Quỷ, Phụ Mẫu, Huynh Đệ) và Hào Vị (Sơ, Nhị, Tam, Tứ, Ngũ, Thượng) trong trạch gia.
-              + Bổ sung tóm tắt ứng kỳ ngay trên danh sách 6 hào của Quẻ Chủ để tra cứu nhanh.
-            - **Tương Phản Màu Chữ WCAG AAA Sắc Nét Vượt Trội**:
-              + Màu Năm phát hổ phách đậm (#b45309), Người phát xanh lục đậm (#15803d), Tiêu đề tím hoàng gia (#581c87) cực nét cả ngoài trời nắng.
-              + Nhúng thêm cơ chế tự động Fallback CSS nội suy ngay trong `modules/dialy_view.js` (Bảo đảm 100% không bao giờ bị mất CSS).
-            - **Đồng Bộ Hoàn Hảo Giao Diện Sáng / Tối (Light & Dark Theme)**:
-              + Chuẩn hóa màu sắc theo quy chuẩn Giấy Lụa Hoàng Gia Neta Light (`theme-light`), tương phản cao WCAG AAA.
-              + Tối ưu chế độ Tối (`dark mode`) huyền bí, sang trọng phương Đông.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.68
+            - **Khôi Phục Chuẩn Xác 100% CSDL Excel Huyền Không Đại Quái Thầy Hạnh Nhật Tấn**:
+              + Loại bỏ hoàn toàn mọi thuật toán suy diễn tự phát. Khôi phục nguyên bản 100% dữ liệu gốc từ file Excel `HKĐQ- 3 Khóa HNT.xlsx`.
+              + **Ứng kỳ Năm phát (Bài 14)**: Lấy chuẩn xác Can Chi tại Hào Biến (Hào Thế) của từng Quẻ Chủ trong 64 quẻ (ví dụ Quẻ Bát Thuần Chấn: Năm Canh Tý).
+              + **Ứng nhân Người được phát (Bài 15)**: Lấy chuẩn xác Can Chi đối chiếu về Quẻ Bát Thuần gốc tại chính vị trí hào tương ứng với năm phát (ví dụ Quẻ Bát Thuần Chấn: Người tuổi Canh Tý).
+            - **Chuẩn Hóa Đánh Giá Công Năng Phong Thủy Của 384 Hào (Khóa 2 Thực Chiến - Bài 1 & Bài 5)**:
+              + Đánh giá chuyên sâu tác dụng Khai Môn (Mở cửa chính, Cổng phụ) và Kích Thủy (Hồ cá, Phong thủy luân chiêu tài) theo Lục Thân của từng Hào vi phân:
+                * **Thê Tài**: Đại Cát Khai Môn & Kích Thủy (Chiêu tài tiến bảo, đắc lợi kinh doanh).
+                * **Tử Tôn**: Phúc Thần Chiêu Cát (Khai Môn & Thành Môn đón vượng khí phúc thần, sinh quý tử, trừ tai ách).
+                * **Quan Quỷ**: Đại Kỵ Mở Cửa & Động Thủy (Chủ kiện tụng, thị phi, tai họa; chỉ hợp an gian thờ trang nghiêm).
+                * **Huynh Đệ**: Tránh Mở Cửa & Động Thủy (Chủ hao tán tiền của, cạnh tranh bất lợi).
+                * **Phụ Mẫu**: Thanh Tĩnh Cát Lợi (Vững vàng điền trạch, bảo trợ gia đạo, hợp bàn làm việc và phòng học).
+              + Đánh dấu nhận diện rõ Hào Biến kích hoạt Năm phát và Hào Ứng Nhân cho người mang tuổi tương ứng.
+            - **Nâng Cấp Giao Diện Thẻ Hào Sắc Nét WCAG AAA**:
+              + Tối ưu hộp đánh giá công năng phong thủy rõ nét, chữ đen than trên nền xanh/vàng dịu trong Light Mode, không còn bị mờ chữ.
             - **Tối Ưu Giao Diện & Công Thái Học Di Động (Mobile Ergonomics)**:
               + Khắc phục hoàn toàn lỗi không kéo lên kéo xuống được màn hình (`overflow-y: auto`, `touch-action: pan-y`).
               + Tinh giản Sticky Header siêu mỏng gọn, không che khuất màn hình; các nút bo tròn thanh thoát, dễ bấm.

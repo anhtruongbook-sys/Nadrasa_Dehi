@@ -102,72 +102,52 @@
     };
   }
 
-  // Thuật toán Xác định Năm Phát & Người Phát cho 384 Hào Huyền Không Đại Quái
-  // Chuẩn mực Dịch lý: Địa Chi Hào, Tam Hợp Cục, Lục Thân và Hào Vị
-  function getHkdqHaoApplication(hex, hao) {
-    if (!hao) return { nam_phat: 'Đương Vận 9', nguoi_phat: 'Chủ trạch & Nhân đinh bản cung' };
-
-    const tamHopMap = {
-      'Tý': 'Thân - Tý - Thìn', 'Thìn': 'Thân - Tý - Thìn', 'Thân': 'Thân - Tý - Thìn',
-      'Dần': 'Dần - Ngọ - Tuất', 'Ngọ': 'Dần - Ngọ - Tuất', 'Tuất': 'Dần - Ngọ - Tuất',
-      'Hợi': 'Hợi - Mão - Mùi', 'Mão': 'Hợi - Mão - Mùi', 'Mùi': 'Hợi - Mão - Mùi',
-      'Tỵ': 'Tỵ - Dậu - Sửu', 'Dậu': 'Tỵ - Dậu - Sửu', 'Sửu': 'Tỵ - Dậu - Sửu'
-    };
-
-    const chi = hao.dia_chi || (hao.can_chi ? hao.can_chi.split(' ')[1] : '');
-    
-    // 1. NĂM PHÁT (Thời điểm ứng kỳ / Niên vận phát tài phát lộc)
-    let namPhat = hao.nam_phat;
-    if (!namPhat) {
-      if (chi && tamHopMap[chi]) {
-        namPhat = `Năm ${chi} (Tam hợp: ${tamHopMap[chi]})`;
-      } else if (hao.can_chi) {
-        namPhat = `Năm ${hao.can_chi}`;
-      } else if (hex && hex.nam_phat_mac_dinh) {
-        namPhat = `Năm ${hex.nam_phat_mac_dinh}`;
-      } else {
-        namPhat = `Đương Vận ${hex ? hex.quai_van : 9} (Lưu niên hành vận)`;
-      }
+  // Đánh giá Công Năng Phong Thủy của Hào theo Lục Thân (Chuẩn mực Khóa 2 Thực Chiến - Thầy HNT)
+  function getHaoFengShuiRole(lucThan) {
+    switch (lucThan) {
+      case 'Thê Tài':
+        return {
+          title: '✨ Cát Khai Môn & Kích Thủy',
+          advice: 'Đại cát để trổ Cửa chính, Cổng phụ hoặc đặt Bể cá, Phong thủy luân chiêu tài tiến bảo, đắc lợi kinh doanh.',
+          badgeClass: 'green',
+          isCat: true
+        };
+      case 'Tử Tôn':
+        return {
+          title: '✨ Phúc Thần Chiêu Cát',
+          advice: 'Đại cát Khai Môn, Thành Môn đón vượng khí phúc thần; sinh quý tử, giải trừ tai ách.',
+          badgeClass: 'green',
+          isCat: true
+        };
+      case 'Quan Quỷ':
+        return {
+          title: '⚠️ Đại Kỵ Mở Cửa & Động Thủy',
+          advice: 'Tuyệt đối tránh trổ Cửa chính hoặc đặt Bể cá; chủ thị phi kiện tụng, tai họa. Chỉ hợp an vị Gian thờ trang nghiêm.',
+          badgeClass: 'warn',
+          isCat: false
+        };
+      case 'Huynh Đệ':
+        return {
+          title: '⚠️ Tránh Mở Cửa & Động Thủy',
+          advice: 'Tránh làm Cửa chính hoặc kích hoạt Thủy; chủ về cạnh tranh bất lợi, hao tán tiền của.',
+          badgeClass: 'gold',
+          isCat: false
+        };
+      case 'Phụ Mẫu':
+        return {
+          title: '🛡️ Thanh Tĩnh Cát Lợi',
+          advice: 'Chủ điền trạch vững bền, bảo trợ gia đạo; rất thích hợp đặt Bàn làm việc, Phòng học, Phòng thiền yên tĩnh.',
+          badgeClass: 'purple',
+          isCat: true
+        };
+      default:
+        return {
+          title: '⚖️ Bình Hòa',
+          advice: 'Khí trường trung tính, cần phối hợp Loan Đầu thực địa.',
+          badgeClass: 'neutral',
+          isCat: true
+        };
     }
-
-    // 2. NGƯỜI PHÁT (Đối tượng thụ hưởng nhân đinh / tài lộc / công danh trong trạch)
-    let nguoiPhat = hao.nguoi_phat;
-    if (!nguoiPhat) {
-      const lt = hao.luc_than || '';
-      const hIdx = hao.hao_index || 1;
-
-      const viTriMap = {
-        1: 'Sơ hào (Khởi nghiệp, vãn bối, con út)',
-        2: 'Nhị hào (Trung thất, nội trợ phụ nữ, con thứ)',
-        3: 'Tam hào (Trọng sự, người gánh vác việc nhà)',
-        4: 'Tứ hào (Quan quản, người điều hành, trưởng quản)',
-        5: 'Ngũ hào (Gia chủ, Trưởng nam, Lãnh đạo)',
-        6: 'Thượng hào (Trưởng bối, Cha mẹ, Bậc lão thành)'
-      };
-
-      let ltDesc = '';
-      if (lt === 'Thê Tài') {
-        ltDesc = 'Vợ, Nữ chủ, Người nắm tài chính buôn bán';
-      } else if (lt === 'Tử Tôn') {
-        ltDesc = 'Con cháu đời sau, Vãn bối, Quý tử';
-      } else if (lt === 'Quan Quỷ') {
-        ltDesc = 'Gia chủ, Nam chủ, Người cầu quan lộ thăng tiến';
-      } else if (lt === 'Phụ Mẫu') {
-        ltDesc = 'Bậc trưởng thượng, Cha mẹ, Người cầu khoa bảng văn chương';
-      } else if (lt === 'Huynh Đệ') {
-        ltDesc = 'Anh em đồng tộc, Bạn bè tương trợ, Đối tác liên danh';
-      }
-
-      if (ltDesc) {
-        nguoiPhat = `${ltDesc} • ${viTriMap[hIdx] || `Hào ${hIdx}`}`;
-      } else if (hex && hex.nguoi_phat_mac_dinh) {
-        nguoiPhat = `${hex.nguoi_phat_mac_dinh} • ${viTriMap[hIdx] || `Hào ${hIdx}`}`;
-      } else {
-        nguoiPhat = viTriMap[hIdx] || 'Chủ trạch & Nhân đinh bản cung';
-      }
-    }
-
-    return { nam_phat: namPhat, nguoi_phat: nguoiPhat };
   }
 
   // Khởi tạo và render module
@@ -492,8 +472,12 @@
         </div>
 
         <div class="dialy-que-subbox">
-          Độ số: <b>${hex.la_kinh ? hex.la_kinh.deg_range : ''}</b> (${hex.la_kinh ? hex.la_kinh.son_24 : ''})<br/>
-          Tài lộc: <span class="dialy-tai-loc-text">${hex.la_kinh ? hex.la_kinh.tai_ton_info : ''}</span>
+          <div>Độ số: <b>${hex.la_kinh ? hex.la_kinh.deg_range : ''}</b> (${hex.la_kinh ? hex.la_kinh.son_24 : ''})</div>
+          <div style="margin-top: 3px;">Tài lộc: <span class="dialy-tai-loc-text">${hex.la_kinh ? hex.la_kinh.tai_ton_info : ''}</span></div>
+          <div style="margin-top: 5px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.15); display: flex; flex-direction: column; gap: 3px; font-size: 0.70rem;">
+            <div>📅 <b>Ứng kỳ Năm phát:</b> <span class="dialy-nam-phat" style="color: #facc15; font-weight: 800;">Năm ${hex.nam_phat_mac_dinh || 'Đương Vận 9'}</span> <span style="font-size: 0.62rem; opacity: 0.75;">(Bài 14 - Hào Biến)</span></div>
+            <div>👤 <b>Ứng nhân Được phát:</b> <span class="dialy-nguoi-phat" style="color: #4ade80; font-weight: 800;">Người tuổi ${hex.nguoi_phat_mac_dinh || 'Bản cung'}</span> <span style="font-size: 0.62rem; opacity: 0.75;">(Bài 15 - Quẻ gốc)</span></div>
+          </div>
         </div>
       </div>
 
@@ -505,20 +489,32 @@
         </div>
 
         ${curHao ? (() => {
-          const curHaoApp = getHkdqHaoApplication(hex, curHao);
+          const role = getHaoFengShuiRole(curHao.luc_than);
+          const isHaoNamPhat = !!curHao.nam_phat;
+          const isHaoNguoiPhat = !!curHao.nguoi_phat;
           return `
             <div class="dialy-hao-cur-card">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <b class="hao-cur-title">Hào ${curHao.hao_index} • ${curHao.can_chi} (${curHao.luc_than})</b>
                 <span class="dialy-label" style="font-weight: 700;">${curHao.deg_range}</span>
               </div>
+              
+              <!-- Đánh giá công năng Khai Môn & Kích Thủy (Khóa 2 Bài 1 & 5) -->
+              <div class="hao-role-box ${role.isCat ? 'is-cat' : 'is-warn'}">
+                <div class="role-box-title">${role.title}</div>
+                <div class="role-box-desc">${role.advice}</div>
+              </div>
+
+              <!-- Ứng kỳ & Ứng nhân của Trạch (Từ CSDL Excel Thầy HNT) -->
               <div class="hao-meta-row">
                 <span class="hao-meta-label">📅 Năm phát:</span>
-                <span class="dialy-nam-phat">${curHaoApp.nam_phat}</span>
+                <span class="dialy-nam-phat">Năm ${hex.nam_phat_mac_dinh || 'Đương Vận 9'}</span>
+                ${isHaoNamPhat ? `<span style="font-size: 0.60rem; color: #facc15; background: rgba(250,204,21,0.15); padding: 1px 4px; border-radius: 3px; font-weight: 700; margin-left: 4px;">⭐ Hào Biến</span>` : ''}
               </div>
               <div class="hao-meta-row">
                 <span class="hao-meta-label">👤 Người phát:</span>
-                <span class="dialy-nguoi-phat">${curHaoApp.nguoi_phat}</span>
+                <span class="dialy-nguoi-phat">Người tuổi ${hex.nguoi_phat_mac_dinh || 'Bản cung'}</span>
+                ${isHaoNguoiPhat ? `<span style="font-size: 0.60rem; color: #4ade80; background: rgba(74,222,128,0.15); padding: 1px 4px; border-radius: 3px; font-weight: 700; margin-left: 4px;">⭐ Hào Ứng Nhân</span>` : ''}
               </div>
             </div>
           `;
@@ -528,8 +524,9 @@
         <div class="dialy-hao-list">
           ${(hex.haos || []).slice().reverse().map(h => {
             const isCur = curHao && curHao.hao_index === h.hao_index;
-            const hApp = getHkdqHaoApplication(hex, h);
-            const shortNguoiPhat = hApp.nguoi_phat.split('•')[0].trim();
+            const hRole = getHaoFengShuiRole(h.luc_than);
+            const isHaoNam = !!h.nam_phat;
+            const isHaoNguoi = !!h.nguoi_phat;
             return `
               <div class="dialy-hao-item ${isCur ? 'active' : ''}">
                 <div style="flex: 1; min-width: 0;">
@@ -538,7 +535,9 @@
                     <span class="dialy-label" style="margin-left: 6px;">${h.deg_range}</span>
                   </div>
                   <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                    Ứng: <span class="hao-sub-ung-nam" style="color: #facc15; font-weight: 600;">${hApp.nam_phat.split('(')[0].trim()}</span> • <span class="hao-sub-ung-nguoi" style="color: #4ade80; font-weight: 600;">${shortNguoiPhat}</span>
+                    <span style="color: ${hRole.isCat ? '#4ade80' : '#fbbf24'}; font-weight: 700;">${hRole.title.split('&')[0].trim()}</span>
+                    ${isHaoNam ? `<span style="color: #facc15; font-weight: 700; margin-left: 4px;">• ⭐ Hào Biến (Năm ${h.nam_phat})</span>` : ''}
+                    ${isHaoNguoi ? `<span style="color: #60a5fa; font-weight: 700; margin-left: 4px;">• ⭐ Hào Ứng Nhân (Tuổi ${h.nguoi_phat})</span>` : ''}
                   </div>
                 </div>
                 <button type="button" class="dialy-btn-select-hao dialy-btn-sm" data-target-deg="${(h.deg_start + h.deg_end)/2}" style="font-size: 0.62rem; padding: 2px 7px; margin-left: 6px;">
@@ -1367,6 +1366,41 @@
   font-weight: 700;
 }
 
+/* Hộp Đánh Giá Công Năng Phong Thủy của Hào */
+.hao-role-box {
+  font-size: 0.70rem;
+  margin: 6px 0;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  border-left: 3.5px solid #64748b;
+}
+
+.hao-role-box.is-cat {
+  border-left-color: #10b981;
+}
+
+.hao-role-box.is-cat .role-box-title {
+  color: #4ade80;
+  font-weight: 800;
+}
+
+.hao-role-box.is-warn {
+  border-left-color: #f59e0b;
+}
+
+.hao-role-box.is-warn .role-box-title {
+  color: #fbbf24;
+  font-weight: 800;
+}
+
+.hao-role-box .role-box-desc {
+  color: #cbd5e1;
+  font-size: 0.66rem;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
 /* Danh Sách 6 Hào */
 .dialy-hao-list {
   display: flex;
@@ -1803,6 +1837,39 @@ body.theme-light .dialy-hao-item .hao-sub-ung-nam {
 body.theme-light .dialy-hao-item .hao-sub-ung-nguoi {
   color: #15803d !important;
 }
+
+/* Light Theme Cho Hào Role Box */
+body.theme-light .hao-role-box {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-left-width: 4px !important;
+}
+
+body.theme-light .hao-role-box.is-cat {
+  background: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  border-left-color: #15803d !important;
+}
+
+body.theme-light .hao-role-box.is-cat .role-box-title {
+  color: #14532d !important;
+}
+
+body.theme-light .hao-role-box.is-warn {
+  background: #fefce8 !important;
+  border-color: #fef08a !important;
+  border-left-color: #b45309 !important;
+}
+
+body.theme-light .hao-role-box.is-warn .role-box-title {
+  color: #78350f !important;
+}
+
+body.theme-light .hao-role-box .role-box-desc {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
 
 `;
     document.head.appendChild(style);

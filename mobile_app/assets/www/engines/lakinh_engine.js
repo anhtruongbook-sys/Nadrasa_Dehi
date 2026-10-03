@@ -943,52 +943,11 @@
       lucThanAdvice = `Hào ${hIdx} mang Phụ Mẫu (${selectedHao.can_chi}): Chủ về che chở, học vấn, giấy tờ bằng cấp, vững chắc cho gia trạch.`;
     }
 
-    // Xác định Năm phát & Người phát chuẩn Dịch lý HKDQ
-    const tamHopHaoMap = {
-      'Tý': 'Thân - Tý - Thìn', 'Thìn': 'Thân - Tý - Thìn', 'Thân': 'Thân - Tý - Thìn',
-      'Dần': 'Dần - Ngọ - Tuất', 'Ngọ': 'Dần - Ngọ - Tuất', 'Tuất': 'Dần - Ngọ - Tuất',
-      'Hợi': 'Hợi - Mão - Mùi', 'Mão': 'Hợi - Mão - Mùi', 'Mùi': 'Hợi - Mão - Mùi',
-      'Tỵ': 'Tỵ - Dậu - Sửu', 'Dậu': 'Tỵ - Dậu - Sửu', 'Sửu': 'Tỵ - Dậu - Sửu'
-    };
-    let chiHao = selectedHao ? (selectedHao.dia_chi || (selectedHao.can_chi ? selectedHao.can_chi.split(' ')[1] : '')) : '';
-    let namPhatCalc = selectedHao ? selectedHao.nam_phat : '';
-    if (!namPhatCalc) {
-      if (chiHao && tamHopHaoMap[chiHao]) {
-        namPhatCalc = `Năm ${chiHao} (Tam hợp: ${tamHopHaoMap[chiHao]})`;
-      } else if (selectedHao && selectedHao.can_chi) {
-        namPhatCalc = `Năm ${selectedHao.can_chi}`;
-      } else if (matchedQue.nam_phat_mac_dinh) {
-        namPhatCalc = `Năm ${matchedQue.nam_phat_mac_dinh}`;
-      } else {
-        namPhatCalc = `Đương Vận ${qVan || 9}`;
-      }
-    }
-
-    let nguoiPhatCalc = selectedHao ? selectedHao.nguoi_phat : '';
-    if (!nguoiPhatCalc) {
-      const viTriMap = {
-        1: 'Sơ hào (Khởi nghiệp, vãn bối, con út)',
-        2: 'Nhị hào (Trung thất, nội trợ phụ nữ, con thứ)',
-        3: 'Tam hào (Trọng sự, người gánh vác việc nhà)',
-        4: 'Tứ hào (Quan quản, người điều hành, trưởng quản)',
-        5: 'Ngũ hào (Gia chủ, Trưởng nam, Lãnh đạo)',
-        6: 'Thượng hào (Trưởng bối, Cha mẹ, Bậc lão thành)'
-      };
-      let ltDesc = '';
-      if (lt === 'Thê Tài') ltDesc = 'Vợ, Nữ chủ, Người quản lý tài chính';
-      else if (lt === 'Tử Tôn') ltDesc = 'Con cháu đời sau, Vãn bối, Quý tử';
-      else if (lt === 'Quan Quỷ') ltDesc = 'Gia chủ, Nam chủ, Người cầu quan lộ';
-      else if (lt === 'Phụ Mẫu') ltDesc = 'Bậc trưởng thượng, Cha mẹ, Người cầu khoa bảng';
-      else if (lt === 'Huynh Đệ') ltDesc = 'Anh em đồng tộc, Bạn bè tương trợ';
-
-      if (ltDesc) {
-        nguoiPhatCalc = `${ltDesc} • ${viTriMap[hIdx] || `Hào ${hIdx}`}`;
-      } else if (matchedQue.nguoi_phat_mac_dinh) {
-        nguoiPhatCalc = `${matchedQue.nguoi_phat_mac_dinh} • ${viTriMap[hIdx] || `Hào ${hIdx}`}`;
-      } else {
-        nguoiPhatCalc = viTriMap[hIdx] || 'Chủ trạch & Nhân đinh';
-      }
-    }
+    // Năm phát & Người phát chuẩn CSDL Excel Thầy HNT (Bài 14 & Bài 15)
+    const namPhatCalc = matchedQue.nam_phat_mac_dinh || '';
+    const nguoiPhatCalc = matchedQue.nguoi_phat_mac_dinh || '';
+    const isHaoBien = !!(selectedHao && selectedHao.nam_phat);
+    const isHaoUngNhan = !!(selectedHao && selectedHao.nguoi_phat);
 
     return {
       degree: Math.round(deg * 100) / 100,

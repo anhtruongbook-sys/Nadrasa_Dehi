@@ -566,6 +566,41 @@
   font-weight: 700;
 }
 
+/* Hộp Đánh Giá Công Năng Phong Thủy của Hào */
+.hao-role-box {
+  font-size: 0.70rem;
+  margin: 6px 0;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  border-left: 3.5px solid #64748b;
+}
+
+.hao-role-box.is-cat {
+  border-left-color: #10b981;
+}
+
+.hao-role-box.is-cat .role-box-title {
+  color: #4ade80;
+  font-weight: 800;
+}
+
+.hao-role-box.is-warn {
+  border-left-color: #f59e0b;
+}
+
+.hao-role-box.is-warn .role-box-title {
+  color: #fbbf24;
+  font-weight: 800;
+}
+
+.hao-role-box .role-box-desc {
+  color: #cbd5e1;
+  font-size: 0.66rem;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
 /* Danh Sách 6 Hào */
 .dialy-hao-list {
   display: flex;
@@ -1002,4 +1037,37 @@ body.theme-light .dialy-hao-item .hao-sub-ung-nam {
 body.theme-light .dialy-hao-item .hao-sub-ung-nguoi {
   color: #15803d !important;
 }
+
+/* Light Theme Cho Hào Role Box */
+body.theme-light .hao-role-box {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-left-width: 4px !important;
+}
+
+body.theme-light .hao-role-box.is-cat {
+  background: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  border-left-color: #15803d !important;
+}
+
+body.theme-light .hao-role-box.is-cat .role-box-title {
+  color: #14532d !important;
+}
+
+body.theme-light .hao-role-box.is-warn {
+  background: #fefce8 !important;
+  border-color: #fef08a !important;
+  border-left-color: #b45309 !important;
+}
+
+body.theme-light .hao-role-box.is-warn .role-box-title {
+  color: #78350f !important;
+}
+
+body.theme-light .hao-role-box .role-box-desc {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
 
