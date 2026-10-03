@@ -108,7 +108,7 @@
     },
     dialy: {
       name: 'ĐỊA LÝ KHẢO SÁT',
-      subtitle: 'Tam Hợp Phái • Huyền Không Đại Quái',
+      subtitle: 'Tầm Long Điểm Huyệt • Tam Hợp • Đại Quái',
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
     },
