@@ -8,6 +8,8 @@ mimetypes.add_type('application/javascript', '.js')
 mimetypes.add_type('text/css', '.css')
 
 class FastCardHandler(SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
     def end_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
@@ -27,10 +29,15 @@ class FastCardHandler(SimpleHTTPRequestHandler):
             self.send_header('Expires', '0')
         super().end_headers()
 
+class FastServer(ThreadingHTTPServer):
+    request_queue_size = 512
+    daemon_threads = True
+    allow_reuse_address = True
+
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     port = 8088
     host = '0.0.0.0'
-    server = ThreadingHTTPServer((host, port), FastCardHandler)
+    server = FastServer((host, port), FastCardHandler)
     print(f'Neta Light High-Performance Server running on port {port}...')
     server.serve_forever()

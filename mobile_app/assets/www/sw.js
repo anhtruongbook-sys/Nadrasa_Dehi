@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v14.3
-const CACHE_NAME = 'neta-poker-v14.3';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v14.4
+const CACHE_NAME = 'neta-poker-v14.4';
 
 const CORE_ASSETS = [
   './',
@@ -99,18 +99,22 @@ for (const s of SUITS) {
   }
 }
 
-// Cài đặt và kích hoạt ngay lập tức
+// Cài đặt và kích hoạt ngay lập tức với chia nhỏ batch tải (chống nghẽn socket server)
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return Promise.allSettled(
-        CORE_ASSETS.map((asset) =>
-          cache.add(asset).catch((err) => {
-            console.warn('Pre-cache asset warning:', asset, err);
-          })
-        )
-      );
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const CHUNK_SIZE = 10;
+      for (let i = 0; i < CORE_ASSETS.length; i += CHUNK_SIZE) {
+        const chunk = CORE_ASSETS.slice(i, i + CHUNK_SIZE);
+        await Promise.allSettled(
+          chunk.map((asset) =>
+            cache.add(asset).catch((err) => {
+              console.warn('Pre-cache asset warning:', asset, err);
+            })
+          )
+        );
+      }
     })
   );
 });
@@ -129,7 +133,7 @@ self.addEventListener('activate', (e) => {
 
 // Chiến lược nạp tài nguyên:
 // 1. Ảnh tĩnh: Cache-First
-// 2. HTML/JS/CSS: Network-First
+// 2. HTML/JS/CSS: Network-First (Fallback Cache an toàn khi lỗi mạng hoặc 502/503)
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
@@ -149,8 +153,9 @@ self.addEventListener('fetch', (e) => {
             if (networkResp && networkResp.status === 200) {
               const clone = networkResp.clone();
               caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+              return networkResp;
             }
-            return networkResp;
+            return cached || networkResp;
           })
           .catch(() => cached);
       })
@@ -158,15 +163,17 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Các file mã nguồn HTML, CSS, JS -> Network First
+  // Các file mã nguồn HTML, CSS, JS -> Network First với fallback Cache khi gặp lỗi kết nối hoặc 5xx
   e.respondWith(
     fetch(e.request)
       .then((networkResp) => {
         if (networkResp && networkResp.status === 200) {
           const clone = networkResp.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+          return networkResp;
         }
-        return networkResp;
+        // Nếu server báo lỗi 502/503/404, lập tức lấy bản cache hợp lệ đang có
+        return caches.match(e.request, { ignoreSearch: true }).then((cached) => cached || networkResp);
       })
       .catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
