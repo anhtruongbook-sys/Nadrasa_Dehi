@@ -273,14 +273,22 @@
           <!-- Hàng 3: Chọn Vị Thế Chiến Lược & Phái Bát Thần / Thập Thần -->
           <div class="ucc-row ucc-row-role">
             <div class="ucc-role-selector">
-              <span class="role-label">Vị Thế:</span>
-              <button type="button" class="role-btn ${currentRole === 'Chủ' ? 'active chu' : ''}" id="btn-role-chu" title="Phe Chủ: Chủ động, người khởi sự">🛡️ Phe Chủ</button>
-              <button type="button" class="role-btn ${currentRole === 'Khách' ? 'active khach' : ''}" id="btn-role-khach" title="Phe Khách: Bị động, ngoại cảnh">⚔️ Phe Khách</button>
+              <span class="role-label"><span class="role-txt-long">Vị Thế:</span><span class="role-txt-short">Thế:</span></span>
+              <button type="button" class="role-btn ${currentRole === 'Chủ' ? 'active chu' : ''}" id="btn-role-chu" title="Phe Chủ: Chủ động, người khởi sự">
+                <span class="role-txt-long">🛡️ Phe Chủ</span><span class="role-txt-short">🛡️ Chủ</span>
+              </button>
+              <button type="button" class="role-btn ${currentRole === 'Khách' ? 'active khach' : ''}" id="btn-role-khach" title="Phe Khách: Bị động, ngoại cảnh">
+                <span class="role-txt-long">⚔️ Phe Khách</span><span class="role-txt-short">⚔️ Khách</span>
+              </button>
             </div>
-            <div class="ucc-deity-selector" style="display:flex;align-items:center;gap:6px;margin-left:auto;">
-              <span class="role-label">Bàn Thần:</span>
-              <button type="button" class="role-btn ${currentDeitySchool === '10thần' ? 'active deity' : ''}" id="btn-deity-10than" title="10 Thần (Cửu Cung - Nguyễn Tấn Công)">10 Thần</button>
-              <button type="button" class="role-btn ${currentDeitySchool === '8thần' ? 'active deity' : ''}" id="btn-deity-8than" title="8 Thần Truyền Thống">8 Thần</button>
+            <div class="ucc-deity-selector">
+              <span class="role-label"><span class="role-txt-long">Bàn Thần:</span><span class="role-txt-short">Thần:</span></span>
+              <button type="button" class="role-btn ${currentDeitySchool === '10thần' ? 'active deity' : ''}" id="btn-deity-10than" title="10 Thần (Cửu Cung - Nguyễn Tấn Công)">
+                <span class="deity-txt-long">10 Thần</span><span class="deity-txt-short">10</span>
+              </button>
+              <button type="button" class="role-btn ${currentDeitySchool === '8thần' ? 'active deity' : ''}" id="btn-deity-8than" title="8 Thần Truyền Thống">
+                <span class="deity-txt-long">8 Thần</span><span class="deity-txt-short">8</span>
+              </button>
             </div>
           </div>
 

@@ -19670,22 +19670,30 @@ body.theme-light .pillar-val {
 .tamthuc-ucc-card .ucc-row-role {
   display: flex !important;
   align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 6px !important;
-  width: 100%;
+  justify-content: space-between !important;
+  gap: 4px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-.ucc-role-selector {
+.ucc-role-selector,
+.ucc-deity-selector {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 5px !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.ucc-deity-selector {
+  margin-left: auto !important;
 }
 
 .role-label {
-  font-size: 0.68rem !important;
+  font-size: 0.66rem !important;
   font-weight: 700;
   color: #94a3b8;
-  margin-right: 2px;
+  margin-right: 1px;
+  white-space: nowrap !important;
 }
 
 body.theme-light .role-label {
@@ -19693,11 +19701,11 @@ body.theme-light .role-label {
 }
 
 .role-btn {
-  padding: 0 10px !important;
-  height: 26px !important;
-  line-height: 24px !important;
-  border-radius: 6px !important;
-  font-size: 0.66rem !important;
+  padding: 0 7px !important;
+  height: 25px !important;
+  line-height: 23px !important;
+  border-radius: 5px !important;
+  font-size: 0.65rem !important;
   font-weight: 700 !important;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -19706,6 +19714,46 @@ body.theme-light .role-label {
   transition: all 0.15s ease;
   white-space: nowrap !important;
   box-sizing: border-box;
+}
+
+.role-txt-short,
+.deity-txt-short {
+  display: none;
+}
+
+@media (max-width: 440px) {
+  .tamthuc-ucc-card .ucc-row-role {
+    gap: 2px !important;
+  }
+  .ucc-role-selector,
+  .ucc-deity-selector {
+    gap: 3px !important;
+  }
+  .role-btn {
+    padding: 0 5px !important;
+    font-size: 0.63rem !important;
+    height: 24px !important;
+    line-height: 22px !important;
+  }
+  .role-txt-long {
+    display: none !important;
+  }
+  .role-txt-short {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 350px) {
+  .deity-txt-long {
+    display: none !important;
+  }
+  .deity-txt-short {
+    display: inline !important;
+  }
+  .role-btn {
+    padding: 0 4px !important;
+    font-size: 0.60rem !important;
+  }
 }
 
 body.theme-light .role-btn {
