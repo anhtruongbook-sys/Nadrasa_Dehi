@@ -1834,6 +1834,17 @@
         bgColor = isLight ? '#fdfbf7' : '#120104';
         captureScale = 2;
         captureHeight = targetElement.scrollHeight || null;
+      } else if (currentDeckMode === 'dialy') {
+        const wrap = document.querySelector('.dialy-workspace') || document.getElementById('view-dialy');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#140418';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-dialy');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
       } else if (currentDeckMode === 'dichhoc') {
         targetElement = document.getElementById('view-dichhoc') || appContainer;
         bgColor = isLight ? '#fdfbf7' : '#0a0d18';

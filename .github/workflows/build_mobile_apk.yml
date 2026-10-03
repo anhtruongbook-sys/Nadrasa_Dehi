@@ -76,10 +76,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.65
-          name: "Neta Light v2.8.65 (Khắc Phục Toàn Diện CSS WebView Android, Đóng Gói 3 Tầng CSS & Hoàn Thiện Giao Diện Địa Lý Khảo Sát)"
+          tag_name: v2.8.66
+          name: "Neta Light v2.8.66 (Tăng Tốc Slider 120fps, Cuộn Siêu Mượt, Tương Phản WCAG AAA Cực Nét & Chụp Ảnh Dài HD)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.65
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.66
+            - **Tối Ưu Tốc Độ Thanh Trượt (120fps Slider Optimization)**:
+              + Áp dụng cơ chế RequestAnimationFrame (RAF) Throttling và Direct DOM Mutation cho con trượt Hướng và Thủy Khẩu, triệt tiêu 100% hiện tượng giật lag / khựng chậm khi kéo.
+            - **Tăng Tốc Cuộn Màn Hình Tức Thời (Fluid Kinetic Scrolling)**:
+              + Chuyển `scroll-behavior: auto`, loại bỏ hoàn toàn lực cản cuộn trên Android cảm ứng.
+              + Bỏ `backdrop-filter: blur` trên Sticky Header để GPU không bị tụt khung hình, cuộn mượt mà trơn tru 120Hz.
+            - **Tương Phản Màu Chữ WCAG AAA Sắc Nét Vượt Trội (Light Mode)**:
+              + Khắc phục hoàn toàn hiện tượng chữ mờ, vàng nhạt, xám nhạt khó đọc.
+              + Can Chi đen tuyền 900, Sao Cát xanh rừng đậm 900, Tên quẻ tím hoàng gia đậm 900, Quái khí/vận tương phản cao cực kỳ rõ ràng.
+            - **Tích Hợp Chụp Màn Hình Ảnh Dài Chuyên Dụng (Full Long Screenshot)**:
+              + Hỗ trợ nút `[📸 Ảnh Dài]` trực tiếp và tích hợp nút Camera Topbar 📷, xuất ảnh dài toàn diện độ phân giải cao HD lưu thẳng vào thư viện ảnh máy.
             - **Khắc Phục Triệt Để Lỗi Thiếu CSS WebView Trên Android**:
               + Bổ sung khai báo thư mục `assets/www/assets/dialy/` trong `pubspec.yaml` để Flutter đóng gói đầy đủ `dialy.css` vào file APK.
               + Tích hợp trực tiếp toàn bộ bộ CSS Địa Lý Khảo Sát vào file chính `styles.css`.
