@@ -260,6 +260,13 @@
     if (!MODULE_CONFIG[mode]) return;
     if (currentDeckMode === mode) {
       closeDropdown();
+      const targetView = document.getElementById(`view-${mode}`) || (mode === 'neta' || mode === 'poker' ? document.getElementById('view-cards') : null);
+      if (targetView && targetView.style.display !== 'flex') {
+        targetView.style.display = 'flex';
+      }
+      if (mode === 'dialy' && window.NetaDiaLyView && typeof window.NetaDiaLyView.init === 'function') {
+        try { window.NetaDiaLyView.init(); } catch (e) {}
+      }
       return;
     }
     const prevMode = currentDeckMode;
@@ -1459,6 +1466,19 @@
       let touchStartY = 0;
       let touchStartTime = 0;
       let isTouchSwiping = false;
+      let lastTriggeredTime = 0;
+
+      const triggerMode = (mode, e) => {
+        if (!mode) return;
+        const now = Date.now();
+        if (now - lastTriggeredTime < 300) return;
+        lastTriggeredTime = now;
+        if (e) {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        }
+        switchAppMode(mode);
+      };
 
       deckDropdown.addEventListener('touchstart', (e) => {
         if (e.touches && e.touches.length > 0) {
@@ -1473,19 +1493,17 @@
         if (e.touches && e.touches.length > 0) {
           const dx = Math.abs(e.touches[0].clientX - touchStartX);
           const dy = Math.abs(e.touches[0].clientY - touchStartY);
-          if (dx > 10 || dy > 10) {
+          if (dx > 15 || dy > 15) {
             isTouchSwiping = true;
           }
         }
       }, { passive: true });
 
       deckDropdown.addEventListener('touchend', (e) => {
-        if (!isTouchSwiping && (Date.now() - touchStartTime < 450)) {
+        if (!isTouchSwiping && (Date.now() - touchStartTime < 750)) {
           const item = e.target.closest('.deck-dropdown-item');
           if (item && item.dataset && item.dataset.mode) {
-            e.preventDefault();
-            e.stopPropagation();
-            switchAppMode(item.dataset.mode);
+            triggerMode(item.dataset.mode, e);
           }
         }
       });
@@ -1493,8 +1511,7 @@
       deckDropdown.addEventListener('click', (e) => {
         const item = e.target.closest('.deck-dropdown-item');
         if (item && item.dataset && item.dataset.mode) {
-          e.stopPropagation();
-          switchAppMode(item.dataset.mode);
+          triggerMode(item.dataset.mode, e);
         }
       });
     }
