@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.70
-          name: "Neta Light v2.8.70 (Tích Hợp Phân Hệ Xin Đài Âm Dương Cổ Truyền - Tam Bất Quá Tam • Tiền Cổ Đĩa Sứ)"
+          tag_name: v2.8.71
+          name: "Neta Light v2.8.71 (Tối Ưu Chụp Ảnh Màn Hình Dài Cả 3 Tab Địa Lý Khảo Sát & Xin Đài Âm Dương)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.70
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.71
+            - **Khắc Phục Hoàn Toàn Lỗi Chụp Ảnh Màn Hình Bị Co Dúm / Chồng Đè Trên Module Địa Lý Khảo Sát**:
+              + Loại bỏ triệt để xung đột render của thuộc tính `content-visibility: auto` trong engine html2canvas.
+              + Học tập kiến trúc chụp ảnh dài (Full-Length Long Capture) từ phân hệ Tử Vi và Bát Tự: tự động unconstrain chiều cao container và chuyển thanh điều khiển sang static.
+              + Chụp trải dài toàn vẹn 100% nội dung cho cả 3 phân hệ: **Tầm Long** (5 phần), **Tam Hợp** (12 Cung Trường Sinh, 120 Phân Kim, 72 Thấu Địa, Bát Lộ Hoàng Tuyền) và **Đại Quái** (Quẻ Chủ, 6 Hào phân kim vi mô, Phối quẻ Vận 9, Ma trận 64 quẻ).
+              + Hỗ trợ định danh tệp chuẩn xác `DiaLy_KhaoSat_YYYYMMDD_HHMMSS.png` cho cả giao diện Sáng và Tối.
             - **Tích Hợp Phân Hệ 'Xin Đài Âm Dương' (Cổ Truyền) Vào Vị Trí Số 3 Menu**:
               + Bố trí chuẩn mực ở vị trí số 3 ngay sau Neta Light và Bài Tây trong nhóm Bốc Bài & Thỉnh Ý Cát Hung.
               + Trực quan hóa đĩa sứ hoa lam truyền thống và 2 đồng xu cổ Càn Long Thông Bảo (Mặt Dương chữ Càn Long, Mặt Âm hình Rồng).
