@@ -134,16 +134,7 @@
   box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35);
 }
 
-.dialy-btn-sm.dialy-btn-camera {
-  background: rgba(16, 185, 129, 0.18);
-  border: 1px solid #10b981;
-  color: #34d399;
-}
 
-.dialy-btn-sm.dialy-btn-camera:active {
-  background: #10b981;
-  color: #ffffff;
-}
 
 /* Hàng 2: Slider & Vi Chỉnh Góc */
 .dialy-slider-control-row {
@@ -535,6 +526,47 @@
 }
 
 /* Lưới Hào 6 Phân Kim */
+/* Card Hào Phân Kim Hiện Tại (Vi Mô) */
+.dialy-hao-cur-card {
+  background: rgba(192, 132, 252, 0.1);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.dialy-hao-cur-card .hao-cur-title {
+  color: #c084fc;
+  font-weight: 800;
+  font-size: 0.76rem;
+}
+
+.dialy-hao-cur-card .hao-meta-row {
+  display: flex;
+  gap: 6px;
+  font-size: 0.70rem;
+  line-height: 1.4;
+  margin-top: 3px;
+}
+
+.dialy-hao-cur-card .hao-meta-label {
+  color: #94a3b8;
+  font-weight: 600;
+  min-width: 72px;
+  flex-shrink: 0;
+}
+
+.dialy-hao-cur-card .dialy-nam-phat {
+  color: #facc15;
+  font-weight: 700;
+}
+
+.dialy-hao-cur-card .dialy-nguoi-phat {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+/* Danh Sách 6 Hào */
 .dialy-hao-list {
   display: flex;
   flex-direction: column;
@@ -652,12 +684,7 @@ body.theme-light .dialy-btn-sm.dialy-btn-primary {
   box-shadow: 0 2px 6px rgba(180, 83, 9, 0.35) !important;
 }
 
-body.theme-light .dialy-btn-sm.dialy-btn-camera {
-  background: #ecfdf5 !important;
-  border: 1.5px solid #059669 !important;
-  color: #065f46 !important;
-  font-weight: 800 !important;
-}
+
 
 body.theme-light .dialy-slider-control-row {
   background: #ffffff !important;
@@ -942,3 +969,37 @@ body.theme-light .dialy-matrix-item.active .matrix-title {
   color: #78350f !important;
   font-weight: 900 !important;
 }
+
+/* Light Theme Cho Card Hào Vi Mô Hiện Tại */
+body.theme-light .dialy-hao-cur-card {
+  background: #fdf4ff !important;
+  border: 1.5px solid #d8b4fe !important;
+}
+
+body.theme-light .dialy-hao-cur-card .hao-cur-title {
+  color: #581c87 !important;
+}
+
+body.theme-light .dialy-hao-cur-card .hao-meta-label {
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .dialy-hao-cur-card .dialy-nam-phat {
+  color: #b45309 !important; /* Hổ phách đậm tương phản WCAG AAA */
+  font-weight: 800 !important;
+}
+
+body.theme-light .dialy-hao-cur-card .dialy-nguoi-phat {
+  color: #15803d !important; /* Xanh lục đậm tương phản WCAG AAA */
+  font-weight: 800 !important;
+}
+
+body.theme-light .dialy-hao-item .hao-sub-ung-nam {
+  color: #b45309 !important;
+}
+
+body.theme-light .dialy-hao-item .hao-sub-ung-nguoi {
+  color: #15803d !important;
+}
+

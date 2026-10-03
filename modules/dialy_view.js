@@ -102,6 +102,74 @@
     };
   }
 
+  // Thuật toán Xác định Năm Phát & Người Phát cho 384 Hào Huyền Không Đại Quái
+  // Chuẩn mực Dịch lý: Địa Chi Hào, Tam Hợp Cục, Lục Thân và Hào Vị
+  function getHkdqHaoApplication(hex, hao) {
+    if (!hao) return { nam_phat: 'Đương Vận 9', nguoi_phat: 'Chủ trạch & Nhân đinh bản cung' };
+
+    const tamHopMap = {
+      'Tý': 'Thân - Tý - Thìn', 'Thìn': 'Thân - Tý - Thìn', 'Thân': 'Thân - Tý - Thìn',
+      'Dần': 'Dần - Ngọ - Tuất', 'Ngọ': 'Dần - Ngọ - Tuất', 'Tuất': 'Dần - Ngọ - Tuất',
+      'Hợi': 'Hợi - Mão - Mùi', 'Mão': 'Hợi - Mão - Mùi', 'Mùi': 'Hợi - Mão - Mùi',
+      'Tỵ': 'Tỵ - Dậu - Sửu', 'Dậu': 'Tỵ - Dậu - Sửu', 'Sửu': 'Tỵ - Dậu - Sửu'
+    };
+
+    const chi = hao.dia_chi || (hao.can_chi ? hao.can_chi.split(' ')[1] : '');
+    
+    // 1. NĂM PHÁT (Thời điểm ứng kỳ / Niên vận phát tài phát lộc)
+    let namPhat = hao.nam_phat;
+    if (!namPhat) {
+      if (chi && tamHopMap[chi]) {
+        namPhat = `Năm ${chi} (Tam hợp: ${tamHopMap[chi]})`;
+      } else if (hao.can_chi) {
+        namPhat = `Năm ${hao.can_chi}`;
+      } else if (hex && hex.nam_phat_mac_dinh) {
+        namPhat = `Năm ${hex.nam_phat_mac_dinh}`;
+      } else {
+        namPhat = `Đương Vận ${hex ? hex.quai_van : 9} (Lưu niên hành vận)`;
+      }
+    }
+
+    // 2. NGƯỜI PHÁT (Đối tượng thụ hưởng nhân đinh / tài lộc / công danh trong trạch)
+    let nguoiPhat = hao.nguoi_phat;
+    if (!nguoiPhat) {
+      const lt = hao.luc_than || '';
+      const hIdx = hao.hao_index || 1;
+
+      const viTriMap = {
+        1: 'Sơ hào (Khởi nghiệp, vãn bối, con út)',
+        2: 'Nhị hào (Trung thất, nội trợ phụ nữ, con thứ)',
+        3: 'Tam hào (Trọng sự, người gánh vác việc nhà)',
+        4: 'Tứ hào (Quan quản, người điều hành, trưởng quản)',
+        5: 'Ngũ hào (Gia chủ, Trưởng nam, Lãnh đạo)',
+        6: 'Thượng hào (Trưởng bối, Cha mẹ, Bậc lão thành)'
+      };
+
+      let ltDesc = '';
+      if (lt === 'Thê Tài') {
+        ltDesc = 'Vợ, Nữ chủ, Người nắm tài chính buôn bán';
+      } else if (lt === 'Tử Tôn') {
+        ltDesc = 'Con cháu đời sau, Vãn bối, Quý tử';
+      } else if (lt === 'Quan Quỷ') {
+        ltDesc = 'Gia chủ, Nam chủ, Người cầu quan lộ thăng tiến';
+      } else if (lt === 'Phụ Mẫu') {
+        ltDesc = 'Bậc trưởng thượng, Cha mẹ, Người cầu khoa bảng văn chương';
+      } else if (lt === 'Huynh Đệ') {
+        ltDesc = 'Anh em đồng tộc, Bạn bè tương trợ, Đối tác liên danh';
+      }
+
+      if (ltDesc) {
+        nguoiPhat = `${ltDesc} • ${viTriMap[hIdx] || `Hào ${hIdx}`}`;
+      } else if (hex && hex.nguoi_phat_mac_dinh) {
+        nguoiPhat = `${hex.nguoi_phat_mac_dinh} • ${viTriMap[hIdx] || `Hào ${hIdx}`}`;
+      } else {
+        nguoiPhat = viTriMap[hIdx] || 'Chủ trạch & Nhân đinh bản cung';
+      }
+    }
+
+    return { nam_phat: namPhat, nguoi_phat: nguoiPhat };
+  }
+
   // Khởi tạo và render module
   function init() {
     const container = document.getElementById('view-dialy');
@@ -173,9 +241,6 @@
               </button>
               <button type="button" class="dialy-btn-sm dialy-btn-primary" id="dialy-btn-apply-lakinh" title="Áp sang La Kinh & Mở bản đồ">
                 🧭 Áp Dụng
-              </button>
-              <button type="button" class="dialy-btn-sm dialy-btn-camera" id="dialy-btn-long-screenshot" title="Chụp toàn bộ bảng khảo sát thành ảnh dài HD">
-                📸 Ảnh Dài
               </button>
             </div>
           </div>
@@ -439,28 +504,44 @@
           ${curHao ? `<span class="dialy-badge purple">${curHao.luc_than}</span>` : ''}
         </div>
 
-        ${curHao ? `
-          <div class="dialy-hao-cur-card" style="background: rgba(192, 132, 252, 0.1); border: 1px solid rgba(192, 132, 252, 0.3); border-radius: 6px; padding: 6px 8px; margin-bottom: 6px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 2px;">
-              <b style="color: #c084fc;">Hào ${curHao.hao_index} • ${curHao.can_chi}</b>
-              <span class="dialy-label">${curHao.deg_range}</span>
+        ${curHao ? (() => {
+          const curHaoApp = getHkdqHaoApplication(hex, curHao);
+          return `
+            <div class="dialy-hao-cur-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <b class="hao-cur-title">Hào ${curHao.hao_index} • ${curHao.can_chi} (${curHao.luc_than})</b>
+                <span class="dialy-label" style="font-weight: 700;">${curHao.deg_range}</span>
+              </div>
+              <div class="hao-meta-row">
+                <span class="hao-meta-label">📅 Năm phát:</span>
+                <span class="dialy-nam-phat">${curHaoApp.nam_phat}</span>
+              </div>
+              <div class="hao-meta-row">
+                <span class="hao-meta-label">👤 Người phát:</span>
+                <span class="dialy-nguoi-phat">${curHaoApp.nguoi_phat}</span>
+              </div>
             </div>
-            <div style="display: flex; gap: 8px; font-size: 0.68rem; color: #94a3b8;">
-              <span>Năm phát: <b class="dialy-nam-phat" style="color: #facc15;">${curHao.nam_phat || 'Chưa định'}</b></span>
-              <span>Người phát: <b class="dialy-nguoi-phat" style="color: #4ade80;">${curHao.nguoi_phat || 'Chưa định'}</b></span>
-            </div>
-          </div>
-        ` : ''}
+          `;
+        })() : ''}
 
         <!-- 6 Hào của Quẻ Chủ -->
         <div class="dialy-hao-list">
           ${(hex.haos || []).slice().reverse().map(h => {
             const isCur = curHao && curHao.hao_index === h.hao_index;
+            const hApp = getHkdqHaoApplication(hex, h);
+            const shortNguoiPhat = hApp.nguoi_phat.split('•')[0].trim();
             return `
               <div class="dialy-hao-item ${isCur ? 'active' : ''}">
-                <span style="font-weight: 700; color: ${isCur ? '#c084fc' : '#cbd5e1'};">Hào ${h.hao_index}: ${h.can_chi} (${h.luc_than})</span>
-                <span class="dialy-label">${h.deg_range}</span>
-                <button type="button" class="dialy-btn-select-hao dialy-btn-sm" data-target-deg="${(h.deg_start + h.deg_end)/2}" style="font-size: 0.62rem; padding: 1px 6px;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-weight: 700; color: ${isCur ? '#c084fc' : '#cbd5e1'};">Hào ${h.hao_index}: ${h.can_chi} (${h.luc_than})</span>
+                    <span class="dialy-label" style="margin-left: 6px;">${h.deg_range}</span>
+                  </div>
+                  <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                    Ứng: <span class="hao-sub-ung-nam" style="color: #facc15; font-weight: 600;">${hApp.nam_phat.split('(')[0].trim()}</span> • <span class="hao-sub-ung-nguoi" style="color: #4ade80; font-weight: 600;">${shortNguoiPhat}</span>
+                  </div>
+                </div>
+                <button type="button" class="dialy-btn-select-hao dialy-btn-sm" data-target-deg="${(h.deg_start + h.deg_end)/2}" style="font-size: 0.62rem; padding: 2px 7px; margin-left: 6px;">
                   Chọn
                 </button>
               </div>
@@ -546,19 +627,6 @@
       };
     }
 
-    // Nút chụp ảnh dài toàn bộ bảng khảo sát
-    const btnLongShot = document.getElementById('dialy-btn-long-screenshot');
-    if (btnLongShot) {
-      btnLongShot.onclick = () => {
-        if (typeof global.captureArenaScreenshot === 'function') {
-          global.captureArenaScreenshot();
-        } else if (typeof window.captureArenaScreenshot === 'function') {
-          window.captureArenaScreenshot();
-        } else if (typeof showToast === 'function') {
-          showToast('📸 Đang chuẩn bị xuất ảnh...');
-        }
-      };
-    }
 
     // Slider & Input Hướng (Tối ưu phản hồi tức thì 120fps bằng RAF Throttle)
     const slH = document.getElementById('dialy-slider-huong');
@@ -867,16 +935,7 @@
   box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35);
 }
 
-.dialy-btn-sm.dialy-btn-camera {
-  background: rgba(16, 185, 129, 0.18);
-  border: 1px solid #10b981;
-  color: #34d399;
-}
 
-.dialy-btn-sm.dialy-btn-camera:active {
-  background: #10b981;
-  color: #ffffff;
-}
 
 /* Hàng 2: Slider & Vi Chỉnh Góc */
 .dialy-slider-control-row {
@@ -1268,6 +1327,47 @@
 }
 
 /* Lưới Hào 6 Phân Kim */
+/* Card Hào Phân Kim Hiện Tại (Vi Mô) */
+.dialy-hao-cur-card {
+  background: rgba(192, 132, 252, 0.1);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.dialy-hao-cur-card .hao-cur-title {
+  color: #c084fc;
+  font-weight: 800;
+  font-size: 0.76rem;
+}
+
+.dialy-hao-cur-card .hao-meta-row {
+  display: flex;
+  gap: 6px;
+  font-size: 0.70rem;
+  line-height: 1.4;
+  margin-top: 3px;
+}
+
+.dialy-hao-cur-card .hao-meta-label {
+  color: #94a3b8;
+  font-weight: 600;
+  min-width: 72px;
+  flex-shrink: 0;
+}
+
+.dialy-hao-cur-card .dialy-nam-phat {
+  color: #facc15;
+  font-weight: 700;
+}
+
+.dialy-hao-cur-card .dialy-nguoi-phat {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+/* Danh Sách 6 Hào */
 .dialy-hao-list {
   display: flex;
   flex-direction: column;
@@ -1385,12 +1485,7 @@ body.theme-light .dialy-btn-sm.dialy-btn-primary {
   box-shadow: 0 2px 6px rgba(180, 83, 9, 0.35) !important;
 }
 
-body.theme-light .dialy-btn-sm.dialy-btn-camera {
-  background: #ecfdf5 !important;
-  border: 1.5px solid #059669 !important;
-  color: #065f46 !important;
-  font-weight: 800 !important;
-}
+
 
 body.theme-light .dialy-slider-control-row {
   background: #ffffff !important;
@@ -1675,6 +1770,40 @@ body.theme-light .dialy-matrix-item.active .matrix-title {
   color: #78350f !important;
   font-weight: 900 !important;
 }
+
+/* Light Theme Cho Card Hào Vi Mô Hiện Tại */
+body.theme-light .dialy-hao-cur-card {
+  background: #fdf4ff !important;
+  border: 1.5px solid #d8b4fe !important;
+}
+
+body.theme-light .dialy-hao-cur-card .hao-cur-title {
+  color: #581c87 !important;
+}
+
+body.theme-light .dialy-hao-cur-card .hao-meta-label {
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .dialy-hao-cur-card .dialy-nam-phat {
+  color: #b45309 !important; /* Hổ phách đậm tương phản WCAG AAA */
+  font-weight: 800 !important;
+}
+
+body.theme-light .dialy-hao-cur-card .dialy-nguoi-phat {
+  color: #15803d !important; /* Xanh lục đậm tương phản WCAG AAA */
+  font-weight: 800 !important;
+}
+
+body.theme-light .dialy-hao-item .hao-sub-ung-nam {
+  color: #b45309 !important;
+}
+
+body.theme-light .dialy-hao-item .hao-sub-ung-nguoi {
+  color: #15803d !important;
+}
+
 `;
     document.head.appendChild(style);
   }
