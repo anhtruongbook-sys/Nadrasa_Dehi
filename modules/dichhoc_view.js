@@ -840,41 +840,42 @@
     const hzList = ptRes.hazards || [];
     const remList = ptRes.remedies || [];
 
+    state.fengShuiMarkdown = ptRes.markdown || '';
+
     return `
       <div class="dh-phongthuy-container">
-        <!-- 1. Thanh chuyển đổi Dương Trạch / Âm Trạch -->
-        <div class="pt-mode-nav-bar">
-          <div class="pt-mode-title-wrap">
-            <span class="pt-mode-icon">🏛️</span>
-            <div>
-              <div class="pt-mode-main-title">KHẢO SÁT & CHẨN ĐOÁN PHONG THỦY LỤC HÀO</div>
-              <div class="pt-mode-subtitle">Kế thừa 100% kết quả quẻ vừa gieo • Không lập lại quẻ (Zero-Recasting)</div>
-            </div>
-          </div>
-          <div class="pt-mode-pill-group">
-            <button type="button" class="pt-mode-btn ${isDuongTrach ? 'active' : ''}" id="btn-pt-mode-duongtrach">
-              🏠 Dương Trạch (Nhà Ở)
-            </button>
-            <button type="button" class="pt-mode-btn ${!isDuongTrach ? 'active' : ''}" id="btn-pt-mode-amtrach">
-              🪦 Âm Trạch (Mồ Mả)
-            </button>
-          </div>
+        <!-- 1. Thanh chọn chế độ: Dương Trạch vs Âm Trạch -->
+        <div class="pt-mode-switch-row">
+          <button type="button" class="pt-mode-btn ${isDuongTrach ? 'active' : ''}" id="btn-pt-mode-duongtrach">
+            🏠 Dương Trạch (Nhà Ở)
+          </button>
+          <button type="button" class="pt-mode-btn ${!isDuongTrach ? 'active' : ''}" id="btn-pt-mode-amtrach">
+            🪦 Âm Trạch (Mồ Mả)
+          </button>
         </div>
 
         ${isDuongTrach && dt ? `
           <!-- 2. Thẻ Tương Quan Trục Trạch - Nhân -->
           <div class="pt-card pt-trach-nhan-card">
             <div class="pt-card-header">
-              <div class="pt-ch-left">
-                <span class="pt-ch-icon">⚖️</span>
-                <span class="pt-ch-title">TƯƠNG QUAN TRỤC TRẠCH VỊ (HÀO 2) & NHÂN VỊ (HÀO 5)</span>
-              </div>
-              <span class="pt-badge-grade ${dt.trach_nhan.grade.toLowerCase()}">${dt.trach_nhan.title}</span>
+              <div class="pt-card-title">⚖️ TƯƠNG QUAN TRỤC TRẠCH - NHÂN (HÀO 2 & HÀO 5)</div>
             </div>
             <div class="pt-card-body">
-              <div class="pt-tn-meta-row">
-                <div class="pt-tn-col"><strong>Hào 2 [Trạch Vị]:</strong> Ngũ hành ${dt.trach_nhan.element_h2} (Gian nhà chính, bếp ăn, phòng ngủ)</div>
-                <div class="pt-tn-col"><strong>Hào 5 [Nhân Vị]:</strong> Ngũ hành ${dt.trach_nhan.element_h5} (Gia chủ, người ở, phòng khách)</div>
+              <div class="pt-tn-verdict-banner grade-${(dt.trach_nhan.grade || 'binh').toLowerCase()}">
+                <span class="pt-verdict-badge">Cục diện: ${dt.trach_nhan.title.includes('(') ? dt.trach_nhan.title.split('(')[1].replace(')', '') : 'Bình Hòa'}</span>
+                <span class="pt-verdict-title">${dt.trach_nhan.title}</span>
+              </div>
+              <div class="pt-tn-boxes">
+                <div class="pt-tn-box">
+                  <div class="pt-tn-role">Hào 2 [Trạch Vị - Nhà Ở]</div>
+                  <div class="pt-tn-elem">Ngũ hành <strong>${dt.trach_nhan.element_h2}</strong></div>
+                  <div class="pt-tn-sub">Gian nhà chính, bếp ăn, phòng ngủ</div>
+                </div>
+                <div class="pt-tn-box">
+                  <div class="pt-tn-role">Hào 5 [Nhân Vị - Gia Chủ]</div>
+                  <div class="pt-tn-elem">Ngũ hành <strong>${dt.trach_nhan.element_h5}</strong></div>
+                  <div class="pt-tn-sub">Gia chủ, người ở, phòng khách</div>
+                </div>
               </div>
               <div class="pt-tn-desc">
                 ${dt.trach_nhan.description}
@@ -885,26 +886,29 @@
           <!-- 3. Ma Trận 6 Bộ Vị Không Gian Kiến Trúc -->
           <div class="pt-card pt-spatial-card">
             <div class="pt-card-header">
-              <div class="pt-ch-left">
-                <span class="pt-ch-icon">📐</span>
-                <span class="pt-ch-title">MA TRẬN 6 BỘ VỊ KHÔNG GIAN NỘI NGOẠI THẤT</span>
-              </div>
-              <span class="pt-badge-info">Từ Mái Nhà (Hào 6) ➔ Nền Móng (Hào 1)</span>
+              <div class="pt-card-title">📐 MA TRẬN 6 BỘ VỊ KHÔNG GIAN NỘI NGOẠI THẤT</div>
+              <span class="pt-badge-info">Từ Hào 6 (Mái) ➔ Hào 1 (Móng)</span>
             </div>
             <div class="pt-card-body">
               <div class="pt-spatial-stack">
                 ${(dt.spatial_rows || []).slice().reverse().map(row => `
                   <div class="pt-spatial-item ${row.is_moving ? 'item-moving' : ''}">
-                    <div class="psi-left">
+                    <div class="psi-top-row">
                       <div class="psi-pos-badge">Hào ${row.position}</div>
-                      <div class="psi-name">${row.name}</div>
-                      <div class="psi-canchi">${row.hao_can_chi}${row.is_moving ? ' <strong class="tag-dong">ĐỘNG</strong>' : ''}${row.is_tuan_khong ? ' <span class="tag-tk">Tuần Không</span>' : ''}</div>
-                      <div class="psi-meta">${row.luc_thu} lâm ${row.luc_than}</div>
+                      <div class="psi-name-wrap">
+                        <span class="psi-name">${row.name}</span>
+                        <span class="psi-canchi">${row.hao_can_chi}</span>
+                        ${row.is_moving ? '<span class="tag-dong">ĐỘNG</span>' : ''}
+                        ${row.is_tuan_khong ? '<span class="tag-tk">Tuần Không</span>' : ''}
+                      </div>
+                      <div class="psi-luc-thu-than">${row.luc_thu} • ${row.luc_than}</div>
                     </div>
-                    <div class="psi-right">
-                      <div class="psi-eval ${row.eval_class}">${row.evaluation}</div>
-                      <div class="psi-desc">${row.detail_note || (row.is_moving ? row.defective_meaning : row.prosperous_meaning)}</div>
-                      <div class="psi-scope"><small>Nội thất: ${row.interior} • Ngoại cảnh: ${row.exterior}</small></div>
+                    <div class="psi-body">
+                      <div class="psi-desc">${row.is_moving ? row.defective_meaning : row.prosperous_meaning}</div>
+                      <div class="psi-scopes">
+                        <div class="psi-scope-item"><strong>Nội thất:</strong> ${row.interior}</div>
+                        <div class="psi-scope-item"><strong>Ngoại cảnh:</strong> ${row.exterior}</div>
+                      </div>
                     </div>
                   </div>
                 `).join('')}
@@ -915,10 +919,7 @@
           <!-- 4. Chẩn Đoán Sát Khí Kiến Trúc Hiện Đại -->
           <div class="pt-card pt-hazard-card">
             <div class="pt-card-header">
-              <div class="pt-ch-left">
-                <span class="pt-ch-icon">⚠️</span>
-                <span class="pt-ch-title">CHẨN ĐOÁN SÁT KHÍ KIẾN TRÚC HIỆN ĐẠI</span>
-              </div>
+              <div class="pt-card-title">⚠️ CHẨN ĐOÁN SÁT KHÍ KIẾN TRÚC HIỆN ĐẠI</div>
               <span class="pt-badge-count ${hzList.length > 0 ? 'has-hazards' : ''}">${hzList.length} CẢNH BÁO</span>
             </div>
             <div class="pt-card-body">
@@ -926,9 +927,12 @@
                 <div class="pt-hazard-list">
                   ${hzList.map((hz, idx) => `
                     <div class="pt-hazard-item">
-                      <div class="phi-title">${idx + 1}. ${hz.name}</div>
+                      <div class="phi-top">
+                        <span class="phi-title">${idx + 1}. ${hz.name}</span>
+                        <span class="phi-badge phi-${(hz.severity || 'high').toLowerCase()}">${hz.severity === 'high' ? 'Mức cao' : 'Mức trung'}</span>
+                      </div>
                       <div class="phi-impact"><strong>Tác động:</strong> ${hz.impact}</div>
-                      <div class="phi-remedy"><strong>Biện pháp hóa giải:</strong> ${hz.remedy}</div>
+                      <div class="phi-remedy"><strong>Biện pháp:</strong> ${hz.remedy}</div>
                     </div>
                   `).join('')}
                 </div>
@@ -944,10 +948,7 @@
           <!-- 5. Phương Án Hóa Giải & Bố Trí Ngũ Hành -->
           <div class="pt-card pt-remedy-card">
             <div class="pt-card-header">
-              <div class="pt-ch-left">
-                <span class="pt-ch-icon">🛡️</span>
-                <span class="pt-ch-title">PHƯƠNG ÁN HÓA GIẢI & BỐ TRÍ NGŨ HÀNH</span>
-              </div>
+              <div class="pt-card-title">🛡️ PHƯƠNG ÁN HÓA GIẢI & BỐ TRÍ NGŨ HÀNH</div>
               <span class="pt-badge-info">${remList.length} GIẢI PHÁP</span>
             </div>
             <div class="pt-card-body">
@@ -957,10 +958,10 @@
                     <div class="pri-top">
                       <span class="pri-num">Mục ${idx + 1}</span>
                       <span class="pri-title">${rem.title}</span>
-                      <span class="pri-badge pri-${rem.priority.toLowerCase()}">Ưu tiên: ${rem.priority}</span>
+                      <span class="pri-badge pri-${(rem.priority || 'medium').toLowerCase()}">Ưu tiên: ${rem.priority}</span>
                     </div>
                     <div class="pri-mech"><strong>Cơ chế:</strong> ${rem.mechanism}</div>
-                    <div class="pri-action"><strong>Biện pháp thực thi:</strong> ${rem.action}</div>
+                    <div class="pri-action"><strong>Biện pháp:</strong> ${rem.action}</div>
                   </div>
                 `).join('')}
               </div>
@@ -970,27 +971,33 @@
 
         ${!isDuongTrach && at ? `
           <!-- Phần Âm Trạch -->
-          <div class="pt-card pt-trach-nhan-card">
+          <div class="pt-card pt-am-trach-card">
             <div class="pt-card-header">
-              <div class="pt-ch-left">
-                <span class="pt-ch-icon">🪦</span>
-                <span class="pt-ch-title">KHẢO SÁT HUYỆT MỘ & ÂM TRẠCH</span>
-              </div>
-              <span class="pt-badge-grade ${at.huyet_class === 'status-good' ? 'cat' : 'hung'}">${at.huyet_trang_thai}</span>
+              <div class="pt-card-title">🪦 KHẢO SÁT HUYỆT MỘ & ÂM TRẠCH</div>
             </div>
             <div class="pt-card-body">
+              <div class="pt-tn-verdict-banner ${at.huyet_class === 'status-good' ? 'grade-a' : 'grade-d'}">
+                <span class="pt-verdict-badge">Trạng thái huyệt</span>
+                <span class="pt-verdict-title">${at.huyet_trang_thai}</span>
+              </div>
               <div class="pt-spatial-stack">
                 ${(at.spatial_rows || []).slice().reverse().map(row => `
                   <div class="pt-spatial-item ${row.is_moving ? 'item-moving' : ''}">
-                    <div class="psi-left">
+                    <div class="psi-top-row">
                       <div class="psi-pos-badge">Hào ${row.position}</div>
-                      <div class="psi-name">${row.name}</div>
-                      <div class="psi-canchi">${row.hao_can_chi}${row.is_moving ? ' <strong class="tag-dong">ĐỘNG</strong>' : ''}${row.is_tuan_khong ? ' <span class="tag-tk">Tuần Không</span>' : ''}</div>
-                      <div class="psi-meta">${row.luc_thu} lâm ${row.luc_than}</div>
+                      <div class="psi-name-wrap">
+                        <span class="psi-name">${row.name}</span>
+                        <span class="psi-canchi">${row.hao_can_chi}</span>
+                        ${row.is_moving ? '<span class="tag-dong">ĐỘNG</span>' : ''}
+                        ${row.is_tuan_khong ? '<span class="tag-tk">Tuần Không</span>' : ''}
+                      </div>
+                      <div class="psi-luc-thu-than">${row.luc_thu} • ${row.luc_than}</div>
                     </div>
-                    <div class="psi-right">
-                      <div class="psi-scope"><small>${row.spatial_element}</small></div>
+                    <div class="psi-body">
                       <div class="psi-desc">${row.is_moving ? row.defective_meaning : row.prosperous_meaning}</div>
+                      <div class="psi-scopes">
+                        <div class="psi-scope-item"><strong>Cương vị âm trạch:</strong> ${row.spatial_element}</div>
+                      </div>
                     </div>
                   </div>
                 `).join('')}
