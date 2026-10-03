@@ -1247,5 +1247,121 @@ body.theme-light .dialy-svg-wrap {
   border-color: #cbd5e1 !important;
 }
 
+/* ============================================================
+   4-PANEL DETAILED MACRO MAP VIEWER (300 DPI GROUND-TRUTH)
+   ============================================================ */
+.dialy-panel4-tab-bar {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-overflow-scrolling: touch;
+}
+
+.dialy-panel4-tab-btn {
+  flex: 1;
+  min-width: 76px;
+  padding: 5px 4px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.dialy-panel4-tab-btn.active {
+  background: #d97706;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4);
+}
+
+.dialy-panel4-img-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(245, 176, 65, 0.3);
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+.dialy-panel4-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.dialy-panel4-img:hover {
+  transform: scale(1.01);
+}
+
+.dialy-panel4-overlay-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #facc15;
+  border: 1px solid rgba(245, 176, 65, 0.5);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  backdrop-filter: blur(4px);
+}
+
+.dialy-panel4-desc-box {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 6px;
+  border-left: 3px solid #f59e0b;
+}
+
+.dialy-panel4-formula-strip {
+  margin-top: 6px;
+  padding: 4px 6px;
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 4px;
+  font-size: 0.60rem;
+  color: #38bdf8;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* Light Theme Overrides for 4-Panel Viewer */
+body.theme-light .dialy-panel4-tab-btn {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+body.theme-light .dialy-panel4-tab-btn.active {
+  background: #b45309 !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .dialy-panel4-img-wrap {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.theme-light .dialy-panel4-desc-box {
+  background: #f8fafc !important;
+  border-left-color: #b45309 !important;
+}
+
+body.theme-light .dialy-panel4-formula-strip {
+  background: #f1f5f9 !important;
+  color: #0369a1 !important;
+}
+
 
 

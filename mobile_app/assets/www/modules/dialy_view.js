@@ -23,7 +23,39 @@
     demResult: null,
     isDemLoading: false,
     inputGpsText: '',
-    profileViewTab: 'longitudinal' // 'longitudinal' | 'transverse' | 'radar'
+    profileViewTab: 'longitudinal', // 'longitudinal' | 'transverse' | 'radar'
+    panel4ActiveTab: 'dem' // 'dem' | 'slope' | 'tangphong' | 'heatmap'
+  };
+
+  const PANEL4_CONFIGS = {
+    dem: {
+      src: 'assets/dialy/hinh_3_1_dem_long_thuy.png',
+      title: 'HÌNH 3.1: BẢN ĐỒ ĐỊA HÌNH SỐ (DEM), KHUNG XƯƠNG SỐNG LONG & MẠNG LƯỚI THỦY HỆ',
+      badge: 'Lưới DEM 120x120 (2.8km x 2.8km)',
+      desc: 'Bóc tách sống Long mạch chính (Ridge Skeleton) dựa trên chỉ số vị trí địa hình TPI > 3.0m và mạng thủy lưu D8 (Flow Accumulation >= 120 ô lưới). Tọa sơn Thái Tổ Sơn 68.4m, Chân Huyệt Top 1 tại thềm cao độ +8.0m.',
+      formula: 'TPI = Z0 - Mean(Zi) > 3.0m | FA(x, y) = 1 + SUM(FA_inflow) >= 120 | d_ridge in [50m, 250m]'
+    },
+    slope: {
+      src: 'assets/dialy/hinh_3_2_slope_dia_mao.png',
+      title: 'HÌNH 3.2: BẢN ĐỒ ĐỘ DỐC (SLOPE) & VI ĐỊA MẠO BỀ MẶT HUYỆT TRƯỜNG',
+      badge: 'Zevenbergen-Thorne 1987',
+      desc: 'Phân tích vi phân độ dốc và độ cong bề mặt: Vùng nước vịnh (0° - 2°), thềm đất tụ khí (4° - 8°), sườn đồi dốc mạnh (> 15°). Chân Huyệt Top 1 đạt độ dốc 9.2° với k_plan > 0 tụ sinh khí, thoát nước tự nhiên an toàn.',
+      formula: 'Slope = arctan(sqrt(p^2 + q^2)) * (180/pi) | k_prof (độ thoải), k_plan (hội tụ sinh khí)'
+    },
+    tangphong: {
+      src: 'assets/dialy/hinh_3_3_tang_phong_tu_tuong.png',
+      title: 'HÌNH 3.3: BẢN ĐỒ CHỈ SỐ TÀNG PHONG & HỘ VỆ TỨ TƯỢNG (WEI)',
+      badge: '360° Raycasting WEI: 0.86/1.00',
+      desc: 'Định lượng góc che chắn chân trời cực đại (Horizon Elevation Angles) theo 8 phương tia. Hậu Huyền Vũ tựa đồi cao chắn gió bấc, Tiền Chu Tước mở quang đãng đón thủy khí, Tả Long Hữu Hổ bao bọc khép kín.',
+      formula: 'beta_k = max_r [ arctan((Z(r, alpha_k) - Z0)/r) ] | WEI = (1/8) * SUM [ max(0, beta_k) ]'
+    },
+    heatmap: {
+      src: 'assets/dialy/hinh_3_4_heatmap_chan_huyet.png',
+      title: 'HÌNH 3.4: BẢN ĐỒ NHIỆT XÁC SUẤT HUYỆT TRƯỜNG & TOP CHÂN HUYỆT (MCE)',
+      badge: 'Top 1 Chân Huyệt (100.0/100đ)',
+      desc: 'Mô hình hợp nhất đa tiêu chí không gian (Spatial MCE) kết hợp lọc triệt tiêu cực đại cục bộ (NMS bán kính 150m). Chân Huyệt Top 1 (Oa Huyệt) đạt điểm tuyệt đối 100/100 điểm, thế Tọa Tốn Hướng Càn.',
+      formula: 'S(x,y) = 0.25*Encl + 0.20*Animals + 0.15*Vein + 0.20*Water + 0.20*Hall | NMS R_min = 150m'
+    }
   };
 
   function escapeHtml(str) {
@@ -249,6 +281,7 @@
     try {
       const container = document.getElementById('view-dialy');
       if (!container) return;
+      const prevScrollTop = container.scrollTop;
 
     const deg = normalizeDeg(state.curHuongDeg);
     const tkDeg = normalizeDeg(state.curThuyKhauDeg);
@@ -381,6 +414,7 @@
       </div>
     `;
 
+    container.scrollTop = prevScrollTop;
     bindEvents();
     } catch (renderErr) {
       console.error('Lỗi khi render DiaLyView:', renderErr);
@@ -636,6 +670,8 @@
     const lkLat = lkCoords ? lkCoords.lat : 20.5242;
     const lkLng = lkCoords ? lkCoords.lng : 106.1099;
     const isFromCustom = effCoords && effCoords.isFromInput;
+
+    const panelData = PANEL4_CONFIGS[state.panel4ActiveTab] || PANEL4_CONFIGS.dem;
 
     return `
       <!-- 1. ĐỊA MẠO SỐ & TỌA ĐỘ GPS KHẢO SÁT -->
@@ -943,6 +979,48 @@
             ✨ Phân kim lập hướng đắc cách cát tường, nạp vượng khí âm dương tương phối.
           </div>
         `}
+      </div>
+
+      <!-- 6. BỘ 4 BẢN ĐỒ ĐỊA MẠO SỐ & TẦM LONG ĐIỂM HUYỆT (QUY MÔ 2.8KM) -->
+      <div class="dialy-card-section">
+        <div class="dialy-card-title">
+          <span>🗺️ 6. Bản Đồ Địa Mạo Số &amp; Huyệt Trường (4 Panel 300 DPI)</span>
+          <span class="dialy-badge gold">Số Liệu Thực</span>
+        </div>
+
+        <div class="dialy-panel4-tab-bar">
+          <button type="button" class="dialy-panel4-tab-btn ${state.panel4ActiveTab === 'dem' ? 'active' : ''}" data-panel="dem">
+            🏔️ 3.1 DEM &amp; Thủy
+          </button>
+          <button type="button" class="dialy-panel4-tab-btn ${state.panel4ActiveTab === 'slope' ? 'active' : ''}" data-panel="slope">
+            📐 3.2 Độ Dốc
+          </button>
+          <button type="button" class="dialy-panel4-tab-btn ${state.panel4ActiveTab === 'tangphong' ? 'active' : ''}" data-panel="tangphong">
+            🛡️ 3.3 Tàng Phong
+          </button>
+          <button type="button" class="dialy-panel4-tab-btn ${state.panel4ActiveTab === 'heatmap' ? 'active' : ''}" data-panel="heatmap">
+            🎯 3.4 Xác Suất Huyệt
+          </button>
+        </div>
+
+        <div class="dialy-panel4-img-wrap" id="dialy-panel4-lightbox-trigger" title="Nhấp để xem chi tiết ảnh nét cao">
+          <img src="${panelData.src}" class="dialy-panel4-img" id="dialy-panel4-img" alt="${panelData.title}" />
+          <div class="dialy-panel4-overlay-badge">
+            ${panelData.badge}
+          </div>
+        </div>
+
+        <div class="dialy-panel4-desc-box">
+          <div class="dialy-panel4-title" style="font-weight: 800; color: #facc15; font-size: 0.72rem; margin-bottom: 3px;">
+            ${panelData.title}
+          </div>
+          <div class="dialy-panel4-desc" style="font-size: 0.65rem; color: #cbd5e1; line-height: 1.4;">
+            ${panelData.desc}
+          </div>
+          <div class="dialy-panel4-formula-strip">
+            <code class="dialy-panel4-formula">${panelData.formula}</code>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -1383,6 +1461,40 @@
         }
       };
     });
+
+    container.querySelectorAll('.dialy-panel4-tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        const p = btn.dataset.panel;
+        if (p && state.panel4ActiveTab !== p) {
+          state.panel4ActiveTab = p;
+          // Cập nhật in-place: không scroll jump, không giật màn hình
+          container.querySelectorAll('.dialy-panel4-tab-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.panel === p);
+          });
+          const pData = PANEL4_CONFIGS[p] || PANEL4_CONFIGS.dem;
+          const imgEl = container.querySelector('#dialy-panel4-img');
+          const badgeEl = container.querySelector('.dialy-panel4-overlay-badge');
+          const titleEl = container.querySelector('.dialy-panel4-title');
+          const descEl = container.querySelector('.dialy-panel4-desc');
+          const formulaEl = container.querySelector('.dialy-panel4-formula');
+          if (imgEl) { imgEl.src = pData.src; imgEl.alt = pData.title; }
+          if (badgeEl) badgeEl.textContent = pData.badge;
+          if (titleEl) titleEl.textContent = pData.title;
+          if (descEl) descEl.textContent = pData.desc;
+          if (formulaEl) formulaEl.textContent = pData.formula;
+        }
+      };
+    });
+
+    const triggerLBox = document.getElementById('dialy-panel4-lightbox-trigger');
+    if (triggerLBox) {
+      triggerLBox.onclick = () => {
+        const imgEl = triggerLBox.querySelector('img');
+        if (imgEl && imgEl.src) {
+          window.open(imgEl.src, '_blank');
+        }
+      };
+    }
 
     // Quét DEM Thực Địa (Open-Meteo DEM API)
     const btnScanDem = document.getElementById('dialy-btn-scan-dem');
