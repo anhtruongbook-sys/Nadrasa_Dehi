@@ -1947,11 +1947,11 @@
         bgColor = isLight ? '#fdfbf7' : '#140418';
         captureScale = 2.5;
         const viewEl = document.getElementById('view-dialy');
-        captureHeight = Math.max(
+        captureHeight = (Math.max(
           (viewEl ? viewEl.scrollHeight : 0),
           (wrap ? wrap.scrollHeight : 0),
           (targetElement ? targetElement.scrollHeight : 0)
-        ) || null;
+        ) || 1200) + 40;
       } else if (currentDeckMode === 'dichhoc') {
         targetElement = document.getElementById('view-dichhoc') || appContainer;
         bgColor = isLight ? '#fdfbf7' : '#0a0d18';
@@ -2278,9 +2278,54 @@
           }
         }
 
+        // Xử lý riêng cho Địa Lý Khảo Sát: mở rộng toàn bộ chiều cao (Full-length Long Capture), bỏ sticky header, bung toàn bộ card sections
+        if (currentDeckMode === 'dialy') {
+          const vDl = clonedDoc.getElementById('view-dialy');
+          if (vDl) {
+            vDl.style.setProperty('contain', 'none', 'important');
+            vDl.style.setProperty('height', 'auto', 'important');
+            vDl.style.setProperty('max-height', 'none', 'important');
+            vDl.style.setProperty('overflow', 'visible', 'important');
+            vDl.style.setProperty('overflow-y', 'visible', 'important');
+            vDl.style.setProperty('flex', 'none', 'important');
+            vDl.style.setProperty('position', 'static', 'important');
+            vDl.style.setProperty('transform', 'none', 'important');
+            vDl.style.setProperty('padding-bottom', '40px', 'important');
+            vDl.style.setProperty('background', bgColor, 'important');
+            vDl.scrollTop = 0;
+          }
+          const wDl = clonedDoc.querySelector('.dialy-workspace');
+          if (wDl) {
+            wDl.style.setProperty('contain', 'none', 'important');
+            wDl.style.setProperty('height', 'auto', 'important');
+            wDl.style.setProperty('max-height', 'none', 'important');
+            wDl.style.setProperty('overflow', 'visible', 'important');
+            wDl.style.setProperty('overflow-y', 'visible', 'important');
+            wDl.style.setProperty('min-height', 'auto', 'important');
+            wDl.style.setProperty('padding-bottom', '40px', 'important');
+            wDl.style.setProperty('background', bgColor, 'important');
+          }
+          const sHeader = clonedDoc.querySelector('.dialy-sticky-header');
+          if (sHeader) {
+            sHeader.style.setProperty('position', 'static', 'important');
+            sHeader.style.setProperty('top', 'auto', 'important');
+            sHeader.style.setProperty('transform', 'none', 'important');
+          }
+          clonedDoc.querySelectorAll('.dialy-card-section').forEach(sec => {
+            sec.style.setProperty('content-visibility', 'visible', 'important');
+            sec.style.setProperty('contain', 'none', 'important');
+            sec.style.setProperty('height', 'auto', 'important');
+            sec.style.setProperty('max-height', 'none', 'important');
+            sec.style.setProperty('overflow', 'visible', 'important');
+          });
+          if (clonedDoc.defaultView) {
+            clonedDoc.defaultView.scrollTo(0, 0);
+          }
+        }
+
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #view-tuvi, #view-bazi, #view-qmdj, #view-calendar, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, .tuvi-analysis-container, .tuvi-full-report-wrap, .bazi-analysis-container, .bazi-full-report-wrap, #view-diachinh, .dc-container, #dc-results-area, #view-xindai, .xindai-workspace, .xindai-altar-container, #app-container, #app-body'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #view-tuvi, #view-bazi, #view-qmdj, #view-calendar, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, .tuvi-analysis-container, .tuvi-full-report-wrap, .bazi-analysis-container, .bazi-full-report-wrap, #view-diachinh, .dc-container, #dc-results-area, #view-dialy, .dialy-workspace, .dialy-content-body, #view-xindai, .xindai-workspace, .xindai-altar-container, #app-container, #app-body'
         );
         scrollViews.forEach(v => {
           v.style.setProperty('contain', 'none', 'important');
@@ -2403,6 +2448,7 @@
       else if (currentDeckMode === 'lakinh') modeName = 'LaKinh_VeTinh';
       else if (currentDeckMode === 'phaphanh') modeName = 'PhapHanh_NadrasaDehi';
       else if (currentDeckMode === 'diachinh') modeName = 'DiaChinh_SoDo_VN2000';
+      else if (currentDeckMode === 'dialy') modeName = 'DiaLy_KhaoSat';
 
       const filename = `${modeName}_${dateStr}.png`;
 
