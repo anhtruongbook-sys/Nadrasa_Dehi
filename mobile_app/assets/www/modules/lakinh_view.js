@@ -3544,8 +3544,11 @@ function updateQmdjStrategicLayer() {
       const elevEl = document.getElementById('hud-detail-elev');
       if (elevEl) elevEl.innerHTML = `⛰️ Cao độ: ${result.center.elevation.toFixed(1)} m`;
 
+      // Lưu lại các markers để định vị nhanh trên bản đồ
+      state.elevationMarkers = { thuyKhau: {}, laiLong: {} };
+
       // Vẽ 3 vòng tròn bán kính trên bản đồ
-      Object.values(result.tiers).forEach(t => {
+      Object.entries(result.tiers).forEach(([tierKey, t]) => {
         L.circle([center.lat, center.lng], {
           radius: t.radiusM,
           color: t.color,
@@ -3554,9 +3557,9 @@ function updateQmdjStrategicLayer() {
           dashArray: '5, 5'
         }).addTo(elevationLayerGroup);
 
-        // Đánh dấu Thủy Khẩu điểm trũng nhất (Thiên Bàn Phùng Châm) - Không nền che khuất thông tin bản đồ
+        // Đánh dấu Thủy Khẩu điểm trũng nhất (Thiên Bàn Phùng Châm)
         const a = t.thuyKhau.analysis;
-        L.marker([t.thuyKhau.lat, t.thuyKhau.lng], {
+        const tkMarker = L.marker([t.thuyKhau.lat, t.thuyKhau.lng], {
           icon: L.divIcon({
             className: 'custom-watermouth-pin',
             html: `<div class="watermouth-pin-wrap" style="display:inline-flex;align-items:center;background:none;border:none;">
@@ -3570,12 +3573,13 @@ function updateQmdjStrategicLayer() {
             iconAnchor: [12, 32],
             popupAnchor: [0, -32]
           })
-        }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">💧 Thủy Khẩu ${t.name} (${a.son} • ${a.songSon})<br>Cự ly điểm thấp nhất: <strong>${t.thuyKhau.distanceM}m</strong> (trong dải ${t.rangeLabel || ''})<br>Tam Hợp: ${a.cuc}<br>Cao độ: ${t.thuyKhau.elevation.toFixed(1)}m</div>`).addTo(elevationLayerGroup);
+        }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">💧 Thủy Khẩu ${t.name} (${a.son} • ${a.songSon})<br>Cự ly điểm thấp nhất: <strong>${t.thuyKhau.distanceM}m</strong> (trong dải ${t.rangeLabel || ''})<br>Tam Hợp: ${a.cuc}<br>Cao độ: ${t.thuyKhau.elevation.toFixed(1)}m<br><small style="color: #64748b;">(Điểm thoát nước khảo sát theo Thiên Bàn)</small></div>`).addTo(elevationLayerGroup);
+        state.elevationMarkers.thuyKhau[tierKey] = tkMarker;
 
         // Đánh dấu Lai Long điểm cao nhất (Địa Bàn Chính Châm) - Gối tựa mạch núi
         const ll = t.laiLong;
         if (ll && ll.lat && ll.lng) {
-          L.marker([ll.lat, ll.lng], {
+          const llMarker = L.marker([ll.lat, ll.lng], {
             icon: L.divIcon({
               className: 'custom-lailong-pin',
               html: `<div class="lailong-pin-wrap" style="display:inline-flex;align-items:center;background:none;border:none;">
@@ -3589,7 +3593,8 @@ function updateQmdjStrategicLayer() {
               iconAnchor: [12, 32],
               popupAnchor: [0, -32]
             })
-          }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">⛰️ Lai Long ${t.name} (Sơn ${ll.son} • ${ll.bearing.toFixed(1)}°)<br>Cự ly gối tựa: <strong>${ll.distanceM}m</strong><br>Địa Bàn Chính Châm: Cung ${ll.cung || ''} (${ll.hanh || ''})<br>Cao độ: <strong>${ll.elevation.toFixed(1)}m</strong> (Chênh +${ll.deltaElev.toFixed(1)}m)</div>`).addTo(elevationLayerGroup);
+          }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">⛰️ Lai Long ${t.name} (Sơn ${ll.son} • ${ll.bearing.toFixed(1)}°)<br>Cự ly gối tựa: <strong>${ll.distanceM}m</strong><br>Địa Bàn Chính Châm: Cung ${ll.cung || ''} (${ll.hanh || ''})<br>Cao độ: <strong>${ll.elevation.toFixed(1)}m</strong> (Chênh +${ll.deltaElev.toFixed(1)}m)<br><small style="color: #64748b;">(Đỉnh gối tựa mạch khí theo Địa Bàn)</small></div>`).addTo(elevationLayerGroup);
+          state.elevationMarkers.laiLong[tierKey] = llMarker;
         }
       });
 
@@ -3598,6 +3603,77 @@ function updateQmdjStrategicLayer() {
       console.error(err);
       showLaKinhToast('❌ Lỗi khi quét cao độ DEM');
     }
+  }
+
+  // Định vị Thủy Khẩu / Lai Long trực tiếp trên Bản Đồ La Kinh
+  function locateDemPointOnMap(tierKey, type) {
+    if (!mapInstance || !state.lastDemScanResult) return;
+    const result = state.lastDemScanResult;
+    const tier = result.tiers && result.tiers[tierKey];
+    if (!tier) return;
+
+    const pt = (type === 'thuykhau') ? tier.thuyKhau : tier.laiLong;
+    if (!pt || !pt.lat || !pt.lng) return;
+
+    // 1. Đóng modal overlay nếu đang mở
+    const overlay = document.getElementById('modal-minhduong-overlay');
+    if (overlay) overlay.remove();
+
+    // 2. Vẽ đường ngắm Sightline từ tâm trạch đến điểm khảo sát
+    if (state.activeDemSightline) {
+      mapInstance.removeLayer(state.activeDemSightline);
+      state.activeDemSightline = null;
+    }
+
+    const center = result.center;
+    const lineColor = (type === 'thuykhau') ? '#0284c7' : '#d97706';
+    const label = (type === 'thuykhau')
+      ? `💧 Thủy Khẩu ${tier.name} (Sơn ${pt.analysis ? pt.analysis.son : ''} • ${pt.distanceM}m • Cao ${pt.elevation.toFixed(1)}m)`
+      : `⛰️ Lai Long ${tier.name} (Sơn ${pt.son} • ${pt.distanceM}m • Cao ${pt.elevation.toFixed(1)}m)`;
+
+    state.activeDemSightline = L.polyline([[center.lat, center.lng], [pt.lat, pt.lng]], {
+      color: lineColor,
+      weight: 3,
+      dashArray: '8, 8',
+      opacity: 0.95
+    }).addTo(mapInstance);
+
+    // 3. Bay bản đồ đến vị trí đó
+    mapInstance.flyTo([pt.lat, pt.lng], Math.max(mapInstance.getZoom(), 16), {
+      animate: true,
+      duration: 1.0
+    });
+
+    // 4. Mở popup của Marker
+    setTimeout(() => {
+      const markers = state.elevationMarkers && state.elevationMarkers[type === 'thuykhau' ? 'thuyKhau' : 'laiLong'];
+      const marker = markers ? markers[tierKey] : null;
+      if (marker) {
+        marker.openPopup();
+      }
+    }, 1100);
+
+    // 5. Hiển thị nút trôi nổi mở lại Bảng Minh Đường
+    showFloatingMinhDuongButton();
+    showLaKinhToast(`📍 Đã định vị ${label} trên Bản Đồ La Kinh`);
+  }
+
+  function showFloatingMinhDuongButton() {
+    let btn = document.getElementById('lakinh-btn-floating-minhduong');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'lakinh-btn-floating-minhduong';
+      btn.className = 'lakinh-btn-floating-minhduong';
+      btn.innerHTML = '📋 Bảng Minh Đường';
+      btn.style.cssText = 'position: fixed; top: 72px; right: 12px; z-index: 9999; background: rgba(15, 23, 42, 0.92); border: 1.5px solid #38bdf8; color: #38bdf8; font-weight: 700; font-size: 0.72rem; padding: 7px 14px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.55); backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; gap: 5px;';
+      btn.onclick = () => {
+        if (state.lastDemScanResult) {
+          openMinhDuongModal(state.lastDemScanResult);
+        }
+      };
+      document.body.appendChild(btn);
+    }
+    btn.style.display = 'flex';
   }
 
   // Mở Modal Phân Tích Minh Đường Cục
@@ -3631,9 +3707,21 @@ function updateQmdjStrategicLayer() {
             • <strong>Đánh giá Cát Hung:</strong> ${a.danhGia}<br>
             • <strong>Cao độ Thủy Khẩu:</strong> ${tk.elevation.toFixed(1)}m (Chênh ${tk.deltaElev >= 0 ? '+' : ''}${tk.deltaElev.toFixed(1)}m so với tâm)<br>
             • <strong>Lai Long (Địa Bàn Chính Châm):</strong> Sơn ${ll.son} (${ll.bearing.toFixed(1)}°) • Cao độ: ${ll.elevation.toFixed(1)}m (Chênh +${ll.deltaElev.toFixed(1)}m)<br>
-            <div style="margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap;">
-              <a href="${a.googleMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${a.googleMapsUrl}'); } else { window.open('${a.googleMapsUrl}', '_blank'); }" target="_blank" style="color: #38bdf8; text-decoration: underline; font-size: 0.72rem; cursor: pointer;">💧 Mở Thủy Khẩu trên Google Maps</a>
-              ${llMapsUrl ? `<a href="${llMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${llMapsUrl}'); } else { window.open('${llMapsUrl}', '_blank'); }" target="_blank" style="color: #fbbf24; text-decoration: underline; font-size: 0.72rem; cursor: pointer;">⛰️ Mở Lai Long trên Google Maps</a>` : ''}
+            
+            <!-- NÚT ĐỊNH VỊ TRỰC TIẾP TRÊN BẢN ĐỒ LA KINH -->
+            <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-locate-dem-point" data-tier="${key}" data-type="thuykhau" style="flex: 1; padding: 7px 8px; background: rgba(2, 132, 199, 0.22); border: 1.5px solid #38bdf8; border-radius: 6px; color: #38bdf8; font-weight: 700; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  💧 Xem Thủy Khẩu trên Bản Đồ
+                </button>
+                <button type="button" class="btn-locate-dem-point" data-tier="${key}" data-type="lailong" style="flex: 1; padding: 7px 8px; background: rgba(217, 119, 6, 0.22); border: 1.5px solid #fbbf24; border-radius: 6px; color: #fbbf24; font-weight: 700; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  ⛰️ Xem Lai Long trên Bản Đồ
+                </button>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.64rem; padding: 0 2px;">
+                <a href="${a.googleMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${a.googleMapsUrl}'); } else { window.open('${a.googleMapsUrl}', '_blank'); }" target="_blank" style="color: #64748b; text-decoration: underline; cursor: pointer;">Mở Thủy Khẩu trên Google Maps ngoài</a>
+                ${llMapsUrl ? `<a href="${llMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${llMapsUrl}'); } else { window.open('${llMapsUrl}', '_blank'); }" target="_blank" style="color: #64748b; text-decoration: underline; cursor: pointer;">Mở Lai Long trên Google Maps ngoài</a>` : ''}
+              </div>
             </div>
           </div>
         </div>
@@ -3662,6 +3750,15 @@ function updateQmdjStrategicLayer() {
       </div>
     `;
 
+    // Gán sự kiện nút định vị trực tiếp trên bản đồ
+    modalBox.querySelectorAll('.btn-locate-dem-point').forEach(btn => {
+      btn.onclick = () => {
+        const tier = btn.dataset.tier;
+        const type = btn.dataset.type;
+        locateDemPointOnMap(tier, type);
+      };
+    });
+
     const btnTh = document.getElementById('btn-open-tamhop-from-minhduong');
     if (btnTh) {
       btnTh.onclick = () => {
@@ -3675,6 +3772,7 @@ function updateQmdjStrategicLayer() {
       };
     }
   }
+
 
   // Mở Modal Huyền Không Phi Tinh Chính Tông (Chuẩn 16 Tinh Bàn - Vận 9)
   function openHuyenKhongModal(selectedPeriod = 9, explicitDeg = null, useGeoGrid = false) {
@@ -9089,6 +9187,8 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     pauseSensor: pauseSensor,
     resumeSensor: resumeSensor,
     stopSensor: stopSensorListening,
+    locateDemPointOnMap: locateDemPointOnMap,
+    openMinhDuongModal: openMinhDuongModal,
     storage: LakinhStorage,
     getState: () => state
   };
