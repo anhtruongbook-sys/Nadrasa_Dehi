@@ -76,10 +76,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.62
-          name: "Neta Light v2.8.62 (Chuẩn Hóa Nút Nổi Minh Đường Mini Chip, Tích Hợp Nút Đóng ✕ & Tùy Chọn Ẩn Hiện Linh Hoạt)"
+          tag_name: v2.8.63
+          name: "Neta Light v2.8.63 (Ra Mắt Module Địa Lý Khảo Sát Độc Lập 2 Tab, Nâng Cấp 120 Phân Kim, 72 Thấu Địa & Nắn Hướng Vi Mô)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.62
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.63
+            - **Ra Mắt Module Độc Lập 'ĐỊA LÝ KHẢO SÁT' (Tam Hợp & Đại Quái)**:
+              + Tổ chức 2 Tab chuyên sâu: Tab 1 (Tam Hợp Phái & Địa Mạo DEM) và Tab 2 (Huyền Không Đại Quái 64 Quẻ & 384 Hào).
+              + Thẻ Tóm Tắt Đối Sánh Nhất Thể (Master Parity Bar) hiển thị song song kết luận cả hai phái ở đầu trang.
+              + Đồng bộ hai chiều (Bi-directional State Coupling) liền mạch 100% với Module La Kinh Vệ Tinh (không làm mất tính năng bên La Kinh).
+              + Nút 1-chạm `[🔄 Lấy Từ La Kinh]` và `[🧭 Áp Sang La Kinh & Mở Bản Đồ]`.
+            - **Nâng Cấp Toàn Diện Phân Hệ Phong Thủy Tam Hợp Phái**:
+              + Chuẩn hóa 120 Phân Kim theo 12 Cặp Song Sơn chuẩn Dương Công La Kinh (phân định Can Chi và Nạp Âm chuẩn 60 Hoa Giáp).
+              + Thuật toán Lái Hướng Vi Mô (Micro-Steering): Tự động phát hiện Tuyến Không Vong / Quy Giáp Sát và trang bị nút nắn hướng 1-chạm sang cung Vượng/Tướng (±3.0°).
+              + Tích hợp 72 Thấu Địa Long (Bảo Châu Long vs Sai Thác Long / Đại Không Vong) và 60 Xuyên Sơn Long (Thuần Khí Dương vs Thuần Khí Âm).
+              + Cầu nối DEM thực địa: Đồng bộ đồng thời cả Thủy Khẩu và Lai Long Nhập Thủ đo đạc từ vệ tinh sang thẩm định Tam Hợp.
             - **Chuẩn Hóa Nút Nổi Minh Đường Mini Chip Công Thái Học**:
               + **Dời Vị Trí Về Góc Dưới Phải (`bottom: 74px; right: 14px`)**: Giải phóng hoàn toàn thanh HUD đo đạc độ số trên cùng, không che khuất Sơn hướng, Tam Hợp hay Huyền Không Đại Quái.
               + **Thiết Kế Mini Capsule / Chip Siêu Nhỏ Gọn**: Chiều cao chỉ 26px, viền kính mờ tinh tế, kích thước nhỏ gọn vừa vặn ngón tay cái khi dùng điện thoại một tay.
