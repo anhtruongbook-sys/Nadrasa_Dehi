@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="assets/trachcat/trachcat.css?v=2.2">
   <link rel="stylesheet" href="assets/diachinh/diachinh.css?v=1.0">
   <link rel="stylesheet" href="assets/dialy/dialy.css?v=1.0">
+  <link rel="stylesheet" href="assets/xindai/xindai.css?v=1.0">
 
   <link rel="stylesheet" href="styles.css?v=8.9">
   <link rel="stylesheet" href="phap_hanh.css?v=1.0">
@@ -48,7 +49,7 @@
 
       <!-- Quick Deck Dropdown Menu (Kính mờ sang trọng) -->
       <div class="deck-dropdown-menu" id="deck-dropdown" style="display: none;">
-        <div class="dropdown-section-title">BỐC BÀI</div>
+        <div class="dropdown-section-title">BỐC BÀI &amp; THỈNH Ý CÁT HUNG</div>
         <div class="deck-dropdown-item active" id="tab-mode-neta" data-mode="neta">
           <span class="dropdown-icon">🪷</span>
           <span class="dropdown-name">Neta Light</span>
@@ -58,6 +59,11 @@
           <span class="dropdown-icon">♠️</span>
           <span class="dropdown-name">Bài Tây</span>
           <span class="dropdown-check" id="check-mode-poker" style="opacity: 0;">✓</span>
+        </div>
+        <div class="deck-dropdown-item" id="tab-mode-xindai" data-mode="xindai">
+          <span class="dropdown-icon">🪙</span>
+          <span class="dropdown-name">Xin Đài Âm Dương (Cổ Truyền)</span>
+          <span class="dropdown-check" id="check-mode-xindai" style="opacity: 0;">✓</span>
         </div>
 
         <div class="dropdown-divider"></div>
@@ -330,6 +336,11 @@
       <!-- Dynamically rendered by modules/diachinh_view.js -->
     </div>
 
+    <!-- View Module: Xin Đài Âm Dương (Xin Keo Cổ Truyền) -->
+    <div id="view-xindai" class="app-module-view" style="display: none;">
+      <!-- Dynamically rendered by modules/xindai_view.js -->
+    </div>
+
     <!-- View Module: Pháp Hành Nadrasa Dehi -->
     <div id="view-phaphanh" class="app-module-view" style="display: none;">
       <div class="ph-toolbar">
@@ -572,6 +583,8 @@
   <script src="modules/xlsx.full.min.js"></script>
   <script src="engines/diachinh_engine.js?v=1.0"></script>
   <script src="modules/diachinh_view.js?v=1.0"></script>
+  <script src="assets/xindai/audio_b64.js?v=1.0"></script>
+  <script src="modules/xindai_view.js?v=1.0"></script>
   <script src="app.js?v=9.0"></script>
 </body>
 </html>

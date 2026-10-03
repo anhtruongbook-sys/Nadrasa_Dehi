@@ -1,5 +1,5 @@
-// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v14.4
-const CACHE_NAME = 'neta-poker-v14.4';
+// Service Worker for Neta Light & Poker PWA - Offline & Cache Architecture v14.5
+const CACHE_NAME = 'neta-poker-v14.5';
 
 const CORE_ASSETS = [
   './',
@@ -71,7 +71,15 @@ const CORE_ASSETS = [
   'modules/trachcat_view.js',
   'modules/xlsx.full.min.js',
   'engines/diachinh_engine.js',
-  'modules/diachinh_view.js'
+  'modules/diachinh_view.js',
+  'assets/xindai/xindai.css',
+  'assets/xindai/audio_b64.js',
+  'assets/xindai/dia_tron_su.png',
+  'assets/xindai/mat_duong.png',
+  'assets/xindai/mat_am.png',
+  'assets/xindai/dia_am_duong_phong_thuy.png',
+  'assets/xindai/tieng_xu_roi_dia_su.wav',
+  'modules/xindai_view.js'
 ];
 
 // Thêm toàn bộ 18 Nơi Tại Phủ và 23 Bài học Pháp Hành

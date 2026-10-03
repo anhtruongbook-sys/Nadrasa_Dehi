@@ -1,0 +1,377 @@
+/* ==========================================================================
+   MODULE XIN ĐÀI ÂM DƯƠNG (XIN KEO CỔ TRUYỀN) - NETA LIGHT DESIGN SYSTEM
+   Chuẩn mực giao diện: Hoàng Gia Cổ Điển, Tương Phản WCAG AAA, Zero-Overflow
+   ========================================================================== */
+
+#view-xindai {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.xindai-workspace {
+  width: 100%;
+  max-width: 440px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px 10px 12px;
+  box-sizing: border-box;
+}
+
+/* 1. THANH ĐIỀU HƯỚNG BỐI CẢNH (SEGMENTED PILL) */
+.xindai-context-selector {
+  display: flex;
+  width: 100%;
+  border-radius: 20px;
+  padding: 3px;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+  transition: all 0.3s ease;
+}
+
+/* Light Theme */
+.theme-light .xindai-context-selector {
+  background: rgba(235, 226, 212, 0.85);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark Theme */
+.theme-dark .xindai-context-selector {
+  background: rgba(30, 16, 24, 0.75);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.xindai-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 6px 4px;
+  border-radius: 16px;
+  font-size: clamp(10.5px, 2.9vw, 12px);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  text-align: center;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.theme-light .xindai-tab-btn {
+  color: #6b5c4c;
+}
+.theme-light .xindai-tab-btn.active {
+  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.35);
+}
+
+.theme-dark .xindai-tab-btn {
+  color: #a89a87;
+}
+.theme-dark .xindai-tab-btn.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.35) 0%, rgba(150, 100, 20, 0.7) 100%);
+  color: #ffdf85;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* 2. VĂN KHẤN GỢI Ý (PRAYER BOX) */
+.xindai-prayer-box {
+  width: 100%;
+  border-left: 3px solid #d4af37;
+  padding: 6px 12px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  font-size: clamp(10.5px, 2.9vw, 11.8px);
+  line-height: 1.45;
+  font-style: italic;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.theme-light .xindai-prayer-box {
+  background: rgba(245, 239, 227, 0.85);
+  color: #4a3e31;
+  border-color: #b8860b;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.theme-dark .xindai-prayer-box {
+  background: rgba(35, 18, 28, 0.55);
+  color: #dbcebe;
+  border-color: #d4af37;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 3. KHU VỰC BÀN THỜ & ĐĨA SỨ HOA LAM */
+.xindai-altar {
+  position: relative;
+  width: min(74vw, 34vh, 300px);
+  height: min(74vw, 34vh, 300px);
+  margin: auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 1;
+}
+
+.xindai-plate {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-image: url('dia_tron_su.png');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.theme-light .xindai-plate {
+  box-shadow: 
+    0 12px 28px rgba(120, 90, 40, 0.25),
+    0 2px 10px rgba(0, 0, 0, 0.12),
+    0 0 16px rgba(43, 76, 126, 0.15);
+}
+
+.theme-dark .xindai-plate {
+  box-shadow: 
+    0 16px 36px rgba(0, 0, 0, 0.9),
+    0 0 16px rgba(43, 76, 126, 0.25);
+}
+
+.xindai-plate-shadow {
+  position: absolute;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.45) 80%, transparent 100%);
+  pointer-events: none;
+}
+
+/* KHU VỰC 2 ĐỒNG XU */
+.xindai-coins-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: min(8vw, 26px);
+  z-index: 10;
+}
+
+.xindai-coin-slot {
+  width: 27%;
+  height: 27%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xindai-coin-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.xindai-coin-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.65));
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* 4. KHUNG HIỂN THỊ KẾT QUẢ (RESULT CARD) */
+.xindai-result-card {
+  border-radius: 12px;
+  padding: 8px 14px;
+  width: 100%;
+  flex-shrink: 0;
+  text-align: center;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.theme-light .xindai-result-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(197, 160, 89, 0.5);
+  box-shadow: 0 4px 14px rgba(120, 90, 40, 0.12);
+}
+
+.theme-dark .xindai-result-card {
+  background: rgba(25, 14, 22, 0.88);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
+.xindai-result-title {
+  font-size: clamp(13px, 3.7vw, 15px);
+  font-weight: 700;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+
+.theme-light .xindai-result-title {
+  color: #8b1d24;
+}
+.theme-dark .xindai-result-title {
+  color: #ffd166;
+}
+
+.xindai-result-desc {
+  font-size: clamp(10.5px, 2.9vw, 12px);
+  line-height: 1.45;
+}
+
+.theme-light .xindai-result-desc {
+  color: #2b2520;
+}
+.theme-dark .xindai-result-desc {
+  color: #dbcebe;
+}
+
+.xindai-result-round {
+  font-size: clamp(9.5px, 2.6vw, 10.5px);
+  margin-top: 3px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+}
+
+.theme-light .xindai-result-round {
+  color: #786856;
+}
+.theme-dark .xindai-result-round {
+  color: #9e9080;
+}
+
+/* 5. NÚT DUY NHẤT: BÉ TINH TẾ, DỄ BẤM */
+.xindai-controls {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.xindai-btn-toss {
+  border-radius: 22px;
+  height: 42px;
+  padding: 0 24px;
+  width: min(72vw, 240px);
+  font-size: clamp(12px, 3.3vw, 14px);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.1s, box-shadow 0.15s, background 0.2s;
+  font-family: inherit;
+}
+
+.theme-light .xindai-btn-toss {
+  background: linear-gradient(135deg, #b8860b 0%, #8b1d24 100%);
+  color: #ffffff;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  box-shadow: 0 4px 14px rgba(139, 29, 36, 0.35);
+}
+.theme-light .xindai-btn-toss:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 6px rgba(139, 29, 36, 0.3);
+}
+
+.theme-dark .xindai-btn-toss {
+  background: linear-gradient(180deg, #d4af37 0%, #a27b16 100%);
+  color: #1a0808;
+  border: 1px solid rgba(255, 235, 160, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 10px rgba(212, 175, 55, 0.25);
+}
+.theme-dark .xindai-btn-toss:active {
+  transform: scale(0.96);
+}
+
+.xindai-btn-toss:disabled {
+  background: #6b635b !important;
+  color: #bbb !important;
+  border-color: #555 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+
+/* =========================================================================
+   ANIMATION RƠI & NẢY TỶ LỆ ĐỘNG 3D
+   ========================================================================= */
+@keyframes xindaiDrop1 {
+  0%   { transform: translateY(0) scale(1); }
+  32%  { transform: translateY(min(-16vh, -90px)) scale(1.28); }
+  54%  { transform: translateY(0) scale(1); }          /* CHẠM ĐĨA 1: 0.75s */
+  64%  { transform: translateY(-16px) scale(1.05); }   /* NẢY LÊN 1 */
+  73%  { transform: translateY(0) scale(1); }          /* CHẠM ĐĨA 2: 1.02s */
+  82%  { transform: translateY(-6px) scale(1.02); }    /* NẢY NHẸ 2 */
+  90%  { transform: translateY(0) scale(1); }          /* CHẠM ĐĨA 3 */
+  100% { transform: translateY(0) scale(1); }          /* NẰM YÊN */
+}
+
+@keyframes xindaiDrop2 {
+  0%   { transform: translateY(0) scale(1); }
+  35%  { transform: translateY(min(-18vh, -105px)) scale(1.32); }
+  62%  { transform: translateY(0) scale(1); }          /* CHẠM ĐĨA 1: 1.02s */
+  71%  { transform: translateY(-20px) scale(1.06); }   /* NẢY LÊN 1 */
+  80%  { transform: translateY(0) scale(1); }          /* CHẠM ĐĨA 2: 1.32s */
+  88%  { transform: translateY(-7px) scale(1.02); }    /* NẢY NHẸ 2 */
+  95%  { transform: translateY(0) scale(1); }          /* CHẠM ĐĨA 3 */
+  100% { transform: translateY(0) scale(1); }          /* NẰM YÊN */
+}
+
+@keyframes xindaiSpin1 {
+  0%   { transform: rotate(0deg) scaleX(1); }
+  25%  { transform: rotate(90deg) scaleX(0.2); }
+  50%  { transform: rotate(180deg) scaleX(1); }
+  75%  { transform: rotate(270deg) scaleX(0.2); }
+  100% { transform: rotate(360deg) scaleX(1); }
+}
+
+@keyframes xindaiSpin2 {
+  0%   { transform: rotate(0deg) scaleX(1); }
+  25%  { transform: rotate(-90deg) scaleX(0.2); }
+  50%  { transform: rotate(-180deg) scaleX(1); }
+  75%  { transform: rotate(-270deg) scaleX(0.2); }
+  100% { transform: rotate(-360deg) scaleX(1); }
+}
+
+.xindai-slot-tossing-1 { animation: xindaiDrop1 1.40s cubic-bezier(0.25, 0.9, 0.35, 1) forwards; }
+.xindai-slot-tossing-2 { animation: xindaiDrop2 1.65s cubic-bezier(0.25, 0.9, 0.35, 1) forwards; }
+.xindai-coin-spinning-1 { animation: xindaiSpin1 0.28s linear infinite; }
+.xindai-coin-spinning-2 { animation: xindaiSpin2 0.28s linear infinite; }

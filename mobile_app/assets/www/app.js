@@ -51,6 +51,12 @@
       guideTitle: '♠️ Tra Cứu Quân Bài Tây (Poker)',
       isCardDeck: true
     },
+    xindai: {
+      name: 'XIN ĐÀI ÂM DƯƠNG',
+      subtitle: 'Tam Bất Quá Tam • Tiền Cổ Đĩa Sứ',
+      logo: 'assets/xindai/mat_duong.png',
+      isCardDeck: false
+    },
     tamthuc: {
       name: 'TAM THỨC',
       subtitle: 'Thái Ất • Kỳ Môn • Lục Nhâm',
@@ -138,7 +144,7 @@
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'tamthuc', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'dialy', 'diachinh', 'phaphanh', 'dichhoc'];
+  const ALL_MODES = ['neta', 'poker', 'xindai', 'tamthuc', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'dialy', 'diachinh', 'phaphanh', 'dichhoc'];
 
 
   // DOM Elements
@@ -267,6 +273,9 @@
       if (mode === 'dialy' && window.NetaDiaLyView && typeof window.NetaDiaLyView.init === 'function') {
         try { window.NetaDiaLyView.init(); } catch (e) {}
       }
+      if (mode === 'xindai' && window.NetaXinDaiView && typeof window.NetaXinDaiView.init === 'function') {
+        try { window.NetaXinDaiView.init(); } catch (e) {}
+      }
       return;
     }
     const prevMode = currentDeckMode;
@@ -319,10 +328,12 @@
     const viewDichHoc = document.getElementById('view-dichhoc');
     const viewTrachCat = document.getElementById('view-trachcat');
     const viewDiaChinh = document.getElementById('view-diachinh');
+    const viewXinDai = document.getElementById('view-xindai');
 
     const viewsMap = {
       neta: viewCards,
       poker: viewCards,
+      xindai: viewXinDai,
       tamthuc: viewTamThuc,
       qmdj: viewQmdj,
       thaiat: viewThaiAt,
@@ -424,6 +435,14 @@
         if (window.NetaDiaChinhView) window.NetaDiaChinhView.init();
       } catch (err) {
         console.error('Lỗi khi init NetaDiaChinhView:', err);
+      }
+    } else if (mode === 'xindai') {
+      try {
+        if (window.NetaXinDaiView && typeof window.NetaXinDaiView.init === 'function') {
+          window.NetaXinDaiView.init();
+        }
+      } catch (err) {
+        console.error('Lỗi khi khởi tạo NetaXinDaiView:', err);
       }
     }
 
@@ -1949,6 +1968,17 @@
           (wrap ? wrap.scrollHeight : 0),
           (targetElement ? targetElement.scrollHeight : 0)
         ) || null;
+      } else if (currentDeckMode === 'xindai') {
+        const wrap = document.querySelector('.xindai-workspace') || document.getElementById('view-xindai');
+        targetElement = wrap || appContainer;
+        bgColor = isLight ? '#fdfbf7' : '#140418';
+        captureScale = 2.5;
+        const viewEl = document.getElementById('view-xindai');
+        captureHeight = Math.max(
+          (viewEl ? viewEl.scrollHeight : 0),
+          (wrap ? wrap.scrollHeight : 0),
+          (targetElement ? targetElement.scrollHeight : 0)
+        ) || null;
       } else {
         targetElement = document.getElementById('card-arena-container') || appContainer;
       }
@@ -2250,7 +2280,7 @@
 
         // Expand scrolling containers so complete chart is captured
         const scrollViews = clonedDoc.querySelectorAll(
-          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #view-tuvi, #view-bazi, #view-qmdj, #view-calendar, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, .tuvi-analysis-container, .tuvi-full-report-wrap, .bazi-analysis-container, .bazi-full-report-wrap, #view-diachinh, .dc-container, #dc-results-area, #app-container, #app-body'
+          '.qmdj-view-container, .bazi-view-container, .tuvi-view-container, .calendar-module-container, .card-arena-container, #view-tuvi, #view-bazi, #view-qmdj, #view-calendar, #view-phaphanh, #view-dichhoc, .dichhoc-container, #view-lucnham, .lucnham-view-wrap, #view-thaiat, .thaiat-view-wrap, .tuvi-analysis-container, .tuvi-full-report-wrap, .bazi-analysis-container, .bazi-full-report-wrap, #view-diachinh, .dc-container, #dc-results-area, #view-xindai, .xindai-workspace, .xindai-altar-container, #app-container, #app-body'
         );
         scrollViews.forEach(v => {
           v.style.setProperty('contain', 'none', 'important');
@@ -2362,6 +2392,7 @@
       let modeName = 'NetaLight';
       if (currentDeckMode === 'tamthuc') modeName = 'TamThuc';
       else if (currentDeckMode === 'poker') modeName = 'Poker';
+      else if (currentDeckMode === 'xindai') modeName = 'XinDai_AmDuong';
       else if (currentDeckMode === 'qmdj') modeName = 'KyMonDonGiap';
       else if (currentDeckMode === 'thaiat') modeName = 'ThaiAtThanKinh';
       else if (currentDeckMode === 'lucnham') modeName = 'LucNham_DaiDon';
@@ -2371,7 +2402,6 @@
       else if (currentDeckMode === 'tarot') modeName = 'Tarot_RiderWaite';
       else if (currentDeckMode === 'lakinh') modeName = 'LaKinh_VeTinh';
       else if (currentDeckMode === 'phaphanh') modeName = 'PhapHanh_NadrasaDehi';
-      else if (currentDeckMode === 'dichhoc') modeName = 'BocQue_DichLy';
       else if (currentDeckMode === 'diachinh') modeName = 'DiaChinh_SoDo_VN2000';
 
       const filename = `${modeName}_${dateStr}.png`;
