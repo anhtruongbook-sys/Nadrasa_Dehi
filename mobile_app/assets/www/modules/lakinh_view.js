@@ -4099,7 +4099,9 @@ function updateQmdjStrategicLayer() {
     showLaKinhToast('🧭 Đã bật cảm biến la bàn. Bản đồ & La Kinh xoay theo hướng thực tế.');
   }
 
-  function stopSensorListening(btn) {
+  let wasSensorActiveBeforeBackground = false;
+
+  function stopSensorListening(btn, showToast = true) {
     state.isSensorActive = false;
     if (btn) {
       btn.classList.remove('active-green');
@@ -4127,7 +4129,25 @@ function updateQmdjStrategicLayer() {
       activeSensorListeners = null;
     }
     hasReceivedAbsoluteEvent = false;
-    showLaKinhToast('Đã dừng cảm biến la bàn');
+    if (showToast) {
+      showLaKinhToast('Đã dừng cảm biến la bàn');
+    }
+  }
+
+  function pauseSensor(rememberState = false) {
+    if (state.isSensorActive) {
+      if (rememberState) wasSensorActiveBeforeBackground = true;
+      const btn = document.getElementById('lakinh-btn-sensor');
+      stopSensorListening(btn, false);
+    }
+  }
+
+  function resumeSensor() {
+    if (wasSensorActiveBeforeBackground) {
+      wasSensorActiveBeforeBackground = false;
+      const btn = document.getElementById('lakinh-btn-sensor');
+      startSensorListening(btn);
+    }
   }
 
   function processSensorHeading(e, isAbsolute) {
@@ -8991,6 +9011,9 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     updateFloorPlanGeoPos: updateFloorPlanGeoPos,
     importParcelFromVN2000: importParcelFromVN2000,
     setParcelBannerVisibility: setParcelBannerVisibility,
+    pauseSensor: pauseSensor,
+    resumeSensor: resumeSensor,
+    stopSensor: stopSensorListening,
     storage: LakinhStorage,
     getState: () => state
   };

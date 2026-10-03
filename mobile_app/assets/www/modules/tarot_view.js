@@ -66,6 +66,23 @@
     }
   }
 
+  let tarotAudioIdleTimer = null;
+  function scheduleTarotAudioSuspend() {
+    if (tarotAudioIdleTimer) clearTimeout(tarotAudioIdleTimer);
+    tarotAudioIdleTimer = setTimeout(() => {
+      if (audioCtx && audioCtx.state === 'running') {
+        audioCtx.suspend().catch(() => {});
+      }
+    }, 2500);
+  }
+
+  function suspendAudio() {
+    if (tarotAudioIdleTimer) clearTimeout(tarotAudioIdleTimer);
+    if (audioCtx && audioCtx.state === 'running') {
+      audioCtx.suspend().catch(() => {});
+    }
+  }
+
   function playCardSlideSound() {
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -93,6 +110,7 @@
       gain.connect(ctx.destination);
 
       noise.start();
+      scheduleTarotAudioSuspend();
     } catch (e) {}
   }
 
@@ -114,6 +132,7 @@
 
       osc.start();
       osc.stop(ctx.currentTime + 0.1);
+      scheduleTarotAudioSuspend();
     } catch (e) {}
   }
 
@@ -138,6 +157,7 @@
         osc.start();
         osc.stop(ctx.currentTime + 1.85);
       });
+      scheduleTarotAudioSuspend();
     } catch (e) {}
   }
 
@@ -2920,7 +2940,8 @@
     openCardDetail: openTarotCardDetailModal,
     openKeyConfigModal: openTarotKeyConfigModal,
     formatMarkdownDeep: formatMarkdownDeep,
-    exportPdf: exportTarotPdfDirect
+    exportPdf: exportTarotPdfDirect,
+    suspendAudio: suspendAudio
   };
 
   global.NetaTarotView = NetaTarotView;

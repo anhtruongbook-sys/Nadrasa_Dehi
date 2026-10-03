@@ -2302,6 +2302,25 @@
     }
   }
 
+  function pauseTimers() {
+    if (breathTimer) {
+      clearInterval(breathTimer);
+      breathTimer = null;
+    }
+    if (breathState) {
+      breathState.isRunning = false;
+    }
+    const circle = document.getElementById('thien-breath-circle');
+    const phaseEl = document.getElementById('thien-breath-phase');
+    const btnToggle = document.getElementById('btn-thien-breath-toggle');
+    if (btnToggle) {
+      btnToggle.textContent = '▶ Bắt Đầu Thở 4-7-8';
+      btnToggle.style.background = '#10b981';
+    }
+    if (circle) circle.className = 'thien-breath-circle';
+    if (phaseEl) phaseEl.textContent = 'SẴN SÀNG';
+  }
+
   /**
    * Render Chế Độ Kỳ Môn Bản Mệnh (Joey Yap Destiny Qi Men / Life Palace)
    */
@@ -5128,7 +5147,8 @@
       currentQmdjDate,
       ptState,
       breathState
-    })
+    }),
+    pauseTimers: pauseTimers
   };
 
 })(typeof window !== 'undefined' ? window : this);

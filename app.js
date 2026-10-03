@@ -256,7 +256,20 @@
       closeDropdown();
       return;
     }
+    const prevMode = currentDeckMode;
     currentDeckMode = mode;
+
+    // 0. Auto-Teardown on Module Switch (Tiết kiệm năng lượng & triệt tiêu rò rỉ phần cứng)
+    if (prevMode === 'lakinh' && mode !== 'lakinh') {
+      if (window.NetaLaKinhView && typeof window.NetaLaKinhView.pauseSensor === 'function') {
+        window.NetaLaKinhView.pauseSensor(false);
+      }
+    }
+    if (prevMode === 'qmdj' && mode !== 'qmdj') {
+      if (window.NetaQMDJView && typeof window.NetaQMDJView.pauseTimers === 'function') {
+        window.NetaQMDJView.pauseTimers();
+      }
+    }
 
     // Update active class & checkmarks in dropdown
     ALL_MODES.forEach((m) => {
@@ -310,7 +323,6 @@
       phaphanh: viewPhapHanh,
       dichhoc: viewDichHoc
     };
-
 
     // Hide all views first, then show active
     Object.values(viewsMap).forEach((v) => {
@@ -375,6 +387,32 @@
     playBellChime();
     showToast(`Đã chuyển sang: ${cfg.name}`);
   }
+
+  // ================= UNIFIED POWER & LIFECYCLE CONTROLLER =================
+  // Quản trị năng lượng thông minh: tự động đưa ứng dụng vào trạng thái ngủ sâu (Deep Sleep)
+  // khi người dùng khóa màn hình hoặc chuyển app, tiết kiệm pin tối đa.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      // 1. Tạm dừng cảm biến la bàn / phần cứng nếu đang bật
+      if (window.NetaLaKinhView && typeof window.NetaLaKinhView.pauseSensor === 'function') {
+        window.NetaLaKinhView.pauseSensor(true);
+      }
+      // 2. Tạm dừng bộ đếm thời gian thiền định Kỳ Môn
+      if (window.NetaQMDJView && typeof window.NetaQMDJView.pauseTimers === 'function') {
+        window.NetaQMDJView.pauseTimers();
+      }
+      // 3. Đưa AudioContext vào trạng thái ngủ sâu ngay lập tức
+      suspendAudioContext();
+      if (window.NetaTarotView && typeof window.NetaTarotView.suspendAudio === 'function') {
+        window.NetaTarotView.suspendAudio();
+      }
+    } else {
+      // Khôi phục cảm biến La Kinh nếu trước đó có bật và người dùng vẫn đang ở màn hình La Kinh
+      if (currentDeckMode === 'lakinh' && window.NetaLaKinhView && typeof window.NetaLaKinhView.resumeSensor === 'function') {
+        window.NetaLaKinhView.resumeSensor();
+      }
+    }
+  });
 
   const switchDeckMode = switchAppMode;
   if (typeof window !== 'undefined') {
@@ -1096,13 +1134,34 @@
   }
 
   // Sound Engine
+  let audioIdleTimer = null;
+  function scheduleAudioContextSuspend() {
+    if (audioIdleTimer) clearTimeout(audioIdleTimer);
+    audioIdleTimer = setTimeout(() => {
+      if (audioCtx && audioCtx.state === 'running') {
+        audioCtx.suspend().catch(() => {});
+      }
+    }, 2800);
+  }
+
+  function suspendAudioContext() {
+    if (audioIdleTimer) clearTimeout(audioIdleTimer);
+    if (audioCtx && audioCtx.state === 'running') {
+      audioCtx.suspend().catch(() => {});
+    }
+  }
+
   function initAudio() {
+    if (audioIdleTimer) {
+      clearTimeout(audioIdleTimer);
+      audioIdleTimer = null;
+    }
     if (!audioCtx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AudioContext();
     }
     if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
+      audioCtx.resume().catch(() => {});
     }
   }
 
@@ -1127,6 +1186,7 @@
 
       osc.start();
       osc.stop(audioCtx.currentTime + 2.6);
+      scheduleAudioContextSuspend();
     } catch (e) {}
   }
 
@@ -1149,6 +1209,7 @@
 
       osc.start();
       osc.stop(audioCtx.currentTime + 0.65);
+      scheduleAudioContextSuspend();
     } catch (e) {}
   }
 
@@ -1171,6 +1232,7 @@
 
       osc.start();
       osc.stop(audioCtx.currentTime + 0.32);
+      scheduleAudioContextSuspend();
     } catch (e) {}
   }
 
@@ -1468,10 +1530,18 @@
     // Screenshot Event (Header camera button)
     if (btnScreenshotHeader) btnScreenshotHeader.addEventListener('click', captureArenaScreenshot);
 
-    // Auto-fit cards on screen resize
-    window.addEventListener('resize', fitCardsToScreen);
+    // Auto-fit cards on screen resize (Throttled bằng requestAnimationFrame để chống giật Layout Thrashing)
+    let resizeRafId = null;
+    const throttledFitCards = () => {
+      if (resizeRafId) cancelAnimationFrame(resizeRafId);
+      resizeRafId = requestAnimationFrame(() => {
+        fitCardsToScreen();
+        resizeRafId = null;
+      });
+    };
+    window.addEventListener('resize', throttledFitCards);
     window.addEventListener('orientationchange', () => {
-      setTimeout(fitCardsToScreen, 150);
+      setTimeout(throttledFitCards, 150);
     });
 
     // Close on Escape key
@@ -1547,8 +1617,22 @@
   }
   window.getCardBase64 = getCardBase64;
 
-  // Fallback chuyển đổi URL ảnh sang Base64 qua Fetch/XHR/Canvas
+  // Fallback chuyển đổi URL ảnh sang Base64 qua Fetch/XHR/Canvas (Bộ đệm LRU giới hạn tối đa 50 ảnh để chống tràn RAM)
+  const MAX_BASE64_CACHE_ENTRIES = 50;
   const imageBase64Cache = new Map();
+
+  function cacheBase64(key, val) {
+    if (!key || !val) return;
+    if (imageBase64Cache.has(key)) {
+      imageBase64Cache.delete(key);
+    } else if (imageBase64Cache.size >= MAX_BASE64_CACHE_ENTRIES) {
+      const oldestKey = imageBase64Cache.keys().next().value;
+      if (oldestKey !== undefined) imageBase64Cache.delete(oldestKey);
+    }
+    imageBase64Cache.set(key, val);
+  }
+  window.cacheBase64 = cacheBase64;
+  window.imageBase64Cache = imageBase64Cache;
 
   async function toBase64Url(url) {
     if (!url) return '';
@@ -1571,8 +1655,8 @@
           reader.readAsDataURL(blob);
         });
         if (dataUrl && dataUrl.startsWith('data:')) {
-          imageBase64Cache.set(url, dataUrl);
-          if (fetchUrl !== url) imageBase64Cache.set(fetchUrl, dataUrl);
+          cacheBase64(url, dataUrl);
+          if (fetchUrl !== url) cacheBase64(fetchUrl, dataUrl);
           return dataUrl;
         }
       }
@@ -1590,8 +1674,8 @@
           reader.readAsDataURL(blob);
         });
         if (dataUrl && dataUrl.startsWith('data:')) {
-          imageBase64Cache.set(url, dataUrl);
-          if (fetchUrl !== url) imageBase64Cache.set(fetchUrl, dataUrl);
+          cacheBase64(url, dataUrl);
+          if (fetchUrl !== url) cacheBase64(fetchUrl, dataUrl);
           return dataUrl;
         }
       }
@@ -1610,7 +1694,7 @@
           ctx.drawImage(img, 0, 0);
           const data = c.toDataURL('image/png');
           if (data && data.startsWith('data:')) {
-            imageBase64Cache.set(url, data);
+            cacheBase64(url, data);
             resolve(data);
             return;
           }
