@@ -152,30 +152,46 @@
 
   // Khởi tạo và render module
   function init() {
-    const container = document.getElementById('view-dialy');
-    if (!container) return;
+    try {
+      const container = document.getElementById('view-dialy');
+      if (!container) return;
 
-    // Đồng bộ góc độ ban đầu từ La Kinh nếu có
-    if (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function') {
-      const lkState = global.NetaLaKinhView.getState();
-      if (typeof lkState.rotation === 'number') state.curHuongDeg = lkState.rotation;
-      if (typeof lkState.tamHopThuyKhauDeg === 'number') state.curThuyKhauDeg = lkState.tamHopThuyKhauDeg;
-      if (lkState.tamHopDongChay) state.curDongChay = lkState.tamHopDongChay;
-      if (lkState.lastDemScanResult) state.demResult = lkState.lastDemScanResult;
-    }
-    if (global.mapInstance && typeof global.mapInstance.getCenter === 'function') {
-      const c = global.mapInstance.getCenter();
-      state.demCoords = { lat: c.lat, lng: c.lng };
-    } else if (!state.demCoords) {
-      state.demCoords = { lat: 20.5242, lng: 106.1099 };
-    }
+      // Đồng bộ góc độ ban đầu từ La Kinh nếu có
+      if (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function') {
+        try {
+          const lkState = global.NetaLaKinhView.getState();
+          if (typeof lkState.rotation === 'number') state.curHuongDeg = lkState.rotation;
+          if (typeof lkState.tamHopThuyKhauDeg === 'number') state.curThuyKhauDeg = lkState.tamHopThuyKhauDeg;
+          if (lkState.tamHopDongChay) state.curDongChay = lkState.tamHopDongChay;
+          if (lkState.lastDemScanResult) state.demResult = lkState.lastDemScanResult;
+        } catch (e) {
+          console.warn('Sync lakinh state warning:', e);
+        }
+      }
+      try {
+        if (global.mapInstance && typeof global.mapInstance.getCenter === 'function') {
+          const c = global.mapInstance.getCenter();
+          if (c && typeof c.lat === 'number' && typeof c.lng === 'number') {
+            state.demCoords = { lat: c.lat, lng: c.lng };
+          }
+        }
+      } catch (e) {
+        console.warn('Map center get error:', e);
+      }
+      if (!state.demCoords || typeof state.demCoords.lat !== 'number') {
+        state.demCoords = { lat: 20.5242, lng: 106.1099 };
+      }
 
-    render();
+      render();
+    } catch (err) {
+      console.error('DiaLyView.init error:', err);
+    }
   }
 
   function render() {
-    const container = document.getElementById('view-dialy');
-    if (!container) return;
+    try {
+      const container = document.getElementById('view-dialy');
+      if (!container) return;
 
     const deg = normalizeDeg(state.curHuongDeg);
     const tkDeg = normalizeDeg(state.curThuyKhauDeg);
@@ -303,6 +319,20 @@
     `;
 
     bindEvents();
+    } catch (renderErr) {
+      console.error('Lỗi khi render DiaLyView:', renderErr);
+      const container = document.getElementById('view-dialy');
+      if (container) {
+        container.innerHTML = `
+          <div style="padding: 24px 16px; text-align: center; color: #ef4444; font-family: sans-serif;">
+            <div style="font-size: 1.5rem; margin-bottom: 8px;">⚠️</div>
+            <div style="font-weight: 700; margin-bottom: 8px;">Không thể tải dữ liệu Địa Lý Khảo Sát</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 16px;">${renderErr.message || 'Lỗi xử lý tham số'}</div>
+            <button type="button" onclick="if(window.NetaDiaLyView)window.NetaDiaLyView.init()" style="padding: 8px 16px; border-radius: 8px; background: #b45309; color: #fff; border: none; font-weight: 700; cursor: pointer;">Thử lại</button>
+          </div>
+        `;
+      }
+    }
   }
 
   // Render HTML cho Tab: Tầm Long Điểm Huyệt & Tứ Tượng Loan Đầu

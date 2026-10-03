@@ -12,15 +12,15 @@
     curHuongDeg: 180.0,
     curThuyKhauDeg: 115.0,
     curDongChay: 'ta_dao_huu',
-    curActiveTab: 'tamhop', // 'tamhop' hoặc 'hkdq'
+    curActiveTab: 'tamlong', // 'tamlong' | 'tamhop' | 'hkdq'
     curCanChu: 'Giáp',
     curChiChu: 'Tý',
     curNamChi: 'Thìn',
     curMoTaSa: '',
     curHkdqFilterVan: 'all',
     curHkdqFilterKhi: 'all',
-    demCoords: null,
-    demData: null,
+    demCoords: { lat: 20.5242, lng: 106.1099 },
+    demResult: null,
     isDemLoading: false
   };
 
@@ -152,27 +152,58 @@
 
   // Khởi tạo và render module
   function init() {
-    const container = document.getElementById('view-dialy');
-    if (!container) return;
+    try {
+      const container = document.getElementById('view-dialy');
+      if (!container) return;
 
-    // Đồng bộ góc độ ban đầu từ La Kinh nếu có
-    if (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function') {
-      const lkState = global.NetaLaKinhView.getState();
-      if (typeof lkState.rotation === 'number') state.curHuongDeg = lkState.rotation;
-      if (typeof lkState.tamHopThuyKhauDeg === 'number') state.curThuyKhauDeg = lkState.tamHopThuyKhauDeg;
-      if (lkState.tamHopDongChay) state.curDongChay = lkState.tamHopDongChay;
+      // Đồng bộ góc độ ban đầu từ La Kinh nếu có
+      if (global.NetaLaKinhView && typeof global.NetaLaKinhView.getState === 'function') {
+        try {
+          const lkState = global.NetaLaKinhView.getState();
+          if (typeof lkState.rotation === 'number') state.curHuongDeg = lkState.rotation;
+          if (typeof lkState.tamHopThuyKhauDeg === 'number') state.curThuyKhauDeg = lkState.tamHopThuyKhauDeg;
+          if (lkState.tamHopDongChay) state.curDongChay = lkState.tamHopDongChay;
+          if (lkState.lastDemScanResult) state.demResult = lkState.lastDemScanResult;
+        } catch (e) {
+          console.warn('Sync lakinh state warning:', e);
+        }
+      }
+      try {
+        if (global.mapInstance && typeof global.mapInstance.getCenter === 'function') {
+          const c = global.mapInstance.getCenter();
+          if (c && typeof c.lat === 'number' && typeof c.lng === 'number') {
+            state.demCoords = { lat: c.lat, lng: c.lng };
+          }
+        }
+      } catch (e) {
+        console.warn('Map center get error:', e);
+      }
+      if (!state.demCoords || typeof state.demCoords.lat !== 'number') {
+        state.demCoords = { lat: 20.5242, lng: 106.1099 };
+      }
+
+      render();
+    } catch (err) {
+      console.error('DiaLyView.init error:', err);
     }
-
-    render();
   }
 
   function render() {
-    const container = document.getElementById('view-dialy');
-    if (!container) return;
+    try {
+      const container = document.getElementById('view-dialy');
+      if (!container) return;
 
     const deg = normalizeDeg(state.curHuongDeg);
     const tkDeg = normalizeDeg(state.curThuyKhauDeg);
     const toaDeg = normalizeDeg(deg + 180.0);
+
+    // Tính toán Tầm Long Điểm Huyệt & Loan Đầu Vi Địa Mạo Số
+    const tamLongData = global.TamLongEngine ? global.TamLongEngine.analyzeLoanDau({
+      lat: state.demCoords.lat,
+      lng: state.demCoords.lng,
+      headingDeg: deg,
+      demResult: state.demResult
+    }) : null;
 
     // Tính toán Tam Hợp
     const thuyPhap = global.TamHopEngine ? global.TamHopEngine.evaluate_trach_thuy_phap(deg, tkDeg, state.curDongChay) : null;
@@ -240,8 +271,16 @@
           <!-- Hàng 3: Thẻ Đối Sánh Nhất Thể (Master Parity Bar) Mỏng Nhẹ -->
           <div class="dialy-parity-bar ${isSongPhaiDacCach ? 'good' : (isPhamKhongVong ? 'warn' : 'neutral')}">
             <div class="dialy-parity-left">
-              <span>${isSongPhaiDacCach ? '✨ Song Phái Cát Khí' : (isPhamKhongVong ? '⚠️ Tuyến Không Vong' : '⚖️ Khảo Sát')}</span>
-              <span style="opacity: 0.85; font-weight: normal;">• ${pk120 ? pk120.can_chi : ''} | ${hkdq && hkdq.hexagram ? hkdq.hexagram.ten_que : ''}</span>
+              ${state.curActiveTab === 'tamlong' ? `
+                <span>🏔️ ${tamLongData ? tamLongData.hinhTheHuyet.loai.split('(')[0].trim() : 'Chân Huyệt'}</span>
+                <span style="opacity: 0.85; font-weight: normal;">• Điểm ${tamLongData ? tamLongData.score : 0}/100 (${tamLongData ? tamLongData.xepHang.split('(')[0].trim() : ''})</span>
+              ` : (state.curActiveTab === 'tamhop' ? `
+                <span>🌊 ${thuyPhap ? thuyPhap.cuc_name : 'Tam Hợp'}</span>
+                <span style="opacity: 0.85; font-weight: normal;">• ${thuyPhap ? thuyPhap.the_cuc : ''} | ${pk120 ? pk120.can_chi : ''}</span>
+              ` : `
+                <span>☯️ ${hkdq && hkdq.hexagram ? hkdq.hexagram.ten_que : 'Đại Quái'}</span>
+                <span style="opacity: 0.85; font-weight: normal;">• Khí ${hkdq ? hkdq.quai_khi : ''} Vận ${hkdq ? hkdq.quai_van : ''}</span>
+              `)}
             </div>
             ${isPhamKhongVong && pk120.steering && pk120.steering.recommended_heading !== undefined ? `
               <div class="dialy-parity-right">
@@ -252,28 +291,304 @@
             ` : ''}
           </div>
 
-          <!-- Hàng 4: Segmented Tab Bar Siêu Nhẹ (iOS Style) -->
+          <!-- Hàng 4: Segmented Tab Bar Siêu Nhẹ (iOS Style) - 3 Phân Hệ -->
           <div class="dialy-tab-bar">
+            <button type="button" id="dialy-tab-btn-tamlong" class="dialy-tab-btn ${state.curActiveTab === 'tamlong' ? 'active' : ''}">
+              🏔️ Tầm Long
+            </button>
             <button type="button" id="dialy-tab-btn-tamhop" class="dialy-tab-btn ${state.curActiveTab === 'tamhop' ? 'active' : ''}">
-              🌊 Tam Hợp &amp; DEM
+              🌊 Tam Hợp
             </button>
             <button type="button" id="dialy-tab-btn-hkdq" class="dialy-tab-btn ${state.curActiveTab === 'hkdq' ? 'active' : ''}">
-              ☯️ Huyền Không Đại Quái
+              ☯️ Đại Quái
             </button>
           </div>
         </div>
 
         <!-- ================= NỘI DUNG CHÍNH (THEO TAB) ================= -->
         <div class="dialy-content-body">
-          ${state.curActiveTab === 'tamhop' ? renderTamHopTabHtml({ deg, tkDeg, toaDeg, huongSon, toaSon, thuyPhap, pk120, thauDia72, xuyenSon60, xuyenSon72, tamSat, thaiTue, hoangTuyen, batSat, tamCat, tu28 }) : renderHkdqTabHtml({ deg, hkdq })}
+          ${state.curActiveTab === 'tamlong'
+            ? renderTamLongTabHtml({ deg, toaDeg, huongSon, toaSon, tamLongData, thuyPhap, pk120 })
+            : (state.curActiveTab === 'tamhop'
+                ? renderTamHopTabHtml({ deg, tkDeg, toaDeg, huongSon, toaSon, thuyPhap, pk120, thauDia72, xuyenSon60, xuyenSon72, tamSat, thaiTue, hoangTuyen, batSat, tamCat, tu28, tamLongData })
+                : renderHkdqTabHtml({ deg, hkdq, tamLongData })
+              )
+          }
         </div>
       </div>
     `;
 
     bindEvents();
+    } catch (renderErr) {
+      console.error('Lỗi khi render DiaLyView:', renderErr);
+      const container = document.getElementById('view-dialy');
+      if (container) {
+        container.innerHTML = `
+          <div style="padding: 24px 16px; text-align: center; color: #ef4444; font-family: sans-serif;">
+            <div style="font-size: 1.5rem; margin-bottom: 8px;">⚠️</div>
+            <div style="font-weight: 700; margin-bottom: 8px;">Không thể tải dữ liệu Địa Lý Khảo Sát</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 16px;">${renderErr.message || 'Lỗi xử lý tham số'}</div>
+            <button type="button" onclick="if(window.NetaDiaLyView)window.NetaDiaLyView.init()" style="padding: 8px 16px; border-radius: 8px; background: #b45309; color: #fff; border: none; font-weight: 700; cursor: pointer;">Thử lại</button>
+          </div>
+        `;
+      }
+    }
   }
 
-  // Render HTML cho Tab 1: Tam Hợp Phái & Địa Mạo DEM
+  // Render HTML cho Tab: Tầm Long Điểm Huyệt & Tứ Tượng Loan Đầu
+  function renderTamLongTabHtml(data) {
+    const { deg, toaDeg, huongSon, toaSon, tamLongData, thuyPhap, pk120 } = data;
+    if (!tamLongData) {
+      return `<div style="text-align: center; color: #94a3b8; padding: 20px;">Đang tải dữ liệu Tầm Long Điểm Huyệt...</div>`;
+    }
+
+    const { centerElev, tuTuong, weiPercent, tpi, hinhTheHuyet, theNuoc, laiLong, thuyKhau, score, xepHang, xepHangClass, luopan } = tamLongData;
+
+    return `
+      <!-- 1. ĐỊA MẠO SỐ & QUÉT DEM THỰC ĐỊA -->
+      <div class="dialy-card-section">
+        <div class="dialy-card-title">
+          <span>🏔️ 1. Địa Mạo Số &amp; Cao Độ DEM Thực Địa</span>
+          <button type="button" class="dialy-btn-sm dialy-btn-primary" id="dialy-btn-scan-dem" ${state.isDemLoading ? 'disabled' : ''} style="font-size: 0.65rem; padding: 2px 8px;">
+            ${state.isDemLoading ? '⏳ Đang Quét DEM...' : '🔄 Quét DEM Vệ Tinh'}
+          </button>
+        </div>
+
+        <div class="dialy-data-row">
+          <span class="dialy-label">Tọa Độ Trắc Địa:</span>
+          <strong class="dialy-value">${state.demCoords.lat.toFixed(5)}°N, ${state.demCoords.lng.toFixed(5)}°E</strong>
+        </div>
+
+        <div class="dialy-data-row">
+          <span class="dialy-label">Cao Độ Gốc Tâm Trạch:</span>
+          <strong style="color: #38bdf8; font-size: 0.90rem;">${centerElev.toFixed(1)} m</strong>
+          <span class="dialy-label" style="margin-left: 6px; font-size: 0.65rem;">(Bù Từ Thiên WMM: ${tamLongData.declination.toFixed(2)}°)</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; font-size: 0.70rem;">
+          <div class="dialy-sub-card">
+            <span class="dialy-label">⛰️ Lai Long (Gối Tựa Cao Nhất):</span>
+            <div style="color: #fbbf24; font-weight: 800; margin-top: 2px;">
+              ${laiLong ? `${laiLong.son || 'Chính'} (${laiLong.elevation.toFixed(1)}m • +${laiLong.deltaElev.toFixed(1)}m)` : 'Đang khảo sát'}
+            </div>
+            <div style="font-size: 0.60rem; color: #94a3b8;">Cự ly: ${laiLong ? laiLong.distanceM : 0}m • Gối sơn vững chãi</div>
+          </div>
+
+          <div class="dialy-sub-card">
+            <span class="dialy-label">💧 Thủy Khẩu (Điểm Thoát Thấp Nhất):</span>
+            <div style="color: #38bdf8; font-weight: 800; margin-top: 2px;">
+              ${thuyKhau ? `${thuyKhau.sonThienBan || 'Trũng'} (${thuyKhau.elevation.toFixed(1)}m • ${thuyKhau.deltaElev.toFixed(1)}m)` : 'Đang khảo sát'}
+            </div>
+            <div style="font-size: 0.60rem; color: #94a3b8;">Cự ly: ${thuyKhau ? thuyKhau.distanceM : 0}m • Tụ thủy xuất khẩu</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. TỨ TƯỢNG HỘ VỆ & CHỈ SỐ TÀNG PHONG TỤ KHÍ (WEI) -->
+      <div class="dialy-card-section">
+        <div class="dialy-card-title">
+          <span>🛡️ 2. Tứ Tượng Hộ Vệ &amp; Tàng Phong Tụ Khí</span>
+          <span class="dialy-badge ${weiPercent >= 75 ? 'green' : 'gold'}">
+            WEI ${weiPercent}%
+          </span>
+        </div>
+
+        <!-- Thanh Đo Chỉ Số Tàng Phong (Wind Enclosure Index) -->
+        <div style="margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.68rem; margin-bottom: 3px;">
+            <span class="dialy-label">Chỉ số Tụ Khí Tàng Phong (WEI):</span>
+            <b style="color: ${weiPercent >= 75 ? '#4ade80' : '#facc15'};">${weiPercent}% (Khí Tụ Đắc Cách)</b>
+          </div>
+          <div class="dialy-wei-bar-wrap">
+            <div class="dialy-wei-bar-fill" style="width: ${weiPercent}%;"></div>
+          </div>
+          <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 3px; font-style: italic;">
+            "Khí thừa phong tắc tán, giới thủy tắc chỉ" - Tứ bề che chở, sinh khí ngưng đọng.
+          </div>
+        </div>
+
+        <!-- Lưới 4 Con Thú Tứ Tượng (2x2 Grid) -->
+        <div class="dialy-tutruong-grid">
+          <!-- Hậu Huyền Vũ -->
+          <div class="dialy-tutruong-card ${tuTuong.huyenVu.isDacCach ? 'dac-cach' : ''}">
+            <div class="card-head">
+              <span class="card-icon">${tuTuong.huyenVu.icon}</span>
+              <b class="card-name">Hậu Huyền Vũ</b>
+              <span class="card-elev ${tuTuong.huyenVu.deltaElev >= 0 ? 'good' : 'warn'}">
+                ${tuTuong.huyenVu.deltaElev >= 0 ? '+' : ''}${tuTuong.huyenVu.deltaElev.toFixed(1)}m
+              </span>
+            </div>
+            <div class="card-desc">${tuTuong.huyenVu.danhGia}</div>
+            <div class="card-foot">Tọa ${toaDeg.toFixed(1)}° (${tuTuong.huyenVu.mountain}) • ${tuTuong.huyenVu.elevation.toFixed(1)}m</div>
+          </div>
+
+          <!-- Tiền Chu Tước -->
+          <div class="dialy-tutruong-card ${tuTuong.chuTuoc.isDacCach ? 'dac-cach' : ''}">
+            <div class="card-head">
+              <span class="card-icon">${tuTuong.chuTuoc.icon}</span>
+              <b class="card-name">Tiền Chu Tước</b>
+              <span class="card-elev ${tuTuong.chuTuoc.deltaElev <= 0.5 ? 'good' : 'warn'}">
+                ${tuTuong.chuTuoc.deltaElev >= 0 ? '+' : ''}${tuTuong.chuTuoc.deltaElev.toFixed(1)}m
+              </span>
+            </div>
+            <div class="card-desc">${tuTuong.chuTuoc.danhGia}</div>
+            <div class="card-foot">Hướng ${deg.toFixed(1)}° (${tuTuong.chuTuoc.mountain}) • ${tuTuong.chuTuoc.elevation.toFixed(1)}m</div>
+          </div>
+
+          <!-- Tả Thanh Long -->
+          <div class="dialy-tutruong-card ${tuTuong.thanhLong.isDacCach ? 'dac-cach' : ''}">
+            <div class="card-head">
+              <span class="card-icon">${tuTuong.thanhLong.icon}</span>
+              <b class="card-name">Tả Thanh Long</b>
+              <span class="card-elev good">
+                ${tuTuong.thanhLong.deltaElev >= 0 ? '+' : ''}${tuTuong.thanhLong.deltaElev.toFixed(1)}m
+              </span>
+            </div>
+            <div class="card-desc">${tuTuong.thanhLong.danhGia}</div>
+            <div class="card-foot">Tả Sa (${tuTuong.thanhLong.mountain}) • ${tuTuong.thanhLong.elevation.toFixed(1)}m</div>
+          </div>
+
+          <!-- Hữu Bạch Hổ -->
+          <div class="dialy-tutruong-card ${tuTuong.bachHo.isDacCach ? 'dac-cach' : ''}">
+            <div class="card-head">
+              <span class="card-icon">${tuTuong.bachHo.icon}</span>
+              <b class="card-name">Hữu Bạch Hổ</b>
+              <span class="card-elev ${tuTuong.bachHo.isDacCach ? 'good' : 'warn'}">
+                ${tuTuong.bachHo.deltaElev >= 0 ? '+' : ''}${tuTuong.bachHo.deltaElev.toFixed(1)}m
+              </span>
+            </div>
+            <div class="card-desc">${tuTuong.bachHo.danhGia}</div>
+            <div class="card-foot">Hữu Sa (${tuTuong.bachHo.mountain}) • ${tuTuong.bachHo.elevation.toFixed(1)}m</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. NHẬN DIỆN CHÂN HUYỆT THEO TỨ THẾ CỔ ĐIỂN -->
+      <div class="dialy-card-section">
+        <div class="dialy-card-title">
+          <span>🎯 3. Nhận Diện Chân Huyệt Theo Tứ Thế Cổ Điển</span>
+          <span class="dialy-badge ${hinhTheHuyet.badgeClass}">${hinhTheHuyet.nguHanh}</span>
+        </div>
+
+        <div class="dialy-chanhuyet-card">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.5rem;">${hinhTheHuyet.icon}</span>
+            <div>
+              <div class="chanhuyet-main-title" style="font-size: 0.95rem; font-weight: 900;">
+                ${hinhTheHuyet.loai}
+              </div>
+              <div class="chanhuyet-sub-info" style="font-size: 0.65rem;">
+                Thế Huyệt: <b>${hinhTheHuyet.tenHan}</b> • Đặc tính: <b>${hinhTheHuyet.dacDiem}</b>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chanhuyet-desc" style="font-size: 0.70rem; line-height: 1.4; margin-top: 6px;">
+            ${hinhTheHuyet.moTa}
+          </div>
+
+          <div class="dialy-tpi-strip">
+            <span>TPI Vi mô: <b>${tpi.micro > 0 ? '+' : ''}${tpi.micro}m</b></span>
+            <span>TPI Trung mô: <b>${tpi.meso > 0 ? '+' : ''}${tpi.meso}m</b></span>
+            <span>k_prof: <b>${tpi.kProf}</b></span>
+            <span>k_plan: <b>${tpi.kPlan}</b></span>
+          </div>
+        </div>
+
+        <!-- 4 Hình Thái Tham Chiếu (Oa - Kiềm - Nhũ - Đột) -->
+        <div class="dialy-tuthe-mini-grid">
+          <div class="dialy-tuthe-mini-item ${hinhTheHuyet.loai.includes('Oa') ? 'active' : ''}">
+            <b>🥣 Oa Huyệt</b><br/><span>Lòng chảo tụ khí</span>
+          </div>
+          <div class="dialy-tuthe-mini-item ${hinhTheHuyet.loai.includes('Kiềm') ? 'active' : ''}">
+            <b>🦀 Kiềm Huyệt</b><br/><span>Gọng kìm hai cánh</span>
+          </div>
+          <div class="dialy-tuthe-mini-item ${hinhTheHuyet.loai.includes('Nhũ') ? 'active' : ''}">
+            <b>⛰️ Nhũ Huyệt</b><br/><span>Bầu tròn buông sườn</span>
+          </div>
+          <div class="dialy-tuthe-mini-item ${hinhTheHuyet.loai.includes('Đột') || hinhTheHuyet.loai.includes('Bình Dương') ? 'active' : ''}">
+            <b>🌕 Đột Huyệt</b><br/><span>Gò nổi bình dương</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. QUAN THỦY & SA THỦY (SƠN HOÀN THỦY BÃO) -->
+      <div class="dialy-card-section">
+        <div class="dialy-card-title">
+          <span>💧 4. Quan Thủy &amp; Sa Thủy Ôm Bọc</span>
+          <span class="dialy-badge ${theNuoc.isCat ? 'green' : 'gold'}">${theNuoc.danhGia}</span>
+        </div>
+
+        <div class="dialy-data-row">
+          <span class="dialy-label">Hình Thái Thủy Thế:</span>
+          <strong style="color: ${theNuoc.color}; font-weight: 800;">${theNuoc.loai}</strong>
+        </div>
+
+        <div style="font-size: 0.70rem; color: #cbd5e1; line-height: 1.4; margin: 4px 0;">
+          ${theNuoc.moTa}
+        </div>
+
+        <div class="dialy-data-row" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px; margin-top: 4px;">
+          <span class="dialy-label">Phương Thủy Khẩu:</span>
+          <strong class="dialy-value">${thuyKhau ? `${thuyKhau.sonThienBan} (${thuyKhau.bearing.toFixed(1)}°)` : 'Đang khảo sát'}</strong>
+          <span class="dialy-label" style="margin-left: 6px;">Cục: <b>${thuyPhap ? thuyPhap.cuc_name : 'Thủy Cục'}</b></span>
+        </div>
+      </div>
+
+      <!-- 5. TỔNG THỂ CHÂN HUYỆT & ĐỀ XUẤT PHÂN KIM VI MÔ -->
+      <div class="dialy-card-section">
+        <div class="dialy-card-title">
+          <span>💎 5. Tổng Thể Chân Huyệt &amp; Đề Xuất Phân Kim</span>
+          <span class="dialy-badge ${xepHangClass}">${score}/100 Điểm</span>
+        </div>
+
+        <div class="dialy-data-row">
+          <span class="dialy-label">Đánh Giá Huyệt Vị:</span>
+          <strong style="color: #facc15; font-size: 0.85rem;">${xepHang}</strong>
+        </div>
+
+        <div class="dialy-data-row">
+          <span class="dialy-label">Phân Kim 120 Hướng:</span>
+          <strong class="dialy-value">${luopan.facing.phanKim.canChi} • ${luopan.facing.phanKim.napAm}</strong>
+          <span class="dialy-badge ${luopan.facing.phanKim.danhGia === 'DAI_CAT' || luopan.facing.phanKim.danhGia === 'CAT' ? 'green' : 'red'}" style="margin-left: 4px;">
+            ${luopan.facing.phanKim.tinhChat}
+          </span>
+        </div>
+
+        <div class="dialy-data-row">
+          <span class="dialy-label">72 Thấu Địa Long:</span>
+          <strong style="color: ${luopan.facing.thauDia.isBaoChau ? '#4ade80' : '#f87171'};">
+            ${luopan.facing.thauDia.canChi} (${luopan.facing.thauDia.danhGia})
+          </strong>
+        </div>
+
+        <div class="dialy-data-row">
+          <span class="dialy-label">60 Xuyên Sơn Long:</span>
+          <strong class="dialy-value">${luopan.facing.xuyenSon.canChi} • ${luopan.facing.xuyenSon.napAm} (${luopan.facing.xuyenSon.khi})</strong>
+        </div>
+
+        ${luopan.steering.isCurrentInVoid ? `
+          <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 6px; padding: 6px 8px; margin: 6px 0;">
+            <div style="font-size: 0.72rem; color: #f87171; font-weight: 700;">
+              ⚠️ ${luopan.steering.warningMessage}
+            </div>
+            <div style="font-size: 0.68rem; color: #fca5a5; margin-top: 2px;">
+              ${luopan.steering.rationale}
+            </div>
+            <button type="button" class="dialy-btn-micro-steering" data-target-deg="${luopan.steering.recommendedTrueBearing}">
+              🎯 Nắn Vi Mô: Xoay ${luopan.steering.deltaAngle > 0 ? '+' : ''}${luopan.steering.deltaAngle.toFixed(1)}° Sang ${luopan.steering.targetPhanKim} (${luopan.steering.recommendedTrueBearing.toFixed(1)}° Cát)
+            </button>
+          </div>
+        ` : `
+          <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: 6px; padding: 5px 8px; margin: 6px 0; font-size: 0.70rem; color: #4ade80;">
+            ✨ Phân kim lập hướng đắc cách cát tường, nạp vượng khí âm dương tương phối.
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  // Render HTML cho Tab: Tam Hợp Phái
   function renderTamHopTabHtml(data) {
     const { deg, tkDeg, toaDeg, huongSon, toaSon, thuyPhap, pk120, thauDia72, xuyenSon60, xuyenSon72, tamSat, thaiTue, hoangTuyen, batSat, tamCat, tu28 } = data;
     const vongTS = thuyPhap ? global.TamHopEngine.get_vong_truong_sinh(thuyPhap.cuc_name, thuyPhap.chieu_quay) : [];
@@ -606,9 +921,18 @@
     const container = document.getElementById('view-dialy');
     if (!container) return;
 
-    // Chuyển Tab
+    // Chuyển Tab (3 Phân Hệ)
+    const tabBtnTl = document.getElementById('dialy-tab-btn-tamlong');
     const tabBtnTh = document.getElementById('dialy-tab-btn-tamhop');
     const tabBtnHk = document.getElementById('dialy-tab-btn-hkdq');
+    if (tabBtnTl) {
+      tabBtnTl.onclick = () => {
+        state.curActiveTab = 'tamlong';
+        render();
+        const v = document.getElementById('view-dialy');
+        if (v) v.scrollTop = 0;
+      };
+    }
     if (tabBtnTh) {
       tabBtnTh.onclick = () => {
         state.curActiveTab = 'tamhop';
@@ -623,6 +947,38 @@
         render();
         const v = document.getElementById('view-dialy');
         if (v) v.scrollTop = 0;
+      };
+    }
+
+    // Quét DEM Thực Địa (Open-Meteo DEM API)
+    const btnScanDem = document.getElementById('dialy-btn-scan-dem');
+    if (btnScanDem) {
+      btnScanDem.onclick = async () => {
+        state.isDemLoading = true;
+        render();
+        try {
+          if (global.TamLongEngine && typeof global.TamLongEngine.scanAndAnalyze === 'function') {
+            const res = await global.TamLongEngine.scanAndAnalyze(state.demCoords.lat, state.demCoords.lng, state.curHuongDeg);
+            state.demResult = {
+              center: { elevation: res.centerElev, lat: state.demCoords.lat, lng: state.demCoords.lng },
+              tiers: {
+                trung: {
+                  thuyKhau: res.thuyKhau,
+                  laiLong: res.laiLong
+                }
+              }
+            };
+            if (typeof showToast === 'function') {
+              showToast(`🏔️ Đã quét xong DEM: Cao độ ${res.centerElev.toFixed(1)}m • Chân Huyệt: ${res.hinhTheHuyet.loai}`);
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          if (typeof showToast === 'function') showToast('❌ Không thể quét dữ liệu DEM');
+        } finally {
+          state.isDemLoading = false;
+          render();
+        }
       };
     }
 
@@ -1044,10 +1400,10 @@
   flex-shrink: 0;
 }
 
-/* Hàng 4: Segmented Tab Bar */
+/* Hàng 4: Segmented Tab Bar (3 Cột Chuẩn Mực) */
 .dialy-tab-bar {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   background: rgba(10, 4, 14, 0.7);
   padding: 3px;
   border-radius: 8px;
@@ -1056,20 +1412,21 @@
 }
 
 .dialy-tab-btn {
-  padding: 6px 8px;
+  padding: 6px 4px;
   background: transparent;
   border: none;
   border-radius: 6px;
   color: #cbd5e1;
   font-weight: 800;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   user-select: none;
   touch-action: manipulation;
+  white-space: nowrap;
 }
 
 .dialy-tab-btn.active {
@@ -1459,9 +1816,167 @@
   touch-action: manipulation;
 }
 
-.dialy-matrix-item.active {
-  background: rgba(245, 176, 65, 0.25);
+/* Tầm Long Điểm Huyệt Components (Dark Mode) */
+.dialy-sub-card {
+  background: rgba(10, 4, 14, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.dialy-wei-bar-wrap {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.dialy-wei-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.dialy-tutruong-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.dialy-tutruong-card {
+  background: rgba(10, 4, 14, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.68rem;
+}
+
+.dialy-tutruong-card.dac-cach {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.dialy-tutruong-card .card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialy-tutruong-card .card-icon {
+  font-size: 0.85rem;
+}
+
+.dialy-tutruong-card .card-name {
+  font-weight: 800;
+  color: #f1f5f9;
+  flex: 1;
+  margin-left: 4px;
+}
+
+.dialy-tutruong-card .card-elev {
+  font-weight: 800;
+  font-size: 0.65rem;
+}
+
+.dialy-tutruong-card .card-elev.good {
+  color: #4ade80;
+}
+
+.dialy-tutruong-card .card-elev.warn {
+  color: #f87171;
+}
+
+.dialy-tutruong-card .card-desc {
+  font-size: 0.62rem;
+  color: #94a3b8;
+  line-height: 1.3;
+}
+
+.dialy-tutruong-card .card-foot {
+  font-size: 0.60rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.dialy-chanhuyet-card {
+  background: rgba(245, 176, 65, 0.1);
+  border: 1.5px solid rgba(245, 176, 65, 0.35);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 6px;
+}
+
+.dialy-chanhuyet-card .chanhuyet-main-title {
+  color: #facc15;
+}
+
+.dialy-chanhuyet-card .chanhuyet-sub-info {
+  color: #94a3b8;
+}
+
+.dialy-chanhuyet-card .chanhuyet-desc {
+  color: #cbd5e1;
+}
+
+.dialy-tpi-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-top: 6px;
+  font-size: 0.64rem;
+  color: #94a3b8;
+}
+
+.dialy-tpi-strip b {
+  color: #facc15;
+}
+
+.dialy-tuthe-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.dialy-tuthe-mini-item {
+  background: rgba(10, 4, 14, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 4px 2px;
+  text-align: center;
+  font-size: 0.60rem;
+  line-height: 1.25;
+}
+
+.dialy-tuthe-mini-item b {
+  color: #cbd5e1;
+}
+
+.dialy-tuthe-mini-item span {
+  color: #64748b;
+  font-size: 0.55rem;
+}
+
+.dialy-tuthe-mini-item.active {
+  background: rgba(245, 176, 65, 0.22);
   border-color: #f5b041;
+}
+
+.dialy-tuthe-mini-item.active b {
+  color: #facc15;
+}
+
+.dialy-tuthe-mini-item.active span {
+  color: #fde68a;
 }
 
 /* ==========================================================================
@@ -1868,6 +2383,97 @@ body.theme-light .hao-role-box.is-warn .role-box-title {
 body.theme-light .hao-role-box .role-box-desc {
   color: #1e293b !important;
   font-weight: 600 !important;
+}
+
+/* Tầm Long Điểm Huyệt (Theme-Light WCAG AAA) */
+body.theme-light .dialy-sub-card {
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+
+body.theme-light .dialy-tutruong-card {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+
+body.theme-light .dialy-tutruong-card.dac-cach {
+  border-color: #059669 !important;
+  background: #f0fdf4 !important;
+}
+
+body.theme-light .dialy-tutruong-card .card-name {
+  color: #0f172a !important;
+}
+
+body.theme-light .dialy-tutruong-card .card-desc {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+body.theme-light .dialy-tutruong-card .card-foot {
+  color: #64748b !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .dialy-chanhuyet-card {
+  background: #fefce8 !important;
+  border: 1.5px solid #b45309 !important;
+}
+
+body.theme-light .chanhuyet-main-title {
+  color: #78350f !important;
+  font-weight: 900 !important;
+}
+
+body.theme-light .chanhuyet-sub-info {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+body.theme-light .chanhuyet-sub-info b {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+body.theme-light .chanhuyet-desc {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+body.theme-light .dialy-tpi-strip {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+body.theme-light .dialy-tpi-strip b {
+  color: #78350f !important;
+}
+
+body.theme-light .dialy-tuthe-mini-item {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+
+body.theme-light .dialy-tuthe-mini-item b {
+  color: #0f172a !important;
+}
+
+body.theme-light .dialy-tuthe-mini-item span {
+  color: #475569 !important;
+}
+
+body.theme-light .dialy-tuthe-mini-item.active {
+  background: #fef3c7 !important;
+  border-color: #b45309 !important;
+}
+
+body.theme-light .dialy-tuthe-mini-item.active b {
+  color: #78350f !important;
+}
+
+body.theme-light .dialy-tuthe-mini-item.active span {
+  color: #92400e !important;
 }
 
 

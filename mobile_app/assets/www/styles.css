@@ -193,7 +193,15 @@ body {
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
   transition: all 0.18s ease;
+}
+
+.deck-dropdown-item > * {
+  pointer-events: none !important;
 }
 
 .deck-dropdown-item:hover, .deck-dropdown-item:active {

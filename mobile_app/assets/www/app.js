@@ -108,7 +108,7 @@
     },
     dialy: {
       name: 'ĐỊA LÝ KHẢO SÁT',
-      subtitle: 'Tam Hợp Phái • Huyền Không Đại Quái',
+      subtitle: 'Tầm Long Điểm Huyệt • Tam Hợp • Đại Quái',
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
     },
@@ -381,17 +381,43 @@
     } else if (mode === 'tarot') {
       if (window.NetaTarotView) window.NetaTarotView.render();
     } else if (mode === 'lakinh') {
-      if (window.NetaLaKinhView) window.NetaLaKinhView.render();
+      try {
+        if (window.NetaLaKinhView) window.NetaLaKinhView.render();
+      } catch (err) {
+        console.error('Lỗi khi render NetaLaKinhView:', err);
+      }
     } else if (mode === 'dialy') {
-      if (window.NetaDiaLyView) window.NetaDiaLyView.init();
+      try {
+        if (window.NetaDiaLyView && typeof window.NetaDiaLyView.init === 'function') {
+          window.NetaDiaLyView.init();
+        }
+      } catch (err) {
+        console.error('Lỗi khi khởi tạo NetaDiaLyView:', err);
+      }
     } else if (mode === 'phaphanh') {
-      if (window.PhapHanhModule) window.PhapHanhModule.renderLessons();
+      try {
+        if (window.PhapHanhModule) window.PhapHanhModule.renderLessons();
+      } catch (err) {
+        console.error('Lỗi khi render PhapHanhModule:', err);
+      }
     } else if (mode === 'dichhoc') {
-      if (window.NetaDichHocView) window.NetaDichHocView.render();
+      try {
+        if (window.NetaDichHocView) window.NetaDichHocView.render();
+      } catch (err) {
+        console.error('Lỗi khi render NetaDichHocView:', err);
+      }
     } else if (mode === 'trachcat') {
-      if (window.NetaTrachCatView) window.NetaTrachCatView.init();
+      try {
+        if (window.NetaTrachCatView) window.NetaTrachCatView.init();
+      } catch (err) {
+        console.error('Lỗi khi init NetaTrachCatView:', err);
+      }
     } else if (mode === 'diachinh') {
-      if (window.NetaDiaChinhView) window.NetaDiaChinhView.init();
+      try {
+        if (window.NetaDiaChinhView) window.NetaDiaChinhView.init();
+      } catch (err) {
+        console.error('Lỗi khi init NetaDiaChinhView:', err);
+      }
     }
 
     playBellChime();
@@ -1427,7 +1453,52 @@
       });
     }
 
-    // Mode Switch Items inside Dropdown (Tất cả 6 Phân hệ)
+    // Mode Switch Items inside Dropdown (Tất cả Phân hệ) - Event Delegation & Touch Ergonomics
+    if (deckDropdown) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchStartTime = 0;
+      let isTouchSwiping = false;
+
+      deckDropdown.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length > 0) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          touchStartTime = Date.now();
+          isTouchSwiping = false;
+        }
+      }, { passive: true });
+
+      deckDropdown.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length > 0) {
+          const dx = Math.abs(e.touches[0].clientX - touchStartX);
+          const dy = Math.abs(e.touches[0].clientY - touchStartY);
+          if (dx > 10 || dy > 10) {
+            isTouchSwiping = true;
+          }
+        }
+      }, { passive: true });
+
+      deckDropdown.addEventListener('touchend', (e) => {
+        if (!isTouchSwiping && (Date.now() - touchStartTime < 450)) {
+          const item = e.target.closest('.deck-dropdown-item');
+          if (item && item.dataset && item.dataset.mode) {
+            e.preventDefault();
+            e.stopPropagation();
+            switchAppMode(item.dataset.mode);
+          }
+        }
+      });
+
+      deckDropdown.addEventListener('click', (e) => {
+        const item = e.target.closest('.deck-dropdown-item');
+        if (item && item.dataset && item.dataset.mode) {
+          e.stopPropagation();
+          switchAppMode(item.dataset.mode);
+        }
+      });
+    }
+
     ALL_MODES.forEach((m) => {
       const el = document.getElementById(`tab-mode-${m}`);
       if (el) {
