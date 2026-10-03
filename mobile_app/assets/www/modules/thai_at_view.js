@@ -96,6 +96,154 @@
     "Hợi": "Phương Tây Bắc phụ. Nước thâm sâu, giai đoạn ẩn giấu tiềm lực chuẩn bị cho chu kỳ mới."
   };
 
+  const THAI_AT_STAR_DETAILS = {
+    "Thái Ất": {
+      title: "Chúa Tể Thiên Tinh - Đại Đế Tối Cao",
+      yNghia: "Đại biểu cho thiên ý tối cao, đấng quân vương, trung tâm quyền lực và nguyên khí vũ trụ tụ hội.",
+      tacDong: "Đại cát vô song, nơi Thái Ất ngự là phe nắm quyền chủ động và thắng thế tuyệt đối; vạn sự hanh thông, giải trừ tai ương sát khí."
+    },
+    "Văn Xương": {
+      title: "Thiên Mục - Quân Sư Phe Chủ",
+      yNghia: "Tượng trưng cho trí tuệ minh triết, mưu lược tham mưu, văn thư chứng từ và kế sách nội bộ.",
+      tacDong: "Chủ về học vấn sáng suốt, ký kết hợp đồng, bàn bạc chiến lược củng cố căn cơ, phò tá đắc lực cho phe Chủ."
+    },
+    "Kế Thần": {
+      title: "U Ám Chi Tinh - Thần Bưng Bít",
+      yNghia: "Khí đối lập Văn Xương, biểu trưng cho sự giấu giếm, bí mật, bưng bít thông tin và nguy cơ tiềm ẩn.",
+      tacDong: "Cảnh báo thông tin thiếu minh bạch, tin đồn thất thiệt, tiểu nhân gièm pha; cần kiểm tra kỹ hồ sơ chứng từ."
+    },
+    "Thủy Kích": {
+      title: "Sát Thần Kích Phá - Tiên Phong Phe Khách",
+      yNghia: "Xung kích dữ dội từ bên ngoài, biểu tượng sức mạnh tiến công đột phá và ngoại lực xung đột.",
+      tacDong: "Đề phòng va chạm bất ngờ, đối thủ cạnh tranh giáng đòn dồn dập, biến cố ngoại giới kích động."
+    },
+    "Chủ Đại Tướng": {
+      title: "Thống Soái Phòng Ngự Phe Chủ",
+      yNghia: "Trụ cột quân sự và lực lượng điều hành nòng cốt của bản phương, bản mệnh hoặc gia chủ.",
+      tacDong: "Thuận cho củng cố tổ chức nội bộ, giữ vững trận địa căn cứ, bảo toàn thực lực, phòng thủ kiên cố."
+    },
+    "Khách Đại Tướng": {
+      title: "Thống Soái Tiến Công Phe Khách",
+      yNghia: "Mũi nhọn tiên phong của đối phương hoặc lực lượng chủ động xuất kích ra bên ngoài.",
+      tacDong: "Thuận cho xuất quân, mở rộng thị trường, đàm phán chủ động ngoại giao, tiên phát chế nhân."
+    },
+    "Chủ Tham Tướng": {
+      title: "Phó Tướng Tiếp Vận Phe Chủ",
+      yNghia: "Lực lượng trợ chiến, tiếp tế hậu cần và thông tin liên lạc nội bộ của phe Chủ.",
+      tacDong: "Gia tăng độ bền vững cho phòng ngự nội bộ, hỗ trợ đắc lực và bảo vệ Chủ Đại Tướng."
+    },
+    "Khách Tham Tướng": {
+      title: "Phó Tướng Đột Kích Phe Khách",
+      yNghia: "Lực lượng trợ kích vòng ngoài, thọc sâu đánh bọc sườn của phe tiến công ngoại giới.",
+      tacDong: "Tăng cường sức ép đàm phán bên ngoài, tạo đột biến bất ngờ, hỗ trợ Khách Đại Tướng xuất kích."
+    },
+    "Ngũ Phúc": {
+      title: "Đệ Nhất Cát Tinh - Phúc Đức Tụ Khí",
+      yNghia: "Tinh tú chí cát chí thiện, đại diện phúc lộc dồi dào, sinh sôi nảy nở và bình an trường thọ.",
+      tacDong: "Đại cát khánh thành, khởi sự đại sự, cầu tài lộc thăng tiến, giải trừ mọi hung tinh sát khí xung quanh."
+    },
+    "Quân Cơ": {
+      title: "Trọng Trách Quốc Gia - Đại Sự Vĩ Mô",
+      yNghia: "Biểu trưng đường lối chỉ đạo cấp cao, chính sách vĩ mô của người đứng đầu tổ chức.",
+      tacDong: "Quyết định phương hướng lớn, các dự án quy mô tầm cỡ, quan hệ thượng tầng và định hướng chiến lược."
+    },
+    "Thần Cơ": {
+      title: "Mưu Lược Thâm Sâu - Quyền Biến Thời Cơ",
+      yNghia: "Trí tuệ mưu trí vi diệu, nắm bắt thời cơ xuất thần, xoay chuyển tình thế ngoạn mục.",
+      tacDong: "Rất thuận cho việc hoạch định chiến lược kinh doanh, tung đòn bất ngờ chuyển bại thành thắng."
+    },
+    "Dân Cơ": {
+      title: "Lòng Dân - Nhân Sự Cơ Sở",
+      yNghia: "Đại diện quần chúng, nhân viên cấp dưới, khách hàng cơ sở, đời sống sinh hoạt thực tế.",
+      tacDong: "Cần chú trọng chăm sóc đời sống nhân viên, lắng nghe phản hồi của khách hàng, củng cố lòng người."
+    },
+    "Tứ Thần": {
+      title: "Hộ Vệ Tứ Phương - Bảo An Thần",
+      yNghia: "Thần hộ trì an ninh tứ phương, cảnh giác tuần phòng, ứng biến nhạy bén bảo vệ nội bộ.",
+      tacDong: "Bảo đảm trật tự an ninh, bảo mật cơ mật thông tin, ngăn chặn sớm các mầm mống xâm nhập tiêu cực."
+    },
+    "Thiên Ất": {
+      title: "Quý Nhân Thượng Cấp - Trợ Lực Quyền Uy",
+      yNghia: "Quý nhân cấp cao, người có chức quyền hoặc cơ quan thẩm quyền nhà nước trợ giúp đắc lực.",
+      tacDong: "Được nâng đỡ, giải quyết thuận lợi các thủ tục hành chính, pháp lý và bảo hộ vị thế."
+    },
+    "Địa Ất": {
+      title: "Hậu Thuẫn Nền Tảng - Đất Đai Thần",
+      yNghia: "Nền tảng thực tế, tài sản đất đai kho bãi, cơ sở hạ tầng và âm đức phúc ấm tổ tiên.",
+      tacDong: "Thuận lợi giao dịch bất động sản, xây dựng củng cố kho bãi, tạo dựng nền móng kinh doanh bền chắc."
+    },
+    "Trực Phù": {
+      title: "Thực Thi Lệnh Bài - Trọng Tài Pháp Quy",
+      yNghia: "Lệnh bài điều hành, sự chấp pháp công minh, hiệu lệnh kỷ cương hành chính.",
+      tacDong: "Hành sự phải chuẩn mực, nghiêm cẩn quy trình pháp lý, hợp đồng minh bạch rõ ràng không được lơ là."
+    },
+    "Phi Phù": {
+      title: "Khí Tốc Tán - Tin Tức Khẩn Cấp",
+      yNghia: "Sự phát tán nhanh chóng, tin tức lan truyền thần tốc, luồng thông tin bay nhanh.",
+      tacDong: "Đề phòng rò rỉ thông tin hoặc tin đồn thất thiệt; thuận cho việc quảng bá truyền thông tốc hành."
+    },
+    "Rồng Xanh": {
+      title: "Thanh Long Đắc Lợi - Hỷ Khí Công Danh",
+      yNghia: "Rồng xanh phương Đông bay lượn, điềm lành phát tài, vượng khí thăng quan tiến chức.",
+      tacDong: "Đại hỷ sự, công danh thăng tiến, thi cử đỗ đạt, ký kết hợp tác đem lại tài lộc dồi dào."
+    },
+    "Cờ Đỏ": {
+      title: "Xích Kỳ Hiệu Lệnh - Tranh Đấu Nóng Nảy",
+      yNghia: "Ngọn cờ đỏ chiến trường hỏa tốc, sự sôi động nhiệt huyết đi kèm tranh cãi gay gắt.",
+      tacDong: "Đề phòng nóng nảy mất kiểm soát, mâu thuẫn tranh phong, sự cố chập điện hỏa hoạn."
+    },
+    "Cờ Đen": {
+      title: "Hắc Kỳ Ẩn Khuất - Cạm Bẫy Trong Tối",
+      yNghia: "Cờ đen trong bóng tối, cạm bẫy khuất tất, khó bề lường trước sự biến động ngầm.",
+      tacDong: "Đề phòng thất thoát tài sản, trộm cắp, kẻ gian ám hại sau lưng; không ký hợp đồng khi chưa rõ điều khoản."
+    },
+    "Âm Cả": {
+      title: "Âm Khí Tích Tụ - Hậu Phương Gia Đạo",
+      yNghia: "Khí âm trầm lắng, các vấn đề nội bộ gia quyến, phụ nữ, hậu phương sâu kín.",
+      tacDong: "Thích hợp chỉnh đốn gia đạo, nghiên cứu tích lũy chiều sâu, không nên phô trương rầm rộ bên ngoài."
+    },
+    "Tuế Cả": {
+      title: "Thái Tuế Niên Khí - Chu Kỳ Thời Đại",
+      yNghia: "Vận khí quy mô năm của Thái Tuế, mang tính quy luật tất yếu theo dòng chảy thời gian.",
+      tacDong: "Nên nương theo chiều gió của chính sách và thời đại, tránh đối đầu trực tiếp với xu thế lớn."
+    },
+    "Thần Hợp": {
+      title: "Lục Hợp Cát Thần - Liên Minh Gắn Kết",
+      yNghia: "Khí tương hợp giao hòa, sự đồng lòng nhất trí giữa các bên, tình hữu hảo chân thành.",
+      tacDong: "Cực kỳ thuận lợi cho việc kết hôn, ký hợp đồng liên doanh, hóa giải bất đồng, xây dựng đội ngũ."
+    },
+    "Kể Định": {
+      title: "Định Cục Then Chốt - Chuẩn Mực Phán Quyết",
+      yNghia: "Điểm chốt cân bằng của trận đồ, khuôn phép chuẩn tắc định lượng cuộc cờ.",
+      tacDong: "Tạo lập ranh giới rõ ràng, xác lập chuẩn mực hoạt động bền vững, phân minh quyền lợi đôi bên."
+    },
+    "Đại Du": {
+      title: "Đại Biến Dịch - Chuyển Động Viễn Phương",
+      yNghia: "Chuyển dời quy mô lớn, viễn du tầm xa, bước ngoặt thay đổi chiến lược mang tính đột phá.",
+      tacDong: "Thuận lợi công tác xa, mở rộng chi nhánh mới, cải tổ cơ cấu tổ chức toàn diện."
+    },
+    "Tiểu Du": {
+      title: "Tiểu Biến Dịch - Thích Ứng Linh Hoạt",
+      yNghia: "Những chuyển dịch nhỏ, điều chỉnh vi mô thường nhật, tính thích ứng mau lẹ.",
+      tacDong: "Linh hoạt ứng phó tình huống phát sinh, vi chỉnh công việc hàng ngày nhẹ nhàng hiệu quả."
+    },
+    "Cửa Trực": {
+      title: "Khai Môn Sinh Khí - Điểm Xuất Hành",
+      yNghia: "Cửa tiếp nhận thiên địa sinh khí tại thời điểm chiêm sự, phương vị đón vượng khí.",
+      tacDong: "Phương hướng xuất hành, đặt bàn làm việc, mở cửa giao thương đón quý nhân và tài lộc."
+    },
+    "Thần Quý": {
+      title: "Quý Khí Vinh Hiển - Uy Danh Vang Xa",
+      yNghia: "Thanh danh cao quý, phong thái đĩnh đạc, được sự kính trọng và tôn sùng của người khác.",
+      tacDong: "Nâng cao uy tín cá nhân và thương hiệu, thăng quan tiến chức, mở rộng uy tín trên thương trường."
+    },
+    "9 Sao Trực Phù": {
+      title: "Cửu Tinh Trực Phù - Luân Chuyển Thời Vận",
+      yNghia: "Cửu tinh điều hòa năng lượng thời không luân chuyển qua các cung vị.",
+      tacDong: "Tác động đến phong thủy phương vị và nhịp độ chuyển hóa năng lượng thực tế tại cung."
+    }
+  };
+
   // Inject Scoped CSS đồng bộ với Neta Light
   function ensureStyles() {
     if (document.getElementById('thaiat-scoped-styles')) return;
@@ -112,16 +260,16 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
       
-      /* Grid 5x5 Matrix Trận Đồ */
+      /* Grid 5x5 Matrix Trận Đồ - Dãn Hàng & Ô Thoáng Đãng */
       .thaiat-grid-5x5 {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: repeat(5, minmax(68px, 1fr));
-        gap: 3px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-rows: repeat(5, minmax(88px, auto));
+        gap: 4px;
         background: rgba(20, 2, 5, 0.95);
-        border: 1px solid rgba(245, 176, 65, 0.35);
+        border: 1.5px solid rgba(245, 176, 65, 0.35);
         border-radius: 8px;
-        padding: 3px;
+        padding: 4px;
         margin-bottom: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
       }
@@ -135,14 +283,16 @@
         background: rgba(30, 6, 12, 0.9);
         border: 1px solid rgba(245, 176, 65, 0.2);
         border-radius: 4px;
-        padding: 3px 4px;
+        padding: 3px 2px 4px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         cursor: pointer;
         position: relative;
-        overflow: hidden;
+        min-height: 88px;
+        box-sizing: border-box;
         transition: all 0.15s ease;
+        overflow: visible;
       }
       body.theme-light .thaiat-cell {
         background: #ffffff !important;
@@ -163,11 +313,13 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2px;
+        padding: 0 2px;
       }
       .thaiat-cell-name {
-        font-weight: 800;
+        font-weight: 900;
         font-size: 11px;
         color: var(--gold-primary, #f5b041);
+        letter-spacing: 0.2px;
       }
       body.theme-light .thaiat-cell-name {
         color: #78350f !important;
@@ -176,7 +328,7 @@
       .thaiat-cell-weight {
         font-size: 9px;
         color: #94a3b8;
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(0, 0, 0, 0.45);
         padding: 1px 4px;
         border-radius: 3px;
         font-weight: 800;
@@ -191,28 +343,34 @@
       .thaiat-star-list {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-        font-size: 9px;
-        overflow-y: auto;
-        max-height: 48px;
-        scrollbar-width: none;
+        gap: 2.5px;
+        width: 100%;
+        margin-top: 1px;
       }
       .thaiat-star-tag {
-        padding: 1px 3px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 2px 2px;
         border-radius: 3px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 8.5px;
         font-weight: 700;
         line-height: 1.2;
+        text-align: center;
+        white-space: normal;
+        word-break: keep-all;
+        letter-spacing: -0.2px;
         color: #f8fafc;
-        background: rgba(245, 176, 65, 0.15);
+        background: rgba(245, 176, 65, 0.18);
+        flex-shrink: 0;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
       }
       body.theme-light .thaiat-star-tag {
         color: #0f172a !important;
         background: #e2e8f0 !important;
         border: 1px solid #cbd5e1 !important;
         font-weight: 700 !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
       }
       .star-thaiat { background: rgba(234, 179, 8, 0.3); color: #fde047; }
       body.theme-light .star-thaiat { background: #fef08a !important; color: #78350f !important; border: 1px solid #fde047 !important; font-weight: 800 !important; }
@@ -483,58 +641,137 @@
         color: #b45309;
       }
       .thaiat-menh-locma {
-        font-size: 9px;
+        font-size: 8.5px;
+        line-height: 1.25;
         color: #94a3b8;
       }
       body.theme-light .thaiat-menh-locma {
         color: #6b7280;
       }
 
-      /* Drawer Tra Cứu Chi Tiết */
+      /* Drawer Tra Cứu Chi Tiết & Giải Mã Toàn Bộ Thần Sát */
       .thaiat-drawer {
         background: rgba(20, 2, 5, 0.95);
-        border: 1px solid rgba(245, 176, 65, 0.35);
+        border: 1.5px solid rgba(245, 176, 65, 0.35);
         border-radius: 8px;
-        padding: 8px 10px;
-        margin-bottom: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
       }
       body.theme-light .thaiat-drawer {
         background: #ffffff;
         border-color: #e0d5c1;
-        box-shadow: 0 1px 4px rgba(160, 120, 60, 0.1);
+        box-shadow: 0 2px 8px rgba(160, 120, 60, 0.1);
       }
-      .thaiat-drawer-title {
-        font-weight: 800;
-        color: #f5b041;
-        font-size: 12px;
+      .thaiat-drawer-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid rgba(245, 176, 65, 0.2);
-        padding-bottom: 4px;
-        margin-bottom: 4px;
+        border-bottom: 1.5px solid rgba(245, 176, 65, 0.3);
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+        gap: 6px;
       }
-      body.theme-light .thaiat-drawer-title {
+      body.theme-light .thaiat-drawer-header {
+        border-color: #f1f5f9;
+      }
+      .thaiat-drawer-title-main {
+        font-weight: 900;
+        color: #f5b041;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        letter-spacing: 0.3px;
+      }
+      body.theme-light .thaiat-drawer-title-main {
         color: #b45309;
-        border-color: #f3f4f6;
+      }
+      .thaiat-drawer-badges {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+      .thaiat-drawer-pill {
+        font-size: 9.5px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(245, 176, 65, 0.15);
+        color: #fcd34d;
+        border: 1px solid rgba(245, 176, 65, 0.3);
+      }
+      body.theme-light .thaiat-drawer-pill {
+        background: #fef3c7;
+        color: #92400e;
+        border-color: #fde68a;
       }
       .thaiat-drawer-desc {
-        font-size: 11px;
-        line-height: 1.4;
+        font-size: 11.5px;
+        line-height: 1.45;
         color: var(--text-secondary, #cbd5e1);
-        margin-bottom: 4px;
+        margin-bottom: 8px;
+        padding: 5px 8px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 4px;
       }
       body.theme-light .thaiat-drawer-desc {
-        color: #374151;
+        background: #f8fafc;
+        color: #334155;
+      }
+      .thaiat-drawer-stars-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .thaiat-drawer-star-card {
+        background: rgba(30, 6, 12, 0.85);
+        border: 1px solid rgba(245, 176, 65, 0.2);
+        border-radius: 6px;
+        padding: 6px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      body.theme-light .thaiat-drawer-star-card {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+      }
+      .thaiat-drawer-star-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+      }
+      .thaiat-drawer-star-name {
+        font-weight: 800;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .thaiat-drawer-star-role {
+        font-size: 9.5px;
+        font-weight: 700;
+        opacity: 0.85;
+      }
+      .thaiat-drawer-star-body {
+        font-size: 10.5px;
+        line-height: 1.4;
+        color: var(--text-secondary, #cbd5e1);
+      }
+      body.theme-light .thaiat-drawer-star-body {
+        color: #475569;
       }
       .thaiat-drawer-advice {
-        font-size: 11px;
-        line-height: 1.4;
-        background: rgba(245, 176, 65, 0.1);
-        border-left: 3px solid #f5b041;
-        padding: 4px 6px;
-        border-radius: 0 4px 4px 0;
+        font-size: 11.5px;
+        line-height: 1.45;
+        background: rgba(245, 176, 65, 0.12);
+        border-left: 3.5px solid #f5b041;
+        padding: 6px 8px;
+        border-radius: 0 6px 6px 0;
         color: var(--text-primary, #f8fafc);
       }
       body.theme-light .thaiat-drawer-advice {
@@ -1961,16 +2198,7 @@
 
           <!-- 5. Drawer Tra Cứu Tương Tác 16 Cung -->
           <div class="thaiat-drawer" id="thaiat-drawer">
-            <div class="thaiat-drawer-title">
-              <span id="thaiat-drawer-name">CHI TIẾT CUNG [${selectedPalace.toUpperCase()}]</span>
-              <span id="thaiat-drawer-weight" style="font-size: 10px; opacity: 0.85;">Trọng số: ${(global.NetaThaiAtEngine && global.NetaThaiAtEngine.QUAI_WEIGHTS[selectedPalace]) || 0}</span>
-            </div>
-            <div class="thaiat-drawer-desc" id="thaiat-drawer-desc">
-              ${PALACE_DESCRIPTIONS[selectedPalace] || "Phương vị địa bàn Thái Ất."}
-            </div>
-            <div class="thaiat-drawer-advice" id="thaiat-drawer-advice">
-              ${getPalaceAdviceHTML(selectedPalace, keData)}
-            </div>
+            ${renderDrawerFullHTML(selectedPalace, keData)}
           </div>
         `)}
       </div>
@@ -2013,9 +2241,9 @@
     if (starName === 'Thái Ất') return 'star-thaiat';
     if (['Văn Xương', 'Chủ Đại Tướng', 'Chủ Tham Tướng'].includes(starName)) return 'star-chu';
     if (['Thủy Kích', 'Khách Đại Tướng', 'Khách Tham Tướng'].includes(starName)) return 'star-khach';
-    if (['Kế Thần', 'Kể Định'].includes(starName)) return 'star-dinh';
-    if (['Ngũ Phúc', 'Thiên Ất', 'Tứ Thần', 'Rồng Xanh', 'Thanh Long'].includes(starName)) return 'star-cat';
-    if (['Xích Kỳ', 'Cờ Đỏ', 'Hắc Kỳ', 'Cờ Đen', 'Âm Cả'].includes(starName)) return 'star-hung';
+    if (['Kế Thần', 'Kể Định', 'Tuế Cả'].includes(starName) || starName.startsWith('9 Sao') || starName.startsWith('[Sao]')) return 'star-dinh';
+    if (['Ngũ Phúc', 'Thiên Ất', 'Địa Ất', 'Tứ Thần', 'Rồng Xanh', 'Thanh Long', 'Thần Hợp', 'Thần Quý', 'Quân Cơ', 'Thần Cơ', 'Dân Cơ', 'Đại Du', 'Tiểu Du', 'Cửa Trực', 'Trực Phù'].includes(starName)) return 'star-cat';
+    if (['Xích Kỳ', 'Cờ Đỏ', 'Hắc Kỳ', 'Cờ Đen', 'Âm Cả', 'Phi Phù'].includes(starName)) return 'star-hung';
     return '';
   }
 
@@ -2050,6 +2278,75 @@
       advice = `<div style="color:#f5b041; font-weight:800; margin-bottom:4px;">🎯 CUNG BẢN MỆNH CỦA BẠN (Tuổi ${qCanChi.canChi})</div>` + advice;
     }
     return advice;
+  }
+
+  function renderDrawerFullHTML(pos, keData) {
+    if (!pos) pos = selectedPalace || "Tý";
+    const starsHere = [];
+    if (keData && keData.stars) {
+      for (let s in keData.stars) {
+        if (keData.stars[s] === pos) starsHere.push(s);
+      }
+    }
+
+    const w = (global.NetaThaiAtEngine && global.NetaThaiAtEngine.QUAI_WEIGHTS[pos]) || 0;
+    const palaceDesc = PALACE_DESCRIPTIONS[pos] || "Phương vị địa bàn Thái Ất.";
+    const adviceHTML = getPalaceAdviceHTML(pos, keData);
+
+    let starCardsHTML = '';
+    if (starsHere.length > 0) {
+      starCardsHTML = `
+        <div class="thaiat-drawer-stars-wrap">
+          ${starsHere.map(starName => {
+            const detail = THAI_AT_STAR_DETAILS[starName] || {
+              title: "Thần Sát Thái Ất",
+              yNghia: "Khí số thần vị chiếu rọi phương vị cung này.",
+              tacDong: "Tác động đến tình thế chiêm đoán tại cung sở tại."
+            };
+            const starCss = getStarCssClass(starName);
+            return `
+              <div class="thaiat-drawer-star-card">
+                <div class="thaiat-drawer-star-header">
+                  <div class="thaiat-drawer-star-name">
+                    <span class="thaiat-star-tag ${starCss}" style="width: auto; padding: 2px 7px; font-size: 10px; margin: 0; display: inline-block;">${starName}</span>
+                    <span style="font-weight: 800; font-size: 11px; color: var(--gold-primary, #f5b041);">${detail.title}</span>
+                  </div>
+                </div>
+                <div class="thaiat-drawer-star-body">
+                  <div><strong>Ý nghĩa:</strong> ${detail.yNghia}</div>
+                  <div style="margin-top: 2px;"><strong>Chiêm nghiệm:</strong> ${detail.tacDong}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    } else {
+      starCardsHTML = `
+        <div style="font-size: 11px; color: #94a3b8; padding: 6px 8px; background: rgba(255,255,255,0.03); border-radius: 4px; margin-bottom: 8px;">
+          ✨ <em>Cung vị thanh tịnh, không có thần sát trực tiếp đáo tụ. Khí số an tĩnh, ổn định, diễn tiến tuần tự theo lẽ thường.</em>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="thaiat-drawer-header">
+        <div class="thaiat-drawer-title-main">
+          <span>🏛️ CUNG [${pos.toUpperCase()}]</span>
+          <span style="font-size: 11px; font-weight: normal; opacity: 0.85;">(${starsHere.length} Thần Sát Đáo Tụ)</span>
+        </div>
+        <div class="thaiat-drawer-badges">
+          <span class="thaiat-drawer-pill">Lạc Thư: ${w}</span>
+        </div>
+      </div>
+      <div class="thaiat-drawer-desc">
+        ${palaceDesc}
+      </div>
+      ${starCardsHTML}
+      <div class="thaiat-drawer-advice">
+        ${adviceHTML}
+      </div>
+    `;
   }
 
   function renderMatrix16ViewHTML(keData) {
@@ -3956,29 +4253,19 @@
 
   function inspectPalace(pos) {
     selectedPalace = pos;
-    const nameEl = document.getElementById('thaiat-drawer-name');
-    const weightEl = document.getElementById('thaiat-drawer-weight');
-    const descEl = document.getElementById('thaiat-drawer-desc');
-    const adviceEl = document.getElementById('thaiat-drawer-advice');
+    const drawerEl = document.getElementById('thaiat-drawer');
+    if (!drawerEl || !currentChart) return;
 
-    if (!nameEl || !currentChart) return;
+    let keData;
+    if (currentKeType === 'gio') keData = currentChart.keGio;
+    else if (currentKeType === 'ngay' || currentKeType === 'menh') keData = currentChart.keNgay;
+    else if (currentKeType === 'thang') keData = currentChart.keThang;
+    else keData = currentChart.keNam;
 
-    let keData = (currentKeType === 'gio') ? currentChart.keGio : currentChart.keNgay;
-    const starsHere = [];
-    if (keData && keData.stars) {
-      for (let s in keData.stars) {
-        if (keData.stars[s] === pos) starsHere.push(s);
-      }
-    }
+    drawerEl.innerHTML = renderDrawerFullHTML(pos, keData);
 
-    const w = (global.NetaThaiAtEngine && global.NetaThaiAtEngine.QUAI_WEIGHTS[pos]) || 0;
-    nameEl.textContent = `CUNG [${pos.toUpperCase()}] • ${starsHere.join(', ') || 'Không có sao chính'}`;
-    weightEl.textContent = `Trọng số Lạc Thư: ${w}`;
-    descEl.textContent = PALACE_DESCRIPTIONS[pos] || "Phương vị địa bàn Thái Ất.";
-    adviceEl.innerHTML = getPalaceAdviceHTML(pos, keData);
-
-    document.querySelectorAll('.thaiat-cell').forEach(el => el.classList.remove('active-cell'));
-    const activeEl = document.querySelector(`.thaiat-cell[onclick*="'${pos}'"]`);
+    document.querySelectorAll('.thaiat-cell, .thaiat-menh-cell').forEach(el => el.classList.remove('active-cell'));
+    const activeEl = document.querySelector(`.thaiat-cell[onclick*="'${pos}'"], .thaiat-menh-cell[onclick*="'${pos}'"]`);
     if (activeEl) activeEl.classList.add('active-cell');
   }
 
