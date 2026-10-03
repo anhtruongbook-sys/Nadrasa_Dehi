@@ -106,6 +106,12 @@
       logo: 'neta_cards/phap_an.jpg',
       isCardDeck: false
     },
+    dialy: {
+      name: 'ĐỊA LÝ KHẢO SÁT',
+      subtitle: 'Tam Hợp Phái • Huyền Không Đại Quái',
+      logo: 'neta_cards/phap_an.jpg',
+      isCardDeck: false
+    },
     phaphanh: {
       name: 'PHÁP HÀNH',
       subtitle: 'Nadrasa Dehi • Bài Học & Cõi Phủ',
@@ -132,7 +138,7 @@
     }
   };
   const DECK_CONFIG = MODULE_CONFIG;
-  const ALL_MODES = ['neta', 'poker', 'tamthuc', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'diachinh', 'phaphanh', 'dichhoc'];
+  const ALL_MODES = ['neta', 'poker', 'tamthuc', 'qmdj', 'thaiat', 'lucnham', 'bazi', 'tuvi', 'calendar', 'trachcat', 'tarot', 'lakinh', 'dialy', 'diachinh', 'phaphanh', 'dichhoc'];
 
 
   // DOM Elements
@@ -301,6 +307,7 @@
     const viewCalendar = document.getElementById('view-calendar');
     const viewTarot = document.getElementById('view-tarot');
     const viewLaKinh = document.getElementById('view-lakinh');
+    const viewDiaLy = document.getElementById('view-dialy');
     const viewPhapHanh = document.getElementById('view-phaphanh');
     const viewDichHoc = document.getElementById('view-dichhoc');
     const viewTrachCat = document.getElementById('view-trachcat');
@@ -319,6 +326,7 @@
       trachcat: viewTrachCat,
       tarot: viewTarot,
       lakinh: viewLaKinh,
+      dialy: viewDiaLy,
       diachinh: viewDiaChinh,
       phaphanh: viewPhapHanh,
       dichhoc: viewDichHoc
@@ -374,6 +382,8 @@
       if (window.NetaTarotView) window.NetaTarotView.render();
     } else if (mode === 'lakinh') {
       if (window.NetaLaKinhView) window.NetaLaKinhView.render();
+    } else if (mode === 'dialy') {
+      if (window.NetaDiaLyView) window.NetaDiaLyView.init();
     } else if (mode === 'phaphanh') {
       if (window.PhapHanhModule) window.PhapHanhModule.renderLessons();
     } else if (mode === 'dichhoc') {

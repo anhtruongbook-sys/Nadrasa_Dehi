@@ -1043,6 +1043,9 @@
             <button id="sheet-btn-scan-elev" class="lakinh-action-btn warning">
               🌊 Quét Cao Độ DEM & Định Tứ Đại Cục
             </button>
+            <button id="sheet-btn-open-dialy" class="lakinh-action-btn primary" style="background: linear-gradient(135deg, rgba(14,165,233,0.3), rgba(99,102,241,0.35)); border-color: #38bdf8; color: #38bdf8; font-weight: 700;">
+              ⛰️ Mở Không Gian Khảo Sát Địa Lý (Tam Hợp &amp; Đại Quái)
+            </button>
             <button id="sheet-btn-tam-hop" class="lakinh-action-btn emerald">
               🌊 Thẩm Định Phong Thủy Tam Hợp Phái 
             </button>
@@ -7684,6 +7687,16 @@ function updateQmdjStrategicLayer() {
       btnTamHop.addEventListener('click', (e) => {
         if (e && e.stopPropagation) e.stopPropagation();
         openTamHopModal();
+      });
+    }
+
+    const btnOpenDiaLy = document.getElementById('sheet-btn-open-dialy');
+    if (btnOpenDiaLy) {
+      btnOpenDiaLy.addEventListener('click', () => {
+        closeBottomSheet();
+        if (typeof global.switchAppMode === 'function') {
+          global.switchAppMode('dialy');
+        }
       });
     }
 
