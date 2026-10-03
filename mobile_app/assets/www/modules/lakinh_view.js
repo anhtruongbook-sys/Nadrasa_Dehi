@@ -3653,27 +3653,73 @@ function updateQmdjStrategicLayer() {
       }
     }, 1100);
 
-    // 5. Hiển thị nút trôi nổi mở lại Bảng Minh Đường
-    showFloatingMinhDuongButton();
+    // 5. Hiển thị nút trôi nổi mini chip mở lại Bảng Minh Đường (nằm gọn gàng góc dưới bên phải)
+    showFloatingMinhDuongButton(true);
     showLaKinhToast(`📍 Đã định vị ${label} trên Bản Đồ La Kinh`);
   }
 
-  function showFloatingMinhDuongButton() {
-    let btn = document.getElementById('lakinh-btn-floating-minhduong');
-    if (!btn) {
-      btn = document.createElement('button');
-      btn.id = 'lakinh-btn-floating-minhduong';
-      btn.className = 'lakinh-btn-floating-minhduong';
-      btn.innerHTML = '📋 Bảng Minh Đường';
-      btn.style.cssText = 'position: fixed; top: 72px; right: 12px; z-index: 9999; background: rgba(15, 23, 42, 0.92); border: 1.5px solid #38bdf8; color: #38bdf8; font-weight: 700; font-size: 0.72rem; padding: 7px 14px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.55); backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; gap: 5px;';
-      btn.onclick = () => {
+  function showFloatingMinhDuongButton(force = false) {
+    if (force) state.isMinhDuongChipVisible = true;
+    if (state.isMinhDuongChipVisible === false && !force) return;
+
+    // Xóa nút cũ nếu còn sót lại ở document.body từ phiên bản trước
+    const oldFixedBtn = document.getElementById('lakinh-btn-floating-minhduong');
+    if (oldFixedBtn && oldFixedBtn.parentElement === document.body) {
+      oldFixedBtn.remove();
+    }
+
+    let chip = document.getElementById('lakinh-btn-floating-minhduong');
+    const container = document.getElementById('view-lakinh') || document.body;
+
+    if (!chip) {
+      chip = document.createElement('div');
+      chip.id = 'lakinh-btn-floating-minhduong';
+      chip.className = 'lakinh-floating-dem-chip';
+
+      chip.innerHTML = `
+        <div class="dem-chip-main" title="Chạm để mở Bảng Khảo Sát Minh Đường Cục">
+          <span style="font-size: 0.78rem; line-height: 1;">📋</span>
+          <span style="font-size: 0.68rem; font-weight: 700; color: #38bdf8; white-space: nowrap;">Minh Đường</span>
+        </div>
+        <div style="width: 1px; height: 12px; background: rgba(56, 189, 248, 0.35); margin: 0 4px;"></div>
+        <div class="dem-chip-close" title="Ẩn nút này (Mở lại bằng nút '🌊 Quét Cục' ở thanh dưới)">✕</div>
+      `;
+
+      chip.querySelector('.dem-chip-main').addEventListener('click', (e) => {
+        e.stopPropagation();
         if (state.lastDemScanResult) {
           openMinhDuongModal(state.lastDemScanResult);
         }
-      };
-      document.body.appendChild(btn);
+      });
+
+      const closeBtn = chip.querySelector('.dem-chip-close');
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hideFloatingMinhDuongButton();
+        showLaKinhToast('Đã ẩn nút Minh Đường. Chạm "🌊 Quét Cục" để mở lại.');
+      });
+
+      container.appendChild(chip);
     }
-    btn.style.display = 'flex';
+
+    state.isMinhDuongChipVisible = true;
+    chip.style.display = 'flex';
+  }
+
+  function hideFloatingMinhDuongButton() {
+    state.isMinhDuongChipVisible = false;
+    const chip = document.getElementById('lakinh-btn-floating-minhduong');
+    if (chip) chip.style.display = 'none';
+  }
+
+  function toggleFloatingMinhDuongButton() {
+    if (state.isMinhDuongChipVisible === false) {
+      showFloatingMinhDuongButton(true);
+      showLaKinhToast('Đã hiện nút Bảng Minh Đường');
+    } else {
+      hideFloatingMinhDuongButton();
+      showLaKinhToast('Đã ẩn nút Bảng Minh Đường');
+    }
   }
 
   // Mở Modal Phân Tích Minh Đường Cục
@@ -3740,11 +3786,21 @@ function updateQmdjStrategicLayer() {
             Tọa độ tâm trạch: ${data.center.lat.toFixed(6)}, ${data.center.lng.toFixed(6)} • Cao độ gốc: ${data.center.elevation.toFixed(1)}m
           </div>
           ${tiersHtml}
-          <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button type="button" class="tamhop-quick-btn" id="btn-open-tamhop-from-minhduong" style="flex: 1; padding: 10px 14px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 0.76rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
-              🧭 THẨM ĐỊNH TAM HỢP PHÁI (1-CHẠM)
+          <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+            <button type="button" class="tamhop-quick-btn" id="btn-open-tamhop-from-minhduong" style="flex: 1; min-width: 140px; padding: 10px 12px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 0.76rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+              🧭 THẨM ĐỊNH TAM HỢP (1-CHẠM)
+            </button>
+            <button type="button" class="tamhop-quick-btn" id="btn-rescan-dem-from-modal" style="flex: 1; min-width: 130px; padding: 10px 12px; background: rgba(56, 189, 248, 0.15); border: 1.5px solid #38bdf8; color: #38bdf8; border-radius: 8px; font-weight: 700; font-size: 0.74rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              🔄 Quét Lại Cao Độ
             </button>
             <button class="lakinh-action-btn" style="width: auto; padding: 0 16px; margin: 0;" onclick="document.getElementById('modal-minhduong-overlay').remove()">Đóng</button>
+          </div>
+          <!-- Thanh công tắc ẩn/hiện nút nổi trên bản đồ -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 7px 10px; background: rgba(15,23,42,0.6); border: 1px dashed rgba(56,189,248,0.3); border-radius: 8px;">
+            <span style="font-size: 0.7rem; color: #94a3b8;">Nút nổi 'Minh Đường' trên bản đồ:</span>
+            <button type="button" id="btn-toggle-chip-visibility-modal" style="padding: 4px 10px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; cursor: pointer; border: 1px solid ${state.isMinhDuongChipVisible !== false ? '#38bdf8' : '#64748b'}; background: ${state.isMinhDuongChipVisible !== false ? 'rgba(56,189,248,0.2)' : 'rgba(100,116,139,0.2)'}; color: ${state.isMinhDuongChipVisible !== false ? '#38bdf8' : '#94a3b8'};">
+              ${state.isMinhDuongChipVisible !== false ? '👁️ Đang Hiện (Chạm để Ẩn)' : '🙈 Đang Ẩn (Chạm để Hiện)'}
+            </button>
           </div>
         </div>
       </div>
@@ -3758,6 +3814,27 @@ function updateQmdjStrategicLayer() {
         locateDemPointOnMap(tier, type);
       };
     });
+
+    const btnRescan = document.getElementById('btn-rescan-dem-from-modal');
+    if (btnRescan) {
+      btnRescan.onclick = () => {
+        const overlay = document.getElementById('modal-minhduong-overlay');
+        if (overlay) overlay.remove();
+        scanElevationAndTiers();
+      };
+    }
+
+    const btnToggleChip = document.getElementById('btn-toggle-chip-visibility-modal');
+    if (btnToggleChip) {
+      btnToggleChip.onclick = () => {
+        toggleFloatingMinhDuongButton();
+        const isVis = state.isMinhDuongChipVisible !== false;
+        btnToggleChip.textContent = isVis ? '👁️ Đang Hiện (Chạm để Ẩn)' : '🙈 Đang Ẩn (Chạm để Hiện)';
+        btnToggleChip.style.borderColor = isVis ? '#38bdf8' : '#64748b';
+        btnToggleChip.style.color = isVis ? '#38bdf8' : '#94a3b8';
+        btnToggleChip.style.background = isVis ? 'rgba(56,189,248,0.2)' : 'rgba(100,116,139,0.2)';
+      };
+    }
 
     const btnTh = document.getElementById('btn-open-tamhop-from-minhduong');
     if (btnTh) {
@@ -6247,7 +6324,12 @@ function updateQmdjStrategicLayer() {
     if (dockDem) {
       dockDem.addEventListener('click', (e) => {
         e.stopPropagation();
-        scanElevationAndTiers();
+        if (state.lastDemScanResult) {
+          openMinhDuongModal(state.lastDemScanResult);
+          showFloatingMinhDuongButton(true);
+        } else {
+          scanElevationAndTiers();
+        }
       });
     }
 
@@ -7580,7 +7662,17 @@ function updateQmdjStrategicLayer() {
     }
 
     const btnScanElev = document.getElementById('sheet-btn-scan-elev');
-    if (btnScanElev) btnScanElev.addEventListener('click', scanElevationAndTiers);
+    if (btnScanElev) {
+      btnScanElev.addEventListener('click', () => {
+        closeBottomSheet();
+        if (state.lastDemScanResult) {
+          openMinhDuongModal(state.lastDemScanResult);
+          showFloatingMinhDuongButton(true);
+        } else {
+          scanElevationAndTiers();
+        }
+      });
+    }
 
     const btnTamHop = document.getElementById('sheet-btn-tam-hop');
     if (btnTamHop) {
@@ -9189,6 +9281,9 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     stopSensor: stopSensorListening,
     locateDemPointOnMap: locateDemPointOnMap,
     openMinhDuongModal: openMinhDuongModal,
+    showFloatingMinhDuongButton: showFloatingMinhDuongButton,
+    hideFloatingMinhDuongButton: hideFloatingMinhDuongButton,
+    toggleFloatingMinhDuongButton: toggleFloatingMinhDuongButton,
     storage: LakinhStorage,
     getState: () => state
   };
