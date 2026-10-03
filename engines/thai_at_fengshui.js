@@ -496,136 +496,544 @@
 
     const totalScore = Math.max(20, Math.min(98, baseTotal));
 
-    // 8 Phân khu công năng kiến trúc
+    // 8 Phân khu công năng kiến trúc chuyên biệt theo từng loại hình bất động sản
     const zoningList = [];
 
-    // 1. Cổng & Cửa chính (Khí Khẩu)
     const congCung = (taPos !== tkPos) ? taPos : ((npPos !== tkPos) ? npPos : "Ngọ");
-    zoningList.push({
-      tenKhuVuc: "1. Cổng & Cửa Chính (Khí Khẩu)",
-      cungThaiAt: congCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[congCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[congCung].hanh,
-      trangThaiKhi: "Đại Cát",
-      nguyenLyDichHoc: "Đón nhận vương khí Thái Ất hoặc phúc lộc Ngũ Phúc giáng lâm, nạp năng lượng dương dồi dào.",
-      chucNangPhuHop: "Cửa đi chính, Cổng ra vào, Sảnh đón khách (Foyer)",
-      giaiPhapKienTruc: "Thiết kế cửa rộng rãi, khoảng đệm sảnh sáng sủa, đặt đèn chiếu sáng ấm cúng, tránh vật cản che khuất tầm nhìn."
-    });
-
-    // 2. Bàn thờ tổ tiên
     const thoCung = ("Kiền" !== tkPos) ? "Kiền" : ((taPos !== tkPos) ? taPos : "Cấn");
-    zoningList.push({
-      tenKhuVuc: "2. Bàn Thờ Tổ Tiên (Tâm Linh Trang Nghiêm)",
-      cungThaiAt: thoCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thoCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thoCung].hanh,
-      trangThaiKhi: "Đại Cát (Tôn Nghiêm)",
-      nguyenLyDichHoc: "Tọa tại Thiên Môn (Kiền) hoặc cung có Thái Ất vương khí để tích tụ phúc đức muôn đời.",
-      chucNangPhuHop: "Phòng thờ riêng biệt tầng thượng, Tủ thờ tựa lưng vào tường đặc",
-      giaiPhapKienTruc: "Không đặt dưới gầm cầu thang, không tựa lưng vào nhà vệ sinh; thông gió thoát khói hương tốt bằng cửa sổ nhỏ trên cao."
-    });
-
-    // 3. Bếp nấu ăn
     const bepCung = ("Tỵ" !== tkPos) ? "Tỵ" : (("Mùi" !== tkPos) ? "Mùi" : "Dần");
-    zoningList.push({
-      tenKhuVuc: "3. Bếp Nấu Ăn (Hỏa Khí Dưỡng Sinh)",
-      cungThaiAt: bepCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[bepCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[bepCung].hanh,
-      trangThaiKhi: "Cát (Tọa Hung Hướng Cát)",
-      nguyenLyDichHoc: "Hỏa lò thiêu đốt tạp khí, cung cấp năng lượng sống cho gia đình; kiêng đặt tại phương Thủy Kích sát.",
-      chucNangPhuHop: "Khu vực nấu nướng, Bếp từ / Bếp gas, Tủ bếp",
-      giaiPhapKienTruc: "Lắp đặt hệ thống hút mùi công suất lớn thoát thẳng ra ngoài; khoảng cách giữa bếp nấu và bồn rửa tối thiểu 60cm (chống Thủy Hỏa đối chọi)."
-    });
-
-    // 4. Phòng ngủ Master
     const nguCung = (thPos !== tkPos) ? thPos : ((npPos !== tkPos) ? npPos : "Khôn");
-    zoningList.push({
-      tenKhuVuc: "4. Phòng Ngủ Master (Tái Tạo Năng Lượng & Gia Đạo)",
-      cungThaiAt: nguCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[nguCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[nguCung].hanh,
-      trangThaiKhi: "Hòa Hợp Đại Cát",
-      nguyenLyDichHoc: "Thần Hợp và Ngũ Phúc bảo trợ giúp tinh thần tĩnh tại, giấc ngủ sâu, vợ chồng thắm thiết thuận hòa.",
-      chucNangPhuHop: "Phòng ngủ gia chủ, Giường đôi Master",
-      giaiPhapKienTruc: "Đầu giường tựa sát tường đặc, không đặt dưới xà ngang; ánh sáng đèn ngủ vàng dịu nhẹ; rèm cửa cản nắng gắt cách nhiệt tốt."
-    });
-
-    // 5. Két sắt tài chính
     const ketCung = (npPos !== tkPos) ? npPos : (("Dậu" !== tkPos) ? "Dậu" : "Thìn");
-    zoningList.push({
-      tenKhuVuc: "5. Két Sắt Tài Chính (Tụ Tài Bảo Bồn)",
-      cungThaiAt: ketCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[ketCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[ketCung].hanh,
-      trangThaiKhi: "Vượng Tài Lộc",
-      nguyenLyDichHoc: "Ngũ Phúc tụ tài, tích lũy của cải bền vững không bị thất thoát.",
-      chucNangPhuHop: "Két sắt gia đình, Quầy thu ngân, Tủ hồ sơ kế toán tài chính",
-      giaiPhapKienTruc: "Đặt ở góc kín đáo tĩnh lặng, tránh luồng gió lùa trực diện hoặc đối diện cửa ra vào."
-    });
-
-    // 6. Thư phòng & Bàn học
     const hocCung = (vxPos !== tkPos) ? vxPos : (("Mão" !== tkPos) ? "Mão" : "Hợi");
-    zoningList.push({
-      tenKhuVuc: "6. Thư Phòng & Bàn Học (Khoa Bảng Trí Tuệ)",
-      cungThaiAt: hocCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[hocCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[hocCung].hanh,
-      trangThaiKhi: "Cát Vị Văn Tinh",
-      nguyenLyDichHoc: "Văn Xương Thiên Mục chủ về tư duy sáng suốt, học hành đỗ đạt, thi cử thuận buồm xuôi gió.",
-      chucNangPhuHop: "Bàn học con cái, Bàn làm việc nghiên cứu, Kệ sách",
-      giaiPhapKienTruc: "Ánh sáng tự nhiên dịu nhẹ không chói gắt; sau lưng ngồi có tường tựa, trước mặt thoáng đãng."
-    });
-
-    // 7. Cầu thang & Giếng trời
     const thangCung = ("Tốn" !== tkPos) ? "Tốn" : (("Cấn" !== tkPos) ? "Cấn" : "Thìn");
-    zoningList.push({
-      tenKhuVuc: "7. Cầu Thang & Giếng Trời (Trục Đối Lưu Không Khí)",
-      cungThaiAt: thangCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thangCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thangCung].hanh,
-      trangThaiKhi: "Bình Hòa Khí Động",
-      nguyenLyDichHoc: "Khí đạo dẫn truyền năng lượng giữa các tầng; kỵ đặt tại trung cung hoặc cung Thủy Kích.",
-      chucNangPhuHop: "Cầu thang bộ, Thang máy, Giếng trời thông gió",
-      giaiPhapKienTruc: "Cầu thang uốn lượn thoai thoải, bậc kín không hở; giếng trời có mái che kính thông minh đóng mở đón gió tự nhiên."
-    });
-
-    // 8. Nhà vệ sinh & Bể phốt
     const wcCung = tkPos;
-    zoningList.push({
-      tenKhuVuc: "8. Nhà Vệ Sinh & Bể Phốt (Khu Ô Uế Ép Chế)",
-      cungThaiAt: wcCung,
-      huongDiaLy: THAP_LUC_FENGSHUI_NATURE[wcCung].huong,
-      nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[wcCung].hanh,
-      trangThaiKhi: "Cần Ép Chế (Dĩ Độc Trị Độc)",
-      nguyenLyDichHoc: "'Dĩ độc trị độc' - Đặt công trình phụ tại cung có Thủy Kích hung sát để đè nén khí hung, bảo vệ các cung cát lợi.",
-      chucNangPhuHop: "Khu vệ sinh, Bể phốt ngầm, Hố ga, Kho chứa rác thải",
-      giaiPhapKienTruc: "Chống thấm nhiều lớp (màng khò bitum/polyurethane), quạt thông gió cưỡng bức hút mùi 24/7, ống thoát khí vươn cao qua mái."
-    });
 
-    // 5 Giải pháp vật lý kiến trúc & vi khí hậu
-    const architecturalRemedies = [
-      {
-        hangMuc: "Thông gió vi khí hậu (Cross-ventilation)",
-        giaiPhap: "Tạo cửa mở đối xứng giữa cung đón gió mát (Tốn/Ly) và cung thoát gió (Càn/Cấn), hạ nhiệt tự nhiên 2-3 độ C mùa hè."
-      },
-      {
-        hangMuc: "Cách nhiệt & Che chắn bức xạ (Thermal Protection)",
-        giaiPhap: "Mặt tiền hướng Tây (Dậu) hoặc Tây Nam (Khôn) bố trí lam chắn nắng di động hoặc kính hộp Low-E cản nhiệt, giảm tải điện máy lạnh."
-      },
-      {
-        hangMuc: "Chắn sát khí Thủy Kích bằng mảng xanh (Green Buffer)",
-        giaiPhap: `Tại phương ${THAP_LUC_FENGSHUI_NATURE[tkPos].huong} (Cung ${tkPos}) trồng hàng rào cây xanh rậm rạp (như trúc quân tử, cau cảnh) để lọc bụi, cản tiếng ồn và tán xạ sát khí.`
-      },
-      {
-        hangMuc: "Cân bằng ánh sáng tự nhiên (Daylight Balance)",
-        giaiPhap: "Khu vực Kế Thần u uất bổ sung giếng trời lấy sáng mái; khu vực Thái Ất vương khí mở rộng cửa sổ kính cường lực."
-      },
-      {
-        hangMuc: "Ngũ hành thông quan vật liệu hoàn thiện (Material Synergy)",
-        giaiPhap: "Tọa sơn yếu bổ sung mảng tường đá tự nhiên dày dặn (Thổ sinh Kim); phòng ngủ dùng sàn gỗ tự nhiên ấm áp (Mộc dưỡng Hỏa)."
-      }
-    ];
+    if (pType === "Căn hộ chung cư") {
+      zoningList.push({
+        tenKhuVuc: "1. Cửa Đi Chính & Sảnh Đệm Căn Hộ (Khí Khẩu Nạp Khí Độc Lập)",
+        cungThaiAt: congCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[congCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[congCung].hanh,
+        trangThaiKhi: "Đại Cát (Khí Khẩu Căn Hộ)",
+        nguyenLyDichHoc: "Đón nhận vương khí Thái Ất hoặc Ngũ Phúc từ hành lang tòa nhà vào căn hộ, tạo khoảng đệm thanh lọc trước khi vào phòng khách.",
+        chucNangPhuHop: "Cửa đi chính căn hộ, Sảnh đệm Huyền quan (Foyer), Tủ để giày dép khử khuẩn",
+        giaiPhapKienTruc: "Cửa chính chống cháy cách âm tốt; khoảng đệm sảnh ốp đá sạch sẽ, đèn rọi ấm áp; bố trí vách đệm nhẹ hoặc tủ trang trí để tránh cửa chính nhìn xuyên suốt ra ban công (xuyên đường sát)."
+      });
+      zoningList.push({
+        tenKhuVuc: "2. Bàn Thờ Gia Tiên Căn Hộ (Tâm Linh Trang Nghiêm)",
+        cungThaiAt: thoCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thoCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thoCung].hanh,
+        trangThaiKhi: "Đại Cát (Tôn Nghiêm)",
+        nguyenLyDichHoc: "Tọa tại Thiên Môn (Kiền) hoặc phương vị vương khí để tích tụ phúc ấm gia đình; tránh tạp khí ô uế.",
+        chucNangPhuHop: "Bàn thờ treo tường trang trọng hoặc Tủ thờ vách ngăn CNC phòng khách",
+        giaiPhapKienTruc: "Bố trí tại không gian phòng khách trang trọng; tựa lưng tường đặc vững chãi, KHÔNG tựa vách buồng tắm vệ sinh; gắn tấm chắn khói mica hoặc gỗ CNC hoa văn ngăn khói hương ám ố trần thạch cao; đèn hắt ánh sáng vàng ấm."
+      });
+      zoningList.push({
+        tenKhuVuc: "3. Bếp Nấu & Logia Thoát Khí Căn Hộ (Hỏa Khí Dưỡng Sinh)",
+        cungThaiAt: bepCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[bepCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[bepCung].hanh,
+        trangThaiKhi: "Cát (Tọa Hung Hướng Cát)",
+        nguyenLyDichHoc: "Hỏa lò thiêu đốt tạp khí, dưỡng sinh dưỡng khí cho cả gia đình; kiêng đặt tại phương Thủy Kích sát.",
+        chucNangPhuHop: "Bếp từ / Bếp điện âm, Máy hút mùi, Tủ bếp chữ I/L, Cửa thông ra logia phụ",
+        giaiPhapKienTruc: "Trang bị máy hút mùi công suất lớn (>= 750 m³/h) dẫn ống xả thẳng ra logia ngoài trời; giữ khoảng cách giữa bếp và bồn rửa tối thiểu 60cm; tránh bếp nhìn thẳng cửa chính căn hộ."
+      });
+      zoningList.push({
+        tenKhuVuc: "4. Phòng Ngủ Master Căn Hộ (Tái Tạo Năng Lượng & Gia Đạo)",
+        cungThaiAt: nguCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[nguCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[nguCung].hanh,
+        trangThaiKhi: "Hòa Hợp Đại Cát",
+        nguyenLyDichHoc: "Thần Hợp và Ngũ Phúc bảo trợ giúp tinh thần tĩnh tại, giấc ngủ sâu, vợ chồng thắm thiết thuận hòa.",
+        chucNangPhuHop: "Phòng ngủ Master chủ hộ, Giường đôi bọc đệm êm ái",
+        giaiPhapKienTruc: "Đầu giường tựa sát tường gạch đặc, không kê giường áp sát vách phòng tắm master; cửa sổ dùng kính hộp Low-E 2 lớp cách âm chống ồn đô thị; rèm cản sáng 2 lớp."
+      });
+      zoningList.push({
+        tenKhuVuc: "5. Két Sắt & Tủ Tài Liệu Căn Hộ (Tụ Tài Bảo Bồn)",
+        cungThaiAt: ketCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[ketCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[ketCung].hanh,
+        trangThaiKhi: "Vượng Tài Lộc",
+        nguyenLyDichHoc: "Ngũ Phúc tụ tài, tích lũy tài chính căn hộ vững bền, phòng ngừa hao tổn thất thoát.",
+        chucNangPhuHop: "Két sắt gia đình, Tủ cất giữ giấy tờ sổ hồng căn hộ và tài sản quý",
+        giaiPhapKienTruc: "Đặt ở góc kín đáo tụ khí trong tủ quần áo âm tường phòng Master; tránh gió lùa trực diện từ cửa sổ hoặc cửa ban công."
+      });
+      zoningList.push({
+        tenKhuVuc: "6. Góc Làm Việc & Bàn Học Căn Hộ (Văn Xương Tri Thức WFH)",
+        cungThaiAt: hocCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[hocCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[hocCung].hanh,
+        trangThaiKhi: "Cát Vị Văn Tinh",
+        nguyenLyDichHoc: "Văn Xương Thiên Mục chủ về tư duy mẫn tiệp, học hành thông tuệ, làm việc từ xa (WFH) thăng tiến.",
+        chucNangPhuHop: "Bàn làm việc WFH, Bàn học con cái, Giá sách treo tường thông minh",
+        giaiPhapKienTruc: "Tận dụng ánh sáng tự nhiên dịu mát gần cửa sổ phòng ngủ phụ; sau lưng có vách tường tựa vững chắc; tránh hướng gió lạnh điều hòa phả thẳng vào gáy."
+      });
+      zoningList.push({
+        tenKhuVuc: "7. Ban Công & Logia Phòng Khách (Trục Đối Lưu & Sinh Khí Căn Hộ)",
+        cungThaiAt: thangCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thangCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thangCung].hanh,
+        trangThaiKhi: "Bình Hòa Khí Động",
+        nguyenLyDichHoc: "Khí đạo nạp quang minh và dưỡng khí trời đất chủ lực cho toàn bộ mặt sàn căn hộ.",
+        chucNangPhuHop: "Ban công phòng khách, Logia đón gió, Tiểu cảnh cây xanh, Cửa trượt kính",
+        giaiPhapKienTruc: "Cửa lùa kính khổ lớn tối ưu đối lưu gió tươi; trồng chậu cây xanh lọc bụi (lưỡi hổ, trúc mây); lắp lưới an toàn tàng hình bảo vệ ban công đạt chuẩn; phễu thoát sàn chống nghẹt lá cây."
+      });
+      zoningList.push({
+        tenKhuVuc: "8. Nhà Vệ Sinh Căn Hộ & Hộp Gen Kỹ Thuật (Ép Chế Khí Hung & Chống Mùi Tòa Nhà)",
+        cungThaiAt: wcCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[wcCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[wcCung].hanh,
+        trangThaiKhi: "Cần Ép Chế (Dĩ Độc Trị Độc)",
+        nguyenLyDichHoc: "'Dĩ độc trị độc' - Đặt công trình phụ tại cung có Thủy Kích hung sát để đè nén tạp uế, bảo vệ các cung cát lợi của căn hộ.",
+        chucNangPhuHop: "Phòng tắm, WC master, WC chung căn hộ, Trục đứng hộp gen kỹ thuật tòa nhà",
+        giaiPhapKienTruc: "Lắp phễu thu sàn có xi-phông bẫy nước ngăn tuyệt đối mùi hôi và khí trào ngược từ trục kỹ thuật tòa nhà; quạt hút mùi âm trần van 1 chiều thổi ra hộp gen; chống thấm kỹ chân tường và cổ ống thoát sàn."
+      });
+    } else if (pType === "Văn phòng công ty") {
+      zoningList.push({
+        tenKhuVuc: "1. Cửa Đi Chính & Sảnh Lễ Tân (Khí Khẩu Tiếp Khách & Bộ Mặt Công Ty)",
+        cungThaiAt: congCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[congCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[congCung].hanh,
+        trangThaiKhi: "Đại Cát (Khí Khẩu Doanh Nghiệp)",
+        nguyenLyDichHoc: "Đón nhận vương khí Thái Ất hoặc Ngũ Phúc, gia tăng uy tín thương hiệu, thu hút đối tác và hợp đồng lớn.",
+        chucNangPhuHop: "Cửa kính tự động, Quầy lễ tân, Backdrop logo công ty, Khu tiếp khách nhanh",
+        giaiPhapKienTruc: "Sảnh đón rộng thoáng sáng sủa; không gian lối vào không bị chướng ngại vật; thảm đón khách màu trang nhã; đèn chiếu sáng ánh sáng ấm sang trọng."
+      });
+      zoningList.push({
+        tenKhuVuc: "2. Bàn Thờ Thần Tài - Thổ Địa Văn Phòng (Chiêu Tài Vượng Khí Doanh Nghiệp)",
+        cungThaiAt: thoCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thoCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thoCung].hanh,
+        trangThaiKhi: "Đại Cát (Chiêu Tài Tụ Khí)",
+        nguyenLyDichHoc: "Tọa tại cung vị cát lợi, hướng ra luồng khách và luồng giao dịch để kích hoạt tài lộc buôn may bán đắt.",
+        chucNangPhuHop: "Bàn thờ Thần Tài - Thổ Địa tại sảnh lễ tân hoặc tầng trệt văn phòng",
+        giaiPhapKienTruc: "Đặt áp sát vách tường kiên cố, hướng nhìn chéo ra cửa chính văn phòng; luôn thắp đèn sáng ấm cúng, giữ gìn sạch sẽ tinh tươm; tuyệt đối không đặt cạnh lối đi vào WC văn phòng."
+      });
+      zoningList.push({
+        tenKhuVuc: "3. Khu Pantry & Bếp Nghỉ Nhân Viên (Khu Năng Lượng Đời Sống Doanh Nghiệp)",
+        cungThaiAt: bepCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[bepCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[bepCung].hanh,
+        trangThaiKhi: "Cát (Dưỡng Khí Nội Bộ)",
+        nguyenLyDichHoc: "Hỏa khí dưỡng sinh duy trì năng lượng tích cực và sự gắn kết thân thiện giữa các bộ phận nhân sự công ty.",
+        chucNangPhuHop: "Khu pha chế cà phê, Máy nước nóng lạnh, Lò vi sóng, Bàn ăn nhẹ, Bồn rửa ly tách",
+        giaiPhapKienTruc: "Bố trí gọn gàng, tủ kệ chống ẩm; bồn rửa có bẫy mỡ cục bộ; quạt hút thông gió riêng chống mùi thức ăn lan sang không gian làm việc; thùng rác phân loại có nắp đậy kín."
+      });
+      zoningList.push({
+        tenKhuVuc: "4. Phòng Lãnh Đạo & Bàn Chủ Tịch / Giám Đốc (Bộ Chỉ Huy Chiến Lược Doanh Nghiệp)",
+        cungThaiAt: nguCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[nguCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[nguCung].hanh,
+        trangThaiKhi: "Quý Nhân Hội Tụ Đại Cát",
+        nguyenLyDichHoc: "Thần Hợp và quý tinh bảo trợ tâm trí quyết đoán, lãnh đạo sáng suốt, củng cố quyền uy và thu phục nhân tâm.",
+        chucNangPhuHop: "Bàn làm việc Chủ tịch HĐQT / Tổng Giám đốc, Phòng tiếp khách VIP",
+        giaiPhapKienTruc: "Bàn làm việc ngồi tựa lưng vào tường đặc vững chãi, không ngồi quay lưng ra cửa sổ hoặc cửa vào; không bị dầm xà ngang đè lên đầu bàn; bố trí ghế khách đối diện lịch sự."
+      });
+      zoningList.push({
+        tenKhuVuc: "5. Phòng Kế Toán & Két Sắt Tài Chính (Tụ Tài Thủ Khố Công Ty)",
+        cungThaiAt: ketCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[ketCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[ketCung].hanh,
+        trangThaiKhi: "Vượng Tài Thủ Khố",
+        nguyenLyDichHoc: "Ngũ Phúc tụ tài, kiểm soát chặt chẽ dòng tiền lưu thông, bảo vệ ngân quỹ doanh nghiệp vững bền.",
+        chucNangPhuHop: "Phòng Kế toán trưởng, Thủ quỹ, Két sắt lưu trữ ngân quỹ và con dấu công ty",
+        giaiPhapKienTruc: "Phòng kín đáo, tường cách âm bảo mật thông tin; két sắt đặt tại góc khuất tài vị; kiểm soát cửa ra vào bằng khóa thẻ từ / vân tay và camera an ninh độc lập."
+      });
+      zoningList.push({
+        tenKhuVuc: "6. Không Gian Làm Việc Mở & Phòng Họp R&D (Trí Tuệ & Sáng Tạo Đột Phá)",
+        cungThaiAt: hocCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[hocCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[hocCung].hanh,
+        trangThaiKhi: "Cát Vị Văn Tinh",
+        nguyenLyDichHoc: "Cung Văn Xương Thiên Mục chủ về tư duy đột phá, sáng tạo chiến lược kinh doanh mới, phối hợp nhóm hiệu quả cao.",
+        chucNangPhuHop: "Khu bàn làm việc nhân viên, Phòng họp Brainstorming, Phòng nghiên cứu phát triển (R&D)",
+        giaiPhapKienTruc: "Tối ưu ánh sáng tự nhiên với hệ vách kính lớn; vách kính viết bảng tương tác; tiêu âm chống vang vọng âm thanh; trang bị bàn ghế công thái học bảo vệ sức khỏe nhân viên."
+      });
+      zoningList.push({
+        tenKhuVuc: "7. Trục Thang Máy, Hành Lang & Thoát Nạn PCCC (Huyết Mạch Giao Thông Văn Phòng)",
+        cungThaiAt: thangCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thangCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thangCung].hanh,
+        trangThaiKhi: "Bình Hòa Khí Động",
+        nguyenLyDichHoc: "Động tuyến lưu chuyển sinh khí xuyên suốt các tầng công ty; giữ thông suốt để vận hành hanh thông.",
+        chucNangPhuHop: "Sảnh thang máy, Thang bộ thoát hiểm PCCC, Hành lang giao thông trục chính",
+        giaiPhapKienTruc: "Cửa thoát hiểm chống cháy có thanh đẩy panic đạt chuẩn PCCC; hành lang rộng tối thiểu 1.4m không để thùng hàng che chắn lối đi; đèn Exit chỉ dẫn thoát nạn chiếu sáng sự cố 24/7."
+      });
+      zoningList.push({
+        tenKhuVuc: "8. Cụm Nhà Vệ Sinh & Phòng Kỹ Thuật Server (Ép Chế Khí Uế & An Ninh Hạ Tầng)",
+        cungThaiAt: wcCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[wcCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[wcCung].hanh,
+        trangThaiKhi: "Cần Ép Chế (Dĩ Độc Trị Độc)",
+        nguyenLyDichHoc: "'Dĩ độc trị độc' - Đặt cụm WC và hệ thống kỹ thuật tỏa nhiệt server tại cung Thủy Kích để triệt tiêu năng lượng hung sát.",
+        chucNangPhuHop: "Cụm WC văn phòng nam/nữ riêng biệt, Phòng máy chủ server, Kho kỹ thuật IT",
+        giaiPhapKienTruc: "Khu WC có quạt hút mùi công nghiệp hoạt động 24/7; cửa tự đóng chống tràn tạp khí; phòng Server có điều hòa nhiệt độ thấp độc lập và hệ thống chữa cháy khí sạch FM200/Novec1230."
+      });
+    } else if (pType === "Nhà xưởng sản xuất") {
+      zoningList.push({
+        tenKhuVuc: "1. Cổng Chính & Khu Nhập Xuất Hàng (Cổng Khí Khẩu & Dock Vận Tải Nhà Máy)",
+        cungThaiAt: congCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[congCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[congCung].hanh,
+        trangThaiKhi: "Đại Cát (Khí Khẩu Sản Xuất)",
+        nguyenLyDichHoc: "Khí khẩu nạp năng lượng công nghiệp và đón dòng hàng hóa lưu thông tấp nập, đắc Thái Ất vương thịnh.",
+        chucNangPhuHop: "Cổng xe container, Bến dock xuất nhập hàng, Trạm cân xe tải, Phòng bảo vệ an ninh",
+        giaiPhapKienTruc: "Bán kính quay xe tải rộng rãi (>= 12m); mái che bến dock chống mưa bão; mặt đường bê tông cốt thép chịu tải trọng nặng; đèn cao áp chiếu sáng an ninh ban đêm."
+      });
+      zoningList.push({
+        tenKhuVuc: "2. Bàn Thờ Tiền Chủ & Thần Tài Nhà Xưởng (Trấn Trạch Bình An & Tụ Phúc Công Nghiệp)",
+        cungThaiAt: thoCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thoCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thoCung].hanh,
+        trangThaiKhi: "Đại Cát (Trấn Trạch An Ninh)",
+        nguyenLyDichHoc: "Giữ gìn an ninh trật tự tâm linh, cầu mong sản xuất thuận buồm xuôi gió, không xảy ra tai nạn lao động hay hỏa hoạn.",
+        chucNangPhuHop: "Bàn thờ Thần Tài / Ban thờ Thổ Công nhà xưởng đặt tại khối văn phòng điều hành xưởng",
+        giaiPhapKienTruc: "Đặt ở nơi cao ráo sạch sẽ của khối văn phòng nhà xưởng; tránh xa khu vực máy móc phát ra tiếng ồn rung lắc lớn hoặc khói bụi sản xuất."
+      });
+      zoningList.push({
+        tenKhuVuc: "3. Bếp Ăn & Căng-tin Nhà Máy (Hỏa Khí Nuôi Dưỡng Thể Lực Lao Động)",
+        cungThaiAt: bepCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[bepCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[bepCung].hanh,
+        trangThaiKhi: "Cát (Dưỡng Thể Tái Tạo)",
+        nguyenLyDichHoc: "Hỏa khí ấm no, duy trì sức lao động bền bỉ cho toàn thể kỹ sư và công nhân viên nhà máy.",
+        chucNangPhuHop: "Nhà ăn tập thể công nhân, Bếp nấu công nghiệp một chiều, Kho thực phẩm lạnh",
+        giaiPhapKienTruc: "Bố trí theo quy trình bếp ăn công nghiệp 1 chiều đạt chuẩn VSATTP; chụp hút khói inox công nghiệp dẫn ống cao qua mái xưởng; rãnh thoát nước có hố bẫy mỡ tự động; sàn chống trơn trượt."
+      });
+      zoningList.push({
+        tenKhuVuc: "4. Văn Phòng Điều Hành & Bàn Làm Việc Quản Đốc (Trung Tâm Kiểm Soát Sản Xuất)",
+        cungThaiAt: nguCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[nguCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[nguCung].hanh,
+        trangThaiKhi: "Quý Nhân Chỉ Huy Đại Cát",
+        nguyenLyDichHoc: "Quý tinh hội tụ giúp chỉ huy quyết đoán, kiểm soát chặt chẽ tiến độ đơn hàng và kỷ luật phân xưởng.",
+        chucNangPhuHop: "Phòng Giám đốc nhà máy, Bàn làm việc Quản đốc phân xưởng, Màn hình giám sát SCADA",
+        giaiPhapKienTruc: "Vách kính cường lực cách âm chống ồn công nghiệp, tạo góc nhìn bao quát toàn bộ dây chuyền sản xuất bên dưới; bàn quản đốc tựa lưng vách vững chắc, điều hòa nhiệt độ thoải mái."
+      });
+      zoningList.push({
+        tenKhuVuc: "5. Kho Thành Phẩm & Thủ Quỹ Phân Xưởng (Kho Tụ Tài & Hàng Hóa Giá Trị)",
+        cungThaiAt: ketCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[ketCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[ketCung].hanh,
+        trangThaiKhi: "Vượng Tài Thủ Kho",
+        nguyenLyDichHoc: "Ngũ Phúc tụ tài, tích lũy giá trị thặng dư sau quy trình sản xuất, chống hao hụt thất thoát hàng hóa.",
+        chucNangPhuHop: "Kho chứa hàng thành phẩm chuẩn bị xuất xưởng, Phòng thủ quỹ thanh toán tạm ứng",
+        giaiPhapKienTruc: "Hệ thống giá kệ pallet nhiều tầng vững chắc; sàn xoa nền tăng cứng hardener chịu mài mòn; camera an ninh bao quát; hệ thống chữa cháy tự động Sprinkler theo tiêu chuẩn TCVN."
+      });
+      zoningList.push({
+        tenKhuVuc: "6. Phòng Thí Nghiệm, KCS & Kiểm Soát Chất Lượng (Khoa Bảng Kỹ Thuật Đạt Chuẩn)",
+        cungThaiAt: hocCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[hocCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[hocCung].hanh,
+        trangThaiKhi: "Cát Vị Văn Tinh",
+        nguyenLyDichHoc: "Cung Văn Xương Thiên Mục thúc đẩy độ chính xác kỹ thuật, nghiên cứu cải tiến năng suất chất lượng sản phẩm.",
+        chucNangPhuHop: "Phòng KCS (Quality Control), Phòng thí nghiệm thử nghiệm mẫu (Lab), Phòng R&D kỹ thuật",
+        giaiPhapKienTruc: "Hệ thống điều hòa nhiệt độ và kiểm soát độ ẩm nghiêm ngặt; bệ đặt thiết bị đo lường chính xác chống rung cơ học; chiếu sáng cục bộ độ rọi cao (>= 500 Lux)."
+      });
+      zoningList.push({
+        tenKhuVuc: "7. Cửa Trời Thông Gió Mái & Cửa Thoát Hiểm PCCC (Trục Đối Lưu Nhiệt & Khí Thải Xưởng)",
+        cungThaiAt: thangCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thangCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thangCung].hanh,
+        trangThaiKhi: "Bình Hòa Khí Động",
+        nguyenLyDichHoc: "Trục lưu chuyển dòng khí đối lưu tự nhiên, giải phóng nhiệt lượng từ máy móc và thải khí tù đọng.",
+        chucNangPhuHop: "Cửa trời thông gió đỉnh mái (Ridge vent), Quạt hút công nghiệp sườn tường, Cửa thoát nạn PCCC",
+        giaiPhapKienTruc: "Lam gió Louver đón gió tươi ngang hông xưởng kết hợp cửa trời nóc mái đẩy khí nóng lên cao theo hiệu ứng ống khói; cửa thoát hiểm gắn thanh đẩy Panic, mở ra lối thoát ngoài trời an toàn."
+      });
+      zoningList.push({
+        tenKhuVuc: "8. Trạm Xử Lý Nước Thải & Khu Chứa Rác Nguy Hại (Khu Ép Chế Tiêu Hao Khí Hung)",
+        cungThaiAt: wcCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[wcCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[wcCung].hanh,
+        trangThaiKhi: "Cần Ép Chế (Dĩ Độc Trị Độc)",
+        nguyenLyDichHoc: "'Dĩ độc trị độc' - Thu gom toàn bộ chất thải và nước xả bẩn vào cung Thủy Kích hung sát để triệt hạ tạp uế.",
+        chucNangPhuHop: "Trạm xử lý nước thải công nghiệp, Cụm WC công nhân, Kho lưu giữ chất thải nguy hại",
+        giaiPhapKienTruc: "Bể xử lý nước thải đạt chuẩn xả thải môi trường, nắp kín ngăn mùi hôi; kho chất thải nguy hại có gờ ngăn tràn hóa chất và tường chống cháy; WC công nhân thông thoáng dễ cọ rửa."
+      });
+    } else if (pType === "Biệt thự") {
+      zoningList.push({
+        tenKhuVuc: "1. Đại Môn, Tiền Sảnh & Sân Vườn Cảnh Quan (Minh Đường Tụ Khí & Đại Khí Khẩu)",
+        cungThaiAt: congCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[congCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[congCung].hanh,
+        trangThaiKhi: "Đại Cát (Đại Khí Khẩu)",
+        nguyenLyDichHoc: "Minh đường rộng rãi sáng sủa tụ vương khí Thái Ất, gia tăng phúc lộc hiển vinh cho gia tộc.",
+        chucNangPhuHop: "Cổng nhôm đúc bề thế, Tiền sảnh đón khách vòm cao, Hồ cá Koi cảnh quan, Lối dạo sân vườn",
+        giaiPhapKienTruc: "Cổng chính tỷ lệ bề thế, khoảng đệm sảnh ốp đá cẩm thạch sang trọng; hồ cá Koi nước chảy sinh động; đèn sân vườn lung linh ấm áp ban đêm; cây xanh bóng mát cắt tỉa gọn gàng."
+      });
+      zoningList.push({
+        tenKhuVuc: "2. Gian Thờ Gia Tiên Riêng Tầng Thượng (Không Gian Tâm Linh Trang Nghiêm)",
+        cungThaiAt: thoCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thoCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thoCung].hanh,
+        trangThaiKhi: "Đại Cát (Tôn Nghiêm)",
+        nguyenLyDichHoc: "Tọa tại Thiên Môn trang nghiêm, tách biệt hoàn toàn tiếng ồn sinh hoạt gia đình, nạp chân khí phúc đức trường cửu.",
+        chucNangPhuHop: "Phòng thờ gia tiên riêng biệt tại tầng tum / tầng thượng biệt thự",
+        giaiPhapKienTruc: "Nội thất gỗ tự nhiên; tựa lưng tường gạch đặc vững chãi; cửa sổ thông gió thoát khói hương ra sân thượng trời; trang bị cảm biến khói nhiệt kết nối báo cháy an toàn."
+      });
+      zoningList.push({
+        tenKhuVuc: "3. Bếp Chính & Bếp Ướt Sân Vườn (Hỏa Khí Gia Đạo Thượng Lưu)",
+        cungThaiAt: bepCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[bepCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[bepCung].hanh,
+        trangThaiKhi: "Cát (Tọa Hung Hướng Cát)",
+        nguyenLyDichHoc: "Giữ lửa tài lộc và sự thịnh vượng sung túc của gia đạo gia chủ.",
+        chucNangPhuHop: "Bếp khô kết hợp đảo bếp sang trọng trong nhà và Bếp ướt sơ chế ngoài trời",
+        giaiPhapKienTruc: "Đảo bếp ốp đá cao cấp; hút mùi âm bàn hoặc treo trần công suất cực đại; khoảng cách bếp nấu và chậu rửa lớn hơn 80cm; khu bếp ướt bên ngoài xử lý các món tanh nồng tiện lợi."
+      });
+      zoningList.push({
+        tenKhuVuc: "4. Phòng Ngủ Master Suite Biệt Thự (Nghỉ Dưỡng Sang Trọng & Sinh Khí Gia Đạo)",
+        cungThaiAt: nguCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[nguCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[nguCung].hanh,
+        trangThaiKhi: "Hòa Hợp Đại Cát",
+        nguyenLyDichHoc: "Thần Hợp và Ngũ Phúc bảo trợ vượng khí nhân đinh, tinh thần tĩnh tại, giấc ngủ sâu an lành.",
+        chucNangPhuHop: "Giường Master King-size, Phòng thay đồ Walk-in closet, Ban công view vườn riêng",
+        giaiPhapKienTruc: "Tường đầu giường ốp gỗ hoặc da cao cấp; cửa ban công mở rộng view vườn xanh mát; kính Low-E cản nhiệt tuyệt đối; rèm điện tự động êm ái."
+      });
+      zoningList.push({
+        tenKhuVuc: "5. Mật Thất Két Sắt & Phòng Sưu Tập Giá Trị (Tụ Tài Bảo Bồn Biệt Thự)",
+        cungThaiAt: ketCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[ketCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[ketCung].hanh,
+        trangThaiKhi: "Vượng Tài Bảo Bồn",
+        nguyenLyDichHoc: "Cung Ngũ Phúc tụ tài, tích lũy tài sản lớn bền vững qua các thế hệ.",
+        chucNangPhuHop: "Két sắt bảo mật vân tay, Tủ trưng bày rượu quý / đồng hồ / nữ trang giá trị cao",
+        giaiPhapKienTruc: "Thiết kế ẩn sau vách trang trí sang trọng kín đáo; khóa cửa sinh trắc học và cảm biến chuyển động hồng ngoại kết nối báo động an ninh."
+      });
+      zoningList.push({
+        tenKhuVuc: "6. Thư Viện Gia Đình & Phòng Làm Việc Tư Gia (Khoa Bảng Trí Tuệ Thượng Lưu)",
+        cungThaiAt: hocCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[hocCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[hocCung].hanh,
+        trangThaiKhi: "Cát Vị Văn Tinh",
+        nguyenLyDichHoc: "Văn Xương Thiên Mục chủ về trí tuệ sáng láng, danh tiếng vẻ vang, con cháu học hành đỗ đạt cao.",
+        chucNangPhuHop: "Phòng làm việc gia chủ, Bàn đọc sách, Tủ sách danh gia vọng tộc",
+        giaiPhapKienTruc: "Cửa sổ mở rộng nhìn ra tiểu cảnh cây xanh thư thái; hệ thống tiêu âm gỗ đục lỗ chống vang vọng; ánh sáng tự nhiên chan hòa không lóa mắt."
+      });
+      zoningList.push({
+        tenKhuVuc: "7. Thang Máy Kính & Đại Sảnh Thông Tầng (Khí Đạo Giao Thông & Đối Lưu Tráng Lệ)",
+        cungThaiAt: thangCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thangCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thangCung].hanh,
+        trangThaiKhi: "Bình Hòa Khí Động",
+        nguyenLyDichHoc: "Trục khí đạo lưu thông sinh khí thẳng đứng xuyên suốt toàn bộ ngôi biệt thự.",
+        chucNangPhuHop: "Thang máy quan sát kính, Cầu thang bộ uốn lượn nghệ thuật, Giếng trời sảnh thông tầng",
+        giaiPhapKienTruc: "Thang máy cabin kính trong suốt êm ái; vòm kính lấy sáng mái đóng mở cảm biến mưa thông minh; đèn chùm pha lê thả trần nghệ thuật."
+      });
+      zoningList.push({
+        tenKhuVuc: "8. Phòng Tắm Suite & Hệ Thống Bể Tự Hoại Khép Kín (Công Trình Phụ Cao Cấp Ép Chế)",
+        cungThaiAt: wcCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[wcCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[wcCung].hanh,
+        trangThaiKhi: "Cần Ép Chế (Dĩ Độc Trị Độc)",
+        nguyenLyDichHoc: "'Dĩ độc trị độc' - Ép toàn bộ chất thải và nước xả xuống cung Thủy Kích để giữ thanh sạch toàn bộ các cung cát.",
+        chucNangPhuHop: "Phòng tắm Master bồn sục Jacuzzi, Cụm vệ sinh các phòng, Bể tự hoại thông minh ngoài nhà",
+        giaiPhapKienTruc: "Bể tự hoại composite/bê tông đúc sẵn 3 ngăn vi sinh kín khít bố trí ngoài sân vườn; ống thông khí khử mùi than hoạt tính vươn cao; phòng tắm lát đá tự nhiên chống trơn trượt."
+      });
+    } else {
+      // Mặc định: Nhà phố liền kề / Nhà ống nhiều tầng
+      zoningList.push({
+        tenKhuVuc: "1. Cổng & Cửa Đi Chính Mặt Phố (Khí Khẩu Nạp Khí Đô Thị)",
+        cungThaiAt: congCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[congCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[congCung].hanh,
+        trangThaiKhi: "Đại Cát",
+        nguyenLyDichHoc: "Nạp luồng sinh khí đô thị dồi dào từ trục phố chính vào nhà ống.",
+        chucNangPhuHop: "Cửa cuốn an toàn ngoài + Cửa kính trong, Gara xe tầng trệt / Phòng khách mặt tiền",
+        giaiPhapKienTruc: "Thiết kế cửa 2 lớp đảm bảo an ninh; cốt nền cao hơn mặt đường phố chống ngập úng mùa mưa; bố trí tiểu cảnh cây xanh sảnh trước để lọc bụi đường phố."
+      });
+      zoningList.push({
+        tenKhuVuc: "2. Gian Thờ Gia Tiên Tầng Tum (Tâm Linh Trang Nghiêm Tầng Cao)",
+        cungThaiAt: thoCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thoCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thoCung].hanh,
+        trangThaiKhi: "Đại Cát (Tôn Nghiêm)",
+        nguyenLyDichHoc: "Đặt ở nơi cao nhất ngôi nhà để hấp thụ linh khí đất trời, tránh bị các không gian sinh hoạt khác giẫm đạp bên trên.",
+        chucNangPhuHop: "Phòng thờ tổ tiên tại tầng tum / sân thượng cao nhất của ngôi nhà phố",
+        giaiPhapKienTruc: "Tựa lưng tường gạch đặc vững chãi, không tựa lưng bồn nước inox trên mái; cửa mở ra khoảng sân thượng thoáng đãng, thoát khói hương thuận lợi."
+      });
+      zoningList.push({
+        tenKhuVuc: "3. Bếp Nấu & Phòng Ăn Gia Đình (Hỏa Khí Giữ Lửa Hạnh Phúc)",
+        cungThaiAt: bepCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[bepCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[bepCung].hanh,
+        trangThaiKhi: "Cát (Tọa Hung Hướng Cát)",
+        nguyenLyDichHoc: "Hỏa lò thiêu đốt tạp khí nhà ống, giữ gìn hòa khí và sức khỏe các thành viên.",
+        chucNangPhuHop: "Khu bếp chữ L / chữ I, Tủ bếp gỗ công nghiệp chống ẩm, Bàn ăn gia đình",
+        giaiPhapKienTruc: "Lắp đặt máy hút mùi dẫn ống thoát thẳng ra giếng trời hoặc ống đứng mặt sau; khoảng cách bếp nấu và chậu rửa bát tối thiểu 60cm; tránh bếp nhìn thẳng ra cửa chính."
+      });
+      zoningList.push({
+        tenKhuVuc: "4. Phòng Ngủ Master Nhà Phố (Tái Tạo Sức Lao Động & Hạnh Phúc Gia Đình)",
+        cungThaiAt: nguCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[nguCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[nguCung].hanh,
+        trangThaiKhi: "Hòa Hợp Đại Cát",
+        nguyenLyDichHoc: "Thần Hợp bảo trợ tinh thần thư thái, giấc ngủ sâu giữa không gian đô thị ồn ào.",
+        chucNangPhuHop: "Giường ngủ đôi Master tầng 2/3, Tủ quần áo, Bàn trang điểm",
+        giaiPhapKienTruc: "Đầu giường tựa sát tường đặc, không tựa vách nhà vệ sinh; cửa sổ ban công dùng cửa nhôm kính hộp cách âm chống ồn còi xe; rèm vải cản sáng tốt."
+      });
+      zoningList.push({
+        tenKhuVuc: "5. Két Sắt Tài Chính Gia Đình (Tụ Tài Bảo Bồn)",
+        cungThaiAt: ketCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[ketCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[ketCung].hanh,
+        trangThaiKhi: "Vượng Tài Lộc",
+        nguyenLyDichHoc: "Ngũ Phúc tụ tài, giúp gia chủ làm ăn tích lũy của cải sinh sôi nảy nở.",
+        chucNangPhuHop: "Két sắt gia đình, Tủ cất giữ giấy tờ nhà đất và tài sản tích lũy",
+        giaiPhapKienTruc: "Bố trí kín đáo trong hộc tủ áo âm tường hoặc góc kín phòng ngủ master; tránh hướng nhìn trực diện từ cửa phòng hoặc cửa ban công."
+      });
+      zoningList.push({
+        tenKhuVuc: "6. Bàn Học & Bàn Làm Việc (Văn Xương Tri Thức)",
+        cungThaiAt: hocCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[hocCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[hocCung].hanh,
+        trangThaiKhi: "Cát Vị Văn Tinh",
+        nguyenLyDichHoc: "Văn Xương Thiên Mục chủ về đầu óc minh mẫn, học tập tấn tới, thi cử đỗ đạt.",
+        chucNangPhuHop: "Bàn học tập con trẻ, Bàn làm việc tại gia, Giá sách",
+        giaiPhapKienTruc: "Đặt cạnh giếng trời lấy sáng tự nhiên hoặc cạnh ban công; ghế ngồi có tường tựa lưng chắc chắn, trước mặt thoáng đãng."
+      });
+      zoningList.push({
+        tenKhuVuc: "7. Cầu Thang Bộ & Giếng Trời Giữa Nhà (Trục Xương Sống Đối Lưu Không Khí Nhà Ống)",
+        cungThaiAt: thangCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[thangCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[thangCung].hanh,
+        trangThaiKhi: "Bình Hòa Khí Động",
+        nguyenLyDichHoc: "Trục giao thông khí đạo lưu chuyển sinh khí xuyên suốt các tầng từ dưới lên trên.",
+        chucNangPhuHop: "Cầu thang bộ thông tầng, Giếng trời trung tâm lấy sáng và đón gió tươi",
+        giaiPhapKienTruc: "Cầu thang bậc kín không hở để tránh thoát khí; giếng trời mái kính mở thoát khí nóng theo hiệu ứng ống khói (Stack effect); không bố trí cầu thang đâm thẳng ra cửa chính."
+      });
+      zoningList.push({
+        tenKhuVuc: "8. Nhà Vệ Sinh Các Tầng & Bể Phốt Ngầm (Ép Chế Khí Uế & Hạ Tầng Ngầm)",
+        cungThaiAt: wcCung,
+        huongDiaLy: THAP_LUC_FENGSHUI_NATURE[wcCung].huong,
+        nguHanhKhuVuc: THAP_LUC_FENGSHUI_NATURE[wcCung].hanh,
+        trangThaiKhi: "Cần Ép Chế (Dĩ Độc Trị Độc)",
+        nguyenLyDichHoc: "'Dĩ độc trị độc' - Đặt công trình phụ tại phương Thủy Kích để đè nén tạp uế, bảo vệ các cung cát lợi.",
+        chucNangPhuHop: "Khu vệ sinh các tầng, Bể phốt ngầm dưới sàn tầng trệt, Hố ga kỹ thuật",
+        giaiPhapKienTruc: "Bể tự hoại xử lý chống thấm ngược kỹ lưỡng; quạt hút mùi âm trần dẫn ống thoát ra hộp kỹ thuật; ống thoát khí bể phốt vươn cao vượt qua mái tum."
+      });
+    }
+
+    // 5 Giải pháp vật lý kiến trúc & vi khí hậu chuyên biệt theo loại hình bất động sản
+    let architecturalRemedies = [];
+    if (pType === "Căn hộ chung cư") {
+      architecturalRemedies = [
+        {
+          hangMuc: "Thông gió vi khí hậu căn hộ cao tầng (Cross-ventilation)",
+          giaiPhap: "Mở hé cửa sổ phòng ngủ kết hợp cửa lùa logia phòng khách để tạo luồng đối lưu gió mát xuyên phòng, hạ nhiệt tự nhiên 2-3°C không phụ thuộc máy lạnh."
+        },
+        {
+          hangMuc: "Cách nhiệt & Che chắn bức xạ kính ban công (Thermal Protection)",
+          giaiPhap: "Vách kính ban công hướng Tây hoặc Tây Nam lắp dán phim cách nhiệt nano gốm hoặc kính hộp Low-E 2 lớp, cản 90% tia UV và giảm bức xạ nhiệt phòng khách."
+        },
+        {
+          hangMuc: "Chắn sát khí bằng chậu cây xanh ban công (Green Buffer)",
+          giaiPhap: `Tại ban công/cửa sổ phương ${THAP_LUC_FENGSHUI_NATURE[tkPos].huong} (Cung ${tkPos}) bố trí chậu cây xanh chịu nắng (trúc mây, lưỡi hổ, ngũ gia bì) để lọc bụi mịn đô thị và tán xạ xung sát.`
+        },
+        {
+          hangMuc: "Xử lý ngăn mùi và chống trào ngược trục kỹ thuật (Sanitary Seal)",
+          giaiPhap: "Lắp phễu thu sàn bẫy nước xi-phông chống trôi ngược mùi hôi từ hộp gen kỹ thuật tòa nhà; van 1 chiều cho toàn bộ quạt hút âm trần."
+        },
+        {
+          hangMuc: "Vật liệu hoàn thiện nội thất ấm cúng (Material Synergy)",
+          giaiPhap: "Sử dụng sàn gỗ công nghiệp chống ẩm cao cấp kết hợp trần thạch cao giật cấp ánh sáng vàng dịu nhẹ, cân bằng ngũ hành Mộc Hỏa cho căn hộ."
+        }
+      ];
+    } else if (pType === "Văn phòng công ty") {
+      architecturalRemedies = [
+        {
+          hangMuc: "Hệ thống cấp khí tươi văn phòng (HVAC Fresh Air Circulation)",
+          giaiPhap: "Đảm bảo lưu lượng cấp khí tươi đạt chuẩn 25-30 m³/h/người, lọc bụi sơ cấp G4 và túi F7, duy trì nồng độ CO2 dưới 800ppm giúp nhân sự tỉnh táo làm việc."
+        },
+        {
+          hangMuc: "Kiểm soát bức xạ nhiệt mặt dựng kính tòa nhà (Solar Glare Control)",
+          giaiPhap: "Mặt kính văn phòng hướng nắng Tây trang bị hệ rèm cuốn chống chói hoặc phim cách nhiệt quang học phản xạ bức xạ mặt trời, bảo vệ thị lực và giảm tải điện chiller."
+        },
+        {
+          hangMuc: "Mảng xanh văn phòng tán xạ tạp khí (Office Biophilic Buffer)",
+          giaiPhap: `Bố trí chậu cây nội thất lọc khí (kim tiền, trầu bà đế vương, lan ý) tại phương ${THAP_LUC_FENGSHUI_NATURE[tkPos].huong} (Cung ${tkPos}) để hấp thụ bức xạ màn hình máy tính và triệt tiêu tạp khí.`
+        },
+        {
+          hangMuc: "Cách âm tiêu âm phòng họp & phòng lãnh đạo (Acoustic Comfort)",
+          giaiPhap: "Vách thạch cao 2 lớp nhồi bông khoáng tỷ trọng 40 kg/m³ và tấm ốp tiêu âm đục lỗ gỗ, đạt ngưỡng cách âm STC >= 45dB, bảo mật tuyệt đối các cuộc họp chiến lược."
+        },
+        {
+          hangMuc: "Chiếu sáng công thái học bảo vệ thị lực (Ergonomic Lighting)",
+          giaiPhap: "Hệ thống đèn LED panel nhiệt độ màu 4000K (trắng trung tính), chỉ số hoàn màu CRI >= 85, độ rọi đồng đều 400-500 Lux khắp khu làm việc."
+        }
+      ];
+    } else if (pType === "Nhà xưởng sản xuất") {
+      architecturalRemedies = [
+        {
+          hangMuc: "Thông gió đối lưu tự nhiên đỉnh mái xưởng (Natural Stack Ventilation)",
+          giaiPhap: "Bố trí cửa trời thông gió tự nhiên (Ridge monitor/vent) trên đỉnh nóc kết hợp lam gió Louver chân tường, đẩy toàn bộ khí nóng và khí phát thải máy móc lên cao."
+        },
+        {
+          hangMuc: "Chống nóng và cách nhiệt mái tôn công nghiệp (Industrial Roof Insulation)",
+          giaiPhap: "Mái tôn lợp panel EPS/PU hoặc rải túi khí cách nhiệt 2 mặt bạc kết hợp lưới kẽm đỡ bông thủy tinh tỷ trọng cao, giảm 8-10°C bức xạ nhiệt nhà xưởng."
+        },
+        {
+          hangMuc: "Vành đai cây xanh cách ly khói bụi và tiếng ồn (Green Industrial Belt)",
+          giaiPhap: `Phương ${THAP_LUC_FENGSHUI_NATURE[tkPos].huong} (Cung ${tkPos}) trồng dải cây xanh lá dày rậm rạp (keo tai tượng, cau vua, sao đen) làm đệm che chắn tiếng ồn và ngăn phát tán bụi ra môi trường xung quanh.`
+        },
+        {
+          hangMuc: "Lấy sáng tự nhiên mái xưởng tiết kiệm năng lượng (Daylighting Panels)",
+          giaiPhap: "Bố trí 8-12% diện tích mái bằng tấm tôn lấy sáng Polycarbonate chống tia cực tím, cung cấp ánh sáng ban ngày tự nhiên đồng đều khắp dây chuyền sản xuất."
+        },
+        {
+          hangMuc: "Sơn sàn Epoxy tăng cứng chịu tải trọng nặng (Heavy Duty Flooring)",
+          giaiPhap: "Sàn bê tông cốt thép dày 200mm hoàn thiện sơn phủ Epoxy tự phẳng 3 lớp hoặc rải sika tăng cứng, chịu tải trọng xe nâng và chống bám dính hóa chất, dầu mỡ."
+        }
+      ];
+    } else if (pType === "Biệt thự") {
+      architecturalRemedies = [
+        {
+          hangMuc: "Thông gió vi khí hậu thông tầng và sân trong (Courtyard Cross-ventilation)",
+          giaiPhap: "Kết hợp sảnh thông tầng cao và giếng trời kính thông minh cảm biến tự động, luân chuyển dòng gió mát từ sân vườn vào khắp các không gian biệt thự."
+        },
+        {
+          hangMuc: "Lam chắn nắng nghệ thuật & Kính Low-E cao cấp (Architectural Sunshade)",
+          giaiPhap: "Mặt tiền hướng Tây và Tây Nam bố trí hệ lam xoay nhôm vân gỗ/gỗ Teak tự nhiên kết hợp kính hộp cách âm cách nhiệt Low-E 24mm, giữ nhiệt độ mát mẻ quanh năm."
+        },
+        {
+          hangMuc: "Cảnh quan cây xanh phong thủy che chắn sát khí (Landscape Shielding)",
+          giaiPhap: `Tại phương ${THAP_LUC_FENGSHUI_NATURE[tkPos].huong} (Cung ${tkPos}) bố trí đồi cỏ tiểu cảnh, hồ cá Koi lọc tuần hoàn hoặc tường rào phủ dây leo xanh mát để thanh lọc không khí và hóa giải hung sát.`
+        },
+        {
+          hangMuc: "Cân bằng ánh sáng tự nhiên và thông tầng nghệ thuật (Atrium Daylight Synergy)",
+          giaiPhap: "Mái kính sảnh thông tầng sử dụng kính dán an toàn phủ film cản nhiệt, truyền ánh sáng tự nhiên mềm mại xuống lòng sảnh mà không gây nóng rát."
+        },
+        {
+          hangMuc: "Hoàn thiện ngũ hành bằng đá cẩm thạch và gỗ quý (Luxury Material Balance)",
+          giaiPhap: "Ốp đá tự nhiên Marble/Granite dày dặn tại các cung vị vững chãi kết hợp sàn gỗ gõ đỏ/óc chó ấm áp, tạo dựng trường khí quý phái trường tồn."
+        }
+      ];
+    } else {
+      architecturalRemedies = [
+        {
+          hangMuc: "Thông gió vi khí hậu (Cross-ventilation)",
+          giaiPhap: "Tạo cửa mở đối xứng giữa cung đón gió mát (Tốn/Ly) và cung thoát gió (Càn/Cấn), hạ nhiệt tự nhiên 2-3 độ C mùa hè."
+        },
+        {
+          hangMuc: "Cách nhiệt & Che chắn bức xạ (Thermal Protection)",
+          giaiPhap: "Mặt tiền hướng Tây (Dậu) hoặc Tây Nam (Khôn) bố trí lam chắn nắng di động hoặc kính hộp Low-E cản nhiệt, giảm tải điện máy lạnh."
+        },
+        {
+          hangMuc: "Chắn sát khí Thủy Kích bằng mảng xanh (Green Buffer)",
+          giaiPhap: `Tại phương ${THAP_LUC_FENGSHUI_NATURE[tkPos].huong} (Cung ${tkPos}) trồng hàng rào cây xanh rậm rạp (như trúc quân tử, cau cảnh) để lọc bụi, cản tiếng ồn và tán xạ sát khí.`
+        },
+        {
+          hangMuc: "Cân bằng ánh sáng tự nhiên (Daylight Balance)",
+          giaiPhap: "Khu vực Kế Thần u uất bổ sung giếng trời lấy sáng mái; khu vực Thái Ất vương khí mở rộng cửa sổ kính cường lực."
+        },
+        {
+          hangMuc: "Ngũ hành thông quan vật liệu hoàn thiện (Material Synergy)",
+          giaiPhap: "Tọa sơn yếu bổ sung mảng tường đá tự nhiên dày dặn (Thổ sinh Kim); phòng ngủ dùng sàn gỗ tự nhiên ấm áp (Mộc dưỡng Hỏa)."
+        }
+      ];
+    }
 
     // Lọc giờ hoàng kim
     const goldenHours = [];
@@ -1005,11 +1413,11 @@
 ---
 
 ### TẦNG 2: ĐỊNH VỊ CÁT PHƯƠNG & ĐẠI SÁT PHƯƠNG THÁI ẤT
-1. **Thái Ất Vương Khí**: Cung **${asm.cungThaiAt}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungThaiAt].huong}). Nơi nạp vương khí tối cao của vũ trụ, thích hợp bố trí Cổng chính, Sảnh đón hoặc Tọa vị Ban thờ gia tiên.
-2. **Ngũ Phúc Tài Vị**: Cung **${asm.cungNguPhuc}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungNguPhuc].huong}). Cát thần chủ về tích lũy của cải, bảo an tài chính, thích hợp đặt Két sắt, Phòng kế toán hoặc Phòng ngủ Master.
-3. **Văn Xương Khoa Bảng**: Cung **${asm.cungVanXuong}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungVanXuong].huong}). Khí mộc vươn lên, chủ về trí tuệ học vấn, thích hợp làm Thư phòng, Bàn học con cái.
+1. **Thái Ất Vương Khí**: Cung **${asm.cungThaiAt}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungThaiAt].huong}). Nơi nạp vương khí tối cao của vũ trụ, thích hợp bố trí Cửa đi chính, Sảnh đón hoặc Tọa vị Ban thờ trang nghiêm.
+2. **Ngũ Phúc Tài Vị**: Cung **${asm.cungNguPhuc}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungNguPhuc].huong}). Cát thần chủ về tích lũy của cải, bảo an tài chính, thích hợp đặt Két sắt, Phòng kế toán hoặc Phòng ngủ Master / Phòng Giám đốc.
+3. **Văn Xương Khoa Bảng**: Cung **${asm.cungVanXuong}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungVanXuong].huong}). Khí mộc vươn lên, chủ về trí tuệ học vấn, thích hợp làm Góc làm việc, Bàn học con cái, Phòng R&D / KCS.
 4. **Thần Hợp Nhân Duyên**: Cung **${asm.cungThanHop}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungThanHop].huong}). Năng lượng kết nối hòa khí gia đạo và quan hệ đối tác bền vững.
-5. **Thủy Kích Đại Sát**: Cung **${asm.cungThuyKich}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungThuyKich].huong}). Phương vị hung sát, tuyệt đối kỵ động thổ, kỵ đặt Cổng chính, Bếp lò hoặc Giường ngủ. Áp dụng chiến lược "Dĩ độc trị độc" đặt khu vệ sinh/bể phốt.
+5. **Thủy Kích Đại Sát**: Cung **${asm.cungThuyKich}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungThuyKich].huong}). Phương vị hung sát, tuyệt đối kỵ đặt Cửa chính, Bếp lò hoặc Giường ngủ / Bàn làm việc lãnh đạo. Áp dụng chiến lược "Dĩ độc trị độc" bố trí ${asm.propertyType === 'Căn hộ chung cư' ? 'nhà vệ sinh & trục hộp gen kỹ thuật căn hộ' : (asm.propertyType === 'Văn phòng công ty' ? 'cụm WC văn phòng & phòng server kỹ thuật' : (asm.propertyType === 'Nhà xưởng sản xuất' ? 'trạm xử lý nước thải & khu rác nguy hại' : 'khu vệ sinh / bể tự hoại khép kín'))}.
 6. **Kế Thần Ám Muội**: Cung **${asm.cungKeThan}** (${THAP_LUC_FENGSHUI_NATURE[asm.cungKeThan].huong}). Đề phòng ẩm mốc, thiếu ánh sáng và tiểu nhân gièm pha.
 
 ---
@@ -1060,10 +1468,10 @@ ${asm.goldenHours.map(g => `* **Giờ ${g.gio}** [${g.trangThai.toUpperCase()}]:
 ### TẦNG 7: MA TRẬN RỦI RO & PHƯƠNG ÁN KIỂM SOÁT KỸ THUẬT
 | Hạng Mục Rủi Ro | Mức Độ | Cung Vị | Biện Pháp Kiểm Soát Vật Lý |
 | :--- | :---: | :---: | :--- |
-| Thủy Kích Hung Sát | Đại Hung | Cung ${asm.cungThuyKich} | Ép chế công trình phụ (WC/Kho), dựng rào cây xanh cản sát |
-| Kế Thần Ám Muội | Trung Bình | Cung ${asm.cungKeThan} | Mở giếng trời lấy sáng tự nhiên, quạt hút gió cưỡng bức |
-| Hướng Nhà Nghịch Mệnh | Biến Đổi | Cửa Chính | Bố trí huyền quan ngăn gió lùa trực diện, dùng Bếp thông quan |
-| Hỏa Nhiệt Hướng Nam | Cần Lưu Ý | Cung Ngọ | Dùng lam chắn nắng, kính cản nhiệt Low-E giảm tải điều hòa |
+| Thủy Kích Hung Sát | Đại Hung | Cung ${asm.cungThuyKich} | ${asm.propertyType === 'Căn hộ chung cư' ? 'Lắp phễu bẫy nước xi-phông chống trào ngược mùi hộp gen, quạt hút van 1 chiều' : (asm.propertyType === 'Văn phòng công ty' ? 'Ép chế cụm WC & phòng server kỹ thuật, quạt hút thông gió âm trần 24/7' : (asm.propertyType === 'Nhà xưởng sản xuất' ? 'Bể xử lý nước thải nắp kín, kho chất thải nguy hại có gờ ngăn tràn hóa chất' : 'Ép chế công trình phụ (WC/Bể phốt), dựng rào cây xanh tán xạ hung sát'))} |
+| Kế Thần Ám Muội | Trung Bình | Cung ${asm.cungKeThan} | Mở giếng trời / tăng cường đèn LED lấy sáng tự nhiên, quạt hút gió cưỡng bức |
+| Hướng Nhà Nghịch Mệnh | Biến Đổi | Cửa Chính | Bố trí huyền quan ngăn gió lùa trực diện, dùng Bếp thông quan điều hòa khí |
+| Hỏa Nhiệt Hướng Tây/Nam | Cần Lưu Ý | Cung Ngọ / Dậu | Dùng lam chắn nắng, dán phim nano cản nhiệt hoặc kính hộp Low-E giảm tải điều hòa |
 
 ---
 

@@ -1620,6 +1620,69 @@
         border-color: #cbd5e1 !important;
         color: #0f172a !important;
       }
+      .fs-stepper-btn {
+        padding: 3px 6px;
+        background: rgba(35, 5, 12, 0.85);
+        border: 1px solid rgba(245, 176, 65, 0.35);
+        border-radius: 4px;
+        color: #fef08a;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        line-height: 1.2;
+        transition: all 0.15s ease;
+      }
+      .fs-stepper-btn:hover, .fs-stepper-btn:active {
+        background: rgba(245, 176, 65, 0.3);
+        border-color: #f5b041;
+      }
+      body.theme-light .fs-stepper-btn {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #1e293b !important;
+      }
+      body.theme-light .fs-stepper-btn:hover {
+        background: #e2e8f0 !important;
+        border-color: #94a3b8 !important;
+      }
+      .fs-cardinal-bar {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .fs-cardinal-bar::-webkit-scrollbar { display: none; }
+      .fs-cardinal-btn {
+        flex: 1;
+        min-width: 48px;
+        padding: 3px 4px;
+        background: rgba(20, 2, 5, 0.7);
+        border: 1px solid rgba(245, 176, 65, 0.25);
+        border-radius: 4px;
+        color: #cbd5e1;
+        font-size: 9.5px;
+        font-weight: 700;
+        text-align: center;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .fs-cardinal-btn.active, .fs-cardinal-btn:hover {
+        background: rgba(245, 176, 65, 0.25);
+        border-color: #f5b041;
+        color: #fef08a;
+      }
+      body.theme-light .fs-cardinal-btn {
+        background: #ffffff !important;
+        border-color: #e2e8f0 !important;
+        color: #475569 !important;
+      }
+      body.theme-light .fs-cardinal-btn.active {
+        background: #fef3c7 !important;
+        border-color: #d97706 !important;
+        color: #b45309 !important;
+      }
       .fs-readout-row {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -3335,7 +3398,7 @@
               <span>🧭</span>
               <span>ĐỊNH VỊ TỌA HƯỚNG LA KINH THÁI ẤT</span>
             </div>
-            <div class="fs-badge ${voidBadgeClass}">${voidBadgeText}</div>
+            <div class="fs-badge ${voidBadgeClass}" id="thaiat-fs-void-badge">${voidBadgeText}</div>
           </div>
 
           <div class="fs-compass-ctrl">
@@ -3346,14 +3409,37 @@
               <span style="font-size: 11px; font-weight: 800; color: #fef08a;">°</span>
             </div>
 
+            <!-- Micro Steppers Row -->
+            <div style="display: flex; gap: 4px; justify-content: flex-end; align-items: center;">
+              <span style="font-size: 9px; color: #94a3b8; margin-right: auto; font-weight: 600;">Vi chỉnh góc:</span>
+              <button type="button" class="fs-stepper-btn" data-step="-5">-5°</button>
+              <button type="button" class="fs-stepper-btn" data-step="-1">-1°</button>
+              <button type="button" class="fs-stepper-btn" data-step="-0.5">-0.5°</button>
+              <button type="button" class="fs-stepper-btn" data-step="+0.5">+0.5°</button>
+              <button type="button" class="fs-stepper-btn" data-step="+1">+1°</button>
+              <button type="button" class="fs-stepper-btn" data-step="+5">+5°</button>
+            </div>
+
+            <!-- 8 Quick Cardinal & Intercardinal Direction Buttons -->
+            <div class="fs-cardinal-bar">
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 0) < 3 || Math.abs(currentFsSittingDeg - 360) < 3 ? 'active' : ''}" data-deg="0">Bắc (0°)</button>
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 45) < 3 ? 'active' : ''}" data-deg="45">ĐB (45°)</button>
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 90) < 3 ? 'active' : ''}" data-deg="90">Đông (90°)</button>
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 135) < 3 ? 'active' : ''}" data-deg="135">ĐN (135°)</button>
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 180) < 3 ? 'active' : ''}" data-deg="180">Nam (180°)</button>
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 225) < 3 ? 'active' : ''}" data-deg="225">TN (225°)</button>
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 270) < 3 ? 'active' : ''}" data-deg="270">Tây (270°)</button>
+              <button type="button" class="fs-cardinal-btn ${Math.abs(currentFsSittingDeg - 315) < 3 ? 'active' : ''}" data-deg="315">TB (315°)</button>
+            </div>
+
             <div class="fs-readout-row">
               <div class="fs-readout-item">
                 <span class="fs-readout-lbl">${isDuong ? 'LƯNG NHÀ (TỌA SƠN)' : 'LƯNG MỘ (TỌA HUYỆT)'}</span>
-                <span class="fs-readout-val">Sơn ${asm.sittingMountain || asm.sitting_mountain} (${asm.sittingCung || asm.sitting_cung})</span>
+                <span class="fs-readout-val" id="thaiat-fs-readout-sitting">Sơn ${asm.sittingMountain || asm.sitting_mountain} (${asm.sittingCung || asm.sitting_cung})</span>
               </div>
               <div class="fs-readout-item">
                 <span class="fs-readout-lbl">${isDuong ? 'MẶT TIỀN (HƯỚNG NHÀ)' : 'BIA MỘ (HƯỚNG MỘ)'}</span>
-                <span class="fs-readout-val">Sơn ${asm.facingMountain || asm.facing_mountain} (${asm.facingCung || asm.facing_cung})</span>
+                <span class="fs-readout-val" id="thaiat-fs-readout-facing">Sơn ${asm.facingMountain || asm.facing_mountain} (${asm.facingCung || asm.facing_cung})</span>
               </div>
             </div>
 
@@ -3385,8 +3471,8 @@
 
             <!-- Vi Phân 120 Phân Kim & 72 Xuyên Sơn Long Badge -->
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 9.5px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; padding: 4px 6px;">
-              <span style="color: #cbd5e1;">Phân kim #${pk.index}: <strong style="color: #fef08a;">${pk.canChi}</strong> [${pk.phanLoai}]</span>
-              <span style="color: #94a3b8;">Long #${xsl.index}: ${xsl.tinhChatLong}</span>
+              <span style="color: #cbd5e1;" id="thaiat-fs-phankim-badge">Phân kim #${pk.index}: <strong style="color: #fef08a;">${pk.canChi}</strong> [${pk.phanLoai}]</span>
+              <span style="color: #94a3b8;" id="thaiat-fs-xuyensonlong-badge">Long #${xsl.index}: ${xsl.tinhChatLong}</span>
             </div>
           </div>
         </div>
@@ -3724,25 +3810,118 @@
       };
     }
 
-    // Degree controls
+    // Degree controls with live smooth readouts and debounced deep recalculation
     const slider = document.getElementById('thaiat-fs-deg-slider');
     const numInput = document.getElementById('thaiat-fs-deg-input');
+    let fsDebounceTimer = null;
+
+    function updateLiveFsReadouts(deg) {
+      currentFsSittingDeg = deg;
+      if (numInput && document.activeElement !== numInput) numInput.value = deg.toFixed(1);
+      if (slider && parseFloat(slider.value) !== deg) slider.value = deg;
+
+      if (fsEngine && typeof fsEngine.analyzeDegreeMicro === 'function') {
+        const micro = fsEngine.analyzeDegreeMicro(deg);
+        const facingDeg = (deg + 180.0) % 360.0;
+        const facingMicro = fsEngine.analyzeDegreeMicro(facingDeg);
+
+        const elSit = document.getElementById('thaiat-fs-readout-sitting');
+        if (elSit) elSit.textContent = `Sơn ${micro.mountain} (${micro.cung})`;
+        const elFac = document.getElementById('thaiat-fs-readout-facing');
+        if (elFac) elFac.textContent = `Sơn ${facingMicro.mountain} (${facingMicro.cung})`;
+
+        const badge = document.getElementById('thaiat-fs-void-badge');
+        if (badge) {
+          if (micro.isDaiKhongVong) {
+            badge.className = 'fs-badge fs-badge-critical';
+            badge.textContent = 'ĐẠI KHÔNG VONG (RẤT HUNG)';
+          } else if (micro.isTieuKhongVong) {
+            badge.className = 'fs-badge fs-badge-warn';
+            badge.textContent = 'TIỂU KHÔNG VONG (KHÍ TẠP)';
+          } else {
+            badge.className = 'fs-badge fs-badge-great';
+            badge.textContent = `ĐẮC KHÍ CHÍNH TUYẾN (${micro.distanceToBorder.toFixed(1)}°)`;
+          }
+        }
+
+        const elPk = document.getElementById('thaiat-fs-phankim-badge');
+        if (elPk && micro.phanKim) {
+          elPk.innerHTML = `Phân kim #${micro.phanKim.index}: <strong style="color: #fef08a;">${micro.phanKim.canChi}</strong> [${micro.phanKim.phanLoai}]`;
+        }
+        const elXsl = document.getElementById('thaiat-fs-xuyensonlong-badge');
+        if (elXsl && micro.xuyenSonLong) {
+          elXsl.textContent = `Long #${micro.xuyenSonLong.index}: ${micro.xuyenSonLong.tinhChatLong}`;
+        }
+
+        // Highlight active cardinal button
+        document.querySelectorAll('.fs-cardinal-btn').forEach(b => {
+          const bdeg = parseFloat(b.getAttribute('data-deg'));
+          if (Math.abs(deg - bdeg) < 4 || (bdeg === 0 && Math.abs(deg - 360) < 4)) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+      }
+    }
+
     if (slider) {
       slider.oninput = (e) => {
         const val = parseFloat(e.target.value) || 0;
+        updateLiveFsReadouts(val);
+        if (fsDebounceTimer) clearTimeout(fsDebounceTimer);
+        fsDebounceTimer = setTimeout(() => {
+          renderThaiAt(true);
+        }, 220);
+      };
+      slider.onchange = (e) => {
+        if (fsDebounceTimer) clearTimeout(fsDebounceTimer);
+        const val = parseFloat(e.target.value) || 0;
         currentFsSittingDeg = val;
-        if (numInput) numInput.value = val.toFixed(1);
         renderThaiAt(true);
       };
     }
     if (numInput) {
+      numInput.oninput = (e) => {
+        const val = parseFloat(e.target.value);
+        if (!isNaN(val)) {
+          const normVal = ((val % 360) + 360) % 360;
+          updateLiveFsReadouts(normVal);
+          if (fsDebounceTimer) clearTimeout(fsDebounceTimer);
+          fsDebounceTimer = setTimeout(() => {
+            renderThaiAt(true);
+          }, 350);
+        }
+      };
       numInput.onchange = (e) => {
+        if (fsDebounceTimer) clearTimeout(fsDebounceTimer);
         const val = parseFloat(e.target.value) || 0;
         currentFsSittingDeg = ((val % 360) + 360) % 360;
-        if (slider) slider.value = currentFsSittingDeg;
         renderThaiAt(true);
       };
     }
+
+    // Micro steppers
+    document.querySelectorAll('.fs-stepper-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (fsDebounceTimer) clearTimeout(fsDebounceTimer);
+        const step = parseFloat(btn.getAttribute('data-step')) || 0;
+        let nextVal = Math.round((currentFsSittingDeg + step) * 10) / 10;
+        nextVal = ((nextVal % 360) + 360) % 360;
+        currentFsSittingDeg = nextVal;
+        renderThaiAt(true);
+      };
+    });
+
+    // Cardinal buttons
+    document.querySelectorAll('.fs-cardinal-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (fsDebounceTimer) clearTimeout(fsDebounceTimer);
+        const deg = parseFloat(btn.getAttribute('data-deg')) || 0;
+        currentFsSittingDeg = deg;
+        renderThaiAt(true);
+      };
+    });
 
     // Property Type
     const propSel = document.getElementById('thaiat-fs-property-type');
