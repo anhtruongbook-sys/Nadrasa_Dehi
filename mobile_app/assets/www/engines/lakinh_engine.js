@@ -123,7 +123,7 @@
       rangeMaxM: 40,
       radiusM: 40,
       rings: [20, 30, 40], // Quét 3 vành cự ly trong dải không gian [20m, 40m]
-      samplesPerRing: 12,
+      samplesPerRing: 24,  // 24 Sơn đầy đủ (bước nhảy 15.0° phủ trọn cả Can, Chi và Tứ Duy)
       color: '#38bdf8'
     },
     trung: {
@@ -134,7 +134,7 @@
       rangeMaxM: 350,
       radiusM: 350,
       rings: [80, 160, 250, 350], // Quét 4 vành cự ly trong dải không gian [40m, 350m]
-      samplesPerRing: 12,
+      samplesPerRing: 24,  // 24 Sơn đầy đủ (bước nhảy 15.0°)
       color: '#fbbf24'
     },
     dai: {
@@ -145,24 +145,37 @@
       rangeMaxM: 2000,
       radiusM: 2000,
       rings: [600, 1000, 1500, 2000], // Quét 4 vành cự ly trong dải không gian [350m, 2000m]
-      samplesPerRing: 12,
+      samplesPerRing: 24,  // 24 Sơn đầy đủ (bước nhảy 15.0°)
       color: '#f43f5e'
     }
   };
 
   async function fetchElevations(points) {
-    const lats = points.map(p => p.lat.toFixed(6)).join(',');
-    const lngs = points.map(p => p.lng.toFixed(6)).join(',');
-    const url = `https://api.open-meteo.com/v1/elevation?latitude=${lats}&longitude=${lngs}`;
+    if (!points || points.length === 0) return [];
+    // Open-Meteo API giới hạn tối đa 100 điểm cho mỗi request.
+    // Chia nhỏ thành các batch tối đa 80 điểm để tải song song bảo đảm 100% không bị HTTP 400.
+    const BATCH_SIZE = 80;
+    const batches = [];
+    for (let i = 0; i < points.length; i += BATCH_SIZE) {
+      batches.push(points.slice(i, i + BATCH_SIZE));
+    }
 
     try {
-      const resp = await fetch(url, { cache: 'no-cache' });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const data = await resp.json();
-      if (Array.isArray(data.elevation)) {
-        return data.elevation;
-      }
-      throw new Error('Dữ liệu cao độ không hợp lệ');
+      const batchPromises = batches.map(async (batch) => {
+        const lats = batch.map(p => p.lat.toFixed(6)).join(',');
+        const lngs = batch.map(p => p.lng.toFixed(6)).join(',');
+        const url = `https://api.open-meteo.com/v1/elevation?latitude=${lats}&longitude=${lngs}`;
+        const resp = await fetch(url, { cache: 'no-cache' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (Array.isArray(data.elevation)) {
+          return data.elevation;
+        }
+        throw new Error('Dữ liệu cao độ không hợp lệ');
+      });
+
+      const batchResults = await Promise.all(batchPromises);
+      return batchResults.flat();
     } catch (err) {
       console.warn('Lỗi gọi Open-Meteo DEM API, sử dụng dữ liệu ước lượng mô phỏng:', err);
       // Fallback offline: mô phỏng địa hình phẳng tương đối với độ nhấp nhô nhẹ
@@ -181,7 +194,7 @@
     for (const [key, cfg] of Object.entries(MINH_DUONG_CONFIG)) {
       samplesMap[key] = [];
       const rings = cfg.rings || [cfg.radiusM];
-      const samplesPerRing = cfg.samplesPerRing || 12;
+      const samplesPerRing = cfg.samplesPerRing || 24;
       const step = 360.0 / samplesPerRing;
 
       rings.forEach(rDist => {
@@ -261,7 +274,8 @@
         },
         laiLong: {
           ...maxPt,
-          deltaElev: deltaMax
+          deltaElev: deltaMax,
+          googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${maxPt.lat.toFixed(6)},${maxPt.lng.toFixed(6)}`
         }
       };
     }
@@ -273,6 +287,7 @@
         elevation: centerElev
       },
       tiers: tiersResult
+
     };
   }
 

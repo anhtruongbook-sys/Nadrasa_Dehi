@@ -3571,6 +3571,26 @@ function updateQmdjStrategicLayer() {
             popupAnchor: [0, -32]
           })
         }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">💧 Thủy Khẩu ${t.name} (${a.son} • ${a.songSon})<br>Cự ly điểm thấp nhất: <strong>${t.thuyKhau.distanceM}m</strong> (trong dải ${t.rangeLabel || ''})<br>Tam Hợp: ${a.cuc}<br>Cao độ: ${t.thuyKhau.elevation.toFixed(1)}m</div>`).addTo(elevationLayerGroup);
+
+        // Đánh dấu Lai Long điểm cao nhất (Địa Bàn Chính Châm) - Gối tựa mạch núi
+        const ll = t.laiLong;
+        if (ll && ll.lat && ll.lng) {
+          L.marker([ll.lat, ll.lng], {
+            icon: L.divIcon({
+              className: 'custom-lailong-pin',
+              html: `<div class="lailong-pin-wrap" style="display:inline-flex;align-items:center;background:none;border:none;">
+                <svg width="24" height="32" viewBox="0 0 28 36" fill="none" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.85));">
+                  <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#d97706" stroke="#ffffff" stroke-width="2"/>
+                  <path d="M14 7L8 18H20L14 7Z" fill="#ffffff"/>
+                </svg>
+                <span style="color:#fbbf24;font-size:11px;font-weight:800;white-space:nowrap;margin-left:3px;background:none;text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 1px 4px #000;">⛰️ ${t.name.split(' ')[0]} (${ll.son} • ${ll.distanceM}m)</span>
+              </div>`,
+              iconSize: [85, 32],
+              iconAnchor: [12, 32],
+              popupAnchor: [0, -32]
+            })
+          }).bindPopup(`<div style="font-weight:700;font-size:12px;color:#0f172a;padding:4px 6px;">⛰️ Lai Long ${t.name} (Sơn ${ll.son} • ${ll.bearing.toFixed(1)}°)<br>Cự ly gối tựa: <strong>${ll.distanceM}m</strong><br>Địa Bàn Chính Châm: Cung ${ll.cung || ''} (${ll.hanh || ''})<br>Cao độ: <strong>${ll.elevation.toFixed(1)}m</strong> (Chênh +${ll.deltaElev.toFixed(1)}m)</div>`).addTo(elevationLayerGroup);
+        }
       });
 
       openMinhDuongModal(result);
@@ -3590,6 +3610,7 @@ function updateQmdjStrategicLayer() {
       const tk = t.thuyKhau;
       const ll = t.laiLong;
       const a = tk.analysis;
+      const llMapsUrl = (ll && ll.googleMapsUrl) || (ll ? `https://www.google.com/maps/search/?api=1&query=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}` : '');
 
       tiersHtml += `
         <div style="background: rgba(30,41,59,0.7); border: 1px solid ${t.color}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
@@ -3610,12 +3631,14 @@ function updateQmdjStrategicLayer() {
             • <strong>Đánh giá Cát Hung:</strong> ${a.danhGia}<br>
             • <strong>Cao độ Thủy Khẩu:</strong> ${tk.elevation.toFixed(1)}m (Chênh ${tk.deltaElev >= 0 ? '+' : ''}${tk.deltaElev.toFixed(1)}m so với tâm)<br>
             • <strong>Lai Long (Địa Bàn Chính Châm):</strong> Sơn ${ll.son} (${ll.bearing.toFixed(1)}°) • Cao độ: ${ll.elevation.toFixed(1)}m (Chênh +${ll.deltaElev.toFixed(1)}m)<br>
-            <div style="margin-top: 6px;">
-              <a href="${a.googleMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${a.googleMapsUrl}'); } else { window.open('${a.googleMapsUrl}', '_blank'); }" target="_blank" style="color: #38bdf8; text-decoration: underline; font-size: 0.72rem; cursor: pointer;">📍 Mở vị trí Thủy Khẩu trên Google Maps</a>
+            <div style="margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap;">
+              <a href="${a.googleMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${a.googleMapsUrl}'); } else { window.open('${a.googleMapsUrl}', '_blank'); }" target="_blank" style="color: #38bdf8; text-decoration: underline; font-size: 0.72rem; cursor: pointer;">💧 Mở Thủy Khẩu trên Google Maps</a>
+              ${llMapsUrl ? `<a href="${llMapsUrl}" onclick="event.preventDefault(); if (window.openExternalUrl) { window.openExternalUrl('${llMapsUrl}'); } else { window.open('${llMapsUrl}', '_blank'); }" target="_blank" style="color: #fbbf24; text-decoration: underline; font-size: 0.72rem; cursor: pointer;">⛰️ Mở Lai Long trên Google Maps</a>` : ''}
             </div>
           </div>
         </div>
       `;
+
     }
 
     modalBox.innerHTML = `
@@ -3629,10 +3652,28 @@ function updateQmdjStrategicLayer() {
             Tọa độ tâm trạch: ${data.center.lat.toFixed(6)}, ${data.center.lng.toFixed(6)} • Cao độ gốc: ${data.center.elevation.toFixed(1)}m
           </div>
           ${tiersHtml}
-          <button class="lakinh-action-btn" onclick="document.getElementById('modal-minhduong-overlay').remove()">Đóng</button>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button type="button" class="tamhop-quick-btn" id="btn-open-tamhop-from-minhduong" style="flex: 1; padding: 10px 14px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 0.76rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+              🧭 THẨM ĐỊNH TAM HỢP PHÁI (1-CHẠM)
+            </button>
+            <button class="lakinh-action-btn" style="width: auto; padding: 0 16px; margin: 0;" onclick="document.getElementById('modal-minhduong-overlay').remove()">Đóng</button>
+          </div>
         </div>
       </div>
     `;
+
+    const btnTh = document.getElementById('btn-open-tamhop-from-minhduong');
+    if (btnTh) {
+      btnTh.onclick = () => {
+        const overlay = document.getElementById('modal-minhduong-overlay');
+        if (overlay) overlay.remove();
+        const activeTier = data.tiers.dai || data.tiers.trung || data.tiers.tieu;
+        if (activeTier && activeTier.thuyKhau && activeTier.thuyKhau.analysis) {
+          state.tamHopThuyKhauDeg = activeTier.thuyKhau.analysis.bearing;
+        }
+        openTamHopModal(state.rotation);
+      };
+    }
   }
 
   // Mở Modal Huyền Không Phi Tinh Chính Tông (Chuẩn 16 Tinh Bàn - Vận 9)
@@ -8292,7 +8333,7 @@ function updateQmdjStrategicLayer() {
               </div>
               <input type="range" id="th-slider-thuykhau" class="lakinh-slider" min="0" max="359.9" step="0.5" value="${curThuyKhauDeg.toFixed(1)}" style="margin-bottom: 6px;" />
               <div style="font-size: 0.7rem; color: #a78bfa; margin-bottom: 4px;">
-                Thủy Khẩu Thiên Bàn: <b>Sơn ${thuyPhap.thuy_khau.son_name}</b> (Song Sơn <b>${thuyPhap.thuy_khau.son_name}</b> thuộc <b>${thuyPhap.cuc_name}</b>)
+                Thủy Khẩu Thiên Bàn: <b>Sơn ${thuyPhap.thuy_khau.son_name}</b> (Song Sơn <b>${thuyPhap.cuc_res ? thuyPhap.cuc_res.thuy_khau_song_son : ''}</b> thuộc <b>${thuyPhap.cuc_name}</b> • <span style="color: #4ade80; font-weight: 600;">${thuyPhap.cuc_res ? thuyPhap.cuc_res.cung_vi_mo_ta : ''}</span>)
               </div>
               <div class="tamhop-quick-tags">
                 <span style="font-size: 0.68rem; color: #94a3b8; align-self: center;">Mộ khố Thủy Khẩu:</span>
@@ -8305,6 +8346,24 @@ function updateQmdjStrategicLayer() {
                 <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 45) < 8 ? 'active' : ''}" data-tk="45">Cấn</button>
                 <button type="button" class="tamhop-tag-btn ${Math.abs(curThuyKhauDeg - 315) < 8 ? 'active' : ''}" data-tk="315">Càn</button>
               </div>
+
+              <!-- DẢI GỢI Ý HƯỚNG CÁT HỢP CÁCH (1-CHẠM) -->
+              ${thuyPhap.goi_y_huong_tot && thuyPhap.goi_y_huong_tot.length > 0 ? `
+              <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 8px; margin: 8px 0;">
+                <div style="font-size: 0.68rem; font-weight: 700; color: #34d399; margin-bottom: 5px; display: flex; align-items: center; gap: 4px;">
+                  🎯 GỢI Ý HƯỚNG CÁT HỢP CÁCH (1-CHẠM XOAY LA KINH):
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px;">
+                  ${thuyPhap.goi_y_huong_tot.map(g => `
+                    <button type="button" class="tamhop-huongtot-btn" data-target-deg="${g.target_deg}" style="background: rgba(15, 23, 42, 0.85); border: 1px solid #10b981; color: #f8fafc; border-radius: 6px; padding: 6px 8px; font-size: 0.68rem; text-align: left; cursor: pointer; transition: all 0.2s ease;">
+                      <div style="color: #34d399; font-weight: 700;">★ ${g.the_cuc}</div>
+                      <div style="font-size: 0.62rem; color: #cbd5e1; margin-top: 2px;">Sơn <b>${g.son_chinh}</b> (${g.target_deg}°) • ${g.song_son}</div>
+                      <div style="font-size: 0.58rem; color: #94a3b8;">${g.danh_gia}</div>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+              ` : ''}
 
               <!-- Dòng chảy Thủy Pháp -->
               <div class="tamhop-input-row" style="margin-top: 8px;">
@@ -8689,6 +8748,22 @@ function updateQmdjStrategicLayer() {
           curThuyKhauDeg = parseFloat(btn.getAttribute('data-tk'));
           state.tamHopThuyKhauDeg = curThuyKhauDeg;
           renderModal();
+        });
+      });
+
+      // Gợi ý hướng cát 1-chạm xoay La Kinh
+      modalBox.querySelectorAll('.tamhop-huongtot-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const deg = parseFloat(btn.dataset.targetDeg);
+          if (!isNaN(deg)) {
+            curHuongDeg = deg;
+            state.rotation = deg;
+            if (typeof updateCompassHeading === 'function') updateCompassHeading();
+            renderModal();
+            if (typeof showLaKinhToast === 'function') {
+              showLaKinhToast(`🎯 Đã xoay La Kinh về: ${deg}°`);
+            }
+          }
         });
       });
 

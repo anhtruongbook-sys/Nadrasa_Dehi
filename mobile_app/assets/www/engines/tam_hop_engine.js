@@ -67,20 +67,27 @@
     { name: "Nhâm", deg_start: 337.5, deg_end: 352.5, chi: null,  can: "Nhâm",quai: null,   cung_bat_quai: "Khảm", am_duong: "Dương", ngu_hanh: "Thủy" }
   ];
 
-  // Song Sơn Ngũ Hành (12 cặp Song Sơn)
+  // Song Sơn Ngũ Hành & Tứ Đại Cục Thủy Khẩu Chuẩn Dương Công (Mộ - Tuyệt - Thai)
   const SONG_SON = {
-    "Nhâm Tý": { ngu_hanh: "Thủy", cuc: "Thủy Cục", chi_chinh: "Tý" },
-    "Quý Sửu": { ngu_hanh: "Kim",  cuc: "Kim Cục",  chi_chinh: "Sửu" },
-    "Cấn Dần": { ngu_hanh: "Hỏa",  cuc: "Hỏa Cục",  chi_chinh: "Dần" },
-    "Giáp Mão": { ngu_hanh: "Mộc", cuc: "Mộc Cục",  chi_chinh: "Mão" },
-    "Ất Thìn": { ngu_hanh: "Thủy", cuc: "Thủy Cục", chi_chinh: "Thìn" },
-    "Tốn Tỵ":  { ngu_hanh: "Kim",  cuc: "Kim Cục",  chi_chinh: "Tỵ" },
-    "Bính Ngọ": { ngu_hanh: "Hỏa", cuc: "Hỏa Cục",  chi_chinh: "Ngọ" },
-    "Đinh Mùi": { ngu_hanh: "Mộc", cuc: "Mộc Cục",  chi_chinh: "Mùi" },
-    "Khôn Thân": { ngu_hanh: "Thủy", cuc: "Thủy Cục", chi_chinh: "Thân" },
-    "Canh Dậu": { ngu_hanh: "Kim",  cuc: "Kim Cục",  chi_chinh: "Dậu" },
-    "Tân Tuất": { ngu_hanh: "Hỏa",  cuc: "Hỏa Cục",  chi_chinh: "Tuất" },
-    "Càn Hợi":  { ngu_hanh: "Mộc",  cuc: "Mộc Cục",  chi_chinh: "Hợi" }
+    // 1. Thủy Cục: Tam hợp Thân (Sinh) - Tý (Vượng) - Thìn (Mộ)
+    "Ất Thìn":  { ngu_hanh: "Thủy", cuc: "Thủy Cục", cung_vi: "Mộ",    chi_chinh: "Thìn", mo_ta: "Chính Mộ Khố (Thìn Khố)" },
+    "Tốn Tỵ":   { ngu_hanh: "Kim",  cuc: "Thủy Cục", cung_vi: "Tuyệt",  chi_chinh: "Tỵ",   mo_ta: "Tuyệt vị xuất thủy" },
+    "Bính Ngọ": { ngu_hanh: "Hỏa",  cuc: "Thủy Cục", cung_vi: "Thai",   chi_chinh: "Ngọ",  mo_ta: "Bào Thai lưu thủy" },
+
+    // 2. Hỏa Cục: Tam hợp Dần (Sinh) - Ngọ (Vượng) - Tuất (Mộ)
+    "Tân Tuất": { ngu_hanh: "Hỏa",  cuc: "Hỏa Cục",  cung_vi: "Mộ",    chi_chinh: "Tuất", mo_ta: "Chính Mộ Khố (Tuất Khố)" },
+    "Càn Hợi":  { ngu_hanh: "Mộc",  cuc: "Hỏa Cục",  cung_vi: "Tuyệt",  chi_chinh: "Hợi",  mo_ta: "Tuyệt vị xuất thủy" },
+    "Nhâm Tý":  { ngu_hanh: "Thủy", cuc: "Hỏa Cục",  cung_vi: "Thai",   chi_chinh: "Tý",   mo_ta: "Bào Thai lưu thủy" },
+
+    // 3. Kim Cục: Tam hợp Tỵ (Sinh) - Dậu (Vượng) - Sửu (Mộ)
+    "Quý Sửu":  { ngu_hanh: "Kim",  cuc: "Kim Cục",  cung_vi: "Mộ",    chi_chinh: "Sửu",  mo_ta: "Chính Mộ Khố (Sửu Khố)" },
+    "Cấn Dần":  { ngu_hanh: "Hỏa",  cuc: "Kim Cục",  cung_vi: "Tuyệt",  chi_chinh: "Dần",  mo_ta: "Tuyệt vị xuất thủy" },
+    "Giáp Mão": { ngu_hanh: "Mộc",  cuc: "Kim Cục",  cung_vi: "Thai",   chi_chinh: "Mão",  mo_ta: "Bào Thai lưu thủy" },
+
+    // 4. Mộc Cục: Tam hợp Hợi (Sinh) - Mão (Vượng) - Mùi (Mộ)
+    "Đinh Mùi":  { ngu_hanh: "Mộc",  cuc: "Mộc Cục",  cung_vi: "Mộ",    chi_chinh: "Mùi",  mo_ta: "Chính Mộ Khố (Mùi Khố)" },
+    "Khôn Thân": { ngu_hanh: "Thủy", cuc: "Mộc Cục",  cung_vi: "Tuyệt",  chi_chinh: "Thân", mo_ta: "Tuyệt vị xuất thủy" },
+    "Canh Dậu":  { ngu_hanh: "Kim",  cuc: "Mộc Cục",  cung_vi: "Thai",   chi_chinh: "Dậu",  mo_ta: "Bào Thai lưu thủy" }
   };
 
   // 12 Cung Trường Sinh theo thứ tự chuẩn
@@ -380,7 +387,8 @@
         throw new Error("Không nhận diện được Song Sơn cho Thủy Khẩu: " + son_name);
       }
 
-      const cuc_name = SONG_SON[matched_song_son].cuc;
+      const ss_info = SONG_SON[matched_song_son];
+      const cuc_name = ss_info.cuc;
       const cuc_info = KHOI_TRUONG_SINH[cuc_name];
 
       return {
@@ -389,7 +397,9 @@
         cuc_name: cuc_name,
         cuc_ngu_hanh: cuc_info.ngu_hanh,
         khoi_truong_sinh_tai: cuc_info.khoi_tai,
-        mo_khu_chuan: cuc_info.mo_khu
+        mo_khu_chuan: cuc_info.mo_khu,
+        cung_vi_thuy_khau: ss_info.cung_vi || "Mộ",
+        cung_vi_mo_ta: ss_info.mo_ta || ""
       };
     }
     determine_cuc_from_thuy_khau(thuy_khau_deg_or_name) {
@@ -482,46 +492,106 @@
         }
       }
 
+      const isXuatMoVi = (cuc_res.cung_vi_thuy_khau === "Mộ");
+      const isXuatTuyetVi = (cuc_res.cung_vi_thuy_khau === "Tuyệt");
+      const isXuatThaiVi = (cuc_res.cung_vi_thuy_khau === "Thai");
+
       let the_cuc = "Phổ thông";
       let danh_gia = "Bình";
       let ghi_chu = "";
 
-      if (cung_nap_huong === "Đế Vượng" && cuc_res.thuy_khau_song_son.includes("Ất Thìn")) {
-        the_cuc = "CHÍNH VƯỢNG HƯỚNG (Tả Thủy Đảo Hữu xuất Mộ vị)";
+      if (cung_nap_huong === "Đế Vượng" && isXuatMoVi) {
+        the_cuc = `CHÍNH VƯỢNG HƯỚNG (${chieu === "thuan" ? "Tả Thủy Đảo Hữu" : "Hữu Thủy Đảo Tả"} xuất Mộ vị)`;
         danh_gia = "ĐẠI CÁT ĐẠI LỢI";
         ghi_chu = "Hưng thịnh kinh doanh thương nghiệp, gia tăng tích lũy tài chính, con cháu hưng vượng.";
-      } else if (cung_nap_huong === "Trường Sinh" && cuc_res.thuy_khau_song_son.includes("Ất Thìn")) {
-        the_cuc = "CHÍNH SINH HƯỚNG (Hữu Thủy Đảo Tả xuất Mộ vị)";
+      } else if (cung_nap_huong === "Trường Sinh" && isXuatMoVi) {
+        the_cuc = `CHÍNH SINH HƯỚNG (${chieu === "thuan" ? "Tả Thủy Đảo Hữu" : "Hữu Thủy Đảo Tả"} xuất Mộ vị)`;
         danh_gia = "ĐẠI CÁT ĐẠI LỢI";
         ghi_chu = "Đinh tài lưỡng vượng, phúc thọ miên trường, quý nhân phù trợ.";
-      } else if (cung_nap_huong === "Lâm Quan") {
-        the_cuc = "LÂM QUAN HƯỚNG";
+      } else if (cung_nap_huong === "Lâm Quan" && isXuatMoVi) {
+        the_cuc = "LÂM QUAN HƯỚNG (Vượng Quan Lộc xuất Mộ vị)";
         danh_gia = "CÁT (Vượng Quan Lộc)";
         ghi_chu = "Thăng quan tiến chức, danh hiển dòng tộc, con cháu đỗ đạt.";
+      } else if (cung_nap_huong === "Suy" && (isXuatTuyetVi || isXuatMoVi)) {
+        the_cuc = "TỰ VƯỢNG HƯỚNG (Hóa Tử vi Vượng - Xuất Tuyệt/Mộ vị)";
+        danh_gia = "CÁT (Tự Vượng Thủy Pháp)";
+        ghi_chu = "Thế nước đảo chiều hợp cách, phát tài phát phúc nhanh chóng.";
+      } else if (["Bệnh", "Tử"].includes(cung_nap_huong) && isXuatTuyetVi) {
+        the_cuc = "TỰ SINH HƯỚNG (Tuyệt xứ phùng sinh)";
+        danh_gia = "CÁT (Tuyệt Xứ Phùng Sinh)";
+        ghi_chu = "Hóa giải suy bại, sinh cơ hồi chuyển, biến hung thành cát.";
+      } else if (cung_nap_huong === "Dưỡng" && isXuatTuyetVi) {
+        the_cuc = "DƯỠNG HƯỚNG (Quý Cục xuất Tuyệt vị)";
+        danh_gia = "CÁT (Quý Cục Dưỡng Hướng)";
+        ghi_chu = "Tích lũy tài lộc, con cháu hiếu thuận, quý nhân tương trợ.";
       } else if (["Bệnh", "Tử", "Tuyệt"].includes(cung_nap_huong)) {
         the_cuc = "HƯỚNG PHẠM TỬ TUYỆT";
         danh_gia = "ĐẠI HUNG";
         ghi_chu = "Khí suy bại, tài vận hao tán, bệnh tật liên miên. Cần xoay cửa chỉnh phân kim.";
       }
 
-      // Kiểm tra Hoàng Tuyền
-      const ht_res = TamHopEngine.kiem_tra_hoang_tuyen(huong_son, thuy_khau_thien_ban.son_name);
+      // Kiểm tra Hoàng Tuyền (Thủy Khẩu là Khứ Thủy -> nếu gặp là Sát Nhân Hoàng Tuyền)
+      const ht_res = TamHopEngine.kiem_tra_hoang_tuyen(huong_son, thuy_khau_thien_ban.son_name, "khu_thuy");
       const ht_warning = ht_res.mo_ta;
       if (ht_res.pham_sat && ht_res.loai_sat.includes("SÁT NHÂN")) {
         danh_gia = "ĐẠI HUNG";
       }
 
+      // Tổng hợp gợi ý các hướng cát tương ứng với Thủy Khẩu này
+      const goi_y_huong_tot = [];
+      vong_ts.forEach(item => {
+        if (item.cung_truong_sinh === "Đế Vượng") {
+          const sons = item.song_son.split(" ");
+          const sObj = SON_24.find(s => s.name === sons[1] || s.name === sons[0]);
+          const deg = sObj ? (sObj.deg_start + 7.5) % 360 : 0;
+          goi_y_huong_tot.push({
+            cung: "Đế Vượng",
+            the_cuc: "Chính Vượng Hướng",
+            song_son: item.song_son,
+            son_chinh: sons[1] || sons[0],
+            target_deg: Math.round(deg * 10) / 10,
+            danh_gia: "Đại Cát (Tài Lộc & Phú Quý)"
+          });
+        } else if (item.cung_truong_sinh === "Trường Sinh") {
+          const sons = item.song_son.split(" ");
+          const sObj = SON_24.find(s => s.name === sons[1] || s.name === sons[0]);
+          const deg = sObj ? (sObj.deg_start + 7.5) % 360 : 0;
+          goi_y_huong_tot.push({
+            cung: "Trường Sinh",
+            the_cuc: "Chính Sinh Hướng",
+            song_son: item.song_son,
+            son_chinh: sons[1] || sons[0],
+            target_deg: Math.round(deg * 10) / 10,
+            danh_gia: "Đại Cát (Nhân Đinh & Phúc Thọ)"
+          });
+        } else if (item.cung_truong_sinh === "Lâm Quan") {
+          const sons = item.song_son.split(" ");
+          const sObj = SON_24.find(s => s.name === sons[1] || s.name === sons[0]);
+          const deg = sObj ? (sObj.deg_start + 7.5) % 360 : 0;
+          goi_y_huong_tot.push({
+            cung: "Lâm Quan",
+            the_cuc: "Lâm Quan Hướng",
+            song_son: item.song_son,
+            son_chinh: sons[1] || sons[0],
+            target_deg: Math.round(deg * 10) / 10,
+            danh_gia: "Cát (Vượng Quan Lộc & Khoa Bảng)"
+          });
+        }
+      });
+
       return {
         huong_nha: huong_dia_ban,
         thuy_khau: thuy_khau_thien_ban,
         cuc_name: cuc_name,
+        cuc_res: cuc_res,
         chieu_quay: chieu,
         huong_song_son: huong_song_son,
         cung_nap_huong: cung_nap_huong,
         the_cuc: the_cuc,
         danh_gia: danh_gia,
         hoang_tuyen_sat: ht_warning,
-        khuyen_nghi: ghi_chu
+        khuyen_nghi: ghi_chu,
+        goi_y_huong_tot: goi_y_huong_tot
       };
     }
     evaluate_trach_thuy_phap(huong_nha_deg, thuy_khau_deg, dong_chay = "ta_dao_huu") {
@@ -1002,25 +1072,39 @@
     // =========================================================================
     // CÁC HÀM TIỆN ÍCH & API KIỂM ĐỊNH MỞ RỘNG
     // =========================================================================
-    static kiem_tra_hoang_tuyen(huong_son, thuy_khau_son) {
+    static kiem_tra_hoang_tuyen(huong_son, thuy_khau_son, loai_thuy = "khu_thuy") {
       const huong = String(huong_son).trim();
       const thuy = String(thuy_khau_son).trim();
 
       const target = HOANG_TUYEN_MAP[huong];
-      if (target && typeof target === "string" && target === thuy) {
+      if (!target) {
         return {
-          pham_sat: true,
-          loai_sat: "SÁT NHÂN HOÀNG TUYỀN (Đại Hung)",
-          mo_ta: `Hướng ${huong} mà Thủy Khẩu tại ${thuy} phạm Sát Nhân Hoàng Tuyền, làm suy thoái quan lộc, hao tổn nhân đinh.`
+          pham_sat: false,
+          loai_sat: "KHÔNG PHẠM",
+          mo_ta: `Hướng ${huong} và Thủy Khẩu ${thuy} an toàn, không nằm trong Hoàng Tuyền Sát.`
         };
       }
 
-      if (target && Array.isArray(target) && target.includes(thuy)) {
-        return {
-          pham_sat: true,
-          loai_sat: "CỨU BẦN HOÀNG TUYỀN (Đại Cát)",
-          mo_ta: `Hướng ${huong} mà Thủy Khẩu thoát tại ${thuy} đắc cách Cứu Bần Hoàng Tuyền, tiêu thủy đúng pháp sinh tài phát lộc.`
-        };
+      let isMatch = false;
+      if (typeof target === "string" && target === thuy) isMatch = true;
+      if (Array.isArray(target) && target.includes(thuy)) isMatch = true;
+
+      if (isMatch) {
+        // Nước chảy đi (Khứ Thủy / Thủy Khẩu) -> 100% SÁT NHÂN HOÀNG TUYỀN (Đại Hung)
+        if (loai_thuy === "khu_thuy") {
+          return {
+            pham_sat: true,
+            loai_sat: "SÁT NHÂN HOÀNG TUYỀN (Đại Hung)",
+            mo_ta: `Hướng ${huong} có Khứ Thủy (Thủy Khẩu thoát nước) tại ${thuy} phạm Sát Nhân Hoàng Tuyền, làm suy thoái quan lộc, hao tổn nhân đinh.`
+          };
+        } else {
+          // Nước chảy đến (Lai Thủy) -> CỨU BẦN HOÀNG TUYỀN (Đại Cát)
+          return {
+            pham_sat: true,
+            loai_sat: "CỨU BẦN HOÀNG TUYỀN (Đại Cát)",
+            mo_ta: `Hướng ${huong} có Lai Thủy (dòng nước tụ đến) từ phương ${thuy} đắc cách Cứu Bần Hoàng Tuyền, tiêu thủy đúng pháp sinh tài phát lộc.`
+          };
+        }
       }
 
       return {
@@ -1029,8 +1113,8 @@
         mo_ta: `Hướng ${huong} và Thủy Khẩu ${thuy} an toàn, không phạm Hoàng Tuyền Sát.`
       };
     }
-    kiem_tra_hoang_tuyen(huong_son, thuy_khau_son) {
-      return TamHopEngine.kiem_tra_hoang_tuyen(huong_son, thuy_khau_son);
+    kiem_tra_hoang_tuyen(huong_son, thuy_khau_son, loai_thuy = "khu_thuy") {
+      return TamHopEngine.kiem_tra_hoang_tuyen(huong_son, thuy_khau_son, loai_thuy);
     }
 
     static kiem_tra_tam_sat(chi_nam_hoac_cuc, huong_nha_son) {
