@@ -76,11 +76,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.58
-          name: "Neta Light v2.8.58 (Thái Ất La Kinh 60 FPS & Quy Hoạch 8 Phân Khu Động 5 Loại Hình BĐS)"
+          tag_name: v2.8.59
+          name: "Neta Light v2.8.59 (Tối Ưu Hiệu Năng Vòng Đời, Chống Hao Pin Ngầm & Bộ Đệm Ảnh LRU)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.58
-            - **Nâng Cấp Đột Phá Thanh Trượt La Kinh Thái Ất 60 FPS**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.59
+            - **Tối Ưu Hiệu Năng Vòng Đời & Triệt Tiêu Hao Pin Ngầm (Battery Leak Prevention)**:
+              + **Cơ chế Thu hồi Cảm biến La Bàn Phần Cứng (Sensor Auto-Teardown & Resume)**: Tự động ngắt hoàn toàn kết nối phần cứng và gỡ bỏ event listeners khi rời khỏi La Kinh hoặc khi ứng dụng chuyển trạng thái ẩn (`document.hidden`); tự phục hồi kết nối mượt mà khi quay lại.
+              + **Bộ Thu Hồi Timer Tập Trung**: Tự động hủy interval (`breathTimer`) chu kỳ nhịp thở 4-7-8 khi chuyển khỏi module Kỳ Môn hoặc khi khóa màn hình.
+              + **Bộ Quản Lý Vòng Đời Âm Thanh Ngủ Sâu (Audio Idle Suspend)**: Tự động đưa `AudioContext` vào trạng thái `suspend()` sau 2.8 giây không có âm thanh phát ra; đánh thức tức thì khi có tương tác người dùng.
+              + **Unified Deep Sleep Mode**: Tích hợp trình đón bắt sự kiện `document.visibilitychange`, đưa ứng dụng vào chế độ ngủ sâu khi khóa máy hoặc chuyển app.
+              + **Bộ Đệm Ảnh Bounded LRU Cache (Giới hạn 50 mục)**: Quản lý bộ đệm Base64 theo nguyên tắc FIFO chống tràn RAM / OOM crash, bảo toàn nguyên vẹn 100% chất lượng ảnh Lossless PNG khi xuất báo cáo.
+              + **Throttled Resize**: Bọc hàm định cỡ qua `requestAnimationFrame`, loại bỏ hiện tượng Layout Thrashing khi xoay màn hình.
+            - **Nâng Cấp Thanh Trượt La Kinh Thái Ất 60 FPS**:
               + Tách biệt hoàn toàn luồng cập nhật DOM tức thời (Live Decoupled Readouts) khỏi tác vụ tính toán chuyên sâu; kéo thanh trượt mượt mà 60 FPS không giật lag.
               + Bổ sung hàng nút vi chỉnh góc công thái học trên di động: `[-5°]`, `[-1°]`, `[-0.5°]`, `[+0.5°]`, `[+1°]`, `[+5°]`.
               + Bổ sung dải 8 nút chọn nhanh phương vị bát quái 1 chạm: Bắc 0°, ĐB 45°, Đông 90°, ĐN 135°, Nam 180°, TN 225°, Tây 270°, TB 315°.
