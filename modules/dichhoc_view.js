@@ -844,14 +844,16 @@
 
     return `
       <div class="dh-phongthuy-container">
-        <!-- 1. Thanh chọn chế độ: Dương Trạch vs Âm Trạch -->
-        <div class="pt-mode-switch-row">
-          <button type="button" class="pt-mode-btn ${isDuongTrach ? 'active' : ''}" id="btn-pt-mode-duongtrach">
-            🏠 Dương Trạch (Nhà Ở)
-          </button>
-          <button type="button" class="pt-mode-btn ${!isDuongTrach ? 'active' : ''}" id="btn-pt-mode-amtrach">
-            🪦 Âm Trạch (Mồ Mả)
-          </button>
+        <!-- 1. Thanh chọn chế độ: Dương Trạch vs Âm Trạch (Segmented Sub-Bar Tinh Tế) -->
+        <div class="pt-sub-seg-bar">
+          <div class="pt-sub-seg">
+            <button type="button" class="pt-sub-seg-btn ${isDuongTrach ? 'active' : ''}" id="btn-pt-mode-duongtrach">
+              🏠 Dương Trạch
+            </button>
+            <button type="button" class="pt-sub-seg-btn ${!isDuongTrach ? 'active' : ''}" id="btn-pt-mode-amtrach">
+              🪦 Âm Trạch
+            </button>
+          </div>
         </div>
 
         ${isDuongTrach && dt ? `
@@ -1203,14 +1205,16 @@
           <!-- C. THOÁN TỪ KINH DỊCH CHUẨN XÁC -->
           ${renderThoanTu()}
 
-          <!-- D. BỘ CHỌN LĂNG KÍNH: SỰ VỤ (8 BƯỚC) VS KHẢO SÁT PHONG THỦY (TRẠCH - NHÂN & 6 HÀO VỊ) -->
-          <div class="dh-lens-selector-row">
-            <button type="button" class="dh-lens-btn ${state.activeLens === 'phongthuy' ? '' : 'active'}" id="btn-lens-suvu">
-              📜 Luận Đoán Sự Vụ (8 Bước Dịch Lý)
-            </button>
-            <button type="button" class="dh-lens-btn ${state.activeLens === 'phongthuy' ? 'active' : ''}" id="btn-lens-phongthuy">
-              🏛️ Khảo Sát Phong Thủy Lục Hào (Trạch - Nhân & 6 Hào Vị)
-            </button>
+          <!-- D. BỘ CHỌN LĂNG KÍNH: SỰ VỤ VS PHONG THỦY (SEGMENTED CONTROL GỌN GÀNG) -->
+          <div class="dh-lens-bar">
+            <div class="dh-lens-seg">
+              <button type="button" class="dh-lens-seg-btn ${state.activeLens === 'phongthuy' ? '' : 'active'}" id="btn-lens-suvu">
+                📜 Luận Sự Vụ
+              </button>
+              <button type="button" class="dh-lens-seg-btn ${state.activeLens === 'phongthuy' ? 'active' : ''}" id="btn-lens-phongthuy">
+                🏛️ Phong Thủy
+              </button>
+            </div>
           </div>
 
           <!-- E. NỘI DUNG LUẬN GIẢI THEO LĂNG KÍNH ĐÃ CHỌN -->
