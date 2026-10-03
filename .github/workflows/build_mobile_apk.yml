@@ -76,10 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.56
-          name: "Neta Light v2.8.56 (Nạp File Excel Tọa Độ VN-2000 • SheetJS & Android Native File Bridge)"
+          tag_name: v2.8.57
+          name: "Neta Light v2.8.57 (Kỳ Môn Đa Dụng Thần & Bàn Thần 10 Thần / 8 Thần Tam Thức)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.56
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.57
+            - **Đồng Bộ Hoàn Toàn Thuật Toán Kỳ Môn Sang Phân Hệ Tam Thức**:
+              + **Cơ Chế Đa Dụng Thần (2 Dụng Thần Đối Trọng + Cung Bản Mệnh)**: Hiển thị đầy đủ Mầm Bệnh (Thiên Nhuế) vs Thầy Thuốc & Y Dược (Thiên Tâm/Ất) vs Bản Mệnh Can Ngày.
+              + **Chuẩn Hóa Ngũ Hành Sinh Khắc Chiêm Bệnh**: Cung Bệnh sinh Bản Mệnh là thế "Bệnh Nhập Thân" (Bệnh mãn tính, bám sâu khó dứt - ĐẠI HUNG), người thắng bệnh (cát lợi), thầy thuốc khắc mầm bệnh (dược đáo bệnh trừ).
+              + **Bộ Chọn Trường Phái 10 Thần (Nguyễn Tấn Công) vs 8 Thần Truyền Thống**: Bổ sung nút chuyển đổi trường phái tức thì trên thanh điều khiển UCC.
+              + **Trụ Cột 2 & Thẻ Địa Lợi Chi Tiết**: Thể hiện Môn, Tinh, Thần, Thập Can Thiên/Địa bàn, nhãn Tuần Không (badge đỏ), Dịch Mã và phương vị cát lợi.
             - **Hỗ Trợ Toàn Diện Nạp File Excel (.xlsx, .xls) Trực Tiếp**:
               + Tích hợp thư viện SheetJS (xlsx.full.min.js) chạy hoàn toàn 100% Offline trên điện thoại không cần internet.
               + Tự động nhận diện cấu trúc bảng tọa độ địa chính từ sổ đỏ (cột X, Y, Northing, Easting, Đỉnh, Điểm mốc, STT).
