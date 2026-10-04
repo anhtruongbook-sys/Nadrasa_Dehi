@@ -84,7 +84,11 @@
     tamHopCanChu: 'Giáp',
     tamHopChiChu: 'Tý',
     tamHopNamChi: 'Thìn',
-    tamHopMoTaSa: ''
+    tamHopMoTaSa: '',
+    // Phân Hệ Linh Thần / Chính Thần Vượng Suy Khí (Huyền Không Đại Quái)
+    isLinhChinhActive: false,
+    isLinhChinhHudCollapsed: true,
+    linhChinhVan: 9
   };
   if (typeof window !== 'undefined') {
     window.lakinhState = state;
@@ -202,6 +206,33 @@
               </marker>
             </defs>
             <g id="lakinh-tamhop-svg-content"></g>
+          </svg>
+          <!-- Lớp Vector Linh Thần / Chính Thần Vượng Suy Khí (Huyền Không Đại Quái) -->
+          <svg id="lakinh-linhchinh-svg" viewBox="0 0 1000 1000" style="${state.isLinhChinhActive ? '' : 'display: none;'}">
+            <defs>
+              <filter id="linhchinh-glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="linhchinh-glow-red" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="linhchinh-glow-amber" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <g id="lakinh-linhchinh-svg-content"></g>
           </svg>
           <!-- Thập Đạo Chỉ Tuyến Trục Dọc (Hướng 12h - Tọa 6h) Chuẩn Xác Tuyệt Đối -->
           <div id="lakinh-target-pointer">
@@ -463,6 +494,50 @@
               </button>
             </div>
           </div>
+
+          <!-- 4. Floating Linh - Chính Thần HUD Card (Huyền Không Đại Quái) -->
+          <div id="lakinh-linhchinh-floating-hud" class="lakinh-glass-panel ${state.isLinhChinhHudCollapsed ? 'is-collapsed' : ''} ${state.isLinhChinhActive ? '' : 'is-hidden'}" style="${state.isLinhChinhActive ? '' : 'display: none;'}">
+            <div class="linhchinh-hud-header">
+              <div class="linhchinh-hud-title-group" id="btn-linhchinh-mini-expand-header" title="Chạm để xem ma trận phi tinh chi tiết">
+                <span class="linhchinh-hud-title">☯️ Linh - Chính Thần</span>
+                <span class="tamhop-pill gold" id="linhchinh-hud-van-label">Vận ${state.linhChinhVan || 9}</span>
+                <span class="tamhop-pill cyan" id="linhchinh-hud-toa-label">Tọa: Đang tính...</span>
+              </div>
+              <div class="tamhop-hud-actions">
+                <button type="button" id="btn-linhchinh-hud-collapse" class="ray-mini-btn-expand" title="Thu gọn / Mở rộng">${state.isLinhChinhHudCollapsed ? '▾ Chi tiết' : '– Thu gọn'}</button>
+                <button type="button" id="btn-linhchinh-hud-close" class="ray-mini-close-btn" title="Tắt lớp Linh - Chính Thần">✕<span class="btn-txt-close"> Tắt</span></button>
+              </div>
+            </div>
+
+            <!-- Thanh Tóm Tắt Khi Thu Gọn (Mini Capsule Cao ~32px Không Che La Kinh) -->
+            <div id="linhchinh-hud-compact-summary" class="tamhop-hud-compact-summary" style="${state.isLinhChinhHudCollapsed ? 'display: flex;' : 'display: none;'}">
+              <span class="tamhop-pill cyan" id="compact-lc-linhvuong" title="Linh Thần Vượng Khí (Kích Thủy)">💧 Linh Vượng: ...</span>
+              <span class="tamhop-pill red" id="compact-lc-chinhvuong" title="Chính Thần Vượng Khí (Tọa Sơn)">🏔️ Chính Vượng: ...</span>
+            </div>
+
+            <!-- Khối Chi Tiết Khi Mở Rộng -->
+            <div id="linhchinh-hud-body" class="linhchinh-hud-body" style="${state.isLinhChinhHudCollapsed ? 'display: none;' : 'display: block; padding-top: 4px;'}">
+              <div class="linhchinh-hud-row">
+                <span class="lbl">Tọa Sơn 6h:</span>
+                <strong id="lc-hud-toason" style="color: #facc15;">...</strong>
+              </div>
+              <div class="linhchinh-hud-row">
+                <span class="lbl">Thượng Quái Tiên Thiên:</span>
+                <strong id="lc-hud-thuongquai" style="color: #38bdf8;">...</strong>
+              </div>
+              <div class="linhchinh-hud-row">
+                <span class="lbl">Bảng 1 (Vận ${state.linhChinhVan || 9}):</span>
+                <span id="lc-hud-b1-rule" style="color: #cbd5e1; font-size: 0.70rem;">...</span>
+              </div>
+              <div class="linhchinh-hud-row">
+                <span class="lbl">Bảng 2 (Nhập sao):</span>
+                <span id="lc-hud-b2-rule" style="color: #4ade80; font-size: 0.70rem;">...</span>
+              </div>
+              <div id="lc-hud-matrix" style="margin-top: 4px; overflow-x: auto;">
+                <!-- 8 Cung table -->
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Floating Ray HUD Card trên màn hình (Chi tiết khi mở rộng tia ngắm) -->
@@ -543,6 +618,9 @@
               </button>
               <button class="lakinh-float-btn icon-only" id="lakinh-btn-tam-hop" title="Thẩm Định Phong Thủy Tam Hợp Phái ">
                 🌊
+              </button>
+              <button class="lakinh-float-btn icon-only ${state.isLinhChinhActive ? 'active' : ''}" id="lakinh-btn-linh-chinh" title="Linh Thần / Chính Thần Vượng Suy Khí (Huyền Không Đại Quái)">
+                ☯️
               </button>
               <button class="lakinh-float-btn icon-only ${state.isQmdjStratActive ? 'active' : ''}" id="lakinh-btn-qmdj-strat" title="Bật/Tắt Lớp Chiến Lược Kỳ Môn">
                 ⚔️
@@ -1055,6 +1133,9 @@
             <button id="sheet-btn-hkdq" class="lakinh-action-btn gold">
               🔱 Phân Kim Đại Quái 64 Quẻ (384 Hào)
             </button>
+            <button id="sheet-btn-linh-chinh" class="lakinh-action-btn ${state.isLinhChinhActive ? 'primary' : 'secondary'}" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700;">
+              ☯️ ${state.isLinhChinhActive ? 'Đang Bật Linh - Chính Thần Vượng Suy' : 'Bật Lớp Linh - Chính Thần Vượng Suy'}
+            </button>
             <button id="sheet-btn-centroid" class="lakinh-action-btn secondary">
               📐 Vẽ Ranh Đất / Tìm Tim Nhà
             </button>
@@ -1412,6 +1493,22 @@
           el.setAttribute('transform', `rotate(${rounded}, ${cx}, ${cy})`);
         }
       });
+    }
+
+    const lcSvg = document.getElementById('lakinh-linhchinh-svg');
+    if (lcSvg) {
+      lcSvg.style.transform = `rotate(${-rounded}deg)`;
+      lcSvg.querySelectorAll('.linhchinh-counter-rotate').forEach(el => {
+        const cx = el.getAttribute('data-cx');
+        const cy = el.getAttribute('data-cy');
+        if (cx && cy) {
+          el.setAttribute('transform', `rotate(${rounded}, ${cx}, ${cy})`);
+        }
+      });
+    }
+
+    if (state.isLinhChinhActive && typeof updateLinhChinhLayer === 'function') {
+      updateLinhChinhLayer();
     }
 
     const pillDeg = document.getElementById('hud-pill-deg');
@@ -2984,7 +3081,259 @@
     }
   }
 
-function updateQmdjStrategicLayer() {
+  function describeArcSector(cx, cy, rIn, rOut, startAngleDeg, endAngleDeg) {
+    let sDeg = startAngleDeg;
+    let eDeg = endAngleDeg;
+    if (eDeg <= sDeg) eDeg += 360;
+
+    const rad = Math.PI / 180;
+    const startRad = (sDeg - 90) * rad;
+    const endRad = (eDeg - 90) * rad;
+
+    const x1 = cx + rOut * Math.cos(startRad);
+    const y1 = cy + rOut * Math.sin(startRad);
+    const x2 = cx + rOut * Math.cos(endRad);
+    const y2 = cy + rOut * Math.sin(endRad);
+    const x3 = cx + rIn * Math.cos(endRad);
+    const y3 = cy + rIn * Math.sin(endRad);
+    const x4 = cx + rIn * Math.cos(startRad);
+    const y4 = cy + rIn * Math.sin(startRad);
+
+    const largeArcFlag = (eDeg - sDeg) > 180 ? 1 : 0;
+
+    return [
+      `M ${x1} ${y1}`,
+      `A ${rOut} ${rOut} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+      `L ${x3} ${y3}`,
+      `A ${rIn} ${rIn} 0 ${largeArcFlag} 0 ${x4} ${y4}`,
+      'Z'
+    ].join(' ');
+  }
+
+  function updateLinhChinhLayer() {
+    const btnQuick = document.getElementById('lakinh-btn-linh-chinh');
+    const svgOverlay = document.getElementById('lakinh-linhchinh-svg');
+    const svgContent = document.getElementById('lakinh-linhchinh-svg-content');
+    const hud = document.getElementById('lakinh-linhchinh-floating-hud');
+
+    if (!state.isLinhChinhActive) {
+      if (btnQuick) btnQuick.classList.remove('active');
+      if (svgOverlay) svgOverlay.style.display = 'none';
+      if (hud) {
+        hud.style.display = 'none';
+        hud.classList.add('is-hidden');
+      }
+      return;
+    }
+
+    if (btnQuick) btnQuick.classList.add('active');
+    if (svgOverlay) {
+      svgOverlay.style.display = 'block';
+      svgOverlay.style.transform = `rotate(${-state.rotation}deg)`;
+    }
+    if (hud) {
+      hud.classList.remove('is-hidden');
+      hud.style.display = state.isLinhChinhHudCollapsed ? 'flex' : 'block';
+      hud.classList.toggle('is-collapsed', !!state.isLinhChinhHudCollapsed);
+    }
+
+    if (!global.LinhChinhEngine) {
+      console.warn("LinhChinhEngine chưa nạp xong");
+      return;
+    }
+
+    const curHuongDeg = normalizeDeg(state.rotation || 0);
+    const van = state.linhChinhVan || 9;
+    const res = global.LinhChinhEngine.calculateLinhChinhThan({ huongDeg: curHuongDeg, currentVan: van });
+
+    if (!res || !res.cungResults) return;
+
+    if (svgContent) {
+      let svgHtml = '';
+      const cx = 500, cy = 500;
+      const rIn = 458, rOut = 496; // Vành mỏng 38px ngoài cùng, tuyệt đối không che chữ 36 tầng
+      const rLabel = 477; // Bán kính tâm capsule
+
+      const cungList = [
+        { cungId: 1, name: 'Khảm', midDeg: 0, startDeg: 337.5, endDeg: 22.5 },
+        { cungId: 8, name: 'Cấn', midDeg: 45, startDeg: 22.5, endDeg: 67.5 },
+        { cungId: 3, name: 'Chấn', midDeg: 90, startDeg: 67.5, endDeg: 112.5 },
+        { cungId: 4, name: 'Tốn', midDeg: 135, startDeg: 112.5, endDeg: 157.5 },
+        { cungId: 9, name: 'Ly', midDeg: 180, startDeg: 157.5, endDeg: 202.5 },
+        { cungId: 2, name: 'Khôn', midDeg: 225, startDeg: 202.5, endDeg: 247.5 },
+        { cungId: 7, name: 'Đoài', midDeg: 270, startDeg: 247.5, endDeg: 292.5 },
+        { cungId: 6, name: 'Càn', midDeg: 315, startDeg: 292.5, endDeg: 337.5 }
+      ];
+
+      cungList.forEach(c => {
+        const item = res.cungResults.find(r => r.cungId === c.cungId) || {};
+        const ketLuan = item.ketLuan || 'UNKNOWN';
+        const saoB2 = item.saoB2 || '?';
+
+        let fillColor, strokeColor, strokeWidth, filterUrl, badgeBg, badgeBorder, badgeText, badgeIcon, tagLabel;
+
+        if (ketLuan === 'LINH_VUONG') {
+          fillColor = 'rgba(6, 182, 212, 0.40)';
+          strokeColor = '#06b6d4';
+          strokeWidth = 2.5;
+          filterUrl = 'url(#linhchinh-glow-cyan)';
+          badgeBg = 'rgba(8, 51, 68, 0.95)';
+          badgeBorder = '#22d3ee';
+          badgeText = '#38bdf8';
+          badgeIcon = '💧';
+          tagLabel = 'L.VƯỢNG';
+        } else if (ketLuan === 'CHINH_VUONG') {
+          fillColor = 'rgba(239, 68, 68, 0.40)';
+          strokeColor = '#ef4444';
+          strokeWidth = 2.5;
+          filterUrl = 'url(#linhchinh-glow-red)';
+          badgeBg = 'rgba(69, 10, 10, 0.95)';
+          badgeBorder = '#f87171';
+          badgeText = '#fca5a5';
+          badgeIcon = '🏔️';
+          tagLabel = 'C.VƯỢNG';
+        } else if (ketLuan === 'LINH_SUY') {
+          fillColor = 'rgba(71, 85, 105, 0.25)';
+          strokeColor = '#94a3b8';
+          strokeWidth = 1.5;
+          filterUrl = 'none';
+          badgeBg = 'rgba(30, 41, 59, 0.92)';
+          badgeBorder = '#64748b';
+          badgeText = '#94a3b8';
+          badgeIcon = '⚠️';
+          tagLabel = 'L.SUY';
+        } else {
+          fillColor = 'rgba(217, 119, 6, 0.32)';
+          strokeColor = '#f59e0b';
+          strokeWidth = 2.0;
+          filterUrl = 'url(#linhchinh-glow-amber)';
+          badgeBg = 'rgba(69, 26, 3, 0.92)';
+          badgeBorder = '#f59e0b';
+          badgeText = '#fcd34d';
+          badgeIcon = '🛡️';
+          tagLabel = 'C.SUY';
+        }
+
+        const pathData = describeArcSector(cx, cy, rIn, rOut, c.startDeg, c.endDeg);
+        svgHtml += `<path d="${pathData}" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}" ${filterUrl !== 'none' ? `filter="${filterUrl}"` : ''} />`;
+
+        const rad = Math.PI / 180;
+        const midRad = (c.midDeg - 90) * rad;
+        const lx = cx + rLabel * Math.cos(midRad);
+        const ly = cy + rLabel * Math.sin(midRad);
+
+        const curRot = state.rotation || 0;
+        svgHtml += `
+          <g class="linhchinh-counter-rotate" data-cx="${lx}" data-cy="${ly}" transform="rotate(${curRot}, ${lx}, ${ly})">
+            <rect x="${lx - 30}" y="${ly - 10}" width="60" height="20" rx="10" fill="${badgeBg}" stroke="${badgeBorder}" stroke-width="1.2" />
+            <text x="${lx}" y="${ly + 3.5}" text-anchor="middle" font-size="8.5" font-weight="800" fill="${badgeText}" font-family="system-ui, sans-serif">
+              ${badgeIcon}${saoB2} ${tagLabel}
+            </text>
+          </g>
+        `;
+      });
+
+      // Đánh dấu TỌA SƠN (6h) ở góc 180°
+      const toaRad = (180 - 90) * Math.PI / 180;
+      const toaTx1 = cx + 450 * Math.cos(toaRad);
+      const toaTy1 = cy + 450 * Math.sin(toaRad);
+      const toaTx2 = cx + 498 * Math.cos(toaRad);
+      const toaTy2 = cy + 498 * Math.sin(toaRad);
+      svgHtml += `<line x1="${toaTx1}" y1="${toaTy1}" x2="${toaTx2}" y2="${toaTy2}" stroke="#facc15" stroke-width="3" stroke-dasharray="3,2" />`;
+
+      svgContent.innerHTML = svgHtml;
+    }
+
+    if (hud) {
+      const toaLabel = document.getElementById('linhchinh-hud-toa-label');
+      const vanLabel = document.getElementById('linhchinh-hud-van-label');
+      const cpLinh = document.getElementById('compact-lc-linhvuong');
+      const cpChinh = document.getElementById('compact-lc-chinhvuong');
+
+      if (vanLabel) vanLabel.textContent = `Vận ${res.currentVan}`;
+      if (toaLabel) {
+        toaLabel.textContent = `Tọa: ${res.toaQue ? res.toaQue.name : 'Chưa rõ'} (${res.toaQue ? res.toaQue.thuongQuai : ''})`;
+      }
+
+      const linhVuongCungs = res.cungResults.filter(r => r.ketLuan === 'LINH_VUONG').map(r => `${r.cungName} [${r.saoB2}]`);
+      const chinhVuongCungs = res.cungResults.filter(r => r.ketLuan === 'CHINH_VUONG').map(r => `${r.cungName} [${r.saoB2}]`);
+
+      if (cpLinh) {
+        cpLinh.textContent = `💧 Linh Vượng: ${linhVuongCungs.join(', ') || 'Không'}`;
+      }
+      if (cpChinh) {
+        cpChinh.textContent = `🏔️ Chính Vượng: ${chinhVuongCungs.join(', ') || 'Không'}`;
+      }
+
+      const elToaSon = document.getElementById('lc-hud-toason');
+      const elThuongQuai = document.getElementById('lc-hud-thuongquai');
+      const elB1Rule = document.getElementById('lc-hud-b1-rule');
+      const elB2Rule = document.getElementById('lc-hud-b2-rule');
+      const elMatrix = document.getElementById('lc-hud-matrix');
+
+        if (elToaSon) {
+          elToaSon.textContent = `${res.toaQue ? res.toaQue.name : ''} (Tọa ${res.toaDeg.toFixed(1)}° • Sơn ${res.toaQue ? res.toaQue.son : ''})`;
+        }
+        if (elThuongQuai) {
+          elThuongQuai.textContent = `${res.thuongQuaiName} ➔ Hướng Tiên Thiên: ${res.huongTienThienThuongQuai} ➔ Lấy sao [${res.saoNhapB2}]`;
+        }
+        if (elB1Rule) {
+          elB1Rule.textContent = `Vận ${res.currentVan} (${res.ruleB1}): Nhập trung cung phi ${res.phiThuanB1 ? 'Thuận (+)' : 'Nghịch (-)'}`;
+        }
+        if (elB2Rule) {
+          elB2Rule.textContent = `Sao [${res.saoNhapB2}] (${res.ruleB2}) ➔ Phi ${res.phiThuanB2 ? 'Thuận (+)' : 'Nghịch (-)'}`;
+        }
+
+        if (elMatrix) {
+          let matrixHtml = `
+            <table class="lc-matrix-table" style="width: 100%; font-size: 0.68rem; border-collapse: collapse; margin-top: 4px;">
+              <thead>
+                <tr style="color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.15);">
+                  <th style="padding: 2px 4px; text-align: left;">Cung</th>
+                  <th style="padding: 2px 4px; text-align: center;">Sao B2</th>
+                  <th style="padding: 2px 4px; text-align: center;">Khí</th>
+                  <th style="padding: 2px 4px; text-align: center;">Thần</th>
+                  <th style="padding: 2px 4px; text-align: left;">Kết Luận</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          res.cungResults.forEach(r => {
+            let rowColor = r.ketLuan === 'LINH_VUONG' ? '#38bdf8' : (r.ketLuan === 'CHINH_VUONG' ? '#f87171' : (r.ketLuan === 'LINH_SUY' ? '#94a3b8' : '#f59e0b'));
+            matrixHtml += `
+              <tr style="border-bottom: 1px dashed rgba(255,255,255,0.06); color: ${rowColor};">
+                <td style="padding: 2px 4px; font-weight: 700;">${r.cungName} (${r.huong})</td>
+                <td style="padding: 2px 4px; text-align: center; font-weight: 800;">${r.saoB2}</td>
+                <td style="padding: 2px 4px; text-align: center;">${r.vuongSuy}</td>
+                <td style="padding: 2px 4px; text-align: center;">${r.linhChinh}</td>
+                <td style="padding: 2px 4px; font-weight: 700;">${r.dienGiai}</td>
+              </tr>
+            `;
+          });
+          matrixHtml += `</tbody></table>`;
+          elMatrix.innerHTML = matrixHtml;
+        }
+      }
+    }
+
+  function toggleLinhChinhLayer(forceState) {
+    if (forceState !== undefined) {
+      state.isLinhChinhActive = forceState;
+    } else {
+      state.isLinhChinhActive = !state.isLinhChinhActive;
+    }
+    if (state.isLinhChinhActive) {
+      state.isLinhChinhHudCollapsed = true;
+    }
+    updateLinhChinhLayer();
+    if (typeof showLaKinhToast === 'function') {
+      showLaKinhToast(state.isLinhChinhActive
+        ? '☯️ Đã bật Lớp Linh - Chính Thần Vượng Suy (HKĐQ)'
+        : 'Đã tắt Lớp Linh - Chính Thần');
+    }
+  }
+
+  function updateQmdjStrategicLayer() {
     const btnQuick = document.getElementById('lakinh-btn-qmdj-strat');
     const svgOverlay = document.getElementById('lakinh-qmdj-svg');
     const svgContent = document.getElementById('lakinh-qmdj-svg-content');
@@ -6448,6 +6797,51 @@ function updateQmdjStrategicLayer() {
       });
     }
 
+    const btnQuickLinhChinh = document.getElementById('lakinh-btn-linh-chinh');
+    if (btnQuickLinhChinh) {
+      btnQuickLinhChinh.addEventListener('click', (e) => {
+        if (e) e.stopPropagation();
+        toggleLinhChinhLayer();
+      });
+    }
+
+    const btnLcCollapse = document.getElementById('btn-linhchinh-hud-collapse');
+    const toggleLcCollapse = (e) => {
+      if (e) e.stopPropagation();
+      state.isLinhChinhHudCollapsed = !state.isLinhChinhHudCollapsed;
+      const hud = document.getElementById('lakinh-linhchinh-floating-hud');
+      const hudBody = document.getElementById('linhchinh-hud-body');
+      const hudCompact = document.getElementById('linhchinh-hud-compact-summary');
+      if (hud) {
+        hud.classList.toggle('is-collapsed', state.isLinhChinhHudCollapsed);
+        hud.style.display = state.isLinhChinhHudCollapsed ? 'flex' : 'block';
+      }
+      if (hudBody) hudBody.style.display = state.isLinhChinhHudCollapsed ? 'none' : 'block';
+      if (hudCompact) hudCompact.style.display = state.isLinhChinhHudCollapsed ? 'flex' : 'none';
+      if (btnLcCollapse) btnLcCollapse.textContent = state.isLinhChinhHudCollapsed ? '▾ Chi tiết' : '– Thu gọn';
+      if (!state.isLinhChinhHudCollapsed) {
+        updateLinhChinhLayer();
+      }
+    };
+    if (btnLcCollapse) btnLcCollapse.addEventListener('click', toggleLcCollapse);
+    const compactLc = document.getElementById('linhchinh-hud-compact-summary');
+    if (compactLc) compactLc.addEventListener('click', toggleLcCollapse);
+    const miniLcHeader = document.getElementById('btn-linhchinh-mini-expand-header');
+    if (miniLcHeader) miniLcHeader.addEventListener('click', toggleLcCollapse);
+
+    const btnLcClose = document.getElementById('btn-linhchinh-hud-close');
+    if (btnLcClose) {
+      const handleCloseLinhChinh = (e) => {
+        if (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        toggleLinhChinhLayer(false);
+      };
+      btnLcClose.addEventListener('click', handleCloseLinhChinh);
+      btnLcClose.addEventListener('touchend', handleCloseLinhChinh);
+    }
+
     ['hud-row-hkdq-que', 'hud-row-hkdq-hao', 'hud-row-hkdq-badges'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
@@ -7723,6 +8117,15 @@ function updateQmdjStrategicLayer() {
 
     const btnHKDQ = document.getElementById('sheet-btn-hkdq');
     if (btnHKDQ) btnHKDQ.addEventListener('click', openHKDQModal);
+
+    const btnSheetLC = document.getElementById('sheet-btn-linh-chinh');
+    if (btnSheetLC) {
+      btnSheetLC.addEventListener('click', () => {
+        toggleLinhChinhLayer();
+        btnSheetLC.textContent = state.isLinhChinhActive ? '☯️ Đang Bật Linh - Chính Thần Vượng Suy' : '☯️ Bật Lớp Linh - Chính Thần Vượng Suy';
+        btnSheetLC.className = `lakinh-action-btn ${state.isLinhChinhActive ? 'primary' : 'secondary'}`;
+      });
+    }
 
     const btnCentroid = document.getElementById('sheet-btn-centroid');
     if (btnCentroid) {
@@ -9388,6 +9791,8 @@ ${isHopCach ? 'HỢP CÁCH PHONG THỦY TAM HỢP PHÁI - ĐINH TÀI LƯỠNG V�
     updateQmdjStrategicLayer: updateQmdjStrategicLayer,
     toggleTamHopLayer: toggleTamHopLayer,
     updateTamHopLayer: updateTamHopLayer,
+    toggleLinhChinhLayer: toggleLinhChinhLayer,
+    updateLinhChinhLayer: updateLinhChinhLayer,
     loadFloorPlanFile: loadFloorPlanFile,
     setFloorPlanFromDataUrl: setFloorPlanFromDataUrl,
     removeFloorPlan: removeFloorPlan,

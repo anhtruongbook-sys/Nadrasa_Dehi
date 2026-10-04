@@ -1526,10 +1526,55 @@
         </div>
       </div>
 
-      <!-- 3. THẨM ĐỊNH PHỐI QUẺ BÍ TRUYỀN VẬN 9 -->
+      <!-- 2.5. PHÂN ĐỊNH LINH - CHÍNH THẦN VƯỢNG SUY KHÍ (4 BƯỚC PHI TINH) -->
+      ${(() => {
+        if (!global.LinhChinhEngine) return '';
+        const lcRes = global.LinhChinhEngine.calculateLinhChinhThan({ huongDeg: deg, currentVan: 9 });
+        if (!lcRes || !lcRes.cungResults) return '';
+
+        return `
+          <div class="dialy-card-section">
+            <div class="dialy-card-title">
+              <span>☯️ 3. Linh - Chính Thần Vượng Suy Khí (Huyền Không Đại Quái)</span>
+              <span class="dialy-badge cyan">Vận 9 • Tọa Sơn 6h</span>
+            </div>
+
+            <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 6px;">
+              Tọa Sơn (6h): <b style="color: #facc15;">${lcRes.toaQue ? lcRes.toaQue.name : ''}</b> (${lcRes.toaDeg.toFixed(1)}°) • Thượng Quái: <b style="color: #38bdf8;">${lcRes.thuongQuaiName}</b> (Tiên Thiên: ${lcRes.huongTienThienThuongQuai})
+            </div>
+
+            <!-- Quy trình 4 bước phi tinh -->
+            <div style="background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; font-size: 0.68rem; line-height: 1.45; color: #cbd5e1;">
+              <div>• <b>B1 (Vận 9 Lẻ):</b> Nhập trung cung phi Thuận ➔ Hướng ${lcRes.huongTienThienThuongQuai} có sao [<b>${lcRes.saoNhapB2}</b>]</div>
+              <div>• <b>B2 (Sao nhập [${lcRes.saoNhapB2}]):</b> So với Vận 9 khác tính chẵn lẻ ➔ Phi ${lcRes.phiThuanB2 ? 'Thuận (+)' : 'Nghịch (-)'}</div>
+              <div>• <b>B3 & B4:</b> Sao 1, 5, 9 vượng cả Thượng/Hạ; Hạ nguyên số 6, 7, 8 vượng (2, 3, 4 suy); Cung 1,2,3,4 là Chính Thần, 6,7,8,9 là Linh Thần.</div>
+            </div>
+
+            <!-- Ma trận 8 Cung -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              ${lcRes.cungResults.map(c => {
+                let badgeClass = c.ketLuan === 'LINH_VUONG' ? 'cyan' : (c.ketLuan === 'CHINH_VUONG' ? 'green' : (c.ketLuan === 'LINH_SUY' ? 'purple' : 'gold'));
+                let titleColor = c.ketLuan === 'LINH_VUONG' ? '#38bdf8' : (c.ketLuan === 'CHINH_VUONG' ? '#f87171' : (c.ketLuan === 'LINH_SUY' ? '#94a3b8' : '#f59e0b'));
+                return `
+                  <div class="dialy-parity-mini-card" style="border-left: 3px solid ${titleColor};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                      <b style="color: ${titleColor};">${c.cungName} (${c.huong})</b>
+                      <span class="dialy-badge ${badgeClass}" style="font-size: 0.60rem; padding: 1px 4px;">Sao ${c.saoB2}</span>
+                    </div>
+                    <div style="font-size: 0.70rem; font-weight: 800; color: #f8fafc;" class="dialy-item-title">${c.dienGiai}</div>
+                    <div style="font-size: 0.64rem; color: #94a3b8; margin-top: 2px; line-height: 1.35;" class="dialy-item-desc">${c.loiKhuyen}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      })()}
+
+      <!-- 4. THẨM ĐỊNH PHỐI QUẺ BÍ TRUYỀN VẬN 9 -->
       <div class="dialy-card-section">
         <div class="dialy-card-title">
-          <span>⚖️ 3. Thẩm Định Phối Quẻ Bí Truyền Vận 9</span>
+          <span>⚖️ 4. Thẩm Định Phối Quẻ Bí Truyền Vận 9</span>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.70rem;">

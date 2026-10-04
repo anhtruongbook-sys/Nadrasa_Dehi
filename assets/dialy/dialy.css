@@ -1363,5 +1363,14 @@ body.theme-light .dialy-panel4-formula-strip {
   color: #0369a1 !important;
 }
 
+/* Light Theme Overrides for Linh - Chính Thần */
+body.theme-light .dialy-item-title {
+  color: #0f172a !important;
+}
+body.theme-light .dialy-item-desc {
+  color: #334155 !important;
+}
+
+
 
 
