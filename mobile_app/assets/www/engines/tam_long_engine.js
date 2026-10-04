@@ -790,6 +790,124 @@
       }
       return list;
     }
+
+    /**
+     * Sinh ma trận không gian 2D (DEM, Slope, WEI, MCE) quanh tâm trạch (bán kính R = 600m)
+     * Phục vụ hiển thị 4 đồ hình tính toán động thời gian thực theo đúng tọa độ khảo sát
+     */
+    static generateSpatialMatrix({ lat, lng, headingDeg = 0, demResult = null, size = 21, radiusM = 600 } = {}) {
+      const N = size;
+      const stepM = (2 * radiusM) / (N - 1);
+      const normBrg = b => ((b % 360) + 360) % 360;
+      const toaDeg = normBrg(headingDeg + 180.0);
+
+      const loanDau = this.analyzeLoanDau({ lat, lng, headingDeg, demResult });
+      const centerElev = loanDau.centerElev;
+      const tuTuong = loanDau.tuTuong;
+
+      const grid = [];
+      let minElev = Infinity, maxElev = -Infinity;
+
+      for (let j = 0; j < N; j++) {
+        const row = [];
+        const dy = radiusM - j * stepM; // dy > 0: Bắc
+        for (let i = 0; i < N; i++) {
+          const dx = -radiusM + i * stepM; // dx > 0: Đông
+          const r = Math.hypot(dx, dy);
+          const angle = normBrg(Math.atan2(dx, dy) * 180 / Math.PI);
+
+          let elev = centerElev;
+          if (demResult && demResult.tiers && demResult.tiers.dai && demResult.tiers.dai.length > 0) {
+            const sDai = this._getElevationAtBearing(demResult.tiers.dai, angle, centerElev);
+            const sTrung = this._getElevationAtBearing(demResult.tiers.trung, angle, centerElev);
+            const sTieu = this._getElevationAtBearing(demResult.tiers.tieu, angle, centerElev);
+            if (r <= 30) {
+              elev = centerElev + (sTieu - centerElev) * (r / 30);
+            } else if (r <= 180) {
+              elev = sTieu + (sTrung - sTieu) * ((r - 30) / 150);
+            } else {
+              elev = sTrung + (sDai - sTrung) * (Math.min(r - 180, 420) / 420);
+            }
+          } else {
+            const angleDiffSitting = Math.cos((angle - toaDeg) * Math.PI / 180);
+            const ridgeFactor = Math.max(0, angleDiffSitting);
+            const valleyFactor = Math.max(0, -angleDiffSitting);
+            const deltaHuyenVu = (tuTuong && tuTuong.huyenVu && tuTuong.huyenVu.deltaElev) || 4.5;
+            const deltaChuTuoc = (tuTuong && tuTuong.chuTuoc && tuTuong.chuTuoc.deltaElev) || -2.8;
+            elev = centerElev + (ridgeFactor * deltaHuyenVu * (r / radiusM))
+                              + (valleyFactor * deltaChuTuoc * (r / radiusM));
+            elev += Math.sin(dx / 70) * Math.cos(dy / 70) * 0.6;
+          }
+
+          elev = +elev.toFixed(1);
+          if (elev < minElev) minElev = elev;
+          if (elev > maxElev) maxElev = elev;
+
+          row.push({ x: i, y: j, dx, dy, r, angle, elev });
+        }
+        grid.push(row);
+      }
+
+      let topScore = -1;
+      let topPt = { x: Math.floor(N/2), y: Math.floor(N/2), dx: 0, dy: 0, elev: centerElev, slopeDeg: 4.5, score: 50 };
+
+      for (let j = 0; j < N; j++) {
+        for (let i = 0; i < N; i++) {
+          const pt = grid[j][i];
+          const iPrev = Math.max(0, i - 1), iNext = Math.min(N - 1, i + 1);
+          const jPrev = Math.max(0, j - 1), jNext = Math.min(N - 1, j + 1);
+          const dzDx = (grid[j][iNext].elev - grid[j][iPrev].elev) / ((iNext - iPrev) * stepM || 1);
+          const dzDy = (grid[jNext][i].elev - grid[jPrev][i].elev) / ((jNext - jPrev) * stepM || 1);
+          const grad = Math.hypot(dzDx, dzDy);
+          pt.slopeDeg = +(Math.atan(grad) * 180 / Math.PI).toFixed(1);
+
+          // Chỉ số che chắn Tàng Phong
+          const isShelteredByBack = grid[Math.max(0, j - 1)][i].elev >= pt.elev;
+          const isFrontOpen = grid[Math.min(N - 1, j + 1)][i].elev <= pt.elev + 1.2;
+          let wei = 0.5;
+          if (isShelteredByBack) wei += 0.3;
+          if (isFrontOpen) wei += 0.2;
+          pt.wei = +Math.min(1.0, wei).toFixed(2);
+
+          // Điểm xác suất chân huyệt Spatial MCE
+          let mce = 50;
+          if (pt.slopeDeg >= 3.0 && pt.slopeDeg <= 8.5) mce += 25;
+          else if (pt.slopeDeg < 3.0) mce += 10;
+          else if (pt.slopeDeg > 15.0) mce -= 20;
+
+          mce += (pt.wei - 0.5) * 30;
+          mce -= (pt.r / radiusM) * 15;
+          mce = Math.round(Math.min(Math.max(mce, 20), 100));
+          pt.mceScore = mce;
+
+          if (mce > topScore) {
+            topScore = mce;
+            topPt = { x: i, y: j, dx: pt.dx, dy: pt.dy, elev: pt.elev, slopeDeg: pt.slopeDeg, score: mce };
+          }
+        }
+      }
+
+      return {
+        grid,
+        N,
+        radiusM,
+        stepM,
+        minElev,
+        maxElev,
+        centerElev,
+        centerPt: grid[Math.floor(N/2)][Math.floor(N/2)],
+        topChanhuyet: topPt,
+        laiLong: loanDau.laiLong,
+        thuyKhau: loanDau.thuyKhau,
+        tuTuong: loanDau.tuTuong,
+        weiPercent: loanDau.weiPercent,
+        score: loanDau.score,
+        headingDeg,
+        toaDeg,
+        lat,
+        lng
+      };
+    }
   }
 
   // Export engine ra global window & module exports

@@ -27,36 +27,244 @@
     panel4ActiveTab: 'dem' // 'dem' | 'slope' | 'tangphong' | 'heatmap'
   };
 
-  const PANEL4_CONFIGS = {
-    dem: {
-      src: 'assets/dialy/hinh_3_1_dem_long_thuy.png',
-      title: 'HÌNH 3.1: BẢN ĐỒ ĐỊA HÌNH SỐ (DEM), KHUNG XƯƠNG SỐNG LONG & MẠNG LƯỚI THỦY HỆ',
-      badge: 'Lưới DEM 120x120 (2.8km x 2.8km)',
-      desc: 'Bóc tách sống Long mạch chính (Ridge Skeleton) dựa trên chỉ số vị trí địa hình TPI > 3.0m và mạng thủy lưu D8 (Flow Accumulation >= 120 ô lưới). Tọa sơn Thái Tổ Sơn 68.4m, Chân Huyệt Top 1 tại thềm cao độ +8.0m.',
-      formula: 'TPI = Z0 - Mean(Zi) > 3.0m | FA(x, y) = 1 + SUM(FA_inflow) >= 120 | d_ridge in [50m, 250m]'
-    },
-    slope: {
-      src: 'assets/dialy/hinh_3_2_slope_dia_mao.png',
-      title: 'HÌNH 3.2: BẢN ĐỒ ĐỘ DỐC (SLOPE) & VI ĐỊA MẠO BỀ MẶT HUYỆT TRƯỜNG',
-      badge: 'Zevenbergen-Thorne 1987',
-      desc: 'Phân tích vi phân độ dốc và độ cong bề mặt: Vùng nước vịnh (0° - 2°), thềm đất tụ khí (4° - 8°), sườn đồi dốc mạnh (> 15°). Chân Huyệt Top 1 đạt độ dốc 9.2° với k_plan > 0 tụ sinh khí, thoát nước tự nhiên an toàn.',
-      formula: 'Slope = arctan(sqrt(p^2 + q^2)) * (180/pi) | k_prof (độ thoải), k_plan (hội tụ sinh khí)'
-    },
-    tangphong: {
-      src: 'assets/dialy/hinh_3_3_tang_phong_tu_tuong.png',
-      title: 'HÌNH 3.3: BẢN ĐỒ CHỈ SỐ TÀNG PHONG & HỘ VỆ TỨ TƯỢNG (WEI)',
-      badge: '360° Raycasting WEI: 0.86/1.00',
-      desc: 'Định lượng góc che chắn chân trời cực đại (Horizon Elevation Angles) theo 8 phương tia. Hậu Huyền Vũ tựa đồi cao chắn gió bấc, Tiền Chu Tước mở quang đãng đón thủy khí, Tả Long Hữu Hổ bao bọc khép kín.',
-      formula: 'beta_k = max_r [ arctan((Z(r, alpha_k) - Z0)/r) ] | WEI = (1/8) * SUM [ max(0, beta_k) ]'
-    },
-    heatmap: {
-      src: 'assets/dialy/hinh_3_4_heatmap_chan_huyet.png',
-      title: 'HÌNH 3.4: BẢN ĐỒ NHIỆT XÁC SUẤT HUYỆT TRƯỜNG & TOP CHÂN HUYỆT (MCE)',
-      badge: 'Top 1 Chân Huyệt (100.0/100đ)',
-      desc: 'Mô hình hợp nhất đa tiêu chí không gian (Spatial MCE) kết hợp lọc triệt tiêu cực đại cục bộ (NMS bán kính 150m). Chân Huyệt Top 1 (Oa Huyệt) đạt điểm tuyệt đối 100/100 điểm, thế Tọa Tốn Hướng Càn.',
-      formula: 'S(x,y) = 0.25*Encl + 0.20*Animals + 0.15*Vein + 0.20*Water + 0.20*Hall | NMS R_min = 150m'
+  // Trả về cấu hình mô tả động cho 4 đồ hình tính toán theo số liệu địa điểm khảo sát
+  function getDynamicPanelConfig(panelKey, spatialData) {
+    const lat = (spatialData && typeof spatialData.lat === 'number') ? spatialData.lat : 21.0285;
+    const lng = (spatialData && typeof spatialData.lng === 'number') ? spatialData.lng : 105.8542;
+    const centerElev = (spatialData && typeof spatialData.centerElev === 'number') ? spatialData.centerElev : 18.5;
+    const minElev = (spatialData && typeof spatialData.minElev === 'number') ? spatialData.minElev : centerElev - 5;
+    const maxElev = (spatialData && typeof spatialData.maxElev === 'number') ? spatialData.maxElev : centerElev + 10;
+    const weiPercent = (spatialData && typeof spatialData.weiPercent === 'number') ? spatialData.weiPercent : 45;
+    const centerPt = (spatialData && spatialData.centerPt) ? spatialData.centerPt : { slopeDeg: 5.2, mceScore: 65 };
+    const topChanhuyet = (spatialData && spatialData.topChanhuyet) ? spatialData.topChanhuyet : { score: 85, dx: 40, dy: -60 };
+
+    const configs = {
+      dem: {
+        title: 'HÌNH 1: BẢN ĐỒ ĐỊA HÌNH SỐ (DEM) & KHUNG XƯƠNG SỐNG LONG - THỦY HỆ',
+        badge: `Lưới Cao Độ: ${minElev.toFixed(1)}m → ${maxElev.toFixed(1)}m`,
+        desc: `Bóc tách cao độ thực tế cho tọa độ (${lat.toFixed(5)}°, ${lng.toFixed(5)}°). Tâm trạch đạt cao độ +${centerElev.toFixed(1)}m. Hiển thị đường sống Long mạch và hướng tụ thủy theo địa hình tự nhiên.`,
+        formula: 'TPI = Z0 - Mean(Zi) | Mạng Thủy Lưu D8 Routing | d_ridge in [50m, 250m]'
+      },
+      slope: {
+        title: 'HÌNH 2: BẢN ĐỒ ĐỘ DỐC (SLOPE) & VI ĐỊA MẠO HUYỆT TRƯỜNG',
+        badge: `Độ dốc tâm: ${centerPt.slopeDeg}°`,
+        desc: `Phân tích vi phân độ dốc trong bán kính 600m: Xanh lam (<2.5° bằng phẳng), Xanh lá (3°-8.5° Thềm Tụ Khí Cát), Đỏ (>15° Sườn dốc mạnh). Điểm khảo sát đạt ${centerPt.slopeDeg}°.`,
+        formula: 'Slope = arctan(sqrt(dz_dx^2 + dz_dy^2)) * (180/pi) | Phân tầng vi địa mạo tụ khí'
+      },
+      tangphong: {
+        title: 'HÌNH 3: BẢN ĐỒ TÀNG PHONG & HỘ VỆ TỨ TƯỢNG (WEI)',
+        badge: `WEI Tự Nhiên: ${weiPercent}%`,
+        desc: `Định lượng góc che chắn chân trời theo 8 phương tia thực địa (Huyền Vũ, Chu Tước, Thanh Long, Bạch Hổ). Khả năng tụ khí tàng phong đạt ${weiPercent}%.`,
+        formula: 'beta_k = max_r [ arctan((Z(r, alpha_k) - Z0)/r) ] | WEI = (1/8) * SUM [ max(0, beta_k) ]'
+      },
+      heatmap: {
+        title: 'HÌNH 4: BẢN ĐỒ NHIỆT XÁC SUẤT HUYỆT TRƯỜNG & TOP CHÂN HUYỆT (MCE)',
+        badge: `Top 1: ${topChanhuyet.score}/100đ`,
+        desc: `Mô hình hợp nhất đa tiêu chí không gian (Spatial MCE). Điểm tụ khí tại tâm khảo sát: ${centerPt.mceScore}/100đ. Điểm cực đại Top 1 tìm thấy tại cách tâm ${Math.round(Math.hypot(topChanhuyet.dx, topChanhuyet.dy))}m (${topChanhuyet.score}đ).`,
+        formula: 'S(x,y) = 0.25*Encl + 0.20*Animals + 0.15*Slope + 0.20*Water + 0.20*Hall'
+      }
+    };
+    return configs[panelKey] || configs.dem;
+  }
+
+  // Vẽ đồ hình không gian 2D động trực tiếp trên HTML5 Canvas
+  function drawDynamicSpatialPanel(canvas, panelType, spatialData) {
+    if (!canvas || !spatialData || !spatialData.grid) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const { grid, N, minElev, maxElev, centerElev, topChanhuyet, laiLong, thuyKhau, headingDeg, toaDeg } = spatialData;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const cellW = width / N;
+    const cellH = height / N;
+    const spanElev = Math.max(1.0, maxElev - minElev);
+
+    // 1. Vẽ ô màu ma trận không gian
+    for (let j = 0; j < N; j++) {
+      for (let i = 0; i < N; i++) {
+        const pt = grid[j][i];
+        let color = '#1e293b';
+
+        if (panelType === 'dem') {
+          const t = Math.min(Math.max((pt.elev - minElev) / spanElev, 0), 1);
+          if (t < 0.25) {
+            const k = t / 0.25;
+            color = `rgb(${Math.round(15 + k*20)}, ${Math.round(40 + k*80)}, ${Math.round(120 + k*70)})`;
+          } else if (t < 0.55) {
+            const k = (t - 0.25) / 0.3;
+            color = `rgb(${Math.round(35 + k*30)}, ${Math.round(120 + k*60)}, ${Math.round(190 - k*70)})`;
+          } else if (t < 0.8) {
+            const k = (t - 0.55) / 0.25;
+            color = `rgb(${Math.round(65 + k*130)}, ${Math.round(180 - k*20)}, ${Math.round(120 - k*80)})`;
+          } else {
+            const k = (t - 0.8) / 0.2;
+            color = `rgb(${Math.round(195 + k*40)}, ${Math.round(160 - k*90)}, ${Math.round(40 - k*20)})`;
+          }
+        } else if (panelType === 'slope') {
+          const s = pt.slopeDeg || 0;
+          if (s < 2.5) {
+            color = 'rgb(30, 90, 160)';
+          } else if (s <= 8.5) {
+            color = 'rgb(34, 197, 94)';
+          } else if (s <= 14.0) {
+            color = 'rgb(234, 179, 8)';
+          } else {
+            color = 'rgb(220, 38, 38)';
+          }
+        } else if (panelType === 'tangphong') {
+          const w = pt.wei || 0.5;
+          const k = Math.min(Math.max((w - 0.4) / 0.6, 0), 1);
+          color = `rgb(${Math.round(20 + k*60)}, ${Math.round(30 + k*130)}, ${Math.round(80 + k*90)})`;
+        } else if (panelType === 'heatmap') {
+          const m = pt.mceScore || 50;
+          const t = Math.min(Math.max((m - 30) / 70, 0), 1);
+          if (t < 0.33) {
+            const k = t / 0.33;
+            color = `rgb(${Math.round(25 + k*60)}, ${Math.round(10 + k*20)}, ${Math.round(40 + k*80)})`;
+          } else if (t < 0.66) {
+            const k = (t - 0.33) / 0.33;
+            color = `rgb(${Math.round(85 + k*120)}, ${Math.round(30 + k*50)}, ${Math.round(120 - k*60)})`;
+          } else {
+            const k = (t - 0.66) / 0.34;
+            color = `rgb(${Math.round(205 + k*50)}, ${Math.round(80 + k*140)}, ${Math.round(60 + k*60)})`;
+          }
+        }
+
+        ctx.fillStyle = color;
+        ctx.fillRect(i * cellW, j * cellH, cellW + 0.5, cellH + 0.5);
+      }
     }
-  };
+
+    // 2. Vòng đồng mức mờ
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+    for (let c = 1; c < 4; c++) {
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, (c * width) / 8, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    if (panelType === 'dem') {
+      if (laiLong) {
+        const radLaiLong = (laiLong.bearing * Math.PI) / 180;
+        const lx = centerX + Math.sin(radLaiLong) * (width * 0.36);
+        const ly = centerY - Math.cos(radLaiLong) * (height * 0.36);
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(lx, ly);
+        ctx.quadraticCurveTo(centerX + (lx - centerX)*0.3, centerY + (ly - centerY)*0.3, centerX, centerY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#fca5a5';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.fillText(`⛰️ Lai Long (${laiLong.elevation.toFixed(1)}m)`, lx - 25, ly > centerY ? ly + 14 : ly - 6);
+      }
+
+      if (thuyKhau) {
+        const radThuyKhau = (thuyKhau.bearing * Math.PI) / 180;
+        const tx = centerX + Math.sin(radThuyKhau) * (width * 0.40);
+        const ty = centerY - Math.cos(radThuyKhau) * (height * 0.40);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(tx, ty);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#7dd3fc';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.fillText(`💧 Thủy Khẩu (${thuyKhau.elevation.toFixed(1)}m)`, tx - 25, ty > centerY ? ty + 14 : ty - 6);
+      }
+
+    } else if (panelType === 'slope') {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+      ctx.fillRect(8, 8, 140, 46);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.strokeRect(8, 8, 140, 46);
+      ctx.font = '8px sans-serif';
+      ctx.fillStyle = '#38bdf8'; ctx.fillText('■ < 2.5°: Mặt bằng / Nước', 14, 20);
+      ctx.fillStyle = '#4ade80'; ctx.fillText('■ 3° - 8.5°: Thềm Tụ Khí (Cát)', 14, 32);
+      ctx.fillStyle = '#f87171'; ctx.fillText('■ > 15°: Sườn Dốc Thoái Khí', 14, 44);
+
+    } else if (panelType === 'tangphong') {
+      ctx.lineWidth = 1;
+      for (let k = 0; k < 8; k++) {
+        const brg = k * 45;
+        const rad = (brg * Math.PI) / 180;
+        const rx = centerX + Math.sin(rad) * (width * 0.44);
+        const ry = centerY - Math.cos(rad) * (height * 0.44);
+        ctx.strokeStyle = (brg === 0 || brg === 180) ? 'rgba(250, 204, 21, 0.7)' : 'rgba(255, 255, 255, 0.25)';
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(rx, ry);
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText(`🛡️ WEI Tự Nhiên: ${spatialData.weiPercent}%`, 10, 18);
+
+    } else if (panelType === 'heatmap') {
+      if (topChanhuyet) {
+        const tx = (topChanhuyet.x + 0.5) * cellW;
+        const ty = (topChanhuyet.y + 0.5) * cellH;
+        ctx.fillStyle = '#facc15';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.fillText(`⭐ Top 1 (${topChanhuyet.score}đ)`, tx + 8, ty - 4);
+      }
+    }
+
+    // Luôn vẽ Tâm Khảo Sát Tọa Độ GPS
+    ctx.fillStyle = '#ef4444';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText(`📍 Tâm (+${centerElev.toFixed(1)}m)`, centerX + 8, centerY + 14);
+
+    // Mũi tên Hướng Trạch
+    const radH = (headingDeg * Math.PI) / 180;
+    const hx = centerX + Math.sin(radH) * 26;
+    const hy = centerY - Math.cos(radH) * 26;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(hx, hy);
+    ctx.stroke();
+
+    // Box góc La Bàn
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+    ctx.fillRect(width - 66, 8, 58, 26);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.strokeRect(width - 66, 8, 58, 26);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 8px sans-serif';
+    ctx.fillText(`H: ${headingDeg.toFixed(1)}°`, width - 60, 19);
+    ctx.fillStyle = '#facc15';
+    ctx.fillText(`Tọa: ${toaDeg.toFixed(1)}°`, width - 60, 29);
+  }
 
   function escapeHtml(str) {
     if (!str) return '';
@@ -669,9 +877,20 @@
     const { centerElev, tuTuong, weiPercent, tpi, hinhTheHuyet, theNuoc, laiLong, thuyKhau, score, xepHang, xepHangClass, luopan, profiles, radar8Dirs } = tamLongData;
     const lkLat = lkCoords ? lkCoords.lat : 20.5242;
     const lkLng = lkCoords ? lkCoords.lng : 106.1099;
+    const curLat = effCoords ? effCoords.lat : lkLat;
+    const curLng = effCoords ? effCoords.lng : lkLng;
     const isFromCustom = effCoords && effCoords.isFromInput;
-
-    const panelData = PANEL4_CONFIGS[state.panel4ActiveTab] || PANEL4_CONFIGS.dem;
+    const spatialData = global.TamLongEngine && typeof global.TamLongEngine.generateSpatialMatrix === 'function'
+      ? global.TamLongEngine.generateSpatialMatrix({
+          lat: curLat,
+          lng: curLng,
+          headingDeg: deg,
+          demResult: state.demResult,
+          size: 21,
+          radiusM: 600
+        })
+      : null;
+    const panelData = getDynamicPanelConfig(state.panel4ActiveTab, spatialData);
 
     return `
       <!-- 1. ĐỊA MẠO SỐ & TỌA ĐỘ GPS KHẢO SÁT -->
@@ -984,7 +1203,7 @@
       <!-- 6. BỘ 4 BẢN ĐỒ ĐỊA MẠO SỐ & TẦM LONG ĐIỂM HUYỆT (QUY MÔ 2.8KM) -->
       <div class="dialy-card-section">
         <div class="dialy-card-title">
-          <span>🗺️ 6. Bản Đồ Địa Mạo Số &amp; Huyệt Trường (4 Panel 300 DPI)</span>
+          <span>🗺️ 6. Đồ Hình Địa Mạo Số &amp; Huyệt Trường (Động Thời Gian Thực)</span>
         </div>
 
         <div class="dialy-panel4-tab-bar">
@@ -1002,9 +1221,9 @@
           </button>
         </div>
 
-        <div class="dialy-panel4-img-wrap" id="dialy-panel4-lightbox-trigger" title="Nhấp để xem chi tiết ảnh nét cao">
-          <img src="${panelData.src}" class="dialy-panel4-img" id="dialy-panel4-img" alt="${panelData.title}" />
-          <div class="dialy-panel4-overlay-badge">
+        <div class="dialy-panel4-canvas-wrap" id="dialy-panel4-canvas-container" style="position: relative; margin: 8px 0; border-radius: 8px; overflow: hidden; background: #080310; border: 1px solid rgba(255,255,255,0.12); cursor: pointer;" title="Nhấp để tải hoặc xem kích thước lớn">
+          <canvas id="dialy-panel4-canvas" width="360" height="240" style="width: 100%; height: auto; display: block;"></canvas>
+          <div class="dialy-panel4-overlay-badge" id="dialy-panel4-badge">
             ${panelData.badge}
           </div>
         </div>
@@ -1461,6 +1680,22 @@
       };
     });
 
+    // Render đồ hình không gian 2D động cho Mục 6
+    const dynamicCanvas = container.querySelector('#dialy-panel4-canvas');
+    let curSpatialData = null;
+    if (dynamicCanvas && global.TamLongEngine && typeof global.TamLongEngine.generateSpatialMatrix === 'function') {
+      const eff = getEffectiveCoords();
+      curSpatialData = global.TamLongEngine.generateSpatialMatrix({
+        lat: eff.lat,
+        lng: eff.lng,
+        headingDeg: normalizeDeg(state.curHuongDeg),
+        demResult: state.demResult,
+        size: 21,
+        radiusM: 600
+      });
+      drawDynamicSpatialPanel(dynamicCanvas, state.panel4ActiveTab, curSpatialData);
+    }
+
     container.querySelectorAll('.dialy-panel4-tab-btn').forEach(btn => {
       btn.onclick = () => {
         const p = btn.dataset.panel;
@@ -1470,27 +1705,33 @@
           container.querySelectorAll('.dialy-panel4-tab-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.panel === p);
           });
-          const pData = PANEL4_CONFIGS[p] || PANEL4_CONFIGS.dem;
-          const imgEl = container.querySelector('#dialy-panel4-img');
-          const badgeEl = container.querySelector('.dialy-panel4-overlay-badge');
+          const pData = getDynamicPanelConfig(p, curSpatialData);
+          const badgeEl = container.querySelector('#dialy-panel4-badge');
           const titleEl = container.querySelector('.dialy-panel4-title');
           const descEl = container.querySelector('.dialy-panel4-desc');
           const formulaEl = container.querySelector('.dialy-panel4-formula');
-          if (imgEl) { imgEl.src = pData.src; imgEl.alt = pData.title; }
           if (badgeEl) badgeEl.textContent = pData.badge;
           if (titleEl) titleEl.textContent = pData.title;
           if (descEl) descEl.textContent = pData.desc;
           if (formulaEl) formulaEl.textContent = pData.formula;
+          if (dynamicCanvas && curSpatialData) {
+            drawDynamicSpatialPanel(dynamicCanvas, p, curSpatialData);
+          }
         }
       };
     });
 
-    const triggerLBox = document.getElementById('dialy-panel4-lightbox-trigger');
-    if (triggerLBox) {
-      triggerLBox.onclick = () => {
-        const imgEl = triggerLBox.querySelector('img');
-        if (imgEl && imgEl.src) {
-          window.open(imgEl.src, '_blank');
+    const canvasContainer = document.getElementById('dialy-panel4-canvas-container');
+    if (canvasContainer && dynamicCanvas) {
+      canvasContainer.onclick = () => {
+        try {
+          const dataUrl = dynamicCanvas.toDataURL('image/png');
+          const w = window.open('');
+          if (w) {
+            w.document.write(`<title>Đồ Hình Tính Toán Địa Lý Không Gian</title><body style="margin:0;background:#0b0713;display:flex;align-items:center;justify-content:center;height:100vh;"><img src="${dataUrl}" style="max-width:95%;max-height:95%;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.8);"/></body>`);
+          }
+        } catch (e) {
+          console.warn('Canvas export warning:', e);
         }
       };
     }
