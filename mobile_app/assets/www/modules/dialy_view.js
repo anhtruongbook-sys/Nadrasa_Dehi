@@ -879,6 +879,7 @@
     const lkLng = lkCoords ? lkCoords.lng : 106.1099;
     const curLat = effCoords ? effCoords.lat : lkLat;
     const curLng = effCoords ? effCoords.lng : lkLng;
+    const isFromCustom = effCoords && effCoords.isFromInput;
     const spatialData = global.TamLongEngine && typeof global.TamLongEngine.generateSpatialMatrix === 'function'
       ? global.TamLongEngine.generateSpatialMatrix({
           lat: curLat,

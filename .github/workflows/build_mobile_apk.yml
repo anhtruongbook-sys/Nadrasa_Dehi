@@ -76,16 +76,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.71
-          name: "Neta Light v2.8.71 (Tối Ưu Chụp Ảnh Màn Hình Dài Cả 3 Tab Địa Lý Khảo Sát & Xin Đài Âm Dương)"
+          tag_name: v2.8.72
+          name: "Neta Light v2.8.72 (Động Cơ Đồ Họa Không Gian 2D Động Thời Gian Thực Tab Tầm Long)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.71
-            - **Khắc Phục Hoàn Toàn Lỗi Chụp Ảnh Màn Hình Bị Co Dúm / Chồng Đè Trên Module Địa Lý Khảo Sát**:
-              + Loại bỏ triệt để xung đột render của thuộc tính `content-visibility: auto` trong engine html2canvas.
-              + Học tập kiến trúc chụp ảnh dài (Full-Length Long Capture) từ phân hệ Tử Vi và Bát Tự: tự động unconstrain chiều cao container và chuyển thanh điều khiển sang static.
-              + Chụp trải dài toàn vẹn 100% nội dung cho cả 3 phân hệ: **Tầm Long** (5 phần), **Tam Hợp** (12 Cung Trường Sinh, 120 Phân Kim, 72 Thấu Địa, Bát Lộ Hoàng Tuyền) và **Đại Quái** (Quẻ Chủ, 6 Hào phân kim vi mô, Phối quẻ Vận 9, Ma trận 64 quẻ).
-              + Hỗ trợ định danh tệp chuẩn xác `DiaLy_KhaoSat_YYYYMMDD_HHMMSS.png` cho cả giao diện Sáng và Tối.
-            - **Tích Hợp Phân Hệ 'Xin Đài Âm Dương' (Cổ Truyền) Vào Vị Trí Số 3 Menu**:
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.72
+            - **Động Cơ Đồ Họa Không Gian 2D Động Thời Gian Thực (Dynamic 2D Spatial Canvas Engine)**:
+              + Chuyển đổi toàn diện 100% việc hiển thị đồ hình sang cơ chế sinh động trực tiếp trên HTML5 Canvas thời gian thực (độ trễ < 2ms, chạy 100% offline).
+              + Không dùng bất kỳ ảnh mẫu tĩnh nào; toàn bộ đồ hình đều được tính toán và vẽ tự động theo đúng tọa độ thực tế của điểm khảo sát (tọa độ GPS người dùng nhập hoặc từ La Kinh vệ tinh).
+              + **3.1 DEM & Thủy Hệ**: Tự động vẽ bình đồ cao độ thực tế, bóc tách Sống Long Mạch chính từ đỉnh gối tựa Lai Long về tâm trạch và Rãnh Thủy Lưu thoát về phương trũng Thủy Khẩu.
+              + **3.2 Phân Tích Độ Dốc (Slope)**: Vi phân gradient bề mặt từng ô lưới; phân màu trực quan vùng bằng phẳng (<2.5°), thềm tụ khí cát tường (3°-8.5°) và sườn dốc mạnh (>15°); hiển thị độ dốc thực tế tại tâm khảo sát.
+              + **3.3 Bản Đồ Tàng Phong Tứ Tượng (WEI)**: 8 tia quét radar che chắn gió tự nhiên quanh tâm, hiển thị chỉ số WEI thực tế.
+              + **3.4 Bản Đồ Nhiệt Xác Suất Chân Huyệt (Spatial MCE)**: Quét tìm điểm cực đại tụ khí Top 1 quanh khu vực khảo sát, cắm cờ ngôi sao vàng và đối sánh điểm số với tâm trạch hiện tại.
+              + Hỗ trợ nhấp vào canvas để xuất ảnh PNG nét cao được sinh ra từ chính dữ liệu của tọa độ đó (`canvas.toDataURL()`).
+            - **Thanh Nhập Tọa Độ GPS Đa Định Dạng & Liên Kết La Kinh**:
+              + Tự động nhận diện URL Google Maps, tọa độ số thập phân và định dạng Độ-Phút-Giây (DMS).
+              + Nút chuyển đổi nhanh: [Lấy từ La Kinh], [GPS Thực địa] và [Phân Tích DEM].
+              + Đồ giải trắc diện mặt cắt dọc, mặt cắt ngang và Radar Tứ tượng tương tác trực tiếp.
               + Bố trí chuẩn mực ở vị trí số 3 ngay sau Neta Light và Bài Tây trong nhóm Bốc Bài & Thỉnh Ý Cát Hung.
               + Trực quan hóa đĩa sứ hoa lam truyền thống và 2 đồng xu cổ Càn Long Thông Bảo (Mặt Dương chữ Càn Long, Mặt Âm hình Rồng).
               + Âm thanh va chạm đĩa sứ chân thực chạy hoàn toàn ngoại tuyến 100% (Offline Base64 Sound Engine).
