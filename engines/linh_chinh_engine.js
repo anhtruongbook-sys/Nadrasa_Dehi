@@ -107,10 +107,10 @@
 
     const isHaNguyen = (currentVan >= 6 && currentVan <= 9);
 
-    // BƯỚC 1: Bảng 1 (Vận Tinh: Vận chẵn phi Thuận (+), Vận lẻ phi Nghịch (-) nhập Trung Cung)
-    const isVanEven = (currentVan % 2 === 0);
-    const isVanOdd = !isVanEven;
-    const isBang1Forward = isVanEven; // Chẵn Thuận, Lẻ Nghịch
+    // BƯỚC 1: Bảng 1 (Vận Tinh: Vận lẻ phi Thuận (+), Vận chẵn phi Nghịch (-) nhập Trung Cung)
+    const isVanOdd = (currentVan % 2 !== 0);
+    const isVanEven = !isVanOdd;
+    const isBang1Forward = isVanOdd; // Vận Lẻ Thuận (+), Vận Chẵn Nghịch (-)
     const bang1 = flyStars(currentVan, isBang1Forward);
 
     // Tìm cung/ô đang chứa sao số 5 trong Bảng 1
@@ -274,7 +274,7 @@
       saoDan: saoDan,
       saoNhapB2: saoDan,
       phiThuanB1: isBang1Forward,
-      ruleB1: isVanEven ? 'Vận chẵn phi Thuận (+)' : 'Vận lẻ phi Nghịch (-)',
+      ruleB1: isVanOdd ? 'Vận lẻ phi Thuận (+)' : 'Vận chẵn phi Nghịch (-)',
       phiThuanB2: isBang2Forward,
       ruleB2: (isVanOdd === isStarDanOdd) ? 'Cùng chẵn/lẻ với Vận' : 'Khác chẵn/lẻ với Vận',
       tienThienInfo: {
