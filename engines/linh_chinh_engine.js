@@ -36,14 +36,22 @@
   // 8 Cung Địa Bàn (không tính Trung Cung)
   const PALACES_8 = PALACES_TRACK.filter(p => p.id !== 'trung');
 
-  // Hàm bay Cửu Cung theo Lượng Thiên Xích
+  // Hàm bay Cửu Cung theo Lượng Thiên Xích (mặc định từ Trung Cung)
   function flyStars(centerStar, isForward) {
+    return flyStarsFromPalace('trung', centerStar, isForward);
+  }
+
+  // Hàm bay Cửu Cung theo Lượng Thiên Xích bắt đầu từ một Cung bất kỳ
+  function flyStarsFromPalace(startPalaceId, startStar, isForward) {
+    let startIdx = PALACES_TRACK.findIndex(p => p.id === startPalaceId);
+    if (startIdx < 0) startIdx = 0;
     const result = {};
-    for (let step = 0; step < 9; step++) {
+    for (let i = 0; i < 9; i++) {
+      const step = (i - startIdx + 9) % 9;
       const star = isForward
-        ? ((centerStar - 1 + step) % 9) + 1
-        : ((centerStar - 1 - step) % 9 + 9) % 9 + 1;
-      result[PALACES_TRACK[step].id] = star;
+        ? ((startStar - 1 + step) % 9) + 1
+        : (((startStar - 1 - step) % 9 + 9) % 9) + 1;
+      result[PALACES_TRACK[i].id] = star;
     }
     return result;
   }
@@ -99,18 +107,24 @@
 
     const isHaNguyen = (currentVan >= 6 && currentVan <= 9);
 
-    // BƯỚC 1: Bảng 1 (Vận Tinh: Lẻ Thuận, Chẵn Nghịch)
+    // BƯỚC 1: Bảng 1 (Vận Tinh: Lẻ Thuận, Chẵn Nghịch nhập Trung Cung)
     const isVanOdd = (currentVan % 2 !== 0);
     const bang1 = flyStars(currentVan, isVanOdd);
 
-    // BƯỚC 2: Tìm hướng Tiên Thiên của Thượng Quái quẻ Tọa và lấy số Bảng 1
-    const targetDirId = TIEN_THIEN_BAT_QUAI_DIRECTION[thuongQuaiToa] || 'ly_n';
-    const starBang2Center = bang1[targetDirId];
+    // Tìm cung/ô đang chứa sao số 5 trong Bảng 1
+    const cungChuaSao5_Step1 = PALACES_TRACK.find(p => bang1[p.id] === 5) || PALACES_TRACK[5];
+    const cungChuaSao5_Id = cungChuaSao5_Step1.id;
+    const cungChuaSao5_Name = `${cungChuaSao5_Step1.name} (${cungChuaSao5_Step1.cungName || 'Trung'})`;
 
-    // BƯỚC 3: Bảng 2 (Cùng chẵn lẻ với Vận -> Thuận, Khác chẵn lẻ -> Nghịch)
-    const isStar2Odd = (starBang2Center % 2 !== 0);
-    const isBang2Forward = (isVanOdd === isStar2Odd);
-    const bang2 = flyStars(starBang2Center, isBang2Forward);
+    // BƯỚC 2: Thượng quái quẻ Tọa theo hướng Tiên Thiên -> lấy số sao tại hướng đó trên Bảng 1
+    const targetDirId = TIEN_THIEN_BAT_QUAI_DIRECTION[thuongQuaiToa] || 'ly_n';
+    const saoDan = bang1[targetDirId];
+
+    // BƯỚC 3: Đem sao dẫn (saoDan) đặt vào ô chứa sao số 5 của Bước 1 (cungChuaSao5_Id)
+    // Quy tắc bay Bảng 2: Cùng chẵn lẻ với Vận -> Phi Thuận (+), Khác chẵn lẻ với Vận -> Phi Nghịch (-)
+    const isStarDanOdd = (saoDan % 2 !== 0);
+    const isBang2Forward = (isVanOdd === isStarDanOdd);
+    const bang2 = flyStarsFromPalace(cungChuaSao5_Id, saoDan, isBang2Forward);
 
     // BƯỚC 4: Đánh giá 8 Cung
     const palacesAnalysis = {};
@@ -253,11 +267,14 @@
       } : null,
       thuongQuaiName: thuongQuaiToa,
       huongTienThienThuongQuai: targetPalaceInfo ? `${targetPalaceInfo.name} (${targetPalaceInfo.cungName})` : 'Nam (Ly)',
-      saoNhapB2: starBang2Center,
+      cungChuaSao5_B1_Id: cungChuaSao5_Id,
+      cungChuaSao5_B1_Name: cungChuaSao5_Name,
+      saoDan: saoDan,
+      saoNhapB2: saoDan,
       phiThuanB1: isVanOdd,
       ruleB1: isVanOdd ? 'Lẻ' : 'Chẵn',
       phiThuanB2: isBang2Forward,
-      ruleB2: (isVanOdd === isStar2Odd) ? 'Cùng chẵn/lẻ với Vận' : 'Khác chẵn/lẻ với Vận',
+      ruleB2: (isVanOdd === isStarDanOdd) ? 'Cùng chẵn/lẻ với Vận' : 'Khác chẵn/lẻ với Vận',
       tienThienInfo: {
         thuongQuai: thuongQuaiToa,
         targetDirId: targetDirId,
@@ -267,10 +284,15 @@
         center: currentVan,
         isForward: isVanOdd,
         directionText: isVanOdd ? 'Phi Thuận (+)' : 'Phi Nghịch (-)',
+        cungSao5: cungChuaSao5_Name,
+        cungSao5Id: cungChuaSao5_Id,
         stars: bang1
       },
       bang2: {
-        center: starBang2Center,
+        startPalaceId: cungChuaSao5_Id,
+        startPalaceName: cungChuaSao5_Name,
+        startStar: saoDan,
+        center: bang2['trung'],
         isForward: isBang2Forward,
         directionText: isBang2Forward ? 'Phi Thuận (+)' : 'Phi Nghịch (-)',
         stars: bang2

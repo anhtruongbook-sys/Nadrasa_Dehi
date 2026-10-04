@@ -76,13 +76,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.74
-          name: "Neta Light v2.8.74 (Linh Thần / Chính Thần Vượng Suy Khí 4 Bước Huyền Không Đại Quái)"
+          tag_name: v2.8.75
+          name: "Neta Light v2.8.75 (Linh Thần / Chính Thần Chuẩn Đặt Vào Ô Chứa Sao Số 5 B1)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.74
-            - **Động Cơ Tính Toán Linh Thần / Chính Thần Vượng Suy Khí Chuẩn 4 Bước HKĐQ**:
-              + B1: Đưa Số Vận vào Trung Cung (Lẻ phi Thuận, Chẵn phi Nghịch) -> Bảng Phi Tinh 1.
-              + B2: Lấy Thượng Quái quẻ Tọa Sơn (hướng 6h) tra hướng Tiên Thiên Bát Quái -> Lấy số Lạc Thư Bảng 1.
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.75
+            - **Cập nhật Thuật toán Chuẩn Linh Thần / Chính Thần Vượng Suy Khí HKĐQ**:
+              + B1: Đưa Số Vận vào Trung Cung (Lẻ phi Thuận, Chẵn phi Nghịch) -> Bảng Phi Tinh 1. Xác định ô chứa sao số 5 (Ví dụ Vận 9 là Khảm - Bắc).
+              + B2: Lấy Thượng Quái quẻ Tọa Sơn (hướng 6h) tra hướng Tiên Thiên -> Lấy số sao dẫn trên Bảng 1.
+              + B3: Đặt số sao dẫn vào ô chứa sao số 5 của B1 -> So tính chẵn/lẻ với Vận để phi Thuận/Nghịch -> Bảng Phi Tinh 2.
+              + B4: Xét Vượng/Suy Khí & Linh/Chính Thần cho 8 cung.
               + B3: Phi tinh số đó (Cùng chẵn lẻ với Vận phi Thuận, khác chẵn lẻ phi Nghịch) -> Bảng Phi Tinh 2.
               + B4: Phân định 8 Cung Vượng/Suy: Sao 1, 5, 9 vượng cả Thượng/Hạ; Hạ nguyên số 6, 7, 8 vượng (2, 3, 4 suy). Cung 1,2,3,4 là Chính Thần, 6,7,8,9 là Linh Thần.
             - **Lớp Vector Trực Quan Sắc Nét Trên La Kinh (Không Che Lấp 36 Tầng)**:

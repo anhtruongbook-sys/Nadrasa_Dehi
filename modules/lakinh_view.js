@@ -3275,13 +3275,13 @@
           elToaSon.textContent = `${res.toaQue ? res.toaQue.name : ''} (Tọa ${res.toaDeg.toFixed(1)}° • Sơn ${res.toaQue ? res.toaQue.son : ''})`;
         }
         if (elThuongQuai) {
-          elThuongQuai.textContent = `${res.thuongQuaiName} ➔ Hướng Tiên Thiên: ${res.huongTienThienThuongQuai} ➔ Lấy sao [${res.saoNhapB2}]`;
+          elThuongQuai.textContent = `${res.thuongQuaiName} ➔ Hướng Tiên Thiên: ${res.huongTienThienThuongQuai} ➔ Lấy sao [${res.saoDan}]`;
         }
         if (elB1Rule) {
-          elB1Rule.textContent = `Vận ${res.currentVan} (${res.ruleB1}): Nhập trung cung phi ${res.phiThuanB1 ? 'Thuận (+)' : 'Nghịch (-)'}`;
+          elB1Rule.textContent = `Vận ${res.currentVan} (${res.ruleB1}): Nhập trung phi ${res.phiThuanB1 ? 'Thuận (+)' : 'Nghịch (-)'} ➔ Ô sao 5 tại ${res.cungChuaSao5_B1_Name}`;
         }
         if (elB2Rule) {
-          elB2Rule.textContent = `Sao [${res.saoNhapB2}] (${res.ruleB2}) ➔ Phi ${res.phiThuanB2 ? 'Thuận (+)' : 'Nghịch (-)'}`;
+          elB2Rule.textContent = `Đặt sao [${res.saoDan}] vào ô sao 5 (${res.cungChuaSao5_B1_Name}) ➔ ${res.ruleB2} ➔ Phi ${res.phiThuanB2 ? 'Thuận (+)' : 'Nghịch (-)'}`;
         }
 
         if (elMatrix) {
