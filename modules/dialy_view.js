@@ -985,7 +985,6 @@
       <div class="dialy-card-section">
         <div class="dialy-card-title">
           <span>🗺️ 6. Bản Đồ Địa Mạo Số &amp; Huyệt Trường (4 Panel 300 DPI)</span>
-          <span class="dialy-badge gold">Số Liệu Thực</span>
         </div>
 
         <div class="dialy-panel4-tab-bar">
