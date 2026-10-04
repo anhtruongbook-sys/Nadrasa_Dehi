@@ -107,9 +107,11 @@
 
     const isHaNguyen = (currentVan >= 6 && currentVan <= 9);
 
-    // BƯỚC 1: Bảng 1 (Vận Tinh: Lẻ Thuận, Chẵn Nghịch nhập Trung Cung)
-    const isVanOdd = (currentVan % 2 !== 0);
-    const bang1 = flyStars(currentVan, isVanOdd);
+    // BƯỚC 1: Bảng 1 (Vận Tinh: Vận chẵn phi Thuận (+), Vận lẻ phi Nghịch (-) nhập Trung Cung)
+    const isVanEven = (currentVan % 2 === 0);
+    const isVanOdd = !isVanEven;
+    const isBang1Forward = isVanEven; // Chẵn Thuận, Lẻ Nghịch
+    const bang1 = flyStars(currentVan, isBang1Forward);
 
     // Tìm cung/ô đang chứa sao số 5 trong Bảng 1
     const cungChuaSao5_Step1 = PALACES_TRACK.find(p => bang1[p.id] === 5) || PALACES_TRACK[5];
@@ -271,8 +273,8 @@
       cungChuaSao5_B1_Name: cungChuaSao5_Name,
       saoDan: saoDan,
       saoNhapB2: saoDan,
-      phiThuanB1: isVanOdd,
-      ruleB1: isVanOdd ? 'Lẻ' : 'Chẵn',
+      phiThuanB1: isBang1Forward,
+      ruleB1: isVanEven ? 'Vận chẵn phi Thuận (+)' : 'Vận lẻ phi Nghịch (-)',
       phiThuanB2: isBang2Forward,
       ruleB2: (isVanOdd === isStarDanOdd) ? 'Cùng chẵn/lẻ với Vận' : 'Khác chẵn/lẻ với Vận',
       tienThienInfo: {
@@ -282,8 +284,8 @@
       },
       bang1: {
         center: currentVan,
-        isForward: isVanOdd,
-        directionText: isVanOdd ? 'Phi Thuận (+)' : 'Phi Nghịch (-)',
+        isForward: isBang1Forward,
+        directionText: isBang1Forward ? 'Phi Thuận (+)' : 'Phi Nghịch (-)',
         cungSao5: cungChuaSao5_Name,
         cungSao5Id: cungChuaSao5_Id,
         stars: bang1

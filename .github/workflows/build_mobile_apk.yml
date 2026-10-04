@@ -76,12 +76,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.75
-          name: "Neta Light v2.8.75 (Linh Thần / Chính Thần Chuẩn Đặt Vào Ô Chứa Sao Số 5 B1)"
+          tag_name: v2.8.76
+          name: "Neta Light v2.8.76 (Linh Thần / Chính Thần Chuẩn B1 Vận Chẵn Thuận Lẻ Nghịch)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.75
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.76
             - **Cập nhật Thuật toán Chuẩn Linh Thần / Chính Thần Vượng Suy Khí HKĐQ**:
-              + B1: Đưa Số Vận vào Trung Cung (Lẻ phi Thuận, Chẵn phi Nghịch) -> Bảng Phi Tinh 1. Xác định ô chứa sao số 5 (Ví dụ Vận 9 là Khảm - Bắc).
+              + B1: Đưa Số Vận vào Trung Cung: Vận chẵn phi Thuận (+), Vận lẻ phi Nghịch (-) -> Bảng Phi Tinh 1. Xác định ô chứa sao số 5.
               + B2: Lấy Thượng Quái quẻ Tọa Sơn (hướng 6h) tra hướng Tiên Thiên -> Lấy số sao dẫn trên Bảng 1.
               + B3: Đặt số sao dẫn vào ô chứa sao số 5 của B1 -> So tính chẵn/lẻ với Vận để phi Thuận/Nghịch -> Bảng Phi Tinh 2.
               + B4: Xét Vượng/Suy Khí & Linh/Chính Thần cho 8 cung.
