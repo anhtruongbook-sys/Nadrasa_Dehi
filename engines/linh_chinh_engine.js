@@ -137,11 +137,11 @@
       // 1. Phân định Linh / Chính Thần theo Cửu Cung Lạc Thư gốc
       let role = '';
       if (isHaNguyen) {
-        // Hạ Nguyên: 1, 2, 3, 4 là Chính Thần; 6, 7, 8, 9 là Linh Thần
-        role = (p.baseNum >= 1 && p.baseNum <= 4) ? 'Chính Thần' : 'Linh Thần';
-      } else {
-        // Thượng Nguyên: 6, 7, 8, 9 là Chính Thần; 1, 2, 3, 4 là Linh Thần
+        // Hạ Nguyên: 6, 7, 8, 9 là Chính Thần; 1, 2, 3, 4 là Linh Thần
         role = (p.baseNum >= 6 && p.baseNum <= 9) ? 'Chính Thần' : 'Linh Thần';
+      } else {
+        // Thượng Nguyên: 1, 2, 3, 4 là Chính Thần; 6, 7, 8, 9 là Linh Thần
+        role = (p.baseNum >= 1 && p.baseNum <= 4) ? 'Chính Thần' : 'Linh Thần';
       }
 
       // 2. Xét Vượng / Suy từ số của Bảng 2

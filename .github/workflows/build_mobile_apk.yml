@@ -76,13 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.77
-          name: "Neta Light v2.8.77 (Linh Thần / Chính Thần Chuẩn B1 Vận Lẻ Thuận Chẵn Nghịch)"
+          tag_name: v2.8.78
+          name: "Neta Light v2.8.78 (Linh Thần / Chính Thần Chuẩn B4 Hạ Nguyên 6-7-8-9 Chính Thần)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.77
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.78
             - **Cập nhật Thuật toán Chuẩn Linh Thần / Chính Thần Vượng Suy Khí HKĐQ**:
               + B1: Đưa Số Vận vào Trung Cung: Vận lẻ phi Thuận (+), Vận chẵn phi Nghịch (-) -> Bảng Phi Tinh 1. Xác định ô chứa sao số 5 (Ví dụ Vận 9 là Khảm - Bắc).
               + B2: Lấy Thượng Quái quẻ Tọa Sơn (hướng 6h) tra hướng Tiên Thiên -> Lấy số sao dẫn trên Bảng 1.
+              + B3: Đặt số sao dẫn vào ô chứa sao số 5 của B1 -> So tính chẵn/lẻ với Vận để phi Thuận/Nghịch -> Bảng Phi Tinh 2.
+              + B4: Phân định Linh / Chính Thần chuẩn:
+                * Hạ Nguyên (Vận 6, 7, 8, 9): Cung 6, 7, 8, 9 là Chính Thần; Cung 1, 2, 3, 4 là Linh Thần.
+                * Thượng Nguyên (Vận 1, 2, 3, 4): Cung 1, 2, 3, 4 là Chính Thần; Cung 6, 7, 8, 9 là Linh Thần.
               + B3: Đặt số sao dẫn vào ô chứa sao số 5 của B1 -> So tính chẵn/lẻ với Vận để phi Thuận/Nghịch -> Bảng Phi Tinh 2.
               + B4: Xét Vượng/Suy Khí & Linh/Chính Thần cho 8 cung.
               + B3: Phi tinh số đó (Cùng chẵn lẻ với Vận phi Thuận, khác chẵn lẻ phi Nghịch) -> Bảng Phi Tinh 2.

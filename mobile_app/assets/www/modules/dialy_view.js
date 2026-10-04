@@ -1547,7 +1547,7 @@
             <div style="background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; font-size: 0.68rem; line-height: 1.45; color: #cbd5e1;">
               <div>• <b>B1 (Vận ${lcRes.currentVan}):</b> Nhập Trung phi ${lcRes.phiThuanB1 ? 'Thuận (+)' : 'Nghịch (-)'} ➔ Ô sao 5 tại <b>${lcRes.cungChuaSao5_B1_Name}</b>; Hướng Tiên Thiên ${lcRes.huongTienThienThuongQuai} có sao [<b>${lcRes.saoDan}</b>]</div>
               <div>• <b>B2 & B3:</b> Đem sao [<b>${lcRes.saoDan}</b>] đặt vào ô sao 5 (${lcRes.cungChuaSao5_B1_Name}) ➔ ${lcRes.ruleB2} ➔ Phi <b>${lcRes.phiThuanB2 ? 'Thuận (+)' : 'Nghịch (-)'}</b> theo Cửu Cung</div>
-              <div>• <b>B4:</b> Sao 1, 5, 9 & 6, 7, 8 vượng (2, 3, 4 suy); Cung 1,2,3,4 là Chính Thần, 6,7,8,9 là Linh Thần (Hạ Nguyên).</div>
+              <div>• <b>B4:</b> Sao 1, 5, 9 & 6, 7, 8 vượng (2, 3, 4 suy); Cung 6,7,8,9 là Chính Thần, 1,2,3,4 là Linh Thần (Hạ Nguyên).</div>
             </div>
 
             <!-- Ma trận 8 Cung -->
