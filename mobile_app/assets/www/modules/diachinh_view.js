@@ -267,11 +267,15 @@
           ${svgContent}
         </div>
 
-        <!-- Nút Đưa Vào La Kinh Lập Cực: Đặt ở dưới bản đồ khu đất và thuộc ô bản đồ vệ tinh & ranh thửa đất -->
-        <div class="dc-map-action-wrap" style="margin-top: 10px;">
+        <!-- Nút Đưa Vào La Kinh Lập Cực & Tầm Long Điểm Huyệt -->
+        <div class="dc-map-action-wrap" style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <button type="button" class="dc-btn-primary-lakinh" id="dc-btn-go-lakinh" title="Đưa ranh thửa đất vào La Kinh Vệ Tinh để lập cực phong thủy">
             <span>🧭</span>
-            <span>Đưa Vào La Kinh Lập Cực</span>
+            <span>La Kinh Lập Cực</span>
+          </button>
+          <button type="button" class="dc-btn-primary-tamlong" id="dc-btn-go-tamlong" style="background: linear-gradient(135deg, #b45309 0%, #d97706 100%); color: #ffffff; border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 8px; padding: 10px 12px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 10px rgba(180, 83, 9, 0.35);" title="Lấy tim khu đất chuyển sang Tab Tầm Long Điểm Huyệt để phân tích Loan Đầu, Tứ Tượng và DEM">
+            <span>🏔️</span>
+            <span>Tầm Long Điểm Huyệt</span>
           </button>
         </div>
       </div>
@@ -1109,6 +1113,13 @@
         importToLaKinh();
       };
     }
+
+    const btnGoTamLong = document.getElementById('dc-btn-go-tamlong');
+    if (btnGoTamLong) {
+      btnGoTamLong.onclick = () => {
+        importToTamLong();
+      };
+    }
   }
 
   // Tái phân tích và cập nhật khu vực kết quả
@@ -1172,6 +1183,47 @@
       }
       showToast(`Đã đưa thửa đất vào La Kinh: ${state.currentParcel.parcelName || 'VN-2000'}`);
     }, 400);
+  }
+
+  // Đưa tim khu đất vào Tab Tầm Long Điểm Huyệt (Khảo sát vi địa mạo, Tứ Tượng, Loan Đầu)
+  function importToTamLong() {
+    if (!state.currentParcel || !state.currentParcel.vertices || state.currentParcel.vertices.length < 3) {
+      const textarea = document.getElementById('dc-textarea-coords');
+      if (textarea && textarea.value.trim()) {
+        state.coordText = textarea.value.trim();
+        reprocessAndRefresh();
+      }
+    }
+
+    if (!state.currentParcel || !state.currentParcel.centroid) {
+      showToast('Vui lòng nhập tọa độ mốc ranh để tính tim khu đất');
+      return;
+    }
+
+    const c = state.currentParcel.centroid;
+    const parcelName = state.currentParcel.parcelName || 'Thửa Đất';
+
+    // 1. Lưu thửa đất vào lakinhState để mọi module dùng chung
+    if (global.lakinhState) {
+      global.lakinhState.importedParcel = state.currentParcel;
+      global.lakinhState.polygonPoints = state.currentParcel.vertices.map(v => [v.lat, v.lng]);
+      global.lakinhState.centerCoords = [c.lat, c.lng];
+      global.lakinhState.userLocation = [c.lat, c.lng];
+      global.lakinhState.isPlanGeoAnchored = true;
+    }
+
+    // 2. Chuyển sang module Địa Lý (Tab Tầm Long)
+    if (typeof window.switchAppMode === 'function') {
+      window.switchAppMode('dialy');
+    }
+
+    // 3. Nạp tọa độ tim đất vào DiaLyView
+    setTimeout(() => {
+      if (global.NetaDiaLyView && typeof global.NetaDiaLyView.setGpsCoordinates === 'function') {
+        global.NetaDiaLyView.setGpsCoordinates(c.lat, c.lng, `${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}`);
+      }
+      showToast(`🏔️ Đã nạp tâm khu đất (${c.lat.toFixed(5)}°, ${c.lng.toFixed(5)}°) vào Tầm Long`);
+    }, 300);
   }
 
   // Xuất file KML cho Google Earth

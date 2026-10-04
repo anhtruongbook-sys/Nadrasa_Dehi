@@ -880,6 +880,8 @@
     const curLat = effCoords ? effCoords.lat : lkLat;
     const curLng = effCoords ? effCoords.lng : lkLng;
     const isFromCustom = effCoords && effCoords.isFromInput;
+    const dcParcel = (global.NetaDiaChinhView && typeof global.NetaDiaChinhView.getState === 'function' && global.NetaDiaChinhView.getState().currentParcel) ||
+                     (global.lakinhState && global.lakinhState.importedParcel);
     const spatialData = global.TamLongEngine && typeof global.TamLongEngine.generateSpatialMatrix === 'function'
       ? global.TamLongEngine.generateSpatialMatrix({
           lat: curLat,
@@ -906,7 +908,7 @@
         <div class="dialy-gps-input-wrap">
           <div class="dialy-gps-input-row">
             <input type="text" id="dialy-gps-input" class="dialy-gps-input"
-              placeholder="🧭 Đang dùng tọa độ La Kinh (${lkLat.toFixed(5)}°, ${lkLng.toFixed(5)}°)..."
+              placeholder="🧭 Đang dùng tọa độ La Kinh (${lkLat.toFixed(5)}°, ${lkLng.toFixed(5)})..."
               value="${escapeHtml(state.inputGpsText || '')}"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
             ${state.inputGpsText ? `
@@ -918,6 +920,11 @@
             <button type="button" id="dialy-btn-get-lakinh" class="dialy-gps-act-btn" title="Lấy tọa độ tâm bản đồ và góc xoay từ La Kinh">
               🧭 Lấy từ La Kinh
             </button>
+            ${(dcParcel && dcParcel.centroid) ? `
+              <button type="button" id="dialy-btn-get-diachinh" class="dialy-gps-act-btn" style="border-color: #f59e0b; color: #facc15;" title="Lấy tọa độ tim khu đất (${escapeHtml(dcParcel.parcelName || 'Thửa Đất')}) từ Địa Chính">
+                📐 Tim Đất
+              </button>
+            ` : ''}
             <button type="button" id="dialy-btn-get-gps" class="dialy-gps-act-btn" title="Bắt tọa độ vệ tinh GPS máy">
               📍 GPS Thực địa
             </button>
@@ -1644,6 +1651,25 @@
       };
     }
 
+    const btnGetDc = document.getElementById('dialy-btn-get-diachinh');
+    if (btnGetDc) {
+      btnGetDc.onclick = () => {
+        const dcParcel = (global.NetaDiaChinhView && typeof global.NetaDiaChinhView.getState === 'function' && global.NetaDiaChinhView.getState().currentParcel) ||
+                         (global.lakinhState && global.lakinhState.importedParcel);
+        if (dcParcel && dcParcel.centroid) {
+          const c = dcParcel.centroid;
+          state.inputGpsText = `${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}`;
+          state.demCoords = { lat: c.lat, lng: c.lng };
+          if (typeof showToast === 'function') {
+            showToast(`📐 Đã nạp tâm khu đất (${c.lat.toFixed(5)}°, ${c.lng.toFixed(5)}°) từ Địa Chính`);
+          }
+          render();
+        } else {
+          if (typeof showToast === 'function') showToast('⚠️ Chưa có dữ liệu mốc ranh thửa đất từ Địa Chính');
+        }
+      };
+    }
+
     const btnGetGps = document.getElementById('dialy-btn-get-gps');
     if (btnGetGps) {
       btnGetGps.onclick = () => {
@@ -1933,6 +1959,12 @@
     render: render,
     setHeading: (deg) => {
       state.curHuongDeg = normalizeDeg(deg);
+      render();
+    },
+    setGpsCoordinates: (lat, lng, text) => {
+      state.curActiveTab = 'tamlong';
+      state.inputGpsText = text || `${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}`;
+      state.demCoords = { lat: Number(lat), lng: Number(lng) };
       render();
     },
     getState: () => state
