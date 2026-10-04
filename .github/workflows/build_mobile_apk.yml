@@ -76,10 +76,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
-          tag_name: v2.8.72
-          name: "Neta Light v2.8.72 (Động Cơ Đồ Họa Không Gian 2D Động Thời Gian Thực Tab Tầm Long)"
+          tag_name: v2.8.73
+          name: "Neta Light v2.8.73 (Cầu Nối 1-Chạm Tim Đất Tầm Long & Khắc Phục Triệt Để Giữ Ranh Thửa Đất La Kinh)"
           body: |
-            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.72
+            ## Ứng dụng Di Động Neta Light & Huyền Học v2.8.73
+            - **Cầu Nối 1-Chạm Tim Đất (Trọng Tâm Thửa Đất) Sang Tab Tầm Long Điểm Huyệt**:
+              + Bổ sung nút bấm `[ 🏔️ Tầm Long Điểm Huyệt ]` ngay bên cạnh `[ 🧭 La Kinh Lập Cực ]` trong màn hình Địa Chính & Sổ Đỏ.
+              + Tự động tính toán trọng tâm hình học (Centroid) từ danh sách tọa độ mốc ranh VN-2000, chuyển sang Tab Tầm Long và nạp sẵn tọa độ để phân tích vi địa mạo, Tứ Tượng, DEM tức thì.
+              + Bổ sung nút `[ 📐 Tim Đất ]` trực tiếp trong Mục 1 của Tab Tầm Long để kéo tọa độ thửa đất Địa Chính vào bất kỳ lúc nào.
+            - **Khắc Phục Triệt Để Lỗi Mất Ranh Thửa Đất Khi Chuyển Sang La Kinh Lần Đầu**:
+              + Khắc phục cơ chế cảm biến định vị GPS nền tự động kéo tâm bản đồ ra khỏi thửa đất sau 1.2s.
+              + Bảo vệ tuyệt đối tâm điểm thửa đất: Không bao giờ dời tâm bản đồ khi đang có thửa đất VN-2000 hoặc mặt bằng đã ghim trừ khi người dùng chủ động nhấn nút GPS.
             - **Động Cơ Đồ Họa Không Gian 2D Động Thời Gian Thực (Dynamic 2D Spatial Canvas Engine)**:
               + Chuyển đổi toàn diện 100% việc hiển thị đồ hình sang cơ chế sinh động trực tiếp trên HTML5 Canvas thời gian thực (độ trễ < 2ms, chạy 100% offline).
               + Không dùng bất kỳ ảnh mẫu tĩnh nào; toàn bộ đồ hình đều được tính toán và vẽ tự động theo đúng tọa độ thực tế của điểm khảo sát (tọa độ GPS người dùng nhập hoặc từ La Kinh vệ tinh).

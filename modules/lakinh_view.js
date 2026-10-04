@@ -1317,9 +1317,12 @@
     setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 100);
     setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 350);
 
-    // Tự động định vị ngầm vị trí hiện tại ngay khi mở bản đồ
+    // Tự động định vị ngầm vị trí hiện tại ngay khi mở bản đồ (Chỉ khi CHƯA có thửa đất VN-2000 hoặc mặt bằng đã ghim)
     setTimeout(() => {
-      getCurrentGPS(true);
+      const hasActiveParcel = !!(state.importedParcel || state.isPlanGeoAnchored || (state.polygonPoints && state.polygonPoints.length > 0));
+      if (!hasActiveParcel) {
+        getCurrentGPS(true);
+      }
     }, 1200);
   } catch (err) {
     console.error('Lỗi khởi tạo Leaflet map:', err);
@@ -3302,7 +3305,14 @@ function updateQmdjStrategicLayer() {
     if (btn) btn.classList.remove('pulse-radar-active');
 
     state.userLocation = [lat, lng];
-    state.centerCoords = [lat, lng];
+
+    const hasActiveParcel = !!(state.importedParcel || state.isPlanGeoAnchored || (state.polygonPoints && state.polygonPoints.length > 0));
+    const isUserExplicit = state._isUserExplicitGpsRequest === true;
+    state._isUserExplicitGpsRequest = false;
+
+    if (isUserExplicit || !hasActiveParcel) {
+      state.centerCoords = [lat, lng];
+    }
 
     if (mapInstance && userLocationLayerGroup) {
       userLocationLayerGroup.clearLayers();
@@ -3317,9 +3327,11 @@ function updateQmdjStrategicLayer() {
         })
       }).addTo(userLocationLayerGroup);
 
-      mapInstance.setView([lat, lng], 19, { animate: true });
-      showLaKinhToast(`🎯 Đã định vị chính xác qua GPS máy! (Sai số ~${Math.round(accuracy || 10)}m)`);
-      updateLocationHUD(lat, lng);
+      if (isUserExplicit || !hasActiveParcel) {
+        mapInstance.setView([lat, lng], 19, { animate: true });
+        showLaKinhToast(`🎯 Đã định vị chính xác qua GPS máy! (Sai số ~${Math.round(accuracy || 10)}m)`);
+        updateLocationHUD(lat, lng);
+      }
     }
   };
 
@@ -3345,6 +3357,12 @@ function updateQmdjStrategicLayer() {
   };
 
   function getCurrentGPS(silent = false) {
+    const hasActiveParcel = !!(state.importedParcel || state.isPlanGeoAnchored || (state.polygonPoints && state.polygonPoints.length > 0));
+    if (silent && hasActiveParcel) {
+      return;
+    }
+    state._isUserExplicitGpsRequest = !silent;
+
     const btn = document.getElementById('lakinh-dock-gps');
     const fab = document.getElementById('lakinh-hud-gps') || btn;
     if (btn) btn.classList.add('pulse-radar-active');

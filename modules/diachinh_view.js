@@ -1161,11 +1161,19 @@
       return;
     }
 
+    const parcel = state.currentParcel;
+    const c = parcel.centroid;
+
     // 1. Gán trực tiếp vào lakinhState để dữ liệu thửa đất được bảo toàn vĩnh viễn
     if (global.lakinhState) {
-      global.lakinhState.importedParcel = state.currentParcel;
-      global.lakinhState.polygonPoints = state.currentParcel.vertices.map(v => [v.lat, v.lng]);
+      global.lakinhState.importedParcel = parcel;
+      global.lakinhState.polygonPoints = parcel.vertices.map(v => [v.lat, v.lng]);
+      if (c) {
+        global.lakinhState.centerCoords = [c.lat, c.lng];
+        global.lakinhState.planAnchorCoords = [c.lat, c.lng];
+      }
       global.lakinhState.isPlanGeoAnchored = true;
+      global.lakinhState.isParcelBannerVisible = true;
     }
 
     // 2. Chuyển sang La Kinh để container được hiển thị và có kích thước thực
@@ -1174,15 +1182,21 @@
     }
 
     // 3. Nạp ngay và đặt timeout an toàn sau khi chu trình render kép của switchAppMode hoàn tất
-    if (global.NetaLaKinhView && typeof global.NetaLaKinhView.importParcelFromVN2000 === 'function') {
-      global.NetaLaKinhView.importParcelFromVN2000(state.currentParcel);
-    }
-    setTimeout(() => {
+    const doImport = () => {
       if (global.NetaLaKinhView && typeof global.NetaLaKinhView.importParcelFromVN2000 === 'function') {
-        global.NetaLaKinhView.importParcelFromVN2000(state.currentParcel);
+        global.NetaLaKinhView.importParcelFromVN2000(parcel);
       }
-      showToast(`Đã đưa thửa đất vào La Kinh: ${state.currentParcel.parcelName || 'VN-2000'}`);
-    }, 400);
+      if (global.lakinhMap && c) {
+        global.lakinhMap.setView([c.lat, c.lng], 19, { animate: false });
+        global.lakinhMap.invalidateSize();
+      }
+    };
+
+    doImport();
+    setTimeout(doImport, 150);
+    setTimeout(doImport, 450);
+
+    showToast(`Đã đưa thửa đất vào La Kinh: ${parcel.parcelName || 'VN-2000'}`);
   }
 
   // Đưa tim khu đất vào Tab Tầm Long Điểm Huyệt (Khảo sát vi địa mạo, Tứ Tượng, Loan Đầu)
